@@ -1,11 +1,11 @@
 
-// OJO para ver cosas capadas en la demo buscar "SHARE" por los CPP
+// NOTE - To see things in the DEMO version, searh for "SHARE" in the cpp files
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      DIV Operating System
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-#define DEFINIR_AQUI
+#define DEFINIR_AQUI // DEFINED HERE - see global.h
 #include "global.h"
 #include "divsound.h"
 #include "divmixer.hpp"
@@ -432,7 +432,7 @@ int main(int argc, char * argv[]) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Crea la barra de titulo
+//      Create the titlebar
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 char cbs[65],cbn,cgs[65],cgn,crs[65],crn;
@@ -467,7 +467,7 @@ void crea_barratitulo(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Dibuja entorno
+//      Draw environment
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int error_code;

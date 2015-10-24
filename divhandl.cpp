@@ -1,6 +1,6 @@
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Mขdulo que contiene el cขdigo de los handler de ventanas
+//      Module that contains the window handler code
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
@@ -9,7 +9,7 @@
 #include "divsb.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Variables del mขdulo
+//      Module variables
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 byte AuxPal[768];
@@ -51,13 +51,13 @@ extern byte nueva_paleta[768];
 extern byte * muestra;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funciขn mกnima de tipo handler
+//      Minimum handler function of type (????)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void dummy_handler(void) {}
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ principal
+//      Main Menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void menu_principal0(void) {
@@ -88,7 +88,7 @@ void menu_principal2(void) {
 void menu_principal3(void) { salir_del_entorno=1; }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ programas
+//      Programs Menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void Print_Program(void);
@@ -396,7 +396,7 @@ void menu_edicion2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funciones relacionadas con el menฃ de programas
+//      Programs Menu Functions
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void write_line(void);
@@ -409,7 +409,7 @@ void save_prg_buffer(int n) { // Actualiza el programa, guarda la lกnea actual
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ paletas
+//      Palette Menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void menu_paletas0(void) {

@@ -1,12 +1,12 @@
 
 
-//#define SHARE // Para compilar la versi¢n demo (recortada)
+//#define SHARE // To compile the demo version ( cropped)Para compilar la versi¢n demo (recortada)
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Variables globales
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//      Global Variables
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
-#ifdef DEFINIR_AQUI
+#ifdef DEFINIR_AQUI // DEFINED HERE
 #define GLOBAL_DATA
 #else
 #define GLOBAL_DATA extern
@@ -38,7 +38,7 @@
 //#include "judas\timer.h"
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Constantes definidas a nivel de aplicaci¢n
+//      Constants defined at the application level
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 #define uchar unsigned char
@@ -50,15 +50,15 @@
 
 #define swap(a,b) {(a)^=(b);(b)^=(a);(a)^=(b);}
 
-#define max_windows 96          // N§ m ximo de ventanas abiertas
-#define max_textos 2048         // N§ m x. de textos permitidos (lenguaje.div)
+#define max_windows 96          // maximum No. of open windows
+#define max_textos 2048         // max No. allowed texts (lenguaje.div)
 
-#define long_line       1024    // Longitud m xima de las l¡neas del editor
+#define long_line       1024    // Maximum line length in the editor
 
 #define RES_FOR_NAME _MAX_PATH
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIV
+//      Functions exported by DIV
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void _fwrite(char*,char*,int);
@@ -88,7 +88,7 @@ void activar(void);
 void DaniDel(char *name);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVBASIC
+//     Functions exported by DIVBASIC (??)
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void writetxt(int,int,int,char*);
@@ -111,7 +111,7 @@ int undo_back(void);
 void undo_next(void);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVPAINT
+//      Functions exported by DIVPAINT
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void edit_scr(void);
@@ -140,7 +140,7 @@ void mover(byte *,int,int);
 void select_zoom(void);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVSPRIT
+//      Functions exported by DIVSPRIT
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void sp_normal (char*,int,int,int,int,int,int,int);
@@ -150,7 +150,7 @@ void invierte_hor(char*,int,int);
 void invierte_ver(char*,int,int);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVVIDEO
+//      Functions exported by DIVVIDEO
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void retrazo(void);
@@ -162,7 +162,7 @@ void volcado_parcial(int,int,int,int);
 void volcado(char *);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVMOUSE
+//      Functions exported by DIVMOUSE
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void mouse_on(void);
@@ -175,7 +175,7 @@ void read_mouse(void);
 void mouse_window(void);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVPALET
+//      Functions exported by DIVPALET
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void find_colors(void);
@@ -190,39 +190,39 @@ byte media(byte,byte);
 void make_near_regla(void);
 void calcula_regla(int);
 
-// Edicion de paleta
+// Editing palette
 
 void EditPal();
 void LoadPal();
 void SaveAsPal();
 void RefPalAndDlg(int,int);
-void ordena_paleta();
-void fusiona_paleta();
-void preparar_tapiz();
+void ordena_paleta();  // palette order (arrange?)
+void fusiona_paleta(); // merge palette
+void preparar_tapiz(); // skin preperation (???)
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVSETUP
+//      Functions exported by DIVSETUP
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 struct _gcolor{
-  byte color;             // Color dentro de la paleta
-  byte r,g,b;             // Propiedades del color
-  byte selec;             // Estado : 1-Activo 0-Inactivo
+  byte color;             // colour within palette 
+  byte r,g,b;             // colour properties
+  byte selec;             // state : 1-Active 0-Inactive
 };
 
-// Estructura usada para salvar y cargar el fichero de configuracion
+// Structure used to save and load the configuration file
 // SETUP.BIN
 
 typedef struct _SetupFile{
         char Setup_Header[8];
 
-        // Modo de video
+        // Video mode
         int Vid_mode;
-        int Vid_modeAncho;
-        int Vid_modeAlto;
-        int Vid_modeBig;
+        int Vid_modeAncho; // video mode width
+        int Vid_modeAlto;  // video mode height
+        int Vid_modeBig;   // "big" video mode
 
-        // Sistema de Undo
+        // Undo system
         int Max_undo;
         int Undo_memory;
 
@@ -794,16 +794,16 @@ void Delete_Taggeds();
 void Show_Taggeds();
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones y estructuras exportadas por la papelera
+//      Functions and structures exported by the paper
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-void muestra_papelera();
+void muestra_papelera(); // trash shows (?)
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones y estructuras exportadas por la grabadora
+//      Functions and structures exported by the (sound) recorder
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-//#define GRABADORA
+//#define GRABADORA // TAPE RECORDER
 
 #ifdef GRABADORA
 #include "grabador.h"
