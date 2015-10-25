@@ -471,11 +471,11 @@ void actualiza_pila(int id, int valor) {
   }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Intrprete del cขdigo generado
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Interpret the generated code
+///////////////////////////////////////////////////////////////////////////////
 
-int max,max_reloj;        // Para procesar segฃn _Priority y pintar segฃn _Z
+int max,max_reloj;        // Process in order or _Priority and _Z 
 extern int alt_x;
 
 void interprete (void)
@@ -990,12 +990,12 @@ void frame_end(void) {
           } textos_pintados=1;
       	} else if (otheride==2) {
           readmouse();
-          x1s=-1; v_function=-1; // No se producen errores
+          x1s=-1; v_function=-1; // No errors (don't show?)
           put_sprite(mouse->file,mouse->graph,mouse->x,mouse->y,mouse->angle,mouse->size,mouse->flags,mouse->region,copia,vga_an,vga_al);
           mouse_x0=x0s;mouse_x1=x1s;mouse_y0=y0s;mouse_y1=y1s; mouse_pintado=1;
-          #ifdef DEBUG
+#ifdef DEBUG
           function_exec(255,get_ticks()-oreloj);
-          #endif
+#endif
       	} else if (otheride==3) {
           for (n=0;n<max_drawings;n++) if (drawing[n].tipo) break;
           if (n<max_drawings) {
@@ -1330,7 +1330,7 @@ void main(int argc,char * argv[]) {
     filenames=(char*)&mem[imem_max+258*5]; // Buffer de 16*1025 para dirinfo[].name
 
     memset(mem,0,4*imem_max+1032*5);
-    // Para sumar cadenas "en el aire"
+    // To add strings (on the fly?) "in the air"
     nullstring[0]=imem_max+1+258*0; mem[nullstring[0]-1]=0xDAD00402;
     nullstring[1]=imem_max+1+258*1; mem[nullstring[1]-1]=0xDAD00402;
     nullstring[2]=imem_max+1+258*2; mem[nullstring[2]-1]=0xDAD00402;
@@ -1370,7 +1370,7 @@ void main(int argc,char * argv[]) {
 
         if (mem[0]!=0 && mem[0]!=1) {
           #ifndef DEBUG
-          printf("Error: Needs a DIV32RUN executable to load.");
+          printf("Error: Needs a DIV executable to load.");
           #endif
 
           _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
@@ -1386,7 +1386,7 @@ void main(int argc,char * argv[]) {
         _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
         chdir(divpath);
 
-        exit(26); // exit sin borrar la pantalla
+        exit(26); // Exit without clearing screen
 
       } else {
         free(ptr);

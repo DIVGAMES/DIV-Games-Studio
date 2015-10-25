@@ -9,9 +9,9 @@
 
 #define INTERPRETE
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 // Includes
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 
 #include <conio.h>
@@ -38,9 +38,9 @@
 #include "..\judas\timer.h"
 #include "divsound.h"
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Definiciones
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// defines
+///////////////////////////////////////////////////////////////////////////////
 
 #pragma check_stack(off)
 
@@ -56,17 +56,17 @@
 #define pi 180000
 #define radian 57295.77951
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Prototipos
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//  Prototypes
+///////////////////////////////////////////////////////////////////////////////
 
-// I-ntrprete
+// Interpreter (i.cpp)
 
 void error(word);
 void exer(int);
 void mouse_window(void);
 
-// V-กdeo
+// Video (v.cpp)
 
 void set_paleta (void);
 void set_dac(void);
@@ -81,7 +81,7 @@ void init_ghost(void);
 void crear_ghost(void);
 void find_color(byte,byte,byte);
 
-// S-prites
+// Sprites (s.cpp)
 
 void scroll_simple(void);
 void scroll_parallax(void);
@@ -99,13 +99,13 @@ void pinta_m7(int);
 int get_distx(int a,int d);
 int get_disty(int a,int d);
 
-// F-unciones
+// Functions (f.cpp)
 
 void function(void);
 void nueva_paleta(void);
 void init_rnd(int);
 
-// C-olisiones
+// Collision routines (c.cpp)
 
 void out_region(void);
 void graphic_info(void);
@@ -114,32 +114,32 @@ void sp_size_scaled( int *x, int *y, int *xx, int *yy, int xg, int yg, int size,
 void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags);
 void sp_size( int *x, int *y, int *xx, int *yy, int xg, int yg, int ang, int size, int flags);
 
-// D-ebug
+// Debug (d.cpp)
 
 #ifdef DEBUG
 void debug(void);
 extern int debug_active;
 #endif
 
-// A-ssembler
+// Assembler (a.asm - replaced with a.cpp)
 
 void memcpyb(byte * di, byte * si, int n);
 void call(int);
 
-// M-ode 8
+// Mode8 (vpe/vpedll.cpp)
 
 void loop_mode8(void);
 
-//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-//      Funciones exportadas por DIVLENGU
-//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVLENGU (divlengu.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void inicializa_textos(byte * fichero);
 void finaliza_textos(void);
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Constantes
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Constants
+///////////////////////////////////////////////////////////////////////////////
 
 #define max_exp 512	  // M ximo nฃmero de elementos en una expresiขn
 #define long_pila 2048	  // Longitud de la pila en ejecuciขn
@@ -499,7 +499,7 @@ GLOBAL int id_end;      // Inicio del ฃltimo proceso hasta el momento
 
 GLOBAL int id_old;      // Para saber por donde se est  procesando
 
-GLOBAL int procesos;    // Nฃmero de procesos vivos en el programa
+GLOBAL int procesos;    // Number of living processes in the program
 
 GLOBAL int ide,id;      // Proceso en proceso
 
@@ -738,9 +738,9 @@ GLOBAL int snum; // Variable para indicar sobre que scroll se trata
 //GLOBAL int map1_x,map1_y,map2_x,map2_y; // Posiciขn del scroll (esq. sup. izda.)
 //GLOBAL int block1,block2; // Nง de scanes de la primera porciขn de los buffers
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Sistema de memoria dinamica - Struct interno
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Dynamic system memory - Internal Struct
+///////////////////////////////////////////////////////////////////////////////
 
 struct _divmalloc {
   byte *ptr;
@@ -750,9 +750,9 @@ struct _divmalloc {
 
 GLOBAL struct _divmalloc divmalloc[256];
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables relativas a c lculos de la paleta
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Variables for palette control
+///////////////////////////////////////////////////////////////////////////////
 
 GLOBAL byte * ghost; // Tabla de ghost layering
 GLOBAL byte * ghost_inicial; // Las primeras 256 medias de la tabla ghost
@@ -762,52 +762,52 @@ GLOBAL int find_min;
 
 GLOBAL byte last_c1;    // Ultimo color del font del sistema (en paleta cargada)
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Control de nง m ximo de frames
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Frame limiter
+///////////////////////////////////////////////////////////////////////////////
 
-GLOBAL int reloj;   // Lกmite de velocidad
+GLOBAL int reloj;   // Speed limiter (framerate)
 GLOBAL int ticks;
 
-GLOBAL int old_reloj; // Para el "timing" de funciones
+GLOBAL int old_reloj; // For time (timing) functions
 GLOBAL int ultimo_reloj;
 GLOBAL double freloj,ireloj;
 
-GLOBAL int max_saltos;                  // M ximo nง de volcados saltados
+GLOBAL int max_saltos;                  // Ma number of skipped frames
 
 GLOBAL int saltar_volcado,volcados_saltados;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Buffer de detecciขn de colisiones
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
+// Collision detection buffer
+//////////////////////////////////////////////////////////////////////////////
 
-GLOBAL byte * buffer;                   // Buffer de colisiones
-GLOBAL int buffer_an,buffer_al;         // Ancho y alto del buffer
+GLOBAL byte * buffer;                   // Collision Buffer
+GLOBAL int buffer_an,buffer_al;         // Width & Height of buffer
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Formato de los ficheros gr ficos fpg
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
+// FPG Graphic files format
+//////////////////////////////////////////////////////////////////////////////
 
-// char     8   cabecera "fpg\x1a\x0d\x0a\x00\x00"
+// char     8   header "fpg\x1a\x0d\x0a\x00\x00"
 // char   768   dac
 // char 16*36   reglas de color
 // --------------------- 1 ---------------------------
-// int      1   codigo del grafico (000-999)
+// int      1   codigo	 del grafico (000-999)
 // int      1   longitud del grafico incluida cabezera
 // char    32   descripcion del grafico
 // char    12   nombre del fichero desde el que se creo
-// int      1   ancho
-// int      1   alto
-// int      1   n - nฃmero de puntos
-// short  2*n   puntos {x,y}
-// char an*al   grafico
+// int      1   width
+// int      1   height
+// int      1   n - number of points
+// short  2*n   pooints {x,y}
+// char an*al   graphic data
 // --------------------- N ---------------------------
 
 #ifdef DEBUG
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Include con prototipos y variables relacionadas con el debugger
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
+//      Include prototypes and variables related to the debugger
+//////////////////////////////////////////////////////////////////////////////
 
 #define v ventana[0]
 #define max_items 24    // Nง m ximo de objetos en una ventana
