@@ -1,10 +1,22 @@
+/**
+ * 
+ * DIV GAMES STUDIO
+ * 
+ * global.h
+ * 
+ * (c) 1996 Daniel Navarro
+ * (c) 1998 Hammer Tech
+ * (c) 2000 FastTrak Software
+ * 
+ * 
+ * 
+ ***/
+ 
+//#define SHARE // To compile the demo (limited) version
 
-
-//#define SHARE // To compile the demo version ( cropped)Para compilar la versi¢n demo (recortada)
-
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+///////////////////////////////////////////////////////////////////////////////
 //      Global Variables
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+///////////////////////////////////////////////////////////////////////////////
 
 #ifdef DEFINIR_AQUI // DEFINED HERE
 #define GLOBAL_DATA
@@ -831,7 +843,7 @@ typedef struct _pcminfo{
         int    SoundBits;
         int    SoundSize;
         short  *SoundData;
-        SAMPLE *sample;
+//        SAMPLE *sample;
 } pcminfo;
 
 typedef struct _modinfo{
@@ -851,7 +863,7 @@ extern byte *pcminfo_aux;
 extern byte *modinfo_aux;
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones y estructuras exportadas por DIVDSKTP
+//      Functions and structures exported by DIVDSKTP
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 int Can_UpLoad_Desktop();
@@ -860,7 +872,7 @@ void DownLoad_Desktop();
 void New_DownLoad_Desktop();
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Compilaci¢n
+//      Compiler functions
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 extern byte lower[256];
@@ -873,7 +885,7 @@ void inicializa_compilador(void);
 void compilar_programa(void);
 void finaliza_compilador(void);
 
-void compilar(void); // Funciones internas del compilador
+void compilar(void); // Internal compiler functions
 void comp(void);
 void free_resources(void);
 void comp_exit(void);
@@ -883,7 +895,7 @@ GLOBAL_DATA int ejecutar_programa; // 0-Compile, 1-Run, 2-Install
 void goto_error(void);
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Hipertexto
+//      Hypertext
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void make_helpidx(void);        // Crea el ¡ndice de t‚rminos
@@ -921,7 +933,7 @@ extern int lp1[512],lp_select;
 void copy(int a,int b);
 void xchg(int a,int b);
 void move(int a,int b);
-void delete(int a);
+void divdelete(int a);
 void addwindow(void);
 void wup(int a);
 void wdown(int a);

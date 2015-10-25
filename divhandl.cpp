@@ -434,7 +434,7 @@ void menu_paletas2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ mapas
+//      Maps Menu 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 extern char input2[32];
@@ -561,7 +561,7 @@ void menu_mapas2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ mapas 3D
+//      3D Maps Menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void actualiza_titulo(void)
@@ -790,7 +790,7 @@ int determina_prg(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ gr ficos (ficheros FPG)
+//      Graphic Menu (FPG Files)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void Print_List(void);
@@ -900,7 +900,7 @@ void menu_graficos2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ fuentes
+//      Fonts Menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void menu_fuentes0(void) {
@@ -1059,7 +1059,7 @@ void imp_fontmap(void) {
   fclose(f);
   free(buffer);
 
-  // Crear la ventana y cerrar la antigua en caso de existir
+  // Create the window and close the old if available
 
 
   for (x=-1,y=1;y<max_windows;y++) if (ventana[y].tipo==104 && !strcmp(ventana[y].titulo,FontName)) x=y;
@@ -1142,7 +1142,7 @@ void gen_char(byte * di,int an,int al,int inc,char * si) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ sonidos
+//      Sound Menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void OpenSound(void);
@@ -1294,7 +1294,7 @@ void menu_sonidos2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Menฃ sistema
+//      System Menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void MemInfo0(void);
@@ -1335,7 +1335,7 @@ void menu_sistema2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Crea un nuevo menฃ
+//      Create a new menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void crear_menu(int menu) {
@@ -1358,7 +1358,7 @@ void crear_menu(int menu) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Pinta el menฃ activo (en v)
+//      Draw the active menu
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void pinta_menu(int menu) {
@@ -1382,7 +1382,7 @@ void pinta_menu(int menu) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Marca o desmarca las opciones seleccionadas de un menฃ
+//      Toggle selected menu options
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void actualiza_menu(int menu,int min,int max) { // (Min,Max) Opciones prohibidas
@@ -1812,7 +1812,7 @@ void mapa3(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Ventana de paleta
+//      Palette window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #define pixelxcolor 4
@@ -1836,7 +1836,7 @@ void paleta1(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Cuadro para introducir la informaciขn sobre el usuario
+//      Box to enter information about the user
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 char user1[128]="";
@@ -1898,7 +1898,7 @@ void usuario0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Cuadro de di logo de Copyright
+//      Copyright Logo Box
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 extern int nueva_sesion;
@@ -1979,7 +1979,7 @@ void err2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Ventana de error con botขn de ayuda
+//      Error window with 'HELP' button
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void errhlp1(void) {
@@ -2006,7 +2006,7 @@ void errhlp0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Mensaje informativo
+//      Info Message
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void info0(void) {
@@ -2015,7 +2015,7 @@ void info0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Test de un nuevo modo de vกdeo
+//      Test new video mode
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 extern int * system_clock;
@@ -2047,7 +2047,7 @@ void test0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Cuadro de di logo Aceptar / Cancelar con v_titulo y/o v_texto
+//      DIV Box OK / Cancel without or without text title (?)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void aceptar0(void) {

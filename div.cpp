@@ -35,7 +35,7 @@ extern int superget;
 //      Variables globales
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-int * system_clock = (void*) 0x46c; // Reloj del sistema
+//int * system_clock = (void*) 0x46c; // Reloj del sistema
 
 char get_buffer[long_line]; // Buffer comฃn, excepto para las calculadoras
 char * get;
@@ -45,7 +45,7 @@ int fin_ventana=0,mover_ventana=0;
 int cierra_rapido=0;
 int no_volcar_ventanas=0;
 
-byte lower[256]=
+byte lower[512]=
   "                                   #$           0123456789      "
   " abcdefghijklmnopqrstuvwxyz    _ abcdefghijklmnopqrstuvwxyz     "
   "ueaaaaeeeiiiaae‘‘ooouuyouaiouคคฆง                        "
@@ -1621,7 +1621,7 @@ void cierra_ventana(void) {
   n=v.tipo;
 
   x=v.x; y=v.y; an=v.an; al=v.al;
-  delete(0);
+  divdelete(0);
   if (modo<100) {
     fondo_edicion(x,y,an,al);
     volcar_barras(0);
@@ -2471,18 +2471,18 @@ void nueva_ventana(int init_handler) {
 
     } else {
       if (n && ventana[n].primer_plano==2) {
-        delete(0);
+        divdelete(0);
         move(0,n-1);
         maximiza_ventana();
       } else if (n) {
         if (ventana[n].primer_plano==0) {
-          delete(0);
+          divdelete(0);
           move(0,n-1);
           for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
             if (colisionan(0,m)) { ventana[m].primer_plano=0; vuelca_ventana(m); }
           v.primer_plano=1; vuelca_ventana(0);
         } else { // Cuando el menu pedido ya est  en primer plano lo resalta
-          delete(0);
+          divdelete(0);
           move(0,n-1);
           wrectangulo(v.ptr,v.an/big2,v.al/big2,c4,0,0,v.an/big2,v.al/big2);
           init_volcado(); vuelca_ventana(0);
@@ -2491,7 +2491,7 @@ void nueva_ventana(int init_handler) {
           v.volcar=1; retrazo(); retrazo(); retrazo(); retrazo();
         }
       } else {
-        delete(0);
+        divdelete(0);
       }
     }
 
@@ -2730,7 +2730,7 @@ void dialogo(int init_handler) {
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
     } else {
-      delete(0);
+      divdelete(0);
     }
   }
 }
@@ -3018,7 +3018,7 @@ void determina_unidades(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Rutina genrica para pasar un buffer a un fichero
+//      Generic routine to write buffer to file
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void _fwrite(char * s, byte * buf, int n) {
@@ -3027,7 +3027,7 @@ void _fwrite(char * s, byte * buf, int n) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funciขn genrica de error, retorna al sistema
+//      Generic function to error and exit to system
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void error(int n) {
@@ -3037,7 +3037,7 @@ void error(int n) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Systema de debugger
+//      Debug system
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 struct _meminfo {
@@ -3101,7 +3101,7 @@ void DebugFile(char *Cadena,char *Nombre) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Definiciขn de items
+//      Items definition
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void _button(int t,int x,int y,int c) {
@@ -3141,7 +3141,7 @@ void _flag(int t,int x,int y,int *valor) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Impresiขn de items
+//      Print (show) items
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void _show_items(void) {
@@ -3975,7 +3975,7 @@ void move(int a,int b) {
   }
 }
 
-void delete(int a) {
+void divdelete(int a) {
   memmove(&ventana[a].tipo,&ventana[a+1].tipo,sizeof(struct tventana)*(max_windows-1-a));
   ventana[max_windows-1].tipo=0;
 }
