@@ -9,9 +9,9 @@
 //             (o bien el nฃmero de procesos m ximo)
 // OJO !!! Convertir imem_max en variable
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Librerias utilizadas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Libraries used
+///////////////////////////////////////////////////////////////////////////////
 
 #define DEFINIR_AQUI
 
@@ -55,7 +55,7 @@ int ignore_errors=0;
 int old_dump_type;
 int old_restore_type;
 
-int last_key_check,key_check,last_joy_check,joy_check; // Llamar al screensaver
+int last_key_check,key_check,last_joy_check,joy_check; // Call screensaver
 int last_mou_check,mou_check;
 int error_vpe;
 
@@ -73,9 +73,9 @@ int process_level=0; // Para contabilizar los cal/ret (para el step del debug)
 int nullstring[4];
 int nstring=0;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 // Critical error handler
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 unsigned c_e_0,c_e_1;
 unsigned far * c_e_2;
@@ -83,7 +83,7 @@ unsigned far * c_e_2;
 int __far critical_error(unsigned deverr,unsigned errcode,unsigned far*devhdr)
   { c_e_0=deverr; c_e_1=errcode; c_e_2=devhdr; return(_HARDERR_IGNORE); }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 void CMP_export(char *name,void *dir,int nparms)
 {
 static int nExt=0;
@@ -98,11 +98,11 @@ void CNT_export(char *name,void *dir,int nparms)
   dir=dir;
   name=name;
 }
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Programa principal
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Main program
+///////////////////////////////////////////////////////////////////////////////
 
 void GetFree4kBlocks(void);
 int DOSalloc4k(void);
@@ -135,7 +135,7 @@ int DPMIalloc4k(void);
         modify [ax bx cx si di] value [edx];
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Inicializaciขn
+// Initialise (setup)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void check_mouse(void);
@@ -583,9 +583,9 @@ void nucleo_exec() {
 #ifdef DEBUG
 
 void trace_process(void) {
-  #ifdef DEBUG
+#ifdef DEBUG
   oreloj=get_ticks();
-  #endif
+#endif
 
   ide=0; max=0x80000000;
 
@@ -607,7 +607,7 @@ void trace_process(void) {
   }
   else {
 
-    _net_loop(); // Recibe los paquetes justo antes de ejecutar el proceso
+    _net_loop(); // Receive packets before executing process
 
     id=ide; ip=mem[id+_IP]; carga_pila(id);
 
@@ -643,9 +643,9 @@ void nucleo_trace(void) {
 
 #endif
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Inicia un frame, prepara variables vuelca y espera timer
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Start a frame prepares timer variables turns and looks
+///////////////////////////////////////////////////////////////////////////////
 
 float ffps=24.0f;
 
@@ -664,7 +664,7 @@ void frame_start(void) {
   int oreloj;
   #endif
 
-  // Control del screen saver
+  // Control screensaver
 
   if (ss_status && ss_frame!=NULL) {
     if (reloj>ss_time_counter) {
@@ -771,7 +771,7 @@ void frame_start(void) {
 
   readmouse();
 
-  // Lee el joystick
+  // Read joystick(s)
 
   if (joy_status==1 && joy_timeout>=6) {
     joy->button1=0; joy->button2=0;
@@ -808,7 +808,7 @@ void frame_start(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Finaliza un frame e imprime los gr ficos
+// Ends a frame and print graphics
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void frame_end(void) {
@@ -1111,9 +1111,9 @@ void frame_end(void) {
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Elimina un proceso
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Remove a process
+///////////////////////////////////////////////////////////////////////////////
 
 void elimina_proceso(int id) {
   int id2;
@@ -1145,9 +1145,9 @@ void elimina_proceso(int id) {
   _object_destroy(mem[id+_M8_Object]);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Finalizaciขn
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Finalise
+///////////////////////////////////////////////////////////////////////////////
 
 void finalizacion (void) {
   while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
@@ -1167,9 +1167,9 @@ void finalizacion (void) {
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Error de ejecuciขn
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Runtime error
+///////////////////////////////////////////////////////////////////////////////
 
 void exer(int e) {
 
@@ -1216,9 +1216,9 @@ void exer(int e) {
   exit(26);
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Mensajes de error no criticos - Versiขn sin debugger
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
+//      Non-critical error messages (non debug versions)
+//////////////////////////////////////////////////////////////////////////////
 
 #ifndef DEBUG
 
@@ -1253,9 +1253,9 @@ void e(int texto) {
 
 #endif
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Programa principal
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
+//  Main Program
+//////////////////////////////////////////////////////////////////////////////
 
 void main(int argc,char * argv[]) {
   FILE * f;
@@ -1269,19 +1269,19 @@ void main(int argc,char * argv[]) {
 
   numfiles=flushall();
 
-  #ifndef DEBUG
+#ifndef DEBUG
   if (argc<2) {
-    printf("DIV32RUN Run time library - version 1.03b - Freeware by Hammer Technologies\n");
-    printf("Error: Needs a DIV32RUN executable to load.");
+    printf("DIV2015 Run time library - version 3.00a - http://div-arena.co.uk\n");
+    printf("Error: Needs a DIV executable to load.");
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
     chdir(divpath);
 
     exit(26);
   }
-  #else
-  vga_an=argc; // Para quitar un warning
-  #endif
+#else
+  vga_an=argc; // To remove a warning (argc unused?)
+#endif
 
   _harderr(critical_error);
 
@@ -1289,7 +1289,7 @@ void main(int argc,char * argv[]) {
 
   if ((f=fopen(argv[1],"rb"))==NULL) {
     #ifndef DEBUG
-    printf("Error: Needs a DIV32RUN executable to load.");
+    printf("Error: Needs a DIV executable to load.");
     #endif
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
@@ -1401,9 +1401,10 @@ void main(int argc,char * argv[]) {
   } else { fclose(f); exer(1); }
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Busca el packfile en los juegos instalados
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+//////////////////////////////////////////////////////////////////////////////
+//  Search the packfile (for installed games)
+//////////////////////////////////////////////////////////////////////////////
 
 void busca_packfile(void) {
   int prg_id=0;
@@ -1442,9 +1443,9 @@ void busca_packfile(void) {
 
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Vuelca informacion en un fichero
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
+//  Dumps information to a file
+//////////////////////////////////////////////////////////////////////////////
 
 void DebugInfo(char *Msg)
 {
@@ -1495,4 +1496,4 @@ void GetFree4kBlocks(void)
   exit(0);
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
