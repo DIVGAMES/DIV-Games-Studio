@@ -1,22 +1,23 @@
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Funciones de video
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+// Video functions
+///////////////////////////////////////////////////////////////////////////////
 
 #include "inter.h"
 #include "..\inc\svga.h"
 #include "..\inc\vesa.h"
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//	Declaraciones y datos a nivel de mขdulo
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//	Declarations and module-level data
+///////////////////////////////////////////////////////////////////////////////
 
 #define CRTC_INDEX      0x3d4   //CRT Controller Index
 #define CRTC_OFFSET     0x13    //CRTC offset register index
 #define SC_INDEX        0x3c4   //Sequence Controller Index
 #define MISC_OUTPUT     0x3c2   //Miscellaneous Output register
 
-byte * vga = (byte *) 0xA0000; // Pantalla fisica
+byte * vga = (byte *) 0xA0000; // Physical screen 
+                               // TODO - (change this to SDL surface pixels)
 
 #define MAX_YRES 2048
 
@@ -241,7 +242,7 @@ void rvmode(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Volcado de un buffer a vga
+//      Dump buffer to VGA
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcado(byte *p) {
