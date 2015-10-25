@@ -69,9 +69,9 @@
 
 #define RES_FOR_NAME _MAX_PATH
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Functions exported by DIV
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIV (div.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void _fwrite(char*,char*,int);
 void _ffwrite(byte *Buffer,unsigned int Len,FILE *file);
@@ -99,9 +99,9 @@ void explode(int x,int y,int an,int al);
 void activar(void);
 void DaniDel(char *name);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//     Functions exported by DIVBASIC (??)
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//     Functions exported by DIVBASIC (divbasic.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void writetxt(int,int,int,char*);
 void box(byte,int,int,int,int);
@@ -122,9 +122,9 @@ int save_undo(int,int,int,int);
 int undo_back(void);
 void undo_next(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Functions exported by DIVPAINT
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVPAINT (divpaint.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void edit_scr(void);
 void edit_mode_0(void);
@@ -151,9 +151,9 @@ void volcar_barras(int);
 void mover(byte *,int,int);
 void select_zoom(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Functions exported by DIVSPRIT
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVSPRIT (divsprit.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void sp_normal (char*,int,int,int,int,int,int,int);
 void sp_rotado (char*,int,int,int,int,int,int,int,float,float);
@@ -161,9 +161,9 @@ void sp_size (int*,int*,int*,int*,int,int,float,float);
 void invierte_hor(char*,int,int);
 void invierte_ver(char*,int,int);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Functions exported by DIVVIDEO
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVVIDEO (divvideo.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void retrazo(void);
 void svmode(void);
@@ -173,9 +173,9 @@ void init_volcado(void);
 void volcado_parcial(int,int,int,int);
 void volcado(char *);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Functions exported by DIVMOUSE
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVMOUSE (divmouse.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void mouse_on(void);
 void mouse_off(void);
@@ -186,9 +186,9 @@ void set_mickeys(word);
 void read_mouse(void);
 void mouse_window(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Functions exported by DIVPALET
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVPALET (divpalet.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void find_colors(void);
 void init_ghost(void);
@@ -212,9 +212,9 @@ void ordena_paleta();  // palette order (arrange?)
 void fusiona_paleta(); // merge palette
 void preparar_tapiz(); // skin preperation (???)
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Functions exported by DIVSETUP
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVSETUP (divsetup.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 struct _gcolor{
   byte color;             // colour within palette 
@@ -279,7 +279,7 @@ GLOBAL_DATA SetupFile Setupfile;
 GLOBAL_DATA int siguiente_orden;
 GLOBAL_DATA int modo_de_retorno;
 
-// Variables globales para el undo
+// Global variables for undo
 GLOBAL_DATA int max_undos;
 GLOBAL_DATA int undo_memory;
 
@@ -291,18 +291,18 @@ int an_setup(void);
 void Save_Cfgbin();
 void Load_Cfgbin();
 
-GLOBAL_DATA char ce1,ce01,ce2,ce4; // Colores del editor
+GLOBAL_DATA char ce1,ce01,ce2,ce4; // Editor colours
 
 GLOBAL_DATA int auto_save_session,exploding_windows,move_full_window,tab_size,coloreador;
 GLOBAL_DATA int editor_font,paint_cursor;
 GLOBAL_DATA char colors_rgb[12*3];
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//                      Dialogos de configuracion
+///////////////////////////////////////////////////////////////////////////////
+//                        Configuration dialogs
 //                            DIVSETUP.CPP
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
 
-// Configuracion de Video
+// Video config settings
 GLOBAL_DATA int VS_MODE;
 GLOBAL_DATA int VS_ANCHO;
 GLOBAL_DATA int VS_ALTO;
@@ -312,9 +312,9 @@ void Vid_Setup0();
 // Configuracion de Tapiz
 void Tap_Setup0(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVWINDO
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVWINDO (divwindow.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void wgra(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al);
 void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al);
@@ -334,16 +334,16 @@ int ratonboton(int n,int x,int y,int centro);
 
 void wline(char *ptr,int realan,int an,int al,int x0, int y0, int x1, int y1, char color);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVLENGU
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVLENGU (divlengu.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void inicializa_textos(byte * fichero);
 void finaliza_textos(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVCDROM
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVCDROM (divcdrom.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void muestra_cd_player();
 void muestra_reloj();
@@ -354,9 +354,9 @@ void FPG0A(void);void FPG1(void);
 void PRJ0();void PRJ1();void PRJ2();void PRJ3();
 void ShowFont0(void);void ShowFont1(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Handler principales, exportados por DIVHANDLE
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Main handler, exported by DIVHANDLE (divhandle.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void dummy_handler(void);
 
@@ -392,9 +392,9 @@ void RenderToMed();
 void Reducex2();
 int Progress(char *titulo,int current,int total);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVFORMA
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVFORMA (divforma.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 int es_MAP(byte *buffer);
 void descomprime_MAP(byte *buffer, byte *mapa, int);
@@ -408,9 +408,9 @@ int es_JPG(byte *buffer, int img_filesize);
 int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize);
 int graba_BMP(byte *mapa, FILE *f);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVEDIT
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVEDIT (divedit.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 void programa0(void);void programa1(void);void programa2(void);void programa3(void);
 void programa0_nuevo(void);
@@ -421,22 +421,24 @@ void sustituir_texto0(void);void sustituir_texto1(void);void sustituir_texto2(vo
 void buscar_texto(void);void sustituir_texto(void);
 void repinta_ventana(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVASM
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVASM (divasm.cpp)
+///////////////////////////////////////////////////////////////////////////////
+
 
 void memcpyb(byte*,byte*,int);
 void call(int); // void funcion(void); int n=(int)funcion; call(n);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones exportadas por DIVEFFECT
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions exported by DIVEFFECT (diveffect.cpp)
+///////////////////////////////////////////////////////////////////////////////
+
 void GenExplodes();
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Variables globales compartidas entre varios m¢dulos
+///////////////////////////////////////////////////////////////////////////////
+//      Global variables shared between several modules
 //      Las variables GLOBAL_DATA se definen en DIVOS, el resto solo las declara
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
 
 GLOBAL_DATA int big,big2; // big(0,1), big2(1,2)
 

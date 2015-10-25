@@ -79,9 +79,9 @@ unsigned far * c_e_2;
 int __far critical_error(unsigned deverr,unsigned errcode,unsigned far*devhdr)
   { c_e_0=deverr; c_e_1=errcode; c_e_2=devhdr; return(_HARDERR_FAIL); }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Cuadro de informaciขn, version demo
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//  Info box for demo version
+///////////////////////////////////////////////////////////////////////////////
 
 #ifdef SHARE
 
@@ -169,7 +169,7 @@ void chk_demo(void) {
 #endif
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Comprobaciขn de beta
+//  beta check (?)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 // 0 - Dialogo
@@ -247,12 +247,18 @@ void betatest6(void) {
 }
 
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Programa principal
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//      Main Program
+///////////////////////////////////////////////////////////////////////////////
 
 int safe;
 
+
+/**
+ * Legacy dos memory routines
+ **/
+
+#ifdef DOS_VERSION
 void GetFree4kBlocks(void);
 int DOSalloc4k(void);
 int DPMIalloc4k(void);
@@ -282,6 +288,9 @@ int DPMIalloc4k(void);
         "mov dx,cx",\
         "done:",\
         modify [ax bx cx si di] value [edx];
+
+
+#endif
 
 int main(int argc, char * argv[]) {
   FILE *f;
@@ -384,11 +393,12 @@ int main(int argc, char * argv[]) {
   inicializacion();
 
   inicializa_entorno();
-
-  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-
+  
+  /////////////////////////////////////////////////////////////////////////////
+  
   if(beta_status==0) dialogo((int)betatest0);
-  #ifdef SHARE
+
+#ifdef SHARE
   else {
     if (!Interpretando) {
       chk_demo();
@@ -398,12 +408,12 @@ int main(int argc, char * argv[]) {
       }
     }
   }
-  #endif
+#endif
 
-  entorno();
+  entorno(); // Environment
 
-  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-
+  /////////////////////////////////////////////////////////////////////////////
+  
   mouse_graf=3; volcado_copia();
 
   if (auto_save_session || modo_de_retorno!=0)
@@ -2256,7 +2266,7 @@ int colisiona_con(int a, int x, int y, int an, int al) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Volcado de la copia virtual de pantalla a la real (pantalla principal)
+//      Dump the virtual copy of the real screen (main display)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int leer_mouse=1;
@@ -2278,7 +2288,7 @@ void volcado_copia(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Crea una nueva ventana
+//      Create a new window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void nueva_ventana(int init_handler) {
