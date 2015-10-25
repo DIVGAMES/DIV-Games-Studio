@@ -1,29 +1,12 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+DIV Games Studio 2, ported, translated and upgraded. 
 
-### What is this repository for? ###
+cross platform IDE, compiler and runtime for
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+Windows
+OSX
+Android
+Linux
 
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+100% compatible with existing DIV2 code
