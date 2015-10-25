@@ -1,4 +1,12 @@
-
+/**
+ * DIV GAMES STUDIO 2015
+ * div.cpp
+ * 
+ * Main DIV/OS file. Program entry point
+ * 
+ ***/
+ 
+ 
 // NOTE - To see things in the DEMO version, searh for "SHARE" in the cpp files
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,18 +53,18 @@ int fin_ventana=0,mover_ventana=0;
 int cierra_rapido=0;
 int no_volcar_ventanas=0;
 
-byte lower[512]=
+byte lower[256]=
   "                                   #$           0123456789      "
   " abcdefghijklmnopqrstuvwxyz    _ abcdefghijklmnopqrstuvwxyz     "
   "áueaaaaáeeeiiiaaeëëooouuyouõúùûüaiou§§¶ß                        "
-  "                                                                ";
+  "                                                              ";
 
 int show_items_called=0;
 int test_video=0;
 int restore_button=0;
 
 extern int numero_error;
-extern byte * index;
+extern byte * div_index;
 extern byte * index_end;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -300,7 +308,7 @@ int main(int argc, char * argv[]) {
 
 //GetFree4kBlocks();
 
-  _harderr(critical_error);
+//  _harderr(critical_error);
 
 //  remove("DEBUGDIV.TXT");
 
@@ -319,11 +327,14 @@ int main(int argc, char * argv[]) {
 
   if (argc<1) exit(0);
 
-  _fullpath(full,argv[0],_MAX_PATH+1);
+  realpath(argv[0], full);
+//  _fullpath(full,argv[0],_MAX_PATH+1);
   strupr(full);
-  #ifdef SHARE
+
+#ifdef SHARE
   strcpy(exe_name,full);
-  #endif
+#endif
+
   n=strlen(full);
   while (n && full[n]!='\\') n--;
   full[n]=0;

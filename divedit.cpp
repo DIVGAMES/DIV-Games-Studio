@@ -1,45 +1,45 @@
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Mขdulo que contiene el cขdigo del editor
+//      Module that contains the code editor
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Constantes
+//      Constants
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #define buffer_grow     16384 // Lo que crece el buffer de ediciขn
-#define buffer_min      2048  // Margen mกnimo de espacio disponible
+#define buffer_min      2048  // Minimum margin space
 
-#define cr 13           //Retorno de carro
-#define lf 10           //Salto de linea
-#define tab 9           //Tabulaciขn
+#define cr 13           // Carriage return
+#define lf 10           // newline / linefeed 
+#define tab 9           // tabulation
 
 extern word * kb_start;
 extern word * kb_end;
-extern int ibuf; // Puntero al buffer, inicio de la cola
+extern int ibuf; // A pointer to the queue buffer
 extern int fbuf; // Puntero al buffer, fin de la cola
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-extern int numero_error;    // Nฃmero de error
-extern int linea_error;     // Linea de error (ojo, puede ser num_lineas+1)
-extern int columna_error;   // Columna del error
+extern int numero_error;    // Error number
+extern int linea_error;     // Line error (note, can be num_lines + 1)
+extern int columna_error;   // Error column num
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//    Estructura tprg
+//    TPRG Struct
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
   /*
 
-  int an,al;            // Ancho y alto en car cteres de la ventana
+  int an,al;                    // Character width and height of the window
 
-  int old_x,old_y;              // Coordenadas antes de maximizarse
-  int old_an,old_al;            // Ancho y alto antes de maximizarse
+  int old_x,old_y;              // Coordinates before maximized
+  int old_an,old_al;            // Width and height before maximized
 
-  char path[_MAX_PATH+1];       // Path del fichero asociado
-  char filename[12+1];          // Nombre del fichero asociado
+  char path[_MAX_PATH+1];       // Path of associated file
+  char filename[12+1];          // Associated file's name
 
   char * buffer;                // Buffer con el fichero cargado
   int buffer_lon;               // Longitud del buffer

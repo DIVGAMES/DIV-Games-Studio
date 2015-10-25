@@ -1,14 +1,8 @@
 /**
- * 
  * DIV GAMES STUDIO 2015
- * 
  * global.h
  * 
- * (c) 1996 Daniel Navarro
- * (c) 1998 Hammer Tech
- * (c) 2000 FastTrak Software
- * 
- * 
+ * Global header file
  * 
  ***/
  
@@ -23,6 +17,7 @@
 #else
 #define GLOBAL_DATA extern
 #endif
+
 
 //#include <i86.h>
 //#include <bios.h>
@@ -98,6 +93,7 @@ void maximiza_ventana(void);
 void explode(int x,int y,int an,int al);
 void activar(void);
 void DaniDel(char *name);
+void check_mouse(void);
 
 ///////////////////////////////////////////////////////////////////////////////
 //     Functions exported by DIVBASIC (divbasic.cpp)
