@@ -1836,7 +1836,7 @@ void paleta1(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Box to enter information about the user
+//      Dialog box to enter information about the user
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 char user1[128]="";
@@ -1898,7 +1898,7 @@ void usuario0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Copyright Logo Box
+//      Copyright Dialog Box
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 extern int nueva_sesion;
@@ -1955,7 +1955,7 @@ void copyright2(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Cuadro de di logo ERROR
+//      ERROR dialog box
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void err0(void) {
@@ -2047,7 +2047,7 @@ void test0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      DIV Box OK / Cancel without or without text title (?)
+//      OK / Cancel Dialog with or without title text
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void aceptar0(void) {
@@ -2192,7 +2192,7 @@ void TratarPaleta3(void) {
 //      Listas para la ventana de abrir fichero
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-#define max_archivos 512 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ Listbox de archivos
+#define max_archivos 512 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ File listbox
 #define an_archivo (12+1)
 char archivo[max_archivos*an_archivo];
 struct t_listbox larchivos={3,49,archivo,an_archivo,12,64};
@@ -2212,9 +2212,9 @@ struct t_listbox lunidades={157,49,unidad,an_unidad,4,28};
 char ext[max_ext*an_ext];
 struct t_listbox lext={157,97,ext,an_ext,4,28};
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Pinta los elementos de un listbox y el slider
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//      Draw listbox and slider elements
+///////////////////////////////////////////////////////////////////////////////
 
 void pinta_listbox(struct t_listbox * l) {
 
@@ -2265,7 +2265,7 @@ void pinta_slider(struct t_listbox * l) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Pinta un listbox
+//      Draw listbox
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void crear_listbox(struct t_listbox * l) {
@@ -2303,7 +2303,7 @@ void crear_listbox(struct t_listbox * l) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Actualiza un listbox, segฃn movimientos del ratขn
+//      Update a listbox, depending on mouse movements
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void actualiza_listbox(struct t_listbox * l) {
@@ -2380,7 +2380,7 @@ void actualiza_listbox(struct t_listbox * l) {
 }
 /*
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Cuadro de di logo abrir
+//      Open dialog box
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #define ancho_abrir 184+12
@@ -2418,7 +2418,7 @@ void dir_abrir(void) {
 }
 */
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Analiza un nombre de fichero (por input+enter, aceptar o doble-click)
+//     Analyzes a file name (for input + enter, accept or double-click)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void crear_listboxbr(struct t_listboxbr * l);
@@ -2437,7 +2437,7 @@ void analizar_input(void) {
   struct find_t fileinfo;
   unsigned n;
 
-  // Quita los espacios en blanco del nombre
+  // Remove blank name
   while (strchr(input,' ')) strcpy(strchr(input,' '),strchr(input,' ')+1);
 
   if (!strlen(input)) strcpy(input,mascara);
@@ -2528,7 +2528,7 @@ void analizar_input(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Dialogo de mapa nuevo
+//      New map dialog
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #define y_nm 67
@@ -2587,9 +2587,9 @@ void nuevo_mapa2(void) {
   }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Crea un mapa nuevo (1 Si error)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//      Create a new map (return 1 on error)
+///////////////////////////////////////////////////////////////////////////////
 
 int nuevo_mapa(byte * mapilla) {
   int n;

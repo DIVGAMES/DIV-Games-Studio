@@ -2633,7 +2633,7 @@ void dialogo(int init_handler) {
     addwindow();
 
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-    // Los siguientes valores los debe definir init_handler, valores por defecto:
+    // The following values should define the init_handler, default values
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
     v.orden=siguiente_orden++;
@@ -2691,7 +2691,7 @@ void dialogo(int init_handler) {
       v.tipo=vtipo;
 
       //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-      // Inicializa la ventana
+      // Initializes the window
       //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
       v.ptr=ptr;
@@ -2726,7 +2726,7 @@ void dialogo(int init_handler) {
       get_pos=_get_pos;
 
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-    // No se pudo abrir el di logo, (no hay memoria)
+    // Could not open the dialog (no memory)
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
     } else {
@@ -2756,7 +2756,7 @@ int an=v.an,al=v.al;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Inicializaciขn del programa
+//      Program initialization
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void init_lexcolor(void);
@@ -2780,7 +2780,7 @@ void inicializacion(void) {
   }
 
   if (n==num_modos) {
-    VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=320; // Modo de video
+    VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=320; // Video mode
     VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=200;
     VS_BIG  =big     =Setupfile.Vid_modeBig=0;
     editor_font      =Setupfile.editor_font=0;
@@ -4020,7 +4020,7 @@ void DaniDel(char *name) {
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Vuelca informacion en un fichero
+//  Dumps information in a file
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void DebugInfo(char *Msg)
