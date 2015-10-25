@@ -93,7 +93,6 @@ void maximiza_ventana(void);
 void explode(int x,int y,int an,int al);
 void activar(void);
 void DaniDel(char *name);
-void check_mouse(void);
 
 ///////////////////////////////////////////////////////////////////////////////
 //     Functions exported by DIVBASIC (divbasic.cpp)
@@ -779,9 +778,9 @@ GLOBAL_DATA int quien_arrastra,free_drag;
 
 GLOBAL_DATA int menukey;
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Tabla de scan codes pulsados
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Pulsed scan codes table
+///////////////////////////////////////////////////////////////////////////////
 
 GLOBAL_DATA byte kbdFLAGS[128];
 
@@ -792,9 +791,9 @@ void kbdReset(void);
 void tecla(void);
 void vacia_buffer(void);
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//      Funciones y estructuras exportadas por DIVFPG
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+///////////////////////////////////////////////////////////////////////////////
+//      Functions and structures exported by DIVFPG (divfpg.cpp)
+///////////////////////////////////////////////////////////////////////////////
 
 int  nuevo_fichero(void);
 void abrir_fichero();

@@ -381,19 +381,26 @@ int main(int argc, char * argv[]) {
 
   inicializa_textos("system\\lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
 
-  check_mouse();
+//  check_mouse();
 
   Load_Cfgbin();
 
+// BETA CHECK pass every time in SDL version
+/*
   strcpy(full,"Be");
   strcat(full,"ta");
 
-  if (strstr(texto[34],full)==NULL && strstr(texto[35],full)==NULL) {
+  if (strstr(texto[34],full)==NULL && 
+	strstr(texto[35],full)==NULL) {
     strupr(full);
-    if (strstr(texto[34],full)==NULL && strstr(texto[35],full)==NULL) {
+    if (strstr(texto[34],full)==NULL && 
+		strstr(texto[35],full)==NULL) {
       beta_status=4;
     }
   }
+*/
+
+beta_status=4;
 
   if(!Interpretando) {
     _setvideomode(_TEXTC80);
@@ -2971,7 +2978,7 @@ void inicializacion(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Retorno del programa
+//      Return from program 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void finalizacion(void) {
@@ -3000,9 +3007,9 @@ void finalizacion(void) {
   kbdReset();
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Crea las reglas de color por defecto
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//      Create default colour rules
+///////////////////////////////////////////////////////////////////////////////
 
 void default_reglas(void) {
 
@@ -3018,7 +3025,7 @@ void default_reglas(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funciขn para determinar las unidades existentes (string en unidades[])
+//      Function to determine the existing units ( in string unidades[])
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void determina_unidades(void) {
@@ -3898,8 +3905,9 @@ void Load_Cfgbin() {
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Check for mouse driver
+//  Not needed for SDL port
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-
+/*
 void check_mouse(void) {
   struct SREGS sregs;
   union REGS inregs, outregs;
@@ -3919,7 +3927,7 @@ void check_mouse(void) {
     }
   }
 }
-
+*/
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Comprueba si hay suficiente espacio en el HD
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
