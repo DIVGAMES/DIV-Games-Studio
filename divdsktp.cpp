@@ -375,9 +375,9 @@ int iWork;
         desktop=fopen("system\\session.dtf","rb");
         if(desktop==NULL)
                 return(0);
-        // lee la cabecera de identificaciขn
+        // read the header id
         fread(cWork,8,1,desktop);
-        // Mira la antigua resoluciขn
+        // Check old resolution
         fread(&iWork,1,4,desktop);
         if(iWork!=Setupfile.Vid_modeAlto+Setupfile.Vid_modeAncho*10000+(Setupfile.Vid_modeBig<<31)) {
                 modo_anterior=iWork;
@@ -411,10 +411,10 @@ FILE *f;
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
         fseek(desktop,8+4+4+768+65536,SEEK_SET);
-        // Mira y carga una por una las ventanas utilizadas
+        // Load each of the windows one by one
         for(x=0;x<numvent;x++)
         {
-                //Estructura de ventana
+                // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
                 switch(ventana_aux.tipo)
                 {
@@ -649,7 +649,7 @@ return(1);
 
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Carga una nueva ventana (1 - Si Error)
+//      Load new window (1 on Error)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int nueva_ventana_carga(int init_handler,int nx,int ny)

@@ -1908,11 +1908,11 @@ void copyright0(void) {
   v.an=232; v.al=12+47+31;
   v.paint_handler=(int)copyright1;
   v.click_handler=(int)copyright2;
-  if (CopiaDesktop) {
-    _button(456,v.an-11,v.al-16,2); // Continuar
-    _button(457,48+48+3,v.al-16,0); // Nueva sesi¢n
+  if (CopiaDesktop) { 
+    _button(456,v.an-11,v.al-16,2); // Continue
+    _button(457,48+48+3,v.al-16,0); // New session
   } else {
-    _button(457,v.an-11,v.al-16,2); // Nueva sesi¢n
+    _button(457,v.an-11,v.al-16,2); // New session
   }
 }
 

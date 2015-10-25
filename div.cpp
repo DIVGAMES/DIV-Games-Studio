@@ -1,9 +1,9 @@
 
 // NOTE - To see things in the DEMO version, searh for "SHARE" in the cpp files
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 //      DIV Operating System
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 #define DEFINIR_AQUI // DEFINED HERE - see global.h
 #include "global.h"
@@ -27,17 +27,17 @@ void MapperCreator2(void);
 extern int help_item;
 extern struct tprg * old_prg;
 int help_paint_active=0;
-int beta_status=0; // 0 di logo, 1 beta.nfo, 2 dc, 3 cmp, 4 ok, 5 error
+int beta_status=0; // 0 dialog, 1 beta.nfo, 2 dc, 3 cmp, 4 ok, 5 error
 
 extern int superget;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Variables globales
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//      Global variables
+///////////////////////////////////////////////////////////////////////////////
 
 //int * system_clock = (void*) 0x46c; // Reloj del sistema
 
-char get_buffer[long_line]; // Buffer comฃn, excepto para las calculadoras
+char get_buffer[long_line]; // Shared buffer (except for calculator)
 char * get;
 int get_cursor,get_pos;     // Clock y posiciขn del cursor en los get
 
@@ -59,9 +59,9 @@ extern int numero_error;
 extern byte * index;
 extern byte * index_end;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
-int primera_vez=0;  // Marca la primera vez que se ejecuta DIV
+int primera_vez=0;  // Marks first time DIV runs
 #ifdef SHARE
 int mostrar_demo=1;  // La primera vez no saldr  el mensaje de la demo
 #else
@@ -69,9 +69,9 @@ int mostrar_demo=0;
 #endif
 int volcados_parciales=0;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 //      Critical error handler
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 unsigned c_e_0,c_e_1;
 unsigned far * c_e_2;
@@ -300,8 +300,8 @@ int main(int argc, char * argv[]) {
   MustCreate=1;
   siguiente_orden=0;
   Interpretando=1;
-  safe=34; // Texto de la esquina inferior derecha
-
+  safe=34; // Text in lower right corner
+  
   if(!strcmp(argv[1],"INIT")) Interpretando=0;
   else beta_status=4;
   if(!strcmp(argv[1],"TEST")) test_video=1;
@@ -3666,7 +3666,7 @@ FILE *file;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// Carga el fichero de configuracion                                      //
+// Load config file                                                       //
 ////////////////////////////////////////////////////////////////////////////
 
 void Load_Cfgbin() {
@@ -3876,7 +3876,7 @@ void Load_Cfgbin() {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Comprueba si hay un driver de ratขn
+//  Check for mouse driver
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void check_mouse(void) {
@@ -3943,9 +3943,9 @@ int determina_calc(void) {
   } return(v_ventana=n);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Movimiento de ventanas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//  Window movement
+///////////////////////////////////////////////////////////////////////////////
 
 struct tventana vaux[4];
 int ivaux=0;
@@ -4019,9 +4019,9 @@ void DaniDel(char *name) {
   }
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
 //  Dumps information in a file
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//////////////////////////////////////////////////////////////////////////////
 
 void DebugInfo(char *Msg)
 {
