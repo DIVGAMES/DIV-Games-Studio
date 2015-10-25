@@ -1659,7 +1659,7 @@ void mapa2(void) {
     zoom_x=v.mapa->zoom_x; zoom_y=v.mapa->zoom_y;
     zoom_cx=v.mapa->zoom_cx; zoom_cy=v.mapa->zoom_cy;
 
-    // Los siguientes cuatro 'if' son para evitar problemas al cambiar de modo
+    // The following four 'if' are to avoid problems when you change (video mode?)
 
     if ((map_an<<zoom)<vga_an) {
       zan=map_an<<zoom; zx=(vga_an-zan)/2;
@@ -1705,7 +1705,7 @@ void mapa2(void) {
 
     fondo_resaltado=0; actual_mouse=21+paint_cursor*4;
 
-    // Inicializacion especial para el programa de dibujo
+    // Special initialization for the drawing program
     ew=exploding_windows; exploding_windows=0;
     for(n=0; n<max_texturas; n++) thumb_tex[n].ptr=NULL;
     for(n=0; n<max_windows;  n++) thumb_map[n].ptr=NULL;
@@ -1716,19 +1716,19 @@ void mapa2(void) {
     textura_color=NULL;
 
     TipoTex=0;
-    if((FilePaintFPG=fopen(full,"rb"))!=NULL) // OJO !!! Aqui se podria dar un mensaje
+    if((FilePaintFPG=fopen(full,"rb"))!=NULL) // NOTE !!! Could provide message here
     {
       strcpy(m3d_edit.fpg_path, full);
       modo-=100;
       M3D_crear_thumbs(&ltexturasbr,0);
       modo+=100;
-      TipoTex |= BRUSH; // Thumbnail tipo BRUSH
+      TipoTex |= BRUSH; // Thumbnail type BRUSH
     }
 
     v.tipo=100;
     if(crear_mapbr_thumbs(&lthumbmapbr))
     {
-      TipoTex |= MAPBR; // Thumbnail tipo MAPBR
+      TipoTex |= MAPBR; // Thumbnail type MAPBR
     }
     v.tipo=0;
 
@@ -1736,20 +1736,20 @@ void mapa2(void) {
      zoom_map(); hacer_zoom=0; back=0;
      modo-=100; switch(modo) {
         case 0: edit_mode_0(); break;   // Pixels
-        case 1: edit_mode_1(); break;   // Trazos
-        case 2: edit_mode_2(); break;   // Lกneas
-        case 3: edit_mode_3(); break;   // Lกneas cont.
+        case 1: edit_mode_1(); break;   // Strokes
+        case 2: edit_mode_2(); break;   // Lกnes
+        case 3: edit_mode_3(); break;   // Lกnes cont.
         case 4: edit_mode_4(); break;   // Bezier
         case 5: edit_mode_5(); break;   // Bezier cont.
-        case 6: edit_mode_6(); break;   // Cajas
-        case 7: edit_mode_7(); break;   // Circulos
+        case 6: edit_mode_6(); break;   // Boxes
+        case 7: edit_mode_7(); break;   // Circles
         case 8: edit_mode_8(); break;   // Spray
-        case 9: edit_mode_9(); break;   // Rellenos
-        case 10: edit_mode_10(); break; // Cortar
+        case 9: edit_mode_9(); break;   // Fill
+        case 10: edit_mode_10(); break; // Cut
         case 11: edit_mode_11(); break; // Undo
-        case 12: edit_mode_12(); break; // Puntos
-        case 13: edit_mode_13(); break; // Texto
-        case 90:                        // Paste un gr fico
+        case 12: edit_mode_12(); break; // Points
+        case 13: edit_mode_13(); break; // Text
+        case 90:                        // Paste a graphic
           sp_an=ventana[1].mapa->map_an;
           sp_al=ventana[1].mapa->map_al;
           if ((sp=(byte*)malloc(sp_an*sp_al))!=NULL) {
@@ -1811,9 +1811,9 @@ void mapa3(void) {
   free(v.mapa);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 //      Palette window
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 #define pixelxcolor 4
 
@@ -1835,9 +1835,9 @@ void paleta1(void) {
       2+x*pixelxcolor,10+y*pixelxcolor,pixelxcolor-1,pixelxcolor-1);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 //      Dialog box to enter information about the user
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 char user1[128]="";
 char user2[128]="";
@@ -1897,9 +1897,9 @@ void usuario0(void) {
   _get(461,4+86,22+19,v.an-8-86,user2,127,0,0);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 //      Copyright Dialog Box
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 extern int nueva_sesion;
 
@@ -1954,9 +1954,9 @@ void copyright2(void) {
   if (v.active_item==1) { nueva_sesion=1; fin_dialogo=1; }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 //      ERROR dialog box
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
 
 void err0(void) {
   v.tipo=1; v.titulo=texto[41];

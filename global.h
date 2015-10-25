@@ -1,6 +1,6 @@
 /**
  * 
- * DIV GAMES STUDIO
+ * DIV GAMES STUDIO 2015
  * 
  * global.h
  * 
