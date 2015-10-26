@@ -6,6 +6,14 @@
 #include "global.h"
 #include "fpgfile.hpp"
 
+void crear_ghost_vc(int m);
+void crear_ghost_slow (void);
+void fusionar_paletas(void);
+void rescalar(byte *si,int sian,int sial,byte *di,int dian,int dial);
+
+
+
+
 //Prototipos de funciones de cargar paleta del fichero: DIVFORMA.CPP
 
 extern int exp_Color0,exp_Color1,exp_Color2;
@@ -507,7 +515,7 @@ extern int num_colores;
 void crear_paleta(void);
 
 void LoadPal() {
-  int try=0;
+  int div_try=0;
   int  num,n;
   FILE *f;
 
@@ -546,15 +554,15 @@ void LoadPal() {
       } else {
         strcpy(PalName,full);
 
-        try|=cargadac_FPG(PalName);
-        try|=cargadac_FNT(PalName);
-        try|=cargadac_PCX(PalName);
-        try|=cargadac_BMP(PalName);
-        try|=cargadac_MAP(PalName);
-        try|=cargadac_PAL(PalName);
-        try|=cargadac_JPG(PalName);
+        div_try|=cargadac_FPG(PalName);
+        div_try|=cargadac_FNT(PalName);
+        div_try|=cargadac_PCX(PalName);
+        div_try|=cargadac_BMP(PalName);
+        div_try|=cargadac_MAP(PalName);
+        div_try|=cargadac_PAL(PalName);
+        div_try|=cargadac_JPG(PalName);
 
-        if(try) {
+        if(div_try) {
           if (hay_mapas()) {
             v_titulo=texto[53];
             v_texto=texto[321];
@@ -590,15 +598,15 @@ void LoadPal() {
 
         strcpy(PalName,full);
 
-        try|=cargadac_FPG(PalName);
-        try|=cargadac_FNT(PalName);
-        try|=cargadac_PCX(PalName);
-        try|=cargadac_BMP(PalName);
-        try|=cargadac_MAP(PalName);
-        try|=cargadac_PAL(PalName);
-        try|=cargadac_JPG(PalName);
+        div_try|=cargadac_FPG(PalName);
+        div_try|=cargadac_FNT(PalName);
+        div_try|=cargadac_PCX(PalName);
+        div_try|=cargadac_BMP(PalName);
+        div_try|=cargadac_MAP(PalName);
+        div_try|=cargadac_PAL(PalName);
+        div_try|=cargadac_JPG(PalName);
 
-        if(try) for (n=0; n<256; n++) {
+        if(div_try) for (n=0; n<256; n++) {
           muestra[((dac4[n*3+0]&0xFE)<<9) | ((dac4[n*3+1]&0xFE)<<4) | (dac4[n*3+2]>>1)]=1;
         }
       }
@@ -1020,7 +1028,7 @@ word find_ord2(byte * dac) {
 }
 
 void fusiona_paleta(void){
-  int try=0;
+  int div_try=0;
 
   v_modo=0; v_tipo=3; v_texto=texto[781]; dialogo((int)browser0);
 
@@ -1033,15 +1041,15 @@ void fusiona_paleta(void){
       strcat(full,input);
       strcpy(PalName,full);
 
-      try|=cargadac_FPG(PalName);
-      try|=cargadac_FNT(PalName);
-      try|=cargadac_PCX(PalName);
-      try|=cargadac_BMP(PalName);
-      try|=cargadac_MAP(PalName);
-      try|=cargadac_PAL(PalName);
-      try|=cargadac_JPG(PalName);
+      div_try|=cargadac_FPG(PalName);
+      div_try|=cargadac_FNT(PalName);
+      div_try|=cargadac_PCX(PalName);
+      div_try|=cargadac_BMP(PalName);
+      div_try|=cargadac_MAP(PalName);
+      div_try|=cargadac_PAL(PalName);
+      div_try|=cargadac_JPG(PalName);
 
-      if(!try) { v_texto=texto[46]; dialogo((int)err0); return; }
+      if(!div_try) { v_texto=texto[46]; dialogo((int)err0); return; }
 
       mouse_graf=3; volcado(copia);
 
