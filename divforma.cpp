@@ -8,8 +8,8 @@
 #ifdef  __cplusplus
 extern "C" {
 #endif
-  #include "jpeglib\jpeglib.h"
-  #include "jpeglib\cdjpeg.h"
+//  #include "jpeglib\jpeglib.h"
+//  #include "jpeglib\cdjpeg.h"
 #ifdef  __cplusplus
 }
 #endif
@@ -967,6 +967,8 @@ return(1);
 
 int es_JPG(byte *buffer, int img_filesize)
 {
+	printf("divforma.cpp - es_JPG\n");
+#ifdef NOTYET
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
 
@@ -985,12 +987,14 @@ int es_JPG(byte *buffer, int img_filesize)
   map_an = cinfo.output_width;
   map_al = cinfo.output_height;
   jpeg_destroy_decompress(&cinfo);
-
+#endif
   return(1);
 }
 
 int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
 {
+	printf("divforma.cpp  - descomprime_JPG\n");
+#ifdef NOTYET
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   JSAMPARRAY buffer_scanline;
@@ -1065,7 +1069,7 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
     Codigo=0;
     Descripcion[0]=0;
   }
-
+#endif
   return(1);
 }
 
@@ -1424,6 +1428,8 @@ int cargadac_BMP(char *name)
 
 int cargadac_JPG(char *name)
 {
+	printf("divforma.cpp - cargadac_JPG\n");
+#ifdef NOTYET
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   int x, y, img_filesize;
@@ -1510,7 +1516,7 @@ int cargadac_JPG(char *name)
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
   free(buffer);
-
+#endif
   return(1);
 }
 
