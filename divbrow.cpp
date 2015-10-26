@@ -972,7 +972,9 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
     if (estado==1)
     {
 //      _heapshrink();
+#ifdef NOTYET
       GetFreeMem(&Mi_meminfo);
+#endif
       if((mem=Mem_GetHeapFree())==-1)
       {
         estado=0;
