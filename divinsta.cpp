@@ -5,8 +5,10 @@
 
 #include "global.h"
 #include "zlib.h"
-#include <io.h>
+//#include <io.h>
 #include <time.h>
+
+
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Prototipos y variables del mขdulo
@@ -15,6 +17,14 @@
 void Setup0();
 void Setupm0();
 void Setupe0();
+void crear_imagen_install(char * file, int errores);
+int is_point(int * ptr, int n);
+int comprimir_fichero(FILE * fin, FILE * fout, unsigned long len);
+int copiar_fichero(FILE * fin, FILE * fout, unsigned long len, int patch);
+int FileCopyICE(char *org,char *dest,int vols,int _texto);
+
+
+
 
 char AppName[128];
 char Copy_Right[128];
@@ -303,7 +313,9 @@ void Setup0() {
   if (strcmp(PackName,ExeGen)) {
     strcpy(PackName,ExeGen);
     strcpy(Copy_Right,texto[352]);
+#ifdef NOTYET
     t=time(NULL); _ctime(&t,tbuf); tbuf[24]=' ';
+#endif
     strcat(Copy_Right,&tbuf[20]);
     if (strlen(user2)+strlen(Copy_Right)<=127) strcat(Copy_Right,user2);
     strcpy(Unid," :\\TMP");
@@ -647,17 +659,19 @@ void crear_instalacion(void) {
   if (strlen(Unid)==1) { // Se supone una letra entre 'a' y 'z' como una unidad y no directorio
     strupr(Unid); if (Unid[0]>='A' && Unid[0]<='Z') strcat(Unid,":");
   }
-
+#ifdef NOTYET
   _fullpath(full,Unid,_MAX_PATH);
   _splitpath(full,drive,dir,fname,ext);
-
+#endif
   if (strlen(dir)==0 || dir[strlen(dir)-1]!='\\') strcat(dir,"\\");
   if (strlen(fname)||strlen(ext)) { strcat(dir,fname); strcat(dir,ext); strcat(dir,"\\"); }
 
   strupr(drive);
+#ifdef NOTYET
   _dos_getdrive(&my_drive);
   _dos_setdrive((int)drive[0]-'A'+1,&_drive);
   _dos_getdrive(&_drive);
+#endif
   if (_drive!=(word)drive[0]-'A'+1) {
     v_texto=texto[356]; dialogo((int)err0); return;
   }
@@ -668,7 +682,9 @@ void crear_instalacion(void) {
     strcpy(cWork,drive);
     strcat(cWork,dir);
     cWork[x+2]=0;
+#ifdef NOTYET
     mkdir(cWork);
+#endif
   }
 
   strcpy(full,drive); strcat(full,dir); // Destino: "full"*.*
@@ -717,7 +733,9 @@ void crear_instalacion(void) {
       if (*ins=='+') { // Cuando el archivo no puede incluirse en el PACKFILE
         ins++; topack=0;
       } else topack=1;
+#ifdef NOTYET
       _splitpath(ins,drive,dir,fname,ext);
+#endif
       strcpy(MiHeaderSetup[x].name,fname);
       strcat(MiHeaderSetup[x].name,ext);
       strupr(MiHeaderSetup[x].name);
@@ -737,7 +755,7 @@ void crear_instalacion(void) {
 
           while (n) { chr+=strlen(chr)+1; n--; }
           if (*chr!='+') {
-            memmove(chr+1,chr,__ins-chr);
+            memmove(chr+1,chr,__ins-(char *)chr);
             __ins++;
             *chr='+';
             dirhead.nfiles--;
@@ -841,8 +859,9 @@ void crear_instalacion(void) {
         v_texto=texto[231]; dialogo((int)err0);
         free(hdir); fclose(fout); free(_ins); return;
       }
-
+#ifdef NOTYET
       _splitpath(ins,drive,dir,fname,ext);
+#endif
       strcpy(hdir[n].name,fname);
       strcat(hdir[n].name,ext);
       strupr(hdir[n].name);
@@ -985,7 +1004,9 @@ void crear_instalacion(void) {
       if (*ins=='+') ins++;
       if (!strcmp(ins,"INSTALL\\PACKFILE.DAT")) topack=0; else topack=1;
       fin=fopen(ins,"rb");
+#ifdef NOTYET
       _splitpath(ins,drive,dir,fname,ext);
+#endif
       strcpy(MiHeaderSetup[x].name,fname);
       strcat(MiHeaderSetup[x].name,ext);
       if (!topack) strcpy(MiHeaderSetup[x].name,dirhead.pack);
@@ -1221,6 +1242,8 @@ int copiar_fichero(FILE * fin, FILE * fout, unsigned long len, int patch) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 unsigned int GetFreeUnid(char unidad) {
+printf("GetFreeUnid (drive)\n");
+#ifdef NOTYET
   union REGS regs;
 
   memset(&regs,0,sizeof(regs));
@@ -1229,6 +1252,9 @@ unsigned int GetFreeUnid(char unidad) {
   intdos(&regs,&regs);
   if(regs.w.ax==0xFFFF) return 0;
   return(regs.w.ax*regs.w.bx*regs.w.cx);
+#endif
+return 0;
+
 }
 
 int FileCopyICE(char *org,char *dest,int vols,int _texto) { // Devuelve 0-Error, 1-Exito
