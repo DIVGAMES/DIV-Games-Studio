@@ -5,6 +5,60 @@
 
 #include "global.h"
 
+void dibuja_barra(int _an);
+void dibuja_regla(void);
+void ayuda_dibujo(int n);
+void regla_edicion(void);
+void select_color(int n);
+void select_fx(int n,int * efecto);
+void line(int x0, int y0, int x1, int y1, int inc0);
+void anal_barra(int an, int al);
+void bezier(int x0,int y0,int x1,int y1,int _x0,int _y0,int _x1,int _y1,int inc0);
+int select_icon(int icono_x,int * iconos);
+void caja(int x0,int y0,int x1,int y1);
+void circulo(int x0,int y0,int x1,int y1,int relleno);
+void _line_pixel(int x,int y);
+void select_fill(int n);
+void select_box(int n);
+void box2mab(void);
+void efectos(void);
+void corta_mapa(void);
+void test_anterior(void);
+int edit_mode_6_box(int s);
+int edit_mode_6_fill(int s);
+int edit_mode_6_lines(int s);
+int edit_mode_6_boxes(int s);
+int edit_mode_6_box_auto(int s);
+void test_siguiente(void);
+void test_sel(void);
+void test_mab(void);
+void write_char(int x, int y, byte c);
+void write_char2(int x, int y, byte * si, int font_an, int font_al);
+void line_pixel(int x,int y);
+void circulo_scan2(int x,int y,int an);
+void circulo_scan(int x,int y,int an);
+int editable(int *n);	
+void cuentagotas(void);
+void mover_zoom(void);
+void mover_barra(void);
+void coord_barra(void);
+void select_mode(void);
+void cambia_mapa(int adelante);
+void volcado_raton(void);
+void ajusta_caja(int*a,int*b,int*c,int*d);
+void volcado_raton_a(void);
+void volcado_raton_b(void);
+void pinta_ventana_mascara(byte * p,int c,int d);
+void pinta_ventana_colores(byte * p,int c,int d);
+void pinta_ventana_colores2(byte * p,int c,int d,int col) ;
+void color_up(void);
+void color_down(void);
+void vuelca_barra(byte * p, int real_an, int x, int y, int an, int al) ;
+void vuelca_barra_oscurecida(byte * p, int real_an, int x, int y, int an, int al);
+
+
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Barras de herramientas del programa de dibujo
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3282,7 +3336,7 @@ void ayuda_dibujo(int n) {
             }
           }
         } old_prg=NULL;
-      } delete(0);
+      } divdelete(0);
       zoom_background=0; v.tipo=0; v.primer_plano=0; v.estado=0;
       fondo_resaltado=0; zoom_map(); hacer_zoom=0;
     }
