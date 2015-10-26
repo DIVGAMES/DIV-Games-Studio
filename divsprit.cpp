@@ -5,6 +5,23 @@
 
 #include "global.h"
 
+
+void sp_normal_mask( byte * p, int x, int y, int an, int al,
+                     int xg, int yg, int flags);
+
+void sp_scanc(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1,int flags);
+
+void sp_rotado( byte * si, int x, int y, int an, int al, int xg, int yg,
+                int flags, float a, float s);
+
+void sp_scan(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1,int flags);
+
+void sp_scanc_mask(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1,int flags);
+
+void sp_scan_mask(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1,int flags);
+
+
+                
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Graficos sin rotar ni escalar
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
