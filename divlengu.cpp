@@ -32,8 +32,6 @@ void inicializa_textos(byte * fichero) {
   FILE * f;
   int n;
 
-printf("Loading language file %s\n",fichero);
-
   memset(texto,0,max_textos*4);
 
   if ((f=fopen(fichero,"rb"))!=NULL) {

@@ -105,7 +105,7 @@ void SetIRQVector(int n, TIRQHandler vec)
 
 void kbdInit(void)
 {
-	printf("kbdInit\n");
+	printf("TODO - kbdInit\n");
 	
 #ifdef NOTYET
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
@@ -128,7 +128,7 @@ void kbdInit(void)
 
 void kbdReset(void)
 {
-printf("kbdReset\n");
+printf("TODO - kbdReset\n");
 #ifdef NOTYET
     if (GetIRQVector(9) == IrqHandler) {   // If it was installed.
       SetIRQVector(9,OldIrqHandler);       // Uninstall it.
