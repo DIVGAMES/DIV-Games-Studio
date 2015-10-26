@@ -19,8 +19,8 @@
 // DEFINED IN osdep.cpp
 ///////////////////////////////////////////////////
 
-extern void strupr(char *string);
-extern void strlwr(char *string);
+extern char * strupr(char *string);
+extern char * strlwr(char *string);
 
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 char * itoa(long n, char *buf, int len);

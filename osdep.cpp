@@ -1,16 +1,20 @@
 #include "osdep.h"
 #include <ctype.h>
 
-void strupr(char *string)
+char * strupr(char *string)
 {
   for(; *string; string++)
     *string = toupper((unsigned char) *string);
+    
+    return string;
 }
 
-void strlwr(char *string)
+char * strlwr(char *string)
 {
   for(; *string; string++)
     *string = tolower((unsigned char) *string);
+    
+   return string;
 }
 
 

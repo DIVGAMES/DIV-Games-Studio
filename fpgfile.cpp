@@ -1,7 +1,8 @@
 
 
 #include "global.h"
-#include "FPGFILE.HPP"
+#include "fpgfile.hpp"
+
 void InitGetCode(void);
 extern int RetValue;
 extern char cCodigo[5];
