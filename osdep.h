@@ -34,3 +34,14 @@ char * itoa(long n, char *buf, int len);
 #define ltoa itoa 
 #define stdprn stdout
 #define stricmp strcasecmp
+
+
+extern void _splitpath (
+   const char *path,  // Path Input
+   char *drive,       // Drive     : Output
+   char *dir,         // Directory : Output
+   char *fname,       // Filename  : Output
+   char *ext          // Extension : Output
+);
+
+extern char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes);

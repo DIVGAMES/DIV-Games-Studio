@@ -223,8 +223,33 @@ void psintactico(void);
 void test_buffer(int * * buffer,int * maximo,int n);
 void save_dbg(void);
 void save_exec_bin(void);
-
-
+void tloc_init(int tipo);
+void g2(int op, int pa);
+void analiza_private(void);
+void g1(int op);
+void expresion_cpa(void);
+void tglo_init2(int tipo);
+void condicion(void);
+void con00(int tipo_exp);
+void generar_expresion(void);
+void con0(void);
+void con1(void);
+void con2(void);
+void exp3(void);
+void exp00(int tipo_exp);
+void exp0(void);
+void exp1(void);
+void exp2(void);
+void exp3(void);
+void exp4(void);
+void exp5(void);
+void exp6(void);
+void unario(void);
+void factor(void);
+void factor_struct(void);
+void gen(int param, int op, int pa);
+void remove_code(int i);
+void add_code(int dir, int param, int op);
 
 
 
