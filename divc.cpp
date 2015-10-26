@@ -217,6 +217,19 @@
 
 //extern char ExeGen[_MAX_PATH];
 
+void delete_code(void);
+void precarga_obj (void);
+void psintactico(void);
+void test_buffer(int * * buffer,int * maximo,int n);
+void save_dbg(void);
+void save_exec_bin(void);
+
+
+
+
+
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Constantes
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
