@@ -204,7 +204,7 @@ void tecla(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void vacia_buffer(void) {
-printf("vacia_buffer\n");
+//printf("vacia_buffer\n");
 #ifdef NOTYET
   union REGS r;
   struct SREGS s;

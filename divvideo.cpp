@@ -247,6 +247,7 @@ void snapshot(byte *p) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcadop320200(byte *p) {
+#ifdef NOTYET
   int y=0,n;
   byte * q=vga;
 
@@ -260,13 +261,16 @@ void volcadop320200(byte *p) {
     if (scan[n+3]) memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
     q+=vga_an; p+=vga_an; y++;
   }
+#endif
 }
 
 void volcadoc320200(byte *p) {
+#ifdef NOTYET
   #ifdef GRABADORA
   RegScreen(p);
   #endif
   memcpy(vga,p,vga_an*vga_al);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
