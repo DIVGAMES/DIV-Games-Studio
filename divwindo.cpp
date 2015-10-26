@@ -5,6 +5,13 @@
 
 #include "global.h"
 
+void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n);
+void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
+           byte*p,int x,int y,byte an,int al,byte c);
+
+void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c) ;
+
+           
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Dibuja un boton en una ventana
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

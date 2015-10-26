@@ -127,6 +127,8 @@ return 1;
 }
 void CDplay_track(int play)
 {
+	printf("divcdrom.cpp - CDplay_track\n");
+	/*
         if(!CDInUse||!tracks)
                 return;
         if(Track<1)
@@ -143,10 +145,13 @@ void CDplay_track(int play)
                 cd_play_audio (startpos, CDEnd);
                 CDgetInfo();
         }
+        * */
 }
 
 void CDstop_play()
 {
+	printf("divcdrom.cpp - CDstop_play\n");
+	/*
         if(!CDInUse||!tracks)
                 return;
         if(CDPlaying)
@@ -154,6 +159,7 @@ void CDstop_play()
                 cd_stop_audio ();
                 CDPlaying=0;
         }
+        * */
 }
 
 void CDftrack()
