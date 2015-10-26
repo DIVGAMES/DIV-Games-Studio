@@ -179,7 +179,7 @@ printf("tecla_bios\n");
 
 void tecla(void) {
     ascii=0; scan_code=0;
-
+//printf("Reading keyboard\n");
 #ifdef NOTYET
   union REGS r;
   struct SREGS s;

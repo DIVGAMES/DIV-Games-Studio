@@ -397,8 +397,9 @@ int main(int argc, char * argv[]) {
     DaniDel("system\\setup.bin");
     DaniDel("system\\session.dtf");
   } else {
-    if ((f=fopen("system\\setup.bin","rb"))!=NULL) {
+    if ((f=fopen("setup.bin","rb"))!=NULL) {
       fclose(f);
+      printf("setup.bin found\n");
       primera_vez=0;
     } else {
       primera_vez=1;
@@ -557,9 +558,11 @@ void inicializa_entorno() {
   int n;
   char cWork[256];
 
-  if ((f=fopen("system\\user.nfo","rb"))!=NULL) {
+  if ((f=fopen("user.nfo","rb"))!=NULL) {
+	printf("Found user info file\n");
     fread(user1,1,128,f);
     fread(user2,1,128,f);
+    printf("%s - %s\n",user1,user2);
     fclose(f);
   }
 
@@ -574,9 +577,15 @@ void inicializa_entorno() {
   // Si no existe el fichero DIV.DTF o se pide el modo a prueba de fallos
 
 //  if(!CopiaDesktop) nueva_ventana((int)menu_principal0); else UpLoad_Desktop();
+//printf("Checking if we can restore session..");
+//printf("%X %X %X\n",CopiaDesktop, nueva_sesion, primera_vez);
 
-  if(CopiaDesktop && !nueva_sesion && !primera_vez) UpLoad_Desktop();
-
+  if(CopiaDesktop && !nueva_sesion && !primera_vez) {
+	  printf("Restoring session!\n");
+	  UpLoad_Desktop();
+	}
+//printf("%X %X %X\n",CopiaDesktop, nueva_sesion, primera_vez);
+ 
   if (!primera_vez) {
     for (n=0;n<max_windows;n++)
       if (ventana[n].click_handler==(int)menu_principal2) break;
@@ -1364,7 +1373,7 @@ void shell(void) {
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//    Bucle secundario de DIV/OS (gesti¢n de un cuadro de di logo)
+//    Secondary loop DIV / OS ( management of a dialog box )
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void entorno_dialogo(void) {
@@ -1374,6 +1383,9 @@ void entorno_dialogo(void) {
   int salir_del_dialogo=0;
 
   fin_dialogo=0;
+  
+  printf("Env Dialog\n");
+  return;
   do { dialogo_invocado=0;
 
     if (reloj==old_reloj) loop_count++; else loop_count=0;
@@ -2361,6 +2373,7 @@ void nueva_ventana(int init_handler) {
   byte * ptr;
   int n,m,om,x,y,an,al;
   int vtipo;
+printf("New Window %d\n",v.tipo);
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -2375,7 +2388,7 @@ void nueva_ventana(int init_handler) {
     addwindow();
 
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Los siguientes valores los debe definir init_handler, valores por defecto:
+    // The following values should define the init_handler, default values:
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
     v.orden=siguiente_orden++;
@@ -2687,7 +2700,7 @@ void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Crea un cuadro de di logo (debe retornar al llamante tal cual)
+//      Create ( it must return to the caller as is) a dialog
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void dialogo(int init_handler) {
@@ -2695,6 +2708,7 @@ void dialogo(int init_handler) {
   int vtipo,_get_pos;
   byte * ptr;
   int n,m,x,y,an,al;
+//printf("Showing dialog box %d\n",v.tipo);
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -2785,17 +2799,16 @@ void dialogo(int init_handler) {
         wwrite(ptr,an,al,3+(an-12)/2,2,1,v.titulo,c1);
         wwrite(ptr,an,al,2+(an-12)/2,2,1,v.titulo,c4);
       }
-
       call(v.paint_handler);
 
       if (big) { an*=2; al*=2; }
 
       do { read_mouse(); } while((mouse_b&1) || key(_ESC));
-
       if (exploding_windows) explode(x,y,an,al);
 
       wvolcado(copia,vga_an,vga_al,ptr,x,y,an,al,0);
       volcado_parcial(x,y,an,al);
+
       do { read_mouse(); } while(mouse_b&1);
       entorno_dialogo();
 

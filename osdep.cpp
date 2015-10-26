@@ -47,8 +47,9 @@ char * itoa(long n, char *buf, int len)
 }
 
 void call(void *(*func)() )
-
 {
+	//printf("calling func\n");
+	
 //      allegro_message("call");
 func();
 //      asm("call *%eax");      

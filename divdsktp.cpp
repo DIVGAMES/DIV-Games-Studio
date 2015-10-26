@@ -375,9 +375,10 @@ int Can_UpLoad_Desktop()
 char cWork[8];
 int iWork;
         VidModeChanged=0;
-        desktop=fopen("system\\session.dtf","rb");
+        desktop=fopen("session.dtf","rb");
         if(desktop==NULL)
                 return(0);
+printf("Found session\n");
         // read the header id
         fread(cWork,8,1,desktop);
         // Check old resolution
@@ -407,18 +408,22 @@ int UpLoad_Desktop()
 int iWork,iWork2,iWork3,x,numvent;
 FILE *f;
 
-        desktop=fopen("system\\session.dtf","rb");
+        desktop=fopen("session.dtf","rb");
         if(desktop==NULL)
                 return(0);
-
+		printf("loading saved session\n");
+        
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
+        
         fseek(desktop,8+4+4+768+65536,SEEK_SET);
         // Load each of the windows one by one
         for(x=0;x<numvent;x++)
         {
+			printf("Restoring window (%d)\n",x);
                 // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
+                printf("Type %d\n",(byte)ventana_aux.tipo);
                 switch(ventana_aux.tipo)
                 {
                         case    2: //menu
@@ -546,6 +551,7 @@ FILE *f;
                                 }
                                 break;
                         case    102: //prg
+								printf("Program file\n");
                                 fread(&iWork,1,4,desktop);
                                 if(iWork==0)
                                 {
@@ -647,7 +653,10 @@ FILE *f;
         fclose(desktop);
         if(Interpretando)
                 actualiza_caja(0,0,vga_an,vga_al);
+
+printf("done\n");
 return(1);
+
 }
 
 

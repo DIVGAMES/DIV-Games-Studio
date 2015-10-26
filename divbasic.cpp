@@ -93,6 +93,7 @@ void salvaguarda(byte * p, int x, int y, int n, int flag) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void put(int x,int y,int n) {
+//	printf("put (%d %d) %d %d %d\n",vga_an, vga_al, x,y,n);
   wput_in_box(copia,vga_an,vga_an,vga_al,x,y,n);
 }
 
