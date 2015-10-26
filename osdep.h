@@ -33,4 +33,4 @@ char * itoa(long n, char *buf, int len);
 
 #define ltoa itoa 
 #define stdprn stdout
-
+#define stricmp strcasecmp
