@@ -23,6 +23,7 @@ typedef struct _TTracks{
 TTracks tTracks[50];
 
 void mixer0(void);
+int CDinit(void);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -30,9 +31,12 @@ void cd_get_position(char *,char *,char *);
 
 void CDgetInfo()
 {
+	printf("divcdrom.cpp - CDgetInfo\n");
+	return;
+	/*
 //struct playinfo songdata;
-static CDChange=0;
-static CDOpendoor=0;
+static int CDChange=0;
+static int CDOpendoor=0;
         if(CDPlaying && ((int)cd_head_position()>=(int)CDEnd) )
         {
                 CDPlaying=0;
@@ -69,10 +73,13 @@ static CDOpendoor=0;
 //        Track=songdata.track;
 //        Min=songdata.min;
 //        Sec=songdata.sec;
+* */
 }
 void cd_get_hala(void);
 int CDinit()
 {
+	printf("divcdrom.cpp - CDInit\n");
+	/*
 int x;
 
         tTracks[0].Min=0;
@@ -115,6 +122,7 @@ int x;
         else {
                 return 0;
         }
+        * */
 return 1;
 }
 void CDplay_track(int play)
@@ -378,6 +386,9 @@ char cTimeForIcon[18];
 
 void Show_Time()
 {
+	printf("CDROM - Show_Time\n");
+	return;
+	/*
 byte * ptr=v.ptr;
 int an,al;
 char cBuff[3];
@@ -439,6 +450,7 @@ struct dostime_t time;
                 wbox(ptr,an,al,c2,23,19,1,1);
                 v.volcar=1;
         }
+        * */
 }
 
 void Clock1(void)
@@ -462,6 +474,9 @@ void Clock3(void)
 
 void Clock0(void)
 {
+	printf("divcdrom.cpp - Clock0\n");
+	return;
+	/*
 struct dostime_t time;
 
         v.tipo=4; // Timer
@@ -478,6 +493,7 @@ struct dostime_t time;
         ORDig2=-1;
         ORDig3=-1;
         ORDig4=-1;
+        * */
 }
 
 void muestra_reloj()
