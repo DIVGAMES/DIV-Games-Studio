@@ -55,3 +55,41 @@ func();
                 // Call functions! EEK
 }
 
+
+
+void comp(void)
+{
+        //allegro_message("comp");
+        /* asm("PUSHA\n\t \
+                PUSH EBP \
+                MOV     _saved_esp,ESP \
+                CALL    NEAR PTR compilar_ \
+                RET "); */
+    //compilar();
+
+
+}
+
+void comp_exit(void)
+{
+        //allegro_message("comp exit");
+}
+
+
+void _splitpath (
+   const char *path,  // Path Input
+   char *drive,       // Drive     : Output
+   char *dir,         // Directory : Output
+   char *fname,       // Filename  : Output
+   char *ext          // Extension : Output
+) {
+	printf("TODO - _splitpath\n");
+	return;
+	
+}
+
+char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
+	printf("TODO - _fullpath\n");
+	return _FullPath;
+	
+}

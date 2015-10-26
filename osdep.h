@@ -20,6 +20,7 @@
 #define __interrupt /* __interrupt */
 #define __loadds /* __loadds */
 #define _HARDERR_FAIL 0
+#define __stdcall /* __stdcall */
 
 ///////////////////////////////////////////////////
 // DEFINED IN osdep.cpp

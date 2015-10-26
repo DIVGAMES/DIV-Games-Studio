@@ -28,8 +28,11 @@ void an_comentario(void);
 
 void inicializa_textos(byte * fichero) {
 
+
   FILE * f;
   int n;
+
+printf("Loading language file %s\n",fichero);
 
   memset(texto,0,max_textos*4);
 

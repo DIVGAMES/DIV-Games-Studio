@@ -547,6 +547,7 @@ void OpenSoundFile(void) // Abre el fichero SoundPathName
   free(SI);
 
   nueva_ventana((int)PCM0);
+#endif
 }
 
 void nueva_ventana_carga(int init_handler,int nx,int ny);
@@ -554,6 +555,7 @@ extern struct tventana ventana_aux;
 
 void OpenDesktopSound(FILE *f)
 {
+#ifdef NOTYET
   pcminfo *mypcminfo;
 
   pcminfo_aux=(char *)malloc(sizeof(pcminfo));
@@ -811,7 +813,7 @@ void OpenSong(void) {
 }
 
 void OpenDesktopSong(void) {
-printf("TODO - divpcm.cpp OpenDesktopSound\n");
+printf("TODO - divpcm.cpp OpenDesktopSong\n");
 
 #ifdef NOTYET
   modinfo *mymodinfo;

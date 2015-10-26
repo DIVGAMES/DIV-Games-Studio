@@ -5,6 +5,11 @@
 
 #include "global.h"
 
+
+void cfg_show_font(void);
+void cfg_show_mouse(void);
+void cfg_show_cursor(void);
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Variables a nivel de mขdulo
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -332,6 +337,7 @@ typedef struct _meminfo{
 
 int Mem_GetHeapFree()
 {
+#ifdef NOTYET
   struct _heapinfo miheap;
   int status=0,total=0;
   miheap._pentry=NULL;
@@ -344,10 +350,13 @@ int Mem_GetHeapFree()
   }
   if(status!=_HEAPEND) return -1;
   return total;
+#endif
+return 0;
 }
 
 void GetFreeMem(meminfo *Meminfo)
 {
+#ifdef NOTYET
   union REGS regs;
   struct SREGS sregs;
   regs.x.eax=0x0500;
@@ -355,6 +364,7 @@ void GetFreeMem(meminfo *Meminfo)
   sregs.es  =FP_SEG(Meminfo);
   regs.x.edi=FP_OFF(Meminfo);
   int386x(0x031,&regs,&regs,&sregs);
+#endif
 }
 
 void MemInfo1(void) {
@@ -411,6 +421,7 @@ void MemInfo2(void) {
 }
 
 void MemInfo0(void) {
+#ifdef NOTYET
   v.tipo=1;
   v.titulo=texto[199];
   v.an=168;
@@ -421,6 +432,7 @@ void MemInfo0(void) {
   _heapshrink();
 
   _button(100,v.an/2,v.al-14,1);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

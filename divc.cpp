@@ -213,7 +213,7 @@
 
 #include "global.h"
 #include "divdll.h"
-#include "zlib.h"
+#include <zlib.h>
 
 //extern char ExeGen[_MAX_PATH];
 

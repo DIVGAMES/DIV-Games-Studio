@@ -4,7 +4,7 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
-#include "zlib.h"
+#include <zlib.h>
 //#include <io.h>
 #include <time.h>
 

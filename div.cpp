@@ -362,6 +362,8 @@ int main(int argc, char * argv[]) {
   Interpretando=1;
   safe=34; // Text in lower right corner
   
+  printf("Let's go\n");
+  
   if(!strcmp(argv[1],"INIT")) Interpretando=0;
   else beta_status=4;
   if(!strcmp(argv[1],"TEST")) test_video=1;
@@ -378,13 +380,15 @@ int main(int argc, char * argv[]) {
   strcpy(exe_name,full);
 #endif
 
+
   n=strlen(full);
+#ifdef NOTYET
   while (n && full[n]!='\\') n--;
   full[n]=0;
   if (full[n-1]==':') strcat(full,"\\");
   _dos_setdrive((int)toupper(full[0])-'A'+1,&n);
   chdir(full);
-
+#endif
   if (cpu_type==3) chdir("..");
 
   getcwd(tipo[1].path,PATH_MAX+1);
@@ -422,7 +426,7 @@ int main(int argc, char * argv[]) {
 
   for (n=0;n<24;n++) { tipo[n].defecto=0; tipo[n].inicial=0; }
 
-  inicializa_textos("system\\lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+  inicializa_textos("lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
 
 //  check_mouse();
 
@@ -4159,8 +4163,8 @@ void GetFree4kBlocks(void)
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 void check_oldpif(void) {
-	printf("Check oldpif\n");
-	/*
+//	printf("Check oldpif\n");
+	
   unsigned n;
   byte pif[1024];
   FILE * f;
@@ -4212,5 +4216,5 @@ void check_oldpif(void) {
 
     } else fclose(f);
   }
-*/
+
 }
