@@ -1,7 +1,9 @@
-#include <dos.h>
-#include <io.h>
-#include <mem.h>
-#include <i86.h>
+//#include <dos.h>
+//#include <io.h>
+//#include <mem.h>
+//#include <i86.h>
+
+#include "global.h"
 
 #define CDROM           0x21
 #define EJECT_TRAY      0
@@ -231,15 +233,17 @@ static struct rminfo {
 	short flags;
 	short ES,DS,FS,GS,IP,CS,SP,SS;
 } RMI;
-
+#ifdef NOTYET
 static union REGS inregs, outregs;
 static struct SREGS sregs;
 static short lowptr;
 static int lowptr2;
 static void *watptr, *watptr2;
+#endif
 
 void allocbuffers (void)
 {
+#ifdef NOTYET
   memset (&sregs, 0, sizeof(sregs));
   inregs.w.ax = 0x0100;
   inregs.w.bx = 0x20;
@@ -249,11 +253,13 @@ void allocbuffers (void)
   int386x (0x31, &inregs, &outregs, &sregs);
   lowptr2 = outregs.w.ax << 16;
   watptr2 = (void *)((outregs.x.eax & 0xffff) << 4);
+#endif
 }
 
 
 void device_request ()
 {
+#ifdef NOTYET
   memset (&sregs, 0, sizeof (sregs));
   memset (&RMI, 0, sizeof(RMI));
   RMI.EAX = 0x00001510;
@@ -270,19 +276,23 @@ void device_request ()
   int386x (0x31, &inregs, &outregs, &sregs);
 //  if (outregs.x.cflag)
 //    printf ("DEVICE REQUEST FAILED!!!\n");
+#endif
 }
 
 
 void red_book (unsigned int value, unsigned char *min, unsigned char *sec, unsigned char *frame)
 {
+#ifdef NOTYET
   *frame = value & 0x000000ff;
   *sec = (value & 0x0000ff00) >> 8;
   *min = (value & 0x00ff0000) >> 16;
+#endif
 }
 
 
 unsigned int hsg (unsigned int value)
 {
+#ifdef NOTYET
   unsigned char min, sec, frame;
 
   red_book (value, &min, &sec, &frame);
@@ -291,11 +301,13 @@ unsigned int hsg (unsigned int value)
   value += frame;
   value -= 150;
   return value;
+#endif
 }
 
 
 unsigned int cd_head_position (void)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -331,11 +343,13 @@ unsigned int cd_head_position (void)
   memcpy (&head_data, watptr2, 6);
   cdrom_data.error = tray_request.status;
   return head_data.address;
+#endif
 }
 
 
 void cd_get_volume (struct volumeinfo *vol)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -363,11 +377,13 @@ void cd_get_volume (struct volumeinfo *vol)
   memcpy (&tray_request, watptr, tray_request.length);
   memcpy (vol, watptr2, sizeof (struct volumeinfo));
   cdrom_data.error = tray_request.status;
+#endif
 }
 
 
 void cd_set_volume (struct volumeinfo *vol)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -392,11 +408,13 @@ void cd_set_volume (struct volumeinfo *vol)
   device_request ();
   memcpy (&cd_request, watptr, cd_request.length);
   cdrom_data.error = cd_request.status;
+#endif
 }
 
 
 short cd_getupc (void)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -436,12 +454,14 @@ short cd_getupc (void)
   if (upc_data.adr == 0)
     memset (&upc_data.upc, 0, 7);
   memcpy (&cdrom_data.upc[0], &upc_data.upc[0], 7);
+#endif
   return 1;
 }
 
 
 void cd_get_audio_info (void)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -484,11 +504,13 @@ void cd_get_audio_info (void)
   red_book (track_data.address, &cdrom_data.disk_length_min, &cdrom_data.disk_length_sec, &cdrom_data.disk_length_frames);
   cdrom_data.endofdisk = hsg (track_data.address);
   cdrom_data.error = ioctli.status;
+#endif
 }
 
 
 void cd_set_track (short tracknum)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -527,11 +549,13 @@ void cd_set_track (short tracknum)
   cdrom_data.track_position = hsg (track_data.address);
   cdrom_data.current_track = tracknum;
   cdrom_data.track_type = track_data.control & TRACK_MASK;
+#endif
 }
 
 
 unsigned int get_track_length (short tracknum)
 {
+#ifdef NOTYET
   unsigned int start, finish;
   unsigned short ct;
 
@@ -549,11 +573,13 @@ unsigned int get_track_length (short tracknum)
 
   finish -= start;
   return finish;
+#endif
 }
 
 
 void cd_track_length (short tracknum, unsigned char *min, unsigned char *sec, unsigned char *frame)
 {
+#ifdef NOTYET
   unsigned int value;
 
   value = get_track_length (tracknum);
@@ -565,11 +591,13 @@ void cd_track_length (short tracknum, unsigned char *min, unsigned char *sec, un
   value -= *sec;
   value /= 60;
   *min = value;
+#endif
 }
 
 
 void cd_status (void)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -608,11 +636,13 @@ void cd_status (void)
 
   cdrom_data.status = cd_data.status;
   cdrom_data.error = tray_request.status;
+#endif
 }
 
 
 void cd_seek (unsigned int location)
 {
+#ifdef NOTYET
 
   struct {
     unsigned char length;
@@ -637,11 +667,13 @@ void cd_seek (unsigned int location)
   device_request ();
   memcpy (&play_request, watptr, sizeof (play_request));
   cdrom_data.error = play_request.status;
+#endif
 }
 
 
 void cd_play_audio (unsigned int begin, unsigned int end)
 {
+#ifdef NOTYET
 
   struct {
     unsigned char length;
@@ -664,11 +696,13 @@ void cd_play_audio (unsigned int begin, unsigned int end)
   device_request ();
   memcpy (&play_request, watptr, sizeof (play_request));
   cdrom_data.error = play_request.status;
+#endif
 }
 
 
 void cd_stop_audio (void)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -684,11 +718,13 @@ void cd_stop_audio (void)
   device_request ();
   memcpy (&stop_request, watptr, sizeof (stop_request));
   cdrom_data.error = stop_request.status;
+#endif
 }
 
 
 void cd_resume_audio (void)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -704,11 +740,13 @@ void cd_resume_audio (void)
   device_request ();
   memcpy (&stop_request, watptr, sizeof (stop_request));
   cdrom_data.error = stop_request.status;
+#endif
 }
 
 
 void cd_cmd (unsigned char mode)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -735,26 +773,32 @@ void cd_cmd (unsigned char mode)
   device_request ();
   memcpy (&tray_request, watptr, sizeof (tray_request));
   cdrom_data.error = tray_request.status;
+#endif
 }
 
 extern short ha,la;
 
 void cd_get_hala(void) {
+#ifdef NOTYET
   ha=cdrom_data.high_audio;
   la=cdrom_data.low_audio;
+#endif
 }
 
 void cd_get_position(char * Track, char * Min, char * Sec) {
+#ifdef NOTYET
   struct playinfo songdata;
 
   cd_getpos(&songdata);
   *Track=(songdata.track&15)+((songdata.track&240)/16)*10;
   *Min=songdata.min;
   *Sec=songdata.sec;
+#endif
 }
 
 void cd_getpos (struct playinfo *info)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -782,11 +826,13 @@ void cd_getpos (struct playinfo *info)
   memcpy (&tray_request, watptr, sizeof (tray_request));
   memcpy (info, watptr2, sizeof (struct playinfo));
   cdrom_data.error = tray_request.status;
+#endif
 }
 
 
 short cdrom_installed (void)
 {
+#ifdef NOTYET
   inregs.h.ah = 0x15;
   inregs.h.al = 0x00;
   inregs.w.bx = 0;
@@ -798,6 +844,7 @@ short cdrom_installed (void)
   if (lowptr == 0)
     allocbuffers ();
   cd_get_audio_info ();
+#endif
   return (1);
 }
 
@@ -811,6 +858,8 @@ short cd_done_play (void)
 
 short cd_mediach (void)
 {
+#ifdef NOTYET
+
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -845,11 +894,13 @@ short cd_mediach (void)
   memcpy (&cd_data, watptr2, sizeof (cd_data));
   cdrom_data.error = tray_request.status;
   return cd_data.media;
+#endif
 }
 
 
 void cd_lock (unsigned char doormode)
 {
+#ifdef NOTYET
   struct {
     unsigned char length;
     unsigned char subunit;
@@ -880,10 +931,12 @@ void cd_lock (unsigned char doormode)
   device_request ();
   memcpy (&tray_request, watptr, sizeof (tray_request));
   cdrom_data.error = tray_request.status;
+#endif
 }
 
 void get_musicpos(int *StartPos, int *EndPos)
 {
+#ifdef NOTYET
 short temp;
 
   *StartPos = cdrom_data.track_position;
@@ -896,6 +949,7 @@ short temp;
     *EndPos = cdrom_data.track_position;
     cd_set_track (temp);
   }
+#endif
 }
 
 unsigned int get_cd_status()
