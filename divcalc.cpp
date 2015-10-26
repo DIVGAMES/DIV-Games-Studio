@@ -5,6 +5,19 @@
 
 #include "global.h"
 
+
+///////////////////////////////////////////////////////////////////////////////
+//   Prototypes for this file
+///////////////////////////////////////////////////////////////////////////////
+void get_token(void);
+void expres0(void); 
+void expres1(void); 
+void expres2(void); 
+void expres3(void); 
+void expres4(void); 
+void expres5(void); 
+void calculadora(void);
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Variables del mขdulo
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
