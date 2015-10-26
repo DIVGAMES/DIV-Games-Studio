@@ -18,6 +18,8 @@ byte *p,*q; // Punteros de lectura y escritura respectivamente.
 void analiza_textos(void);
 void coder(byte * ptr, int len, char * clave);
 void an_numero(void);
+void an_texto(void);
+void an_comentario(void);
 
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -122,7 +124,7 @@ int rnd2(int min,int max) {
 }
 
 void init_rnd(int n, char * clave){
-  register a;
+  register int a;
   for (a=0;a<32;a++) seed.d[a]=n;
   if (clave!=NULL) {
     for (a=0;a<127;a++) {
