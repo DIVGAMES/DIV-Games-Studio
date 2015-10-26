@@ -4,7 +4,7 @@
 #include <string.h>
 */
 #include "global.h"
-#include "inc\vesa.h"
+//#include "inc\vesa.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Detecciขn de los modos vesa
@@ -30,6 +30,7 @@ int compare_mode(void const *aa, void const *bb) {
 }
 
 void detectar_vesa(void) { // Detecta los modos de vกdeo disponibles
+#ifdef NOTYET
 	short *modelist;
   int n;
 
@@ -74,5 +75,5 @@ void detectar_vesa(void) { // Detecta los modos de vกdeo disponibles
 	}
 
   qsort((void*)&(modos[0].ancho),num_modos,sizeof(struct _modos),compare_mode);
-
+#endif
 }
