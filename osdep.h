@@ -7,6 +7,10 @@
 #define cprintf printf
 
 #define _MAX_PATH PATH_MAX
+#define _MAX_DRIVE 26
+#define _MAX_DIR 2048
+#define _MAX_FNAME 256
+#define _MAX_EXT 64
 
 #include <SDL.h>
 

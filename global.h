@@ -166,7 +166,7 @@ void rvmode(void);
 void set_dac(byte*);
 void init_volcado(void);
 void volcado_parcial(int,int,int,int);
-void volcado(char *);
+void volcado(byte *);
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions exported by DIVMOUSE (divmouse.cpp)
