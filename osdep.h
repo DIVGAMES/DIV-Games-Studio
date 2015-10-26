@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
+#define cprintf printf
 
 #define _MAX_PATH PATH_MAX
 
@@ -19,5 +20,9 @@
 ///////////////////////////////////////////////////
 
 extern void strupr(char *string);
+extern void strlwr(char *string);
+
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
+void itoa(long n, char *buf, int len);
+
 

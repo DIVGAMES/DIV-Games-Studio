@@ -18,7 +18,8 @@
 #include "divsound.h"
 #include "divmixer.hpp"
 #include "divsb.h"
-//#include "sysdac.h"
+#include "runtime/sysdac.h"
+
 //#include "inc\svga.h"
 
 void heap_dump(void );
@@ -31,6 +32,48 @@ void calc2(void);
 void cargar_thumbs(void);
 void mostrar_mod_meters(void);
 void MapperCreator2(void);
+
+///////////////////////////////////////////////////////////////////////////////
+//   Prototypes for this file
+///////////////////////////////////////////////////////////////////////////////
+
+void inicializacion(void);
+void inicializa_entorno(void);
+void entorno(void);
+void finalizacion(void);
+void minimiza_ventana(void);
+void mueve_ventana(void);
+int determina_prg2(void);
+int determina_calc(void);
+void shell(void);
+void actualiza_dialogos(int x, int y, int an, int al);
+int colisiona_con(int a, int x, int y, int an, int al);
+void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2);
+void desactivar(void);
+void implode(int x,int y,int an,int al);
+void mueve_ventana_completa(void);
+void restaura_tapiz(int x,int y,int an,int al);
+void posicion_menos_mala(int*_x,int*_y,int an,int al);
+int calcular_colision(int x,int y,int an,int al);
+int cuanto_colisiona_con(int a, int x, int y, int an, int al);
+void check_oldpif(void);
+void default_reglas(void);
+void determina_unidades(void);
+void show_button(struct t_item * i);
+void show_get(struct t_item * i);
+void show_flag(struct t_item * i);
+void select_button(struct t_item * i,int activo);
+void select_get(struct t_item * i,int activo,int ocultar_error);
+int button_status(int n);
+void process_button(int n,int e);
+int get_status(int n);
+void process_get(int n,int e);
+int flag_status(int n);
+void process_flag(int n,int e);
+void get_input(int n);
+
+
+
 
 extern int help_item;
 extern struct tprg * old_prg;
@@ -403,9 +446,9 @@ int main(int argc, char * argv[]) {
 beta_status=4;
 
   if(!Interpretando) {
-    _setvideomode(_TEXTC80);
-    _setbkcolor(1); _settextcolor(15);
-    _outtext(texto[1]);
+//    _setvideomode(_TEXTC80);
+//    _setbkcolor(1); _settextcolor(15);
+//    _outtext(texto[1]);
   }
 
   inicializacion();
@@ -674,7 +717,7 @@ void entorno(void) {
   int llamar;
   char cwork[256],*p;
 
-  check_free();
+//  check_free();
 
   do {
 
@@ -1207,7 +1250,7 @@ void entorno(void) {
                 cwork[strlen(cwork)+1]=0;
                 cwork[strlen(cwork)]=lower[p[n++]];
               }
-              p=index;
+              p=div_index;
               while (p<index_end) {
                 if (!strcmp(cwork,p)) {
                   help(*(word*)(p+strlen(p)+1)); break;
@@ -1268,7 +1311,7 @@ void entorno(void) {
 char *paths_to_check[] = {"COMSPEC","PATH"};
 
 char *command_path() {
-    static char fullpath[128];
+/*    static char fullpath[128];
     char *commandpath;
     int i;
 
@@ -1281,9 +1324,11 @@ char *command_path() {
     _searchenv("command.com",paths_to_check[i],fullpath);
     if(fullpath[0]) return(&fullpath);
     }    return(NULL);
+    */
 }
 
 void shell(void) {
+	/*
   char *s=command_path();
   unsigned n;
 
@@ -1313,6 +1358,7 @@ void shell(void) {
 
     InitSound();
   }
+  */
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1458,7 +1504,7 @@ void entorno_dialogo(void) {
 
   wmouse_x=-1; wmouse_y=-1;
 
-  if (flushall()>10) fcloseall();
+//  if (flushall()>10) fcloseall();
 
   do { read_mouse(); } while((mouse_b) || key(_ESC));
 }
@@ -2972,9 +3018,9 @@ void inicializacion(void) {
   volcado(copia);
 
   InitSound();
-
+/*
   if(judascfg_device!=DEV_NOSOUND) set_init_mixer();
-
+*/
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3025,11 +3071,11 @@ void default_reglas(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Function to determine the existing units ( in string unidades[])
+//      Function to determine the present drives (in string unidades[])
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void determina_unidades(void) {
-  int n,m,uni=0;
+/*  int n,m,uni=0;
   union REGS r;
 
   n=1; do {
@@ -3043,6 +3089,7 @@ void determina_unidades(void) {
       if (unidades[m]==unidades[uni-1]) uni--;
   } while (++n<=26);
   unidades[uni]=0;
+  */
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3085,7 +3132,7 @@ char MemoriaLibre[100];
 int MaxMemUsed=0;
 
 int GetHeapFree(int RetUsed) {
-  struct _heapinfo h_info;
+/*  struct _heapinfo h_info;
   int heap_status;
   int Use =0;
   int Free=0;
@@ -3098,9 +3145,11 @@ int GetHeapFree(int RetUsed) {
     heap_status=_heapwalk(&h_info);
   }
   if(RetUsed) return(Use); else return(Free);
+  */
 }
 
 char *GetMemoryFree() {
+	/*
   union  REGS  regs;
   struct SREGS sregs;
 
@@ -3113,6 +3162,7 @@ char *GetMemoryFree() {
   sprintf(MemoriaLibre,"%u %u %u [%u]",MemInfo.data1,
           MemInfo.data1+GetHeapFree(0),GetHeapFree(1),MaxMemUsed);
   return(MemoriaLibre);
+  */
 }
 
 void DebugFile(char *Cadena,char *Nombre) {
@@ -3702,7 +3752,7 @@ void Load_Cfgbin() {
   FILE *file;
   char cWork[_MAX_PATH+1];
 
-  // Sistema de Directorios
+  // System Directories 
 
   strcpy(Setupfile.Dir_cwd,tipo[0].path);
 
@@ -3776,10 +3826,10 @@ void Load_Cfgbin() {
       Setupfile.t_gama[8].r=0;
       Setupfile.t_gama[8].g=0;
       Setupfile.t_gama[8].b=63;
-      Setupfile.Vid_modeAncho=640; // Modo de video
+      Setupfile.Vid_modeAncho=640; // Video Mode
       Setupfile.Vid_modeAlto=480;
       Setupfile.Vid_modeBig=1;
-      Setupfile.Max_undo=1024; // Sistema de Undo
+      Setupfile.Max_undo=1024; // Undo System
       Setupfile.Undo_memory=1024*1024+65536;
       Setupfile.tab_size=4;
       memcpy(&Setupfile.colors_rgb[0],"\x19\x19\x20\x3f\x3f\x3f\x00\x00\x30\x00\x00\x20\x25\x25\x2b\x3f\x3f\x3f"
@@ -3806,10 +3856,10 @@ void Load_Cfgbin() {
       Setupfile.Desktop_Gama=0;
       Setupfile.Desktop_Tile=0;
       for (n=0;n<9;n++) Setupfile.t_gama[n].selec=0;
-      Setupfile.Vid_modeAncho=320; // Modo de video
+      Setupfile.Vid_modeAncho=320; // Video Mode
       Setupfile.Vid_modeAlto=200;
       Setupfile.Vid_modeBig=0;
-      Setupfile.Max_undo=1024; // Sistema de Undo
+      Setupfile.Max_undo=1024; // Undo System
       Setupfile.Undo_memory=1024*1024+65536;
       Setupfile.tab_size=4;
       memcpy(&Setupfile.colors_rgb[0],"\x19\x19\x20\x3f\x3f\x3f\x00\x00\x30\x00\x00\x20\x25\x25\x2b\x3f\x3f\x3f"
@@ -3843,7 +3893,7 @@ void Load_Cfgbin() {
   coloreador=Setupfile.coloreador;
   memcpy(&colors_rgb[0],&Setupfile.colors_rgb[0],12*3);
 
-  VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho; // Modo de video
+  VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho; // Video mode
   VS_ALTO =vga_al  =Setupfile.Vid_modeAlto;
   VS_BIG  =big     =Setupfile.Vid_modeBig;
 
@@ -3851,11 +3901,11 @@ void Load_Cfgbin() {
 
   big2=big+1;
 
-  max_undos  =Setupfile.Max_undo; // Sistema de Undo
+  max_undos  =Setupfile.Max_undo; // Undo System
   undo_memory=Setupfile.Undo_memory;
   tab_size=Setupfile.tab_size;
 
-  // Sistema de Directorios
+  // System Directories
 
   if (Interpretando)
     if (chdir(Setupfile.Dir_cwd)!=-1)
@@ -3891,7 +3941,7 @@ void Load_Cfgbin() {
   if (chdir(Setupfile.Dir_prj)!=-1) strcpy(tipo[12].path,Setupfile.Dir_prj);
   else if (chdir(tipo[12].path)==-1) strcpy(tipo[12].path,tipo[1].path);
 
-  strcpy(tipo[13].path,tipo[1].path); // Generico
+  strcpy(tipo[13].path,tipo[1].path); // Generic
 
   if (chdir(Setupfile.Dir_wld)!=-1) strcpy(tipo[15].path,Setupfile.Dir_wld);
   else if (chdir(tipo[15].path)==-1) strcpy(tipo[15].path,tipo[1].path);
@@ -3928,9 +3978,10 @@ void check_mouse(void) {
   }
 }
 */
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Comprueba si hay suficiente espacio en el HD
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+///////////////////////////////////////////////////////////////////////////////
+//  Check if there is enough space on the HD
+///////////////////////////////////////////////////////////////////////////////
 
 unsigned int GetFreeUnid(char unidad);
 
@@ -3951,7 +4002,7 @@ void check_free(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Determina un prg para la ayuda con F1
+//  Determines a prg for help with F1
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int determina_prg2(void) {
@@ -4024,6 +4075,9 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
+	printf("DaniDel %s\n",name);
+	return;
+	/*
   unsigned rc;
   struct find_t ft;
   int x;
@@ -4046,6 +4100,7 @@ void DaniDel(char *name) {
     remove(cwork1);
     rc=_dos_findnext(&ft);
   }
+  * */
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -4072,6 +4127,9 @@ void DebugData(int Val)
 
 void GetFree4kBlocks(void)
 {
+	printf("GetFree4KBlocks\n");
+//	return;
+	/*
   FILE *f;
   unsigned u, DOScount, DPMIcount;
 
@@ -4091,7 +4149,7 @@ void GetFree4kBlocks(void)
             DOScount + DPMIcount, (DOScount + DPMIcount) * 4);
     fclose(f);
   }
-
+*/
   exit(0);
 }
 
@@ -4101,6 +4159,8 @@ void GetFree4kBlocks(void)
 //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
 void check_oldpif(void) {
+	printf("Check oldpif\n");
+	/*
   unsigned n;
   byte pif[1024];
   FILE * f;
@@ -4152,5 +4212,5 @@ void check_oldpif(void) {
 
     } else fclose(f);
   }
-
+*/
 }

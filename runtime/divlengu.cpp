@@ -11,6 +11,13 @@ byte * fin_textos;
 int numero=0; // Nฃmero de texto
 byte *p_lengu,*q_lengu; // Punteros de lectura y escritura respectivamente.
 
+
+///////////////////////////////////////////////////////////////////////////////
+//   Prototypes for this file
+///////////////////////////////////////////////////////////////////////////////
+void analiza_textos(void);
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Inicializa el sistema de textos
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

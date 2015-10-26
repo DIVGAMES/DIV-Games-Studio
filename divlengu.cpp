@@ -11,6 +11,15 @@ byte * fin_textos;
 int numero=0; // Nฃmero de texto
 byte *p,*q; // Punteros de lectura y escritura respectivamente.
 
+
+///////////////////////////////////////////////////////////////////////////////
+//   Prototypes for this file
+///////////////////////////////////////////////////////////////////////////////
+void analiza_textos(void);
+void coder(byte * ptr, int len, char * clave);
+void an_numero(void);
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Inicializa el sistema de textos
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

@@ -507,7 +507,8 @@ GLOBAL_DATA int _mouse_x,_mouse_y;
 
 GLOBAL_DATA byte color,old_color,color_c0; // Color/es seleccionado/s
 
-GLOBAL_DATA struct callback_data {
+//GLOBAL_DATA 
+struct callback_data {
     unsigned short mouse_action;
     unsigned short mouse_bx;
     unsigned short mouse_cx;
@@ -516,7 +517,8 @@ GLOBAL_DATA struct callback_data {
 
 extern struct callback_data cbd;
 
-GLOBAL_DATA struct tipo_regla{
+//GLOBAL_DATA 
+struct tipo_regla{
   byte numcol;  // 8,16,32
   byte tipo;    // 0 (lineal), 1-2-4-8 (adaptable cada n colores)
   byte fijo;    // 0 (No), 1 (S¡)
@@ -538,7 +540,8 @@ GLOBAL_DATA byte * fondo_raton; // Buffer para guardar el fondo del rat¢n
 
 GLOBAL_DATA byte * graf_ptr, * graf[256];    // Gr ficos del entorno
 
-GLOBAL_DATA struct tgraf_help {
+//GLOBAL_DATA 
+struct tgraf_help {
   int offset;
   int an,al;
   int ran,ral;
@@ -556,7 +559,8 @@ GLOBAL_DATA int char_size; // font_an*font_al
 
 GLOBAL_DATA int actual_mouse; // Dibujo del rat¢n
 
-GLOBAL_DATA struct tipo_undo {               // Tabla c¡clica con los undo
+//GLOBAL_DATA 
+struct tipo_undo {               // Tabla c¡clica con los undo
   int start, end, x, y, an, al, modo;   // start se refiere a *(undo+start)
   int codigo;                           // identificador del mapa editado
 };                                      // modo=-1 si entrada no usada
@@ -592,7 +596,8 @@ GLOBAL_DATA int wmouse_x,wmouse_y; // Rat¢n dentro de una ventana
 
 #define max_items 24    // N§ m ximo de objetos en una ventana
 
-GLOBAL_DATA struct t_item {
+//GLOBAL_DATA 
+struct t_item {
   int tipo;             // 0-ninguno,1-boton,2-get,3-switch
   int estado;           // Estado del item (raton sobre ‚l, pulsado o no ...)
   union {
@@ -614,7 +619,8 @@ GLOBAL_DATA struct t_item {
   };
 };
 
-GLOBAL_DATA struct tventana {
+//GLOBAL_DATA 
+struct tventana {
   int tipo;                             // 0-none, 1-dialogo, 2-menu, 3-paleta
                                         // 4-timer, 5-papelera, 7-barra_progreso
                                         // 8-mixer
@@ -645,7 +651,8 @@ GLOBAL_DATA struct tventana {
 GLOBAL_DATA struct tventana ventana[max_windows];
 #define v ventana[0]
 
-GLOBAL_DATA struct tmapa {
+//GLOBAL_DATA 
+struct tmapa {
   char TengoNombre;                     // La nueva ventana cogera el filename
   int codigo;                           // C¢digo de este mapa (para el undo)
   int Codigo;                           // C¢digo de este mapa (para el FPG)
@@ -735,7 +742,8 @@ GLOBAL_DATA int siguiente_codigo;            // C¢digo del siguiente mapa creado
 
 GLOBAL_DATA int salir_del_entorno;
 
-GLOBAL_DATA struct ttipo {                   // Informaci¢n de los diferentes tipos
+//GLOBAL_DATA 
+struct ttipo {                   // Informaci¢n de los diferentes tipos
   char path[PATH_MAX+1];                // Su path por defecto
   char * ext;                           // Extensiones .: "*.MAP *.PCX *.*"
   int defecto;         // Eleccion por defecto (para las extensiones de abrir0)
