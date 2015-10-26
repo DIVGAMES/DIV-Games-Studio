@@ -1,5 +1,8 @@
 #include "global.h"
-#include "FPGFILE.HPP"
+#include "fpgfile.hpp"
+
+int selecciona_fichero(void);
+
 
 HeadFPG HeadFPGArrastre;
 int RetValue=0;
