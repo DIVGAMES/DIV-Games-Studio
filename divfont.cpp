@@ -13,6 +13,9 @@ void Selcolor0(void);
 void GenFont0(void);
 int font_generated=0;
 void GetText0(void);
+void crear_texto_prueba(char * s, char flags);
+
+
 
 char fontsizes[8*8]="8x8\0    10x10\0  12x12\0  14x14\0  16x16\0  32x32\0  64x64\0  128x128";
 int fontTamanos[8]={8,10,12,14,16,32,64,128};

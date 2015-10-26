@@ -32,12 +32,12 @@ void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
 
 
 
-void itoa(long n, char *buf, int len)
+char * itoa(long n, char *buf, int len)
 {
 //    int len = n==0 ? 1 : floor(log10l(abs(n)))+1;
     if (n<0) len++; // room for negative sign '-'
 
 //    char    *buf = calloc(sizeof(char), len+1); // +1 for null
     snprintf(buf, len+1, "%ld", n);
-//    return   buf;
+    return   buf;
 }
