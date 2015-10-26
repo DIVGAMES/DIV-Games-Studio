@@ -5,6 +5,8 @@
 
 #include "global.h"
 
+void col_analiza_ltlex(void);
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #define max_obj 768     // Lกmite m ximo de objetos del compilador
