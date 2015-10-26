@@ -849,6 +849,7 @@ typedef struct _pcminfo{
         int    SoundSize;
         short  *SoundData;
 //        SAMPLE *sample;
+		char *sample;
 } pcminfo;
 
 typedef struct _modinfo{

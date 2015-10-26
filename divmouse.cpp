@@ -10,6 +10,10 @@ int m_b;
 
 float m_x=0.0,m_y=0.0;
 
+void read_mouse2(void);
+void libera_drag(void);
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Comprueba si el ratขn est  en una caja
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -183,10 +187,13 @@ void libera_drag(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Rutinas de ratขn nuevas (sin interrupciขn)
+//  New mouse routines ( without interruption )
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void read_mouse2(void) {
+printf("divmouse.cpp - read_mouse2 REPLACE WITH SDL VERSION\n");
+
+#ifdef NOTYET
   union REGS regs;
   short ix,iy;
 
@@ -205,4 +212,6 @@ void read_mouse2(void) {
 
   m_x+=(float)ix/(1.0+((float)Setupfile.mouse_ratio/3.0));
   m_y+=(float)iy/(1.0+((float)Setupfile.mouse_ratio/3.0));
+#endif
+
 }
