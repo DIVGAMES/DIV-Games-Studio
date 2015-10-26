@@ -974,13 +974,14 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
 //      _heapshrink();
 #ifdef NOTYET
       GetFreeMem(&Mi_meminfo);
-#endif
       if((mem=Mem_GetHeapFree())==-1)
       {
         estado=0;
         thumb[num].status=-1;
         return;
       }
+#endif
+
       mem=(Mi_meminfo.Bloque_mas_grande_disponible+mem-1000000)/2;
       if((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
       {
