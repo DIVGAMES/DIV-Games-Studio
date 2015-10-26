@@ -12,6 +12,7 @@ int SoundActive=0;
 
 void InitSound(void)
 {
+#ifdef NOTYET
   FILE *File_Cfg;
   int master=7,sound_fx=7,cd_audio=7;
   char Device[8]={DEV_NOSOUND,DEV_SB,DEV_SB,DEV_SBPRO,DEV_SB16,DEV_SB16,DEV_GUS,DEV_GUS};
@@ -95,12 +96,14 @@ void InitSound(void)
     }
 
   }
-
+#endif
 }
 
 void EndSound(void)
 {
+#ifdef NOTYET
   judas_uninit();
   timer_uninit();
+#endif
 }
 

@@ -150,11 +150,11 @@ void select_zoom(void);
 //      Functions exported by DIVSPRIT (divsprit.cpp)
 ///////////////////////////////////////////////////////////////////////////////
 
-void sp_normal (char*,int,int,int,int,int,int,int);
-void sp_rotado (char*,int,int,int,int,int,int,int,float,float);
+void sp_normal (byte*,int,int,int,int,int,int,int);
+void sp_rotado (byte*,int,int,int,int,int,int,int,float,float);
 void sp_size (int*,int*,int*,int*,int,int,float,float);
-void invierte_hor(char*,int,int);
-void invierte_ver(char*,int,int);
+void invierte_hor(byte*,int,int);
+void invierte_ver(byte*,int,int);
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions exported by DIVVIDEO (divvideo.cpp)
@@ -350,7 +350,7 @@ void PRJ0();void PRJ1();void PRJ2();void PRJ3();
 void ShowFont0(void);void ShowFont1(void);
 
 ///////////////////////////////////////////////////////////////////////////////
-//      Main handler, exported by DIVHANDLE (divhandle.cpp)
+//      Main handler, exported by DIVHANDLE (divhandl.cpp)
 ///////////////////////////////////////////////////////////////////////////////
 
 void dummy_handler(void);
