@@ -6,6 +6,17 @@
 
 void ayuda_dibujo(int); // Drawing support
 
+
+void draw_selection_box(int _x0,int _y0,int _x1,int _y1);
+void draw_selection_mab(void);
+void fill_inter(int an,int al);
+void volcado_inter(int an);
+void fill_scan(word x,word y);
+void fill_draw(void);
+void copy_block(byte *d,byte *s,int an,int al);
+void xchg_block(byte *d,byte *s,int an,int al);
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //      Global module variables
 ///////////////////////////////////////////////////////////////////////////////
