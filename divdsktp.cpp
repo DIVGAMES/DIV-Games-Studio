@@ -3,6 +3,8 @@
 
 int nueva_ventana_carga(int init_handler,int nx,int ny);
 int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla);
+void nuevo_mapa3d_carga(void);
+
 void carga_programa0(void);
 void carga_Fonts0(void);
 void carga_help(int n,int helpal,int helpline,int x1,int x2);
@@ -26,7 +28,8 @@ extern char Load_FontName[14];
 
 // extern char Nombres[256][15];
 
-extern struct _calc {
+//extern 
+struct _calc {
   char ctext[128];
   char cget[128];
   char cresult[128];
@@ -634,9 +637,9 @@ FILE *f;
                                 fread(SongPathName,1,256,desktop);
                                 if ((f=fopen(SongPathName,"rb"))!=NULL) {
                                   fclose(f);
-                                  if ( judascfg_device != DEV_NOSOUND ) {
+                                 //if ( judascfg_device != DEV_NOSOUND ) {
                                     OpenDesktopSong();
-                                  }
+                                 // }
                                 }
                                 break;
                 }
@@ -863,7 +866,7 @@ int nueva_ventana_carga(int init_handler,int nx,int ny)
     // No se pudo abrir la ventana, (no hay memoria o men� duplicado)
     //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-    } else { delete(0); return(1); }
+    } else { divdelete(0); return(1); }
 
   } else return(1);
 

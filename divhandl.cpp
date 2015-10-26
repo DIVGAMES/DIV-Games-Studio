@@ -8,6 +8,20 @@
 #include "fpgfile.hpp"
 #include "divsb.h"
 
+
+///////////////////////////////////////////////////////////////////////////////
+//   Prototypes for this file
+///////////////////////////////////////////////////////////////////////////////
+void crear_menu(int menu);
+void pinta_menu(int menu);
+void actualiza_menu(int menu,int min,int max);
+int determina_prg(void);
+void save_prg_buffer(int n);
+int determina_map(void);
+void abrir_mapa(void);
+
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Module variables
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
