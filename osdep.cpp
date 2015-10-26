@@ -45,3 +45,13 @@ char * itoa(long n, char *buf, int len)
     snprintf(buf, len+1, "%ld", n);
     return   buf;
 }
+
+void call(void *(*func)() )
+
+{
+//      allegro_message("call");
+func();
+//      asm("call *%eax");      
+                // Call functions! EEK
+}
+

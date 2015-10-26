@@ -98,7 +98,7 @@ void DaniDel(char *name);
 //     Functions exported by DIVBASIC (divbasic.cpp)
 ///////////////////////////////////////////////////////////////////////////////
 
-void writetxt(int,int,int,char*);
+void writetxt(int,int,int,byte*);
 void box(byte,int,int,int,int);
 void rectangulo(byte,int,int,int,int);
 void salvaguarda(byte * p, int x, int y, int n, int flag);
@@ -422,8 +422,8 @@ void repinta_ventana(void);
 
 
 void memcpyb(byte*,byte*,int);
-void call(int); // void funcion(void); int n=(int)funcion; call(n);
-
+//void call(int); // void funcion(void); int n=(int)funcion; call(n);
+void call(void *(*func)() );
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions exported by DIVEFFECT (diveffect.cpp)
 ///////////////////////////////////////////////////////////////////////////////

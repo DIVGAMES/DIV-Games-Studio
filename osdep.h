@@ -17,6 +17,8 @@
 
 #define far /*far*/
 #define __far /*__far*/
+#define __interrupt /* __interrupt */
+#define __loadds /* __loadds */
 #define _HARDERR_FAIL 0
 
 ///////////////////////////////////////////////////

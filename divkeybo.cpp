@@ -8,13 +8,13 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // IRQ Data
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-
+/*
 typedef void (__interrupt __far *TIRQHandler)(void);
 
 TIRQHandler OldIrqHandler;
 TIRQHandler OldIrq23;
 TIRQHandler OldIrq1b;
-
+*/
 byte * shift = (byte *) 0x417; // Shift status
 
 byte buf[64*3]; // {ascii,scan_code,shift_status}
@@ -25,12 +25,17 @@ int fbuf=0; // Puntero al buffer, fin de la cola
 // Interrupt handler related functions.
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+
 int ctrl_c=0;
+
+#ifdef NOTYET
 word * kb_start = (void*) 0x41a;
 word * kb_end = (void*) 0x41c;
+#endif
 
 void __far __interrupt __loadds IrqHandler(void)
 {
+#ifdef NOTYET
   int n;
   int scancode;
 
@@ -56,6 +61,7 @@ void __far __interrupt __loadds IrqHandler(void)
     if ((*kb_end-28)%32+30==*kb_start) *kb_start=(*kb_start-28)%32+30;
 
   }
+#endif
 }
 
 void __far __interrupt __loadds Irq23(void){}
@@ -64,7 +70,7 @@ void __far __interrupt __loadds Irq1b(void){}
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Obtains the address of an IRQ handler.
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-
+#ifdef NOTYET
 TIRQHandler GetIRQVector(int n)
 {
     struct SREGS sregs;
@@ -75,11 +81,12 @@ TIRQHandler GetIRQVector(int n)
     int386x (0x21, &inregs, &outregs, &sregs);
     return (TIRQHandler)(MK_FP((word)sregs.es, outregs.x.ebx));
 }
-
+#endif
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Sets the address of an IRQ handler.
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+#ifdef NOTYET
 void SetIRQVector(int n, TIRQHandler vec)
 {
     struct SREGS sregs;
@@ -91,13 +98,16 @@ void SetIRQVector(int n, TIRQHandler vec)
     sregs.es     = 0;
     int386x (0x21, &inregs, &outregs, &sregs);
 }
-
+#endif
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Function to initialize the handler.
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void kbdInit(void)
 {
+	printf("kbdInit\n");
+	
+#ifdef NOTYET
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
       OldIrqHandler=GetIRQVector(9);       // Get old handler.
       SetIRQVector(9,IrqHandler);          // Set our handler.
@@ -109,7 +119,7 @@ void kbdInit(void)
 
     signal(SIGBREAK,SIG_IGN);
     signal(SIGINT,SIG_IGN);
-
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -118,11 +128,14 @@ void kbdInit(void)
 
 void kbdReset(void)
 {
+printf("kbdReset\n");
+#ifdef NOTYET
     if (GetIRQVector(9) == IrqHandler) {   // If it was installed.
       SetIRQVector(9,OldIrqHandler);       // Uninstall it.
       SetIRQVector(0x1b,OldIrq1b);         // Uninstall it.
       SetIRQVector(0x23,OldIrq23);         // Uninstall it.
     }
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -130,6 +143,8 @@ void kbdReset(void)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void tecla_bios(void) {
+printf("tecla_bios\n");
+#ifdef NOTYET
   int as,sc,ss;
   union REGS r;
   struct SREGS s;
@@ -159,9 +174,13 @@ void tecla_bios(void) {
     buf[fbuf]=0; buf[fbuf+1]=46; buf[fbuf+2]=ss;
     if ((fbuf+=3)==64*3) fbuf=0; ctrl_c=0;
   }
+#endif
 }
 
 void tecla(void) {
+    ascii=0; scan_code=0;
+
+#ifdef NOTYET
   union REGS r;
   struct SREGS s;
 
@@ -175,13 +194,18 @@ void tecla(void) {
     s.ds=s.es=s.fs=s.gs=FP_SEG(&s);
     r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
   }
+
+#endif
+
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Vacia el buffer de teclado (real e interno)
+//     Empty the keyboard buffer (real and internal)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void vacia_buffer(void) {
+printf("vacia_buffer\n");
+#ifdef NOTYET
   union REGS r;
   struct SREGS s;
 
@@ -190,7 +214,7 @@ void vacia_buffer(void) {
   while(_bios_keybrd(_KEYBRD_READY)) { r.h.ah=0; int386x(0x16,&r,&r,&s); }
   ascii=0; scan_code=0;
   r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
-
+#endif
   ibuf=fbuf=0; // Vacia el buffer interno
 }
 
