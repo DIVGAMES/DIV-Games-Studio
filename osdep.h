@@ -25,4 +25,5 @@ extern void strlwr(char *string);
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 void itoa(long n, char *buf, int len);
 
+#define ltoa itoa 
 
