@@ -5,7 +5,7 @@
 
 #include "global.h"
 #include "visor.hpp"
-#include "FPGFILE.HPP"
+#include "fpgfile.hpp"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Constantes
@@ -58,12 +58,12 @@ char anim_spr_mujer_a[100][20];
 char anim_spr_enano[100][20];
 char anim_spr_enano_a[100][20];
 struct t_listbox lanim_spr;
-struct t_listbox lanim_spr_hombre   = { 3, 95+20, anim_spr_hombre,   20, 7, 93 };
-struct t_listbox lanim_spr_hombre_a = { 3, 95+20, anim_spr_hombre_a, 20, 7, 93 };
-struct t_listbox lanim_spr_mujer    = { 3, 95+20, anim_spr_mujer,    20, 7, 93 };
-struct t_listbox lanim_spr_mujer_a  = { 3, 95+20, anim_spr_mujer_a,  20, 7, 93 };
-struct t_listbox lanim_spr_enano    = { 3, 95+20, anim_spr_enano,    20, 7, 93 };
-struct t_listbox lanim_spr_enano_a  = { 3, 95+20, anim_spr_enano_a,  20, 7, 93 };
+struct t_listbox lanim_spr_hombre   = { 3, 95+20, (char *)anim_spr_hombre,   20, 7, 93 };
+struct t_listbox lanim_spr_hombre_a = { 3, 95+20, (char *)anim_spr_hombre_a, 20, 7, 93 };
+struct t_listbox lanim_spr_mujer    = { 3, 95+20, (char *)anim_spr_mujer,    20, 7, 93 };
+struct t_listbox lanim_spr_mujer_a  = { 3, 95+20, (char *)anim_spr_mujer_a,  20, 7, 93 };
+struct t_listbox lanim_spr_enano    = { 3, 95+20, (char *)anim_spr_enano,    20, 7, 93 };
+struct t_listbox lanim_spr_enano_a  = { 3, 95+20, (char *)anim_spr_enano_a,  20, 7, 93 };
 int anim_actual;
 int anim_total_hombre, anim_total_hombre_a;
 int anim_total_mujer,  anim_total_mujer_a;
