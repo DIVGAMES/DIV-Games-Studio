@@ -971,7 +971,7 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
     // Se comienza a leer un nuevo thumbnail
     if (estado==1)
     {
-      _heapshrink();
+//      _heapshrink();
       GetFreeMem(&Mi_meminfo);
       if((mem=Mem_GetHeapFree())==-1)
       {
@@ -1481,7 +1481,7 @@ void browser0(void) {
     larchivosbr.al=8;
   }
 
-  if(v_thumb==7 && judascfg_device == DEV_NOSOUND) opc_pru=0;
+  if(v_thumb==7 && false /*judascfg_device == DEV_NOSOUND*/) opc_pru=0;
 
 }
 
@@ -1513,7 +1513,7 @@ int ns,chn;
 void browser2(void) {
   unsigned n, selected;
   unsigned pos1, pos2;
-  SoundInfo *SI=NULL;
+//  SoundInfo *SI=NULL;
   int need_refresh=0;
   int estado;
 //FILE *f;
@@ -1650,7 +1650,7 @@ void browser2(void) {
 
       browser1(); v.volcar=1;
       strcpy(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
-
+#ifdef NOTYET
       // OJO !!! Tener en cuenta CTRL y SHIFT
       if (strcmp(input,full) || ((v_thumb==7 || v_tipo==16) && opc_pru))
       {
@@ -1720,7 +1720,7 @@ void browser2(void) {
       } else {
         if(num_taggeds==1) v_existe=1, v_terminado=1;
       }
-
+#endif
     } else if (ldirectoriosbr.zona>=10) { v.volcar=1;
       if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='\\')
         strcat(tipo[v_tipo].path,"\\");
@@ -1803,18 +1803,21 @@ void browser3(void) {
   }
 
   if(v_tipo==16) FreeMOD();
-
+#ifdef NOTYET
   if(v_thumb==7) {
     if(judas_channel[0].smp) judas_stopsample(0);
     if(smp!=NULL) { judas_freesample(smp); smp=NULL; }
   }
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Lee las tablas de directorios y ficheros
+//  Read directories and files
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void dir_abrirbr(void) {
+	printf("TODO - divbrow.cpp dir_abribr\n");
+#ifdef NOTYET	
   unsigned n,m;
   struct find_t fileinfo;
 
@@ -1848,6 +1851,7 @@ void dir_abrirbr(void) {
   else strcpy(input,&ext[0]);
   strcpy(mascara,input);
 */
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
