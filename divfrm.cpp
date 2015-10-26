@@ -11,6 +11,58 @@
 
 #define formato  // Listado fuente formateado (DIV.FRM)
 
+
+void delete_code(void);
+void precarga_obj (void);
+void psintactico(void);
+void test_buffer(int * * buffer,int * maximo,int n);
+void save_dbg(void);
+void save_exec_bin(void);
+void l_objetos (void);
+void l_ensamblador (void);
+void linea_ensamblador (void);
+void token(void);
+void emitir_comentario(void);
+void emitir_token(char * p);
+void tloc_init(int tipo);
+void g2(int op, int pa);
+void analiza_private(void);
+void g1(int op);
+void expresion_cpa(void);
+void tglo_init2(int tipo);
+void condicion(void);
+void con00(int tipo_exp);
+void generar_expresion(void);
+void con0(void);
+void con1(void);
+void con2(void);
+void exp3(void);
+void exp00(int tipo_exp);
+void exp0(void);
+void exp1(void); 
+void exp2(void);
+void exp4(void);
+void exp5(void);
+void unario(void);
+void exp6(void);
+void factor(void);
+void factor_struct(void);
+void gen(int param, int op, int pa);
+void remove_code(int i);
+void add_code(int dir, int param, int op);
+
+
+
+
+
+
+
+
+ 
+
+
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      DIV - Compilador Interno
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1409,7 +1461,7 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
 
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Lexico (lee una nueva pieza del *source)
+//      Lexico ( reading a new piece of *source)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void lexico(void) {
@@ -1427,7 +1479,7 @@ void lexico(void) {
   char ext[_MAX_EXT+1];
 
   #ifdef formato
-  int n_cr=0; // Nง de crlf seguidos
+  int n_cr=0; // No of CRLF followed
   #endif
 
   int n;
@@ -1440,7 +1492,7 @@ void lexico(void) {
   if (!coment) {old_linea=linea; old_ierror=ierror; old_ierror_end=ierror_end;}
 
   lex_scan: ierror=_source;
-  switch ((int)lex_case[*_source]) { // Puntero a un lex_ele o l_???
+  switch ((int)lex_case[*_source]) { // Pointer to lex_ele or l_???
 
     case l_err:
       if (coment) { pieza=p_rem; _source++; } else c_error(0,10); break;
@@ -1482,7 +1534,7 @@ void lexico(void) {
       #endif
       ptr=&vhash[h];
       while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
-      if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
+      if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id found
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
         if (pieza<256 && pieza>=0) { // palabra reservada (token)
@@ -1563,8 +1615,8 @@ void lexico(void) {
       if ((f=open_file(ivnom.b))!=NULL) {
         empaquetable=0;
 
-        // Determinar si el archivo es empaquetable ...
-
+        // Determine if the file is packable
+#ifdef NOTYET
         _splitpath(full,drive,dir,fname,ext);
         strupr(ext);
 
@@ -1577,7 +1629,7 @@ void lexico(void) {
           if (!strcmp(cwork,"wld\x1a\x0d\x0a")) empaquetable=1;
           if (!strcmp(cwork,"wld\x1a\x0d\x0a\x01")) empaquetable=1;
         }
-
+#endif
         fclose(f);
         if (!empaquetable) fwrite("+",1,1,lins);
         fwrite(full,1,strlen(full)+1,lins);
@@ -5615,7 +5667,9 @@ void factor(void) {
   }
 }
 
-void factor_struct(void) { struct objeto * ob;
+void factor_struct(void) { 
+	
+struct objeto * ob;
 
   if (pieza!=p_id) c_error(3,58);
   switch ((*o).tipo) {
@@ -6443,8 +6497,12 @@ FILE * open_file(char * file) {
 
   strcpy(full,file);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
+
+#ifdef NOTYET
     if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
+#endif
+
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='\\') strcat(full,"\\");
     strcat(full,file);
