@@ -7,6 +7,21 @@
 #include "divsound.h"
 #include "ifs.h"
 
+
+///////////////////////////////////////////////////////////////////////////////
+//   Prototypes for this file
+///////////////////////////////////////////////////////////////////////////////
+
+void crear_un_thumb_MAP(struct t_listboxbr * l);
+void crear_un_thumb_PAL(struct t_listboxbr * l);
+void crear_un_thumb_FNT(struct t_listboxbr * l);
+void crear_un_thumb_IFS(struct t_listboxbr * l);
+void crear_un_thumb_PCM(struct t_listboxbr * l);
+void muestra_thumb(struct t_listboxbr * l, int num);
+
+
+
+
 #define incremento_maximo 65536
 int incremento=incremento_maximo;
 
@@ -19,7 +34,7 @@ int num_taggeds;
 int ini_tagged;
 int song_playing=0;
 
-SAMPLE * smp=NULL;
+//SAMPLE * smp=NULL;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Variables del mขdulo
@@ -214,7 +229,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 
     if (estado==0) { num=-1; return; }
 
-    if (estado==1) { // Se comienza a leer un nuevo thumbnail
+    if (estado==1) { // Read a new thumbnail
 
       if (strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PCX") &&
