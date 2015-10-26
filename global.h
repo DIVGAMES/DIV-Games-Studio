@@ -308,7 +308,7 @@ void Vid_Setup0();
 void Tap_Setup0(void);
 
 ///////////////////////////////////////////////////////////////////////////////
-//      Functions exported by DIVWINDO (divwindow.cpp)
+//      Functions exported by DIVWINDO (divwindo.cpp)
 ///////////////////////////////////////////////////////////////////////////////
 
 void wgra(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al);

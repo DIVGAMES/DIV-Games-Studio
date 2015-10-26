@@ -18,7 +18,7 @@ byte *help_buffer=NULL;         // Buffer para contener la ayuda
 byte *h_buffer;                 // Buffer auxiliar
 byte *help_line;                // Puntero a la lกnea actual
 byte *help_end;                 // Final de help_buffer;
-byte *index=NULL;               // Inicio del glosario
+byte *div_index=NULL;           // Inicio del glosario
 byte *index_end;                // Final del glosario
 
 int loaded[64],n_loaded=0;      // Im genes cargadas, hasta un m ximo de 32
@@ -28,6 +28,15 @@ struct tprg * old_prg;
 extern int help_paint_active;
 
 void read_line(void);
+void vuelca_help(void);
+void help_xref(int n,int linea);
+void Print_Help(void);
+void resize_help(void);
+int dtoi(int m);
+void arregla_linea(byte * end,int chars,int help_an);
+void put_chr(byte * ptr, int an, byte c,byte color);
+void put_image_line(int n,int linea,byte * di,int v_an);
+
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -38,7 +47,7 @@ int i_back,f_back; // Inicio y final de la cola circular (0,2,...,62)
 int a_back;        // Trmino actual (i_back <= a_back <= f_back)
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Carga el glosario de trminos (index.prg)
+//      Carga el glosario de trminos (div_index.prg)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void load_index(void) {
@@ -46,16 +55,16 @@ void load_index(void) {
   byte *si,*di;
   FILE *f;
 
-  if (index!=NULL) {
-    //free(index);
-    index=NULL;
+  if (div_index!=NULL) {
+    //free(div_index);
+    div_index=NULL;
   }
 
   if((f=fopen("help\\help.idx","rb"))!=NULL) {
     fseek(f,0,SEEK_END); len=ftell(f);
-    if ((index=(byte*)malloc(len))!=NULL) {
-      fseek(f,0,SEEK_SET); fread(index,1,len,f); fclose(f);
-      index_end=index+len; si=di=index;
+    if ((div_index=(byte*)malloc(len))!=NULL) {
+      fseek(f,0,SEEK_SET); fread(div_index,1,len,f); fclose(f);
+      index_end=div_index+len; si=di=div_index;
       do {
         if(lower[*si] && lower[*si]!=' ') *di++=*si;
         else if (*si==',') {
@@ -281,7 +290,7 @@ void help2(void) {
         while (*p++); my--;
       } si=p; while (*si++);
 
-      if (p+1<help_end) { // Estamos en una linea del hipertexto, en mx
+      if (p+1<help_end) { // We are in a line of hypertext, in mx
         n=-1;
         while (*p && mx>=0) {
           switch(*p) {
