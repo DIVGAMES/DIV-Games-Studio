@@ -3,7 +3,7 @@
 #include "divsound.h"
 #include "divmixer.hpp"
 #include "divsb.h"
-#include <io.h>
+//#include <io.h>
 
 void FreeMOD                (void);
 int  GetSongPos             (void);
@@ -143,7 +143,7 @@ void PCM2(void) {
   pcminfo *mypcminfo=(pcminfo *)v.aux;
 
   if(mouse_b&1) {
-    if ( judascfg_device == DEV_NOSOUND) {
+    if ( false /*judascfg_device == DEV_NOSOUND */) {
       if ( SoundError ) {
         v_texto=texto[549]; dialogo((int)errhlp0);
         if (v_aceptar) help(2008);
@@ -153,8 +153,11 @@ void PCM2(void) {
       }
       return;
     } else {
-      if(mypcminfo->SoundData)
-        judas_playsample(mypcminfo->sample, 0, mypcminfo->SoundFreq, 64*256, MIDDLE);
+      if(mypcminfo->SoundData) {
+		  // 
+		  printf("TODO - Play sample via SDL\n");
+//        judas_playsample(mypcminfo->sample, 0, mypcminfo->SoundFreq, 64*256, MIDDLE);
+}
       while (mouse_b&1) read_mouse();
     }
   }
@@ -164,7 +167,9 @@ void PCM3(void) {
   pcminfo *mypcminfo=(pcminfo *)v.aux;
 
   if(mypcminfo->SoundData) {
-    judas_freesample(mypcminfo->sample);
+	  printf("TODO - SDL Free sample\n");
+	  
+    //judas_freesample(mypcminfo->sample);
     mypcminfo->SoundData=NULL;
     mypcminfo->SoundSize=0;
   }
@@ -205,7 +210,9 @@ void MOD1(void) {
   wrectangulo(v.ptr, an, al, c0, 1, 38, an-2,       11);
   wrectangulo(v.ptr, an, al, c0, 1, 38,   21,       11);
 
-  if(judas_songisplaying() && mymodinfo->SongCode == SongCode) {
+	printf("TODO - SDL Song is playing\n");
+	
+  if(/*judas_songisplaying() && */ mymodinfo->SongCode == SongCode) {
     if(ModButton && ModWindow==v.orden) wput(v.ptr, an, al, 2, 39, -214);
     else                                wput(v.ptr, an, al, 2, 39, -234);
   } else {
@@ -233,7 +240,7 @@ void MOD2(void) {
     {
       ModWindow=v.orden;
       need_refresh=1;
-      if(judas_songisplaying() && mymodinfo->SongCode==SongCode) FreeMOD();
+      if(/*judas_songisplaying() && */mymodinfo->SongCode==SongCode) FreeMOD();
       else {
         FreeMOD();
         PlaySong(mymodinfo->pathname);
@@ -279,19 +286,22 @@ void MOD0(void) {
 
 void FreeMOD(void)
 {
-  switch(SongType)
+	printf("TODO - JUDAS FREE MOD \n");
+/*  switch(SongType)
   {
-    case XM:  judas_freexm();  break;
+    case XM:   judas_freexm();  break;
     case S3M: judas_frees3m(); break;
     case MOD: judas_freemod(); break;
   }
+  * */
   SongType=0;
 }
 
 int GetSongPos(void)
 {
   int pos;
-
+printf("TODO - JUDAS GET SONG POS\n");
+/*
   switch(SongType)
   {
     case XM:  pos=judas_getxmpos();  break;
@@ -300,12 +310,16 @@ int GetSongPos(void)
   }
 
   return(pos);
+  * */
+  return 0;
+  
 }
 
 int GetSongLine(void)
 {
   int pos;
-
+printf("TODO - JUDAS FREEXM\n");
+/*
   switch(SongType)
   {
     case XM:  pos=judas_getxmline();  break;
@@ -314,10 +328,16 @@ int GetSongLine(void)
   }
 
   return(pos);
+  * *
+  */
+  return 0;
 }
 
 void mostrar_mod_meters(void)
 {
+	printf("TODO - MOD METERS\n");
+	
+	/*
   modinfo *mymodinfo=(modinfo *)v.aux;
   int     an=v.an/big2, al=v.al/big2;
   int     x, y, con, canal, ancho_barra;
@@ -375,6 +395,7 @@ void mostrar_mod_meters(void)
       last_mod_clean = 1;
     }
   }
+  * */
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -397,6 +418,8 @@ typedef struct _HeadDC {
 } HeadDC;
 
 void OpenSound(void) {
+	printf("TODO - divpcm.cpp OpenSound\n");
+	/*
   pcminfo   *mypcminfo;
   SoundInfo *SI=NULL;
   int       num;
@@ -474,10 +497,13 @@ void OpenSound(void) {
       nueva_ventana((int)PCM0);
     }
   }
+  * */
 }
 
 void OpenSoundFile(void) // Abre el fichero SoundPathName
 {
+	printf("TODO - divpcm.cpp OpenSound\n");
+#ifdef NOTYET
   pcminfo   *mypcminfo;
   SoundInfo *SI=NULL;
 
@@ -561,10 +587,13 @@ void OpenDesktopSound(FILE *f)
 */
 
   nueva_ventana_carga((int)PCM0,ventana_aux.x,ventana_aux.y);
+#endif
 }
 
 void SaveSound(pcminfo *mypcminfo, char *dst)
 {
+	printf("TODO - divpcm.cpp SaveSound\n");
+#ifdef NOTYET
   FILE   *dstfile;
   HeadDC MyHeadDC;
   int    length;
@@ -685,6 +714,9 @@ void SaveSound(pcminfo *mypcminfo, char *dst)
 
   if(byte_ptr != (byte *)mypcminfo->SoundData) free(byte_ptr);
   fclose(dstfile);
+
+#endif
+
 }
 
 void SaveDesktopSound(pcminfo *mypcminfo, FILE *f)
@@ -779,6 +811,9 @@ void OpenSong(void) {
 }
 
 void OpenDesktopSong(void) {
+printf("TODO - divpcm.cpp OpenDesktopSound\n");
+
+#ifdef NOTYET
   modinfo *mymodinfo;
 
   if((modinfo_aux=(char *)malloc(sizeof(modinfo)))==NULL)
@@ -812,10 +847,15 @@ void OpenDesktopSong(void) {
   memcpy(mymodinfo->pathname,SongPathName,256);
 
   nueva_ventana_carga((int)MOD0,ventana_aux.x,ventana_aux.y);
+#endif
+
 }
 
 void PlaySong(char *pathname)
 {
+	printf("TODO - divpcm.cpp PlaySong\n");
+#ifdef NOTYET
+
   modinfo *mymodinfo=(modinfo *)v.aux;
 
   if(judas_channel[0].smp) judas_stopsample(0);
@@ -851,6 +891,8 @@ void PlaySong(char *pathname)
     case S3M: SongChannels = judas_gets3mchannels(); break;
     case MOD: SongChannels = judas_getmodchannels(); break;
   }
+
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -877,7 +919,7 @@ typedef struct _SND {
 SND     DesktopSND[100];
 int     NumSND;   // Contador de sonidos pegados durante una edicion
 int     ConSND=1; // Contador de sonidos pegados durante toda la sesion
-SAMPLE  sample;
+//SAMPLE  sample;
 CLP     Clipboard = { 0, 0, NULL };
 int     PosY=31;
 
@@ -1097,7 +1139,10 @@ void EditSound2(void)
 
 void EditSound3(void)
 {
+	printf("TODO - divpcm.cpp EditSound3\n");
+#ifdef NOTYET
   if(judas_channel[0].smp) judas_stopsample(0);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1136,6 +1181,8 @@ void RecSound0(void)
 
 void RecSound1(void)
 {
+	printf("TODO - divpcm.cpp RecSound1\n");
+#ifdef NOTYET
   int an=v.an/big2,al=v.al/big2;
 
   char drive[_MAX_DRIVE+1];
@@ -1161,6 +1208,7 @@ void RecSound1(void)
   wrectangulo(v.ptr, an, al,  c0, 3, 29, an-6, 20);
   wwrite_in_box(v.ptr,an,an-4,al,an/2,31,1,texto[563],c3);
   wwrite_in_box(v.ptr,an,an-4,al,an/2,40,1,texto[564],c3);
+#endif
 }
 
 void RecSound2(void)
@@ -1227,6 +1275,8 @@ void RecSound3(void)
 
 void ModifySound(int option)
 {
+	printf("TODO - divpcm.cpp ModifySound\n");
+#ifdef NOTYET
   pcminfo   *mypcminfo=(pcminfo *)pcminfo_aux;
   pcminfo   pcminfo_bak;
   SoundInfo *SI=NULL;
@@ -1513,10 +1563,13 @@ void ModifySound(int option)
     if(value> 32767) value= 32767;
     buffer[pos]=(short)value;
   }
+#endif
 }
 
 void ChangeSoundFreq(int freq)
 {
+	printf("TODO - divpcm.cpp ChangeSoundFreq\n");
+#ifdef NOTYET
   pcminfo   *mypcminfo=(pcminfo *)pcminfo_aux;
   pcminfo   pcminfo_bak;
   byte      *FileBuffer;
@@ -1582,10 +1635,14 @@ void ChangeSoundFreq(int freq)
   free(SI);
   free(FileBuffer);
   free(short_ptr);
+#endif
+
 }
 
 void RecordSound(void)
 {
+	printf("TODO - divpcm.cpp RecordSound\n");
+#ifdef NOYET
   HeadDC         MyHeadDC;
   FILE           *f;
   unsigned short ra;
@@ -1702,10 +1759,13 @@ void RecordSound(void)
   dmastatus();
 
   PollRecord();
+#endif
 }
 
 void PollRecord(void)
 {
+	printf("TODO - divpcm.cpp PollRecord\n");
+#ifdef NOTYET
   FILE *f;
   int  length;
 
@@ -1754,6 +1814,9 @@ void PollRecord(void)
   InitSound();
   MIX_Reset();
   set_mixer();
+
+#endif
+
 }
 
 int JudasProgressRead(int handle, short *buffer, int size)
@@ -1824,6 +1887,9 @@ void CopyNewSound(pcminfo *mypcminfo, int ini, int fin)
 
 void PasteNewSounds(void)
 {
+	printf("TODO - divpcm.cpp PasteNewSounds\n");
+
+#ifdef NOTYET
   pcminfo   *mypcminfo;
   byte      *FileBuffer;
   SoundInfo *SI=NULL;
@@ -1879,6 +1945,8 @@ void PasteNewSounds(void)
 
     nueva_ventana((int)PCM0);
   }
+#endif
+  
 }
 
 byte *SaveSoundMem(pcminfo *mypcminfo)
@@ -1961,6 +2029,8 @@ int IsWAV(char *FileName)
 
 int NewSample(pcminfo *mypcminfo)
 {
+	printf("TODO - divpcm.cpp NewSample\n");
+#ifdef NOTYET
   mypcminfo->sample = judas_allocsample(mypcminfo->SoundSize*2);
   if(judas_error != JUDAS_OK) return(0);
   mypcminfo->sample->repeat    = mypcminfo->sample->start;
@@ -1968,8 +2038,9 @@ int NewSample(pcminfo *mypcminfo)
   mypcminfo->sample->voicemode = VM_ON | VM_16BIT;
   judas_ipcorrect(mypcminfo->sample);
   mypcminfo->SoundData = (short *)(mypcminfo->sample->start);
-
+#endif
   return(1);
+ 
 }
 
 void wline(char *ptr,int realan,int an,int al,int x0, int y0, int x1, int y1, char color) {
