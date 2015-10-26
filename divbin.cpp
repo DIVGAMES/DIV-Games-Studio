@@ -1,5 +1,5 @@
 #include "global.h"
-#include "FPGFILE.HPP"
+#include "fpgfile.hpp"
 
 extern HeadFPG HeadFPGArrastre;
 void FPG2();
