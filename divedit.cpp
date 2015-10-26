@@ -5,6 +5,59 @@
 
 #include "global.h"
 
+
+void _completo(void);
+void error_cursor(void);
+void f_desmarcar(void);
+void f_marcar(void);
+void f_down(void);
+void f_up(void);
+void f_right(void);
+void f_left(void);
+void maximizar(void);
+void resize(void);
+int get_slide_x(void);
+void editor(void); 
+void _parcial(void);
+void error_cursor2(void);
+void delete_text_cursor(void);
+void f_cortar_bloque(int borrar);
+void f_pegar_bloque(void);
+int linelen(byte * p);
+void f_fin(void);
+void f_word_right2(void);
+void f_word_left(void);
+void f_avpag(void);
+void f_repag(void);
+void f_destabulador(void);
+void f_insert(void);
+void f_suprimir(void);
+void f_backspace(void);
+void f_tabulador(void);
+void f_delete(void);
+void f_word_right(void);
+void f_bof(void);
+void f_eof(void);
+void f_eop(void);
+void f_enter(void);
+void f_sobreescribir(void);
+void f_insertar(void);
+void quitar_espacios(void);
+void comprobar_memoria(int bloque_lon);
+void text_cursor(void);
+int in_block(void);
+void f_cortar(int borrar);
+void test_cursor2(void);
+void delete_line(void);
+void barra_info(void);
+void barras_desplazamiento(void);
+void put_char3(byte * ptr, int an, byte c,int block, byte color);
+void test_cursor(void);
+void put_char2(byte * ptr, int an, byte c,byte color);
+void pinta_segmento_procesos(void);
+
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Constants
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -144,7 +197,7 @@ void programa1(void) {
 }
 
 void programa2(void) {
-  static bloque=0,bloque_x,bloque_y;
+  static int bloque=0,bloque_x,bloque_y;
   int n,m,min,max;
   int an=v.an,al=v.al;
   if (big) { an/=2; al/=2; }
@@ -817,7 +870,7 @@ void comprobar_memoria(int bloque_lon) {
     write_line();
     p=realloc(v.prg->buffer,v.prg->file_lon+bloque_lon+buffer_grow);
     if (p!=NULL) {
-      ip=p-v.prg->buffer;
+      ip=(char*)p-v.prg->buffer;
       v.prg->buffer+=ip;
       v.prg->lptr+=ip;
       v.prg->vptr+=ip;
@@ -984,7 +1037,7 @@ void f_cortar(int borrar) { // 0-Copiar, 1-Cortar, 2-Borrar
     }
 
     if (k2<v.prg->buffer+v.prg->file_lon)
-      memmove(k1,k2+1,v.prg->buffer+v.prg->file_lon-k2);
+      memmove(k1,k2+1,(byte *)v.prg->buffer+v.prg->file_lon-k2);
 
     v.prg->file_lon-=k2-k1+1;
 
@@ -1035,7 +1088,7 @@ void f_pegar_bloque(void) {
     ini=v.prg->lptr+v.prg->columna-1-espacios; // Dode va a pegar el bloque
 
     if (ini<v.prg->buffer+v.prg->file_lon)
-      memmove(ini+espacios+lon_papelera,ini,v.prg->buffer+v.prg->file_lon-ini);
+      memmove(ini+espacios+lon_papelera,ini,(byte *)v.prg->buffer+v.prg->file_lon-ini);
 
     memset(ini,' ',espacios); // Pega los espacios
 
@@ -1440,10 +1493,10 @@ byte * retrocede(byte * q) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void rellena_colin(void) {  // Funciขn para obtener los colores de la siguiente lกnea
-  char *p=csource;
+  unsigned char *p=csource;
   int i=0;
 
-  if (!coloreador || !strstr(v.titulo,".PRG")) {
+  if (!coloreador || strstr((const char *)v.titulo,".PRG")) {
     memset(colin,ce4,1024);
   } else do {
     clexico();
@@ -2278,7 +2331,7 @@ void write_line(void) {
   fin=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
 
   if (ini<v.prg->buffer+old_lon) {
-    lon=v.prg->buffer+old_lon-ini;
+    lon=v.prg->buffer+old_lon-(int)ini;
     memmove(fin,ini,lon);
     if (kini>ini && kini<ini+lon) kini+=fin-ini;
     if (kfin>ini && kfin<ini+lon) kfin+=fin-ini;
@@ -2301,7 +2354,7 @@ void delete_line(void) {
   fin=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
 
   if (ini<v.prg->buffer+old_lon) {
-    lon=v.prg->buffer+old_lon-ini;
+    lon=v.prg->buffer+old_lon-(int)ini;
     memmove(fin,ini,lon);
     if (kini>=ini && kini<ini+lon) kini+=fin-ini;
     if (kfin>=ini && kfin<ini+lon) kfin+=fin-ini;
@@ -2818,7 +2871,7 @@ void abrir_programa_para_fernando(char *nombre,char *path) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int lp1[512];     // Numero de lกnea en el que est n los procesos
-char * lp2[512];  // Punteros a las lกneas de los procesos
+byte * lp2[512];  // Punteros a las lกneas de los procesos
 int lp_num;       // Nฃmero de procesos en la lista
 int lp_ini;       // La primera variable que se visualiza en la ventana
 int lp_select;    // La variable seleccionada
@@ -2886,8 +2939,8 @@ void crear_lista_procesos(char * buffer, int file_lon) {
           cwork[strlen(cwork)]=lower[p[n++]];
         }
         for (n=0;n<lp_num;n++) {
-          p=strchr(lp2[n],' ');
-          if (p>strchr(lp2[n],'(') || p==NULL) p=strchr(lp2[n],'(');
+          p=strchr((char *)lp2[n],' ');
+          if (p>strchr((char *)lp2[n],'(') || p==NULL) p=strchr((char *)lp2[n],'(');
           memcpy(cwork2,lp2[n],p-lp2[n]);
           cwork2[p-lp2[n]]=0;
           for (m=strlen(cwork2)-1;m>=0;m--) cwork2[m]=lower[cwork2[m]];
