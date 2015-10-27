@@ -575,7 +575,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
 
     if (estado==0) { num=-1; return; }
 
-    // Se comienza a leer un nuevo thumbnail
+    // read a new thumbnail
     if (estado==1)
     {
       if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".FNT"));
