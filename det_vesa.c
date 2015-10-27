@@ -29,9 +29,8 @@ int compare_mode(void const *aa, void const *bb) {
   return((int)(*a)*10000+*(a+1)>(int)(*b)*10000+*(b+1));
 }
 
-void detectar_vesa(void) { // Detecta los modos de v¡deo disponibles
-#ifdef NOTYET
-	short *modelist;
+void detectar_vesa(void) { // Detects available video modes
+  short *modelist;
   int n;
 
   num_modos=6;
@@ -42,6 +41,8 @@ void detectar_vesa(void) { // Detecta los modos de v¡deo disponibles
   modos[4].ancho=360; modos[4].alto=360; modos[4].modo=0;
   modos[5].ancho=376; modos[5].alto=282; modos[5].modo=0;
   modos[5].ancho=376; modos[5].alto=282; modos[5].modo=0;
+
+#ifdef NOTYET
 
 	if (vbeInit() != 0) {
     VersionVesa=0;

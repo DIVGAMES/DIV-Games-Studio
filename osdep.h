@@ -1,3 +1,5 @@
+#ifndef __OSDEP_H
+#define __OSDEP_H
 // OSDEP includes
 // should be good for most SDL ports
 
@@ -46,3 +48,6 @@ extern void _splitpath (
 );
 
 extern char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes);
+
+#endif // __OSDEP_H
+
