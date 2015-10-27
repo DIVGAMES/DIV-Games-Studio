@@ -76,7 +76,7 @@ SET(TARGET ${TARGET}-${PLATFORM} ) #-${GIT_BRANCH}-${GIT_COMMIT_HASH})
 # make this a c++ app
 #IF(CPLUSPLUS) 
 SET_SOURCE_FILES_PROPERTIES(${DIV_SOURCES} ${VISOR_SOURCES} PROPERTIES LANGUAGE CXX )
-ADD_DEFINITIONS( -fpermissive  -funsigned-char -Wfatal-errors ) #-w -DFUZEBUILD="${TARGET}") 
+ADD_DEFINITIONS( -fpermissive -w -funsigned-char -Wfatal-errors ) #-w -DFUZEBUILD="${TARGET}") 
 #SET (TARGET ${TARGET}-CXX)
 #ENDIF()
 
