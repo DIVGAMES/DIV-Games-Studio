@@ -1,4 +1,4 @@
-#include "../global.h"
+#include "global.h"
 #include "resource.hpp"
 #include "global.hpp"
 

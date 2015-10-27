@@ -18,7 +18,7 @@
 #include "divsound.h"
 #include "divmixer.hpp"
 #include "divsb.h"
-#include "runtime/sysdac.h"
+#include "sysdac.h"
 
 //#include "inc\svga.h"
 
