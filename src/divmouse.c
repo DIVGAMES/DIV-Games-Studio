@@ -191,7 +191,7 @@ void libera_drag(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void read_mouse2(void) {
-//printf("divmouse.cpp - read_mouse2 REPLACE WITH SDL VERSION\n");
+//printf("divmouse.c- read_mouse2 REPLACE WITH SDL VERSION\n");
 
 #ifdef NOTYET
   union REGS regs;

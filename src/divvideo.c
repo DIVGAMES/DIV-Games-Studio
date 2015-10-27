@@ -25,7 +25,9 @@ void volcadopx(byte * p);
 #define SC_INDEX        0x3c4   //Sequence Controller Index
 #define MISC_OUTPUT     0x3c2   //Miscellaneous Output register
 
-byte * vga = (byte *) 0xA0000; // Pantalla fisica
+//byte * vga = (byte *) 0xA0000; // Pantalla fisica
+
+SDL_Surface *vga;
 
 #define MAX_YRES 2048
 
@@ -98,7 +100,8 @@ int LinealMode;
 int modovesa;
 
 void svmode(void) {
-	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
+//	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
+	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
 #ifdef NOTYET
   VBESCREEN Screen;
 
@@ -201,6 +204,7 @@ void rvmode(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcado(byte *p) {
+//printf("%d\n",vga_an*1000+vga_al);
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 

@@ -649,9 +649,9 @@ void inicializa_entorno() {
   vacia_buffer();
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Error (grave) de ejecuciขn
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+///////////////////////////////////////////////////////////////////////////////
+//      Execution Error (fatal)
+///////////////////////////////////////////////////////////////////////////////
 
 // 1 - Out of memory - (algฃn malloc fundamental)
 // 2 - Too many process
@@ -687,7 +687,7 @@ void interr0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Return from interpreter with exit ( " message " code)
+//      Return from interpreter with exit ("message" code)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void intmsg1(void) {
@@ -856,10 +856,11 @@ void entorno(void) {
 
     }
 
-    //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-    // Determina la forma del cursor
-    //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-
+    
+    ///////////////////////////////////////////////////////////////////////////
+    // Determine the shape of the cursor (mouse pointer)
+    ///////////////////////////////////////////////////////////////////////////
+   
     if (n==max_windows) mouse_graf=1;
     else switch(ventana[n].primer_plano) {
       case 0:
@@ -875,7 +876,7 @@ void entorno(void) {
     }
 
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-    // Si estamos sobre una ventana que no es la primera ...
+    // If we are on a window that is not the first ...
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
     if (n!=0 && n<max_windows) {
@@ -1399,7 +1400,7 @@ void entorno_dialogo(void) {
   fin_dialogo=0;
   
   printf("Env Dialog\n");
-  return;
+//  return;
   do { dialogo_invocado=0;
 
     if (reloj==old_reloj) loop_count++; else loop_count=0;
@@ -1499,7 +1500,7 @@ void entorno_dialogo(void) {
     }
 
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-    // Control de teclado
+    // Keyboard Control
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
     if ((key(_ESC) && !key(_L_CTRL)) ||
@@ -1510,7 +1511,7 @@ void entorno_dialogo(void) {
     }
 
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-    // Finaliza el bucle central
+    // End central loop
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
     if ((shift_status&8) && scan_code==31) shell();
