@@ -1048,7 +1048,7 @@ printf("compilar\n");
 
   convert=1; ultima_linea=source; fwrite(&cero,1,1,lprg);
   acceso_remoto=0; parametros=0; linea=1;
-
+printf("1051\n");
   sintactico();
 
   i=obj; while (i<iobj) {
@@ -1692,6 +1692,7 @@ void lexico(void) {
   char ext[_MAX_EXT+1];
 
   int n;
+printf("lexico\n");
 
   if (!coment) {old_linea=linea; old_ierror=ierror; old_ierror_end=ierror_end;}
 
@@ -3152,7 +3153,7 @@ void sintactico (void) {
   char cWork[256];
 
   int num_extern;
-
+printf("sintactico\n");
   lexico();
 
   //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�

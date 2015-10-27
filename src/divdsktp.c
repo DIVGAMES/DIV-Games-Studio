@@ -182,7 +182,7 @@ modinfo *mymodinfo;
 //  fprintf(lst,"vid_mode=%d,vid_modebig=%d\n",Setupfile.Vid_mode,Setupfile.Vid_modeBig);
 
         // Pone una cabecera de identificaci¢n
-        desktop=fopen("system\\session.dtf","wb");
+        desktop=fopen("system/session.dtf","wb");
         n=fwrite("dtf\x1a\x0d\x0a\x0",8,1,desktop);
         // fprintf(lst,"header %d elementos escritos <<<\n",n);
         // guarda la antigua resoluci¢n
@@ -375,7 +375,7 @@ int Can_UpLoad_Desktop()
 char cWork[8];
 int iWork;
         VidModeChanged=0;
-        desktop=fopen("session.dtf","rb");
+        desktop=fopen("system/session.dtf","rb");
         if(desktop==NULL)
                 return(0);
 printf("Found session\n");
@@ -408,7 +408,7 @@ int UpLoad_Desktop()
 int iWork,iWork2,iWork3,x,numvent;
 FILE *f;
 
-        desktop=fopen("session.dtf","rb");
+        desktop=fopen("system/session.dtf","rb");
         if(desktop==NULL)
                 return(0);
 	//	printf("loading saved session\n");

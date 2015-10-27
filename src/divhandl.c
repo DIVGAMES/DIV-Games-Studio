@@ -134,6 +134,7 @@ void menu_programas2(void) {
   if ((old_mouse_b&1) && !(mouse_b&1)) {
 
     v_tipo=8;
+      printf("program menu %d\n",v.estado);
 
     switch (v.estado) {
 
@@ -255,13 +256,13 @@ void menu_programas2(void) {
           source_len=ventana[n].prg->file_lon;
           v_ventana=n;
           ejecutar_programa=2;
-          DaniDel("system\\exec.ins");
+          DaniDel("system/exec.ins");
           compilar_programa();
           if(numero_error!=-1) {
             goto_error();
             if (v_ayuda) help(500+numero_error);
           } else {
-            f=fopen("system\\exec.ins","rb");
+            f=fopen("system/exec.ins","rb");
             if (f!=NULL) {
               fclose(f); crear_instalacion();
               DaniDel("install.div");
@@ -1011,7 +1012,7 @@ void imp_fontmap(void) {
   v_modo=1; v_tipo=5;
 
   strcpy(FontPathName,tipo[v_tipo].path);
-  strcat(FontPathName,"\\");
+  strcat(FontPathName,"/");
   strcat(FontPathName,FontName);
 
   v_texto=texto[264]; dialogo((int)browser0);
@@ -1025,7 +1026,7 @@ void imp_fontmap(void) {
 
   strcpy(FontName,input);
   strcpy(FontPathName,tipo[v_tipo].path);
-  if (FontPathName[strlen(FontPathName)-1]!='\\') strcat(FontPathName,"\\");
+  if (FontPathName[strlen(FontPathName)-1]!='/') strcat(FontPathName,"/");
   strcat(FontPathName,input); // * FontPathName ruta completa del fichero
 
   buffer_len=1356+256*16+map_an*map_al; // Pide memoria suficiente para el FNT
@@ -1742,7 +1743,7 @@ void mapa2(void) {
     for(n=0; n<max_windows;  n++) thumb_map[n].ptr=NULL;
     strcpy(full, tipo[1].path);
     if (full[strlen(full)-1]!='/') strcat(full,"/");
-    strcat(full, "SYSTEM\\BRUSH.FPG");
+    strcat(full, "system/brush.fpg");
 
     textura_color=NULL;
 
@@ -1904,7 +1905,7 @@ void usuario3(void) {
   FILE * f;
 
   if (strlen(user1) || strlen(user2)) {
-    if ((f=fopen("system\\user.nfo","wb"))!=NULL) {
+    if ((f=fopen("system/user.nfo","wb"))!=NULL) {
       fwrite(user1,1,128,f);
       fwrite(user2,1,128,f);
       fclose(f);
@@ -2462,8 +2463,8 @@ extern int num_taggeds;
 
 void analizar_input(void) {
 	printf("analizar_input\n");
-	return;
-	/*
+//	return;
+	
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
@@ -2476,7 +2477,7 @@ void analizar_input(void) {
 
   if (!strlen(input)) strcpy(input,mascara);
   else if ((n=strlen(input))>1)
-    if (input[n-1]=='.' && input[n-2]=='.') strcat(input,"\\");
+    if (input[n-1]=='.' && input[n-2]=='.') strcat(input,"/");
 
   if (strchr(input,':')!=NULL)
     if (strchr(unidades,toupper(*(strchr(input,':')-1)))==NULL) {
@@ -2489,7 +2490,7 @@ void analizar_input(void) {
     _dos_setdrive(drive[0]-'A'+1,&n);
     getcwd(full,PATH_MAX+1);
     if (full[0]==drive[0]) {
-      if (strlen(dir)>1) if (dir[strlen(dir)-1]=='\\') dir[strlen(dir)-1]=0;
+      if (strlen(dir)>1) if (dir[strlen(dir)-1]=='/') dir[strlen(dir)-1]=0;
       if (!strlen(dir) || !chdir(dir)) {
         strcpy(input,fname); strcat(input,ext);
         if (strlen(input)) {
@@ -2557,7 +2558,7 @@ void analizar_input(void) {
       } else _dos_setdrive(tipo[v_tipo].path[0]-'A'+1,&n);
     }
   } else strcpy(input,mascara);
-*/
+
   call(v.paint_handler); v.volcar=1;
 }
 

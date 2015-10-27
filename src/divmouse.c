@@ -199,7 +199,7 @@ while(SDL_PollEvent(&event))
             if (event.type == SDL_QUIT)
             {
                 /* Quit the application */
-                exit(0);
+                salir_del_entorno=1;
             }
               if (event.type == SDL_MOUSEMOTION)
             {

@@ -264,7 +264,7 @@ int realen;
 void betatest4(void) {
   FILE * f;
 
-  f=fopen("SYSTEM\\BETA.NFO","rb");
+  f=fopen("system/beta.nfo","rb");
   if (f==NULL) { beta_status=5; return; }
   fseek(f,4,SEEK_SET);
   realen=fread(realname,1,128,f);
@@ -387,13 +387,12 @@ system_clock = &mclock;
 
 
   n=strlen(full);
-#ifdef NOTYET
-  while (n && full[n]!='\\') n--;
+  while (n && full[n]!='/') n--;
   full[n]=0;
-  if (full[n-1]==':') strcat(full,"\\");
+  if (full[n-1]==':') strcat(full,"/");
   _dos_setdrive((int)toupper(full[0])-'A'+1,&n);
   chdir(full);
-#endif
+
   if (cpu_type==3) chdir("..");
 
   getcwd(tipo[1].path,PATH_MAX+1);
@@ -401,10 +400,10 @@ system_clock = &mclock;
   if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
     safe=33;
     DaniDel("sound.cfg");
-    DaniDel("system\\setup.bin");
-    DaniDel("system\\session.dtf");
+    DaniDel("system/setup.bin");
+    DaniDel("system/session.dtf");
   } else {
-    if ((f=fopen("setup.bin","rb"))!=NULL) {
+    if ((f=fopen("system/setup.bin","rb"))!=NULL) {
       fclose(f);
   //    printf("setup.bin found\n");
       primera_vez=0;
@@ -606,7 +605,7 @@ void inicializa_entorno() {
 // Have we come back from running a prog?
   if (Interpretando) {
     vacia_buffer();
-    if ((f=fopen("system\\exec.err","rb"))!=NULL) {
+    if ((f=fopen("system/exec.err","rb"))!=NULL) {
       fread(&error_code,4,1,f);
       if (error_code) dialogo((int)interr0);
       else {
@@ -1355,7 +1354,7 @@ char *command_path() {
 }
 
 void shell(void) {
-	/*
+	
   char *s=command_path();
   unsigned n;
 
@@ -1365,13 +1364,13 @@ void shell(void) {
 
     EndSound();
 
-    _setvideomode(_TEXTC80);
+//    _setvideomode(_TEXTC80);
     putenv("PROMPT=[DIV] $P$G");
     chdir(tipo[0].path);
 
-    flushall();
-    _heapmin();
-    _heapshrink();
+  //  flushall();
+  //  _heapmin();
+  //  _heapshrink();
     system(s);
 
     _dos_setdrive((int)toupper(*tipo[1].path)-'A'+1,&n);
@@ -1385,7 +1384,7 @@ void shell(void) {
 
     InitSound();
   }
-  */
+  
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3045,7 +3044,7 @@ void inicializacion(void) {
   crea_barratitulo();
 
   svmode(); set_dac(dac); read_mouse();
-
+printf("set complete copy\n");
   volcado_completo=1;
   volcado(copia);
 
@@ -3771,7 +3770,7 @@ FILE *file;
         Setupfile.coloreador=coloreador;
         memcpy(&Setupfile.colors_rgb[0],&colors_rgb[0],12*3);
 
-        file=fopen("system\\setup.bin","wb");
+        file=fopen("system/setup.bin","wb");
         fwrite(&Setupfile,1,sizeof(Setupfile),file);
         fclose(file);
 }
@@ -3790,65 +3789,65 @@ void Load_Cfgbin() {
   strcpy(Setupfile.Dir_cwd,tipo[0].path);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\MAP");
+  strcat(cWork,"/MAP");
   strcpy(Setupfile.Dir_map,cWork);
   strcpy(tipo[2].path,cWork);
   strcpy(tipo[9].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\PAL");
+  strcat(cWork,"/PAL");
   strcpy(Setupfile.Dir_pal,cWork);
   strcpy(tipo[3].path,cWork);
   strcpy(tipo[10].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\FPG");
+  strcat(cWork,"/FPG");
   strcpy(Setupfile.Dir_fpg,cWork);
   strcpy(tipo[4].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\FNT");
+  strcat(cWork,"/FNT");
   strcpy(Setupfile.Dir_fnt,cWork);
   strcpy(tipo[5].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\IFS");
+  strcat(cWork,"/IFS");
   strcpy(Setupfile.Dir_ifs,cWork);
   strcpy(tipo[6].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\PCM");
+  strcat(cWork,"/PCM");
   strcpy(Setupfile.Dir_pcm,cWork);
   strcpy(tipo[7].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\PRG");
+  strcat(cWork,"/PRG");
   strcpy(Setupfile.Dir_prg,cWork);
   strcpy(tipo[8].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\PCM");
+  strcat(cWork,"/PCM");
   strcpy(Setupfile.Dir_pcms,cWork);
   strcpy(tipo[11].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\PRJ");
+  strcat(cWork,"/PRJ");
   strcpy(Setupfile.Dir_prj,cWork);
   strcpy(tipo[12].path,cWork);
 
   strcpy(tipo[13].path,tipo[1].path);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\WLD");
+  strcat(cWork,"/WLD");
   strcpy(Setupfile.Dir_wld,cWork);
   strcpy(tipo[15].path,cWork);
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\MOD");
+  strcat(cWork,"/MOD");
   strcpy(Setupfile.Dir_mod,cWork);
   strcpy(tipo[16].path,cWork);
 
-  file=fopen("system\\setup.bin","rb");
+  file=fopen("system/setup.bin","rb");
   if(file==NULL) {
     if (primera_vez) {
       strcpy(Setupfile.Desktop_Image,texto[487]); // Informacion del tapiz
@@ -4125,7 +4124,7 @@ void DaniDel(char *name) {
   strcpy(cwork2, name);
   for(x=strlen(cwork2)-1;; x--) {
     if(x==-1) { cwork2[0]=0; break; }
-    if(cwork2[x]=='\\') { cwork2[x+1]=0; break; }
+    if(cwork2[x]=='/') { cwork2[x+1]=0; break; }
   }
 
   rc=_dos_findfirst(name,_A_NORMAL,&ft);

@@ -582,7 +582,8 @@ void help(int n){
   }
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
-    if((f=fopen("help\\help.div","rb"))!=NULL) {
+    if((f=fopen("help/help.div","rb"))!=NULL) {
+		printf("loading help\n");
       fseek(f,helpidx[n*2],SEEK_SET);
       if ((h_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
         if ((help_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {

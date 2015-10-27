@@ -95,6 +95,7 @@ int modovesa;
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
+	modovesa=1;
 
 //printf("%d %d \n",vga->pitch,vga->format->BytesPerPixel);
 #ifdef NOTYET
@@ -106,7 +107,7 @@ void svmode(void) {
   LinealMode=0;
   modovesa=0;
 
-  // Comprueba primero si es un modo vesa
+  // Check first if a VESA mode
 
   for (n=0;n<num_modos;n++) {
     if (vga_an==modos[n].ancho && vga_al==modos[n].alto) {
@@ -198,19 +199,25 @@ void rvmode(void) {
 //      Dump buffer to vga (screen)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+
+void volcadosdl(byte *p) {
+	
+	byte *q = vga->pixels;
+	for (int vy=0; vy<vga_al;vy++) {
+		memcpy(q,p,vga_an);
+		p+=vga_an;
+		q+=vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+	}
+	
+	SDL_Flip(vga);
+}
+
 void volcado(byte *p) {
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 
-//  if (volcado_completo) {
-	 volcadoc320200(p); 
-//} else {
-	volcadop320200(p);
-//}
-	  
-	/*  
-	  
-    if (modovesa) volcadocsvga(p);
+  if (volcado_completo) {
+    if (modovesa) volcadosdl(p);
     else switch(vga_an*1000+vga_al) {
       case 320200: volcadoc320200(p); break;
       case 320240: volcadocx(p); break;
@@ -221,7 +228,7 @@ void volcado(byte *p) {
     }
   } else {
 	  
-    if (modovesa) volcadopsvga(p);
+    if (modovesa) volcadosdl(p); 
     else switch(vga_an*1000+vga_al) {
       case 320200: volcadop320200(p); break;
       case 320240: volcadopx(p); break;
@@ -231,7 +238,7 @@ void volcado(byte *p) {
       case 376282: volcadopx(p); break;
     }
   } 
-  */init_volcado();
+  init_volcado();
 }
 
 void snapshot(byte *p) {
@@ -290,10 +297,10 @@ void volcadoc320200(byte *p) { // COMPLETE
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcadopsvga(byte *p) {
-	printf("divvideo.cpp - volcadopsvga\n");
-#ifdef NOTYET
+//	printf("divvideo.cpp - volcadopsvga\n");
+//#ifdef NOTYET
   int y=0,page,old_page=-1751,point,t1,t2,n;
-  char *q=vga;
+  char *q=vga->pixels;
 
   if(LinealMode) {
    while (y<vga_al) {
@@ -310,12 +317,12 @@ void volcadopsvga(byte *p) {
       if (point+scan[n+1]>65536) {
         t1=65536-point;
         t2=scan[n+1]-t1;
-        if (page!=old_page) SV_setBank((signed long)page);
+ //       if (page!=old_page) SV_setBank((signed long)page);
         memcpy(vga+point,p+scan[n],t1);
-        SV_setBank((signed long)page+1); old_page=page+1;
+ //       SV_setBank((signed long)page+1); old_page=page+1;
         memcpy(vga,p+scan[n]+t1,t2);
       } else {
-        if (page!=old_page) SV_setBank((signed long)(old_page=page));
+       // if (page!=old_page) SV_setBank((signed long)(old_page=page));
         memcpy(vga+point,p+scan[n],scan[n+1]);
       }
     }
@@ -325,34 +332,34 @@ void volcadopsvga(byte *p) {
       if (point+scan[n+3]>65536) {
         t1=65536-point;
         t2=scan[n+3]-t1;
-        if (page!=old_page) SV_setBank((signed long)page);
+   //     if (page!=old_page) SV_setBank((signed long)page);
         memcpy(vga+point,p+scan[n+2],t1);
-        SV_setBank((signed long)page+1); old_page=page+1;
+    //    SV_setBank((signed long)page+1); old_page=page+1;
         memcpy(vga,p+scan[n+2]+t1,t2);
       } else {
-        if (page!=old_page) SV_setBank((signed long)(old_page=page));
+     //   if (page!=old_page) SV_setBank((signed long)(old_page=page));
         memcpy(vga+point,p+scan[n+2],scan[n+3]);
       }
     } p+=vga_an; y++;
   }
-#endif
+//#endif
 }
 
 void volcadocsvga(byte *p) {
-	printf("divvideo.cpp - volcadocsvga\n");
-#ifdef NOTYET
+//	printf("divvideo.cpp - volcadocsvga\n");
+//#ifdef NOTYET
   int cnt=vga_an*vga_al;
   int tpv=0,ActPge=0;
 
   if(LinealMode) memcpy(vga,p,cnt);
   else while(cnt>0) {
-    SV_setBank((signed long)ActPge++);
+    //SV_setBank((signed long)ActPge++);
     tpv=cnt>65536?65536:cnt;
     memcpy(vga,p,tpv);
     p+=tpv;
     cnt-=tpv;
   }
-#endif
+//#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -418,7 +425,7 @@ void vgacpy(byte * q, byte * p, int n) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Selecciona una ventana para su posterior volcado
+//      Select a window for subsequent dump
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void init_volcado(void) { memset(&scan[0],0,MAX_YRES*8); volcado_completo=0; }
