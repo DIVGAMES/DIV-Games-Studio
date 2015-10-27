@@ -3088,7 +3088,7 @@ typedef struct _DLL{
 DLL *ImpDLL;
 int PrevOrder;
 int nFuns;
-PE    *pe;
+extern PE    *pe;
 
 void CNT_export(char *name,void *dir,int nparms)
 {
