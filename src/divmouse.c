@@ -28,7 +28,7 @@ int wmouse_in(int x, int y, int an, int al) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Coloca el ratขn en la posiciขn indicada
+//      Place your mouse in the indicated position
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void set_mouse(word x, word y) {
@@ -37,7 +37,7 @@ void set_mouse(word x, word y) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Lee la posiciขn y botones del ratขn
+//      Read mouse button and position
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void read_mouse(void) {
@@ -192,6 +192,38 @@ void libera_drag(void) {
 
 void read_mouse2(void) {
 //printf("divmouse.c- read_mouse2 REPLACE WITH SDL VERSION\n");
+SDL_Event event;
+while(SDL_PollEvent(&event))
+        {
+            /* If a quit event has been sent */
+            if (event.type == SDL_QUIT)
+            {
+                /* Quit the application */
+                exit(0);
+            }
+              if (event.type == SDL_MOUSEMOTION)
+            {
+				m_x+=event.motion.xrel;
+				m_y+=event.motion.yrel;
+			}
+            /* If a button on the mouse is pressed. */
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+				printf("click\n");
+				m_b = 1;
+			}
+			
+			if (event.type == SDL_MOUSEBUTTONUP)
+            {
+				m_b = 0;
+			}
+			
+                /* If the left button was pressed. */
+//                if (event.button.button == SDL_BUTTON_LEFT)
+                    /* Quit the application */
+  //                  quit = 1;
+            
+        }
 
 #ifdef NOTYET
   union REGS regs;

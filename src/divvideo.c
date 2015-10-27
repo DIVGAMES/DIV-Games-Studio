@@ -74,9 +74,9 @@ void set_dac(byte *_dac) {
 	int i;
 	int b=0;
 	for(i=0;i<256;i++){
-          colors[i].r=_dac[b];
-          colors[i].g=_dac[b+1];
-          colors[i].b=_dac[b+2];
+          colors[i].r=_dac[b]*4;
+          colors[i].g=_dac[b+1]*4;
+          colors[i].b=_dac[b+2]*4;
           b+=3;
     }
 	if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
@@ -96,6 +96,7 @@ void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
 
+//printf("%d %d \n",vga->pitch,vga->format->BytesPerPixel);
 #ifdef NOTYET
   VBESCREEN Screen;
 
@@ -198,11 +199,17 @@ void rvmode(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcado(byte *p) {
-//printf("%d\n",vga_an*1000+vga_al);
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 
   if (volcado_completo) {
+	 volcadop320200(p); 
+} else {
+	volcadop320200(p);
+}
+	  
+	/*  
+	  
     if (modovesa) volcadocsvga(p);
     else switch(vga_an*1000+vga_al) {
       case 320200: volcadoc320200(p); break;
@@ -213,6 +220,7 @@ void volcado(byte *p) {
       case 376282: volcadocx(p); break;
     }
   } else {
+	  
     if (modovesa) volcadopsvga(p);
     else switch(vga_an*1000+vga_al) {
       case 320200: volcadop320200(p); break;
@@ -222,7 +230,8 @@ void volcado(byte *p) {
       case 360360: volcadopx(p); break;
       case 376282: volcadopx(p); break;
     }
-  } init_volcado();
+  } 
+  */init_volcado();
 }
 
 void snapshot(byte *p) {
@@ -243,17 +252,18 @@ void snapshot(byte *p) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Volcado en el modo 320x200
+//      Dump mode 320x200
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void volcadop320200(byte *p) {
-#ifdef NOTYET
+void volcadop320200(byte *p) { // PARTIAL
+//printf("partial dump\n");
+//#ifdef NOTYET
   int y=0,n;
-  byte * q=vga;
+  byte * q=vga->pixels;
 
-  #ifdef GRABADORA
-  RegScreen(p);
-  #endif
+//  #ifdef GRABADORA
+//  RegScreen(p);
+//  #endif
 
   while (y<vga_al) {
     n=y*4;
@@ -261,10 +271,12 @@ void volcadop320200(byte *p) {
     if (scan[n+3]) memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
     q+=vga_an; p+=vga_an; y++;
   }
-#endif
+//#endif
+SDL_Flip(vga);
 }
 
-void volcadoc320200(byte *p) {
+void volcadoc320200(byte *p) { // COMPLETE
+//printf("complete dump\n");
 #ifdef NOTYET
   #ifdef GRABADORA
   RegScreen(p);
