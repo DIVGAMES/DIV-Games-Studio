@@ -411,7 +411,7 @@ FILE *f;
         desktop=fopen("session.dtf","rb");
         if(desktop==NULL)
                 return(0);
-		printf("loading saved session\n");
+	//	printf("loading saved session\n");
         
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
@@ -420,10 +420,10 @@ FILE *f;
         // Load each of the windows one by one
         for(x=0;x<numvent;x++)
         {
-			printf("Restoring window (%d)\n",x);
+//			printf("Restoring window (%d)\n",x);
                 // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
-                printf("Type %d\n",(byte)ventana_aux.tipo);
+  //              printf("Type %d\n",(byte)ventana_aux.tipo);
                 switch(ventana_aux.tipo)
                 {
                         case    2: //menu

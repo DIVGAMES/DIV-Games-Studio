@@ -706,7 +706,7 @@ void intmsg0(void) {
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Bucle principal de DIV/OS
+//      Main loop DIV / OS
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 /*
@@ -719,8 +719,12 @@ int IntIncr  = 65536;
 
 byte rndb(void);
 
-int old_reloj,loop_count=0;
-extern int reloj;
+int old_reloj,loop_count=0; 
+extern int reloj; // clock
+
+///////////////////////////////////////////////////////////////////////////////
+//      Environment
+///////////////////////////////////////////////////////////////////////////////
 
 void entorno(void) {
 
@@ -740,7 +744,7 @@ void entorno(void) {
     } old_reloj=reloj;
 
 /*
-    if (GetIRQVector(0) != Irq0Handler) { // en entorno_di logo y en paint
+    if (GetIRQVector(0) != Irq0Handler) { // in dialogue environment and paint
 
       svmode(); set_dac(dac);
       set_mouse(mouse_x,mouse_y);
@@ -759,8 +763,8 @@ void entorno(void) {
     SetIRQVector(0, Irq0Handler);
 */
 
-    if (arrastrar==3) {
-      goto fin_bucle_entorno;
+    if (arrastrar==3) { // drag == 3?
+      goto fin_bucle_entorno; // end loop environment
     }
 
     tecla();
@@ -908,11 +912,11 @@ void entorno(void) {
       v.primer_plano=1; vuelca_ventana(0); v.volcar=0;
       do { read_mouse(); } while(mouse_b&1);
 
-      goto fin_bucle_entorno;
+      goto fin_bucle_entorno; // end loop environment
     }
 
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Si estamos dentro del contenido de una ventana ...
+    // If we are within the contents of a window ...
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
     if (n==0 && v.primer_plano==1) if (mouse_in(v.x+2*big2,
@@ -970,10 +974,10 @@ void entorno(void) {
       oldn=0;
 
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    } else { // Si estamos en la barra de control de la ventana ...
+    } else { // If we are in the control bar of the window ...
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-      // Mueve una ventana
+      // Move a window
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
       if (mouse_graf==2 && (mouse_b&1) && !(old_mouse_b&1)) {
@@ -981,7 +985,7 @@ void entorno(void) {
       }
 
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-      // Cierra una ventana
+      // Close the window
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
       if (mouse_graf==5) {
@@ -1059,10 +1063,11 @@ void entorno(void) {
       }
     }
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Control de las ventanas tipo timer
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
+    ///////////////////////////////////////////////////////////////////////////
+    // Type windows control timer
+    ///////////////////////////////////////////////////////////////////////////
+    
+	// end loop environment
     fin_bucle_entorno:
 
     for (m=0;m<max_windows;m++) {
@@ -1097,7 +1102,7 @@ void entorno(void) {
           wdown(m);
         }
 
-        if (fin_ventana==2) { // Cierra la ventana(m)
+        if (fin_ventana==2) { // Close the window(m)
           move(0,m);
           cierra_ventana();
         } else if (ventana[m].volcar) {
@@ -1108,14 +1113,14 @@ void entorno(void) {
       }
     }
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    ///////////////////////////////////////////////////////////////////////////
     //  Hotkey del menu programas
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
+    ///////////////////////////////////////////////////////////////////////////
+    
     for (m=0;m<max_windows;m++)
       if (ventana[m].tipo==102 && ventana[m].estado && ventana[m].prg!=NULL) break;
 
-    if (m<max_windows && beta_status==4) { // Si hay un PRG ...
+    if (m<max_windows && beta_status==4) { // If a PRG ...
       n=0;
       if (shift_status&8) switch(scan_code) {
         case 33: n=1; break; // alt+f
