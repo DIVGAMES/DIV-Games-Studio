@@ -970,6 +970,7 @@ void compilar(void) {
   struct objeto * i;
   byte * q, * p;
 
+printf("compilar\n");
   program_type=0;
 
   mensaje_compilacion(texto[201]);
@@ -1008,8 +1009,8 @@ void compilar(void) {
 
   // *** OJO *** Estos dos errores no son "memoria insuficiente"
 
-  if ((linf=fopen("system\\exec.lin","wb"))==NULL) c_error(0,0);
-  if ((lprg=fopen("system\\exec.pgm","wb"))==NULL) c_error(0,0);
+  if ((linf=fopen("system/exec.lin","wb"))==NULL) c_error(0,0);
+  if ((lprg=fopen("system/xec.pgm","wb"))==NULL) c_error(0,0);
 
   imem_max=default_buffer; imem=0;
   if ((mem_ory=mem=(int*)malloc(imem_max*sizeof(int)))==NULL) c_error(0,0);
@@ -1080,7 +1081,7 @@ void compilar(void) {
   mem[0]+=1024;
   #endif
 
-  if (program_type==1) if ((f=fopen("install\\setup.ovl","wb"))!=NULL) {
+  if (program_type==1) if ((f=fopen("install/setup.ovl","wb"))!=NULL) {
     fwrite(div_stub,1,602,f);
 //    fwrite(mem,4,imem,f); fwrite(loc,4,iloc,f);
 //    fclose(f);
@@ -1115,7 +1116,7 @@ void compilar(void) {
   if (ejecutar_programa==3) mem[0]+=128;
   if (ignore_errors) mem[0]+=512;
 
-  if ((f=fopen("system\\EXEC.EXE","wb"))!=NULL) {
+  if ((f=fopen("system/EXEC.EXE","wb"))!=NULL) {
     fwrite(div_stub,1,602,f);
 //    fwrite(mem,4,imem,f); fwrite(loc,4,iloc,f);
 //    fclose(f);
@@ -1296,7 +1297,8 @@ void analiza_ltlex(void){
   byte * _ivnom;
   byte * * ptr;
 
-  if ((def=fopen("system\\ltlex.def","rb"))==NULL) c_error(0,1);
+  if ((def=fopen("system/ltlex.def","rb"))==NULL) c_error(0,1);
+  printf("ltex loaded %x\n",def);
   fseek(def,0,SEEK_END); len=ftell(def);
   if ((_buf=buf=(byte *) malloc(len+2))==NULL) c_error(0,0);
   fseek(def,0,SEEK_SET);
@@ -1346,6 +1348,7 @@ void analiza_ltlex(void){
         } (*e).token=t;
       } break;
   } while (cont);
+printf("lex parsed\n");
 
   free(_buf); _buf=NULL;
   fclose(def); def=NULL;
@@ -1365,7 +1368,7 @@ void precarga_obj (void) {
   struct objeto * ob;
   struct objeto * ob2;
 
-  if ((def=fopen("system\\ltobj.def","rb"))==NULL) c_error(0,6);
+  if ((def=fopen("system/ltobj.def","rb"))==NULL) c_error(0,6);
   fseek(def,0,SEEK_END); len=ftell(def);
   if ((_buf=source=(byte *) malloc(len+2))==NULL) c_error(0,0);
   fseek(def,0,SEEK_SET);
@@ -3254,8 +3257,8 @@ void sintactico (void) {
   if (pieza!=p_program && pieza!=p_setup_program) c_error(4,20);
 
   if (pieza==p_setup_program) {
-    program_type=1; strcpy(cWork,"install\\setup.ins");
-  } else strcpy(cWork,"system\\EXEC.INS");
+    program_type=1; strcpy(cWork,"install/setup.ins");
+  } else strcpy(cWork,"system/EXEC.INS");
   if ((lins=fopen(cWork,"wb"))==NULL) c_error(0,0);
 
   inicio_sentencia(); lexico();
@@ -7072,7 +7075,7 @@ void save_dbg(void) {
     int v0,v1,v2,v3,v4,v5;
   } ob;
 
-  sta=fopen("system\\exec.dbg","wb");
+  sta=fopen("system/exec.dbg","wb");
 
   fwrite(&num_obj,4,1,sta);
   fwrite(&num_obj_predefinidos,4,1,sta);
@@ -7112,7 +7115,7 @@ void save_dbg(void) {
 void save_exec_bin(void) {
   FILE * sta;
 
-  sta=fopen("system\\exec.bin","wb");
+  sta=fopen("system/exec.bin","wb");
 
   fwrite(&Setupfile.vol_fx,1,1,sta);
   fwrite(&Setupfile.vol_cd,1,1,sta);
@@ -7292,14 +7295,14 @@ FILE * open_file(char * file) {
     if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='\\') strcat(full,"\\");
+    if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,file);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
       strcpy(full,fname);
       strcat(full,ext);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"\\");
+        if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"

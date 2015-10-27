@@ -90,7 +90,7 @@ unsigned int _dos_findnext(struct find_t *result);
 
 unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
 
-
+extern void compilar(void);
 
 #endif // __OSDEP_H
 

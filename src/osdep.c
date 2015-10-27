@@ -1,5 +1,8 @@
 #include "osdep.h"
 #include <ctype.h>
+#include <setjmp.h>
+
+static jmp_buf buf;
 
 char * strupr(char *string)
 {
@@ -63,20 +66,22 @@ func();
 
 void comp(void)
 {
-        //allegro_message("comp");
-        /* asm("PUSHA\n\t \
-                PUSH EBP \
-                MOV     _saved_esp,ESP \
-                CALL    NEAR PTR compilar_ \
-                RET "); */
-    //compilar();
-
+	printf("compile\n");
+	if (!setjmp(buf))
+		compilar();
+	else
+		printf("done\n");
+		
+	return;
 
 }
 
 void comp_exit(void)
 {
+	printf("compile end\n");
         //allegro_message("comp exit");
+     longjmp(buf,1);
+        
 }
 
 
