@@ -70,26 +70,19 @@ void retrazo(void) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void set_dac(byte *_dac) {
-printf("TODO - divvideo.cpp set_dac\n");
-#ifdef NOTYET
-union REGS regs;
-  int n=0;
-
-  #ifdef GRABADORA
-  WriteDac(_dac);
-  #endif
-
-  retrazo();
-
-  outp(0x3c8,0);
-  do {
-    outp(0x3c9,_dac[n++]);
-  } while (n<768);
-
-  regs.w.ax=0x1001;
-  regs.h.bh=c0;
-  int386(0x010,&regs,&regs);
-#endif
+	SDL_Color colors[256];
+	int i;
+	int b=0;
+	for(i=0;i<256;i++){
+          colors[i].r=_dac[b];
+          colors[i].g=_dac[b+1];
+          colors[i].b=_dac[b+2];
+          b+=3;
+    }
+	if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+		printf("Failed to set palette :(\n"); 
+	
+	retrazo();
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
