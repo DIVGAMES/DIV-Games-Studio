@@ -2394,7 +2394,7 @@ void abrir_programa(void) {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -2412,8 +2412,11 @@ void abrir_programa(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
+
+
+//printf("trying to open %s\n",full);
 
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
         fseek(f,0,SEEK_END); n=ftell(f)+buffer_grow;
@@ -2488,7 +2491,7 @@ void programa0_nuevo(void) {
   int n;
 
   strcpy(full,tipo[v_tipo].path);
-  if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+  if (full[strlen(full)-1]!='/') strcat(full,"/");
   strcat(full,input);
 
   if (v_terminado) { n=buffer_grow;
@@ -2517,7 +2520,7 @@ void guardar_prg(void) {
   int an=v.an/big2,al=v.al/big2;
 
   strcpy(full,tipo[v_tipo].path);
-  if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+  if (full[strlen(full)-1]!='/') strcat(full,"/");
   strcat(full,input);
   if ((f=fopen(full,"wb"))!=NULL) {
     write_line();

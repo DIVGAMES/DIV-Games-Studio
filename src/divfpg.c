@@ -381,7 +381,7 @@ int nuevo_fichero(void)
       	dialogo((int)browser0);
 
         strcpy(full,tipo[v_tipo].path);
-        if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+        if (full[strlen(full)-1]!='/') strcat(full,"/");
         strcat(full,input);
 
         if (v_terminado)
@@ -445,7 +445,7 @@ void abrir_fichero(void) {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -470,7 +470,7 @@ void abrir_fichero(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       if((f=fopen(full,"rb"))==NULL) {
@@ -551,7 +551,7 @@ void abrir_fichero(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
@@ -1846,7 +1846,7 @@ int selecciona_fichero(void)
       	dialogo((int)browser0);
 
         strcpy(full,tipo[v_tipo].path);
-        if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+        if (full[strlen(full)-1]!='/') strcat(full,"/");
         strcat(full,input);
 
         if (v_terminado)

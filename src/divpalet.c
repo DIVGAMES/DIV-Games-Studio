@@ -527,7 +527,7 @@ void LoadPal() {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -545,7 +545,7 @@ void LoadPal() {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       if (!v_existe) {
@@ -593,7 +593,7 @@ void LoadPal() {
       {
         strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
         strcpy(full,tipo[v_tipo].path);
-        if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+        if (full[strlen(full)-1]!='/') strcat(full,"/");
         strcat(full, input);
 
         strcpy(PalName,full);
@@ -1037,7 +1037,7 @@ void fusiona_paleta(void){
       v_texto=texto[43]; dialogo((int)err0);
     } else {
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full,input);
       strcpy(PalName,full);
 

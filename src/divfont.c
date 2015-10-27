@@ -713,7 +713,7 @@ int  num;
                 {
                         if(!num_taggeds) {
                           strcpy(full,tipo[v_tipo].path);
-                          if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+                          if (full[strlen(full)-1]!='/') strcat(full,"/");
                           strcat(full, input);
                           if ((f=fopen(full,"rb"))!=NULL) {
                             fclose(f);
@@ -1483,7 +1483,7 @@ void OpenFont(void) {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -1501,7 +1501,7 @@ void OpenFont(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno

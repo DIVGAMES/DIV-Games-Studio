@@ -679,7 +679,7 @@ void menu_mapas3D2(void) {
             if (v_aceptar) {
               mouse_graf=3; volcado_copia(); mouse_graf=1;
               strcpy(full, tipo[v_tipo].path);
-              if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+              if (full[strlen(full)-1]!='/') strcat(full,"/");
               strcat(full,input);
               m3d=(void *)ventana[v_ventana].aux;
               map_save();
@@ -713,7 +713,7 @@ int comprobar_fichero(void) {
   dialogo((int)browser0);
 
   strcpy(full,tipo[v_tipo].path);
-  if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+  if (full[strlen(full)-1]!='/') strcat(full,"/");
   strcat(full,input);
 
   if (v_terminado) if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
@@ -873,7 +873,7 @@ void menu_graficos2(void) {
               // Comprueba que el fichero no sea el mismo
               Fpg=(FPG *)ventana[n].aux;
               strcpy(full,tipo[4].path);
-              if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+              if (full[strlen(full)-1]!='/') strcat(full,"/");
               strcat(full,input);
 
               if (!strcmp(full,Fpg->ActualFile)) {
@@ -1260,7 +1260,7 @@ void menu_sonidos2(void) {
               mouse_graf=3; volcado_copia(); mouse_graf=1;
               mypcminfo=(pcminfo *)ventana[n].aux;
               strcpy(full,tipo[v_tipo].path);
-              if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+              if (full[strlen(full)-1]!='/') strcat(full,"/");
               strcat(full,input);
 
               if (strchr(input,' ')==NULL) {
@@ -1741,7 +1741,7 @@ void mapa2(void) {
     for(n=0; n<max_texturas; n++) thumb_tex[n].ptr=NULL;
     for(n=0; n<max_windows;  n++) thumb_map[n].ptr=NULL;
     strcpy(full, tipo[1].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, "SYSTEM\\BRUSH.FPG");
 
     textura_color=NULL;
@@ -2687,7 +2687,7 @@ void abrir_mapa(void) {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -2712,7 +2712,7 @@ void abrir_mapa(void) {
       div_try=0;
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       cargar_paleta=1;
@@ -2792,7 +2792,7 @@ void abrir_mapa(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
@@ -2880,7 +2880,7 @@ void abrir_mapa3d(void) {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -2898,7 +2898,7 @@ void abrir_mapa3d(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
@@ -2927,7 +2927,7 @@ void guardar_mapa(void) {
   if (big) { an/=2; al/=2; }
 
   strcpy(full,tipo[v_tipo].path);
-  if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+  if (full[strlen(full)-1]!='/') strcat(full,"/");
   strcat(full,input);
 
   if (strchr(input,' ')==NULL) {

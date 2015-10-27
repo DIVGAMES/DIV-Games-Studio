@@ -176,7 +176,7 @@ void Setup2() {
       dialogo((int)browser0);
 
       strcpy(full,tipo[4].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full,input);
       strcpy(tipo[4].path,cwork);
 
@@ -209,7 +209,7 @@ void Setup2() {
       dialogo((int)browser0);
 
       strcpy(full,tipo[5].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full,input);
       strcpy(tipo[5].path,cwork);
 
@@ -237,7 +237,7 @@ void Setup2() {
       dialogo((int)browser0);
 
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full,input);
       strcpy(tipo[5].path,cwork);
 
