@@ -171,6 +171,7 @@ int num;
 void crear_thumbs(void) {
   if (opc_img[v_thumb]) {
     do {
+		    printf("%s %d\n",larchivosbr.lista,v_thumb);
       switch(v_thumb) // 2-MAP, 3-PAL, 5-FNT, 6-IFS, 7-PCM
       {
         case 2: crear_un_thumb_MAP(&larchivosbr); break;
@@ -576,6 +577,8 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
     if (estado==0) { num=-1; return; }
 
     // read a new thumbnail
+//    printf("%s\n",l->lista);
+    
     if (estado==1)
     {
       if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".FNT"));

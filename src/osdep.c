@@ -3,10 +3,13 @@
 
 char * strupr(char *string)
 {
+	if(string>0) {
   for(; *string; string++)
     *string = toupper((unsigned char) *string);
-    
     return string;
+
+}
+else return " ";
 }
 
 char * strlwr(char *string)

@@ -419,9 +419,8 @@ typedef struct _HeadDC {
 
 void OpenSound(void) {
 	printf("TODO - divpcm.cpp OpenSound\n");
-	/*
   pcminfo   *mypcminfo;
-  SoundInfo *SI=NULL;
+ // SoundInfo *SI=NULL;
   int       num;
 
   v_modo=0;
@@ -468,7 +467,7 @@ void OpenSound(void) {
         continue;
       }
       mypcminfo=(pcminfo *)pcminfo_aux;
-
+#ifdef NOT YET
       SI = judas_loadwav(SoundPathName);
       if(judas_error != JUDAS_OK && judas_error == JUDAS_WRONG_FORMAT)
       {
@@ -493,11 +492,11 @@ void OpenSound(void) {
       mypcminfo->sample    = SI->sample;
 
       free(SI);
-
+#endif
       nueva_ventana((int)PCM0);
     }
   }
-  * */
+  
 }
 
 void OpenSoundFile(void) // Abre el fichero SoundPathName
