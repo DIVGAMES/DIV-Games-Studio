@@ -485,7 +485,7 @@ GLOBAL_DATA int old_mouse_b; // ¨Cual era el valor del raton la £ltima vez?
 
 GLOBAL_DATA byte * cuad; // Diferencias elevadas al cuadrado para la paleta
 
-GLOBAL_DATA int * system_clock, cclock;
+GLOBAL_DATA int * system_clock, cclock, mclock;
 
 GLOBAL_DATA byte * copia; // Copia virtual de pantalla (del entorno)
 GLOBAL_DATA byte * undo; // Copias del mapa editado (para deshacer, NULL si falta memoria)

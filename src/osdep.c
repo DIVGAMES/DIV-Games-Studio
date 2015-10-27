@@ -94,3 +94,25 @@ char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
 	return _FullPath;
 	
 }
+
+
+
+
+unsigned int _dos_findfirst(char *name, unsigned int attr, 
+                            struct find_t *result) {
+								printf("TODO - findfirst\n");
+								return 1;
+							}
+unsigned int _dos_findnext(struct find_t *result) {
+								printf("TODO - findnext\n");
+
+	return 1;
+}
+
+unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
+								printf("TODO - setfileattr\n");
+
+	return 1;
+}
+
+

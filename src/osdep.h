@@ -49,5 +49,48 @@ extern void _splitpath (
 
 extern char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes);
 
+
+// dos directory stuff
+
+#include <dirent.h>
+
+struct find_t {
+  char reserved[21];
+  unsigned char attrib;
+  unsigned short wr_time;
+  unsigned short wr_date;
+  unsigned long size;
+  char name[256];
+};
+
+#define _A_NORMAL (0x00)
+//Normal file (no read/write restrictions)
+
+#define _A_RDONLY (0x01)
+//Read only file
+
+#define _A_HIDDEN (0x02)
+//Hidden file
+
+#define _A_SYSTEM (0x04)
+//System file
+
+#define _A_VOLID (0x08)
+//Volume ID file
+
+#define _A_SUBDIR (0x10)
+//Subdirectory
+
+#define _A_ARCH (0x20)
+//Archive file
+
+unsigned int _dos_findfirst(char *name, unsigned int attr, 
+                            struct find_t *result);
+unsigned int _dos_findnext(struct find_t *result);
+
+unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
+
+
+
 #endif // __OSDEP_H
 

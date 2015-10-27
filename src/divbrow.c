@@ -1819,8 +1819,7 @@ void browser3(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void dir_abrirbr(void) {
-	printf("TODO - divbrow.cpp dir_abribr\n");
-#ifdef NOTYET	
+//	printf("TODO - divbrow.cpp dir_abribr\n");
   unsigned n,m;
   struct find_t fileinfo;
 
@@ -1854,7 +1853,6 @@ void dir_abrirbr(void) {
   else strcpy(input,&ext[0]);
   strcpy(mascara,input);
 */
-#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

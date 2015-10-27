@@ -88,6 +88,7 @@ extern int superget;
 ///////////////////////////////////////////////////////////////////////////////
 
 //int * system_clock = (void*) 0x46c; // Reloj del sistema
+//int system_clock;
 
 char get_buffer[long_line]; // Shared buffer (except for calculator)
 char * get;
@@ -347,7 +348,7 @@ int DPMIalloc4k(void);
 int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
-
+system_clock = &mclock;
 
 //  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
 
@@ -1399,7 +1400,7 @@ void entorno_dialogo(void) {
 
   fin_dialogo=0;
   
-  printf("Env Dialog\n");
+//  printf("Env Dialog\n");
 //  return;
   do { dialogo_invocado=0;
 
@@ -1870,11 +1871,11 @@ void mueve_ventana_completa(void) {
   if (v.primer_plano==1) wrectangulo(v.ptr,an/big2,al/big2,c2,0,0,an/big2,al/big2);
 
   //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-  // Comprueba si se ha pulsado doble click para autoemplazar la ventana
+  // Check if you pressed double-click to auto deploy window
   //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
   x=0; // Ahora x indica si la ventana se autoemplaza
-
+/*
   if (oldx==v.x && oldy==v.y) {
     if (*system_clock<doble_click+10 && *system_clock>doble_click
       && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
@@ -1894,7 +1895,7 @@ void mueve_ventana_completa(void) {
       doble_click=*system_clock; doble_click_x=mouse_x; doble_click_y=mouse_y;
     }
   }
-
+*/
   if (!x && v.primer_plano==1) vuelca_ventana(0);
 }
 
@@ -4111,9 +4112,9 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
-	printf("DaniDel %s\n",name);
-	return;
-	/*
+//	printf("DaniDel %s\n",name);
+	//return;
+	
   unsigned rc;
   struct find_t ft;
   int x;
@@ -4136,7 +4137,6 @@ void DaniDel(char *name) {
     remove(cwork1);
     rc=_dos_findnext(&ft);
   }
-  * */
 }
 
 //////////////////////////////////////////////////////////////////////////////

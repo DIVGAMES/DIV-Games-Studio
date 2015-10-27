@@ -202,11 +202,11 @@ void volcado(byte *p) {
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 
-  if (volcado_completo) {
-	 volcadop320200(p); 
-} else {
+//  if (volcado_completo) {
+	 volcadoc320200(p); 
+//} else {
 	volcadop320200(p);
-}
+//}
 	  
 	/*  
 	  
@@ -261,9 +261,9 @@ void volcadop320200(byte *p) { // PARTIAL
   int y=0,n;
   byte * q=vga->pixels;
 
-//  #ifdef GRABADORA
-//  RegScreen(p);
-//  #endif
+  #ifdef GRABADORA
+  RegScreen(p);
+  #endif
 
   while (y<vga_al) {
     n=y*4;
