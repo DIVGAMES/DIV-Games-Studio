@@ -71,6 +71,7 @@ void process_get(int n,int e);
 int flag_status(int n);
 void process_flag(int n,int e);
 void get_input(int n);
+void check_mouse(void);
 
 
 
@@ -347,7 +348,11 @@ int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
 
-  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
+
+//  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
+
+// Treat all modern targets as '586' type
+	cpu_type = 5;
 
 //GetFree4kBlocks();
 
@@ -373,6 +378,7 @@ int main(int argc, char * argv[]) {
   realpath(argv[0], full);
   _fullpath(full,argv[0],_MAX_PATH+1);
   strupr(full);
+//  printf("%s\n",full);
 
 #ifdef SHARE
   strcpy(exe_name,full);
@@ -399,7 +405,7 @@ int main(int argc, char * argv[]) {
   } else {
     if ((f=fopen("setup.bin","rb"))!=NULL) {
       fclose(f);
-      printf("setup.bin found\n");
+  //    printf("setup.bin found\n");
       primera_vez=0;
     } else {
       primera_vez=1;
@@ -427,7 +433,7 @@ int main(int argc, char * argv[]) {
 
   inicializa_textos("lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
 
-//  check_mouse();
+ check_mouse();
 
   Load_Cfgbin();
 
@@ -449,9 +455,11 @@ int main(int argc, char * argv[]) {
 beta_status=4;
 
   if(!Interpretando) {
+//	  printf("Not Interpreter\n");
 //    _setvideomode(_TEXTC80);
 //    _setbkcolor(1); _settextcolor(15);
 //    _outtext(texto[1]);
+	printf("%s\n",texto[1]);
   }
 
   inicializacion();
@@ -559,10 +567,10 @@ void inicializa_entorno() {
   char cWork[256];
 
   if ((f=fopen("user.nfo","rb"))!=NULL) {
-	printf("Found user info file\n");
+//	printf("Found user info file\n");
     fread(user1,1,128,f);
     fread(user2,1,128,f);
-    printf("%s - %s\n",user1,user2);
+//    printf("%s - %s\n",user1,user2);
     fclose(f);
   }
 
@@ -581,7 +589,7 @@ void inicializa_entorno() {
 //printf("%X %X %X\n",CopiaDesktop, nueva_sesion, primera_vez);
 
   if(CopiaDesktop && !nueva_sesion && !primera_vez) {
-	  printf("Restoring session!\n");
+	//  printf("Restoring session!\n");
 	  UpLoad_Desktop();
 	}
 //printf("%X %X %X\n",CopiaDesktop, nueva_sesion, primera_vez);
@@ -594,6 +602,7 @@ void inicializa_entorno() {
 
   if (test_video) dialogo((int)test0);
 
+// Have we come back from running a prog?
   if (Interpretando) {
     vacia_buffer();
     if ((f=fopen("system\\exec.err","rb"))!=NULL) {
@@ -2866,7 +2875,7 @@ void inicializacion(void) {
   byte *ptr,*ptr2;
 
   detectar_vesa();
-printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
+//printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
   for (n=0;n<num_modos;n++) {
     if (modos[n].ancho==vga_an && modos[n].alto==vga_al) {
       break;
@@ -3979,8 +3988,11 @@ void Load_Cfgbin() {
 //  Check for mouse driver
 //  Not needed for SDL port
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-/*
+
 void check_mouse(void) {
+//	printf("Mouse installed via SDL\n");
+	return;
+	/*
   struct SREGS sregs;
   union REGS inregs, outregs;
 
@@ -3998,8 +4010,9 @@ void check_mouse(void) {
       exit(0);
     }
   }
-}
 */
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Check if there is enough space on the HD

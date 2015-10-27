@@ -84,13 +84,13 @@ void _splitpath (
    char *fname,       // Filename  : Output
    char *ext          // Extension : Output
 ) {
-	printf("TODO - _splitpath\n");
+	printf("TODO - _splitpath %s\n",path);
 	return;
 	
 }
 
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
-	printf("TODO - _fullpath\n");
+	printf("TODO - _fullpath %s\n",_FullPath);
 	return _FullPath;
 	
 }

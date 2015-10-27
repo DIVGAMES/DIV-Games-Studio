@@ -215,6 +215,6 @@ void vacia_buffer(void) {
   ascii=0; scan_code=0;
   r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
 #endif
-  ibuf=fbuf=0; // Vacia el buffer interno
+  ibuf=fbuf=0; // Empty the internal buffer
 }
 

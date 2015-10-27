@@ -17,7 +17,7 @@ void volcadopx(byte * p);
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//	Declaraciones y datos a nivel de mขdulo
+//	Declarations and module-level data
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CRTC_INDEX      0x3d4   //CRT Controller Index
@@ -52,10 +52,11 @@ struct {
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-//      Awaits the arrival of the vertical retrace
+//      Awaits the arrival of the vertical retrace (vsync)
 ///////////////////////////////////////////////////////////////////////////////
 
 void retrazo(void) {
+//printf("retrazo (vsync)\n");
 #ifdef NOTYET
   while (inp(0x3da)&8);
   while ((inp(0x3da)&8)==0);
@@ -63,7 +64,7 @@ void retrazo(void) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//      Activa una paleta
+//      Activate a palette
 ///////////////////////////////////////////////////////////////////////////////
 
 void set_dac(byte *_dac) {
@@ -97,7 +98,7 @@ int LinealMode;
 int modovesa;
 
 void svmode(void) {
-	printf("TODO - Set video mode\n");
+	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
 #ifdef NOTYET
   VBESCREEN Screen;
 
@@ -188,6 +189,7 @@ void svmodex(int m) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void rvmode(void) {
+	printf("TODO - rvmode - Reset Video Mode\n");
 #ifdef NOTYET
   SV_restoreMode();
   _setvideomode(3);
