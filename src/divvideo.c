@@ -102,6 +102,7 @@ int modovesa;
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
+
 #ifdef NOTYET
   VBESCREEN Screen;
 
