@@ -41,8 +41,8 @@ void IniCfg                 (void);
 
 int  TipoModelo[3]={ 1, 0, 0 };
 int  Armado=0;
-char FicheroMod[128] = "GENSPR\\HOMBRE\\ANIM.O3D";
-char FicheroAni[128] = "GENSPR\\HOMBRE\\ANIM.A3D";
+char FicheroMod[128] = "GENSPR/HOMBRE/ANIM.O3D";
+char FicheroAni[128] = "GENSPR/HOMBRE/ANIM.A3D";
 char TamText[10]   = "100";
 char AngText[10]   = "0";
 char PerText[10]   = "0";
@@ -97,7 +97,7 @@ void generador_sprites(void) {
 
   Progress(texto[434],0,100);
 
-  CargarTextura("GENSPR\\TEXTURA.PCX");
+  CargarTextura("GENSPR/TEXTURA.PCX");
 
   if (TexturaSprite==NULL) {
     Progress(texto[434],100,100);
@@ -182,18 +182,18 @@ int ParseAnimFile(void)
   for(con2=0; con2<6; con2++)
   {
     strcpy(AnimFile, tipo[1].path);
-    if (AnimFile[strlen(AnimFile)-1]!='\\') strcat(AnimFile, "\\");
+    if (AnimFile[strlen(AnimFile)-1]!='/') strcat(AnimFile, "/");
 
     memset(anim_aux, 0, 2000);
 
     switch(con2)
     {
-      case HOMBRE   : strcat(AnimFile, "GENSPR\\HOMBRE\\ANIM.HPP");   break;
-      case HOMBRE_A : strcat(AnimFile, "GENSPR\\HOMBRE_A\\ANIM.HPP"); break;
-      case MUJER    : strcat(AnimFile, "GENSPR\\MUJER\\ANIM.HPP");    break;
-      case MUJER_A  : strcat(AnimFile, "GENSPR\\MUJER_A\\ANIM.HPP");  break;
-      case ENANO    : strcat(AnimFile, "GENSPR\\ENANO\\ANIM.HPP");    break;
-      case ENANO_A  : strcat(AnimFile, "GENSPR\\ENANO_A\\ANIM.HPP");  break;
+      case HOMBRE   : strcat(AnimFile, "GENSPR/HOMBRE/ANIM.HPP");   break;
+      case HOMBRE_A : strcat(AnimFile, "GENSPR/HOMBRE_A/ANIM.HPP"); break;
+      case MUJER    : strcat(AnimFile, "GENSPR/MUJER/ANIM.HPP");    break;
+      case MUJER_A  : strcat(AnimFile, "GENSPR/MUJER_A/ANIM.HPP");  break;
+      case ENANO    : strcat(AnimFile, "GENSPR/ENANO/ANIM.HPP");    break;
+      case ENANO_A  : strcat(AnimFile, "GENSPR/ENANO_A/ANIM.HPP");  break;
     }
 
     if( (f=fopen(AnimFile, "rb")) == NULL ) return(0);
@@ -503,14 +503,14 @@ void GenSpr2(void)
       volcado_copia();
       TipoModelo[0]=1; TipoModelo[1]=0; TipoModelo[2]=0;
       if(Armado) {
-        strcpy(FicheroMod, "GENSPR\\HOMBRE_A\\ANIM.O3D");
-        strcpy(FicheroAni, "GENSPR\\HOMBRE_A\\ANIM.A3D");
+        strcpy(FicheroMod, "GENSPR/HOMBRE_A/ANIM.O3D");
+        strcpy(FicheroAni, "GENSPR/HOMBRE_A/ANIM.A3D");
         memcpy(anim_spr,   anim_spr_hombre_a,   2000);
         memcpy(&lanim_spr, &lanim_spr_hombre_a, sizeof(struct t_listbox));
         lanim_spr.maximo = anim_total_hombre_a;
       } else {
-        strcpy(FicheroMod, "GENSPR\\HOMBRE\\ANIM.O3D");
-        strcpy(FicheroAni, "GENSPR\\HOMBRE\\ANIM.A3D");
+        strcpy(FicheroMod, "GENSPR/HOMBRE/ANIM.O3D");
+        strcpy(FicheroAni, "GENSPR/HOMBRE/ANIM.A3D");
         memcpy(anim_spr,   anim_spr_hombre,   2000);
         memcpy(&lanim_spr, &lanim_spr_hombre, sizeof(struct t_listbox));
         lanim_spr.maximo = anim_total_hombre;
@@ -541,14 +541,14 @@ void GenSpr2(void)
       volcado_copia();
       TipoModelo[0]=0; TipoModelo[1]=1; TipoModelo[2]=0;
       if(Armado) {
-        strcpy(FicheroMod, "GENSPR\\MUJER_A\\ANIM.O3D");
-        strcpy(FicheroAni, "GENSPR\\MUJER_A\\ANIM.A3D");
+        strcpy(FicheroMod, "GENSPR/MUJER_A/ANIM.O3D");
+        strcpy(FicheroAni, "GENSPR/MUJER_A/ANIM.A3D");
         memcpy(anim_spr,   anim_spr_mujer_a, 2000);
         memcpy(&lanim_spr, &lanim_spr_mujer_a, sizeof(struct t_listbox));
         lanim_spr.maximo = anim_total_mujer_a;
       } else {
-        strcpy(FicheroMod, "GENSPR\\MUJER\\ANIM.O3D");
-        strcpy(FicheroAni, "GENSPR\\MUJER\\ANIM.A3D");
+        strcpy(FicheroMod, "GENSPR/MUJER/ANIM.O3D");
+        strcpy(FicheroAni, "GENSPR/MUJER/ANIM.A3D");
         memcpy(anim_spr,   anim_spr_mujer, 2000);
         memcpy(&lanim_spr, &lanim_spr_mujer, sizeof(struct t_listbox));
         lanim_spr.maximo = anim_total_mujer;
@@ -579,14 +579,14 @@ void GenSpr2(void)
       volcado_copia();
       TipoModelo[0]=0; TipoModelo[1]=0; TipoModelo[2]=1;
       if(Armado) {
-        strcpy(FicheroMod, "GENSPR\\ENANO_A\\ANIM.O3D");
-        strcpy(FicheroAni, "GENSPR\\ENANO_A\\ANIM.A3D");
+        strcpy(FicheroMod, "GENSPR/ENANO_A/ANIM.O3D");
+        strcpy(FicheroAni, "GENSPR/ENANO_A/ANIM.A3D");
         memcpy(anim_spr,   anim_spr_enano_a, 2000);
         memcpy(&lanim_spr, &lanim_spr_enano_a, sizeof(struct t_listbox));
         lanim_spr.maximo = anim_total_enano_a;
       } else {
-        strcpy(FicheroMod, "GENSPR\\ENANO\\ANIM.O3D");
-        strcpy(FicheroAni, "GENSPR\\ENANO\\ANIM.A3D");
+        strcpy(FicheroMod, "GENSPR/ENANO/ANIM.O3D");
+        strcpy(FicheroAni, "GENSPR/ENANO/ANIM.A3D");
         memcpy(anim_spr,   anim_spr_enano, 2000);
         memcpy(&lanim_spr, &lanim_spr_enano, sizeof(struct t_listbox));
         lanim_spr.maximo = anim_total_enano;
@@ -617,40 +617,40 @@ void GenSpr2(void)
       volcado_copia();
       if(Armado) {
         if(TipoModelo[0]) {
-          strcpy(FicheroMod, "GENSPR\\HOMBRE_A\\ANIM.O3D");
-          strcpy(FicheroAni, "GENSPR\\HOMBRE_A\\ANIM.A3D");
+          strcpy(FicheroMod, "GENSPR/HOMBRE_A/ANIM.O3D");
+          strcpy(FicheroAni, "GENSPR/HOMBRE_A/ANIM.A3D");
           memcpy(anim_spr,   anim_spr_hombre_a, 2000);
           memcpy(&lanim_spr, &lanim_spr_hombre_a, sizeof(struct t_listbox));
           lanim_spr.maximo = anim_total_hombre_a;
         } else if(TipoModelo[1]) {
-          strcpy(FicheroMod, "GENSPR\\MUJER_A\\ANIM.O3D");
-          strcpy(FicheroAni, "GENSPR\\MUJER_A\\ANIM.A3D");
+          strcpy(FicheroMod, "GENSPR/MUJER_A/ANIM.O3D");
+          strcpy(FicheroAni, "GENSPR/MUJER_A/ANIM.A3D");
           memcpy(anim_spr,   anim_spr_mujer_a, 2000);
           memcpy(&lanim_spr, &lanim_spr_mujer_a, sizeof(struct t_listbox));
           lanim_spr.maximo = anim_total_mujer_a;
         } else if(TipoModelo[2]) {
-          strcpy(FicheroMod, "GENSPR\\ENANO_A\\ANIM.O3D");
-          strcpy(FicheroAni, "GENSPR\\ENANO_A\\ANIM.A3D");
+          strcpy(FicheroMod, "GENSPR/ENANO_A/ANIM.O3D");
+          strcpy(FicheroAni, "GENSPR/ENANO_A/ANIM.A3D");
           memcpy(anim_spr,   anim_spr_enano_a, 2000);
           memcpy(&lanim_spr, &lanim_spr_enano_a, sizeof(struct t_listbox));
           lanim_spr.maximo = anim_total_enano_a;
         }
       } else {
         if(TipoModelo[0]) {
-          strcpy(FicheroMod, "GENSPR\\HOMBRE\\ANIM.O3D");
-          strcpy(FicheroAni, "GENSPR\\HOMBRE\\ANIM.A3D");
+          strcpy(FicheroMod, "GENSPR/HOMBRE/ANIM.O3D");
+          strcpy(FicheroAni, "GENSPR/HOMBRE/ANIM.A3D");
           memcpy(anim_spr,   anim_spr_hombre, 2000);
           memcpy(&lanim_spr, &lanim_spr_hombre, sizeof(struct t_listbox));
           lanim_spr.maximo = anim_total_hombre;
         } else if(TipoModelo[1]) {
-          strcpy(FicheroMod, "GENSPR\\MUJER\\ANIM.O3D");
-          strcpy(FicheroAni, "GENSPR\\MUJER\\ANIM.A3D");
+          strcpy(FicheroMod, "GENSPR/MUJER/ANIM.O3D");
+          strcpy(FicheroAni, "GENSPR/MUJER/ANIM.A3D");
           memcpy(anim_spr,   anim_spr_mujer, 2000);
           memcpy(&lanim_spr, &lanim_spr_mujer, sizeof(struct t_listbox));
           lanim_spr.maximo = anim_total_mujer;
         } else if(TipoModelo[2]) {
-          strcpy(FicheroMod, "GENSPR\\ENANO\\ANIM.O3D");
-          strcpy(FicheroAni, "GENSPR\\ENANO\\ANIM.A3D");
+          strcpy(FicheroMod, "GENSPR/ENANO/ANIM.O3D");
+          strcpy(FicheroAni, "GENSPR/ENANO/ANIM.A3D");
           memcpy(anim_spr,   anim_spr_enano, 2000);
           memcpy(&lanim_spr, &lanim_spr_enano, sizeof(struct t_listbox));
           lanim_spr.maximo = anim_total_enano;
@@ -934,7 +934,7 @@ void CargarTextura(char *NombreTextura)
   else
   {
     strcpy(full, tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full, "\\");
+    if (full[strlen(full)-1]!='/') strcat(full, "/");
     strcat(full, input);
   }
 
