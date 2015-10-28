@@ -6,10 +6,19 @@ static jmp_buf buf;
 
 char * strupr(char *string)
 {
-	if(string>0) {
-  for(; *string; string++)
-    *string = toupper((unsigned char) *string);
-    return string;
+	int x=0;
+	char *st = string;
+	if(string>0 && strlen(string)>0) {
+//		st = (char *)malloc(strlen(string));
+	
+//printf("string: [%s]\n",string);
+
+  for(x=0;x<strlen(string);x++) 
+    st[x] = toupper((unsigned char) string[x]);
+
+st[x]=0;
+//printf("upper'd string: [%s]\n",st);
+    return st;
 
 }
 else return " ";
@@ -17,10 +26,17 @@ else return " ";
 
 char * strlwr(char *string)
 {
-  for(; *string; string++)
-    *string = tolower((unsigned char) *string);
-    
-   return string;
+	int x=0;
+	char *st = string;
+	if(strlen(string)>0) {
+
+  for(x=0;x<strlen(string);x++) 
+    st[x] = tolower((unsigned char) string[x]);
+
+st[x]=0;
+//printf("lower'd string: [%s]\n",st);
+}
+   return st;
 }
 
 

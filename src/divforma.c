@@ -100,6 +100,7 @@ int es_MAP (byte * buffer) {
 
 void descomprime_MAP (byte * buffer, byte * mapa, int vent) {
 short npuntos;
+printf("descomprime_MAP\n");
   if (vent) {
     memcpy(&Codigo,buffer+12,4);
     memcpy(Descripcion,buffer+16,32);
@@ -968,6 +969,7 @@ return(1);
 int es_JPG(byte *buffer, int img_filesize)
 {
 	printf("divforma.cpp - es_JPG\n");
+	return(0);
 #ifdef NOTYET
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;

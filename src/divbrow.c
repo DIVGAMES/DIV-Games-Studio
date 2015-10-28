@@ -171,7 +171,7 @@ int num;
 void crear_thumbs(void) {
   if (opc_img[v_thumb]) {
     do {
-		    printf("%s %d\n",larchivosbr.lista,v_thumb);
+//		    printf("DIVBROW.c %d %s %d\n",__LINE__,larchivosbr.lista,v_thumb);
       switch(v_thumb) // 2-MAP, 3-PAL, 5-FNT, 6-IFS, 7-PCM
       {
         case 2: crear_un_thumb_MAP(&larchivosbr); break;
@@ -232,7 +232,8 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 
     if (estado==1) { // Read a new thumbnail
 
-      if (strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP") &&
+      if (strchr(l->lista+(l->lista_an*num),'.')>0 &&
+	      strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PCX") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".BMP") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".JPG") &&
@@ -240,6 +241,10 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 
         estado=0; thumb[num].status=-1;
 
+//		printf("hello [%s] [%s] [%s]\n",strchr(l->lista+(l->lista_an*num),'.'),l->lista+(l->lista_an*num),strupr(strchr(l->lista+(l->lista_an*num),'.')));
+//		printf("strcmp MAP %d\n",strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP"));
+		
+		
       } else if ((f=fopen(l->lista+(l->lista_an*num),"rb"))!=NULL) {
         fseek(f,0,SEEK_END);
         thumb[num].filesize=ftell(f);

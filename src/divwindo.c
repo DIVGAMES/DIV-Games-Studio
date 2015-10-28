@@ -326,7 +326,7 @@ void wvolcado(byte*copia,int an_copia,int al_copia,
   resto_x+=salta_x+long_x; an=long_x;
   do {
     memcpy(q,p,an); q+=an_copia; p+=resto_x;
-  } while (--long_y);
+  } while (--long_y >0);
 
 }
 

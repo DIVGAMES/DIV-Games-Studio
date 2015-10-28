@@ -169,6 +169,8 @@ void New_DownLoad_Desktop() {
 
 */
 
+//#define SLST
+
 void DownLoad_Desktop()
 {
 int iWork,x,numvent=0,n;
@@ -176,39 +178,55 @@ int man,mal;
 pcminfo *mypcminfo;
 modinfo *mymodinfo;
 
-//  FILE * lst;
-//  lst=fopen("session.lst","wt");
-//  fprintf(lst,"sizeof(struct tventana)=%d\n",sizeof(struct tventana));
-//  fprintf(lst,"vid_mode=%d,vid_modebig=%d\n",Setupfile.Vid_mode,Setupfile.Vid_modeBig);
-
+#ifdef SLST
+  FILE * lst;
+  lst=fopen("session.lst","wt");
+  fprintf(lst,"sizeof(struct tventana)=%d\n",sizeof(struct tventana));
+  fprintf(lst,"vid_mode=%d,vid_modebig=%d\n",Setupfile.Vid_mode,Setupfile.Vid_modeBig);
+fflush(lst);
+#endif
         // Pone una cabecera de identificaci¢n
         desktop=fopen("system/session.dtf","wb");
         n=fwrite("dtf\x1a\x0d\x0a\x0",8,1,desktop);
-        // fprintf(lst,"header %d elementos escritos <<<\n",n);
+#ifdef SLST
+        fprintf(lst,"header %d elementos escritos <<<\n",n);
+#endif
         // guarda la antigua resoluci¢n
         iWork=Setupfile.Vid_modeAlto+Setupfile.Vid_modeAncho*10000+(Setupfile.Vid_modeBig<<31);
         n=fwrite(&iWork,1,4,desktop);
-        // fprintf(lst,"resol %d elementos escritos <<<\n",n);
+#ifdef SLST        
+        fprintf(lst,"resol %d elementos escritos <<<\n",n);
+#endif
         // reserva espacio para el numero de ventanas
         n=fwrite(&numvent,1,4,desktop);
-        // fprintf(lst,"numvent %d elementos escritos <<<\n",n);
+#ifdef SLST
+        fprintf(lst,"numvent %d elementos escritos <<<\n",n);
+#endif
         // guarda paleta /4
         n=fwrite(dac,768,1,desktop);
-        // fprintf(lst,"dac %d elementos escritos <<<\n",n);
+#ifdef SLST
+        fprintf(lst,"dac %d elementos escritos <<<\n",n);
+#endif
         // guarda tabla ghost
         n=fwrite(ghost,65536,1,desktop);
-        // fprintf(lst,"ghost %d elementos escritos <<<\n",n);
-
+#ifdef SLST
+        fprintf(lst,"ghost %d elementos escritos <<<\n",n);
+#endif
         // Mira y guarda una por una las ventanas utilizadas
         for(x=max_windows;x>=0;x--)
         {
-                if(ventana[x].tipo!=0)
+			printf("dumping window %d\n",x);
+                if(ventana[x].tipo!=0 && ventana[x].titulo)
                 {
                         numvent++;
                         n=fwrite(&ventana[x],1,sizeof(struct tventana),desktop);
-                        // fprintf(lst,"v %d elementos escritos <<<\n",n);
-                        // fprintf(lst,"Ventana %d \"%s\" (tipo %d)\n",x,ventana[x].titulo,ventana[x].tipo);
-                        // fprintf(lst,"  primer_plano=%d, (%d,%d,%d,%d)\n",ventana[x].primer_plano,ventana[x].x,ventana[x].y,ventana[x].an,ventana[x].al);
+#ifdef SLST
+                        fprintf(lst,"v %d elementos escritos <<<\n",n);
+						if(ventana[x].tipo < 107)
+							fprintf(lst,"Ventana %d \"%s\" (tipo %d)\n",x,ventana[x].titulo,ventana[x].tipo);
+
+                        fprintf(lst,"  primer_plano=%d, (%d,%d,%d,%d)\n",ventana[x].primer_plano,ventana[x].x,ventana[x].y,ventana[x].an,ventana[x].al);
+#endif
                         switch(ventana[x].tipo)
                         {
                                 //Estructura de ventana
@@ -234,12 +252,17 @@ modinfo *mymodinfo;
                                                         iWork=8;
                                         if(ventana[x].paint_handler==(int)menu_mapas3D1)
                                                         iWork=9;
-                                        // fprintf(lst,"  menu tipo %d\n",iWork);
+#ifdef SLST
+                                        fprintf(lst,"  menu tipo %d\n",iWork);
+                                        fprintf(lst,"tipomenu %d elementos escritos <<<\n",n);
+#endif
                                         n=fwrite(&iWork,1,4,desktop);
-                                        // fprintf(lst,"tipomenu %d elementos escritos <<<\n",n);
+                                        
                                         break;
                                 case    3: //palet
-                                        // fprintf(lst,"  paleta\n");
+#ifdef SLST                                
+                                        fprintf(lst,"  paleta\n");
+#endif
                                         break;
                                 case    4: //timer
                                         if(ventana[x].paint_handler==(int)CDiv1)
@@ -247,20 +270,31 @@ modinfo *mymodinfo;
                                         if(ventana[x].paint_handler==(int)Clock1)
                                                 iWork=1;
                                         n=fwrite(&iWork,1,4,desktop);
-                                        // fprintf(lst,"cdivorclock %d elementos escritos <<<\n",n);
-                                        if (iWork) // fprintf(lst,"  reloj\n"); else // fprintf(lst,"  cdiv\n");
+#ifdef SLST
+                                        fprintf(lst,"cdivorclock %d elementos escritos <<<\n",n);
+
+                                        if (iWork) 
+                                            fprintf(lst,"  reloj\n"); 
+                                        else 
+                                            fprintf(lst,"  cdiv\n");
+#endif
                                         break;
                                 case    5: //papelera
-                                        // fprintf(lst,"  papelera\n");
+#ifdef SLST
+                                        fprintf(lst,"  papelera\n");
+#endif
                                         break;
                                 case    8: //mixer
-                                        // fprintf(lst,"  mixer\n");
+#ifdef SLST
+                                        fprintf(lst,"  mixer\n");
+#endif
                                         break;
                                 case    100: //map
                                         // estructura tmapa
                                         man=ventana[x].mapa->map_an;
                                         mal=ventana[x].mapa->map_al;
                                         n=fwrite(ventana[x].mapa,1,sizeof(struct tmapa),desktop);
+
                                         // fprintf(lst,"tmapa %d elementos escritos <<<\n",n);
                                         // Grafico
                                         n=fwrite((char *)ventana[x].mapa->map,man*mal,1,desktop);
@@ -362,7 +396,10 @@ modinfo *mymodinfo;
         fseek(desktop,0,SEEK_SET);
         fseek(desktop,8+4,SEEK_SET);
         n=fwrite(&numvent,1,4,desktop);
-        // fprintf(lst,"numvent %d elementos escritos <<<\n",n);
+#ifdef SLST
+        fprintf(lst,"numvent %d elementos escritos <<<\n",n);
+		fclose(lst);
+#endif
         fclose(desktop);
 }
 
@@ -417,12 +454,13 @@ FILE *f;
         
         fseek(desktop,8+4+4+768+65536,SEEK_SET);
         // Load each of the windows one by one
+        printf("numvent: %d\n",numvent);
         for(x=0;x<numvent;x++)
         {
-//			printf("Restoring window (%d)\n",x);
+			printf("Restoring window (%d)\n",x);
                 // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
-  //              printf("Type %d\n",(byte)ventana_aux.tipo);
+                printf("Type %d\n",(byte)ventana_aux.tipo);
                 switch(ventana_aux.tipo)
                 {
                         case    2: //menu
