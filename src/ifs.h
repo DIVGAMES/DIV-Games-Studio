@@ -17,17 +17,17 @@
 
 // ESTRUCTURAS PARA EL FICHERO DE ENTRADA (IFS)
 typedef struct _TABLAIFS{
-    long    desp;
-    long    size;
+    uint32_t    desp;
+    uint32_t    size;
 } TABLAIFS;
 
 typedef struct _IFSHEADER{
-    char    id[4];
-    long    offset8;
-    long    offset10;
-    long    offset12;
-    long    offset14;
-    long    offset128;
+    uint8_t    id[4];
+    uint32_t    offset8;
+    uint32_t   offset10;
+    uint32_t    offset12;
+    uint32_t    offset14;
+    uint32_t    offset128;
 } IFSHEADER;
 
 // ESTRUCTURA PARA EL FICHERO DE SALIDA (FNT)

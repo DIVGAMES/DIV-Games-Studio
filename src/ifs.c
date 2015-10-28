@@ -92,10 +92,15 @@ short initStruct()
         return(IFS_OPEN_ERROR);
     if (fread(&IFSheader,sizeof(IFSheader),1,fichIFS)<1)
         return(IFS_FORMAT_ERROR);
+        
+//    printf("%s\n",IFSheader.id);
     if (strcmp(IFSheader.id,"IFS"))
         return(IFS_FORMAT_ERROR);
+        
     if (ifs.tamX<8 || ifs.tamX>128 || ifs.tamY<8 || ifs.tamY>128)
         return(IFS_PARAM_ERROR);
+
+printf("tamX %d pos %lu\n",ifs.tamX,IFSheader.offset8);
 
     if (ifs.tamX==8 && ifs.tamY==8) { posicion=IFSheader.offset8; sizeIFS=8; }
     else if (ifs.tamX<=10 && ifs.tamY<=10) { posicion=IFSheader.offset10; sizeIFS=10; }
@@ -103,13 +108,19 @@ short initStruct()
     else if (ifs.tamX<=14 && ifs.tamY<=14) { posicion=IFSheader.offset14; sizeIFS=14; }
     else { posicion=IFSheader.offset128; sizeIFS=128; }
 
-    if (fseek(fichIFS,posicion,SEEK_SET))
+    if (fseek(fichIFS,posicion,SEEK_SET)) {
+		printf("pos %lu 109\n",posicion);
         return (IFS_FORMAT_ERROR);
+	}
+   printf("111\n");
+
     if (fread(&tablaIFS,sizeof(tablaIFS),1,fichIFS)<1)
         return(IFS_FORMAT_ERROR);
+printf("115\n");
 
     if (ifs.brillo>4) ifs.brillo=0;
 
+printf("119\n");
     return (0);
 }
 
@@ -721,10 +732,13 @@ int Jorge_Crea_el_font(int GenCode)
   short x, ret;
   short j;
 
+printf("Jorge_Crea_el_font %d\n",GenCode);
+
     Buffer=NULL; Buffer2=NULL; Buffer3=NULL;
     outBuffer=NULL; shadowBuffer=NULL;
     if (ret=initStruct())
     {
+		printf("730 fail %d\n",ret);
         CloseAndFreeAll();
         return (ret);
     }
