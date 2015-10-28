@@ -2930,7 +2930,7 @@ void inicializacion(void) {
       cuad==NULL || ghost==NULL || barra==NULL || undo==NULL || tundo==NULL ||
       fill_dac==NULL || error_window==NULL) error(0);
 
-  if (big) f=fopen("grande.fon","rb"); else f=fopen("pequeno.fon","rb");
+  if (big) f=fopen("system/grande.fon","rb"); else f=fopen("system/pequeno.fon","rb");
   if (f==NULL) error(0);
   fseek(f,0,SEEK_END); n=ftell(f);
   if ((text_font=(byte *)malloc(n))!=NULL) {
@@ -2938,10 +2938,10 @@ void inicializacion(void) {
   } else { fclose(f); error(0); }
 
   switch(editor_font) {
-    case 0: f=fopen("SYS06X08.BIN","rb"); font_an=6; font_al=8; break;
-    case 1: f=fopen("SYS08X08.BIN","rb"); font_an=8; font_al=8; break;
-    case 2: f=fopen("SYS08X11.BIN","rb"); font_an=8; font_al=11; break;
-    case 3: f=fopen("SYS09X16.BIN","rb"); font_an=9; font_al=16; break;
+    case 0: f=fopen("system/SYS06X08.BIN","rb"); font_an=6; font_al=8; break;
+    case 1: f=fopen("system/SYS08X08.BIN","rb"); font_an=8; font_al=8; break;
+    case 2: f=fopen("system/SYS08X11.BIN","rb"); font_an=8; font_al=11; break;
+    case 3: f=fopen("system/SYS09X16.BIN","rb"); font_an=9; font_al=16; break;
   } char_size=font_an*font_al;
 
 
@@ -2952,7 +2952,7 @@ void inicializacion(void) {
     fseek(f,0,SEEK_SET); fread(font,1,n,f); fclose(f);
   } else { fclose(f); error(0); }
 
-  f=fopen("tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
+  f=fopen("system/tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
 
   if (big) f=fopen("system/GRAF_G.DIV","rb"); else f=fopen("system/GRAF_P.DIV","rb");
   if (f==NULL) error(0);
