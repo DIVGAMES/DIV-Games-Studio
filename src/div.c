@@ -348,6 +348,8 @@ int DPMIalloc4k(void);
 int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
+  SDL_Init( SDL_INIT_VIDEO );
+  SDL_EnableUNICODE( SDL_ENABLE );   
 system_clock = &mclock;
 
 //  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
@@ -566,7 +568,7 @@ void inicializa_entorno() {
   int n;
   char cWork[256];
 
-  if ((f=fopen("user.nfo","rb"))!=NULL) {
+  if ((f=fopen("system/user.nfo","rb"))!=NULL) {
 //	printf("Found user info file\n");
     fread(user1,1,128,f);
     fread(user2,1,128,f);
@@ -2139,7 +2141,7 @@ void restaura_tapiz(int x,int y,int an,int al) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//    Vuelca una ventana, normal u oscurecida segฃn este o no en primer plano
+//    Dumps a window, according this standard or obscured or not in the foreground
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void vuelca_ventana(int m) {

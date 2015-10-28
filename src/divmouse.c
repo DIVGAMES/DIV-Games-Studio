@@ -191,6 +191,8 @@ void libera_drag(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void read_mouse2(void) {
+	scan_code  =0;
+	ascii=0;
 //printf("divmouse.c- read_mouse2 REPLACE WITH SDL VERSION\n");
 SDL_Event event;
 while(SDL_PollEvent(&event))
@@ -212,7 +214,14 @@ while(SDL_PollEvent(&event))
 				printf("click\n");
 				m_b = 1;
 			}
-			
+			if (event.type == SDL_KEYDOWN)
+            {
+				scan_code = event.key.keysym.scancode;
+				ascii = event.key.keysym.unicode&0x7f;
+				printf("key pressed %c\n",ascii);
+
+			}
+
 			if (event.type == SDL_MOUSEBUTTONUP)
             {
 				m_b = 0;

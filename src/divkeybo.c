@@ -176,11 +176,47 @@ printf("tecla_bios\n");
   }
 #endif
 }
-
+//extern float m_x=0.0,m_y;
 void tecla(void) {
+#ifdef NOTYET
     ascii=0; scan_code=0;
 //printf("Reading keyboard\n");
-#ifdef NOTYET
+
+SDL_Event event;
+while(SDL_PollEvent(&event))
+        {
+            /* If a quit event has been sent */
+            if (event.type == SDL_QUIT)
+            {
+                /* Quit the application */
+                salir_del_entorno=1;
+            }
+            
+            if (event.type == SDL_KEYDOWN)
+            {
+				printf("key pressed\n");
+				scan_code = event.key.keysym.scancode;
+			}
+			  if (event.type == SDL_MOUSEMOTION)
+            {
+				m_x+=event.motion.xrel;
+				m_y+=event.motion.yrel;
+			}
+            /* If a button on the mouse is pressed. */
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+				printf("click\n");
+				m_b = 1;
+			}
+			
+			if (event.type == SDL_MOUSEBUTTONUP)
+            {
+				m_b = 0;
+			}
+			
+        }
+
+
   union REGS r;
   struct SREGS s;
 

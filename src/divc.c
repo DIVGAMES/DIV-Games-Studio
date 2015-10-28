@@ -832,7 +832,7 @@ union { byte*b; byte**p; } ivnom;
 
 byte * inicio_objetos; // Para el crear listado de la tabla de objetos
 
-byte * vhash[256]; // Punteros al vector de nombres;
+byte * vhash[256]; // Pointer to the vector of names
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -1028,7 +1028,7 @@ printf("compilar\n");
 
   imem=long_header;
 
-  precarga_obj(); // No hay literales en los objetos precargados
+  precarga_obj(); // No literals in the preloaded objects
 
   mensaje_compilacion(texto[200]);
 
@@ -1048,7 +1048,7 @@ printf("compilar\n");
 
   convert=1; ultima_linea=source; fwrite(&cero,1,1,lprg);
   acceso_remoto=0; parametros=0; linea=1;
-printf("1051\n");
+//printf("1051\n");
   sintactico();
 
   i=obj; while (i<iobj) {
@@ -1194,6 +1194,8 @@ void c_error(word tipo, word e) {
   int columna=0;
   byte *_p,*p;
 
+printf("c_error %d %d\n",tipo,e);
+
   numero_error=e;
 
   switch(tipo) {
@@ -1306,8 +1308,10 @@ void analiza_ltlex(void){
   *(buf+len)=cr; *(buf+len+1)=cr;
 
   linea=1;
-
-  do switch (*buf++) {
+//printf("%s\n",buf);
+  do {
+	//  printf("[%c] %x",*buf, buf); 
+	  switch (*buf++) {
     case ' ': case tab:
       break;
     case  cr:
@@ -1315,12 +1319,14 @@ void analiza_ltlex(void){
     case ';':
       while (*buf!=cr) buf++; break;
     case '&':
+//    printf("%c%c %c\n",*(buf),*(buf+1),*(buf+2));
       *buf=lower[*buf]; if (*buf>='0' && *buf<='9') t=(*buf++-'0')<<4;
       else if (*buf>='a' && *buf<='f') t=(*buf++-'a'+10)<<4; else c_error(0,2);
       *buf=lower[*buf]; if (*buf>='0' && *buf<='9') t+=(*buf++-'0');
       else if (*buf>='a' && *buf<='f') t+=(*buf++-'a'+10); else c_error(0,2);
       if (*buf==cr || *buf==' ' || *buf==tab) break;
-      else if (lower[*buf]) {           //Analiza una palabra reservada
+      else if (lower[*buf]) {           //Analyzes a keyword
+//		  printf("keyword %s\n",buf);
         _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=(void*)t; h=0;
         while (*ivnom.b=lower[*buf++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
         ptr=&vhash[h]; while (*ptr) ptr=(void *)*ptr; *ptr=_ivnom;
@@ -1347,7 +1353,8 @@ void analiza_ltlex(void){
           } (*e).caracter=*buf++;
         } (*e).token=t;
       } break;
-  } while (cont);
+  } 
+  }while (cont);
 printf("lex parsed\n");
 
   free(_buf); _buf=NULL;
@@ -1694,6 +1701,7 @@ void lexico(void) {
   int n;
 printf("lexico\n");
 
+//printf("%s\n",_source);
   if (!coment) {old_linea=linea; old_ierror=ierror; old_ierror_end=ierror_end;}
 
   lex_scan: ierror=_source;
@@ -3255,6 +3263,8 @@ printf("sintactico\n");
   //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
   save_error(0);
+  printf("%d %d\n",pieza,p_program);
+  
   if (pieza!=p_program && pieza!=p_setup_program) c_error(4,20);
 
   if (pieza==p_setup_program) {
@@ -7323,6 +7333,7 @@ char e_msg[32];
 int compilado=0;
 
 void compilar1(void) {
+	printf("compilar1\n");
   _show_items();
   wwrite(v.ptr,v.an/big2,v.al/big2,3,12,0,texto[206],c3);
   wwrite(v.ptr,v.an/big2,v.al/big2,6+text_len(texto[206]),12,0,ventana[v_ventana+1].titulo,c4);
@@ -7332,6 +7343,7 @@ extern char cerror[128];
 void get_error(int n);
 
 void compilar2(void) {
+//	printf("compilar2\n");
   if (compilado==0) {
     compilado=1; mouse_graf=3; numero_error=-1;
     comp();
@@ -7339,6 +7351,7 @@ void compilar2(void) {
       //      strcpy(e_msg,texto[207]);
       //      itoa(numero_error,e_msg+strlen(e_msg),10);
 //      if (numero_error>=10) {
+printf("error %d\n",numero_error);
         get_error(500+numero_error);
       //        strcat(e_msg,texto[208]);
       //        itoa(linea_error,e_msg+strlen(e_msg),10);
@@ -7624,6 +7637,8 @@ void plexico(void) {
   if (!coment) {old_linea=linea; old_ierror=ierror; old_ierror_end=ierror_end;}
 
   lex_scan: ierror=_source;
+  printf("%d %c %c\n",lex_case[*_source],*_source,lower[*_source]);
+  
   switch ((int)lex_case[*_source]) { // Puntero a un lex_ele o l_???
 
     case l_err:

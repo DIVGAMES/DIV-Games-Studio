@@ -3126,6 +3126,7 @@ void lista_procesos0(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void goto_error(void) {
+	printf("error\n");
   int m,n=0;
 
   for (m=0;m<max_windows;m++) {

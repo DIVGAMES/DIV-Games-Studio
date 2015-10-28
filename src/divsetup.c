@@ -421,7 +421,6 @@ void MemInfo2(void) {
 }
 
 void MemInfo0(void) {
-#ifdef NOTYET
   v.tipo=1;
   v.titulo=texto[199];
   v.an=168;
@@ -429,10 +428,9 @@ void MemInfo0(void) {
   v.paint_handler=(int)MemInfo1;
   v.click_handler=(int)MemInfo2;
 
-  _heapshrink();
+//  _heapshrink();
 
   _button(100,v.an/2,v.al-14,1);
-#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

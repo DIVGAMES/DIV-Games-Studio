@@ -80,7 +80,7 @@ void find_colors(void) {
 
   memset(pal,0,768);
 
-  if ((f=fopen("help\\help.fig","rb"))!=NULL) {
+  if ((f=fopen("help/help.fig","rb"))!=NULL) {
     fseek(f,8,SEEK_SET);
     fread(pal,1,768,f);
     fclose(f);
@@ -629,8 +629,8 @@ void Guarda_Pal()
 {
 int x;
         strcpy(full,tipo[v_tipo].path);
-        if (full[strlen(full)-1]!='\\')
-                strcat(full,"\\");
+        if (full[strlen(full)-1]!='/')
+                strcat(full,"/");
         strcat(full,input);
         if ((f=fopen(full,"wb"))!=NULL)
         {
