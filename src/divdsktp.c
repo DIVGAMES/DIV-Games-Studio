@@ -1017,7 +1017,7 @@ void carga_help(int n,int helpal,int helpline,int x1,int x2)
   int m_back;
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
-    if((f=fopen("help\\help.div","rb"))!=NULL) {
+    if((f=fopen("help/help.div","rb"))!=NULL) {
       fseek(f,helpidx[n*2],SEEK_SET);
       if ((h_buffer=(byte*)malloc(helpidx[n*2+1]))!=NULL) {
         if ((help_buffer=(byte*)malloc(helpidx[n*2+1]+1024))!=NULL) {
