@@ -2954,7 +2954,7 @@ void inicializacion(void) {
 
   f=fopen("tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
 
-  if (big) f=fopen("GRAF_G.DIV","rb"); else f=fopen("GRAF_P.DIV","rb");
+  if (big) f=fopen("system/GRAF_G.DIV","rb"); else f=fopen("system/GRAF_P.DIV","rb");
   if (f==NULL) error(0);
   else {
     fseek(f,0,SEEK_END); n=ftell(f)-1352;
