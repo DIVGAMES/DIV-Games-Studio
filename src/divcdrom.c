@@ -79,8 +79,8 @@ static int CDOpendoor=0;
 void cd_get_hala(void);
 int CDinit()
 {
-	printf("divcdrom.cpp - CDInit\n");
-	/*
+//	printf("divcdrom.cpp - CDInit\n");
+#ifdef NOTYET
 int x;
 
         tTracks[0].Min=0;
@@ -123,7 +123,7 @@ int x;
         else {
                 return 0;
         }
-        * */
+#endif
 return 1;
 }
 void CDplay_track(int play)
@@ -484,18 +484,13 @@ void Clock3(void)
 }
 
 void Clock0(void)
-{
-	printf("divcdrom.cpp - Clock0\n");
-//	return;
-	
+{	
         v.tipo=4; // Timer
         v.an=47;
         v.al=30;
         v.titulo=texto[151];
-  //      _dos_gettime(&time);
-  time(&dtime);
-  
-  timeinfo = localtime ( &dtime );
+        time(&dtime);
+        timeinfo = localtime ( &dtime );
         sprintf(cTimeForIcon,"%s [%02d%c%02d]",texto[151],timeinfo->tm_hour,timeinfo->tm_sec%2?';':' ',timeinfo->tm_min);
         v.nombre=cTimeForIcon;
         v.paint_handler=(int)Clock1;
@@ -505,7 +500,6 @@ void Clock0(void)
         ORDig2=-1;
         ORDig3=-1;
         ORDig4=-1;
-        
 }
 
 void muestra_reloj()

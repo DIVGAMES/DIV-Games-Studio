@@ -349,7 +349,7 @@ int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
   SDL_Init( SDL_INIT_VIDEO );
-  SDL_EnableUNICODE( SDL_ENABLE );   
+  
 system_clock = &mclock;
 
 //  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
@@ -407,7 +407,7 @@ system_clock = &mclock;
   } else {
     if ((f=fopen("system/setup.bin","rb"))!=NULL) {
       fclose(f);
-  //    printf("setup.bin found\n");
+      printf("setup.bin found\n");
       primera_vez=0;
     } else {
       primera_vez=1;
@@ -3046,7 +3046,7 @@ void inicializacion(void) {
   crea_barratitulo();
 
   svmode(); set_dac(dac); read_mouse();
-printf("set complete copy\n");
+//printf("set complete copy\n");
   volcado_completo=1;
   volcado(copia);
 
@@ -3852,6 +3852,7 @@ void Load_Cfgbin() {
   file=fopen("system/setup.bin","rb");
   if(file==NULL) {
     if (primera_vez) {
+		printf("no setup data and first run...\n ");
       strcpy(Setupfile.Desktop_Image,texto[487]); // Informacion del tapiz
       Setupfile.Desktop_Gama=1;
       Setupfile.Desktop_Tile=0;

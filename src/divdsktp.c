@@ -378,7 +378,6 @@ int iWork;
         desktop=fopen("system/session.dtf","rb");
         if(desktop==NULL)
                 return(0);
-printf("Found session\n");
         // read the header id
         fread(cWork,8,1,desktop);
         // Check old resolution

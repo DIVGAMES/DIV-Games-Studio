@@ -211,14 +211,14 @@ while(SDL_PollEvent(&event))
             /* If a button on the mouse is pressed. */
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
-				printf("click\n");
+			//	printf("click\n");
 				m_b = 1;
 			}
 			if (event.type == SDL_KEYDOWN)
             {
 				scan_code = event.key.keysym.scancode;
 				ascii = event.key.keysym.unicode&0x7f;
-				printf("key pressed %c\n",ascii);
+//				printf("key pressed %c\n",ascii);
 
 			}
 

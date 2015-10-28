@@ -36,7 +36,7 @@ void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
 	c[2]=0;
 //	chdir(c);
 	
-	printf( "set drive: %c\n %s",__drivenum+'A'-1,c);
+//	printf( "set drive: %c\n %s",__drivenum+'A'-1,c);
 
 }
 
@@ -98,7 +98,7 @@ void _splitpath (
 }
 
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
-	printf("TODO - _fullpath %s\n",_FullPath);
+//	printf("TODO - _fullpath %s\n",_FullPath);
 	return _FullPath;
 	
 }
@@ -116,7 +116,7 @@ unsigned int _dos_findfirst(char *name, unsigned int attr,
 
   //  int n;
 if(n>0) {
-	printf("free'ing old find struct\n");
+//	printf("free'ing old find struct\n");
 	free(namelist);
 }
 
@@ -125,7 +125,7 @@ np=-1;
 type = attr;
 
 //n--;
-printf("findfirst: %s\n",namelist[0]->d_name);
+//printf("findfirst: %s\n",namelist[0]->d_name);
 
 return _dos_findnext(result);
 /*result->attrib=0;
@@ -163,7 +163,7 @@ while(++np<n) {
 }
 
 unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
-								printf("TODO - setfileattr\n");
+						//		printf("TODO - setfileattr\n");
 
 	return 1;
 }

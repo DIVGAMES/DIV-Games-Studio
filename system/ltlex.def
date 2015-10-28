@@ -132,7 +132,7 @@
 
 ;컴� C줰igos de token especiales o reservados 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-&00                    ;&00 p_즠tima (Fin de fichero)
+&00                  ;&00 p_즠tima (Fin de fichero)
 &78' &79"               ;&78..&7B delimitadores de literales (interno an.lex.)
                         ;&7C reservado                                     (")
 &7D/*                   ;&7D Inicio de un comentario de varias l죒eas

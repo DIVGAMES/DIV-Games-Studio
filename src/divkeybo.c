@@ -105,8 +105,8 @@ void SetIRQVector(int n, TIRQHandler vec)
 
 void kbdInit(void)
 {
-	printf("TODO - kbdInit\n");
-	
+//	printf("TODO - kbdInit\n");
+	 SDL_EnableUNICODE( SDL_ENABLE );  
 #ifdef NOTYET
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
       OldIrqHandler=GetIRQVector(9);       // Get old handler.
