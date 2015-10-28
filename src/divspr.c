@@ -89,6 +89,7 @@ float spr_coefred;
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void generador_sprites(void) {
+	printf("Sprite generator\n");
   if(!ParseAnimFile())
   {
     v_texto=texto[545]; dialogo((int)err0);
@@ -110,6 +111,8 @@ void generador_sprites(void) {
   InfoCfg.frame = 0;
   FloatFrame    = 0.0;
   InfoSpr = visor_init((lptvisor)&InfoCfg);
+
+printf("InfoSpr %d\n",InfoSpr);
 
   if (InfoSpr==NULL) {
     Progress(texto[434],100,100);
@@ -186,7 +189,6 @@ int ParseAnimFile(void)
     if (AnimFile[strlen(AnimFile)-1]!='/') strcat(AnimFile, "/");
 
     memset(anim_aux, 0, 2000);
-printf("%d\n",con2);
 
     switch(con2)
     {
@@ -198,7 +200,6 @@ printf("%d\n",con2);
       case ENANO_A  : strcat(AnimFile, "GENSPR/ENANO_A/ANIM.HPP");  break;
     }
 
-printf("%s\n",AnimFile);
     if( (f=fopen(AnimFile, "rb")) == NULL ) return(0);
 
     anim_actual = 0;
@@ -206,6 +207,7 @@ printf("%s\n",AnimFile);
 
     while( (c=fgetc(f)) != EOF)
     {
+		printf("status: %d\n",status);
       switch(status)
       {
         case 0: if(c==0x20 || c==0x09) status++; else status=0; break;
@@ -216,6 +218,7 @@ printf("%s\n",AnimFile);
         case 5: if(c!='_') { status=0; break; }
         case 6:
           con=0;
+          printf("ANIM_ found\n");
           for(;;)
           {
             c=fgetc(f);
@@ -228,6 +231,8 @@ printf("%s\n",AnimFile);
           break;
       }
     }
+    printf("anim total: %d\n",anim_total);
+    
     fclose(f);
     if(!anim_total) return(0);
 

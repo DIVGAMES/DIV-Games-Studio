@@ -47,9 +47,9 @@ char Ierr6[128];
 char Ierr7[128];
 char Ierr8[128];
 
-char ifile1[256]="INSTALL\\INSTALL.FPG",ifile1name[16]="INSTALL.FPG";
-char ifile2[256]="INSTALL\\INST_SMA.FNT",ifile2name[16]="INST_SMA.FNT";
-char ifile3[256]="INSTALL\\INST_BIG.FNT",ifile3name[16]="INST_BIG.FNT";
+char ifile1[256]="INSTALL/INSTALL.FPG",ifile1name[16]="INSTALL.FPG";
+char ifile2[256]="INSTALL/INST_SMA.FNT",ifile2name[16]="INST_SMA.FNT";
+char ifile3[256]="INSTALL/INST_BIG.FNT",ifile3name[16]="INST_BIG.FNT";
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -169,7 +169,7 @@ void Setup2() {
     case 2:
       strcpy(cwork,tipo[4].path);
       strcpy(tipo[4].path,tipo[1].path);
-      if (tipo[4].path[strlen(tipo[4].path)-1]!='\\') strcat(tipo[4].path,"\\");
+      if (tipo[4].path[strlen(tipo[4].path)-1]!='/') strcat(tipo[4].path,"/");
       strcat(tipo[4].path,"INSTALL");
       v_modo=1; v_tipo=4;
       v_texto=texto[524];
@@ -202,7 +202,7 @@ void Setup2() {
     case 3:
       strcpy(cwork,tipo[5].path);
       strcpy(tipo[5].path,tipo[1].path);
-      if (tipo[5].path[strlen(tipo[5].path)-1]!='\\') strcat(tipo[5].path,"\\");
+      if (tipo[5].path[strlen(tipo[5].path)-1]!='/') strcat(tipo[5].path,"/");
       strcat(tipo[5].path,"INSTALL");
       v_modo=1; v_tipo=5;
       v_texto=texto[525];
@@ -230,7 +230,7 @@ void Setup2() {
     case 4:
       strcpy(cwork,tipo[5].path);
       strcpy(tipo[5].path,tipo[1].path);
-      if (tipo[5].path[strlen(tipo[5].path)-1]!='\\') strcat(tipo[5].path,"\\");
+      if (tipo[5].path[strlen(tipo[5].path)-1]!='/') strcat(tipo[5].path,"/");
       strcat(tipo[5].path,"INSTALL");
       v_modo=1; v_tipo=5;
       v_texto=texto[525];
@@ -270,7 +270,7 @@ void Setup2() {
 void Setup3() {
   FILE * f;
 
-  if ((f=fopen("INSTALL\\INS_TEXT.ASC","wb"))!=NULL) {
+  if ((f=fopen("INSTALL/INS_TEXT.ASC","wb"))!=NULL) {
     fwrite(MsgExe,1,128,f);
     fwrite(THelp1,1,128,f);
     fwrite(THelp2,1,128,f);
@@ -318,7 +318,7 @@ void Setup0() {
 #endif
     strcat(Copy_Right,&tbuf[20]);
     if (strlen(user2)+strlen(Copy_Right)<=127) strcat(Copy_Right,user2);
-    strcpy(Unid," :\\TMP");
+    strcpy(Unid," :/TMP");
     Unid[0]=toupper(tipo[1].path[0]);
     strcpy(DefDir,texto[353]);
     strcat(DefDir,ExeGen);
@@ -329,7 +329,7 @@ void Setup0() {
 
   strcat(ExeGen,".EXE");
 
-  if ((f=fopen("INSTALL\\INS_TEXT.ASC","rb"))!=NULL) {
+  if ((f=fopen("INSTALL/INS_TEXT.ASC","rb"))!=NULL) {
     fread(MsgExe,1,128,f);
     fread(THelp1,1,128,f);
     fread(THelp2,1,128,f);
@@ -659,12 +659,10 @@ void crear_instalacion(void) {
   if (strlen(Unid)==1) { // Se supone una letra entre 'a' y 'z' como una unidad y no directorio
     strupr(Unid); if (Unid[0]>='A' && Unid[0]<='Z') strcat(Unid,":");
   }
-#ifdef NOTYET
   _fullpath(full,Unid,_MAX_PATH);
   _splitpath(full,drive,dir,fname,ext);
-#endif
-  if (strlen(dir)==0 || dir[strlen(dir)-1]!='\\') strcat(dir,"\\");
-  if (strlen(fname)||strlen(ext)) { strcat(dir,fname); strcat(dir,ext); strcat(dir,"\\"); }
+  if (strlen(dir)==0 || dir[strlen(dir)-1]!='/') strcat(dir,"/");
+  if (strlen(fname)||strlen(ext)) { strcat(dir,fname); strcat(dir,ext); strcat(dir,"/"); }
 
   strupr(drive);
 #ifdef NOTYET
@@ -676,9 +674,9 @@ void crear_instalacion(void) {
     v_texto=texto[356]; dialogo((int)err0); return;
   }
 
-  if (_drive<=2) { strcpy(dir,"\\"); is_disk=_drive; } // En un disquete no crear  directorios
+  if (_drive<=2) { strcpy(dir,"/"); is_disk=_drive; } // En un disquete no crear  directorios
 
-  for(x=1;x<strlen(dir);x++) if(dir[x]=='\\') { // Crea directorios ...
+  for(x=1;x<strlen(dir);x++) if(dir[x]=='/') { // Crea directorios ...
     strcpy(cWork,drive);
     strcat(cWork,dir);
     cWork[x+2]=0;
@@ -702,16 +700,16 @@ void crear_instalacion(void) {
 
   // *** Ficheros de la instalaciขn (los de exec y los de setup)
 
-  fin=fopen("system\\EXEC.INS","rb"); fseek(fin,0,SEEK_END); n=ftell(fin); fclose(fin);
+  fin=fopen("system/EXEC.INS","rb"); fseek(fin,0,SEEK_END); n=ftell(fin); fclose(fin);
 
-  fin=fopen("install\\setup.ins","rb"); fseek(fin,0,SEEK_END); x=ftell(fin);
+  fin=fopen("install/setup.ins","rb"); fseek(fin,0,SEEK_END); x=ftell(fin);
   if (!include_setup) x=0;
   if ((__ins=_ins=ins=(byte *) malloc(n+x+32))==NULL) {
     v_texto=texto[357]; dialogo((int)err0);
     fclose(fin); return;
   } fseek(fin,0,SEEK_SET); x=fread(_ins,1,x,fin); fclose(fin);
 
-  fin=fopen("system\\EXEC.INS","rb"); n=fread(_ins+x,1,n,fin)+x; fclose(fin);
+  fin=fopen("system/EXEC.INS","rb"); n=fread(_ins+x,1,n,fin)+x; fclose(fin);
 
   nfiles=2; if (include_setup) nfiles++;
   while (ins<_ins+n) { nfiles++; ins+=strlen(ins)+1; } ins=_ins;
@@ -733,9 +731,9 @@ void crear_instalacion(void) {
       if (*ins=='+') { // Cuando el archivo no puede incluirse en el PACKFILE
         ins++; topack=0;
       } else topack=1;
-#ifdef NOTYET
+
       _splitpath(ins,drive,dir,fname,ext);
-#endif
+
       strcpy(MiHeaderSetup[x].name,fname);
       strcat(MiHeaderSetup[x].name,ext);
       strupr(MiHeaderSetup[x].name);
@@ -804,7 +802,7 @@ void crear_instalacion(void) {
     dirhead.crc2=0;
     dirhead.crc3=0;
 
-    if ((fin=fopen("system\\exec.exe","rb"))!=NULL) {
+    if ((fin=fopen("system/exec.exe","rb"))!=NULL) {
       fseek(fin,602,SEEK_SET);
       fread(memcrc,4,9,fin);
       memcrc[0]=(memcrc[0]&1);
@@ -812,7 +810,7 @@ void crear_instalacion(void) {
       fclose(fin);
     }
 
-    if ((fin=fopen("install\\setup.ovl","rb"))!=NULL) {
+    if ((fin=fopen("install/setup.ovl","rb"))!=NULL) {
       fseek(fin,602,SEEK_SET);
       fread(memcrc,4,9,fin);
       memcrc[0]=(memcrc[0]&1);
@@ -822,7 +820,7 @@ void crear_instalacion(void) {
 
     // 2ง Abre el fichero ("INSTALL\\PACKFILE.DAT","wb")
 
-    if ((fout=fopen("INSTALL\\PACKFILE.DAT","wb"))==NULL) {
+    if ((fout=fopen("INSTALL/PACKFILE.DAT","wb"))==NULL) {
       v_texto=texto[358]; dialogo((int)err0);
       free(_ins); return;
     }
@@ -859,9 +857,9 @@ void crear_instalacion(void) {
         v_texto=texto[231]; dialogo((int)err0);
         free(hdir); fclose(fout); free(_ins); return;
       }
-#ifdef NOTYET
+
       _splitpath(ins,drive,dir,fname,ext);
-#endif
+
       strcpy(hdir[n].name,fname);
       strcat(hdir[n].name,ext);
       strupr(hdir[n].name);
@@ -895,7 +893,7 @@ void crear_instalacion(void) {
       strcpy(__ins,chr); __ins+=strlen(__ins)+1;
     }
 
-    strcpy(__ins,"INSTALL\\PACKFILE.DAT"); // aคade el PACKFILE como el ฃltimo fichero
+    strcpy(__ins,"INSTALL/PACKFILE.DAT"); // aคade el PACKFILE como el ฃltimo fichero
 
     // 8ง Reescribe el hdir[] y cierra el fichero
 
@@ -914,13 +912,13 @@ void crear_instalacion(void) {
 
    // Crea el INSTALL\DIV32RUN.DLL a partir de (INSTALL\DIV32RUN.INS/386 + SYSTEM\LENGUAJE.INT)
 
-  if ((fout=fopen("INSTALL\\DIV32RUN.DLL","wb"))==NULL) {
+  if ((fout=fopen("INSTALL/DIV32RUN.DLL","wb"))==NULL) {
     v_texto=texto[358]; dialogo((int)err0);
     free(_ins); return;
   }
 
-  if (pentium) fin=fopen("install\\div32run.ins","rb");
-  else         fin=fopen("install\\div32run.386","rb");
+  if (pentium) fin=fopen("install/div32run.ins","rb");
+  else         fin=fopen("install/div32run.386","rb");
 
   if (fin==NULL) {
     v_texto=texto[231]; dialogo((int)err0);
@@ -938,7 +936,7 @@ void crear_instalacion(void) {
 
   fclose(fin);
 
-  if ((fin=fopen("system\\lenguaje.int","rb"))==NULL) {
+  if ((fin=fopen("system/lenguaje.int","rb"))==NULL) {
     v_texto=texto[231]; dialogo((int)err0);
     fclose(fout); free(_ins); return;
   }
@@ -965,7 +963,7 @@ void crear_instalacion(void) {
 
   // *** Crea install.div (fichero empaquetado original)
 
-  if ((fout=fopen("INSTALL\\INSTALL.DIV","wb"))==NULL) {
+  if ((fout=fopen("INSTALL/INSTALL.DIV","wb"))==NULL) {
     v_texto=texto[358]; dialogo((int)err0);
     free(_ins); return;
   }
@@ -984,12 +982,12 @@ void crear_instalacion(void) {
   for(x=0;x<nfiles;x++) {
     Progress(texto[219],x*100,nfiles*100);
     if (x==0) {
-      fin=fopen("system\\EXEC.EXE","rb");
+      fin=fopen("system/EXEC.EXE","rb");
       strcpy(MiHeaderSetup[x].name,ExeGen);
       topack=0;
     } else if (x==1) {
 
-      fin=fopen("install\\div32run.dll","rb");
+      fin=fopen("install/div32run.dll","rb");
 
 //    if (pentium) fin=fopen("install\\div32run.ins","rb");
 //    else         fin=fopen("install\\div32run.386","rb");
@@ -997,16 +995,16 @@ void crear_instalacion(void) {
       strcpy(MiHeaderSetup[x].name,"DIV32RUN.DLL");
       topack=0;
     } else if (x==2 && include_setup) {
-      fin=fopen("install\\setup.ovl","rb");
+      fin=fopen("install/setup.ovl","rb");
       strcpy(MiHeaderSetup[x].name,"SETUP.EXE");
       topack=0;
     } else {
       if (*ins=='+') ins++;
-      if (!strcmp(ins,"INSTALL\\PACKFILE.DAT")) topack=0; else topack=1;
+      if (!strcmp(ins,"INSTALL/PACKFILE.DAT")) topack=0; else topack=1;
       fin=fopen(ins,"rb");
-#ifdef NOTYET
+
       _splitpath(ins,drive,dir,fname,ext);
-#endif
+
       strcpy(MiHeaderSetup[x].name,fname);
       strcat(MiHeaderSetup[x].name,ext);
       if (!topack) strcpy(MiHeaderSetup[x].name,dirhead.pack);
@@ -1053,15 +1051,15 @@ void crear_instalacion(void) {
   Progress(texto[219],nfiles*100,nfiles*100); // INSTALL.DIV ya creado
 
   strcpy(cWork,tipo[1].path); // Borra el PACKFILE.DAT
-  strcat(cWork,"\\");
-  strcat(cWork,"INSTALL\\PACKFILE.DAT");
+  strcat(cWork,"/");
+  strcat(cWork,"INSTALL/PACKFILE.DAT");
   DaniDel(cWork);
 
   // *** Graba INSTALL.EXE con la coletilla informativa
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\");
-  strcat(cWork,"install\\install.ovl");
+  strcat(cWork,"/");
+  strcat(cWork,"install/install.ovl");
 
   strcpy(dWork,full);
   strcat(dWork,"INSTALL.EXE");
@@ -1174,8 +1172,8 @@ void crear_instalacion(void) {
   // *** Graba PackName.001, 002, ... a partir de INSTALL.DIV
 
   strcpy(cWork,tipo[1].path);
-  strcat(cWork,"\\");
-  strcat(cWork,"INSTALL\\INSTALL.DIV");
+  strcat(cWork,"/");
+  strcat(cWork,"INSTALL/INSTALL.DIV");
 
   strcpy(dWork,full);
   strcat(dWork,PackName);

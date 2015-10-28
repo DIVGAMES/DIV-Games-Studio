@@ -1590,6 +1590,7 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
 
   if (linea) ierror=_source;
   next_source=_source;
+    printf("found id %c\n",*_source);
 
   switch ((int)lex_case[*_source]) {
 
@@ -1705,6 +1706,9 @@ printf("lexico\n");
   if (!coment) {old_linea=linea; old_ierror=ierror; old_ierror_end=ierror_end;}
 
   lex_scan: ierror=_source;
+//  printf("found id %c %d\n",*_source,(int)lex_case[*_source]);
+
+
   switch ((int)lex_case[*_source]) { // Puntero a un lex_ele o l_???
 
     case l_err:
@@ -1721,23 +1725,31 @@ printf("lexico\n");
       pieza=p_ultima; break; // eof
 
     case l_id :
+     printf("p id\n"); 
       if (coment) { pieza=p_rem; _source++; break; }
       _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=0; h=0;
+
       while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
       ivnom.b++; _source--; if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
       ptr=&vhash[h];
+      
       while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
+
       if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
+        printf("pieza %d %d\n",pieza,pieza_num);
+
         if (pieza<256 && pieza>=0) { // palabra reservada (token)
 
           if (pieza==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
 
         } else { // objeto (id anterior)
+
           ptr_o=(void*)(ptr+1); o=*ptr_o; pieza=p_id;
           while(o!=NULL && ( ((*o).bloque && bloque_lexico!=(*o).bloque) ||
                              ((*o).member!=member) )) o=(*o).anterior;
+
           if(o==NULL) { // No encontrado
             o=iobj++; (*o).anterior=*ptr_o; *ptr_o=o;
             (*o).name=(byte*)(ptr_o+1);

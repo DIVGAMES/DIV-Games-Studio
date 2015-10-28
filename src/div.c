@@ -310,11 +310,11 @@ int safe;
 /**
  * Legacy dos memory routines
  **/
-
-#ifdef DOS_VERSION
 void GetFree4kBlocks(void);
 int DOSalloc4k(void);
 int DPMIalloc4k(void);
+
+#ifdef DOS_VERSION
 
 #pragma aux DOSalloc4k =\
         "mov bx,0100h",\
@@ -357,7 +357,7 @@ system_clock = &mclock;
 // Treat all modern targets as '586' type
 	cpu_type = 5;
 
-//GetFree4kBlocks();
+GetFree4kBlocks();
 
 //  _harderr(critical_error);
 
@@ -3166,6 +3166,7 @@ char MemoriaLibre[100];
 int MaxMemUsed=0;
 
 int GetHeapFree(int RetUsed) {
+	printf("HeapFree\n");
 /*  struct _heapinfo h_info;
   int heap_status;
   int Use =0;
@@ -3183,6 +3184,7 @@ int GetHeapFree(int RetUsed) {
 }
 
 char *GetMemoryFree() {
+	printf("MemoryFree\n");
 	/*
   union  REGS  regs;
   struct SREGS sregs;
@@ -4188,7 +4190,7 @@ void GetFree4kBlocks(void)
     fclose(f);
   }
 */
-  exit(0);
+//  exit(0);
 }
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�

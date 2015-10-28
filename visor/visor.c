@@ -48,11 +48,12 @@ void lfset(void *buf, long c, long d) {
 void reescalar_sprite3d(buffer_sprite3d  *sbuffer);
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-//  Procedimiento que inicializa el visor
+//  Procedure that initializes the viewfinder
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 buffer_sprite3d *visor_init(lptvisor datos_render)
 {
+	printf("visor init\n");
   if (lib_3d)
     visor_end();
 
