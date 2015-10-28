@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "global.h"
 #include "cdrom.h"
+#include <time.h>
 
 short CDInUse=0;
 short CDPlaying=0;
@@ -31,7 +32,7 @@ void cd_get_position(char *,char *,char *);
 
 void CDgetInfo()
 {
-	printf("divcdrom.cpp - CDgetInfo\n");
+//	printf("divcdrom.cpp - CDgetInfo\n");
 	return;
 	/*
 //struct playinfo songdata;
@@ -389,33 +390,37 @@ void muestra_cd_player() {
 int ORDig1=-1,ORDig2=-1,ORDig3=-1,ORDig4=-1;
 
 char cTimeForIcon[18];
+struct tm * timeinfo;
+time_t dtime;
 
 void Show_Time()
 {
-	printf("CDROM - Show_Time\n");
-	return;
-	/*
+//	printf("CDROM - Show_Time\n");
+//	return;
+	
 byte * ptr=v.ptr;
 int an,al;
 char cBuff[3];
 int Dig1,Dig2,Dig3,Dig4;
-struct dostime_t time;
+//struct dostime_t time;
         if (v.primer_plano!=2 || v.al>v._al) {
           an=v.an; al=v.al;
         } else {
           an=v._an; al=v._al;
         }
         if (big) {an/=2; al/=2; }
-        _dos_gettime(&time);
-        sprintf(cTimeForIcon,"%s [%02d:%02d]",texto[151],time.hour,time.minute);
-        sprintf(cBuff,"%02d",time.hour);
+         time(&dtime);
+         timeinfo = localtime ( &dtime );
+        sprintf(cTimeForIcon,"%s [%02d%c%02d]",texto[151],timeinfo->tm_hour,timeinfo->tm_sec%2?':':'.',timeinfo->tm_min);
+
+        sprintf(cBuff,"%02d",timeinfo->tm_hour);
         if(cBuff[0]=='0')
                 Dig1=10+200;
         else
                 Dig1=(cBuff[0]-'0')+200;
         Dig2=(cBuff[1]-'0')+200;
 
-        sprintf(cBuff,"%02d",time.minute);
+        sprintf(cBuff,"%02d",timeinfo->tm_min);
         Dig3=(cBuff[0]-'0')+200;
         Dig4=(cBuff[1]-'0')+200;
 
@@ -444,7 +449,7 @@ struct dostime_t time;
                 ORDig4=Dig4;
         }
 
-        if(time.second%2)
+        if(timeinfo->tm_sec%2)
         {
                 wbox(ptr,an,al,c4,23,17,1,1);
                 wbox(ptr,an,al,c4,23,19,1,1);
@@ -456,7 +461,7 @@ struct dostime_t time;
                 wbox(ptr,an,al,c2,23,19,1,1);
                 v.volcar=1;
         }
-        * */
+        
 }
 
 void Clock1(void)
@@ -481,16 +486,17 @@ void Clock3(void)
 void Clock0(void)
 {
 	printf("divcdrom.cpp - Clock0\n");
-	return;
-	/*
-struct dostime_t time;
-
+//	return;
+	
         v.tipo=4; // Timer
         v.an=47;
         v.al=30;
         v.titulo=texto[151];
-        _dos_gettime(&time);
-        sprintf(cTimeForIcon,"%s [%02d:%02d]",texto[151],time.hour,time.minute);
+  //      _dos_gettime(&time);
+  time(&dtime);
+  
+  timeinfo = localtime ( &dtime );
+        sprintf(cTimeForIcon,"%s [%02d%c%02d]",texto[151],timeinfo->tm_hour,timeinfo->tm_sec%2?';':' ',timeinfo->tm_min);
         v.nombre=cTimeForIcon;
         v.paint_handler=(int)Clock1;
         v.click_handler=(int)Clock2;
@@ -499,7 +505,7 @@ struct dostime_t time;
         ORDig2=-1;
         ORDig3=-1;
         ORDig4=-1;
-        * */
+        
 }
 
 void muestra_reloj()
