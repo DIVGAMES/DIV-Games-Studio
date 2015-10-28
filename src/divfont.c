@@ -234,7 +234,7 @@ char cWork[10];
                           strcpy(Load_FontName,FontName);
                           strcpy(Load_FontPathName,FontPathName);
                           for(x=strlen(Load_FontPathName)+1;x>=0;x++) {
-                            if(Load_FontPathName[x]=='\\') {
+                            if(Load_FontPathName[x]=='/') {
                               Load_FontPathName[x+1]=0; break;
                             }
                           }
@@ -492,20 +492,21 @@ void Fonts0(void) {
 
         strcpy(FontName,texto[90]);
         strcpy(FontPathName,tipo[5].path);
-        strcat(FontPathName,"\\");
+        strcat(FontPathName,"/");
         strcat(FontPathName,FontName);
 
         strcpy(FaceName,"NORMAL.IFS");
         strcpy(FacePathName,tipo[6].path);
-        strcat(FacePathName,"\\");
+        strcat(FacePathName,"/");
         strcat(FacePathName,FaceName);
+printf("fontpath facename %s %s\n", FaceName, FacePathName);
 
         if ((f=fopen(FacePathName,"rb"))!=NULL) fclose(f);
         else {
           strcpy(tipo[6].path,tipo[1].path);
-          strcat(tipo[6].path,"\\IFS");
+          strcat(tipo[6].path,"/IFS");
           strcpy(FacePathName,tipo[6].path);
-          strcat(FacePathName,"\\NORMAL.IFS");
+          strcat(FacePathName,"/NORMAL.IFS");
           if ((f=fopen(FacePathName,"rb"))!=NULL) fclose(f);
           else {
             strcpy(FaceName,"");
@@ -555,9 +556,11 @@ int CreateFont(int GenCode)
 int x;
 byte _c0;
 FILE *file;
+printf("CreateFont %s\n", FacePathName);
         file=fopen(FacePathName,"rb");
         if(file==NULL)
         {
+			printf("Failed to open font\n");
                 v_texto=texto[45]; dialogo((int)err0);
                 return 0;
         } else fclose(file);
@@ -662,7 +665,7 @@ int an=v.an/big2,al=v.al/big2;
         v_tipo=5;
 
         strcpy(FontPathName,tipo[v_tipo].path);
-        strcat(FontPathName,"\\");
+        strcat(FontPathName,"/");
         strcat(FontPathName,FontName);
 
         v_texto=texto[264];
@@ -679,7 +682,7 @@ int an=v.an/big2,al=v.al/big2;
                 }
                 strcpy(FontName,input);
                 strcpy(FontPathName,tipo[v_tipo].path);
-                if (FontPathName[strlen(FontPathName)-1]!='\\') strcat(FontPathName,"\\");
+                if (FontPathName[strlen(FontPathName)-1]!='/') strcat(FontPathName,"/");
                 strcat(FontPathName,input);
                 wbox(v.ptr,an,al,c2,4,19,66,8); // Borde oscuro del Font
                 wwrite(v.ptr,an,al,4,19,0,FontName,c4);
@@ -732,7 +735,7 @@ int  num;
                             strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
                             strcpy(FaceName,input);
                             strcpy(FacePathName,tipo[v_tipo].path);
-                            if (FacePathName[strlen(FacePathName)-1]!='\\') strcat(FacePathName,"\\");
+                            if (FacePathName[strlen(FacePathName)-1]!='/') strcat(FacePathName,"/");
                             strcat(FacePathName,input);
                           }
                         }
@@ -1474,7 +1477,7 @@ void OpenFont(void) {
   v_modo=0; v_tipo=5;
 
   strcpy(Load_FontPathName,tipo[v_tipo].path);
-  strcat(Load_FontPathName,"\\");
+  strcat(Load_FontPathName,"/");
   strcat(Load_FontPathName,Load_FontName);
 
   v_texto=texto[74];

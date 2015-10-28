@@ -966,7 +966,7 @@ void mensaje_compilacion(byte * p) {
 
 void compilar(void) {
   int n;
-  unsigned long m;
+  uint32_t m;
   struct objeto * i;
   byte * q, * p;
 
@@ -1093,7 +1093,7 @@ printf("compilar\n");
       memcpy(p,&mem[9],(imem-9)*4);
       memcpy(p+(imem-9)*4,loc,iloc*4);
       n=(imem-9+iloc)*4;
-      if (!compress(q,&m,p,n)) {
+      if (!compress(q,(uLongf*)&m,p,n)) {
         fwrite(&n,1,4,f); // mem[0]..mem[8],longitud_datos_descomp,datos comp...
         fwrite(q,1,m,f);
         free(q); free(p);
@@ -1128,7 +1128,7 @@ printf("compilar\n");
       memcpy(p,&mem[9],(imem-9)*4);
       memcpy(p+(imem-9)*4,loc,iloc*4);
       n=(imem-9+iloc)*4;
-      if (!compress(q,&m,p,n)) {
+      if (!compress(q,(uLongf*)&m,p,n)) {
         fwrite(&n,1,4,f); // mem[0]..mem[8],longitud_datos_descomp,datos comp...
         fwrite(q,1,m,f);
         free(q); free(p);
