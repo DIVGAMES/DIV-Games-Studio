@@ -433,7 +433,7 @@ system_clock = &mclock;
 
   for (n=0;n<24;n++) { tipo[n].defecto=0; tipo[n].inicial=0; }
 
-  inicializa_textos("lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+  inicializa_textos("system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
 
  check_mouse();
 
@@ -2983,7 +2983,7 @@ void inicializacion(void) {
 
   // *** Inicializa graf_help[384].offset/an/al/ptr=0
 
-  if ((f=fopen("help.fig","rb"))==NULL) error(0); else {
+  if ((f=fopen("help/help.fig","rb"))==NULL) error(0); else {
     fseek(f,0,SEEK_END); n=ftell(f);
     if ((ptr2=(byte *)malloc(n))!=NULL) {
       memset(graf_help,0,sizeof(graf_help));
