@@ -60,7 +60,7 @@ void load_index(void) {
     div_index=NULL;
   }
 
-  if((f=fopen("help\\help.idx","rb"))!=NULL) {
+  if((f=fopen("help/help.idx","rb"))!=NULL) {
     fseek(f,0,SEEK_END); len=ftell(f);
     if ((div_index=(byte*)malloc(len))!=NULL) {
       fseek(f,0,SEEK_SET); fread(div_index,1,len,f); fclose(f);
@@ -91,7 +91,7 @@ void make_helpidx(void) {
   i_back=a_back=f_back=0; // La cola se vacกa
 
   memset(helpidx,0,sizeof(helpidx));
-  if((f=fopen("help\\help.div","rb"))!=NULL) {
+  if((f=fopen("help/help.div","rb"))!=NULL) {
     fseek(f,0,SEEK_END); len=ftell(f);
     if ((help=(byte*)malloc(len))!=NULL) {
       fseek(f,0,SEEK_SET); fread(help,1,len,f); fclose(f);
@@ -543,6 +543,7 @@ void help(int n){
   FILE * f;
   byte * p;
   int m,m_back;
+printf("HELP!\n");
 
   determina_prg2();
 
@@ -554,7 +555,7 @@ void help(int n){
       old_prg=(struct tprg*)ventana[v_ventana].aux;
     }
   }
-
+printf("HELP! 558\n");
   if ((m=determina_help())!=-1) {
 
     if (m) move(0,m);
@@ -565,6 +566,7 @@ void help(int n){
         if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
       v.primer_plano=1;
     }
+printf("HELP! 569\n");
 
     if (help_item==n) {
       while (help_line!=help_buffer+1) {
@@ -580,10 +582,12 @@ void help(int n){
     return;
 
   }
+printf("HELP! 585\n");
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
+	printf("loading help\n");
     if((f=fopen("help/help.div","rb"))!=NULL) {
-		printf("loading help\n");
+		
       fseek(f,helpidx[n*2],SEEK_SET);
       if ((h_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
         if ((help_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
@@ -614,6 +618,8 @@ void help(int n){
       } fclose(f);
     }
   }
+  printf("HELP! 621\n");
+
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -663,7 +669,7 @@ void help_paint(int n){
   int m_back;
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
-    if((f=fopen("help\\help.div","rb"))!=NULL) {
+    if((f=fopen("help/help.div","rb"))!=NULL) {
       fseek(f,helpidx[n*2],SEEK_SET);
       if ((h_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
         if ((help_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
@@ -708,11 +714,11 @@ extern int linea_error;
 void get_error(int n) {
   FILE * f;
   byte * p;
-
+printf("get error %d\n",n);
   sprintf(cerror,texto[381]); p=cerror+strlen(cerror);
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
-    if((f=fopen("help\\help.div","rb"))!=NULL) {
+    if((f=fopen("help/help.div","rb"))!=NULL) {
       fseek(f,helpidx[n*2],SEEK_SET);
       fread(p,1,128-strlen(cerror),f); fclose(f);
       while (*p!='}') p++; *p=0;
@@ -742,7 +748,7 @@ void help_xref(int n,int linea) {
   //free(help_buffer);
   help_buffer=NULL;
   if (helpidx[n*2] && helpidx[n*2+1]) {
-    if((f=fopen("help\\help.div","rb"))!=NULL) {
+    if((f=fopen("help/help.div","rb"))!=NULL) {
       fseek(f,helpidx[n*2],SEEK_SET);
       if ((h_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
         if ((help_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
@@ -915,7 +921,7 @@ void tabula_help(byte *si,byte *di,int lon) {
                 tipo_imagen*=10; tipo_imagen+=*si-'0'; si++;
               } si++;
               if (imagen<384 && graf_help[imagen].offset) {
-                if ((f=fopen("help\\help.fig","rb"))!=NULL) {
+                if ((f=fopen("help/help.fig","rb"))!=NULL) {
                   if ((ptr=(byte*)malloc(graf_help[imagen].an*graf_help[imagen].al))!=NULL) {
                     fseek(f,graf_help[imagen].offset,SEEK_SET);
                     fread(ptr,graf_help[imagen].an,graf_help[imagen].al,f);
@@ -1399,7 +1405,7 @@ void Print_Help(void) {
       g=fopen(h_ar,"rb");
       if (g!=NULL) {
         fclose(g);
-        sprintf(cwork,"%s\\%s",tipo[1].path,h_ar);
+        sprintf(cwork,"%s/%s",tipo[1].path,h_ar);
         strupr(cwork);
         v_titulo=texto[450];
         v_texto=cwork;
@@ -1410,7 +1416,7 @@ void Print_Help(void) {
       if (g==NULL) { v_texto=texto[47]; dialogo((int)err0); return; }
     } else g=stdprn;
 
-    if((f=fopen("help\\help.div","rb"))!=NULL) {
+    if((f=fopen("help/help.div","rb"))!=NULL) {
       fseek(f,helpidx[help_item*2],SEEK_SET);
       if ((h_buffer=(byte*)malloc(helpidx[help_item*2+1]+2048))!=NULL) {
         if ((print_buffer=(byte*)malloc(helpidx[help_item*2+1]+2048))!=NULL) {
