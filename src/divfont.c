@@ -1659,16 +1659,22 @@ int Save_Font_session(FILE *file,int n)
         n+=fwrite(&Text1Anc,1,4,file);
         n+=fwrite(&Text1Alt,1,4,file);
         n+=fwrite(&Text1Col,1,4,file);
+        if(!Text01)
+			Text01 = (char *)malloc(Text1Anc*Text1Alt);
         n+=fwrite(Text01,1,Text1Anc*Text1Alt,file);
 
         n+=fwrite(&Text2Anc,1,4,file);
         n+=fwrite(&Text2Alt,1,4,file);
         n+=fwrite(&Text2Col,1,4,file);
+        if(!Text02)
+			Text02 = (char *)malloc(Text1Anc*Text1Alt);
         n+=fwrite(Text02,1,Text2Anc*Text2Alt,file);
 
         n+=fwrite(&Text3Anc,1,4,file);
         n+=fwrite(&Text3Alt,1,4,file);
         n+=fwrite(&Text3Col,1,4,file);
+        if(!Text03)
+			Text03 = (char *)malloc(Text1Anc*Text1Alt);
         n+=fwrite(Text03,1,Text3Anc*Text3Alt,file);
 
         n+=fwrite(&FntAlto,1,4,file);
