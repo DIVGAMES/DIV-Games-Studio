@@ -171,6 +171,7 @@ void FinalizaGenerador(void)
   visor_end();
 }
 
+
 int ParseAnimFile(void)
 {
   FILE* f;
@@ -185,6 +186,7 @@ int ParseAnimFile(void)
     if (AnimFile[strlen(AnimFile)-1]!='/') strcat(AnimFile, "/");
 
     memset(anim_aux, 0, 2000);
+printf("%d\n",con2);
 
     switch(con2)
     {
@@ -196,6 +198,7 @@ int ParseAnimFile(void)
       case ENANO_A  : strcat(AnimFile, "GENSPR/ENANO_A/ANIM.HPP");  break;
     }
 
+printf("%s\n",AnimFile);
     if( (f=fopen(AnimFile, "rb")) == NULL ) return(0);
 
     anim_actual = 0;
