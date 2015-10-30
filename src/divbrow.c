@@ -130,7 +130,7 @@ int  Mem_GetHeapFree(void);
 
 TABLAIFS tifs[256];
 FILE *fifs;
-void carga_letra(char letra);
+void carga_letra(uint8_t letra);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Imprime la ruta del directorio o fichero actual
@@ -153,8 +153,8 @@ void imprime_rutabr(void) {
   wbox(v.ptr,an,al,c12,3,11,wbox_ancho,8);
 
   strcpy(full,tipo[v_tipo].path);
-  if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='\\')
-    strcat(full,"\\"); strcat(full,mascara);
+  if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
+    strcat(full,"/"); strcat(full,mascara);
 
   wwrite_in_box(v.ptr,an,wbox_ancho+2,al,5,12,0,full,c1);
   wwrite_in_box(v.ptr,an,wbox_ancho+2,al,4,12,0,full,c3);
@@ -169,9 +169,10 @@ int _omx,_omy,omx,omy,oclock=0;
 int num;
 
 void crear_thumbs(void) {
+	
   if (opc_img[v_thumb]) {
     do {
-//		    printf("DIVBROW.c %d %s %d\n",__LINE__,larchivosbr.lista,v_thumb);
+		    printf("DIVBROW.c %d %s %d\n",__LINE__,larchivosbr.lista,v_thumb);
       switch(v_thumb) // 2-MAP, 3-PAL, 5-FNT, 6-IFS, 7-PCM
       {
         case 2: crear_un_thumb_MAP(&larchivosbr); break;
@@ -1277,10 +1278,10 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
   }
 }
 
-void carga_letra(char letra) {
+void carga_letra(uint8_t letra) {
   long offset;
   short x,y,j,t;
-  char rtbyte, error=0;
+  uint8_t rtbyte, error=0;
   short pixels,despY;
 
   map_an=map_al=0;
@@ -1447,6 +1448,7 @@ void browser0(void) {
 
   _dos_setdrive(toupper(*tipo[v_tipo].path)-'A'+1,&n);
   chdir(tipo[v_tipo].path);
+//printf("chdir %s\n",tipo[v_tipo].path);
 
   dir_abrirbr(); // Crea la lista de ficheros y directorios
 
@@ -1661,13 +1663,15 @@ void browser2(void) {
 
       browser1(); v.volcar=1;
       strcpy(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
-#ifdef NOTYET
+
+		printf("FULL: %s\n",full);
       // OJO !!! Tener en cuenta CTRL y SHIFT
       if (strcmp(input,full) || ((v_thumb==7 || v_tipo==16) && opc_pru))
       {
         strcpy(input, full);
         browser1();
         v.volcar=1;
+#ifdef NOTYET
 
         if(v_thumb==7 && opc_pru) {
           if ( judascfg_device == DEV_NOSOUND) {
@@ -1678,8 +1682,8 @@ void browser2(void) {
             } return;
           } else {
             strcpy(full,tipo[v_tipo].path);
-            if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='\\')
-              strcat(full,"\\");
+            if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
+              strcat(full,'/');
             strcat(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
 
             if(judas_channel[0].smp) judas_stopsample(0);
@@ -1705,8 +1709,8 @@ void browser2(void) {
 //        strcpy(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
         } else if(v_tipo==16 && opc_pru) {
           strcpy(full,tipo[v_tipo].path);
-          if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='\\')
-            strcat(full,"\\");
+          if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
+            strcat(full,"/");
           strcat(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
 
           if(judas_channel[0].smp) judas_stopsample(0);
@@ -1730,11 +1734,12 @@ void browser2(void) {
         }
       } else {
         if(num_taggeds==1) v_existe=1, v_terminado=1;
-      }
 #endif
+      }
+
     } else if (ldirectoriosbr.zona>=10) { v.volcar=1;
-      if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='\\')
-        strcat(tipo[v_tipo].path,"\\");
+      if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
+        strcat(tipo[v_tipo].path,"/");
       strcat(tipo[v_tipo].path,directorio+(ldirectoriosbr.zona-10+
         ldirectoriosbr.inicial)*an_directorio);
       chdir(tipo[v_tipo].path);
