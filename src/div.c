@@ -349,8 +349,10 @@ int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
   SDL_Init( SDL_INIT_VIDEO );
-  
-system_clock = &mclock;
+  SDL_WM_SetCaption( "DIVDX - Linux 64bit", "" );
+//  SDL_ShowCursor( SDL_FALSE );
+//  SDL_WM_GrabInput( SDL_GRAB_ON );
+  system_clock = &mclock;
 
 //  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
 
@@ -4116,7 +4118,7 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
-//	printf("DaniDel %s\n",name);
+	printf("DaniDel %s\n",name);
 	//return;
 	
   unsigned rc;
