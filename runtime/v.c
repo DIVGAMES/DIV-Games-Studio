@@ -4,8 +4,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "inter.h"
-#include "..\inc\svga.h"
-#include "..\inc\vesa.h"
+//#include "..\inc\svga.h"
+//#include "..\inc\vesa.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //	Declarations and module-level data
@@ -16,8 +16,28 @@
 #define SC_INDEX        0x3c4   //Sequence Controller Index
 #define MISC_OUTPUT     0x3c2   //Miscellaneous Output register
 
+#ifdef DOS
 byte * vga = (byte *) 0xA0000; // Physical screen 
                                // TODO - (change this to SDL surface pixels)
+#else
+SDL_Surface *vga;
+#endif
+
+void snapshot(byte *p);
+void volcadocsvga(byte *p);
+void volcadoc320200(byte *p);
+void volcadocx(byte * p);
+void volcadopsvga(byte *p);
+void volcadop320200(byte *p);
+void volcadopx(byte * p);
+int graba_PCX(byte *mapa,int an,int al,FILE *f);
+void crear_ghost_vc(int m);
+void crear_ghost_slow(void);
+
+
+
+
+
 
 #define MAX_YRES 2048
 
@@ -100,6 +120,7 @@ void set_paleta (void) {
 }
 
 void set_dac (void) {
+#ifdef DOS
   union REGS regs;
   word n=0;
   if (fli_palette_update) return;
@@ -113,9 +134,11 @@ void set_dac (void) {
   regs.w.ax=0x1001;
   regs.h.bh=color_oscuro;
   int386(0x010,&regs,&regs);
+#endif
 }
 
 void set_dac2 (void) {
+#ifdef DOS
   int n=0;
   outp(0x3c8,0);
   do {
@@ -123,11 +146,14 @@ void set_dac2 (void) {
     outp(0x3c9,dac[n++]);
     outp(0x3c9,dac[n++]);
   } while (n<768);
+#endif
 }
 
 void retrazo (void) {
+#ifdef DOS
   while (inp(0x3da)&8);
   while ((inp(0x3da)&8)==0);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -140,6 +166,9 @@ int modovesa;
 extern float m_x,m_y;
 
 void svmode(void) {
+	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
+	modovesa=1;
+#ifdef DOS
   VBESCREEN Screen;
 
   int mode=0;
@@ -192,11 +221,12 @@ void svmode(void) {
   }
 
   // OJO!, esto provoca que, en equipos sin VESA, se vea en "320x200 BIG"
-
+  
   if (error) {
     modovesa=0;
     vga_an=320; vga_al=200; _setvideomode(_MRES256COLOR);
   }
+#endif
 
   m_x=(float)vga_an/2.0;
   m_y=(float)vga_al/2.0;
@@ -208,9 +238,11 @@ void svmode(void) {
     texto[max_textos].x=vga_an/2;
     texto[max_textos].font=(byte*)fonts[0];
   } else texto[max_textos].font=0;
+
 }
 
 void svmodex(int m) {
+#ifdef DOS
   int n=0;
 
   _setvideomode(_MRES256COLOR);
@@ -229,7 +261,7 @@ void svmodex(int m) {
 
   outp(CRTC_INDEX,CRTC_OFFSET);
   outp(CRTC_INDEX+1,vga_an/8);
-
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -237,8 +269,10 @@ void svmodex(int m) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void rvmode(void) {
+#ifdef DOS
   SV_restoreMode();
   _setvideomode(3);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -456,7 +490,7 @@ void restore(byte *q, byte *p) {
 
 void volcadop320200(byte *p) {
   int y=0,n;
-  byte * q=vga;
+  byte * q=(byte *)vga->pixels;
 
   #ifdef GRABADORA
   RegScreen(p);
@@ -482,6 +516,7 @@ void volcadoc320200(byte *p) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcadopsvga(byte *p) {
+#ifdef DOS
   int y=0,page,old_page=-1751,point,t1,t2,n;
   char *q=vga;
 
@@ -525,9 +560,12 @@ void volcadopsvga(byte *p) {
       }
     } p+=vga_an; y++;
   }
+#endif
+
 }
 
 void volcadocsvga(byte *p) {
+#ifdef DOS
   int cnt=vga_an*vga_al;
   int tpv=0,ActPge=0;
 
@@ -539,6 +577,7 @@ void volcadocsvga(byte *p) {
     p+=tpv;
     cnt-=tpv;
   }
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -546,6 +585,7 @@ void volcadocsvga(byte *p) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcadopx(byte * p) {
+#ifdef DOS
   int n,m=(vga_an*vga_al)/4,plano=0x100,y;
   byte * v2, * p2;
 
@@ -564,9 +604,12 @@ void volcadopx(byte * p) {
     if (scan[n+3]) memcpyb(v2+scan[n+2],v2+scan[n+2]+m,scan[n+3]);
     v2+=vga_an/4; y++;
   } outp(0x3CE,5); outp(0x3CF,inp(0x3CF)&252);
+
+#endif
 }
 
 void volcadocx(byte * p) {
+#ifdef DOS
   int n=(vga_an*vga_al)/4;
 
   outpw(SC_INDEX,0x102); vgacpy(vga+n,p,n); p++;
@@ -576,6 +619,7 @@ void volcadocx(byte * p) {
 
   outpw(SC_INDEX,0xF02); outp(0x3CE,5); outp(0x3CF,(inp(0x3CF)&252)+1);
   memcpyb(vga,vga+n,n); outp(0x3CE,5); outp(0x3CF,inp(0x3CF)&252);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
