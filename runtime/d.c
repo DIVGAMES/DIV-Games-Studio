@@ -109,7 +109,7 @@ void pinta_segmento_profile(void);
 
 #define max_procesos 2048
 
-extern char combo_error[128]; // para componer mensajes de error compuestos.
+char combo_error[128]; // para componer mensajes de error compuestos.
 
 extern int process_level; // Para contabilizar los cal/ret (step)
 

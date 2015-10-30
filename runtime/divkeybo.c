@@ -33,6 +33,7 @@ word * kb_end = (void*) 0x41c;
 
 void __far __interrupt __loadds IrqHandler(void)
 {
+#ifdef DOS
   int n;
   int scancode;
 
@@ -60,6 +61,7 @@ void __far __interrupt __loadds IrqHandler(void)
     }
 
   }
+#endif
 }
 
 void __far __interrupt __loadds Irq23(void){}
@@ -71,6 +73,7 @@ void __far __interrupt __loadds Irq1b(void){}
 
 TIRQHandler GetIRQVector(int n)
 {
+#ifdef DOS
     struct SREGS sregs;
     union REGS inregs, outregs;
 
@@ -78,6 +81,7 @@ TIRQHandler GetIRQVector(int n)
     sregs.ds = sregs.es = 0;
     int386x (0x21, &inregs, &outregs, &sregs);
     return (TIRQHandler)(MK_FP((word)sregs.es, outregs.x.ebx));
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -86,6 +90,7 @@ TIRQHandler GetIRQVector(int n)
 
 void SetIRQVector(int n, TIRQHandler vec)
 {
+#ifdef DOS
     struct SREGS sregs;
     union REGS inregs, outregs;
 
@@ -94,6 +99,7 @@ void SetIRQVector(int n, TIRQHandler vec)
     sregs.ds     = FP_SEG (vec);     // Handler pointer.
     sregs.es     = 0;
     int386x (0x21, &inregs, &outregs, &sregs);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -102,6 +108,9 @@ void SetIRQVector(int n, TIRQHandler vec)
 
 void kbdInit(void)
 {
+	printf("kbdInit\n");
+	
+#ifdef DOS
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
       OldIrqHandler=GetIRQVector(9);       // Get old handler.
       SetIRQVector(9,IrqHandler);          // Set our handler.
@@ -113,7 +122,7 @@ void kbdInit(void)
 
     signal(SIGBREAK,SIG_IGN);
     signal(SIGINT,SIG_IGN);
-
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -134,6 +143,7 @@ void kbdReset(void)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void tecla_bios(void) {
+#ifdef DOS
   int as,sc,ss;
   union REGS r;
   struct SREGS s;
@@ -161,9 +171,11 @@ void tecla_bios(void) {
       if (fbuf==0) fbuf=buf_max*3-3; else fbuf-=3;
     }
   }
+#endif
 }
 
 void tecla(void) {
+#ifdef DOS
   union REGS r;
   struct SREGS s;
 
@@ -179,6 +191,7 @@ void tecla(void) {
     r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
   }
 
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -186,6 +199,7 @@ void tecla(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void vacia_buffer(void) {
+#ifdef DOS
   union REGS r;
   struct SREGS s;
 
@@ -196,5 +210,7 @@ void vacia_buffer(void) {
   r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
 
   ibuf=fbuf=0; // Vacia el buffer interno
+
+#endif
 }
 

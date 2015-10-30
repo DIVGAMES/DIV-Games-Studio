@@ -1,6 +1,18 @@
 #ifndef __DIV_SOUND_
 #define __DIV_SOUND_
 
+#define CHANNELS 0
+#define DEV_NOSOUND 0
+#define DEV_SB 1
+#define DEV_SBPRO 2
+#define DEV_SB16 3
+#define DEV_GUS 4
+#define FASTMIXER 0
+#define SIXTEENBIT 0
+#define STEREO 0
+#define EIGHTBIT 0
+
+
 #define MOD 1
 #define S3M 2
 #define XM  3

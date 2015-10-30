@@ -1827,7 +1827,6 @@ void _sound(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 extern int MusicChannels;
-#define CHANNELS 0
 
 void stop_sound(void) {
   int x, InitChannel=16;

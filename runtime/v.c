@@ -859,7 +859,7 @@ void crear_ghost_slow (void) {
   find_col=(color-dac4)/3;
 }
 
-void find_color(int r,int g,int b) { // Encuentra un color (que no sea el 0)
+void find_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
 
   int dmin,dif;
   byte *pal,*endpal,*color;

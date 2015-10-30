@@ -77,7 +77,7 @@ void svmode(void);
 void rvmode(void);
 void init_volcado(void);
 void volcado_parcial(int,int,int,int);
-void volcado(char *);
+void volcado(byte *);
 void restore(char *,char *);
 void init_ghost(void);
 void crear_ghost(void);
@@ -929,7 +929,7 @@ void frame_end(void);
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
-void find_color(int r,int g,int b);
+//void find_color(int r,int g,int b);
 byte media(byte a,byte b);
 
 GLOBAL int dr,dg,db;

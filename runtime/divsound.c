@@ -19,6 +19,7 @@ int SoundActive=1;
 
 void InitSound(void)
 {
+#ifdef DOS
   FILE *File_Cfg;
   int con;
   int master=10,sound_fx=10,cd_audio=10;
@@ -77,7 +78,6 @@ void InitSound(void)
       fread(&master,1,1,File_Cfg);
       fclose(File_Cfg);
     }
-
     judas_config();
 
     if(!(mem[0]&1)) {
@@ -156,11 +156,19 @@ void InitSound(void)
   }
   for(con=16; con<32; con++) judas_channel[con].smp=NULL;
   for(con= 0; con<32; con++) channel(con)=0;
+
+
+#endif
+
   MusicChannels=0;
+
+
+
 }
 
 void ResetSound(void)
 {
+#ifdef DOS
   int con;
   char Device[8]={DEV_NOSOUND,DEV_SB,DEV_SB,DEV_SBPRO,DEV_SB16,DEV_SB16,DEV_GUS,DEV_GUS};
   unsigned short Puertos[6]={0x210,0x220,0x230,0x240,0x250,0x260};
@@ -206,11 +214,16 @@ void ResetSound(void)
 
   for(con=16; con<32; con++) judas_channel[con].smp=NULL;
   for(con= 0; con<32; con++) channel(con)=0;
+
+
+#endif
   MusicChannels=0;
 }
 
 int LoadSound(char *ptr, long Len, int Loop)
 {
+#ifdef DOS
+
   SoundInfo *SI=NULL;
   int con=0;
 
@@ -236,21 +249,25 @@ int LoadSound(char *ptr, long Len, int Loop)
   free(SI);
 
   return(con);
+#endif
 }
 
 int UnloadSound(int NumSonido)
 {
+#ifdef DOS
   if(sonido[NumSonido].smp)
   {
     judas_freesample(sonido[NumSonido].smp);
     sonido[NumSonido].smp=NULL;
   }
-
+#endif
   return(1);
+
 }
 
 int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
+#ifdef DOS
   int con, InitChannel=16;
 
   if(MusicChannels>InitChannel) InitChannel=MusicChannels;
@@ -274,19 +291,21 @@ int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
   channel(con)=1;
 
   return(con);
+#endif
 }
 
 int StopSound(int NumChannel)
 {
   if(NumChannel >= CHANNELS) return(-1);
-
+#ifdef DOS
   judas_stopsample(NumChannel);
-
+#endif
   return(1);
 }
 
 int ChangeSound(int NumChannel,int Volumen,int Frec)
 {
+#ifdef DOS
   CHANNEL *chptr;
 
   if(NumChannel >= CHANNELS || NumChannel < MusicChannels) return(-1);
@@ -296,11 +315,14 @@ int ChangeSound(int NumChannel,int Volumen,int Frec)
   chptr->vol       = 32*Volumen;
   chptr->freq      = (Freq_original[NumChannel]*Frec)/256;
 
+#endif
+
   return(1);
 }
 
 int ChangeChannel(int NumChannel,int Volumen,int Panning)
 {
+#ifdef DOS
   CHANNEL *chptr;
 
   if(NumChannel >= CHANNELS || NumChannel < MusicChannels) return(-1);
@@ -309,12 +331,13 @@ int ChangeChannel(int NumChannel,int Volumen,int Panning)
 
   chptr->mastervol = Volumen/2;
   chptr->panning   = Panning;
-
+#endif
   return(1);
 }
 
 int IsPlayingSound(int NumChannel)
 {
+#ifdef DOS
   SAMPLE *smp = judas_channel[NumChannel].smp;
   char *pos   = judas_channel[NumChannel].pos;
 
@@ -328,11 +351,14 @@ int IsPlayingSound(int NumChannel)
 
 //printf("%d - %d\n", chptr->pos, chptr->end);
 
+#endif
+
   return(1);
 }
 
 int LoadSong(char *ptr, int Len, int Loop)
 {
+#ifdef DOS
   int con=0;
 
   while(con<128 && cancion[con].ptr!=NULL) con++;
@@ -370,10 +396,12 @@ int LoadSong(char *ptr, int Len, int Loop)
   cancion[con].loop=Loop;
 
   return(con);
+#endif
 }
 
 int PlaySong(int NumSong)
 {
+#ifdef DOS
   if(NumSong>127 || !cancion[NumSong].ptr) return(-1);
 
   StopSong();
@@ -402,11 +430,14 @@ int PlaySong(int NumSong)
 
   SongType = cancion[NumSong].SongType;
 
+#endif
+
   return(1);
 }
 
 void StopSong(void)
 {
+#ifdef DOS
   if(!judas_songisplaying()) return;
 
   switch(SongType)
@@ -415,6 +446,8 @@ void StopSong(void)
     case S3M: judas_frees3m(); break;
     case MOD: judas_freemod(); break;
   }
+
+#endif
 
   MusicChannels=0;
 }
@@ -429,6 +462,7 @@ void UnloadSong(int NumSong)
 
 void SetSongPos(int SongPat)
 {
+#ifdef DOS
   if(!judas_songisplaying()) return;
 
   switch(SongType)
@@ -437,10 +471,12 @@ void SetSongPos(int SongPat)
     case S3M: judas_set_s3m_pos(SongPat); break;
     case MOD: judas_set_mod_pos(SongPat); break;
   }
+#endif
 }
 
 int GetSongPos(void)
 {
+#ifdef DOS
   int pos;
 
   if(!judas_songisplaying()) return(-1);
@@ -453,10 +489,12 @@ int GetSongPos(void)
   }
 
   return(pos);
+#endif
 }
 
 int GetSongLine(void)
 {
+#ifdef DOS
   int pos;
 
   if(!judas_songisplaying()) return(-1);
@@ -469,18 +507,23 @@ int GetSongLine(void)
   }
 
   return(pos);
+#endif
 }
 
 int IsPlayingSong(void)
 {
+#ifdef DOS
   if(judas_songisplaying()) return(1);
 
   return(0);
+#endif
 }
 
 void EndSound(void)
 {
+#ifdef DOS
   judas_uninit();
   timer_uninit();
+#endif
 }
 
