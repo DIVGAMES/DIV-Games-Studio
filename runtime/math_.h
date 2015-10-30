@@ -7,7 +7,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#pragma pack(1);
+
+
+//#pragma pack(1);
+
 #ifdef M_I86HM
 extern	const double __far  _HugeValue;
 #else
@@ -98,7 +101,7 @@ extern double	_matherr( struct exception * );
     #pragma intrinsic(acos,asin,atan,cosh,exp,log10,sinh,tanh)
 //    #pragma intrinsic(acos,asin,atan,cosh,log10,sinh,tanh)
 #endif
-#pragma pack();
+//#pragma pack();
 #define _MATH_H_INCLUDED
 #ifdef __cplusplus
 };

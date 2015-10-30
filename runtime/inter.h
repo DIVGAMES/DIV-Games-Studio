@@ -14,28 +14,30 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-#include <conio.h>
+//#include <conio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
 #include <ctype.h>
-#include <direct.h>
+//#include <direct.h>
 #include <signal.h>
 
-#include <bios.h>
-#include <dos.h>
-#include <i86.h>
-#include <graph.h>
+#include "../src/osdep.h"
+
+//#include <bios.h>
+//#include <dos.h>
+//#include <i86.h>
+//#include <graph.h>
 #include "math_.h"
 #include "divdll.h"
 
 #include "divkeybo.h"
 #include "divfli.h"
-#include "zlib.h"
+#include  <zlib.h>
 
-#include "..\judas\judas.h"
-#include "..\judas\timer.h"
+//#include "..\judas\judas.h"
+//#include "..\judas\timer.h"
 #include "divsound.h"
 
 ///////////////////////////////////////////////////////////////////////////////

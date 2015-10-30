@@ -5,6 +5,9 @@
 #define S3M 2
 #define XM  3
 
+#define SAMPLE char
+
+
 typedef struct _sonido {
   SAMPLE *smp;
   int    freq;

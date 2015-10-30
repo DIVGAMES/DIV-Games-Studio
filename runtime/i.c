@@ -238,7 +238,11 @@ void inicializacion (void) {
   memset(video_modes, 0, 12*32);
 
   system_font();
-  _bios_timeofday(_TIME_GETCLOCK,(long*)&ip); init_rnd(ip);
+
+ip = 99;
+
+//  _bios_timeofday(_TIME_GETCLOCK,(long*)&ip); init_rnd(ip);
+
   //_setvideomode(_MRES256COLOR);
 
   detectar_vesa();
@@ -373,7 +377,9 @@ void inicializacion (void) {
   }
 
   InitSound();
+#ifdef JUDAS
   if(judascfg_device!=DEV_NOSOUND) set_init_mixer();
+#endif
   Init_CD();
 
   find_status=0;
@@ -1257,7 +1263,7 @@ void e(int texto) {
 //  Main Program
 //////////////////////////////////////////////////////////////////////////////
 
-void main(int argc,char * argv[]) {
+int main(int argc,char * argv[]) {
   FILE * f;
   byte * ptr;
   unsigned long len,len_descomp;
@@ -1267,7 +1273,9 @@ void main(int argc,char * argv[]) {
 
   getcwd(divpath,PATH_MAX+1);
 
+#ifdef DOS
   numfiles=flushall();
+#endif
 
 #ifndef DEBUG
   if (argc<2) {
@@ -1283,7 +1291,12 @@ void main(int argc,char * argv[]) {
   vga_an=argc; // To remove a warning (argc unused?)
 #endif
 
+#ifdef DOS
   _harderr(critical_error);
+#endif
+
+
+
 
   vga_an=320; vga_al=200;
 
@@ -1399,6 +1412,9 @@ void main(int argc,char * argv[]) {
     }
 
   } else { fclose(f); exer(1); }
+
+return 0;
+
 }
 
 
