@@ -8,6 +8,7 @@ float m_x=0.0,m_y=0.0;
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void check_mouse(void) {
+#ifdef DOS
   struct SREGS sregs;
   union REGS inregs, outregs;
 
@@ -15,6 +16,7 @@ void check_mouse(void) {
   inregs.w.ax = 0;
   int386 (0x33, &inregs, &outregs);
   if (outregs.w.ax!=0xffff) mouse->cursor=1; else mouse->cursor=0;
+#endif
 }
 
 void set_mouse(int x,int y) {
@@ -25,6 +27,7 @@ void set_mouse(int x,int y) {
 float vx=0.0,vy=0.0,vmax;
 
 void readmouse(void) {
+#ifdef DOS
   union REGS regs;
   short ix,iy;
   int keymouse=0,n=0;
@@ -100,5 +103,6 @@ void readmouse(void) {
 
   mouse->x=_mouse_x;
   mouse->y=_mouse_y;
+#endif
 }
 

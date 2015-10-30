@@ -13,6 +13,15 @@ void function_exec(int id,int n);
 
 int line_fx,color;
 
+void line(int x0, int y0, int x1, int y1);
+void caja(int x,int y,int an,int al);
+void caja_rellena(int x,int y,int an,int al);
+void circulo(int relleno,int x0,int y0,int x1,int y1);
+void line_pixel(int x, int y);
+
+
+
+
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // cabeceras
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -52,6 +61,8 @@ int seno[grados_360+1], coseno[grados_360+1]; //m7
 
 tfast * fast;
 
+#ifdef DOS
+
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Multiplica dos numeros de 8.24
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -68,6 +79,37 @@ extern int mul_16(int, int);
         "imul edx"      \
         "shrd eax,edx,16" \
         parm caller [EDX] [EAX] value [EAX]
+
+#endif
+static int mul_24(int a, int b)
+{
+	int result = a*b;
+/*	asm ( "imull %%ebx\n\t"
+	"shrdl $24,%%edx,%%eax\n\t"
+	: "=a" (result)
+	: "a" (a), "b" (b)
+	: "edx");
+	*/
+	return (result);
+}
+
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//  Muliply two 16:16 floating points
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//fixed mul_16(long a, long b)
+//{
+static unsigned int mul_16(long a, long b)
+{
+	unsigned int result = a*b;
+/*	asm ( "imull %%ebx\n\t"
+	"shrdl $16,%%edx,%%eax\n\t"
+	: "=a" (result)
+	: "a" (a), "b" (b)
+	: "edx");
+	*/
+	return (result);
+}
+
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Funciขn para pintar los sprites de un scroll ordenados por Z

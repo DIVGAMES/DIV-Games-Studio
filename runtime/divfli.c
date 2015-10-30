@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <conio.h>
-#include <mem.h>
+//#include <conio.h>
+//#include <mem.h>
 #include "topflc.h"
 #include "inter.h"
 
