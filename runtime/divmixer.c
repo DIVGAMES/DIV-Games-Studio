@@ -6,6 +6,7 @@ UWORD BaseAddress;
 
 void SetMasterVolume (UWORD volumen)
 {
+#ifdef DOS
     if (SoundCard==DEV_NOSOUND) return;
 
     volumen &= 15;
@@ -39,10 +40,12 @@ void SetMasterVolume (UWORD volumen)
                     break;
 */
     }
+#endif
 }
 
 void SetVocVolume (UWORD volumen)
 {
+#ifdef DOS
     if (SoundCard==DEV_NOSOUND) return;
 
     volumen &= 15;
@@ -78,10 +81,12 @@ void SetVocVolume (UWORD volumen)
                     break;
 */
     }
+#endif
 }
 
 void SetCDVolume (UWORD volumen)
 {
+#ifdef DOS
     if (SoundCard==DEV_NOSOUND) return;
 
     volumen &= 15;
@@ -116,6 +121,7 @@ void SetCDVolume (UWORD volumen)
                     break;
 */
     }
+#endif
 }
 
 void InitMixer(UWORD card, UWORD address, UWORD master, UWORD voc, UWORD cd)
@@ -135,12 +141,15 @@ void InitMixer(UWORD card, UWORD address, UWORD master, UWORD voc, UWORD cd)
 
 void MIX_Reset(void)
 {
+#ifdef DOS
   outp(judascfg_port+MIX_ADR_OFF,   0);
   outp(judascfg_port+MIX_ADR_OFF+1, 0);
+#endif
 }
 
 void MIX_SetInput(byte opt)
 {
+#ifdef DOS
   outp(judascfg_port+MIX_ADR_OFF,   MIX_INPUT);
   outp(judascfg_port+MIX_ADR_OFF+1, opt);
 /*
@@ -152,10 +161,12 @@ void MIX_SetInput(byte opt)
 	asm mov al,opt;
 	asm out dx,al;
 */
+#endif
 }
 
 void MIX_GetVolume(byte reg, byte *left, byte *right)
 {
+#ifdef DOS
   byte al;
 
   outp(judascfg_port+MIX_ADR_OFF, reg);
@@ -179,10 +190,13 @@ void MIX_GetVolume(byte reg, byte *left, byte *right)
 	asm shr al,cl
 	asm mov es:[bx],al
 */
+
+#endif
 }
 
 void MIX_SetVolume(byte reg, byte left, byte right)
 {
+#ifdef DOS
   byte al;
 
   outp(judascfg_port+MIX_ADR_OFF,   reg);
@@ -201,15 +215,19 @@ void MIX_SetVolume(byte reg, byte left, byte right)
 	asm or al,right
 	asm out dx,al
 */
+#endif
 }
 
 void set_mixer(void) {
+#ifdef DOS
   if(judascfg_device==DEV_NOSOUND) return;
 
   InitMixer(judascfg_device, judascfg_port, setup->master, setup->sound_fx, setup->cd_audio);
+#endif
 }
 
 void set_init_mixer(void) {
+#ifdef DOS
   byte fx_l, fx_r;
   byte cd_l, cd_r;
   byte ma_l, ma_r;
@@ -232,5 +250,7 @@ void set_init_mixer(void) {
     setup->master   = ((ma_l>ma_r) ? ma_l : ma_r);
   }
   InitMixer(judascfg_device, judascfg_port, setup->master, setup->sound_fx, setup->cd_audio);
+
+#endif
 }
 
