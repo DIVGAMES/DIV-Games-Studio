@@ -2,6 +2,9 @@
 #include <ctype.h>
 #include <setjmp.h>
 
+#include <fnmatch.h>
+
+
 static jmp_buf buf;
 
 char * strupr(char *string)
@@ -9,7 +12,7 @@ char * strupr(char *string)
 	int x=0;
 	char *st = string;
 	if(string>0 && strlen(string)>0) {
-//		st = (char *)malloc(strlen(string));
+	st = (char *)malloc(strlen(string));
 	
 //printf("string: [%s]\n",string);
 
@@ -29,7 +32,8 @@ char * strlwr(char *string)
 	int x=0;
 	char *st = string;
 	if(strlen(string)>0) {
-
+st = (char *)malloc(strlen(string));
+	
   for(x=0;x<strlen(string);x++) 
     st[x] = tolower((unsigned char) string[x]);
 
@@ -80,6 +84,7 @@ func();
 
 
 
+
 void comp(void)
 {
 	printf("compile\n");
@@ -114,7 +119,7 @@ void _splitpath (
 }
 
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
-//	printf("TODO - _fullpath %s\n",_FullPath);
+	printf("TODO - _fullpath %s\n",_FullPath);
 	return _FullPath;
 	
 }
@@ -125,9 +130,17 @@ int n=0;
 int np=0;
 int type=0;
 
+char findmask[255];
+char findname[2048];
+
 unsigned int _dos_findfirst(char *name, unsigned int attr, 
                             struct find_t *result) {
 //								printf("TODO - findfirst\n");
+
+//printf("name is %s\n",name);
+
+strcpy(findmask,strlwr(name));
+
 
 
   //  int n;
@@ -141,9 +154,8 @@ np=-1;
 type = attr;
 
 //n--;
-//printf("findfirst: %s\n",namelist[0]->d_name);
-
 return _dos_findnext(result);
+
 /*result->attrib=0;
 	strcpy(result->name,namelist[0]->d_name);
 	if(namelist[0]->d_type == DT_DIR) {
@@ -160,16 +172,23 @@ unsigned int _dos_findnext(struct find_t *result) {
 while(++np<n) {
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
+//printf("findnext: %s\n",namelist[np]->d_name);
+	
 	if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
 		result->attrib=16;
 		return 0;
 	} 
+	strcpy(findname, result->name);
+	
+//	printf("%s %s\n",findmask,strlwr(findname));
+	
+if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 	
 	if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
 		result->attrib=0;
 		return 0;
 	} 
-
+}
 //	printf("%s %d %d \n",result->name,n,np);
 	
 //	return 0; 	
@@ -184,4 +203,8 @@ unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
 	return 1;
 }
 
+
+void mkdir(char *dir) {
+	printf("mkdir %\n",dir);
+}
 
