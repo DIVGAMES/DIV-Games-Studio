@@ -13,6 +13,24 @@ void readmouse(void);
 #include "divmixer.hpp"
 #include "divsound.h"
 
+
+
+void load_pal(void);
+int es_PCX(byte *buffer);
+void adaptar(byte * ptr, int len, byte * pal, byte * xlat);
+void put_screen(void);
+void texn2(byte * copia, int vga_an, byte * p, int x, int y, byte an, int al);
+void get_token(void);
+void expres0(void);
+void expres1(void);
+void expres2(void);
+void expres3(void);
+void expres4(void);
+void expres5(void);
+void _encriptar(int encode, char * fichero, char * clave);
+void _comprimir(int encode, char *fichero);
+
+
 extern int max_reloj;
 
 void set_sector_height(void);
@@ -238,13 +256,13 @@ int read_packfile(byte * file) {
 
   if (n<npackfiles) {
     len_desc=packdir[n].len_desc;
-    if ((packptr=malloc(len_desc))!=NULL) {
-      if ((ptr=malloc(packdir[n].len))!=NULL) {
+    if ((packptr=(byte *)malloc(len_desc))!=NULL) {
+      if ((ptr=(char *)malloc(packdir[n].len))!=NULL) {
         if ((f=fopen(packfile,"rb"))!=NULL) {
           fseek(f,packdir[n].offset,SEEK_SET);
           fread(ptr,1,packdir[n].len,f);
           fclose(f);
-          if (!uncompress(packptr,&len_desc,ptr,packdir[n].len)) {
+          if (!uncompress( packptr, &len_desc, ptr, packdir[n].len)) {
             free(ptr);
             return(packdir[n].len_desc);
           } else { free(ptr); free(packptr); return(-2); }
@@ -1172,7 +1190,7 @@ byte ptr;
   return(seed.b[seed.b[127]]+=++ptr);
 }
 
-void random(void) {
+void divrandom(void) {
   int min,max;
   max=pila[sp--]; min=pila[sp];
   pila[sp]=_random(min,max);
@@ -1191,7 +1209,7 @@ int _random(int min,int max) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void init_rnd(int n){
-  register a;
+  int a;
   for (a=0;a<32;a++)seed.d[a]=n;
   for (a=0;a<2048;a++) rnd();
 }
@@ -1357,12 +1375,12 @@ void map_block_copy(void) {
 
 void screen_copy(void) {
   int reg,file,graf;
-  int an,al,and,ald;
+  int an,al,divand,ald;
   int * ptr;
   int xr,ixr,yr,iyr;
   byte *old_si,*si,*di;
 
-  ald=pila[sp--]; and=pila[sp--];
+  ald=pila[sp--]; divand=pila[sp--];
   yr=pila[sp--]; xr=pila[sp--]; graf=pila[sp--];
   file=pila[sp--]; reg=pila[sp];
 
@@ -1379,17 +1397,17 @@ void screen_copy(void) {
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
   if (xr<0) xr=0; if (yr<0) yr=0;
-  if (xr+and>ptr[13]) and=ptr[13]-xr;
+  if (xr+divand>ptr[13]) divand=ptr[13]-xr;
   if (yr+ald>ptr[14]) ald=ptr[14]-yr;
-  if (and<=0 || ald<=0 || an<=0 || al<=0) return;
+  if (divand<=0 || ald<=0 || an<=0 || al<=0) return;
 
   di=(byte*)ptr+64+ptr[15]*4+xr+yr*ptr[13];
   old_si=copia+region[reg].x0+region[reg].y0*vga_an;
 
-  ixr=(float)(an*256)/(float)and;
+  ixr=(float)(an*256)/(float)divand;
   iyr=(float)(al*256)/(float)ald;
 
-  an=and; yr=0;
+  an=divand; yr=0;
 
   do {
     si=old_si+(yr>>8)*vga_an; xr=0;
@@ -1397,7 +1415,7 @@ void screen_copy(void) {
       *di=*(si+(xr>>8));
       di++; xr+=ixr;
     } while (--an);
-    yr+=iyr; di+=ptr[13]-(an=and);
+    yr+=iyr; di+=ptr[13]-(an=divand);
   } while (--ald);
 
 }
@@ -1809,6 +1827,7 @@ void _sound(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 extern int MusicChannels;
+#define CHANNELS 0
 
 void stop_sound(void) {
   int x, InitChannel=16;
@@ -2020,13 +2039,17 @@ void _system(void) {
 
   if (system(NULL)) {
     if (!strcmp(strupr((char*)&mem[pila[sp]]),"COMMAND.COM")) {
+#ifdef DOS
       _setvideomode(_TEXTC80);
+#endif
       getcwd(cwork,256);
       EndSound();
+#ifdef DOS
       flushall();
       _heapmin();
       _heapshrink();
       system("command.com");
+#endif
       InitSound();
       set_mixer();
       _dos_setdrive((int)toupper(*cwork)-'A'+1,&n);
@@ -2036,10 +2059,12 @@ void _system(void) {
       readmouse();
       volcado_completo=1;
     } else {
+#ifdef DOS
       flushall();
       _heapmin();
       _heapshrink();
       system((byte*)&mem[pila[sp]]);
+#endif
     }
   }
 }
@@ -2406,8 +2431,10 @@ void get_real_point(void) {
 #define  TIME_OUT 2000
 
 void get_joy_button(void) {
+#ifdef DOS
    if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(134); return; }
    if(inp(GAME_PORT)&(1<<(4+pila[sp]))) pila[sp]=0; else pila[sp]=1;
+#endif
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -2417,11 +2444,15 @@ void get_joy_button(void) {
 int ej[4]={-1,-1,-1,-1};
 
 void get_joy_position(void) {
+#ifdef DOS
    if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(134); return; }
    else pila[sp]=joy_position(pila[sp]);
+#endif
 }
 int joy_position(int eje)
 {
+#ifdef DOS
+
    unsigned start,finish,result;
    int i,mask=1<<eje;
 
@@ -2446,6 +2477,10 @@ int joy_position(int eje)
         ej[eje]=(result*(100-joy_filter)+ej[eje]*joy_filter)/100;
       } result=ej[eje];
    } return(result/100);
+#else
+return 0;
+#endif
+
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -2455,6 +2490,8 @@ int joy_position(int eje)
 int joy_cx=0,joy_cy=0,joy_x0,joy_x1,joy_y0,joy_y1,init_joy=0;
 
 void read_joy(void) {
+#ifdef DOS
+
   int n,x,y;
   n=inp(GAME_PORT);
   if(n&16) joy->button1=0; else joy->button1=1;
@@ -2508,6 +2545,7 @@ void read_joy(void) {
   } else {
     joy->up=0; joy->down=0;
   }
+#endif
 }
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 //      Convert_palette(file,graph,&new_palette)
@@ -3031,7 +3069,7 @@ void _filelength(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void flush(void) {
-  pila[++sp]=flushall()-numfiles;
+  pila[++sp]=0;//flushall()-numfiles;
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -3238,6 +3276,7 @@ typedef struct _meminfo{
 
 int Mem_GetHeapFree()
 {
+#ifdef DOS
   struct _heapinfo miheap;
   int status=0,total=0;
   miheap._pentry=NULL;
@@ -3250,10 +3289,12 @@ int Mem_GetHeapFree()
   }
 //if(status!=_HEAPEND) return -1;
   return total;
+#endif
 }
 
 void GetFreeMem(meminfo *Meminfo)
 {
+#ifdef DOS
   union REGS regs;
   struct SREGS sregs;
   regs.x.eax=0x0500;
@@ -3261,6 +3302,7 @@ void GetFreeMem(meminfo *Meminfo)
   sregs.es  =FP_SEG(Meminfo);
   regs.x.edi=FP_OFF(Meminfo);
   int386x(0x031,&regs,&regs,&sregs);
+#endif
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -3268,6 +3310,7 @@ void GetFreeMem(meminfo *Meminfo)
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void disk_free(void) {
+#ifdef DOS
   long MBfree;
   union REGS regs;
   struct diskfree_t structdiskfree;
@@ -3284,6 +3327,7 @@ void disk_free(void) {
       pila[sp]=MBfree/1024;
     } else pila[sp]=0;
   } else pila[sp]=0;
+#endif
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -3291,6 +3335,7 @@ void disk_free(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void memory_free(void) {
+#ifdef DOS
   meminfo Mi_meminfo;
   int mem;
 
@@ -3298,6 +3343,9 @@ void memory_free(void) {
   GetFreeMem(&Mi_meminfo);
   mem=Mem_GetHeapFree();
   pila[++sp]=(Mi_meminfo.Bloque_mas_grande_disponible+mem)/1024;
+#else
+pila[++sp]=0;
+#endif
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -4232,7 +4280,7 @@ void function(void) {
     case 18: delete_text(); break;
     case 19: move_text(); break;
     case 20: unload_fpg(); break;
-    case 21: random(); break;
+    case 21: divrandom(); break;
     case 22: define_region(); break;
     case 23: _xput(); break;
     case 24: _put(); break;
