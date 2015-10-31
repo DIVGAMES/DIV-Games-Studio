@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include <fnmatch.h>
+#include "global.h"
 static jmp_buf buf;
 
 
@@ -83,11 +84,11 @@ char * itoa(long n, char *buf, int len)
     snprintf(buf, len+1, "%ld", n);
     return   buf;
 }
-/*
-void call(int func) {
-//	func();
+
+void call(int *(*func)() ) {
+	func();
 }
-*/
+
 void call(void *(*func)() )
 {
 	//printf("calling func\n");
@@ -98,6 +99,9 @@ func();
                 // Call functions! EEK
 }
 
+void call(const voidReturnType func) {	
+	func("");
+}
 
 
 
@@ -246,7 +250,11 @@ void _makepath(char* Path,const char* Drive,const char* Directory,
 
 int _chdir(const char* Directory)
 {
-  chdir(Directory);
+	printf("Chdir %s\n",Directory);
+
+	if(Directory!=NULL && strlen(Directory)>0)
+		chdir(Directory);
+
   return 0;
 }
 

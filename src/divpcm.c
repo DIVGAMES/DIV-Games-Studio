@@ -5,6 +5,13 @@
 #include "divsb.h"
 //#include <io.h>
 
+// HACK
+byte DmaBuf=0;
+unsigned short dmacount ( void ) { return 0; }
+unsigned char *aligned[2];
+// END HACK
+
+
 void FreeMOD                (void);
 int  GetSongPos             (void);
 int  GetSongLine            (void);
@@ -63,7 +70,7 @@ extern int reloj;
 void errhlp0(void);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Ventana de sonidos
+//  Sounds Window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void PCM1(void) {
@@ -196,7 +203,7 @@ void PCM0(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Ventana de canciones
+//  Song (mod/s3m/xm) window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void MOD1(void) {
@@ -335,7 +342,7 @@ printf("TODO - JUDAS FREEXM\n");
 
 void mostrar_mod_meters(void)
 {
-	printf("TODO - MOD METERS\n");
+//	printf("TODO - MOD METERS\n");
 	
 	/*
   modinfo *mymodinfo=(modinfo *)v.aux;
@@ -431,7 +438,7 @@ void OpenSound(void) {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -449,7 +456,7 @@ void OpenSound(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
       strcpy(SoundName,input);
       strcpy(SoundPathName,full);
@@ -499,12 +506,18 @@ void OpenSound(void) {
   
 }
 
-void OpenSoundFile(void) // Abre el fichero SoundPathName
+#define SoundInfo char
+
+void OpenSoundFile(void) // Open the file SoundPathName
 {
-	printf("TODO - divpcm.cpp OpenSound\n");
-#ifdef NOTYET
+	printf("TODO - divpcm.cpp OpenSoundFile\n");
+
   pcminfo   *mypcminfo;
   SoundInfo *SI=NULL;
+
+printf("SOundName %s\n",input);
+printf("SOundPath %s\n",full);
+
 
   strcpy(SoundName,input);
   strcpy(SoundPathName,full);
@@ -519,7 +532,7 @@ void OpenSoundFile(void) // Abre el fichero SoundPathName
   }
   mypcminfo=(pcminfo *)pcminfo_aux;
 
-  SI = judas_loadwav(SoundPathName);
+/*  SI = judas_loadwav(SoundPathName);
   if(judas_error == JUDAS_WRONG_FORMAT)
   {
     if (SI) free(SI);
@@ -544,9 +557,9 @@ void OpenSoundFile(void) // Abre el fichero SoundPathName
   mypcminfo->sample    = SI->sample;
 
   free(SI);
-
+*/
   nueva_ventana((int)PCM0);
-#endif
+
 }
 
 void nueva_ventana_carga(int init_handler,int nx,int ny);
@@ -766,7 +779,7 @@ void OpenSong(void) {
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);
-    if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+    if (full[strlen(full)-1]!='/') strcat(full,"/");
     strcat(full, input);
     if ((f=fopen(full,"rb"))!=NULL) {
       fclose(f);
@@ -784,7 +797,7 @@ void OpenSong(void) {
     {
       strcpy(input,larchivosbr.lista+larchivosbr.lista_an*num);
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
       strcpy(SongName,input);
       strcpy(SongPathName,full);
@@ -1163,7 +1176,7 @@ void RecSound0(void)
   v.close_handler=(int)RecSound3;
 
   strcpy(SoundFile, tipo[7].path);
-  if (SoundFile[strlen(SoundFile)-1]!='\\') strcat(SoundFile, "\\");
+  if (SoundFile[strlen(SoundFile)-1]!='/') strcat(SoundFile, "/");
   strcat(SoundFile, "SAMPLE.WAV");
 
   // Botones Aceptar/Cancelar
@@ -1183,7 +1196,7 @@ void RecSound0(void)
 void RecSound1(void)
 {
 	printf("TODO - divpcm.cpp RecSound1\n");
-#ifdef NOTYET
+
   int an=v.an/big2,al=v.al/big2;
 
   char drive[_MAX_DRIVE+1];
@@ -1209,7 +1222,7 @@ void RecSound1(void)
   wrectangulo(v.ptr, an, al,  c0, 3, 29, an-6, 20);
   wwrite_in_box(v.ptr,an,an-4,al,an/2,31,1,texto[563],c3);
   wwrite_in_box(v.ptr,an,an-4,al,an/2,40,1,texto[564],c3);
-#endif
+
 }
 
 void RecSound2(void)
@@ -1242,7 +1255,7 @@ void RecSound2(void)
       dialogo((int)browser0);
 
       strcpy(full,tipo[v_tipo].path);
-      if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+      if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
       if(v_terminado)
@@ -1640,15 +1653,17 @@ void ChangeSoundFreq(int freq)
 
 }
 
+
 void RecordSound(void)
 {
 	printf("TODO - divpcm.cpp RecordSound\n");
-#ifdef NOYET
+
   HeadDC         MyHeadDC;
   FILE           *f;
   unsigned short ra;
   unsigned char  ca;
   int            length;
+printf("SoundFile to record: %s\n",SoundFile);
 
   if((f=fopen(SoundFile,"wb"))==NULL)
   {
@@ -1686,7 +1701,8 @@ void RecordSound(void)
   MyHeadDC.wFormatTag       = 1;
   MyHeadDC.wChannels        = 1;
   MyHeadDC.wBlockAlign      = 1;
-  if(judascfg_device == DEV_SB16) {
+  
+  if(true /*judascfg_device == DEV_SB16 */) {
     MyHeadDC.dwSamplePerSec   = 44100;
     MyHeadDC.dwAvgBytesPerSec = 44100;
     MyHeadDC.wBits            = 8;
@@ -1722,12 +1738,14 @@ void RecordSound(void)
   fclose(f);
 
   DmaBuf=0;
+#ifdef NOTYET
   judas_uninit();
   timer_uninit();
 
   if(!sbinit()) return;
   MIX_Reset();
   set_mixer();
+#endif
 
   if(RecDevice[0])
   {
@@ -1741,7 +1759,9 @@ void RecordSound(void)
   }
 //MIX_SetVolume(MIX_INPUT, 15, 15);
 
-  if(judascfg_device == DEV_SB16) {
+
+#ifdef NOTYET
+  if(judascfg_device == DEV_SB16 ) {
 //  ra=44100;
 //  dspwrite(0x42);
 //  dspwrite((unsigned char)((ra>>8)&0xFF));
@@ -1758,29 +1778,33 @@ void RecordSound(void)
   spkon();
   sbrec(65000);
   dmastatus();
-
-  PollRecord();
 #endif
+  PollRecord();
+
 }
 
 void PollRecord(void)
 {
 	printf("TODO - divpcm.cpp PollRecord\n");
-#ifdef NOTYET
+
   FILE *f;
   int  length;
 
   if((f=fopen(SoundFile,"ab"))==NULL) {
     v_texto=texto[47];  // OJO !!! Cambiar mensaje de error
     dialogo((int)err0);
+#ifdef NOTYET
     spkoff();
     InitSound();
     MIX_Reset();
     set_mixer();
+#endif
     return;
   }
 
   kbdFLAGS[_ESC]=0;
+#ifdef NOTYET
+
   while(!kbdFLAGS[_ESC])
   {
     if(dmastatus())
@@ -1793,6 +1817,8 @@ void PollRecord(void)
       if(DmaBuf) DmaBuf=0; else DmaBuf=1;
     }
   }
+#endif
+
   fwrite(aligned[DmaBuf],1,65000-dmacount(),f);
   length=ftell(f)-44;
   fclose(f);
@@ -1800,15 +1826,20 @@ void PollRecord(void)
   {
     v_texto=texto[47];  // OJO !!! Cambiar mensaje de error
     dialogo((int)err0);
+#ifdef NOTYET
     spkoff();
     InitSound();
     MIX_Reset();
     set_mixer();
+#endif
     return;
   }
+  printf("1836 length %d fseek %x\n",length,f);
+  
   fseek(f, 40, SEEK_SET);
   fwrite(&length,1,4,f);
   fclose(f);
+#ifdef NOTYET
   while(!dmastatus());
   inp(judascfg_port+0x0E);
   spkoff();
@@ -1817,7 +1848,6 @@ void PollRecord(void)
   set_mixer();
 
 #endif
-
 }
 
 int JudasProgressRead(int handle, short *buffer, int size)

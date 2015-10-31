@@ -1801,7 +1801,7 @@ printf("1798 something\n");
           while(o!=NULL && ( ((*o).bloque && bloque_lexico!=(*o).bloque) ||
                              ((*o).member!=member) )) o=(*o).anterior;
 
-          if(o==NULL) { // No encontrado
+          if(o==NULL) { // Not found
             o=iobj++; (*o).anterior=*ptr_o; *ptr_o=o;
             (*o).name=(byte*)(ptr_o+1);
             (*o).member=member;

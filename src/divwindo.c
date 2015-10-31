@@ -368,22 +368,28 @@ void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Funciones de impresiขn de un texto
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+typedef  struct { byte an; word dir; } sscar;
+// * car;
 
 int char_len(char c) {
-  struct { byte an; word dir; } * car;
-  car=(void*)(text_font+1); return(car[c].an);
+	sscar *car;
+//  struct { byte an; word dir; } * car;
+  car=(sscar *)(text_font+1); return(car[c].an);
 }
 
 int text_len(byte * ptr) {
 
   int an;
 
-  struct {
+/*  struct {
     byte an;
     word dir;
   } * car;
+*/
 
-  car=(void*)(text_font+1); an=0;
+sscar *car;
+
+  car=(sscar*)(text_font+1); an=0;
   while (*ptr) { an+=car[*ptr].an; ptr++; }
 
   if (big) an/=2;
@@ -394,11 +400,14 @@ int text_len(byte * ptr) {
 
 int text_len2(byte * ptr) {
   int an;
-  struct {
+/*  struct {
     byte an;
     word dir;
   } * car;
-  car=(void*)(text_font+1); an=0;
+
+*/
+sscar *car;
+  car=(sscar*)(text_font+1); an=0;
   while (*ptr) { an+=car[*ptr].an; ptr++; }
   if (big) an/=2; return(an-1);
 }
@@ -412,19 +421,20 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
             int x,int y,int centro,byte * ptr,byte c) {
 
   int an,al,boton,multi;
-
+/*
   struct {
     byte an;
     word dir;
   } * car;
-
+*/
   byte * font;
 
+sscar *car;
   if (centro>=10) { centro-=10; multi=1; } else multi=0;
 
   if (*ptr=='\xd') { boton=1; ptr++; } else boton=0;
 
-  car=(void*)(text_font+1);
+  car=(sscar*)(text_font+1);
 
   if (big&&!multi) {
     an=text_len(ptr); al=7;

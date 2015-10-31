@@ -342,7 +342,7 @@ void Explode2(void) {
     if (v_aceptar) need_refresh=1;
   }
   if(need_refresh){
-        call(v.paint_handler);
+        call((voidReturnType )v.paint_handler);
         v.volcar=1;
   }
 }
@@ -521,7 +521,7 @@ int x;
     for (n=0;n<512;n++)
         v.mapa->puntos[n]=-1;
     v.mapa->Codigo=0;
-    call(v.paint_handler);
+    call((voidReturnType )v.paint_handler);
     wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
 
     avanzar_puntos();

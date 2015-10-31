@@ -249,7 +249,7 @@ void gama2(void)
       if ( wmouse_in(button_coords[con].x,button_coords[con].y,7,7) )
       {
         t_gama[con].selec = !t_gama[con].selec;
-        call(v.paint_handler);
+        call((voidReturnType )v.paint_handler);
         v.volcar=1;
       }
       else
@@ -266,7 +266,7 @@ void gama2(void)
         }
       }
     }
-    call(v.paint_handler);
+    call((voidReturnType )v.paint_handler);
     v.volcar=1;
   }
 }

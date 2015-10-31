@@ -108,6 +108,7 @@ void _makepath(
 );
 
 extern void compilar(void);
+extern int _chdir(const char* Directory);
 
 #endif // __OSDEP_H
 

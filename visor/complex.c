@@ -3,7 +3,7 @@
 #include <math.h>
 #include "complex.hpp"
 
-#define TAPES_ACTIVAS
+//#define TAPES_ACTIVAS
 
 extern long complex_x_ini,complex_x_fin;
 extern long complex_y_ini,complex_y_fin;
@@ -36,7 +36,7 @@ wmaterial   wmat;
 
 
   file=fopen(name,"rb");
-  if(file==NULL)        {ERROR=ERR8;printf("Nombre: %s\n",name);exit(1);};
+  if(file==NULL)        {ERROR=ERR8;printf("Failed to open file: %s\n",name);exit(1);};
   fread(cControl,1,4,file);
   if(strcmp(cControl,"O3D")) {ERROR=ERR9;exit(1);};
   fread(&sWork,1,2,file);   // Versi¢n
@@ -165,8 +165,12 @@ wmaterial   wmat;
   for(i=0;i<complex_struct->nObjects;i++)
     for(j=0;j<complex_struct->Objects[i]->nFaces;j++)
       complex_struct->Objects[i]->Faces[j].tipo_map=complex_struct->Objects[i]->Faces[j].material->tipo_map;
+  
   fread(complex_struct->Dummies,sizeof(tbbox),complex_struct->nDummies,file);
-  fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
+  
+  printf("%d %d %d\n",ftell(file),sizeof(short),complex_struct->nTapes);
+  
+//  fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
 
 #ifdef TAPES_ACTIVAS
   for(i=0;i<complex_struct->nTapes;i++)

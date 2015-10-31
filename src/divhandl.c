@@ -139,12 +139,12 @@ void menu_programas2(void) {
     switch (v.estado) {
 
       case 1: // Nuevo ...
-        v_modo=1; v_texto=texto[186];
+        v_modo=1; v_texto=(char *)texto[186];
       	dialogo((int)browser0);
         if (v_terminado) {
           if (!v_existe) v_aceptar=1;
           else {
-            v_titulo=texto[187]; v_texto=input;
+            v_titulo=(char *)texto[187]; v_texto=input;
             dialogo((int)aceptar0);
           }
           if(v_aceptar) {
@@ -154,11 +154,11 @@ void menu_programas2(void) {
         } break;
 
       case 2: // Abrir programa ...
-        v_modo=0; v_texto=texto[346];
+        v_modo=0; v_texto=(char *)texto[346];
       	dialogo((int)browser0);
         if (v_terminado) {
           if (!v_existe) {
-            v_texto=texto[43];dialogo((int)err0);
+            v_texto=(char *)texto[43];dialogo((int)err0);
           } else {
             mouse_graf=3; volcado_copia(); mouse_graf=1;
             abrir_programa();
@@ -167,7 +167,7 @@ void menu_programas2(void) {
 
       case 3:
         if (n=determina_prg()) {
-          v_titulo=texto[188]; v_texto=ventana[n].titulo;
+          v_titulo=(char *)texto[188]; v_texto=(char *)ventana[n].titulo;
           dialogo((int)aceptar0);
           if (v_aceptar) {
             move(0,n);
@@ -192,11 +192,11 @@ void menu_programas2(void) {
       case 5:
         if (n=determina_prg()) {
           save_prg_buffer(n);
-          v_modo=1; v_texto=texto[906];
+          v_modo=1; v_texto=(char *)texto[906];
           dialogo((int)browser0);
           if (v_terminado) {
             if (v_existe) {
-              v_titulo=texto[187]; v_texto=input;
+              v_titulo=(char *)texto[187]; v_texto=input;
               dialogo((int)aceptar0);
             } else v_aceptar=1;
             if (v_aceptar) {
@@ -267,7 +267,7 @@ void menu_programas2(void) {
               fclose(f); crear_instalacion();
               DaniDel("install.div");
             } else {
-              v_texto=texto[238]; dialogo((int)err0);
+              v_texto=(char *)texto[238]; dialogo((int)err0);
             }
           }
         } break;
@@ -352,7 +352,7 @@ void menu_edicion2(void) {
 
       case 7:
         if (n=determina_prg()) {
-          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call(v.click_handler);
+          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call((voidReturnType)v.click_handler);
           if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
           move(0,n);
           if (v.primer_plano==0) {
@@ -392,7 +392,7 @@ void menu_edicion2(void) {
 
       case 9:
         if (n=determina_prg()) {
-          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call(v.click_handler);
+          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call((voidReturnType )v.click_handler);
           if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
           move(0,n);
           if (v.primer_plano==0) {
@@ -491,11 +491,11 @@ void menu_mapas2(void) {
         } break;
 
       case 2: // Abrir mapa ...
-        v_modo=0; v_texto=texto[803];
+        v_modo=0; v_texto=(char *)texto[803];
       	dialogo((int)browser0);
         if (v_terminado) {
           if (!v_existe) {
-            v_texto=texto[43];dialogo((int)err0);
+            v_texto=(char *)texto[43];dialogo((int)err0);
           } else {
             mouse_graf=3; volcado_copia(); mouse_graf=1;
             abrir_mapa();
@@ -504,7 +504,7 @@ void menu_mapas2(void) {
 
       case 3: // Cerrar mapa
         if (n=determina_mapa()) {
-          v_titulo=texto[50]; v_texto=ventana[n].titulo;
+          v_titulo=(char *)texto[50]; v_texto=(char *)ventana[n].titulo;
           dialogo((int)aceptar0);
           if (v_aceptar) {
             move(0,n); cierra_ventana();
@@ -512,7 +512,7 @@ void menu_mapas2(void) {
         } break;
 
       case 4: // Cerrar todos los mapas (maximizados)
-        v_titulo=texto[334]; v_texto=texto[335];
+        v_titulo=(char *)texto[334]; v_texto=(char *)texto[335];
         dialogo((int)aceptar0);
         if (v_aceptar) {
           for (n=0;n<max_windows;n++) if (ventana[n].tipo==100 && ventana[n].primer_plano!=2) {
@@ -525,7 +525,7 @@ void menu_mapas2(void) {
           if (strchr((const char *)ventana[n].titulo,' ')!=NULL) goto no_tiene_nombre;
           if (ventana[n].mapa->path[0]==0) {
             v_modo=2;
-            strcpy(input2,ventana[n].titulo);
+            strcpy(input2,(char *)ventana[n].titulo);
             goto casi_no_tiene_nombre;
           }
           mouse_graf=3; volcado_copia(); mouse_graf=1;
@@ -538,11 +538,11 @@ void menu_mapas2(void) {
         if (determina_mapa()) {
           v_modo=1;
       casi_no_tiene_nombre:
-          v_texto=texto[807];
+          v_texto=(char *)texto[807];
           dialogo((int)browser0);
           if (v_terminado) {
             if (v_existe) {
-              v_titulo=texto[52]; v_texto=input;
+              v_titulo=(char *)texto[52]; v_texto=input;
               dialogo((int)aceptar0);
             } else v_aceptar=1;
             if (v_aceptar) {
@@ -566,7 +566,7 @@ void menu_mapas2(void) {
             for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
               if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
             v.primer_plano=1;
-          } mouse_b=1; call(v.click_handler);
+          } mouse_b=1; call((voidReturnType )v.click_handler);
         } break;
 
       case 10:
@@ -576,7 +576,7 @@ void menu_mapas2(void) {
       case 11:
         if (cpu_type==5) generador_sprites();
         else {
-          v_texto=texto[391]; dialogo((int)err0);
+          v_texto=(char *)texto[391]; dialogo((int)err0);
         }
         break;
 
@@ -628,11 +628,11 @@ void menu_mapas3D2(void) {
         break;
 
       case 2: // Abrir mapa ...
-        v_modo=0; v_texto=texto[803];
+        v_modo=0; v_texto=(char *)texto[803];
       	dialogo((int)browser0);
         if (v_terminado) {
           if (!v_existe) {
-            v_texto=texto[43];dialogo((int)err0);
+            v_texto=(char *)texto[43];dialogo((int)err0);
           } else {
             mouse_graf=3; volcado_copia(); mouse_graf=1;
             abrir_mapa3d();
@@ -641,7 +641,7 @@ void menu_mapas3D2(void) {
 
       case 3: // Cerrar mapa
         if (n=determina_mapa3d()) {
-          v_titulo=texto[50]; v_texto=ventana[n].titulo;
+          v_titulo=(char *)texto[50]; v_texto=(char *)ventana[n].titulo;
           dialogo((int)aceptar0);
           if (v_aceptar) {
             move(0,n); cierra_ventana();
@@ -649,7 +649,7 @@ void menu_mapas3D2(void) {
         } break;
 
       case 4: // Cerrar todos los mapas 3d (maximizados)
-        v_titulo=texto[334]; v_texto=texto[335];
+        v_titulo=(char *)texto[334]; v_texto=(char *)texto[335];
         dialogo((int)aceptar0);
         if (v_aceptar) {
           for (n=0;n<max_windows;n++) if (ventana[n].tipo==106 && ventana[n].primer_plano!=2) {
@@ -661,20 +661,20 @@ void menu_mapas3D2(void) {
         if (n=determina_mapa3d()) {
           if (strchr((const char *)ventana[n].titulo,' ')!=NULL) goto no_tiene_nombre;
           mouse_graf=3; volcado_copia(); mouse_graf=1;
-          m3d=(void *)ventana[v_ventana].aux;
-          strcpy(input, m3d->m3d_name);
-          strcpy(full,  m3d->m3d_path);
+          m3d=(M3D_info *)ventana[v_ventana].aux;
+          strcpy(input, (char *)m3d->m3d_name);
+          strcpy(full,  (char *)m3d->m3d_path);
           map_save();
         } break;
 
       case 6: // Guardar mapa como ...
       no_tiene_nombre:
         if (determina_mapa3d()) {
-          v_modo=1; v_texto=texto[807];
+          v_modo=1; v_texto=(char *)texto[807];
           dialogo((int)browser0);
           if (v_terminado) {
             if (v_existe) {
-              v_titulo=texto[52]; v_texto=input;
+              v_titulo=(char *)texto[52]; v_texto=input;
               dialogo((int)aceptar0);
             } else v_aceptar=1;
             if (v_aceptar) {
@@ -682,7 +682,7 @@ void menu_mapas3D2(void) {
               strcpy(full, tipo[v_tipo].path);
               if (full[strlen(full)-1]!='/') strcat(full,"/");
               strcat(full,input);
-              m3d=(void *)ventana[v_ventana].aux;
+              m3d=(M3D_info *)ventana[v_ventana].aux;
               map_save();
               wup(v_ventana);
               actualiza_titulo();
@@ -699,7 +699,7 @@ void menu_mapas3D2(void) {
             for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
               if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
             v.primer_plano=1;
-          } mouse_b=1; call(v.click_handler);
+          } mouse_b=1; call((voidReturnType )v.click_handler);
         } break;
     }
   }
@@ -710,7 +710,7 @@ int comprobar_fichero(void) {
   FILE *f;
 
   v_modo=0; v_tipo=4;
-  v_texto=texto[70];
+  v_texto=(char *)texto[70];
   dialogo((int)browser0);
 
   strcpy(full,tipo[v_tipo].path);
@@ -722,14 +722,14 @@ int comprobar_fichero(void) {
       fclose(f);
       if (!strcmp(cwork,"fpg\x1a\x0d\x0a")) {
         if (!v_existe) {
-          v_texto=texto[43];
+          v_texto=(char *)texto[43];
           dialogo((int)err0);
         } else {
           return(1);
         }
-      } else { v_texto=texto[46]; dialogo((int)err0); }
-    } else { fclose(f); v_texto=texto[44]; dialogo((int)err0); }
-  } else { v_texto=texto[44]; dialogo((int)err0); }
+      } else { v_texto=(char *)texto[46]; dialogo((int)err0); }
+    } else { fclose(f); v_texto=(char *)texto[44]; dialogo((int)err0); }
+  } else { v_texto=(char *)texto[44]; dialogo((int)err0); }
 
   return(0);
 }
@@ -856,7 +856,7 @@ void menu_graficos2(void) {
 
       case 3: // Cerrar fichero
         if (n=determina_fpg()) {
-          v_titulo=texto[81]; v_texto=ventana[n].titulo;
+          v_titulo=(char *)texto[81]; v_texto=(char *)ventana[n].titulo;
           dialogo((int)aceptar0);
           if (v_aceptar) {
             free(ventana[n].aux);
@@ -866,7 +866,7 @@ void menu_graficos2(void) {
 
       case 4: // fichero guardar como...
         if (n=determina_fpg()) {
-          v_modo=1; v_texto=texto[830];
+          v_modo=1; v_texto=(char *)texto[830];
           dialogo((int)browser0);
           if (v_terminado) {
             if (v_existe) {
@@ -877,12 +877,12 @@ void menu_graficos2(void) {
               if (full[strlen(full)-1]!='/') strcat(full,"/");
               strcat(full,input);
 
-              if (!strcmp(full,Fpg->ActualFile)) {
-                v_texto=texto[418];
+              if (!strcmp(full,(char *)Fpg->ActualFile)) {
+                v_texto=(char *)texto[418];
                 dialogo((int)err0);
                 v_aceptar=0;
               } else {
-                v_titulo=texto[82]; v_texto=input;
+                v_titulo=(char *)texto[82]; v_texto=input;
                 dialogo((int)aceptar0);
               }
 
@@ -974,14 +974,14 @@ void menu_fuentes2(void) {
 
       case 4:
         if (n=determina_fnt()) {
-          FntAux=ventana[n].aux+RES_FOR_NAME;
+          FntAux=(char *)(ventana[n].aux+RES_FOR_NAME);
           dialogo((int)GetText0);
           if(v_aceptar) CreateText();
         } break;
 
       case 5:
         if (n=determina_fnt()) {
-          FntAux=ventana[n].aux+RES_FOR_NAME;
+          FntAux=(char *)(ventana[n].aux+RES_FOR_NAME);
           gen_fontmap();
         } break;
 
@@ -1015,12 +1015,12 @@ void imp_fontmap(void) {
   strcat(FontPathName,"/");
   strcat(FontPathName,FontName);
 
-  v_texto=texto[264]; dialogo((int)browser0);
+  v_texto=(char *)texto[264]; dialogo((int)browser0);
 
   if (!v_terminado) return;
 
   if (v_existe) {
-    v_titulo=texto[75]; v_texto=texto[76];
+    v_titulo=(char *)texto[75]; v_texto=(char *)texto[76];
     dialogo((int)aceptar0); if(!v_aceptar) return;
   }
 
@@ -1032,7 +1032,7 @@ void imp_fontmap(void) {
   buffer_len=1356+256*16+map_an*map_al; // Pide memoria suficiente para el FNT
 
   if ((buffer=(char*)malloc(buffer_len))==NULL) {
-    v_texto=texto[45]; dialogo((int)err0); return; // Not enought memory, close ...
+    v_texto=(char *)texto[45]; dialogo((int)err0); return; // Not enought memory, close ...
   }
 
   memcpy(buffer,"fnt\x1a\x0d\x0a\x00",8);
@@ -1059,7 +1059,7 @@ void imp_fontmap(void) {
 
   end_bucle:
 
-  if (chars!=256) { v_texto=texto[243]; dialogo((int)err0); free(buffer); return; }
+  if (chars!=256) { v_texto=(char *)texto[243]; dialogo((int)err0); free(buffer); return; }
 
   gencode=0;
   if (*(int*)(buffer+1356+'0'*16)) gencode|=1;
@@ -1071,12 +1071,12 @@ void imp_fontmap(void) {
   memcpy(buffer+1352,&gencode,4);
 
   if ((f=fopen(FontPathName,"wb"))==NULL) {
-    v_texto=texto[242]; dialogo((int)err0);
+    v_texto=(char *)texto[242]; dialogo((int)err0);
     free(buffer); return;
   }
 
   if (fwrite(buffer,1,di-buffer,f)!=di-buffer) {
-    v_texto=texto[242]; dialogo((int)err0);
+    v_texto=(char *)texto[242]; dialogo((int)err0);
     fclose(f); free(buffer); return;
   }
 
@@ -1086,7 +1086,7 @@ void imp_fontmap(void) {
   // Create the window and close the old if available
 
 
-  for (x=-1,y=1;y<max_windows;y++) if (ventana[y].tipo==104 && !strcmp(ventana[y].titulo,FontName)) x=y;
+  for (x=-1,y=1;y<max_windows;y++) if (ventana[y].tipo==104 && !strcmp((char *)ventana[y].titulo,FontName)) x=y;
 
   if (x>=0) {
     move(0,x); cierra_ventana();
@@ -1205,24 +1205,26 @@ void menu_sonidos2(void) {
 
         if ( false /*judascfg_device == DEV_NOSOUND*/) {
           if ( SoundError ) {
-            v_texto=texto[549]; dialogo((int)errhlp0);
+            v_texto=(char *)texto[549]; dialogo((int)errhlp0);
             if (v_aceptar) help(2008);
           } else {
-            v_texto=texto[548]; dialogo((int)errhlp0);
+            v_texto=(char *)texto[548]; dialogo((int)errhlp0);
             if (v_aceptar) help(2009);
           }
           return;
-        } else if( true /*judascfg_device != DEV_SBPRO &&
+        } else if( false /*judascfg_device != DEV_SBPRO &&
                    judascfg_device != DEV_SB16 */ ) {
-          v_texto=texto[575]; dialogo((int)err0);
+          v_texto=(char *)texto[575]; dialogo((int)err0);
           return;
         }
 
 //        judas_stopsample(0);
-        sbmalloc();
-        if(aligned[0]!=NULL && aligned[1]!=NULL) dialogo((int)RecSound0);
-        else { v_texto=texto[45];dialogo((int)err0); }
-        sbfree();
+//        sbmalloc();
+
+        if(true /*aligned[0]!=NULL && aligned[1]!=NULL */) 
+			dialogo((int)RecSound0);
+        else { v_texto=(char *)texto[45];dialogo((int)err0); }
+//        sbfree();
         break;
 
       case 2:
@@ -1231,7 +1233,7 @@ void menu_sonidos2(void) {
 
       case 3:
         if (n=determina_pcm()) {
-          v_titulo=texto[338]; v_texto=ventana[n].titulo;
+          v_titulo=(char *)texto[338]; v_texto=(char *)ventana[n].titulo;
           dialogo((int)aceptar0);
           if (v_aceptar) { move(0,n); cierra_ventana(); }
         } break;
@@ -1250,11 +1252,11 @@ void menu_sonidos2(void) {
       case 5:
       no_tiene_nombre_sonido:
         if (n=determina_pcm()) {
-          v_tipo=7; v_modo=1; v_texto=texto[339];
+          v_tipo=7; v_modo=1; v_texto=(char *)texto[339];
           dialogo((int)browser0);
           if (v_terminado) {
             if (v_existe) {
-              v_titulo=texto[340]; v_texto=input;
+              v_titulo=(char *)texto[340]; v_texto=input;
               dialogo((int)aceptar0);
             } else v_aceptar=1;
             if (v_aceptar) {
@@ -1271,7 +1273,7 @@ void menu_sonidos2(void) {
                 move(0,n); cierra_ventana();
                 OpenSoundFile();
 //              wup(n); repinta_ventana(); wdown(n); vuelca_ventana(n);
-              } else { v_texto=texto[47]; dialogo((int)err0); }
+              } else { v_texto=(char *)texto[47]; dialogo((int)err0); }
             }
           }
         } break;
@@ -1279,12 +1281,12 @@ void menu_sonidos2(void) {
       case 6:
         if (n=determina_pcm()) {
           pcminfo_aux=ventana[n].aux;
-          v_tipo=7; v_texto=texto[349];
+          v_tipo=7; v_texto=(char *)texto[349];
 
 //          judas_stopsample(0);
 
           dialogo((int)EditSound0);
-          move(0,n); call(v.paint_handler); v.volcar=1;
+          move(0,n); call((voidReturnType )v.paint_handler); v.volcar=1;
           PasteNewSounds();
         }
         break;
@@ -1296,10 +1298,10 @@ void menu_sonidos2(void) {
       case 8:
         if ( false /*judascfg_device == DEV_NOSOUND*/ ) {
           if ( SoundError ) {
-            v_texto=texto[549]; dialogo((int)errhlp0);
+            v_texto=(char *)texto[549]; dialogo((int)errhlp0);
             if (v_aceptar) help(2008);
           } else {
-            v_texto=texto[548]; dialogo((int)errhlp0);
+            v_texto=(char *)texto[548]; dialogo((int)errhlp0);
             if (v_aceptar) help(2009);
           }
           return;
@@ -1310,7 +1312,7 @@ void menu_sonidos2(void) {
 
       case 9:
         if (n=determina_mod()) {
-          v_titulo=texto[513]; v_texto=ventana[n].titulo;
+          v_titulo=(char *)texto[513]; v_texto=(char *)ventana[n].titulo;
           dialogo((int)aceptar0);
           if (v_aceptar) { move(0,n); cierra_ventana(); }
         } break;
@@ -1354,7 +1356,7 @@ void menu_sistema2(void) {
       case 9: dialogo((int)about0); break;
       case 10: shell(); break;
       case 11:
-        v_titulo=texto[40]; v_texto=NULL; dialogo((int)aceptar0);
+        v_titulo=(char *)texto[40]; v_texto=NULL; dialogo((int)aceptar0);
         if (v_aceptar) salir_del_entorno=1; break;
     }
   }
@@ -1375,7 +1377,7 @@ void crear_menu(int menu) {
 
   v.an=text_len(texto[menu++])+23; v.al=11;
 
-  while (texto[menu]) {
+  while ((char *)texto[menu]) {
     v.al+=9;
     an=text_len(texto[menu++])+7;
     if (v.an<an) v.an=an;
@@ -1397,7 +1399,7 @@ void pinta_menu(int menu) {
 
   while (texto[++menu]) {
     if (*(p=texto[menu])=='-') { p++; wbox(ptr,an,al,c0,2,9+n*9,an-4,1); }
-    if ((q=strchr((const char *)p,'['))!=NULL) {
+    if ((q=(byte *)strchr((const char *)p,'['))!=NULL) {
       *q=0; wwrite(ptr,an,al,3,11+n*9,0,p,c3);
       *q='[';
       wwrite(ptr,an,al,an-4,11+n*9,2,q,c1);
@@ -1429,7 +1431,7 @@ void actualiza_menu(int menu,int min,int max) { // (Min,Max) Opciones prohibidas
       wbox(ptr,an,al,c2,2,1+abs(v.estado)*9,an-4,8);
       p=texto[menu+abs(v.estado)]; if (*p=='-') p++;
 //      wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
-      if ((q=strchr((const char *)p,'['))!=NULL) {
+      if ((q=(byte *)strchr((const char *)p,'['))!=NULL) {
         *q=0; wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
         *q='[';
         wwrite(ptr,an,al,an-4,2+abs(v.estado)*9,2,q,c1);
@@ -1458,7 +1460,7 @@ void actualiza_menu(int menu,int min,int max) { // (Min,Max) Opciones prohibidas
         }
 
         p=texto[menu-n]; if (*p=='-') p++;
-        if ((q=strchr((const char *)p,'['))!=NULL) { *q=0;
+        if ((q=(byte *)strchr((const char *)p,'['))!=NULL) { *q=0;
           wwrite(ptr,an,al,4,2-n*9,0,p,c1);
           wwrite(ptr,an,al,3,2-n*9,0,p,c4);
           *q='[';
@@ -1471,7 +1473,7 @@ void actualiza_menu(int menu,int min,int max) { // (Min,Max) Opciones prohibidas
       } else {
         wbox(ptr,an,al,c2,2,1+n*9,an-4,8);
         p=texto[menu+n]; if (*p=='-') p++;
-        if ((q=strchr((const char *)p,'['))!=NULL) { *q=0;
+        if ((q=(byte *)strchr((const char *)p,'['))!=NULL) { *q=0;
           wwrite(ptr,an,al,4,2+n*9,0,p,c1);
           wwrite(ptr,an,al,3,2+n*9,0,p,c4);
           *q='[';
@@ -1531,8 +1533,8 @@ void mapa0(void) {
     v.an=-v.an; // Para indicar que no se multiplique la ventana por 2
   }
 
-  v.titulo=v.mapa->filename;
-  v.nombre=v.mapa->filename;
+  v.titulo=(byte *)v.mapa->filename;
+  v.nombre=(byte *)v.mapa->filename;
 
   v.mapa->codigo=codigo_siguiente_mapa++;
   v.mapa->grabado=1;
@@ -1676,10 +1678,10 @@ void mapa2(void) {
 
     map_an=v.mapa->map_an; map_al=v.mapa->map_al;
 
-    mab=malloc(((map_an*map_al+31)/32)*4);
+    mab=(int *)malloc(((map_an*map_al+31)/32)*4);
 
     if (mab==NULL) {
-      v_texto=texto[45]; dialogo((int)err0); return;
+      v_texto=(char *)texto[45]; dialogo((int)err0); return;
     }
 
     for (n=1;n<max_windows;n++)
@@ -1750,7 +1752,7 @@ void mapa2(void) {
     TipoTex=0;
     if((FilePaintFPG=fopen(full,"rb"))!=NULL) // NOTE !!! Could provide message here
     {
-      strcpy(m3d_edit.fpg_path, full);
+      strcpy((char *)m3d_edit.fpg_path, full);
       modo-=100;
       M3D_crear_thumbs(&ltexturasbr,0);
       modo+=100;
@@ -1925,8 +1927,8 @@ void usuario0(void) {
 
   _button(100,v.an-8,v.al-14,2);
 
-  _get(460,4+86,22,v.an-8-86,user1,127,0,0);
-  _get(461,4+86,22+19,v.an-8-86,user2,127,0,0);
+  _get(460,4+86,22,v.an-8-86,(byte *)user1,127,0,0);
+  _get(461,4+86,22+19,v.an-8-86,(byte *)user2,127,0,0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1970,10 +1972,10 @@ void copyright1(void) {
 
   // User info:
 
-  wwrite_in_box(v.ptr,an,an-9,al,99,25,0,user1,c1);
-  wwrite_in_box(v.ptr,an,an-9,al,98,25,0,user1,c23);
-  wwrite_in_box(v.ptr,an,an-9,al,99,25+8,0,user2,c1);
-  wwrite_in_box(v.ptr,an,an-9,al,98,25+8,0,user2,c23);
+  wwrite_in_box(v.ptr,an,an-9,al,99,25,0,(byte *)user1,c1);
+  wwrite_in_box(v.ptr,an,an-9,al,98,25,0,(byte *)user1,c23);
+  wwrite_in_box(v.ptr,an,an-9,al,99,25+8,0,(byte *)user2,c1);
+  wwrite_in_box(v.ptr,an,an-9,al,98,25+8,0,(byte *)user2,c23);
 
   wwrite(v.ptr,an,al,48+48+1,61,0,texto[484],c1);
   wwrite(v.ptr,an,al,48+48,61,0,texto[484],c4);
@@ -1992,7 +1994,7 @@ void copyright2(void) {
 
 void err0(void) {
   v.tipo=1; v.titulo=texto[41];
-  v.an=text_len(v_texto)+8; v.al=38; // Ojo: error_window=malloc(640*38*2)
+  v.an=text_len((byte *)v_texto)+8; v.al=38; // Ojo: error_window=malloc(640*38*2)
   if (v.an>320) v.an=320;
   v.paint_handler=(int)err1;
   v.click_handler=(int)err2;
@@ -2002,7 +2004,7 @@ void err0(void) {
 void err1(void) {
   int an=v.an/big2,al=v.al/big2;
   _show_items();
-  wwrite(v.ptr,an,al,4,12,0,v_texto,c3);
+  wwrite(v.ptr,an,al,4,12,0,(byte *)v_texto,c3);
 }
 
 void err2(void) {
@@ -2017,7 +2019,7 @@ void err2(void) {
 void errhlp1(void) {
   int an=v.an/big2,al=v.al/big2;
   _show_items();
-  wwrite(v.ptr,an,al,4,12,0,v_texto,c3);
+  wwrite(v.ptr,an,al,4,12,0,(byte *)v_texto,c3);
 }
 
 void errhlp2(void) {
@@ -2028,7 +2030,7 @@ void errhlp2(void) {
 
 void errhlp0(void) {
   v.tipo=1; v.titulo=texto[41];
-  v.an=text_len(v_texto)+8; v.al=38; // Ojo: error_window=malloc(640*38*2)
+  v.an=text_len((byte *)v_texto)+8; v.al=38; // Ojo: error_window=malloc(640*38*2)
   if (v.an>320) v.an=320;
   v.paint_handler=(int)errhlp1;
   v.click_handler=(int)errhlp2;
@@ -2043,7 +2045,7 @@ void errhlp0(void) {
 
 void info0(void) {
   err0();
-  v.titulo=v_titulo;
+  v.titulo=(byte *)v_titulo;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -2056,8 +2058,8 @@ int old_system_clock;
 void test1(void) {
   int an=v.an/big2,al=v.al/big2;
   _show_items();
-  wwrite(v.ptr,an,al,5,12,0,v_texto,c1);
-  wwrite(v.ptr,an,al,4,12,0,v_texto,c3);
+  wwrite(v.ptr,an,al,5,12,0,(byte *)v_texto,c1);
+  wwrite(v.ptr,an,al,4,12,0,(byte *)v_texto,c3);
 }
 
 void test2(void) {
@@ -2068,8 +2070,8 @@ void test2(void) {
 
 void test0(void) {
   v.tipo=1; v.titulo=texto[384];
-  v_texto=texto[383];
-  v.an=text_len(v_texto)+9; v.al=38;
+  v_texto=(char *)texto[383];
+  v.an=text_len((byte *)v_texto)+9; v.al=38;
   v.paint_handler=(int)test1;
   v.click_handler=(int)test2;
   _button(100,v.an/2,v.al-14,1);
@@ -2085,10 +2087,10 @@ void test0(void) {
 void aceptar0(void) {
   v.tipo=1;
   v.an=text_len(texto[100])+text_len(texto[101])+24;
-  if (v_titulo!=NULL) { v.titulo=v_titulo;
-    if (text_len(v_titulo)+14>v.an) v.an=text_len(v_titulo)+14; }
+  if (v_titulo!=NULL) { v.titulo=(byte *)v_titulo;
+    if (text_len((byte *)v_titulo)+14>v.an) v.an=text_len((byte *)v_titulo)+14; }
   if (v_texto!=NULL) { v.al=38;
-    if (text_len(v_texto)+6>v.an) v.an=text_len(v_texto)+6;
+    if (text_len((byte *)v_texto)+6>v.an) v.an=text_len((byte *)v_texto)+6;
   } else v.al=29;
   v.paint_handler=(int)aceptar1;
   v.click_handler=(int)aceptar2;
@@ -2100,7 +2102,7 @@ void aceptar0(void) {
 void aceptar1(void) {
   int an=v.an/big2,al=v.al/big2;
   _show_items();
-  if (v_texto!=NULL) wwrite(v.ptr,an,al,an/2,12,1,v_texto,c3);
+  if (v_texto!=NULL) wwrite(v.ptr,an,al,an/2,12,1,(byte *)v_texto,c3);
 }
 
 void aceptar2(void) {
@@ -2126,7 +2128,7 @@ void TratarPaleta0(void) {
   v.an=160;
   v.al=59+77;
 
-  v.titulo=v_titulo=texto[568];
+  v.titulo=(byte *)(v_titulo=(char *)texto[568]);
 
   v.paint_handler=(int)TratarPaleta1;
   v.click_handler=(int)TratarPaleta2;
@@ -2163,8 +2165,8 @@ void TratarPaleta1(void) {
   if (OpcPal[1]) {
     wrectangulo(v.ptr,an,al,c0,4,12,an-8,11);
     wbox(v.ptr,an,al,c12,5,13,an-10,9);
-    wwrite(v.ptr,an,al,an/2+1,14,1,"+",c0);
-    wwrite(v.ptr,an,al,an/2,14,1,"+",c4);
+    wwrite(v.ptr,an,al,an/2+1,14,1,(byte *)"+",c0);
+    wwrite(v.ptr,an,al,an/2,14,1,(byte *)"+",c4);
   }
 
   if (OpcPal[0] || OpcPal[1]) {
@@ -2211,7 +2213,7 @@ void TratarPaleta2(void) {
   }
 
   if(need_refresh) {
-    call(v.paint_handler);
+    call((voidReturnType )v.paint_handler);
     v.volcar=1;
   }
 }
@@ -2262,7 +2264,7 @@ void pinta_listbox(struct t_listbox * l) {
     n-=l->inicial; p=l->lista+l->lista_an*l->inicial;
     y=l->y+2; if (n>l->lista_al) n=l->lista_al;
     do {
-      wwrite_in_box(ptr+(l->x+2)*big2,an,l->an-4,al,0,y,0,p,c3);
+      wwrite_in_box(ptr+(l->x+2)*big2,an,l->an-4,al,0,y,0,(byte *)p,c3);
       p+=l->lista_an; y+=8;
     } while (--n);
   }
@@ -2278,7 +2280,7 @@ void pinta_listbox(struct t_listbox * l) {
 
   if (l->zona>=10) { // Marca zona
     wwrite_in_box(ptr+(l->x+2)*big2,an,l->an-4,al,0,l->y+2+(l->zona-10)*8,0,
-      l->lista+l->lista_an*(l->inicial+l->zona-10),c4); v.volcar=1;
+      (byte *)l->lista+l->lista_an*(l->inicial+l->zona-10),c4); v.volcar=1;
   }
 
 }
@@ -2356,7 +2358,7 @@ void actualiza_listbox(struct t_listbox * l) {
 
   if (old_zona!=l->zona) if (old_zona>=10) { // Desmarca zona
     wwrite_in_box(ptr+(l->x+2)*big2,an,l->an-4,al,0,l->y+2+(old_zona-10)*8,0,
-      l->lista+l->lista_an*(l->inicial+old_zona-10),c3); v.volcar=1;
+      (byte *)l->lista+l->lista_an*(l->inicial+old_zona-10),c3); v.volcar=1;
   }
 
   if (l->zona==2 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1)))) {
@@ -2401,7 +2403,7 @@ void actualiza_listbox(struct t_listbox * l) {
 
   if (old_zona!=l->zona) if (l->zona>=10) { // Marca zona
     wwrite_in_box(ptr+(l->x+2)*big2,an,l->an-4,al,0,l->y+2+(l->zona-10)*8,0,
-      l->lista+l->lista_an*(l->inicial+l->zona-10),c4); v.volcar=1;
+      (byte *)l->lista+l->lista_an*(l->inicial+l->zona-10),c4); v.volcar=1;
   }
 
   switch (l->zona) {
@@ -2612,7 +2614,7 @@ printf("input %s\n",input);
     }
   } else strcpy(input,mascara);
 
-  call(v.paint_handler); v.volcar=1;
+  call((voidReturnType )v.paint_handler); v.volcar=1;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -2661,7 +2663,7 @@ void nuevo_mapa2(void) {
       mapsizes[n*9+strlen(&mapsizes[n*9])]='x';
       itoa(map_an,mancho,10); itoa(map_al,malto,10);
 //      v.item[0].estado&=-3; v.item[1].estado&=-3; // Evitar "out of range"
-      call(v.paint_handler); actualiza_listbox(&lmapsizes);
+      call((voidReturnType )v.paint_handler); actualiza_listbox(&lmapsizes);
       _select_new_item(2); v.volcar=1;
     }
   }
@@ -2960,7 +2962,7 @@ void abrir_mapa3d(void) {
         nuevo_mapa3d();
         map_read((void*)v.aux);
         actualiza_titulo();
-        call(v.paint_handler);
+        call((voidReturnType )v.paint_handler);
         v.volcar=1;
       } else { v_texto=texto[44]; dialogo((int)err0); }
     }
@@ -3247,7 +3249,7 @@ int Colors[9],min_dist,i,dist;
         for (n=0;n<512;n++)
                 v.mapa->puntos[n]=-1;
         v.mapa->Codigo=0;
-        call(v.paint_handler);
+        call((voidReturnType )v.paint_handler);
         wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
 
 }
@@ -3365,7 +3367,7 @@ void mapa_busqueda() {
     return;
   }
 
-  call(v.paint_handler);
+  call((voidReturnType )v.paint_handler);
   wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
 }
 
@@ -3667,7 +3669,7 @@ int Colors[9],min_dist,i,dist;
         for (n=0;n<512;n++)
                 v.mapa->puntos[n]=-1;
         v.mapa->Codigo=0;
-        call(v.paint_handler);
+        call((voidReturnType )v.paint_handler);
         wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
 
         if(!Gris)

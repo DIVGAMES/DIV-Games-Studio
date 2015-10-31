@@ -215,7 +215,6 @@ fflush(lst);
         // Mira y guarda una por una las ventanas utilizadas
         for(x=max_windows;x>=0;x--)
         {
-			printf("dumping window %d\n",x);
                 if(ventana[x].tipo!=0 && ventana[x].titulo)
                 {
                         numvent++;
@@ -454,13 +453,13 @@ FILE *f;
         
         fseek(desktop,8+4+4+768+65536,SEEK_SET);
         // Load each of the windows one by one
-        printf("numvent: %d\n",numvent);
+//        printf("numvent: %d\n",numvent);
         for(x=0;x<numvent;x++)
         {
-			printf("Restoring window (%d)\n",x);
+//			printf("Restoring window (%d)\n",x);
                 // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
-                printf("Type %d\n",(byte)ventana_aux.tipo);
+//                printf("Type %d\n",(byte)ventana_aux.tipo);
                 switch(ventana_aux.tipo)
                 {
                         case    2: //menu
@@ -566,7 +565,7 @@ FILE *f;
                                 memcpy((char *)v.mapa->puntos,(char *)maux.puntos,512*2);
                                 // Grafico
                                 // fread(v.mapa->map,maux.map_an,maux.map_al,desktop);
-                                call(v.paint_handler);
+                                call((voidReturnType )v.paint_handler);
                                 wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
                                 if(!Interpretando)
                                         actualiza_caja(0,0,vga_an,vga_al);
@@ -744,7 +743,7 @@ int nueva_ventana_carga(int init_handler,int nx,int ny)
     v.selected_item=-1;
     v.prg=NULL;
 
-    call(init_handler);
+    call((voidReturnType )init_handler);
 
     if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
 
@@ -864,7 +863,7 @@ int nueva_ventana_carga(int init_handler,int nx,int ny)
         wwrite(ptr,an,al,2+(an-20)/2,2,1,v.titulo,c4);
       }
 
-      call(v.paint_handler);
+      call((voidReturnType )v.paint_handler);
 
 /*
       do { read_mouse(); } while((mouse_b&1) || key(_ESC));

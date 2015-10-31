@@ -202,7 +202,7 @@ void rvmode(void) {
 
 void volcadosdl(byte *p) {
 	
-	byte *q = vga->pixels;
+	byte *q = (byte *)vga->pixels;
 	for (int vy=0; vy<vga_al;vy++) {
 		memcpy(q,p,vga_an);
 		p+=vga_an;
@@ -266,7 +266,7 @@ void volcadop320200(byte *p) { // PARTIAL
 //printf("partial dump\n");
 //#ifdef NOTYET
   int y=0,n;
-  byte * q=vga->pixels;
+  byte * q=(byte *)vga->pixels;
 
   #ifdef GRABADORA
   RegScreen(p);
@@ -300,7 +300,7 @@ void volcadopsvga(byte *p) {
 //	printf("divvideo.cpp - volcadopsvga\n");
 //#ifdef NOTYET
   int y=0,page,old_page=-1751,point,t1,t2,n;
-  char *q=vga->pixels;
+  char *q=(char *)vga->pixels;
 
   if(LinealMode) {
    while (y<vga_al) {

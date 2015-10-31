@@ -8,8 +8,12 @@
 #ifdef  __cplusplus
 extern "C" {
 #endif
+
+#ifndef __llvm__
 #include <jpeglib.h>
 static jmp_buf jmp_error_ptr;
+#endif
+
 //  #include "jpeglib\jpeglib.h"
 //  #include "jpeglib\cdjpeg.h"
 #ifdef  __cplusplus
@@ -93,7 +97,7 @@ typedef struct tagRGBQUAD
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int es_MAP (byte * buffer) {
-  if (!strcmp(buffer,"map\x1a\x0d\x0a")) {
+  if (!strcmp((char *)buffer,"map\x1a\x0d\x0a")) {
     map_an=*(word*)(buffer+8);
     map_al=*(word*)(buffer+10);
     return(1);
@@ -247,7 +251,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
   {
     if ((pDest=(byte *)malloc((map_an+1)*(map_al+1)*3))==NULL)
     {
-      v_texto=texto[45];
+      v_texto=(char *)texto[45];
       dialogo((int)err0);
       return;
     }
@@ -259,7 +263,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
   {
     if ((pDest=(byte *)malloc(last_byte))==NULL)
     {
-      v_texto=texto[45];
+      v_texto=(char *)texto[45];
       dialogo((int)err0);
       return;
     }
@@ -483,7 +487,7 @@ int graba_PCX(byte *mapa,FILE *f) {
         if ((cbuffer=(unsigned char *)malloc(map_an*map_al*2))==NULL)
         {
                 //Error reservando memoria.
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((int)err0);
                 return(1);
         }
         ActPixel=mapa[ptr];
@@ -972,7 +976,7 @@ int es_JPG(byte *buffer, int img_filesize)
 {
 	printf("divforma.cpp - es_JPG\n");
 //	return(0);
-
+#ifndef __llvm__
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
 
@@ -993,12 +997,16 @@ int es_JPG(byte *buffer, int img_filesize)
   jpeg_destroy_decompress(&cinfo);
 
   return(1);
+#else
+return (0);
+#endif
+
 }
 
 int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
 {
 	printf("divforma.cpp  - descomprime_JPG\n");
-
+#ifndef __llvm__
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   JSAMPARRAY buffer_scanline;
@@ -1075,6 +1083,9 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
   }
 
   return(1);
+#else 
+return (0);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1112,7 +1123,7 @@ int cargadac_FNT(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=texto[44];
+    v_texto=(char *)texto[44];
     dialogo((int)err0);
     return(0);
   }
@@ -1137,7 +1148,7 @@ int cargadac_FPG(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=texto[44];
+    v_texto=(char *)texto[44];
     dialogo((int)err0);
     return(0);
   }
@@ -1162,7 +1173,7 @@ int cargadac_PAL(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=texto[44];
+    v_texto=(char *)texto[44];
     dialogo((int)err0);
     return(0);
   }
@@ -1198,7 +1209,7 @@ int cargadac_MAP(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=texto[44];
+    v_texto=(char *)texto[44];
     dialogo((int)err0);
     return(0);
   }
@@ -1214,7 +1225,7 @@ int cargadac_MAP(char *name)
     mal=*(word*)(par+10);
     fseek(file,0,SEEK_END);
     n=ftell(file);
-    if ((buffer=malloc(n))==NULL) {
+    if ((buffer=(byte *)malloc(n))==NULL) {
       fclose(file);
       return(0);
     }
@@ -1262,7 +1273,7 @@ int cargadac_PCX(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=texto[44];
+    v_texto=(char *)texto[44];
     dialogo((int)err0);
     return(0);
   }
@@ -1289,7 +1300,7 @@ int cargadac_PCX(char *name)
     man=header.xmax-header.xmin+1;
     mal=header.ymax-header.ymin+1;
     fseek(file,0,SEEK_END); n=ftell(file);
-    if ((buffer=malloc(n))==NULL) {
+    if ((buffer=(byte *)malloc(n))==NULL) {
       fclose(file);
       return(0);
     }
@@ -1351,7 +1362,7 @@ int cargadac_BMP(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=texto[44]; dialogo((int)err0);
+    v_texto=(char *)texto[44]; dialogo((int)err0);
     free(CopiaBuffer);
     return(0);
   }
@@ -1386,7 +1397,7 @@ int cargadac_BMP(char *name)
     man = InfoHeader.biWidth;
     mal = InfoHeader.biHeight;
     fseek(file,0,SEEK_END); n=ftell(file);
-    if ((buffer=malloc(n))==NULL) {
+    if ((buffer=(byte *)malloc(n))==NULL) {
       fclose(file);
       return(0);
     }
@@ -1433,6 +1444,7 @@ int cargadac_BMP(char *name)
 int cargadac_JPG(char *name)
 {
 	printf("divforma.cpp - cargadac_JPG\n");
+#ifndef __llvm__
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   int x, y, img_filesize;
@@ -1520,5 +1532,9 @@ int cargadac_JPG(char *name)
   jpeg_destroy_decompress(&cinfo);
   free(buffer);
   return(1);
+
+#else
+return(0);
+#endif
 }
 

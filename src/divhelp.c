@@ -314,7 +314,7 @@ void help2(void) {
           mouse_graf=2;
           if ((mouse_b&1) && !(old_mouse_b&1) && old_estado) {
             if (n==9999) { // *** Extrae un ejemplo ***
-              if ((di=p=malloc(16384))!=NULL) {
+              if ((di=p=(byte *)malloc(16384))!=NULL) {
 
                 while (*si!=6) si++;
                 while (*si++==6) {
@@ -325,8 +325,8 @@ void help2(void) {
 
                 if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
                   v_prg->buffer_lon=16384;
-                  strcpy(v_prg->filename,texto[220]);
-                  strcpy(v_prg->path,tipo[1].path);
+                  strcpy(v_prg->filename,(char *)texto[220]);
+                  strcpy(v_prg->path,(char *)tipo[1].path);
                   v_prg->file_lon=di-p;
                   v_prg->buffer=p;
                   v_prg->lptr=p;
@@ -470,7 +470,7 @@ void resize_help(void) {
       if (v.al&1) v.al++;
     }
 
-    if ((new_block=realloc(v.ptr,v.an*v.al))!=NULL) {
+    if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
 
       if (modo<100) {
         fondo_edicion(v.x,v.y,v.an>an?v.an:an,v.al>al?v.al:al);
@@ -606,7 +606,7 @@ printf("HELP! 585\n");
 
           fread(h_buffer,1,helpidx[n*2+1],f);
           p=h_buffer; while (*p!='}') p++; *p=0;
-          strcpy(help_title,h_buffer);
+          strcpy((char *)help_title,(char *)h_buffer);
           help_an=(vga_an-12*big2-1)/font_an;
           if (help_an>120) help_an=120;
           help_al=(vga_al/2-(12+16)*big2-1)/font_al; help_l=0;
@@ -688,7 +688,7 @@ void help_paint(int n){
 
           fread(h_buffer,1,helpidx[n*2+1],f);
           p=h_buffer; while (*p!='}') p++; *p=0;
-          strcpy(help_title,h_buffer);
+          strcpy((char *)help_title,(char *)h_buffer);
           help_an=(vga_an-12*big2-1)/font_an;
           if (help_an>120) help_an=120;
           help_al=(vga_al/2-(12+16)*big2-1)/font_al; help_l=0;
@@ -715,7 +715,7 @@ void get_error(int32_t n) {
   FILE * f;
   byte * p;
 printf("get error %d\n",n);
-  sprintf(cerror,texto[381]); p=cerror+strlen(cerror);
+  sprintf(cerror,(char *)texto[381]); p=(byte *)cerror+strlen((char *)cerror);
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
     if((f=fopen("help/help.div","rb"))!=NULL) {
@@ -767,7 +767,7 @@ void help_xref(int n,int linea) {
 
           fread(h_buffer,1,helpidx[n*2+1],f);
           p=h_buffer; while (*p!='}') p++; *p=0;
-          strcpy(help_title,h_buffer);
+          strcpy((char *)help_title,(char *)h_buffer);
 //          help_an=(vga_an-12*big2-1)/font_an; if (help_an>80) help_an=80;
 //          help_al=(vga_al/2-12*big2-1)/font_al;
           help_l=0;
@@ -982,8 +982,8 @@ void tabula_help(byte *si,byte *di,int lon) {
               while (*si>='0' && *si<='9') {
                 tex*=10; tex+=*si-'0'; si++;
               } si++;
-              if (*texto[tex]=='-') strcpy(di,texto[tex]+1); else strcpy(di,texto[tex]);
-              di+=strlen(di);
+              if (*texto[tex]=='-') strcpy((char *)di,(char *)texto[tex]+1); else strcpy((char *)di,(char *)texto[tex]);
+              di+=strlen((char *)di);
               continue;
 
             default: // Negrita
@@ -1312,8 +1312,8 @@ void tabula_help2(byte *si,byte *di,int lon) {
             case '/': // L죒ea
               si+=2;
               if (!ultimo_cr) { *di++=0; ultimo_cr=1; chars=0; }
-              strcpy(di,"컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴");
-              di+=strlen(di)+1;
+              strcpy((char *)di,"컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴");
+              di+=strlen((char *)di)+1;
               ultimo_cr=1; chars=0;
               continue;
 
@@ -1339,8 +1339,8 @@ void tabula_help2(byte *si,byte *di,int lon) {
               while (*si>='0' && *si<='9') {
                 n*=10; n+=*si-'0'; si++;
               } si++;
-              if (*texto[n]=='-') strcpy(di,texto[n]+1); else strcpy(di,texto[n]);
-              di+=strlen(di);
+              if (*texto[n]=='-') strcpy((char *)di,(char *)texto[n]+1); else strcpy((char *)di,(char *)texto[n]);
+              di+=strlen((char *)di);
               continue;
 
             default: // Negrita
@@ -1391,10 +1391,10 @@ void Print_Help(void) {
   unsigned u;
   FILE * f, * g;
 
-  if (!strlen(h_ar)) strcpy(h_ar,texto[495]);
+  if (!strlen(h_ar)) strcpy(h_ar,(char *)texto[495]);
 
   v_texto=h_ar;
-  v_titulo=texto[496];
+  v_titulo=(char *)texto[496];
   dialogo((int)printlist0);
 
   if (v_aceptar) {
@@ -1407,13 +1407,13 @@ void Print_Help(void) {
         fclose(g);
         sprintf(cwork,"%s/%s",tipo[1].path,h_ar);
         strupr(cwork);
-        v_titulo=texto[450];
+        v_titulo=(char *)texto[450];
         v_texto=cwork;
         dialogo((int)aceptar0);
         if (!v_aceptar) return;
       }
       g=fopen(h_ar,"wb");
-      if (g==NULL) { v_texto=texto[47]; dialogo((int)err0); return; }
+      if (g==NULL) { v_texto=(char *)texto[47]; dialogo((int)err0); return; }
     } else g=stdprn;
 
     if((f=fopen("help/help.div","rb"))!=NULL) {
@@ -1429,21 +1429,21 @@ void Print_Help(void) {
           // Imprime el t죜ulo de la p쟥ina de ayuda
 
           fwrite("\xd\xa",1,2,g);
-          for (n=0;n<(ancho_ayuda-strlen(help_title)-4)/2;n++) fwrite(" ",1,1,g);
+          for (n=0;n<(ancho_ayuda-strlen((char *)help_title)-4)/2;n++) fwrite(" ",1,1,g);
           fwrite("[ ",1,2,g);
-          fwrite(help_title,1,strlen(help_title),g);
+          fwrite(help_title,1,strlen((char *)help_title),g);
           fwrite(" ]\xd\xa\xd\xa컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴",1,76,g);
 
           p=print_buffer;
 
           while (p<help_end) {
-            Progress(texto[437],p-print_buffer,help_end-print_buffer);
-            fwrite(p,1,strlen(p),g);
+            Progress((char *)texto[437],p-print_buffer,help_end-print_buffer);
+            fwrite(p,1,strlen((char *)p),g);
             fwrite("\xd\xa",1,2,g);
-            p+=strlen(p)+1;
+            p+=strlen((char *)p)+1;
           }
 
-          Progress(texto[437],help_end-print_buffer,help_end-print_buffer);
+          Progress((char *)texto[437],help_end-print_buffer,help_end-print_buffer);
 
           help_end=_help_end;
           //free(print_buffer);

@@ -33,7 +33,7 @@ void inicializa_textos(byte * fichero) {
 
   memset(texto,0,max_textos*4);
 
-  if ((f=fopen(fichero,"rb"))!=NULL) {
+  if ((f=fopen((char *)fichero,"rb"))!=NULL) {
     fseek(f,0,SEEK_END); n=ftell(f);
     if ((textos=(byte *)malloc(n))!=NULL) {
       fseek(f,0,SEEK_SET);
@@ -53,7 +53,7 @@ void analiza_textos(void) {
 
   q=p=textos;
 
-  if (!strcmp(p,"Zk!")) {
+  if (!strcmp((char *)p,"Zk!")) {
     p+=4;
     coder(p,fin_textos-textos-4,"lave");
   }
@@ -124,7 +124,7 @@ int rnd2(int min,int max) {
 }
 
 void init_rnd(int n, char * clave){
-  register byte a;
+  register int a;
   for (a=0;a<32;a++) seed.d[a]=n;
   if (clave!=NULL) {
     for (a=0;a<127;a++) {

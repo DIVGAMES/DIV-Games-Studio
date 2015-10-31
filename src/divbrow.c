@@ -1795,7 +1795,7 @@ void browser2(void) {
 
   if(need_refresh)
   {
-    call(v.paint_handler);
+    call((voidReturnType )v.paint_handler);
     v.volcar=1;
   }
 }

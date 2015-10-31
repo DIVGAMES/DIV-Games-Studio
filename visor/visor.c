@@ -41,7 +41,13 @@ void lfset(void *, long, long);
 
 
 void lfset(void *buf, long c, long d) {
-	printf("Should fill buffer with c for d bytes\n");
+	printf("Should fill buffer [%x] with c [%d] for d [%d]  bytes\n",buf,c,d);
+/*	long f=0;
+	
+	while(f++<d) {
+		*buf++=c;
+	}
+	* */
 	return;
 }
 
@@ -114,6 +120,9 @@ buffer_sprite3d *visor_init(lptvisor datos_render)
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //  Procedure that manages the viewfinder
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
+
+
+#define lfset memset
 
 void visor_loop(lptvisor datos_render)
 {

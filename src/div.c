@@ -351,6 +351,8 @@ int main(int argc, char * argv[]) {
   SDL_Init( SDL_INIT_VIDEO );
   SDL_WM_SetCaption( "DIVDX - Linux 64bit", "" );
   SDL_ShowCursor( SDL_FALSE );
+ // chdir("/home/mike/src/div2015");
+  
 //  SDL_WM_GrabInput( SDL_GRAB_ON );
   system_clock = &mclock;
 
@@ -363,7 +365,7 @@ GetFree4kBlocks();
 
 //  _harderr(critical_error);
 
-//  remove("DEBUGDIV.TXT");
+  remove("DEBUGDIV.TXT");
 
   modo_de_retorno=0;
   salir_del_entorno=0;
@@ -383,7 +385,6 @@ GetFree4kBlocks();
   realpath(argv[0], full);
   _fullpath(full,argv[0],_MAX_PATH+1);
   strupr(full);
-//  printf("%s\n",full);
 
 #ifdef SHARE
   strcpy(exe_name,full);
@@ -395,7 +396,7 @@ GetFree4kBlocks();
   full[n]=0;
   if (full[n-1]==':') strcat(full,"/");
   _dos_setdrive((int)toupper(full[0])-'A'+1,&n);
-  chdir(full);
+  _chdir(full);
 
   if (cpu_type==3) chdir("..");
 
@@ -508,10 +509,10 @@ beta_status=4;
 
   if (modo_de_retorno==1) {
     _dos_setdrive((int)toupper(*tipo[1].path)-'A'+1,&n);
-    chdir(tipo[1].path);
+    _chdir(tipo[1].path);
   } else {
     _dos_setdrive((int)toupper(*tipo[0].path)-'A'+1,&n);
-    chdir(tipo[0].path);
+    _chdir(tipo[0].path);
   }
 
   return(modo_de_retorno);
@@ -624,7 +625,7 @@ void inicializa_entorno() {
   }
 
   DaniDel("*.swp");
-  chdir("system"); DaniDel("exec.*"); chdir("..");
+  _chdir("system"); DaniDel("exec.*"); _chdir("..");
 
   if (primera_vez) {
     //v_tipo=13; strcpy(input,"system\\div.txt");
@@ -834,7 +835,7 @@ void entorno(void) {
             memcpy(v.mapa->filename,v_mapa->filename,13);
           } else v.mapa->Codigo=0;
 
-          call(v.paint_handler);
+          call((voidReturnType )v.paint_handler);
           wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
 
         } else MustCreate=1;
@@ -854,7 +855,7 @@ void entorno(void) {
 
       if (n!=oldn && oldn==0) if (v.primer_plano==1) {
         wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-        call(v.click_handler); mouse_b=m;
+        call((voidReturnType )v.click_handler); mouse_b=m;
         if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
       } oldn=max_windows; if (n<0) n++;
 
@@ -918,7 +919,7 @@ void entorno(void) {
       if (v.tipo==100) mouse_b|=1; activar();
       wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
       if (big) { wmouse_x/=2; wmouse_y/=2; }
-      call(v.click_handler);
+      call((voidReturnType )v.click_handler);
 
       for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
         if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
@@ -979,7 +980,7 @@ void entorno(void) {
       if (llamar) {
         wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
         if (big) { wmouse_x/=2; wmouse_y/=2; }
-        call(v.click_handler);
+        call((voidReturnType )v.click_handler);
         volcados_parciales=1;
         if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
         volcados_parciales=0;
@@ -1137,7 +1138,7 @@ void entorno(void) {
             mostrar_mod_meters();
             break;
           default:
-            call(v.click_handler);
+            call((voidReturnType )v.click_handler);
             break;
         }
 
@@ -1185,7 +1186,7 @@ void entorno(void) {
 
       if (n) { // Si se pulso algฃn hotkey ...
         if (m) {
-          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call(v.click_handler);
+          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call((voidReturnType )v.click_handler);
           if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
           move(0,m);
           if (v.primer_plano==0) {
@@ -1269,9 +1270,9 @@ void entorno(void) {
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
     if (rndb()>200) switch(beta_status) {
-      case 1: call((int)betatest4); break;
-      case 2: call((int)betatest5); break;
-      case 3: call((int)betatest6); break;
+      case 1: call((voidReturnType )betatest4); break;
+      case 2: call((voidReturnType )betatest5); break;
+      case 3: call((voidReturnType )betatest6); break;
       case 5: salir_del_entorno=1; break;
     }
 
@@ -1466,7 +1467,7 @@ void entorno_dialogo(void) {
     if (n!=oldn && oldn==0) if (v.primer_plano==1) {
       dialogo_invocado=1;
       wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-      call(v.click_handler); mouse_b=m;
+      call((voidReturnType )v.click_handler); mouse_b=m;
       volcados_parciales=1;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
       volcados_parciales=0;
@@ -1492,7 +1493,7 @@ void entorno_dialogo(void) {
       dialogo_invocado=1;
       wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
       if (big) { wmouse_x/=2; wmouse_y/=2; }
-      call(v.click_handler);
+      call((voidReturnType )v.click_handler);
       volcados_parciales=1;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
       volcados_parciales=0;
@@ -1525,7 +1526,7 @@ void entorno_dialogo(void) {
     if (!dialogo_invocado && !salir_del_dialogo) {
       dialogo_invocado=1;
       wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-      call(v.click_handler); mouse_b=m;
+      call((voidReturnType )v.click_handler); mouse_b=m;
       volcados_parciales=1;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
       volcados_parciales=0;
@@ -1714,7 +1715,7 @@ void cierra_ventana(void) {
 
   if (v.tipo==102 && fin_ventana==1) { fin_ventana=2; return; }
 
-  call(v.close_handler);
+  call((voidReturnType )v.close_handler);
   if (!cierra_rapido) {
     if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
     else wput(v.ptr,v.an,v.al,v.an-9,2,-45);
@@ -2432,7 +2433,7 @@ printf("New Window %d\n",v.tipo);
     if (v.tipo) {
       wmouse_x=-1; wmouse_y=-1;
       m=mouse_b; om=old_mouse_b; mouse_b=0; old_mouse_b=0;
-      call(v.click_handler);
+      call((voidReturnType )v.click_handler);
       mouse_b=m; old_mouse_b=om;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
     }
@@ -2465,7 +2466,7 @@ printf("New Window %d\n",v.tipo);
     v.prg=NULL;
     v.aux=NULL;
 
-    call(init_handler);
+    call((voidReturnType )init_handler);
 
     if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
 
@@ -2502,7 +2503,7 @@ printf("New Window %d\n",v.tipo);
 
         if (v.tipo==102 && (ventana[m].prg!=NULL || ventana[m].click_handler==(int)calc2) && ventana[m].tipo==102) { // Borra cursor
           wup(m);
-          call(v.paint_handler);
+          call((voidReturnType )v.paint_handler);
           wdown(m);
         }
         vtipo=v.tipo; v.tipo=0; vuelca_ventana(m); v.tipo=vtipo;
@@ -2545,7 +2546,7 @@ printf("New Window %d\n",v.tipo);
                 wup(1);
                 wmouse_x=-1; wmouse_y=-1;
                 m=mouse_b; om=old_mouse_b; mouse_b=0; old_mouse_b=0;
-                call(v.click_handler);
+                call((voidReturnType )v.click_handler);
                 mouse_b=m; old_mouse_b=om;
                 v.primer_plano=0; vuelca_ventana(0); v.volcar=0;
                 wdown(1);
@@ -2594,7 +2595,7 @@ printf("New Window %d\n",v.tipo);
         }
       }
 
-      call(v.paint_handler);
+      call((voidReturnType )v.paint_handler);
 
       if (big) { an*=2; al*=2; }
 
@@ -2768,7 +2769,7 @@ void dialogo(int init_handler) {
 
     if (v.tipo) {
       wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-      call(v.click_handler); mouse_b=m;
+      call((voidReturnType )v.click_handler); mouse_b=m;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
     }
 
@@ -2800,7 +2801,7 @@ void dialogo(int init_handler) {
     v.prg=NULL;
     v.aux=NULL;
 
-    call(init_handler);
+    call((voidReturnType )init_handler);
 
     if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
 
@@ -2851,7 +2852,7 @@ void dialogo(int init_handler) {
         wwrite(ptr,an,al,3+(an-12)/2,2,1,v.titulo,c1);
         wwrite(ptr,an,al,2+(an-12)/2,2,1,v.titulo,c4);
       }
-      call(v.paint_handler);
+      call((voidReturnType )v.paint_handler);
 
       if (big) { an*=2; al*=2; }
 
@@ -2893,7 +2894,7 @@ int an=v.an,al=v.al;
         wwrite(ptr,an,al,2+(an-12)/2,2,1,v.titulo,c4);
       }
 
-      call(v.paint_handler);
+      call((voidReturnType )v.paint_handler);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3720,7 +3721,7 @@ void desactivar(void) { // Minimiza: se desactiva
       }
       vuelca_ventana(m); break;
     }
-    if (v.tipo==102) call(v.paint_handler); // Borra cursor
+    if (v.tipo==102) call((voidReturnType )v.paint_handler); // Borra cursor
   }
 }
 
@@ -3749,7 +3750,7 @@ void activar(void) { // Maximiza: se activa *** OJO *** se llama en varias
     }
     if (v.tipo==102 && ventana[m].tipo==102) { // Borra cursor
       wup(m);
-      call(v.paint_handler);
+      call((voidReturnType )v.paint_handler);
       wdown(m);
     } vuelca_ventana(m); break;
   }
@@ -4179,7 +4180,8 @@ void DaniDel(char *name) {
     strcat(cwork3,ft.name);
     if (_fullpath(cwork1, cwork3, _MAX_PATH)==NULL) strcpy(cwork1,ft.name);
     _dos_setfileattr(cwork1,_A_NORMAL);
-    remove(cwork1);
+    printf("deleting %s\n",cwork1);
+//    remove(cwork1);
     rc=_dos_findnext(&ft);
   }
 }

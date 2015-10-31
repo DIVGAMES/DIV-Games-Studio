@@ -26,11 +26,11 @@ typedef struct {
         short           nFrames;
         lptmatrix       Anims;
         tmatrix         CompMat;
-        long            curframe;
-        long            bbox_x_ini; //Coordenadas de pantalla de la bounding box
-        long            bbox_x_fin;
-        long            bbox_y_ini;
-        long            bbox_y_fin;
+        int            curframe;
+        int            bbox_x_ini; //Coordenadas de pantalla de la bounding box
+        int            bbox_x_fin;
+        int            bbox_y_ini;
+        int            bbox_y_fin;
 } complex;
 
 void complex_create(complex *complex_struct,hlrender *hlrnd,char *name,Resource *res);

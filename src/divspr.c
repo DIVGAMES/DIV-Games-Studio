@@ -167,7 +167,7 @@ void FinalizaGenerador(void)
   }
   if(MapaSprite != NULL)
   {
-    free(MapaSprite);
+//    free(MapaSprite);
     MapaSprite=NULL;
   }
 
@@ -958,9 +958,11 @@ void CargarTextura(char *NombreTextura)
     v_texto=texto[45]; dialogo((int)err0);
     return;
   }
+  
   if(fread(mapa, 1, x, f) != x)
   {
     free(mapa);
+    mapa = NULL;
     v_texto=texto[44]; dialogo((int)err0);
     return;
   }
@@ -1055,7 +1057,8 @@ void CargarSprite(void)
 
   if(ThumbSprite!=NULL)
   {
-    free(ThumbSprite);
+	printf("Thumb mem: %x\n",ThumbSprite);
+    //free(ThumbSprite);
     ThumbSprite=NULL;
   }
 
@@ -1152,6 +1155,7 @@ void CargarSprite(void)
     if ((temp2=(char *)malloc(an_final*al_final))==NULL)
     {
       free(mapa);
+      mapa = NULL;
       v_texto=texto[45]; dialogo((int)err0);
       return;
     }

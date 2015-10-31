@@ -440,9 +440,13 @@ void repinta_ventana(void);
 
 
 void memcpyb(byte*,byte*,int);
-#ifdef __llvm__
-void call(int); // void funcion(void); int n=(int)funcion; call(n);
+//#ifdef __llvm__
+#ifndef ARSE
+typedef void(*voidReturnType)(const char *);
+void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 #else
+typedef void(*voidReturnType)(int *);
+
 void call(void *(*func)() );
 #endif
 ///////////////////////////////////////////////////////////////////////////////

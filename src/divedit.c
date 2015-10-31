@@ -2018,7 +2018,7 @@ void repinta_ventana(void) {
     }
   }
 
-  call(v.paint_handler);
+  call((voidReturnType )v.paint_handler);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
