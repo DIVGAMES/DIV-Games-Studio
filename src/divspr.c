@@ -207,7 +207,6 @@ int ParseAnimFile(void)
 
     while( (c=fgetc(f)) != EOF)
     {
-		printf("status: %d\n",status);
       switch(status)
       {
         case 0: if(c==0x20 || c==0x09) status++; else status=0; break;
@@ -218,7 +217,6 @@ int ParseAnimFile(void)
         case 5: if(c!='_') { status=0; break; }
         case 6:
           con=0;
-          printf("ANIM_ found\n");
           for(;;)
           {
             c=fgetc(f);

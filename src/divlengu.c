@@ -28,7 +28,6 @@ void an_comentario(void);
 
 void inicializa_textos(byte * fichero) {
 
-
   FILE * f;
   int n;
 
@@ -125,7 +124,7 @@ int rnd2(int min,int max) {
 }
 
 void init_rnd(int n, char * clave){
-  register int a;
+  register byte a;
   for (a=0;a<32;a++) seed.d[a]=n;
   if (clave!=NULL) {
     for (a=0;a<127;a++) {

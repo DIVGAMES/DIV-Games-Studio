@@ -1004,13 +1004,13 @@ printf("compilar\n");
 
   analiza_ltlex();
 
-  for (n=0;n<256;n++)
-	printf("vhash[%d] = %x\n",n,vhash[n]);
-
-
   lex_case[' ']=(lex_ele*)l_spc;
   lex_case[tab]=(lex_ele*)l_spc;
   lex_case[cr]=(lex_ele*)l_cr;
+
+  for (n=0;n<256;n++)
+	printf("vhash[%d] = %x\n",n,vhash[n]);
+
 
   inicio_objetos=ivnom.b;
 
@@ -1056,7 +1056,7 @@ printf("Source len: %d\n",source_len);
 
   convert=1; ultima_linea=source; fwrite(&cero,1,1,lprg);
   acceso_remoto=0; parametros=0; linea=1;
-//printf("1051\n");
+
   sintactico();
 
   i=obj; while (i<iobj) {
@@ -1318,7 +1318,6 @@ printf("analiza_ltlex\n");
   linea=1;
 //printf("%s\n",buf);
   do {
-//	  printf("[%c] %x",*buf, buf); 
 	  switch (*buf++) {
     case ' ': case tab:
       break;
@@ -1340,33 +1339,26 @@ printf("analiza_ltlex\n");
       
       
       else if (lower[*buf]>0) {           //Analyzes a keyword
-	//	  printf("keyword %c %d\n",*buf,lower[*buf]);
         _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=(byte*)t; h=0;
-	//		printf("keyword is: %c",lower[*buf]);
 
         while (*ivnom.b=lower[*buf++]) {
-//			printf("%c",*ivnom.b);
-			h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
-		}
-	//	printf("\nivnom.b = %s\n",*_ivnom);
+		h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
+	}
         ptr=&vhash[h]; 
         
         while (*ptr) { 
-			printf("before ptr: %x (h=%d)\n",*ptr,h);
-			ptr=(byte **)*ptr; 
-			printf("after ptr: %x %x\n",*ptr,_ivnom);	
-		}
+		ptr=(byte **)*ptr; 
+	}
 		
-		*ptr=_ivnom;
+	*ptr=_ivnom;
         buf--; ivnom.b++;
        printf("h is %d %x %d\n",h,_ivnom,t);
-idlist[h]=t;
+	
+	idlist[h]=t;
         
       } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
-//		  printf("literal\n");
         lex_case[*buf]=(lex_ele*)l_lit;
       } else {                          //Analiza un nuevo s¡mbolo
-//		  printf("symbol\n");
         if ((e=lex_case[*buf])==0) {
           if (num_nodos++==max_nodos) c_error(0,3);
           e=lex_case[*buf]=ilex_simb++; (*e).caracter=*buf++;
