@@ -251,9 +251,8 @@ int _chdir(const char* Directory)
 }
 
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
-	printf("TODO - _fullpath %s\n",_FullPath);
+	realpath(_Path, _FullPath);
 	return _FullPath;
-	
 }
 
 
