@@ -175,10 +175,12 @@ void Get_Tapiz() {
   dialogo((int)browser0);
 
   strcpy(full,tipo[v_tipo].path);
-  if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+  if (full[strlen(full)-1]!='/') strcat(full,"/");
   strcat(full,input);
 
   if (v_terminado) if (v_existe) {
+	  printf("hello %s [%s]\n",full,input);
+	  
     if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
       fseek(f,0,SEEK_END);
       len=ftell(f);
@@ -228,7 +230,7 @@ void Tap_Setup1(void) {
   int x;
 
   _show_items();
-  for(x=strlen(Tap_pathname)-1;x>=0;x--) if(Tap_pathname[x]=='\\' || x==0) {
+  for(x=strlen(Tap_pathname)-1;x>=0;x--) if(Tap_pathname[x]=='/' || x==0) {
     strcpy(Tap_name,&Tap_pathname[x+1]);
     x=-1;
   }
@@ -765,10 +767,10 @@ void Cfg_Setup_end(void) {
 
     if (old_editor_font!=editor_font) {
       switch(editor_font) {
-        case 0: f=fopen("system\\sys06x08.bin","rb"); break;
-        case 1: f=fopen("system\\sys08x08.bin","rb"); break;
-        case 2: f=fopen("system\\sys08x11.bin","rb"); break;
-        case 3: f=fopen("system\\sys09x16.bin","rb"); break;
+        case 0: f=fopen("system/sys06x08.bin","rb"); break;
+        case 1: f=fopen("system/sys08x08.bin","rb"); break;
+        case 2: f=fopen("system/sys08x11.bin","rb"); break;
+        case 3: f=fopen("system/sys09x16.bin","rb"); break;
       }
       if (f!=NULL) {
         fseek(f,0,SEEK_END); n=ftell(f);

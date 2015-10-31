@@ -86,9 +86,9 @@ void init_lexcolor() {
 
   for (n=0;n<256;n++)
     if (lower[n])
-      if (n>='0' && n<='9') clex_case[n]=(void*)l_num;
-      else clex_case[n]=(void*)l_id;
-    else clex_case[n]=(void*)l_err;
+      if (n>='0' && n<='9') clex_case[n]=(clex_ele*)l_num;
+      else clex_case[n]=(clex_ele*)l_id;
+    else clex_case[n]=(clex_ele*)l_err;
 
   if ((cvnom=(byte *) malloc(max_obj*long_med_id+1024))==NULL) col_error(0,0);
 
@@ -96,10 +96,10 @@ void init_lexcolor() {
 
   col_analiza_ltlex();
 
-  clex_case[' ']=(void*)l_spc;
-  clex_case[tab]=(void*)l_spc;
-  clex_case[cr]=(void*)l_cr;
-  clex_case[0]=(void*)l_cr;
+  clex_case[' ']=(clex_ele*)l_spc;
+  clex_case[tab]=(clex_ele*)l_spc;
+  clex_case[cr]=(clex_ele*)l_cr;
+  clex_case[0]=(clex_ele*)l_cr;
 
   incluye_nombres=0;
 
@@ -111,6 +111,7 @@ void init_lexcolor() {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void clexico(void) {
+//printf("clexico\n");
 
   byte ** ptr, * _ivnom, h, * _source=csource;
   struct clex_ele * e;
@@ -132,8 +133,8 @@ void clexico(void) {
       icvnom.b++; _source--;
       if (icvnom.b-cvnom>max_obj*long_med_id) { icvnom.b=_ivnom; cpieza=p_id; break; }
       ptr=&cvhash[h];
-      while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
-      if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
+      while (*ptr && strcmp((char *)(ptr+2),(char *)_ivnom+8)) ptr=(byte **)*ptr;
+      if (!strcmp((char *)(ptr+2),(char *)_ivnom+8)) { // id encontrado
         icvnom.b=_ivnom; // lo saca de cvnom
         cpieza=(int)*(ptr+1);
         if (cpieza<256 && cpieza>=0) { // palabra reservada (token)
@@ -164,7 +165,7 @@ void clexico(void) {
              if (*(_source+1)==h) *_ivnom=*++_source; else *_ivnom=0;
            else *_ivnom=*_source;
       } while (*_ivnom++); _source++;
-      n=(strlen(icvnom.b)+4)>>2;
+      n=(strlen((char *)icvnom.b)+4)>>2;
       break;
 
     case l_num:
@@ -212,7 +213,7 @@ byte *_cbuf;
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void col_analiza_ltlex(void){
-
+printf("col_analiza_ltlex\n");
   byte * buf, cont=1;
   int len;
   struct clex_ele * e;
@@ -222,9 +223,9 @@ void col_analiza_ltlex(void){
   byte * _ivnom;
   byte * * ptr;
 
-  if ((cdef=fopen("system\\ltlex.def","rb"))==NULL) { col_error(0,1); return; }
+  if ((cdef=fopen("system/ltlex.def","rb"))==NULL) { col_error(0,1); return; }
   fseek(cdef,0,SEEK_END); len=ftell(cdef);
-  if ((_cbuf=buf=(byte *) malloc(len+2))==NULL) { col_error(0,0); return; }
+  if ((_cbuf=buf= (byte *)malloc(len+2))==NULL) { col_error(0,0); return; }
   fseek(cdef,0,SEEK_SET);
   len=fread(buf,1,len,cdef);
   *(buf+len)=cr; *(buf+len+1)=cr;
@@ -243,12 +244,12 @@ void col_analiza_ltlex(void){
       else if (*buf>='a' && *buf<='f') t+=(*buf++-'a'+10); else col_error(0,2);
       if (*buf==cr || *buf==' ' || *buf==tab) break;
       else if (lower[*buf]) {           //Analiza una palabra reservada
-        _ivnom=icvnom.b; *icvnom.p++=0; *icvnom.p++=(void*)t; h=0;
+        _ivnom=icvnom.b; *icvnom.p++=0; *icvnom.p++=(byte *)t; h=0;
         while (*icvnom.b=lower[*buf++]) h=((byte)(h<<1)+(h>>7))^(*icvnom.b++);
-        ptr=&cvhash[h]; while (*ptr) ptr=(void *)*ptr; *ptr=_ivnom;
+        ptr=&cvhash[h]; while (*ptr) ptr=(byte **)*ptr; *ptr=_ivnom;
         buf--; icvnom.b++;
       } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
-        clex_case[*buf]=(void*)l_lit;
+        clex_case[*buf]=(clex_ele*)l_lit;
       } else {                          //Analiza un nuevo sกmbolo
         if ((e=clex_case[*buf])==0) {
           if (cnum_nodos++==max_nodos) col_error(0,3);
@@ -281,10 +282,11 @@ void col_analiza_ltlex(void){
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void col_analiza_ltobj(void){
+	printf("col_analiza_ltobj\n");
   byte * buf;
   int len;
 
-  if ((cdef=fopen("system\\ltobj.def","rb"))==NULL) { col_error(0,1); return; }
+  if ((cdef=fopen("system/ltobj.def","rb"))==NULL) { col_error(0,1); return; }
   fseek(cdef,0,SEEK_END); len=ftell(cdef);
   if ((_cbuf=buf=(byte *) malloc(len+2))==NULL) { col_error(0,0); return; }
   fseek(cdef,0,SEEK_SET);

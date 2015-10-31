@@ -711,7 +711,7 @@ char cerror[128];
 
 extern int linea_error;
 
-void get_error(int n) {
+void get_error(int32_t n) {
   FILE * f;
   byte * p;
 printf("get error %d\n",n);

@@ -492,7 +492,7 @@ void Clock0(void)
         time(&dtime);
         timeinfo = localtime ( &dtime );
         sprintf(cTimeForIcon,"%s [%02d%c%02d]",texto[151],timeinfo->tm_hour,timeinfo->tm_sec%2?';':' ',timeinfo->tm_min);
-        v.nombre=cTimeForIcon;
+        v.nombre=(byte *)cTimeForIcon;
         v.paint_handler=(int)Clock1;
         v.click_handler=(int)Clock2;
         v.close_handler=(int)Clock3;

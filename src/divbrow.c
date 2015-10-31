@@ -156,8 +156,8 @@ void imprime_rutabr(void) {
   if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
     strcat(full,"/"); strcat(full,mascara);
 
-  wwrite_in_box(v.ptr,an,wbox_ancho+2,al,5,12,0,full,c1);
-  wwrite_in_box(v.ptr,an,wbox_ancho+2,al,4,12,0,full,c3);
+  wwrite_in_box(v.ptr,an,wbox_ancho+2,al,5,12,0,(byte *)full,c1);
+  wwrite_in_box(v.ptr,an,wbox_ancho+2,al,4,12,0,(byte *)full,c3);
 
 }
 
@@ -172,7 +172,7 @@ void crear_thumbs(void) {
 	
   if (opc_img[v_thumb]) {
     do {
-		    printf("DIVBROW.c %d %s %d\n",__LINE__,larchivosbr.lista,v_thumb);
+	//	    printf("DIVBROW.c %d %s %d\n",__LINE__,larchivosbr.lista,v_thumb);
       switch(v_thumb) // 2-MAP, 3-PAL, 5-FNT, 6-IFS, 7-PCM
       {
         case 2: crear_un_thumb_MAP(&larchivosbr); break;
@@ -232,7 +232,6 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
     if (estado==0) { num=-1; return; }
 
     if (estado==1) { // Read a new thumbnail
-
       if (strchr(l->lista+(l->lista_an*num),'.')>0 &&
 	      strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PCX") &&
@@ -251,6 +250,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
         thumb[num].filesize=ftell(f);
         fseek(f,0,SEEK_SET);
         if (thumb[num].filesize<=2048) incremento=2048;
+
         if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))!=NULL) {
           if (thumb[num].filesize>incremento) {
             if (fread(thumb[num].ptr,1,incremento,f)==incremento) {
@@ -295,15 +295,16 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
     // Y ahora crea el thumbnail si el fichero se carg¢ ya completo
 
     if (estado==2 && thumb[num].status==thumb[num].filesize &&
-        abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0) {
+        abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0) 
+     {
 
       thumb[num].status=0;
 
       man=map_an; mal=map_al;
-      if (es_MAP(thumb[num].ptr)) tipomapa=1;
-      else if (es_PCX(thumb[num].ptr)) tipomapa=2;
-      else if (es_BMP(thumb[num].ptr)) tipomapa=3;
-      else if (es_JPG(thumb[num].ptr,thumb[num].filesize)) tipomapa=4;
+      if (es_MAP((byte *)thumb[num].ptr)) tipomapa=1;
+      else if (es_PCX((byte *)thumb[num].ptr)) tipomapa=2;
+      else if (es_BMP((byte *)thumb[num].ptr)) tipomapa=3;
+      else if (es_JPG((byte *)thumb[num].ptr,thumb[num].filesize)) tipomapa=4;
       else tipomapa=0;
       swap(man,map_an); swap(mal,map_al);
 
@@ -312,11 +313,11 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
           swap(man,map_an); swap(mal,map_al);
           n=1;
           switch (tipomapa) {
-            case 1: descomprime_MAP(thumb[num].ptr,temp,0); break;
-            case 2: descomprime_PCX(thumb[num].ptr,temp,0); break;
-            case 3: descomprime_BMP(thumb[num].ptr,temp,0); break;
+            case 1: descomprime_MAP((byte *)thumb[num].ptr,temp,0); break;
+            case 2: descomprime_PCX((byte *)thumb[num].ptr,temp,0); break;
+            case 3: descomprime_BMP((byte *)thumb[num].ptr,temp,0); break;
             case 4:
-              n=descomprime_JPG(thumb[num].ptr,temp,0,thumb[num].filesize);
+              n=descomprime_JPG((byte *)thumb[num].ptr,temp,0,thumb[num].filesize);
             break;
           } swap(man,map_an); swap(mal,map_al);
           free(thumb[num].ptr);
@@ -335,7 +336,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
             thumb[num].an=man; thumb[num].al=mal;
             for (n=thumb[num].an*thumb[num].al-1;n>=0;n--) {
               temp[n]=xlat[temp[n]];
-            } thumb[num].ptr=temp;
+            } thumb[num].ptr=(char *)temp;
 
           } else { // Crea el thumbnail
 
@@ -353,7 +354,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
             if (coefredy*(float)(thumb[num].al-1)>=(float)mal)
               coefredy=(float)(mal-1)/(float)(thumb[num].al-1);
 
-            if ((temp2=(char *)malloc(thumb[num].an*thumb[num].al))!=NULL) {
+            if ((temp2=(byte *)malloc(thumb[num].an*thumb[num].al))!=NULL) {
 
               memset(temp2,0,thumb[num].an*thumb[num].al);
               a=(float)0.0;
@@ -583,7 +584,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
     if (estado==0) { num=-1; return; }
 
     // read a new thumbnail
-//    printf("%s\n",l->lista);
+//	    printf("%s %d\n",l->lista,estado);
     
     if (estado==1)
     {
@@ -596,7 +597,8 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       }
       if((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
       {
-        estado=0;
+		  
+	    estado=0;
         thumb[num].status=-1;
         return;
       }
@@ -643,11 +645,16 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
     // Se contin£a leyendo un thumbnail
     else if (estado==2 && thumb[num].status!=thumb[num].filesize)
     {
+	//	printf("estado 2\n");
+		
       if ((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
       {
+		  	  printf("failed to open font\n");
+    
         estado=0;
         thumb[num].status=-1;
       }
+//      printf("open sucess\n");
       fseek(f,thumb[num].status,SEEK_SET);
       if (thumb[num].filesize-thumb[num].status>incremento)
       {
@@ -678,11 +685,13 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       fclose(f);
       return;
     }
-
-    // Y ahora crea el thumbnail si el fichero se carg¢ ya completo
+//		printf("687\n");
+//printf("%d %d %d %d %d %d %d %d\n",estado, thumb[num].status, thumb[num].filesize, ascii, _omx, mouse_x, _omy, mouse_y);
+    // Now create the thumbnail if the file is complete ¢ Loaded
     if (estado==2 && thumb[num].status==thumb[num].filesize &&
         abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0)
     {
+		printf("creating thumb\n");
       thumb[num].status=0;
 
       memcpy(pal, &thumb[num].ptr[8], 768);
@@ -717,7 +726,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
 
       memcpy(MiTabladeLetras,CopiaMiTabladeLetras,256);
 
-      if((temp=(char *)malloc(TamaX*TamaY))==NULL)
+      if((temp=(byte *)malloc(TamaX*TamaY))==NULL)
       {
         free(thumb[num].ptr);
         thumb[num].ptr=NULL;
@@ -730,7 +739,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       init=0;
       for(x=0;x<strlen(TestString2);x++)
       {
-        len=ShowCharBuffer(TestString2[x],init,0,temp,TamaX,thumb[num].ptr);
+        len=ShowCharBuffer(TestString2[x],init,0,(char *)temp,TamaX,thumb[num].ptr);
         if (len<=1) len=0;
         init+=len;
       }
@@ -759,7 +768,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
         if (coefredy*(float)(thumb[num].al-1)>=(float)TamaY)
           coefredy=(float)(TamaY-1)/(float)(thumb[num].al-1);
 
-        if ((temp2=(char *)malloc(thumb[num].an*thumb[num].al))!=NULL)
+        if ((temp2=(byte *)malloc(thumb[num].an*thumb[num].al))!=NULL)
         {
           a=(float)0.0;
           for(y=0;y<thumb[num].al;y++)
@@ -801,7 +810,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       }
       else
       {
-        thumb[num].ptr=temp;
+        thumb[num].ptr=(char *)temp;
         thumb[num].an=TamaX;
         thumb[num].al=TamaY;
       }
@@ -858,7 +867,7 @@ void crear_un_thumb_IFS(struct t_listboxbr * l)
     fseek(fifs,n,SEEK_SET);
     fread(tifs,sizeof(TABLAIFS),256,fifs);
 
-    str=texto[246];
+    str=(char *)texto[246];
 
     pos=0; ancho=0; alto=0;
 
@@ -1297,7 +1306,7 @@ void carga_letra(uint8_t letra) {
 
   if (!map_an || !map_al) { map_an=0; return; }
 
-  map=(char*)malloc(map_al*map_an*8);
+  map=(byte*)malloc(map_al*map_an*8);
   if (map==NULL) { map_an=0; return; }
   memset(map,c1,map_al*map_an*8);
 
@@ -1352,12 +1361,12 @@ void muestra_thumb(struct t_listboxbr * l, int num) {
     p=l->lista+l->lista_an*num;
 
     if (l->zona-10==num-l->inicial) x=c4; else x=c3;
-    if (text_len(p)<l->an-2 && opc_img[v_thumb]) {
-      wwrite(ptr,an,al,px+l->an/2+1,py,7,p,c0);
-      wwrite(ptr,an,al,px+l->an/2,py,7,p,x);
+    if (text_len((byte *)p)<l->an-2 && opc_img[v_thumb]) {
+      wwrite(ptr,an,al,px+l->an/2+1,py,7,(byte *)p,c0);
+      wwrite(ptr,an,al,px+l->an/2,py,7,(byte *)p,x);
     } else {
-      wwrite_in_box(ptr,an,px+l->an-1,al,px+2,py,6,p,c0);
-      wwrite_in_box(ptr,an,px+l->an-1,al,px+1,py,6,p,x);
+      wwrite_in_box(ptr,an,px+l->an-1,al,px+2,py,6,(byte *)p,c0);
+      wwrite_in_box(ptr,an,px+l->an-1,al,px+1,py,6,(byte *)p,x);
     }
 
     v.volcar=1;
@@ -1372,7 +1381,7 @@ void browser0(void) {
   unsigned n,m,x;
 
   v.tipo=1; // Di logo
-  v.titulo=v_texto;
+  v.titulo=(byte *)v_texto;
   v_thumb=v_tipo;
 
   num_taggeds = 0;
@@ -1439,7 +1448,7 @@ void browser0(void) {
   strcpy(mascara,input);
   v_terminado=0;
 
-  _get(126,4,v.al-21,v.an-(24+text_len(texto[100])+text_len(texto[101])),input,512,0,0);
+  _get(126,4,v.al-21,v.an-(24+text_len(texto[100])+text_len(texto[101])),(byte *)input,512,0,0);
 
   _button(100,v.an-12-text_len(texto[101]),v.al-14,2);
   _button(101,v.an-8,v.al-14,2);
@@ -1766,7 +1775,7 @@ void browser2(void) {
         crear_listbox(&ldirectoriosbr);
       } else {
         _dos_setdrive(tipo[v_tipo].path[0]-'A'+1,&n);
-        v_texto=texto[42]; dialogo((int)err0); return;
+        v_texto=(char *)texto[42]; dialogo((int)err0); return;
       }
     } else if (lextbr.zona>=10) { v.volcar=1;
       tipo[v_tipo].defecto=lextbr.zona-10+lextbr.inicial;
@@ -1841,7 +1850,7 @@ void dir_abrirbr(void) {
     strcpy(archivo+n++*an_archivo,fileinfo.name);
     m=_dos_findnext(&fileinfo);
   } larchivosbr.maximo=n;
-  qsort(archivo,larchivosbr.maximo,an_archivo,strcmp);
+  qsort(archivo,larchivosbr.maximo,(size_t)an_archivo,(int (*)(const void *, const void *))strcmp);
 
   n=0; m=_dos_findfirst("*.*",_A_SUBDIR,&fileinfo);
   while (m==0 && n<max_directorios) {
@@ -1849,7 +1858,7 @@ void dir_abrirbr(void) {
       strcpy(directorio+n++*an_directorio,fileinfo.name);
     m=_dos_findnext(&fileinfo);
   } ldirectoriosbr.maximo=n;
-  qsort(directorio,ldirectoriosbr.maximo,an_directorio,strcmp);
+  qsort(directorio,ldirectoriosbr.maximo,an_directorio,(int (*)(const void *, const void *))strcmp);
 
   for (n=0;n<max_archivos;n++) {
     if (thumb[n].ptr!=NULL) {
@@ -1973,7 +1982,7 @@ void actualiza_listboxbr(struct t_listboxbr * l) {
   if (old_zona!=l->zona) if (old_zona>=10) { // Desmarca zona
     x=l->x+1+((old_zona-10)%l->columnas)*(l->an+1);
     y=l->y+l->al+((old_zona-10)/l->columnas)*(l->al+1);
-    p=l->lista+l->lista_an*(l->inicial+old_zona-10);
+    p=(byte *)l->lista+l->lista_an*(l->inicial+old_zona-10);
     if (text_len(p)<l->an-2 && opc_img[v_thumb]) {
       wwrite(ptr,an,al,x+l->an/2,y,7,p,c3);
     } else {
@@ -2031,7 +2040,7 @@ void actualiza_listboxbr(struct t_listboxbr * l) {
   if (old_zona!=l->zona) if (l->zona>=10) { // Marca zona
     x=l->x+1+((l->zona-10)%l->columnas)*(l->an+1);
     y=l->y+l->al+((l->zona-10)/l->columnas)*(l->al+1);
-    p=l->lista+l->lista_an*(l->inicial+l->zona-10);
+    p=(byte *)l->lista+l->lista_an*(l->inicial+l->zona-10);
     if (text_len(p)<l->an-2 && opc_img[v_thumb]) {
       wwrite(ptr,an,al,x+l->an/2,y,7,p,c4);
     } else {

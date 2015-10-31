@@ -51,12 +51,27 @@
 //      Constants defined at the application level
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-#define uchar unsigned char
-#define byte unsigned char
-#define ushort unsigned short
-#define word unsigned short
-#define ulong unsigned int
-#define dword unsigned int
+
+#define uchar uint8_t
+//unsigned char
+#define byte uint8_t
+//unsigned char
+#define ushort uint16_t
+//unsigned short
+#define word uint16_t
+//unsigned short
+
+#ifndef __llvm__
+#define ulong uint32_t
+//unsigned int
+#endif
+
+
+#define dword uint32_t
+//unsigned int
+
+
+
 
 #define swap(a,b) {(a)^=(b);(b)^=(a);(a)^=(b);}
 
@@ -71,7 +86,7 @@
 //      Functions exported by DIV (div.c)
 ///////////////////////////////////////////////////////////////////////////////
 
-void _fwrite(char*,char*,int);
+void _fwrite(char*,byte*,int);
 void _ffwrite(byte *Buffer,unsigned int Len,FILE *file);
 void error(int);
 void nueva_ventana(int);
@@ -425,8 +440,11 @@ void repinta_ventana(void);
 
 
 void memcpyb(byte*,byte*,int);
-//void call(int); // void funcion(void); int n=(int)funcion; call(n);
+#ifdef __llvm__
+void call(int); // void funcion(void); int n=(int)funcion; call(n);
+#else
 void call(void *(*func)() );
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions exported by DIVEFFECT (diveffect.c)
 ///////////////////////////////////////////////////////////////////////////////
@@ -675,14 +693,14 @@ struct tprg {
   int old_an,old_al;            // Ancho y alto antes de maximizarse
   char path[_MAX_PATH+1];       // Path del fichero asociado
   char filename[12+1];          // Nombre del fichero asociado
-  char * buffer;                // Buffer con el fichero cargado
+  byte * buffer;                // Buffer con el fichero cargado
   int buffer_lon;               // Longitud del buffer
   int file_lon;                 // Longitud del fichero ( < buffer_lon)
   int num_lineas;               // N� de l죒eas del fuente
   int linea;                    // L죒ea actual en edici줻
   int columna;                  // Columna actual del cursor
-  char * lptr;                  // Puntero a la l죒ea actual en el fichero
-  char * vptr;                  // Puntero a la primera l죒ea visualizada
+  byte * lptr;                  // Puntero a la l죒ea actual en el fichero
+  byte * vptr;                  // Puntero a la primera l죒ea visualizada
   int primera_linea;            // Primera l죒ea visualizada en pantalla
   int primera_columna;          // Desp. horizontal del fichero en pantalla
   char l[long_line+4];          // Buffer para la l죒ea editada

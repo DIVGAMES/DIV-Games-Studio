@@ -31,7 +31,7 @@ struct tventana MiVentana;
                                 cierra_ventana();
                                 break;
                         case 101: // Objeto de FPG
-                                v_titulo=texto[60];
+                                v_titulo=(char *)texto[60];
                                 v_texto=ventana[1].mapa->descripcion;
                                 dialogo((int)aceptar0);
                                 if(v_aceptar)
@@ -68,7 +68,7 @@ void Bin0(void)
         v.al=34;
         v.paint_handler=(int)Bin1;
         v.click_handler=(int)Bin2;
-        v.titulo="";
+        v.titulo=(byte *)"";
         v.nombre=texto[350];
 }
 

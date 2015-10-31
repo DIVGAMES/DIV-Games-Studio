@@ -363,8 +363,8 @@ void programa0(void){
   }
 
   v.prg=v_prg;
-  v.titulo=v_prg->filename;
-  v.nombre=v_prg->filename;
+  v.titulo=(byte *)v_prg->filename;
+  v.nombre=(byte *)v_prg->filename;
 
   v.paint_handler=(int)programa1;
   v.click_handler=(int)programa2;
@@ -868,9 +868,9 @@ void comprobar_memoria(int bloque_lon) {
 
   if (v.prg->buffer_lon<=v.prg->file_lon+bloque_lon+buffer_min) {
     write_line();
-    p=realloc(v.prg->buffer,v.prg->file_lon+bloque_lon+buffer_grow);
+    p=(byte *)realloc(v.prg->buffer,v.prg->file_lon+bloque_lon+buffer_grow);
     if (p!=NULL) {
-      ip=(char*)p-v.prg->buffer;
+      ip=(byte*)p-v.prg->buffer;
       v.prg->buffer+=ip;
       v.prg->lptr+=ip;
       v.prg->vptr+=ip;
@@ -1005,7 +1005,7 @@ void f_cortar(int borrar) { // 0-Copiar, 1-Cortar, 2-Borrar
 
   if (borrar!=2) {
     if (papelera!=NULL) free(papelera);
-    if ((papelera=(byte*)malloc(lon_papelera=k2-k1+1))==NULL) {
+    if ((papelera=(char *)malloc(lon_papelera=k2-k1+1))==NULL) {
 
       // *** OJO *** Error "no hay memoria"
 
@@ -1419,11 +1419,11 @@ void avanza_vptr(void) {
 
   while (*p!=cr && p<v.prg->buffer+v.prg->file_lon) p++;
   if (*p==cr && p<v.prg->buffer+v.prg->file_lon) {
-    if (_csource==v.prg->vptr) {
-      csource=_csource; iscoment=_iscoment;
+    if (_csource==(char *)v.prg->vptr) {
+      csource=(byte *)_csource; iscoment=_iscoment;
       v.prg->vptr=p+2;
       while (csource<v.prg->vptr) clexico();
-      _csource=v.prg->vptr; _iscoment=iscoment;
+      _csource=(char *)v.prg->vptr; _iscoment=iscoment;
     } else v.prg->vptr=p+2;
     v.prg->primera_linea++;
   }
@@ -1443,20 +1443,20 @@ void retrocede_vptr(void) {
   if (p!=v.prg->buffer) { p-=2;
     while (p>v.prg->buffer && (*p!=cr || p==v.prg->vptr-2)) p--;
     if (p==v.prg->buffer && (*p!=cr || p==v.prg->vptr-2)) {
-      if (_csource==v.prg->vptr) {
-        csource=_csource; iscoment=_iscoment;
+      if (_csource==(char *)v.prg->vptr) {
+        csource=(byte *)_csource; iscoment=_iscoment;
         v.prg->vptr=p; cpieza=-1;
         csource=p;
         while (cpieza!=p_ultima) clexico();
-        _csource=v.prg->vptr; _iscoment-=(iscoment-_iscoment);
+        _csource=(char *)v.prg->vptr; _iscoment-=(iscoment-_iscoment);
       } else v.prg->vptr=p;
     } else {
-      if (_csource==v.prg->vptr) {
-        csource=_csource; iscoment=_iscoment;
+      if (_csource==(char *)v.prg->vptr) {
+        csource=(byte *)_csource; iscoment=_iscoment;
         v.prg->vptr=p+2; cpieza=-1;
         csource=p+2;
         while (cpieza!=p_ultima) clexico();
-        _csource=v.prg->vptr; _iscoment-=(iscoment-_iscoment);
+        _csource=(char *)v.prg->vptr; _iscoment-=(iscoment-_iscoment);
       } v.prg->vptr=p+2;
     } v.prg->primera_linea--;
   }
@@ -1540,12 +1540,14 @@ void _completo(void) {
   int an,al,_an=0,_al=0;
   int i;
 
-  if (_csource!=v.prg->vptr) {
+  if (_csource!=(char *)v.prg->vptr) {
     csource=v.prg->buffer; iscoment=0;
     while (csource<v.prg->vptr) clexico();
-    csource=_csource=v.prg->vptr; _iscoment=iscoment;
+    _csource=(char *)v.prg->vptr;
+    csource=(byte *)_csource;
+     _iscoment=iscoment;
   } else {
-    csource=_csource; iscoment=_iscoment;
+    csource=(byte *)_csource; iscoment=_iscoment;
   }
 
   if (v.al<v._al) { _an=v.an; _al=v.al; v.an=v._an; v.al=v._al; }
@@ -1619,7 +1621,7 @@ void _completo(void) {
 
     } else {
 
-      s=si; si=v.prg->l;
+      s=si; si=(byte *)v.prg->l;
 
       i=0; csource=si; rellena_colin();
       color_cursor=colin[v.prg->columna-1];
@@ -1660,22 +1662,24 @@ void _parcial(void) {
   int an,al,_an=0,_al=0;
   int i;
 
-  if (_csource!=v.prg->vptr) {
+  if (_csource!=(char *)v.prg->vptr) {
     csource=v.prg->buffer; iscoment=0;
     while (csource<v.prg->vptr) clexico();
-    csource=_csource=v.prg->vptr; _iscoment=iscoment;
+    _csource=(char *)v.prg->vptr;
+    csource=(byte *)_csource;
+     _iscoment=iscoment;
   } else {
-    csource=_csource; iscoment=_iscoment;
+    csource=(byte *)_csource; iscoment=_iscoment;
   }
 
   while (csource<v.prg->lptr) clexico();
-  numrem=0; csource=v.prg->l; rellena_colin();
+  numrem=0; csource=(byte *)v.prg->l; rellena_colin();
   color_cursor=colin[v.prg->columna-1];
 
-  if (c_oldline==v.prg->lptr && numrem!=c_oldrem) {
-    c_oldline=v.prg->lptr; c_oldrem=numrem;
+  if (c_oldline==(char *)v.prg->lptr && numrem!=c_oldrem) {
+    c_oldline=(char *)v.prg->lptr; c_oldrem=numrem;
     v.volcar++; _completo(); return;
-  } c_oldline=v.prg->lptr; c_oldrem=numrem;
+  } c_oldline=(char *)v.prg->lptr; c_oldrem=numrem;
 
   if (v.al<v._al) { _an=v.an; _al=v.al; v.an=v._an; v.al=v._al; }
   an=v.an/big2; al=v.al/big2;
@@ -1720,7 +1724,7 @@ void _parcial(void) {
   }
 
   di=old_di;
-  si=v.prg->l;
+  si=(byte *)v.prg->l;
   i=0;
 
   ancho=v.prg->primera_columna;
@@ -1796,9 +1800,9 @@ void barra_info(void) {
 
   wbox(ptr,an,al,c12,2,10,an-4-16,7);  // Barra de estado
   itoa(v.prg->linea,num,10);
-  wwrite_in_box(v.ptr,an,an-19,al,3,10,0,num,c3); ancho=text_len(num)+1;
+  wwrite_in_box(v.ptr,an,an-19,al,3,10,0,(byte *)num,c3); ancho=text_len((byte *)num)+1;
   itoa(v.prg->columna,num+1,10); num[0]=',';
-  wwrite_in_box(v.ptr,an,an-19,al,3+ancho,10,0,num,c3); ancho+=text_len(num)+1;
+  wwrite_in_box(v.ptr,an,an-19,al,3+ancho,10,0,(byte *)num,c3); ancho+=text_len((byte *)num)+1;
 //  itoa(v.prg->num_lineas,num+1,10); num[0]='('; num[strlen(num)+1]=0; num[strlen(num)]=')';
 //  wwrite_in_box(v.ptr,an,an-19,al,3+ancho,10,0,num,c3); ancho+=text_len(num)+1;
 }
@@ -1846,7 +1850,7 @@ void resize(void) {
       if (v.al&1) v.al++;
     }
 
-    if ((new_block=realloc(v.ptr,v.an*v.al))!=NULL) {
+    if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
       v.ptr=new_block;
       test_cursor();
       repinta_ventana();
@@ -1924,7 +1928,7 @@ void maximizar(void) {
       if (v.al&1) v.al++;
     }
 
-    if ((new_block=realloc(v.ptr,v.an*v.al))!=NULL) {
+    if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
       _an=_an2; _al=_al2;
       v.ptr=new_block;
       test_cursor();
@@ -1959,7 +1963,7 @@ void maximizar(void) {
       if (v.al&1) v.al++;
     }
 
-    if ((new_block=realloc(v.ptr,v.an*v.al))!=NULL) {
+    if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
       v.ptr=new_block;
       test_cursor();
       repinta_ventana();
@@ -2066,7 +2070,7 @@ void text_cursor(void) {
   } else {
     if (block) do { memset(di,ce4,font_an); di+=v.an; } while (--alto);
     else do { memset(di,ce1,font_an); di+=v.an; } while (--alto);
-    si=v.prg->l;
+    si=(byte *)v.prg->l;
     y=v.prg->columna;
     x=0; while (--y && si[x]) {
       x++;
@@ -2088,7 +2092,7 @@ void error_cursor2(void) {
   alto=font_al; di=old_di;
   do { memset(di,c_r_low,font_an); di+=v.an; } while (--alto);
 
-  si=v.prg->l;
+  si=(byte *)v.prg->l;
   y=v.prg->columna;
   x=0; while (--y && si[x]) x++;
   if (!(ch=si[x])) ch=' ';
@@ -2117,7 +2121,7 @@ void error_cursor(void) {
   alto=font_al; di=old_di;
   do { memset(di,c_r_low,font_an); di+=v.an; } while (--alto);
 
-  si=v.prg->l;
+  si=(byte *)v.prg->l;
   y=v.prg->columna;
   x=0; while (--y && si[x]) x++;
   if (!(ch=si[x])) ch=' ';
@@ -2140,7 +2144,7 @@ void delete_text_cursor(void) {
   if (block) do { memset(di,ce4,font_an); di+=v.an; } while (--alto);
   else do { memset(di,ce1,font_an); di+=v.an; } while (--alto);
 
-  si=v.prg->l;
+  si=(byte *)v.prg->l;
   y=v.prg->columna;
   x=0; while (--y && si[x]) {
     x++;
@@ -2331,13 +2335,13 @@ void write_line(void) {
   fin=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
 
   if (ini<v.prg->buffer+old_lon) {
-    lon=v.prg->buffer+old_lon-(int)ini;
+    lon=(int)v.prg->buffer+old_lon-(int)ini;
     memmove(fin,ini,lon);
     if (kini>ini && kini<ini+lon) kini+=fin-ini;
     if (kfin>ini && kfin<ini+lon) kfin+=fin-ini;
   }
 
-  ini=v.prg->l; fin=v.prg->lptr;
+  ini=(byte *)v.prg->l; fin=v.prg->lptr;
   while (*ini) *fin++=*ini++;
 }
 
@@ -2354,13 +2358,13 @@ void delete_line(void) {
   fin=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
 
   if (ini<v.prg->buffer+old_lon) {
-    lon=v.prg->buffer+old_lon-(int)ini;
+    lon=(int)v.prg->buffer+old_lon-(int)ini;
     memmove(fin,ini,lon);
     if (kini>=ini && kini<ini+lon) kini+=fin-ini;
     if (kfin>=ini && kfin<ini+lon) kfin+=fin-ini;
   }
 
-  ini=v.prg->l; fin=v.prg->lptr;
+  ini=(byte *)v.prg->l; fin=v.prg->lptr;
   while (*ini) *fin++=*ini++;
 }
 
@@ -2420,7 +2424,7 @@ void abrir_programa(void) {
 
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
         fseek(f,0,SEEK_END); n=ftell(f)+buffer_grow;
-        if ((buffer=malloc(n))!=NULL) {
+        if ((buffer=(byte *)malloc(n))!=NULL) {
           if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
               v_prg->buffer_lon=n;
               strcpy(v_prg->filename,input);
@@ -2472,13 +2476,13 @@ void abrir_programa(void) {
 
                 nueva_ventana((int)programa0);
 
-              } else { free(v_prg); free(buffer); v_texto=texto[46]; dialogo((int)err0); }
-            } else { free(v_prg); free(buffer); v_texto=texto[44]; dialogo((int)err0); }
-          } else { free(buffer); v_texto=texto[45]; dialogo((int)err0); }
-        } else { v_texto=texto[45]; dialogo((int)err0); }
+              } else { free(v_prg); free(buffer); v_texto=(char *)texto[46]; dialogo((int)err0); }
+            } else { free(v_prg); free(buffer); v_texto=(char *)texto[44]; dialogo((int)err0); }
+          } else { free(buffer); v_texto=(char *)texto[45]; dialogo((int)err0); }
+        } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
         fclose(f);
       } else {
-        if (v_terminado!=-1) { v_texto=texto[44]; dialogo((int)err0); }
+        if (v_terminado!=-1) { v_texto=(char *)texto[44]; dialogo((int)err0); }
         v_terminado=0;
       }
     }
@@ -2495,7 +2499,7 @@ void programa0_nuevo(void) {
   strcat(full,input);
 
   if (v_terminado) { n=buffer_grow;
-    if ((buffer=malloc(n))!=NULL) {
+    if ((buffer=(byte *)malloc(n))!=NULL) {
       if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
           v_prg->buffer_lon=n;
           strcpy(v_prg->filename,input);
@@ -2507,8 +2511,8 @@ void programa0_nuevo(void) {
         pr=v.prg; v.prg=v_prg; read_line(); v.prg=pr;
         v_prg->num_lineas=1;
         nueva_ventana((int)programa0);
-      } else { free(buffer); v_texto=texto[45]; dialogo((int)err0); }
-    } else { v_texto=texto[45]; dialogo((int)err0); }
+      } else { free(buffer); v_texto=(char *)texto[45]; dialogo((int)err0); }
+    } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
   }
 }
 
@@ -2541,7 +2545,7 @@ void guardar_prg(void) {
 
     if (!strcmp(input,"help.div")) make_helpidx();
     if (!strcmp(input,"help.idx")) load_index();
-  } else { v_texto=texto[47]; dialogo((int)err0); }
+  } else { v_texto=(char *)texto[47]; dialogo((int)err0); }
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -2582,7 +2586,7 @@ void buscar_texto0(void) {
 
 //  strcpy(buscar,"");
 
-  _get(161,4,11,v.an-8,buscar,32,0,0);
+  _get(161,4,11,v.an-8,(byte *)buscar,32,0,0);
   _button(100,7,y_bt,0);
   _button(101,v.an-8,y_bt,2);
   _flag(163,4,y_bt-20,&completa);
@@ -2629,7 +2633,7 @@ void buscar_texto(void) {
 
   if (!encontrado) { // Restaura variables y emite dialogo informativo
     memcpy(v.prg,&mi_prg,sizeof(struct tprg));
-    v_titulo=texto[347]; v_texto=texto[189]; dialogo((int)info0);
+    v_titulo=(char *)texto[347]; v_texto=(char *)texto[189]; dialogo((int)info0);
   } else {
     n=strlen(buscar); while (n--) f_right();
     n=strlen(buscar); while (n--) f_left();
@@ -2664,8 +2668,8 @@ void sustituir_texto0(void) {
   //strcpy(buscar2,"");
   //strcpy(sustituir,"");
 
-  _get(161,4,11,v.an-8,buscar2,32,0,0);
-  _get(162,4,30,v.an-8,sustituir,32,0,0);
+  _get(161,4,11,v.an-8,(byte *)buscar2,32,0,0);
+  _get(162,4,30,v.an-8,(byte *)sustituir,32,0,0);
   _button(100,7,y_st,0);
   _button(101,v.an-8,y_st,2);
   _flag(163,4,y_st-20,&completa2);
@@ -2783,14 +2787,14 @@ char sus[128];
 
 void sustituciones1(void) {
   _show_items();
-  wwrite(v.ptr,v.an/big2,v.al/big2,(v.an/big2)/2,12,1,sus,c3);
+  wwrite(v.ptr,v.an/big2,v.al/big2,(v.an/big2)/2,12,1,(byte *)sus,c3);
 }
 void sustituciones2(void) { _process_items(); if (!v.active_item) fin_dialogo=1; }
 
 void sustituciones0(void) {
   v.tipo=1; v.titulo=texto[191];
   itoa(num_cambios,sus,10);
-  strcat(sus,texto[192]);
+  strcat(sus,(char *)texto[192]);
   v.an=text_len(texto[191])+28; v.al=38;
   v.paint_handler=(int)sustituciones1;
   v.click_handler=(int)sustituciones2;
@@ -2810,7 +2814,7 @@ void abrir_programa_para_fernando(char *nombre,char *path) {
   wpath[strlen(wpath)-strlen(nombre)]=0;
   if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
     fseek(f,0,SEEK_END); n=ftell(f)+buffer_grow;
-    if ((buffer=malloc(n))!=NULL) {
+    if ((buffer=(byte *)malloc(n))!=NULL) {
       if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
     v_prg->buffer_lon=n;
     strcpy(v_prg->filename,input);
@@ -2861,12 +2865,12 @@ void abrir_programa_para_fernando(char *nombre,char *path) {
 
             nueva_ventana((int)programa0);
 
-          } else { free(v_prg); free(buffer); v_texto=texto[46]; dialogo((int)err0); }
-        } else { free(v_prg); free(buffer); v_texto=texto[44]; dialogo((int)err0); }
-      } else { free(buffer); v_texto=texto[45]; dialogo((int)err0); }
-    } else { v_texto=texto[45]; dialogo((int)err0); }
+          } else { free(v_prg); free(buffer); v_texto=(char *)texto[46]; dialogo((int)err0); }
+        } else { free(v_prg); free(buffer); v_texto=(char *)texto[44]; dialogo((int)err0); }
+      } else { free(buffer); v_texto=(char *)texto[45]; dialogo((int)err0); }
+    } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
     fclose(f);
-  } else { v_texto=texto[44]; dialogo((int)err0); }
+  } else { v_texto=(char *)texto[44]; dialogo((int)err0); }
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -2885,7 +2889,7 @@ void crear_lista_procesos(char * buffer, int file_lon) {
   char cwork[512],cwork2[256];
   int linea=1,n,m;
 
-  p=buffer;
+  p=(byte *)buffer;
   end=p+file_lon;
   lp_num=0; lp_ini=0; lp_select=0;
 
@@ -2903,7 +2907,7 @@ void crear_lista_procesos(char * buffer, int file_lon) {
               q=p; n=0;
               while (*q!=cr && q<end) { cwork[n++]=*q; q++; } cwork[n]=0;
               n=0; while (n<lp_num) {
-                if (strcmp(cwork,lp2[n])<0) break;
+                if (strcmp((char *)cwork,(char *)lp2[n])<0) break;
                 n++;
               }
               if (n<lp_num) {
@@ -2929,10 +2933,10 @@ void crear_lista_procesos(char * buffer, int file_lon) {
 
   // Si estamos sobre un nombre de proceso en el programa, lo selecciona
 
-  if (buffer==ventana[1].prg->buffer) {
+  if (buffer==(char *)ventana[1].prg->buffer) {
     n=ventana[1].prg->columna-1;
-    p=ventana[1].prg->l;
-    if (n<=strlen(p)) {
+    p=(byte *)ventana[1].prg->l;
+    if (n<=strlen((char *)p)) {
       if (!lower[p[n]] && n) n--;
       if (lower[p[n]]) {
         while (p) if (lower[p[n-1]]) n--; else break;
@@ -2942,8 +2946,8 @@ void crear_lista_procesos(char * buffer, int file_lon) {
           cwork[strlen(cwork)]=lower[p[n++]];
         }
         for (n=0;n<lp_num;n++) {
-          p=strchr((char *)lp2[n],' ');
-          if (p>strchr((char *)lp2[n],'(') || p==NULL) p=strchr((char *)lp2[n],'(');
+          p=(byte *)strchr((char *)lp2[n],' ');
+          if (p>(byte *)strchr((char *)lp2[n],'(') || p==NULL) p=(byte *)strchr((char *)lp2[n],'(');
           memcpy(cwork2,lp2[n],p-lp2[n]);
           cwork2[p-lp2[n]]=0;
           for (m=strlen(cwork2)-1;m>=0;m--) cwork2[m]=lower[cwork2[m]];
@@ -2979,7 +2983,7 @@ void pintar_lista_procesos(void) {
       x=c4;
     } else x=c3;
     p=lp2[m]; n=0; while (*p!=cr && p<end) { cwork[n++]=*p; p++; } cwork[n]=0;
-    wwrite_in_box(ptr,an,153+100,al,5,21+(m-lp_ini)*8,0,cwork,x);
+    wwrite_in_box(ptr,an,153+100,al,5,21+(m-lp_ini)*8,0,(byte *)cwork,x);
   }
   pinta_segmento_procesos();
 }
@@ -3016,7 +3020,7 @@ void lista_procesos1(void) {
   wput(ptr,an,al,123+132,20,-39); // Boton arriba / abajo (pulsados 41,42)
   wput(ptr,an,al,123+132,174-40,-40);
 
-  crear_lista_procesos(ventana[1].prg->buffer,ventana[1].prg->file_lon);
+  crear_lista_procesos((char *)ventana[1].prg->buffer,ventana[1].prg->file_lon);
   pintar_lista_procesos();
 }
 
@@ -3102,7 +3106,7 @@ void lista_procesos2(void) {
     case 0: if (lp_num) v_aceptar=1; fin_dialogo=1; break;
     case 1: fin_dialogo=1; break;
     case 2:
-      crear_lista_procesos(ventana[1].prg->buffer,ventana[1].prg->file_lon);
+      crear_lista_procesos((char *)ventana[1].prg->buffer,ventana[1].prg->file_lon);
       pintar_lista_procesos();
       v.volcar=1; break;
   }
@@ -3230,7 +3234,7 @@ void Print_Program(void) {
     if (fp_bl) { // Imprime el bloque seleccionado
 
       if (!kbloque) {
-        v_texto=texto[452];
+        v_texto=(char *)texto[452];
         dialogo((int)err0);
         return;
       }
@@ -3238,7 +3242,7 @@ void Print_Program(void) {
       f_cortar_bloque(0);
       v.volcar=2;
 
-      buf=papelera;
+      buf=(byte *)papelera;
       lon=lon_papelera;
 
     } else { // Imprime el listado completo
@@ -3252,13 +3256,13 @@ void Print_Program(void) {
 
     if (lon>0) {
       for (n=0;n<lon;n+=32) {
-        Progress(texto[437],n,lon);
+        Progress((char *)texto[437],n,lon);
         if (n+32<=lon) fwrite(buf+n,1,32,stdprn);
         else fwrite(buf+n,1,lon-n,stdprn);
       }
 
       fwrite("\xd\xa\f",1,3,stdprn);
-      Progress(texto[437],lon,lon);
+      Progress((char *)texto[437],lon,lon);
     }
 
   }

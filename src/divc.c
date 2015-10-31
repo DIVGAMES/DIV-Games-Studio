@@ -709,7 +709,7 @@ int optimizar;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-FILE * open_file(char * file);
+FILE * open_file(uint8_t * file);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -833,6 +833,7 @@ union { byte*b; byte**p; } ivnom;
 byte * inicio_objetos; // Para el crear listado de la tabla de objetos
 
 byte * vhash[256]; // Pointer to the vector of names
+byte idlist[256];
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -966,7 +967,7 @@ void mensaje_compilacion(byte * p) {
 
 void compilar(void) {
   int n;
-  uint32_t m;
+  uint m;
   struct objeto * i;
   byte * q, * p;
 
@@ -989,11 +990,13 @@ printf("compilar\n");
   memset(lex_simb,0,sizeof(lex_simb)); ilex_simb=lex_simb; num_nodos=0;
   memset(vhash,0,sizeof(vhash));
 
+  memset(idlist,0,sizeof(idlist));
+
   for (n=0;n<256;n++)
     if (lower[n])
-      if (n>='0' && n<='9') lex_case[n]=(void*)l_num;
-      else lex_case[n]=(void*)l_id;
-    else lex_case[n]=(void*)l_err;
+      if (n>='0' && n<='9') lex_case[n]=(lex_ele*)l_num;
+      else lex_case[n]=(lex_ele*)l_id;
+    else lex_case[n]=(lex_ele*)l_err;
 
   if ((vnom=(byte *) malloc(max_obj*long_med_id+1024))==NULL) c_error(0,0);
 
@@ -1001,9 +1004,13 @@ printf("compilar\n");
 
   analiza_ltlex();
 
-  lex_case[' ']=(void*)l_spc;
-  lex_case[tab]=(void*)l_spc;
-  lex_case[cr]=(void*)l_cr;
+  for (n=0;n<256;n++)
+	printf("vhash[%d] = %x\n",n,vhash[n]);
+
+
+  lex_case[' ']=(lex_ele*)l_spc;
+  lex_case[tab]=(lex_ele*)l_spc;
+  lex_case[cr]=(lex_ele*)l_cr;
 
   inicio_objetos=ivnom.b;
 
@@ -1031,6 +1038,7 @@ printf("compilar\n");
   precarga_obj(); // No literals in the preloaded objects
 
   mensaje_compilacion(texto[200]);
+printf("Source len: %d\n",source_len);
 
   source=source_ptr; _source=source;
   *(source+source_len)=cr; *(source+source_len+1)=cr;
@@ -1289,13 +1297,13 @@ void test_buffer(int * * buffer,int * maximo,int n) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void analiza_ltlex(void){
-
+printf("analiza_ltlex\n");
   byte * buf, cont=1;
   int len;
   struct lex_ele * e;
 
   int t; //token (pieza)
-  byte h; //hash (para id)
+  byte h; //hash (for id)
   byte * _ivnom;
   byte * * ptr;
 
@@ -1310,7 +1318,7 @@ void analiza_ltlex(void){
   linea=1;
 //printf("%s\n",buf);
   do {
-	//  printf("[%c] %x",*buf, buf); 
+//	  printf("[%c] %x",*buf, buf); 
 	  switch (*buf++) {
     case ' ': case tab:
       break;
@@ -1324,16 +1332,41 @@ void analiza_ltlex(void){
       else if (*buf>='a' && *buf<='f') t=(*buf++-'a'+10)<<4; else c_error(0,2);
       *buf=lower[*buf]; if (*buf>='0' && *buf<='9') t+=(*buf++-'0');
       else if (*buf>='a' && *buf<='f') t+=(*buf++-'a'+10); else c_error(0,2);
+//      printf("t is %d buf is %x\n",t,*buf);
+
+ //     printf("lower buf %d %c\n",lower[*buf],lower[*buf]);
+      
       if (*buf==cr || *buf==' ' || *buf==tab) break;
-      else if (lower[*buf]) {           //Analyzes a keyword
-//		  printf("keyword %s\n",buf);
-        _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=(void*)t; h=0;
-        while (*ivnom.b=lower[*buf++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
-        ptr=&vhash[h]; while (*ptr) ptr=(void *)*ptr; *ptr=_ivnom;
+      
+      
+      else if (lower[*buf]>0) {           //Analyzes a keyword
+	//	  printf("keyword %c %d\n",*buf,lower[*buf]);
+        _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=(byte*)t; h=0;
+	//		printf("keyword is: %c",lower[*buf]);
+
+        while (*ivnom.b=lower[*buf++]) {
+//			printf("%c",*ivnom.b);
+			h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
+		}
+	//	printf("\nivnom.b = %s\n",*_ivnom);
+        ptr=&vhash[h]; 
+        
+        while (*ptr) { 
+			printf("before ptr: %x (h=%d)\n",*ptr,h);
+			ptr=(byte **)*ptr; 
+			printf("after ptr: %x %x\n",*ptr,_ivnom);	
+		}
+		
+		*ptr=_ivnom;
         buf--; ivnom.b++;
+       printf("h is %d %x %d\n",h,_ivnom,t);
+idlist[h]=t;
+        
       } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
-        lex_case[*buf]=(void*)l_lit;
+//		  printf("literal\n");
+        lex_case[*buf]=(lex_ele*)l_lit;
       } else {                          //Analiza un nuevo sกmbolo
+//		  printf("symbol\n");
         if ((e=lex_case[*buf])==0) {
           if (num_nodos++==max_nodos) c_error(0,3);
           e=lex_case[*buf]=ilex_simb++; (*e).caracter=*buf++;
@@ -1590,7 +1623,7 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
 
   if (linea) ierror=_source;
   next_source=_source;
-    printf("found id %c\n",*_source);
+//    printf("found id %c\n",*_source);
 
   switch ((int)lex_case[*_source]) {
 
@@ -1599,6 +1632,7 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
       next_pieza=0; break;
 
     case l_cr :
+//    printf("found newline\n");
       if (linea) {
 
         if (convert) {
@@ -1622,8 +1656,8 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
       while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
       ivnom.b++; _source--;
       ptr=&vhash[h];
-      while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
-      if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
+      while (*ptr && strcmp((char *)(ptr+2),(char *)(_ivnom+8))) ptr=(byte **)*ptr;
+      if (!strcmp((char *)(ptr+2),(char *)(_ivnom+8))) { // id encontrado
         ivnom.b=_ivnom; // lo saca de vnom
         next_pieza=(int)*(ptr+1);
         if (next_pieza<256 && next_pieza>=0) { // palabra reservada (token)
@@ -1660,6 +1694,7 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
       } _source=_ivnom;
 
       if (next_pieza==p_rem && !coment) {
+//		  printf("1664 found p_rem comment\n");
         while (*_source!=cr) _source++; goto lex_scan;
       }
 
@@ -1688,25 +1723,25 @@ int en_fopen=0;
 void lexico(void) {
 
   struct objeto * * ptr_o;
-  byte ** ptr, * _ivnom, h, * _source=source;
+  uint8_t ** ptr, * _ivnom, h, * _source=source;
   struct lex_ele * e;
-  char cwork[66];
+  int8_t cwork[66];
   FILE * f;
 
   int empaquetable;
-  char drive[_MAX_DRIVE+1];
-  char dir[_MAX_DIR+1];
-  char fname[_MAX_FNAME+1];
-  char ext[_MAX_EXT+1];
+  uint8_t drive[_MAX_DRIVE+1];
+  uint8_t dir[_MAX_DIR+1];
+  uint8_t fname[_MAX_FNAME+1];
+  uint8_t ext[_MAX_EXT+1];
 
   int n;
 printf("lexico\n");
 
-//printf("%s\n",_source);
+//printf("SOURCE: %s\n",_source);
   if (!coment) {old_linea=linea; old_ierror=ierror; old_ierror_end=ierror_end;}
 
   lex_scan: ierror=_source;
-//  printf("found id %c %d\n",*_source,(int)lex_case[*_source]);
+  //printf("switch %c %d\n",*_source,(int)lex_case[*_source]);
 
 
   switch ((int)lex_case[*_source]) { // Puntero a un lex_ele o l_???
@@ -1715,7 +1750,7 @@ printf("lexico\n");
       if (coment) { pieza=p_rem; _source++; } else c_error(0,10); break;
 
     case l_cr :
-
+//	printf("found newline\n");
       if (convert) {
         fwrite(ultima_linea,1,_source-ultima_linea,lprg);
         fwrite(&cero,1,1,lprg);
@@ -1725,28 +1760,52 @@ printf("lexico\n");
       pieza=p_ultima; break; // eof
 
     case l_id :
-     printf("p id\n"); 
-      if (coment) { pieza=p_rem; _source++; break; }
-      _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=0; h=0;
+     printf("l_id %c \n",lower[*_source]); 
 
-      while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
-      ivnom.b++; _source--; if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
+      if (coment) { pieza=p_rem; _source++; break; }
+
+      _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=0; h=0;
+//printf("ivnom %d\n",ivnom);
+      while (*ivnom.b=lower[*_source++]) {
+		h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
+	  }
+      
+      ivnom.b++; 
+      _source--; 
+      
+      if (ivnom.b-vnom>max_obj*long_med_id) 
+		c_error(0,100);
+		
+		printf("hash index is %d %d\n",h,idlist[h]);
+		
+
       ptr=&vhash[h];
       
-      while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
-
-      if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
+      printf("ptr [%x] ptr+2[%x] _ivnom+8[%x]\n",*ptr,*(byte *)(ptr+2),*(_ivnom+8)); 
+      
+      while (*ptr && strcmp((char *)(ptr+2),(char *)(_ivnom+8))!=0) {
+		  printf("comp [%c]\n",(byte *)(ptr+2));
+		  ptr=(byte **)*ptr;
+		}
+		
+      if (strcmp((char *)(ptr+2),(char *)(_ivnom+8))==0) { // id found
+	//	printf("id found\n");
         ivnom.b=_ivnom; // lo saca de vnom
+		
         pieza=(int)*(ptr+1);
-        printf("pieza %d %d\n",pieza,pieza_num);
+	
+       printf("pieza num %d %d\n",pieza,pieza_num);
 
-        if (pieza<256 && pieza>=0) { // palabra reservada (token)
-
+        if (pieza<256 && pieza>=0) { // reserved word (token)
+			printf("reserved word\n");
+			
           if (pieza==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
 
         } else { // objeto (id anterior)
-
-          ptr_o=(void*)(ptr+1); o=*ptr_o; pieza=p_id;
+printf("1798 something\n");
+          ptr_o=(objeto **)(ptr+1); 
+          o=*ptr_o; 
+          pieza=p_id;
           while(o!=NULL && ( ((*o).bloque && bloque_lexico!=(*o).bloque) ||
                              ((*o).member!=member) )) o=(*o).anterior;
 
@@ -1766,8 +1825,11 @@ printf("lexico\n");
           }
         }
       } else {
-        *ptr=_ivnom; ptr_o=(void*)(_ivnom+4); *ptr_o=o=iobj++; pieza=p_id; // id nuevo
-        (*o).name=(byte*)_ivnom+8;
+        *ptr=_ivnom; 
+        ptr_o=(objeto **)(_ivnom+4); 
+        *ptr_o=o=iobj++; 
+        pieza=p_id; // id nuevo
+        (*o).name=(byte*)(_ivnom+8);
         (*o).member=member;
         if (parametros) (*o).bloque=bloque_actual;
         if (num_obj++==max_obj) c_error(0,102);
@@ -1801,37 +1863,37 @@ printf("lexico\n");
         next_lexico(_source,0,0);
       }
 
-      n=(strlen(ivnom.b)+4)/4;
-      memcpy(&mem_ory[itxt],ivnom.b,strlen(ivnom.b)+1);
+      n=(strlen((char *)ivnom.b)+4)/4;
+      memcpy(&mem_ory[itxt],ivnom.b,strlen((char *)ivnom.b)+1);
 
       if ((f=open_file(ivnom.b))!=NULL) {
         empaquetable=0;
 
         // Determinar si el archivo es empaquetable ...
 
-        _splitpath(full,drive,dir,fname,ext);
-        strupr(ext);
+        _splitpath(full,(char *)drive,(char *)dir,(char *)fname,(char *)ext);
+        strupr((char *)ext);
 
-        if (!strcmp(ext,".MOD") || !strcmp(ext,".S3M") || !strcmp(ext,".XM")) {
+        if (!strcmp((char *)ext,".MOD") || !strcmp((char *)ext,".S3M") || !strcmp((char *)ext,".XM")) {
           empaquetable=1;
-        } else if (!strcmp(ext,".PCM")) {
+        } else if (!strcmp((char *)ext,".PCM")) {
           empaquetable=1;
-        } else if (!strcmp(ext,".PCX")) {
+        } else if (!strcmp((char *)ext,".PCX")) {
           if (fread(cwork,1,66,f)!=NULL) {
             if(cwork[2]==1 && cwork[3]==8 && cwork[65]==1) empaquetable=1;
           }
         } else if (fread(cwork,1,8,f)!=NULL) {
-          if (!strcmp(cwork,"pal\x1a\x0d\x0a")) empaquetable=1;
-          if (!strcmp(cwork,"map\x1a\x0d\x0a")) empaquetable=1;
-          if (!strcmp(cwork,"fpg\x1a\x0d\x0a")) empaquetable=1;
-          if (!strcmp(cwork,"fnt\x1a\x0d\x0a")) empaquetable=1;
-          if (!strcmp(cwork,"wld\x1a\x0d\x0a")) empaquetable=1;
-          if (!strcmp(cwork,"wld\x1a\x0d\x0a\x01")) empaquetable=1;
+          if (!strcmp((char *)cwork,"pal\x1a\x0d\x0a")) empaquetable=1;
+          if (!strcmp((char *)cwork,"map\x1a\x0d\x0a")) empaquetable=1;
+          if (!strcmp((char *)cwork,"fpg\x1a\x0d\x0a")) empaquetable=1;
+          if (!strcmp((char *)cwork,"fnt\x1a\x0d\x0a")) empaquetable=1;
+          if (!strcmp((char *)cwork,"wld\x1a\x0d\x0a")) empaquetable=1;
+          if (!strcmp((char *)cwork,"wld\x1a\x0d\x0a\x01")) empaquetable=1;
         }
 
         fclose(f);
 
-        if (IsWAV(ivnom.b)) empaquetable=1;
+        if (IsWAV((char *)ivnom.b)) empaquetable=1;
 
         if (!empaquetable || en_fopen) fwrite("+",1,1,lins);
         fwrite(full,1,strlen(full)+1,lins);
@@ -1867,6 +1929,7 @@ printf("lexico\n");
       } _source=_ivnom;
 
       if (pieza==p_rem && !coment) {
+		  //printf("1872 found comment\n");
         while (*_source!=cr) _source++;
         goto lex_scan;
       }
@@ -3170,7 +3233,7 @@ void sintactico (void) {
   int _imem,_imem_old,num_par,n;
   byte * old_source,*nombre_dll,*oimemptr;
   int _itxt,dup;
-  char cWork[256];
+  uint8_t cWork[256];
 
   int num_extern;
 printf("sintactico\n");
@@ -3275,14 +3338,15 @@ printf("sintactico\n");
   //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
   save_error(0);
-  printf("%d %d\n",pieza,p_program);
+  //printf("%d %d\n",pieza,p_program);
   
   if (pieza!=p_program && pieza!=p_setup_program) c_error(4,20);
 
   if (pieza==p_setup_program) {
-    program_type=1; strcpy(cWork,"install/setup.ins");
-  } else strcpy(cWork,"system/EXEC.INS");
-  if ((lins=fopen(cWork,"wb"))==NULL) c_error(0,0);
+    program_type=1; 
+    strcpy((char *)cWork,"install/setup.ins");
+  } else strcpy((char *)cWork,"system/EXEC.INS");
+  if ((lins=fopen((char *)cWork,"wb"))==NULL) c_error(0,0);
 
   inicio_sentencia(); lexico();
   if (pieza!=p_id) c_error(1,21);
@@ -3318,11 +3382,11 @@ printf("sintactico\n");
     if (idlls<64) dlls[idlls].filename=pieza_num;
 
     if (nombre_dll==NULL) c_error(0,63);
-    if ((num_extern=ImportDll(nombre_dll))==0) c_error(0,63);
+    if ((num_extern=ImportDll((char *)nombre_dll))==0) c_error(0,63);
     if (num_extern>0) {
       save_error(0);
       for (n=0;n<num_extern;n++) {
-        source=ImpDLL[n].Name;
+        source=(byte *)ImpDLL[n].Name;
         lexico();
         if (pieza!=p_id) c_error(4,63);
         if ((*o).tipo!=tnone) c_error(4,63);
@@ -4786,8 +4850,8 @@ void tglo_init2(int tipo) {
         oimemptr=imemptr;
         while (*(oimemptr-(int)mem+(int)frm)==2) oimemptr++;
         if (tipo==0) if (strlen((char*)&mem_ory[valor])>(int)(oimemptr-imemptr)) c_error(2,33);
-        strcpy(imemptr,(char*)&mem_ory[valor]);
-        imemptr+=strlen(imemptr);
+        strcpy((char *)imemptr,(char*)&mem_ory[valor]);
+        imemptr+=strlen((char *)imemptr);
         imem=((int)imemptr-(int)mem+3)/4;
         if (*(imemptr-(int)mem+(int)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
         if (pieza!=p_coma) return;
@@ -7306,28 +7370,28 @@ void l_ensamblador (void) {
 //  Esta funciขn debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-FILE * open_file(char * file) {
+FILE * open_file(uint8_t * file) {
   FILE * f;
-  char drive[_MAX_DRIVE+1];
-  char dir[_MAX_DIR+1];
-  char fname[_MAX_FNAME+1];
-  char ext[_MAX_EXT+1];
+  uint8_t drive[_MAX_DRIVE+1];
+  uint8_t dir[_MAX_DIR+1];
+  uint8_t fname[_MAX_FNAME+1];
+  uint8_t ext[_MAX_EXT+1];
 
-  strcpy(full,file);
+  strcpy((char *)full,(char *)file);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
-    if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
-    _splitpath(full,drive,dir,fname,ext);
-    if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
+    if (_fullpath(full,(char *)file,_MAX_PATH)==NULL) return(NULL);
+    _splitpath(full,(char *)drive,(char *)dir,(char *)fname,(char *)ext);
+    if (strchr((char *)ext,'.')==NULL) strcpy(full,(char *)ext); else strcpy(full,strchr((char *)ext,'.')+1);
     if (strlen(full) && file[0]!='/') strcat(full,"/");
-    strcat(full,file);
+    strcat(full,(char *)file);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
-      strcpy(full,fname);
-      strcat(full,ext);
+      strcpy(full,(char *)fname);
+      strcat(full,(char *)ext);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
-        if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
+        if (strchr((char *)ext,'.')==NULL) strcpy(full,(char *)ext); else strcpy(full,strchr((char *)ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
-        strcat(full,fname);
-        strcat(full,ext);
+        strcat(full,(char *)fname);
+        strcat(full,(char *)ext);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
           strcpy(full,"");
           return(NULL);
@@ -7341,17 +7405,17 @@ FILE * open_file(char * file) {
 //      Dialogo de compilar
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-char e_msg[32];
+uint8_t e_msg[32];
 int compilado=0;
 
 void compilar1(void) {
-	printf("compilar1\n");
+	//printf("compilar1\n");
   _show_items();
   wwrite(v.ptr,v.an/big2,v.al/big2,3,12,0,texto[206],c3);
   wwrite(v.ptr,v.an/big2,v.al/big2,6+text_len(texto[206]),12,0,ventana[v_ventana+1].titulo,c4);
 }
 
-extern char cerror[128];
+extern uint8_t cerror[128];
 void get_error(int n);
 
 void compilar2(void) {
@@ -7624,6 +7688,7 @@ void remove_code(int i) {
 
 void delete_code(void) {
   int n;
+  //printf("delete code\n");
   for (n=0;n<16;n++) {
     code[n].dir=0; code[n].param=0; code[n].op=0;
   }
@@ -7643,13 +7708,14 @@ void add_code(int dir, int param, int op) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void plexico(void) {
+	printf("plexico\n");
   byte ** ptr, * _ivnom, h, * _source=source;
   struct lex_ele * e;
 
   if (!coment) {old_linea=linea; old_ierror=ierror; old_ierror_end=ierror_end;}
 
   lex_scan: ierror=_source;
-  printf("%d %c %c\n",lex_case[*_source],*_source,lower[*_source]);
+  //printf("%d %c %c\n",lex_case[*_source],*_source,lower[*_source]);
   
   switch ((int)lex_case[*_source]) { // Puntero a un lex_ele o l_???
 
@@ -7657,17 +7723,19 @@ void plexico(void) {
       if (coment) { pieza=p_rem; _source++; } else c_error(0,10); break;
 
     case l_cr :
+ //   printf("found newline\n");
       linea++; if ((*++_source)==lf) { _source++; ultima_linea=_source; goto lex_scan; }
       pieza=p_ultima; break; // eof
 
     case l_id :
+    printf("type id\n");
       if (coment) { pieza=p_rem; _source++; break; }
       _ivnom=ivnom.b; *ivnom.p++=0; *ivnom.p++=0; h=0;
       while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
       ivnom.b++; _source--; if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
       ptr=&vhash[h];
-      while (*ptr && strcmp((byte *)(ptr+2),_ivnom+8)) ptr=(void*)*ptr;
-      if (!strcmp((byte *)(ptr+2),_ivnom+8)) { // id encontrado
+      while (*ptr && strcmp((char *)(ptr+2),(char *)(_ivnom+8))) ptr=(byte **)*ptr;
+      if (!strcmp((char *)(ptr+2),(char *)(_ivnom+8))) { // id found
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
         if (pieza<256 && pieza>=0) { // palabra reservada (token)
@@ -7691,7 +7759,7 @@ void plexico(void) {
              if (*(_source+1)==h) *_ivnom=*++_source; else *_ivnom=0;
            else *_ivnom=*_source;
       } while (*_ivnom++); _source++;
-      longitud_textos+=(strlen(ivnom.b)+4)/4;
+      longitud_textos+=(strlen((char *)ivnom.b)+4)/4;
       ivnom.b=_ivnom; // lo saca de vnom
       break;
 
@@ -7721,6 +7789,7 @@ void plexico(void) {
       } _source=_ivnom;
 
       if (pieza==p_rem && !coment) {
+		  //printf("7728 found comment\n");
         while (*_source!=cr) _source++;
         goto lex_scan;
       }

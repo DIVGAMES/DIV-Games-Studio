@@ -19,17 +19,23 @@
 
 #define far /*far*/
 #define __far /*__far*/
+#define __near /*__near*/
 #define __interrupt /* __interrupt */
 #define __loadds /* __loadds */
 #define _HARDERR_FAIL 0
+#define _HARDERR_IGNORE 1
 #define __stdcall /* __stdcall */
 
 ///////////////////////////////////////////////////
 // DEFINED IN osdep.cpp
 ///////////////////////////////////////////////////
 
+#ifdef __llvm__
+#include <string.h>
+#else
 extern char * strupr(char *string);
 extern char * strlwr(char *string);
+#endif
 
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 char * itoa(long n, char *buf, int len);
@@ -89,6 +95,16 @@ unsigned int _dos_findfirst(char *name, unsigned int attr,
 unsigned int _dos_findnext(struct find_t *result);
 
 unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
+
+void mkdir(char *dir);
+void _dos_getdrive( unsigned int *drive);
+void _makepath(
+   char *path,
+   const char *drive,
+   const char *dir,
+   const char *fname,
+   const char *ext 
+);
 
 extern void compilar(void);
 

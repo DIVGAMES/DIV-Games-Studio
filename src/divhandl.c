@@ -2475,26 +2475,56 @@ void analizar_input(void) {
   // Remove blank name
   while (strchr(input,' ')) strcpy(strchr(input,' '),strchr(input,' ')+1);
 
-  if (!strlen(input)) strcpy(input,mascara);
+
+printf("input: %s mascara: %s\n",input,mascara);
+
+  if (strlen(input)==0) strcpy(input,mascara);
   else if ((n=strlen(input))>1)
     if (input[n-1]=='.' && input[n-2]=='.') strcat(input,"/");
+
+printf("input: %s\n",input);
 
   if (strchr(input,':')!=NULL)
     if (strchr(unidades,toupper(*(strchr(input,':')-1)))==NULL) {
     strcpy(input,mascara); return;
   }
 
+
+printf("input: %s\n",input);
+
+
   if (_fullpath(full,input,_MAX_PATH)!=NULL) {
-    strupr(full); strcpy(input,mascara);
+    
+    strupr(full); 
+
+#ifdef DOS
+    strcpy(input,mascara);
+#endif
     _splitpath(full,drive,dir,fname,ext);
     _dos_setdrive(drive[0]-'A'+1,&n);
     getcwd(full,PATH_MAX+1);
-    if (full[0]==drive[0]) {
+    printf("full: %s\n",full);
+    printf("drive: %s\n",drive);
+    
+    printf("fname %s ext %s\n", fname, ext);
+    
+    
+    if ( true || (full[0]==drive[0])) {
       if (strlen(dir)>1) if (dir[strlen(dir)-1]=='/') dir[strlen(dir)-1]=0;
+      
+      
+      printf("dir: %s\n",dir);
+      
       if (!strlen(dir) || !chdir(dir)) {
-        strcpy(input,fname); strcat(input,ext);
-        if (strlen(input)) {
+		
+		printf("2520\n");
 
+#ifdef DOS		
+        strcpy(input,fname); strcat(input,ext);
+#endif
+
+        if (strlen(input)) {
+		printf("2527 input: %s\n",input);
         // LเGICA DE TRATAMIENTO DEL NOMBRE DE FICHERO
 
         // si tiene comodines
@@ -2509,22 +2539,25 @@ void analizar_input(void) {
         // (la otra diferencia entre abrir/guardar es que al entrar en guardar
         // se est  en status_abrir=1 e input="")
 
-          if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) { // Comodines
+          if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) { // Wildcards
 
-            if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) { // si hay alguno...
-
+            if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) { // If any... ?
+			printf("2540\n");
               if (_dos_findnext(&fileinfo)) { // si SOLO hay uno ...
+				printf("fileinfo.name\n",fileinfo.name);
                 strcpy(input,fileinfo.name);
-              } else strcpy(mascara,input); // si hay MAS de uno ...
-
+              } else {
+				  strcpy(mascara,input); // si hay MAS de uno ...
+				printf("input: %s\n",input);
+				}
             } else { // si no encontrข ninguno ...
 
               // si no tenia extensiขn y la m scara si la tiene ...
-
+printf("input: %s\n",input);
               if (strchr(input,'.')==NULL && strchr(mascara,'.')!=NULL) {
 
                 strcat(input,strchr(mascara,'.')); // le aคade la m scara
-
+printf("2558 %s\n",input);
         	      if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) { // si hay alguno ...
               		if (_dos_findnext(&fileinfo)) { // si SOLO hay uno
                     strcpy(input,fileinfo.name);
@@ -2534,27 +2567,47 @@ void analizar_input(void) {
         	    } else strcpy(mascara,input);
             }
 
-          } else // Sin comodines ...
-          if (!_dos_findfirst(input,_A_SUBDIR,&fileinfo))
+          } else // No wildcards ...
+          if (_dos_findfirst(input,_A_SUBDIR,&fileinfo) != 0)
             if (fileinfo.attrib&16) {
-              chdir(input); strcpy(input,mascara);
-            } else {v_terminado=1; v_existe=1;} // Fichero encontrado
+              printf("chdir %s\n",input);
+              chdir(input); 
+              strcpy(input,mascara);
+            } else {
+				v_terminado=1; 
+				v_existe=1;
+			} // Fichero encontrado
           else if (strchr(input,'.')==NULL && strchr(mascara,'.')!=NULL) {
             strcat(input,strchr(mascara,'.'));
            if (!_dos_findfirst(input,_A_NORMAL,&fileinfo))
           		if (_dos_findnext(&fileinfo)) {
                 strcpy(input,fileinfo.name);
-              } else strcpy(mascara,input);
+              } else {
+				  strcpy(mascara,input);
+				  printf("2584 input %s\n",input);
+
+			}
             else if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) {
+			printf("2580 falling back to mask %s\n",mascara);
               strcpy(mascara,input);
             } else {v_terminado=1; v_existe=0; } // Fichero no encontrado (con extensiขn aคadida)
           } else {v_terminado=1; v_existe=0; } // Fichero no encontrado (sin extensiขn aคadida)
-        } else strcpy(input,mascara); // Mantiene la m scara vieja
-
-        getcwd(tipo[v_tipo].path,PATH_MAX+1); imprime_rutabr();
-        larchivos.creada=0; ldirectorios.creada=0;
+        } 
+        else {
+			printf("falling back to mask %s\n",mascara);
+			strcpy(input,mascara); // Mantiene la m scara vieja
+		}
+printf("2584\n");
+printf("input %s\n",input);
+        getcwd(tipo[v_tipo].path,PATH_MAX+1); 
+        imprime_rutabr();
+        
+        larchivos.creada=0; 
+        ldirectorios.creada=0;
         tipo[v_tipo].inicial=0;
-        dir_abrirbr(); crear_listbox(&larchivos); crear_listbox(&ldirectorios);
+        dir_abrirbr(); 
+        crear_listbox(&larchivos); 
+        crear_listbox(&ldirectorios);
       } else _dos_setdrive(tipo[v_tipo].path[0]-'A'+1,&n);
     }
   } else strcpy(input,mascara);
@@ -2666,7 +2719,7 @@ int nuevo_mapa(byte * mapilla) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Abre un mapa contenido en disco
+//     Open a map disc content
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int hay_mapas(void);
@@ -2934,10 +2987,10 @@ void guardar_mapa(void) {
   if (strchr(input,' ')==NULL) {
     if ((f=fopen(full,"wb"))!=NULL) { // Se ha elegido uno
 
-/*      if (!strcmp(strupr(strchr(input,'.')),".PCX")) tipomapa=1;
+      if (!strcmp(strupr(strchr(input,'.')),".PCX")) tipomapa=1;
       else if (!strcmp(strupr(strchr(input,'.')),".BMP")) tipomapa=2;
       else 
-      */
+      
       tipomapa=0;
 
       switch(tipomapa) {
@@ -3623,7 +3676,7 @@ int Colors[9],min_dist,i,dist;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Cuadro de di logo de Acerca de ...
+//      About Dialog Box
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void about1(void) {
@@ -3653,6 +3706,7 @@ void about1(void) {
   wwrite(v.ptr,an,al,x,11+8*17,1,texto[481],c0);
   wwrite(v.ptr,an,al,x,11+8*18,1,texto[482],c3);
   wwrite(v.ptr,an,al,x,11+8*19,1,texto[483],c4);
+//  wwrite(v.ptr,an,al,x,11+8*20,1,texto[484],c4);
 }
 
 void about2(void) {

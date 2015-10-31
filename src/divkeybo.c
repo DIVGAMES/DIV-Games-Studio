@@ -178,6 +178,7 @@ printf("tecla_bios\n");
 }
 //extern float m_x=0.0,m_y;
 void tecla(void) {
+mclock++;
 #ifdef NOTYET
     ascii=0; scan_code=0;
 //printf("Reading keyboard\n");

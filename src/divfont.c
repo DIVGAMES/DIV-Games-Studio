@@ -107,21 +107,21 @@ char cWork[10];
         wbox(v.ptr,an,al,c2,84-8,75-1,16,8); // Borde oscuro de la somy
 
         wwrite(v.ptr,an,al,4+60+20,51,1,texto[86],c3);
-        wwrite(v.ptr,an,al,24+60,61,1,itoa(OutLine,cWork,10),c3);
+        wwrite(v.ptr,an,al,24+60,61,1,(byte *)itoa(OutLine,cWork,10),c3);
         wput(v.ptr,an,al,20+60,75,220+OutLineDir);
 
         wwrite(v.ptr,an,al,64+60+20,51,1,texto[87],c3);
-        wwrite(v.ptr,an,al,84+60,61,1,itoa(Somx,cWork,10),c3);
-        wwrite(v.ptr,an,al,84+60,75,1,itoa(Somy,cWork,10),c3);
+        wwrite(v.ptr,an,al,84+60,61,1,(byte *)itoa(Somx,cWork,10),c3);
+        wwrite(v.ptr,an,al,84+60,75,1,(byte *)itoa(Somy,cWork,10),c3);
 
         wwrite(v.ptr,an,al,124-120+20,51,1,texto[91],c3);
 
         wwrite(v.ptr,an,al,4,12,0,texto[84],c3);
         wbox(v.ptr,an,al,c2,4,19,66,8); // Borde oscuro del Font
-        wwrite(v.ptr,an,al,4,19,0,FontName,c4);
+        wwrite(v.ptr,an,al,4,19,0,(byte *)FontName,c4);
         wwrite(v.ptr,an,al,4,31,0,texto[85],c3);
         wbox(v.ptr,an,al,c2,4,38,66,8); // Borde oscuro de Face
-        wwrite(v.ptr,an,al,4,38,0,FaceName,c4);
+        wwrite(v.ptr,an,al,4,38,0,(byte *)FaceName,c4);
 
         ShowText();
 
@@ -132,7 +132,7 @@ char cWork[10];
 void close_old_fnt(void) {
   int m;
 
-  for (m=1;m<max_windows;m++) if (ventana[m].tipo==104 && !strcmp(FontName,ventana[m].aux)) {
+  for (m=1;m<max_windows;m++) if (ventana[m].tipo==104 && !strcmp(FontName,(char *)ventana[m].aux)) {
     move(0,m);
     cierra_ventana();
     break;
@@ -170,14 +170,14 @@ char cWork[10];
                         if(--OutLine<0)
                                 OutLine=0;
                         wbox(v.ptr,an,al,c2,24-7+60,61-1,14,8);
-                        wwrite(v.ptr,an,al,24+60,61,1,itoa(OutLine,cWork,10),c3);
+                        wwrite(v.ptr,an,al,24+60,61,1,(byte *)itoa(OutLine,cWork,10),c3);
                         v.volcar=1;
                         break;
                 case 5:
                         if(++OutLine>99)
                                 OutLine=99;
                         wbox(v.ptr,an,al,c2,24-7+60,61-1,14,8);
-                        wwrite(v.ptr,an,al,24+60,61,1,itoa(OutLine,cWork,10),c3);
+                        wwrite(v.ptr,an,al,24+60,61,1,(byte *)itoa(OutLine,cWork,10),c3);
                         v.volcar=1;
                         break;
                 case 6:
@@ -196,37 +196,37 @@ char cWork[10];
                         if(--Somx<-99)
                                 Somx=-99;
                         wbox(v.ptr,an,al,c2,84-7+60,61-1,14,8);
-                        wwrite(v.ptr,an,al,84+60,61,1,itoa(Somx,cWork,10),c3);
+                        wwrite(v.ptr,an,al,84+60,61,1,(byte *)itoa(Somx,cWork,10),c3);
                         v.volcar=1;
                         break;
                 case 9:
                         if(++Somx>99)
                                 Somx=99;
                         wbox(v.ptr,an,al,c2,84-7+60,61-1,14,8);
-                        wwrite(v.ptr,an,al,84+60,61,1,itoa(Somx,cWork,10),c3);
+                        wwrite(v.ptr,an,al,84+60,61,1,(byte *)itoa(Somx,cWork,10),c3);
                         v.volcar=1;
                         break;
                 case 10:
                         if(--Somy<-99)
                         Somy=-99;
                         wbox(v.ptr,an,al,c2,84-7+60,75-1,14,8);
-                        wwrite(v.ptr,an,al,84+60,75,1,itoa(Somy,cWork,10),c3);
+                        wwrite(v.ptr,an,al,84+60,75,1,(byte *)itoa(Somy,cWork,10),c3);
                         v.volcar=1;
                         break;
                 case 11:
                         if(++Somy>99)
                                 Somy=99;
                         wbox(v.ptr,an,al,c2,84-7+60,75-1,14,8);
-                        wwrite(v.ptr,an,al,84+60,75,1,itoa(Somy,cWork,10),c3);
+                        wwrite(v.ptr,an,al,84+60,75,1,(byte *)itoa(Somy,cWork,10),c3);
                         v.volcar=1;
                         break;
                 case 13:
-                        if (!strcmp(FaceName,"")) { v_texto=texto[263]; dialogo((int)err0); break; }
+                        if (!strcmp(FaceName,"")) { v_texto=(char *)texto[263]; dialogo((int)err0); break; }
                         Preview();
                         v.volcar=1;
                         break;
                 case 14:
-                        if (!strcmp(FaceName,"")) { v_texto=texto[263]; dialogo((int)err0); break; }
+                        if (!strcmp(FaceName,"")) { v_texto=(char *)texto[263]; dialogo((int)err0); break; }
                         font_generated=0;
                         dialogo((int)GenFont0);
                         if (font_generated) {
@@ -317,7 +317,7 @@ char cWork[10];
                         Text01=(char *)malloc(ventana[1].mapa->map_an*ventana[1].mapa->map_al);
                         if(Text01==NULL)
                         {
-                                v_texto=texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo((int)err0);
                                 Text1Anc=1;
                                 Text1Alt=1;
                         }
@@ -347,7 +347,7 @@ char cWork[10];
                         Text02=(char *)malloc(ventana[1].mapa->map_an*ventana[1].mapa->map_al);
                         if(Text02==NULL)
                         {
-                                v_texto=texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo((int)err0);
                                 Text2Anc=1;
                                 Text2Alt=1;
                         }
@@ -376,7 +376,7 @@ char cWork[10];
                         Text03=(char *)malloc(ventana[1].mapa->map_an*ventana[1].mapa->map_al);
                         if(Text03==NULL)
                         {
-                                v_texto=texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo((int)err0);
                                 Text3Anc=1;
                                 Text3Alt=1;
                         }
@@ -451,7 +451,7 @@ void Fonts0(void) {
         Text1=(char *)malloc(tan*tal*10);
         if(Text1==NULL)
         {
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((int)err0);
                 return;
         }
         memset(Text1,Text1Col,tan*tal*10);
@@ -463,7 +463,7 @@ void Fonts0(void) {
         if(Text2==NULL)
         {
                 free(Text1);
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((int)err0);
                 return;
         }
         memset(Text2,Text2Col,tan*tal*10);
@@ -476,7 +476,7 @@ void Fonts0(void) {
         {
                 free(Text1);
                 free(Text2);
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((int)err0);
                 return;
         }
         memset(Text3,Text3Col,tan*tal*10);
@@ -490,7 +490,7 @@ void Fonts0(void) {
         Mosaico2=0;
         Mosaico3=0;
 
-        strcpy(FontName,texto[90]);
+        strcpy(FontName,(char *)texto[90]);
         strcpy(FontPathName,tipo[5].path);
         strcat(FontPathName,"/");
         strcat(FontPathName,FontName);
@@ -520,8 +520,8 @@ printf("fontpath facename %s %s\n", FaceName, FacePathName);
 
         _button(121,74,16,0);//15
         _button(121,74,35,0);//16
-        _get(133,88,11,19,cFntAncho,4,16,128);//1
-        _get(134,88,30,19,cFntAlto,4,16,128);//2
+        _get(133,88,11,19,(byte *)cFntAncho,4,16,128);//1
+        _get(134,88,30,19,(byte *)cFntAlto,4,16,128);//2
 
         _button(111,7+60,61,0);//4
         _button(110,37+60,61,0);//5
@@ -532,7 +532,7 @@ printf("fontpath facename %s %s\n", FaceName, FacePathName);
         _button(111,67+60,75,0);//10
         _button(110,97+60,75,0);//11
 
-        _get(80,4,v.al-(39),v.an-16-text_len(texto[113]+1),TestString,21,0,0);
+        _get(80,4,v.al-(39),v.an-16-text_len(texto[113]+1),(byte *)TestString,21,0,0);
         _button(113,v.an-8,v.al-14-18,2);//14
 
         _button(120,7,v.al-14,0);//13
@@ -561,7 +561,7 @@ printf("CreateFont %s\n", FacePathName);
         if(file==NULL)
         {
 			printf("Failed to open font\n");
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((int)err0);
                 return 0;
         } else fclose(file);
         if(GenCode!=255)
@@ -650,7 +650,7 @@ printf("CreateFont %s\n", FacePathName);
         outTexBuffer   =Text01;
         if(Jorge_Crea_el_font(GenCode))
         {
-                v_texto=texto[45];
+                v_texto=(char *)texto[45];
                 dialogo((int)err0);
                 return 0;
         }
@@ -668,14 +668,14 @@ int an=v.an/big2,al=v.al/big2;
         strcat(FontPathName,"/");
         strcat(FontPathName,FontName);
 
-        v_texto=texto[264];
+        v_texto=(char *)texto[264];
         dialogo((int)browser0);
         if (v_terminado)
         {
                 if (v_existe)
                 {
-                        v_titulo=texto[75];
-                        v_texto=texto[76];
+                        v_titulo=(char *)texto[75];
+                        v_texto=(char *)texto[76];
                         dialogo((int)aceptar0);
                         if(!v_aceptar)
                                 return;

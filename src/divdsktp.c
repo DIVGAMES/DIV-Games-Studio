@@ -328,13 +328,13 @@ fflush(lst);
                                         else
                                         {
                                                 //if(ventana[x].aux!=NULL)
-                                                if (!strcmp(ventana[x].nombre,texto[83])) {
+                                                if (!strcmp((char *)ventana[x].nombre,(char *)texto[83])) {
                                                         iWork=1;
                                                         n=fwrite(&iWork,1,4,desktop);
                                                         // fprintf(lst,"tipo fontgen %d elementos escritos <<<\n",n);
                                                         iWork=Save_Font_session(desktop,iWork);
                                                         // fprintf(lst,"  font generator\n");
-                                                } else if (!strcmp(ventana[x].nombre,texto[413])) {
+                                                } else if (!strcmp((char *)ventana[x].nombre,(char *)texto[413])) {
                                                   iWork=3;
                                                   n=fwrite(&iWork,1,4,desktop);
                                                   strcpy(((struct _calc*)(ventana[x].aux))->ctext,((struct _calc*)(ventana[x].aux))->cget);
@@ -546,7 +546,7 @@ FILE *f;
                                 fread(baux,maux.map_an,maux.map_al,desktop);
                                 map_an=maux.map_an;
                                 map_al=maux.map_al;
-                                if (nuevo_mapa_carga(ventana_aux.x,ventana_aux.y,maux.filename,baux)) {
+                                if (nuevo_mapa_carga(ventana_aux.x,ventana_aux.y,maux.filename,(byte *)baux)) {
                                   free(baux);
                                   if(!Interpretando) actualiza_caja(0,0,vga_an,vga_al);
                                   break;
@@ -574,11 +574,11 @@ FILE *f;
                         case    101: //fpg
                                 // estructura fpg
                                 fread(&faux,1,sizeof(FPG),desktop);
-                                strcpy(input,faux.NombreFpg);
-                                strcpy(full,faux.ActualFile);
+                                strcpy(input,(char *)faux.NombreFpg);
+                                strcpy(full,(char *)faux.ActualFile);
                                 if ((f=fopen(full,"rb"))!=NULL) {
                                   fclose(f);
-                                  v_aux=(char *)malloc(sizeof(FPG));
+                                  v_aux=(byte *)malloc(sizeof(FPG));
                                   if(v_aux!=NULL) {
                                     memcpy(v_aux,&faux,sizeof(FPG));
                                     nueva_ventana_carga((int)FPG0A,ventana_aux.x,ventana_aux.y);
@@ -595,7 +595,7 @@ FILE *f;
                                         if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL)
                                         {
                                                 fread(v_prg,1,sizeof(struct tprg),desktop);
-                                                v_prg->buffer=(char *)malloc(v_prg->buffer_lon);
+                                                v_prg->buffer=(byte *)malloc(v_prg->buffer_lon);
                                                 fread(v_prg->buffer,1,v_prg->buffer_lon,desktop);
 
                                                 fread(&iWork,1,4,desktop);
@@ -636,7 +636,7 @@ FILE *f;
                                                           fseek(desktop,sizeof(struct _calc),SEEK_CUR);
                                                         }
                                                   } else {
-                                                        v_texto=texto[45];
+                                                        v_texto=(char *)texto[45];
                                                         dialogo((int)err0);
                                                   }
                                                 }
@@ -726,8 +726,8 @@ int nueva_ventana_carga(int init_handler,int nx,int ny)
     v.orden=siguiente_orden++;
     v.tipo=0;
     v.primer_plano=1;
-    v.nombre="?";
-    v.titulo="?";
+    v.nombre=(byte *)"?";
+    v.titulo=(byte *)"?";
     v.paint_handler=(int)dummy_handler;
     v.click_handler=(int)dummy_handler;
     v.close_handler=(int)dummy_handler;
@@ -801,7 +801,7 @@ int nueva_ventana_carga(int init_handler,int nx,int ny)
 
     if (!n)
 */
-    if ((ptr=malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
+    if ((ptr=(byte *)malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
 
       //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
       // Pasa a segundo plano las ventanas que corresponda
@@ -930,7 +930,7 @@ int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla)
   int n;
 
   //1� Pide memoria para un struct tmapa
-  if ((v_mapa=malloc(sizeof(struct tmapa)))!=NULL) {
+  if ((v_mapa=(tmapa *)malloc(sizeof(struct tmapa)))!=NULL) {
 
     // 2� Pide memoria para el mapa
     v_mapa->map=mapilla;
@@ -948,7 +948,7 @@ int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla)
 
     return(0);
 
-  } else { v_texto=texto[45]; dialogo((int)err0); }
+  } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
 
   return(1);
 }
@@ -962,7 +962,7 @@ void nuevo_mapa3d_carga(void)
 
   if((m3d=(M3D_info *)malloc(sizeof(M3D_info)))==NULL)
   {
-    v_texto=texto[45];
+    v_texto=(char *)texto[45];
     dialogo((int)err0);
     return;
   }
@@ -1026,8 +1026,8 @@ void carga_programa0(void)
     v.an=-v.an; // Para indicar que no se multiplique la ventana por 2
   }
 
-  v.titulo=v_prg->filename;
-  v.nombre=v_prg->filename;
+  v.titulo=(byte *)v_prg->filename;
+  v.nombre=(byte *)v_prg->filename;
 
   v.paint_handler=(int)programa1;
   v.click_handler=(int)programa2;
@@ -1067,7 +1067,7 @@ void carga_help(int n,int helpal,int helpline,int x1,int x2)
           if (i_back==f_back) i_back=(i_back+2)%64;
           fread(h_buffer,1,helpidx[n*2+1],f);
           p=h_buffer; while (*p!='}') p++; *p=0;
-          strcpy(help_title,h_buffer);
+          strcpy((char *)help_title,(char *)h_buffer);
           help_an=(vga_an-12*big2-1)/font_an;
           if (help_an>120) help_an=120;
           help_al=(vga_al/2-12*big2-1)/font_al;

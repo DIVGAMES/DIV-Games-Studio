@@ -1,8 +1,8 @@
 typedef struct _HeadFPG{
         int COD;
         int LONG;
-        char Descrip[32];
-        char Filename[12];
+        uint8_t Descrip[32];
+        uint8_t Filename[12];
         int  Ancho;
         int  Alto;
         int  nPuntos;
@@ -14,11 +14,11 @@ typedef struct _FPG{
         FILE    *fpg;
         FILE    *Oldfpg;
         HeadFPG MiHeadFPG;
-        char    ActualFile[_MAX_PATH+14];
+        uint8_t    ActualFile[_MAX_PATH+14];
         int     nIndex;
         int     LastUsed;
         int     DesIndex[1000];
-        char    CodDes[1000][40];
+        uint8_t    CodDes[1000][40];
         int     OffsGrf[1000];
         byte    NombreFpg[13];
         struct  t_listboxbr lInfoFPG;

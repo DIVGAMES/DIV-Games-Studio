@@ -427,7 +427,7 @@ void modo_inter(void) {
   } else free(m0);
 
   if (m0==NULL || m1==NULL) {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo((int)err0);
   }
 
   modo+=100;
@@ -559,7 +559,7 @@ void fill_select(word x,word y) {
   if ((fss=(word*)malloc(60000))!=NULL) {
     fsp=fss; fsp_max=fss+30000; fill_scan(x,y); free(fss);
   } else {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo((int)err0);
   }
   modo_fill=_modo_fill;
 }
@@ -608,7 +608,7 @@ void fill(word x,word y) {
 
     free(fss);
   } else {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo((int)err0);
   }
 }
 
@@ -1031,7 +1031,7 @@ int save_undo(int x, int y, int an, int al) {
     fondo_edicion(0,0,vga_an,vga_al);
     volcar_barras(1);
     volcado_completo=1; volcado(copia);
-    v_texto=texto[320]; dialogo((int)err0); undo_error=1;
+    v_texto=(char *)texto[320]; dialogo((int)err0); undo_error=1;
   }
 
   return(ret);

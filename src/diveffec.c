@@ -126,11 +126,11 @@ int pintar_explosion(void) {
   int m,x,y,dx,dy,n;
   int dist,exp_Color,exp_Coloracum;
 
-        Progress(texto[434],0,exp_alto);
+        Progress((char *)texto[434],0,exp_alto);
         for (y=0;y<exp_alto;y++)
         {
-        Progress(texto[434],y,exp_alto);
-        tecla(); if (key(_ESC)) { Progress(texto[434],exp_alto,exp_alto); return(1); }
+        Progress((char *)texto[434],y,exp_alto);
+        tecla(); if (key(_ESC)) { Progress((char *)texto[434],exp_alto,exp_alto); return(1); }
                 for (x=0;x<exp_ancho;x++)
                 {
                         exp_Coloracum=0;
@@ -182,7 +182,7 @@ int pintar_explosion(void) {
                                 }
                 }
         }
-        Progress(texto[434],exp_alto,exp_alto);
+        Progress((char *)texto[434],exp_alto,exp_alto);
         for (n=0;n<(exp_ancho*exp_alto)*per_points/100;n++)
         {
                 x=(rnd()%(exp_ancho-2))+1;
@@ -400,15 +400,15 @@ void Explode0(void) {
    sprintf(cexp_alto,"%d",exp_alto);
    sprintf(cper_points,"%d",per_points);
 
-  _get(133,4,11,21,cexp_ancho,5,8,2000);
-  _get(134,69-36,11,21,cexp_alto ,5,8,2000);
+  _get(133,4,11,21,(byte *)cexp_ancho,5,8,2000);
+  _get(134,69-36,11,21,(byte *)cexp_alto ,5,8,2000);
 
   _flag(301,4,16+19,&TipoA);
   _flag(302,4,16+34,&TipoB);
   _flag(303,4,16+48,&TipoC);
 
-  _get(304,69-24+30,16+19,21,cFrames,3,1,48);
-  _get(305,69-24+30,16+38,21,cper_points ,3,0,100);
+  _get(304,69-24+30,16+19,21,(byte *)cFrames,3,1,48);
+  _get(305,69-24+30,16+38,21,(byte *)cper_points ,3,0,100);
 
   v_aceptar=0;
 }

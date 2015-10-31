@@ -284,7 +284,7 @@ void calc1(void) {
   get=get_buffer;
   wbox(v.ptr,an,al,c12,3,11,an-6-22-26,8);
   wrectangulo(v.ptr,an,al,c1,3,11,an-6-22-26,8);
-  wwrite(v.ptr,an,al,4,12,0,pcalc->cresult,c3);
+  wwrite(v.ptr,an,al,4,12,0,(byte *)pcalc->cresult,c3);
 }
 
 void calc2(void) {
@@ -305,9 +305,9 @@ void calc2(void) {
       if (pcalc->chex) sprintf(pcalc->cresult,"0x%x",(int)tnumero);
       else if (pcalc->cint) sprintf(pcalc->cresult,"%d",(int)tnumero);
       else sprintf(pcalc->cresult,"%g",tnumero);
-    } else strcpy(pcalc->cresult,texto[417]);
+    } else strcpy(pcalc->cresult,(char *)texto[417]);
     wbox(v.ptr,an,al,c12,4,12,an-8-22-26,6);
-    wwrite(v.ptr,an,al,4,12,0,pcalc->cresult,c3);
+    wwrite(v.ptr,an,al,4,12,0,(byte *)pcalc->cresult,c3);
     v.volcar=1;
   }
 }
@@ -335,7 +335,7 @@ void calc0(void) {
 
   v.aux=(byte*)pcalc;
 
-  _get(414,4,13,v.an-8,pcalc->ctext,256,0,0);
+  _get(414,4,13,v.an-8,(byte *)pcalc->ctext,256,0,0);
   _flag(416,v.an-23-26,12,&pcalc->chex);
   _flag(415,v.an-23,12,&pcalc->cint);
 }

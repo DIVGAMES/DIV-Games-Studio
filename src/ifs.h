@@ -17,8 +17,8 @@
 
 // ESTRUCTURAS PARA EL FICHERO DE ENTRADA (IFS)
 typedef struct _TABLAIFS{
-    uint32_t    desp;
-    uint32_t    size;
+    int32_t    desp;
+    int32_t    size;
 } TABLAIFS;
 
 typedef struct _IFSHEADER{

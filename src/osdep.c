@@ -1,11 +1,18 @@
 #include "osdep.h"
 #include <ctype.h>
 #include <setjmp.h>
+#include <stdio.h>
 
 #include <fnmatch.h>
-
-
 static jmp_buf buf;
+
+
+#ifdef __llvm__
+#include <string.h>
+
+#else
+
+
 
 char * strupr(char *string)
 {
@@ -27,6 +34,10 @@ st[x]=0;
 else return " ";
 }
 
+
+
+ 
+
 char * strlwr(char *string)
 {
 	int x=0;
@@ -43,6 +54,7 @@ st[x]=0;
    return st;
 }
 
+#endif
 
 
 void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
@@ -71,7 +83,11 @@ char * itoa(long n, char *buf, int len)
     snprintf(buf, len+1, "%ld", n);
     return   buf;
 }
-
+/*
+void call(int func) {
+//	func();
+}
+*/
 void call(void *(*func)() )
 {
 	//printf("calling func\n");
@@ -137,6 +153,9 @@ unsigned int _dos_findfirst(char *name, unsigned int attr,
                             struct find_t *result) {
 //								printf("TODO - findfirst\n");
 
+
+unsigned int ret =0;
+
 //printf("name is %s\n",name);
 
 strcpy(findmask,strlwr(name));
@@ -154,7 +173,12 @@ np=-1;
 type = attr;
 
 //n--;
-return _dos_findnext(result);
+ret =_dos_findnext(result);
+
+printf("matches: %d\n",ret);
+
+return (ret);
+
 
 /*result->attrib=0;
 	strcpy(result->name,namelist[0]->d_name);
@@ -173,16 +197,18 @@ while(++np<n) {
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
 //printf("findnext: %s\n",namelist[np]->d_name);
+
 	
 	if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
 		result->attrib=16;
 		return 0;
 	} 
 	strcpy(findname, result->name);
+
+if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 	
 //	printf("%s %s\n",findmask,strlwr(findname));
 	
-if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 	
 	if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
 		result->attrib=0;
@@ -203,8 +229,9 @@ unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
 	return 1;
 }
 
-
+#ifndef __llvm__
 void mkdir(char *dir) {
 	printf("mkdir %\n",dir);
 }
 
+#endif

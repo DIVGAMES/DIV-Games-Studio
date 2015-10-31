@@ -249,7 +249,7 @@ void betatest0(void) {
   v.al=38+16;
 
   strcpy(betaname,"");
-  _get(460,4,12,v.an-8,betaname,127,0,0);
+  _get(460,4,12,v.an-8,(uint8_t *)betaname,127,0,0);
 
   v.paint_handler=(int)betatest1;
   v.click_handler=(int)betatest2;
@@ -281,8 +281,8 @@ void betatest5(void) {
 
   strcpy(full,"beta");
   for (n=0;n<strlen(betaname);n++) if (lower[betaname[n]]) betaname[n]=lower[betaname[n]];
-  strcat(full,texto[398]);
-  coder(realname,realen,full);
+  strcat(full,(char *)texto[398]);
+  coder((byte *)realname,realen,full);
   *strchr(realname,(char)13)=0;
 
   if (strlen(realname)<8) beta_status=5;
@@ -350,7 +350,7 @@ int main(int argc, char * argv[]) {
   unsigned n;
   SDL_Init( SDL_INIT_VIDEO );
   SDL_WM_SetCaption( "DIVDX - Linux 64bit", "" );
-//  SDL_ShowCursor( SDL_FALSE );
+  SDL_ShowCursor( SDL_FALSE );
 //  SDL_WM_GrabInput( SDL_GRAB_ON );
   system_clock = &mclock;
 
@@ -435,26 +435,26 @@ GetFree4kBlocks();
 
   for (n=0;n<24;n++) { tipo[n].defecto=0; tipo[n].inicial=0; }
 
-  inicializa_textos("system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+  inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
 
  check_mouse();
 
   Load_Cfgbin();
 
 // BETA CHECK pass every time in SDL version
-/*
+
   strcpy(full,"Be");
   strcat(full,"ta");
 
-  if (strstr(texto[34],full)==NULL && 
-	strstr(texto[35],full)==NULL) {
+  if (strstr((const char *)texto[34],(const char *)full)==NULL && 
+	strstr((const char *)texto[35],(const char *)full)==NULL) {
     strupr(full);
-    if (strstr(texto[34],full)==NULL && 
-		strstr(texto[35],full)==NULL) {
+    if (strstr((const char *)texto[34],(const char *)full)==NULL && 
+		strstr((const char *)texto[35],(const char *)full)==NULL) {
       beta_status=4;
     }
   }
-*/
+
 
 beta_status=4;
 
@@ -614,7 +614,7 @@ void inicializa_entorno() {
       if (error_code) dialogo((int)interr0);
       else {
         fread(&v_modo,1,4,f);
-        strcpy(cWork,texto[366]);
+        strcpy(cWork,(char *)texto[366]);
         fread(cWork+strlen(cWork),1,256-strlen(cWork),f);
         cWork[255]=0; if (strlen(cWork)<255) strcat(cWork,"\"");
         v_texto=cWork; dialogo((int)intmsg0);
@@ -667,7 +667,7 @@ void inicializa_entorno() {
 void interr1(void) {
   int an=v.an/big2,al=v.al/big2;
   _show_items();
-  wwrite(v.ptr,an,al,an/2,12,1,v_texto,c3);
+  wwrite(v.ptr,an,al,an/2,12,1,(uint8_t*)v_texto,c3);
 }
 
 void interr2(void) {
@@ -678,13 +678,13 @@ void interr2(void) {
 void interr0(void) {
   v.tipo=1; v.titulo=texto[367]; v.al=38;
   switch(error_code) {
-    case 1: v_texto=texto[368]; break;
-    case 2: v_texto=texto[369]; break;
-    case 3: v_texto=texto[370]; break;
-    case 4: v_texto=texto[371]; break;
-    case 5: v_texto=texto[372]; break;
-    case 6: v_texto=texto[373]; break;
-  } v.an=text_len(v_texto)+8; if (v.an<120) v.an=120;
+    case 1: v_texto=(char *)texto[368]; break;
+    case 2: v_texto=(char *)texto[369]; break;
+    case 3: v_texto=(char *)texto[370]; break;
+    case 4: v_texto=(char *)texto[371]; break;
+    case 5: v_texto=(char *)texto[372]; break;
+    case 6: v_texto=(char *)texto[373]; break;
+  } v.an=text_len((byte *)v_texto)+8; if (v.an<120) v.an=120;
   v.paint_handler=(int)interr1;
   v.click_handler=(int)interr2;
   _button(100,v.an/2,v.al-14,1);
@@ -698,9 +698,9 @@ void intmsg1(void) {
   char cWork[256];
   int an=v.an/big2,al=v.al/big2;
   _show_items();
-  wwrite(v.ptr,an,al,an/2,12,1,v_texto,c3);
-  sprintf(cWork,texto[374],v_modo);
-  wwrite(v.ptr,an,al,an/2,12+8,1,cWork,c3);
+  wwrite(v.ptr,an,al,an/2,12,1,(byte *)v_texto,c3);
+  sprintf(cWork,(char *)texto[374],v_modo);
+  wwrite(v.ptr,an,al,an/2,12+8,1,(byte *)cWork,c3);
 }
 
 void intmsg2(void) {
@@ -710,7 +710,7 @@ void intmsg2(void) {
 
 void intmsg0(void) {
   v.tipo=1; v.titulo=texto[375];
-  v.an=text_len(v_texto)+8;
+  v.an=text_len((byte *)v_texto)+8;
   if (v.an<120) v.an=120;
   v.al=38+8;
   v.paint_handler=(int)intmsg1;
@@ -797,7 +797,7 @@ void entorno(void) {
 
     if (arrastrar==4 && (n==max_windows || ventana[n].tipo==2)) {
       arrastrar=5; free_drag=0;
-      v_titulo=texto[57]; v_texto=NULL;
+      v_titulo=(char *)texto[57]; v_texto=NULL;
       dialogo((int)aceptar0);
       if (v_aceptar) {
 
@@ -1010,24 +1010,53 @@ void entorno(void) {
         }
         if (!(mouse_b&1) && (old_mouse_b&1)) {
           if (v.click_handler==(int)menu_principal2) {
-            if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-            else wput(v.ptr,v.an,v.al,v.an-9,2,-45);
+            if (big) 
+				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+            else 
+				wput(v.ptr,v.an,v.al,v.an-9,2,-45);
+            
             vuelca_ventana(0); volcado_copia();
-            if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-            else wput(v.ptr,v.an,v.al,v.an-9,2,-35);
-            do read_mouse(); while (mouse_b&1);
-            v_titulo=texto[40]; v_texto=NULL; dialogo((int)aceptar0);
-            if (v_aceptar) salir_del_entorno=1;
+            
+            if (big) 
+				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+            else 
+				wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+
+            do 
+				read_mouse(); 
+			while (mouse_b&1);
+            
+            v_titulo=(char *)texto[40]; 
+            v_texto=NULL; 
+            dialogo((int)aceptar0);
+            if (v_aceptar) 
+				salir_del_entorno=1;
           } else if (v.tipo>=100) {
-            if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-            else wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-            vuelca_ventana(0); volcado_copia();
-            if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-            else wput(v.ptr,v.an,v.al,v.an-9,2,-35);
-            do read_mouse(); while (mouse_b&1);
+            if (big) 
+				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+            else 
+				wput(v.ptr,v.an,v.al,v.an-9,2,-45);
+            
+            vuelca_ventana(0); 
+            volcado_copia();
+            if (big) 
+				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+            else 
+				wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+            do 
+				read_mouse(); 
+			while (mouse_b&1);
+ 
             switch(v.tipo) {
-              case 100: v_titulo=texto[50]; v_texto=v.titulo; break;
-              case 102: v_titulo=texto[188]; v_texto=v.titulo; break;
+              case 100: 
+					v_titulo=(char *)texto[50]; 
+					v_texto=(char *)v.titulo; 
+					break;
+					
+              case 102: 
+					v_titulo=(char *)texto[188]; 
+					v_texto=(char *)v.titulo; 
+					break;
             }
             if (v.tipo==100 || (v.tipo==102 && v.prg!=NULL))
               dialogo((int)aceptar0); else v_aceptar=1;
@@ -1251,11 +1280,15 @@ void entorno(void) {
     //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
     if (scan_code==62) { // F4 Open PRG
-      v_tipo=8; v_modo=0; v_texto=texto[346];
+      v_tipo=8; 
+      v_modo=0; 
+      v_texto=(char *)texto[346];
       dialogo((int)browser0);
+      
       if (v_terminado) {
         if (!v_existe) {
-          v_texto=texto[43]; dialogo((int)err0);
+          v_texto=(char *)texto[43]; 
+          dialogo((int)err0);
         } else {
           mouse_graf=3; volcado_copia(); mouse_graf=1;
           abrir_programa();
@@ -1280,12 +1313,12 @@ void entorno(void) {
                 cwork[strlen(cwork)+1]=0;
                 cwork[strlen(cwork)]=lower[p[n++]];
               }
-              p=div_index;
-              while (p<index_end) {
+              p=(char *)div_index;
+              while (p<(char *)index_end) {
                 if (!strcmp(cwork,p)) {
                   help(*(word*)(p+strlen(p)+1)); break;
                 } else p+=strlen(p)+3;
-              } if (p>=index_end) help(3);
+              } if (p>=(char *)index_end) help(3);
             } else help(3);
           } else help(3);
         }
@@ -1298,7 +1331,7 @@ void entorno(void) {
     }
 
     if ((shift_status&8) && scan_code==45) { // Alt-X Exit
-      v_titulo=texto[40]; v_texto=NULL; dialogo((int)aceptar0);
+      v_titulo=(char *)texto[40]; v_texto=NULL; dialogo((int)aceptar0);
       if (v_aceptar) salir_del_entorno=1;
     }
 
@@ -1363,7 +1396,7 @@ void shell(void) {
   unsigned n;
 
   if (s==NULL) {
-    v_texto=texto[390]; dialogo((int)err0);
+    v_texto=(char *)texto[390]; dialogo((int)err0);
   } else {
 
     EndSound();
@@ -1878,7 +1911,7 @@ void mueve_ventana_completa(void) {
   //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
   x=0; // Ahora x indica si la ventana se autoemplaza
-/*
+
   if (oldx==v.x && oldy==v.y) {
     if (*system_clock<doble_click+10 && *system_clock>doble_click
       && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
@@ -1898,7 +1931,7 @@ void mueve_ventana_completa(void) {
       doble_click=*system_clock; doble_click_x=mouse_x; doble_click_y=mouse_y;
     }
   }
-*/
+
   if (!x && v.primer_plano==1) vuelca_ventana(0);
 }
 
@@ -2413,8 +2446,8 @@ printf("New Window %d\n",v.tipo);
     v.orden=siguiente_orden++;
     v.tipo=0;
     v.primer_plano=1;
-    v.nombre="?";
-    v.titulo="?";
+    v.nombre=(byte *)"?";
+    v.titulo=(byte *)"?";
     v.paint_handler=(int)dummy_handler;
     v.click_handler=(int)dummy_handler;
     v.close_handler=(int)dummy_handler;
@@ -2487,7 +2520,7 @@ printf("New Window %d\n",v.tipo);
           if (ventana[m].click_handler==v.click_handler) n=m;
     }
 
-    if (!n) ptr=malloc(an*al); else ptr=NULL;
+    if (!n) ptr=(byte *)malloc(an*al); else ptr=NULL;
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 
@@ -2748,8 +2781,8 @@ void dialogo(int init_handler) {
     v.orden=siguiente_orden++;
     v.tipo=1;
     v.primer_plano=1;
-    v.nombre="?";
-    v.titulo="?";
+    v.nombre=(byte *)"?";
+    v.titulo=(byte *)"?";
     v.paint_handler=(int)dummy_handler;
     v.click_handler=(int)dummy_handler;
     v.close_handler=(int)dummy_handler;
@@ -2775,7 +2808,7 @@ void dialogo(int init_handler) {
     x=vga_an/2-an/2; y=vga_al/2-al/2;
     v.x=x; v.y=y;
 
-    if (v.click_handler==(int)err2) ptr=error_window; else ptr=malloc(an*al);
+    if (v.click_handler==(int)err2) ptr=error_window; else ptr=(byte *)malloc(an*al);
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 
@@ -2808,7 +2841,7 @@ void dialogo(int init_handler) {
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
-      if (!strcmp(v.titulo,texto[41]) || !strcmp(v.titulo,texto[367]))
+      if (!strcmp((const char *)v.titulo,(const char *)texto[41]) || !strcmp((const char *)v.titulo,(const char *)texto[367]))
         wgra(ptr,an,al,c_r_low,2,2,an-12,7);
       else wgra(ptr,an,al,c_b_low,2,2,an-12,7);
       if (text_len(v.titulo)+3>an-12) {
@@ -2850,7 +2883,7 @@ int an=v.an,al=v.al;
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
-      if (!strcmp(v.titulo,texto[41])) wgra(ptr,an,al,c_r_low,2,2,an-12,7);
+      if (!strcmp((const char *)v.titulo,(const char *)texto[41])) wgra(ptr,an,al,c_r_low,2,2,an-12,7);
       else wgra(ptr,an,al,c_b_low,2,2,an-12,7);
       if (text_len(v.titulo)+3>an-12) {
         wwrite_in_box(ptr,an,an-11,al,4,2,0,v.titulo,c1);
@@ -2908,7 +2941,7 @@ void inicializacion(void) {
   load_index();   // *** Carga el glosario del hipertexto ***
 
   if(!Interpretando)
-        printf(texto[6]); // *** Init buffers gr쟣icos ***
+        printf((char *)texto[6]); // *** Init buffers gr쟣icos ***
 
   undo=(byte*)malloc(undo_memory);
   tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
@@ -3001,18 +3034,18 @@ void inicializacion(void) {
     } else { fclose(f); error(0); }
   }
 
-  if (!Interpretando) printf(texto[10]); // *** Carga los objetos editados ***
+  if (!Interpretando) printf((char *)texto[10]); // *** Carga los objetos editados ***
 
   if (auto_save_session || Interpretando) CopiaDesktop=Can_UpLoad_Desktop();
 
   if(!CopiaDesktop) { //Carga paleta comun
-    if (!Interpretando) cprintf(texto[11]); // *** C쟫culos sobre la paleta ***
+    if (!Interpretando) cprintf((char *)texto[11]); // *** C쟫culos sobre la paleta ***
     memcpy(dac,system_dac,768);
     init_ghost();
     crear_ghost(1);
   }
 
-  if (!Interpretando) printf(texto[12]); // *** Miscel쟮ea ***
+  if (!Interpretando) printf((char *)texto[12]); // *** Miscel쟮ea ***
   find_colors(); memset(copia,c0,vga_an*vga_al);
   zoom=0; zoom_x=0; zoom_y=0; zoom_cx=vga_an/2; zoom_cy=vga_al/2; zoom_move=c3;
   barra_x=8*big2; barra_y=vga_al-27*big2; regla=0; actual_mouse=21; sel_status=0;
@@ -3031,7 +3064,7 @@ void inicializacion(void) {
   inicializa_compilador(); // *** Compilador *** espacios de lower a 00
   init_lexcolor();
 
-  if (!Interpretando) printf(texto[13]);
+  if (!Interpretando) printf((char *)texto[13]);
 
   crea_gama(Setupfile.t_gama,tapiz_gama);
 
@@ -3142,7 +3175,7 @@ void _fwrite(char * s, byte * buf, int n) {
 
 void error(int n) {
     finalizacion();
-    printf(texto[14],n);
+    printf((char *)texto[14],n);
     printf("\n");
     exit(0);
 }
@@ -3316,11 +3349,14 @@ void select_get(struct t_item * i,int activo,int ocultar_error) {
   int n;
   if (activo) {
     wrectangulo(v.ptr,v.an/big2,v.al/big2,c12,i->get.x-1,i->get.y+7,i->get.an+2,11);
-    if (i->estado&2) { strcpy(get,i->get.buffer); get_pos=strlen(get); }
+    if (i->estado&2) { 
+		strcpy((char *)get, (char *)i->get.buffer); 
+		get_pos=strlen(get); 
+	}
     i->estado&=1;
   } else {
-    if (i->estado&2) if (*get) if (i->get.r0==i->get.r1) strcpy(i->get.buffer,get); else {
-      if (atoi(get)>=i->get.r0 && atoi(get)<=i->get.r1) itoa(atoi(get),i->get.buffer,10);
+    if (i->estado&2) if (*get) if (i->get.r0==i->get.r1) strcpy((char *)i->get.buffer,get); else {
+      if (atoi(get)>=i->get.r0 && atoi(get)<=i->get.r1) itoa(atoi(get),(char *)i->get.buffer,10);
       else if (!ocultar_error && !show_items_called) {
         sprintf(cWork,"%s [%d..%d].",texto[49],i->get.r0,i->get.r1);
         v_texto=cWork; dialogo((int)err0);
@@ -3375,8 +3411,9 @@ void _process_items(void) {
         if (v.item[v.selected_item].tipo==2) {
           asc=ascii; kesc=kbdFLAGS[28]; est=v.item[v.selected_item].estado;
           ascii=0;
-          if (superget) strcpy(v.item[v.selected_item].get.buffer,"");
-          strcpy(get,v.item[v.selected_item].get.buffer);
+          if (superget) 
+			strcpy((char *)v.item[v.selected_item].get.buffer,"");
+          strcpy((char *)get, (char *)v.item[v.selected_item].get.buffer);
           get_pos=strlen(get);
           select_get(&v.item[v.selected_item],0,1);
           select_get(&v.item[v.selected_item],1,1);
@@ -3486,7 +3523,7 @@ void process_button(int n,int e) {
 
 int get_status(int n) {
   int x=v.item[n].estado;
-  if (strcmp(v.item[n].get.texto,"")) {
+  if (strcmp((char *)v.item[n].get.texto, "")) {
     if (wmouse_in(v.item[n].get.x,v.item[n].get.y, // bit 0 "hilite"
       v.item[n].get.an,18)) x|=1; else x&=2;
   } else {
@@ -3517,7 +3554,7 @@ void process_get(int n,int e) {
   v.item[n].estado=e;
   if (!(old_e&2) && (e&2)) {
     _select_new_item(n);
-     strcpy(get,v.item[n].get.buffer);
+     strcpy((char *)get, (char *)v.item[n].get.buffer);
      get_pos=strlen(get);
   }
 
@@ -3587,7 +3624,8 @@ void get_input(int n) {
         strcpy(&get[get_pos-1],&get[get_pos]); get_pos--;
 //        get[strlen(get)-1]=0;
       }
-      if (!*get && superget) strcpy(v.item[v.selected_item].get.buffer,"");
+      if (!*get && superget) 
+		strcpy((char *)v.item[v.selected_item].get.buffer,"");
       v.volcar=1;
       break;
     case 13: ascii=0; kbdFLAGS[28]=0; _select_new_item(n+1);
@@ -3605,7 +3643,8 @@ void get_input(int n) {
           case 83:
             get[strlen(get)+1]=0;
             strcpy(&get[get_pos],&get[get_pos+1]);
-            if (!*get && superget) strcpy(v.item[v.selected_item].get.buffer,"");
+            if (!*get && superget) 
+				strcpy((char *)v.item[v.selected_item].get.buffer,"");
             break;
           default: v.volcar=l; break;
         }
@@ -3629,7 +3668,7 @@ void get_input(int n) {
 
     strcpy(cwork,get);
     cwork[get_pos]=0;
-    l=text_len2(cwork);
+    l=text_len2((byte *)cwork);
     strcat(cwork," ");
     strcat(cwork,get+get_pos);
 
@@ -3639,7 +3678,7 @@ void get_input(int n) {
 
     wbox(v.ptr,v.an/big2,v.al/big2,c0,v.item[n].get.x,v.item[n].get.y+8,v.item[n].get.an,9);
 //    wwrite_in_box(v.ptr,v.an/big2,v.item[n].get.an-1+v.item[n].get.x,v.al/big2,v.item[n].get.x+1,v.item[n].get.y+9,0,cwork,c4);
-    wwrite_in_box(v.ptr+(v.item[n].get.x+1)*big2,v.an/big2,v.item[n].get.an-2,v.al/big2,0-scroll,v.item[n].get.y+9,0,cwork,c4);
+    wwrite_in_box(v.ptr+(v.item[n].get.x+1)*big2,v.an/big2,v.item[n].get.an-2,v.al/big2,0-scroll,v.item[n].get.y+9,0,(byte *)cwork,c4);
 
     if (*system_clock&4) {
 //      if (strlen(get)) x=v.item[n].get.x+text_len(get)+2; else x=v.item[n].get.x+1;
@@ -3857,7 +3896,7 @@ void Load_Cfgbin() {
   if(file==NULL) {
     if (primera_vez) {
 		printf("no setup data and first run...\n ");
-      strcpy(Setupfile.Desktop_Image,texto[487]); // Informacion del tapiz
+      strcpy(Setupfile.Desktop_Image,(char *)texto[487]); // Informacion del tapiz
       Setupfile.Desktop_Gama=1;
       Setupfile.Desktop_Tile=0;
       for (n=0;n<8;n++) Setupfile.t_gama[n].selec=0;
@@ -4036,8 +4075,8 @@ void check_free(void) {
 
   if (totfree<4096) {
     v_titulo=t1; v_texto=t2;
-    sprintf(t1,texto[377],toupper(tipo[1].path[0]));
-    sprintf(t2,texto[378],4096-totfree);
+    sprintf(t1,(char *)texto[377],toupper((int)tipo[1].path[0]));
+    sprintf(t2,(char *)texto[378],(char *)4096-totfree);
     dialogo((int)info0);
   }
 
@@ -4231,14 +4270,14 @@ void check_oldpif(void) {
       fread(pif,1,n,f);
       fclose(f);
 
-      name=&pif[0x273]; // Path del icono
+      name=(char *)&pif[0x273]; // Path del icono
 
       _splitpath(name,drive,dir,fname,ext);
       strupr(fname); strupr(ext);
 
       if (!strcmp(fname,"DIV") && !strcmp(ext,".ICO")) { // Es el PIF de DIV 1
 
-        name=&pif[0x24];
+        name=(char *)&pif[0x24];
 
         if ((f=fopen(name,"rb"))!=NULL) {
 
