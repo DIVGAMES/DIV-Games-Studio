@@ -2909,10 +2909,12 @@ void map_deletepoint(int point)
 
 void map_deletenullregion()
 {
+  if(my_map->walls[my_map->num_walls]) {
   if (my_map->walls[my_map->num_walls]->p2==-1) {
     my_map->walls[my_map->num_walls]->p2=first_point;
     my_map->num_walls++;
   }
+}
   map_deletenullwalls();
   region_status=0;
   region_deleted=0;
@@ -3357,9 +3359,7 @@ void map_read_old( M3D_info *m3d_aux )
   }
   else
   {
-#ifdef NOTYET
     _splitpath(m3d_aux->m3d_path,drive,dir,fname,ext);
-#endif
     strcpy(full_path, drive);
     strcat(full_path, dir);
     strcat(full_path, m3d_aux->fpg_name);
@@ -3471,9 +3471,7 @@ void map_read(M3D_info *m3d_aux)
   }
   else
   {
-#ifdef NOTYET
     _splitpath(m3d_aux->m3d_path,drive,dir,fname,ext);
-#endif
     strcpy(full_path, drive);
     strcat(full_path, dir);
     strcat(full_path, m3d_aux->fpg_name);
