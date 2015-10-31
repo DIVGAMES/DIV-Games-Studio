@@ -8,6 +8,8 @@
 #ifdef  __cplusplus
 extern "C" {
 #endif
+#include <jpeglib.h>
+static jmp_buf jmp_error_ptr;
 //  #include "jpeglib\jpeglib.h"
 //  #include "jpeglib\cdjpeg.h"
 #ifdef  __cplusplus
@@ -969,8 +971,8 @@ return(1);
 int es_JPG(byte *buffer, int img_filesize)
 {
 	printf("divforma.cpp - es_JPG\n");
-	return(0);
-#ifdef NOTYET
+//	return(0);
+
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
 
@@ -983,20 +985,20 @@ int es_JPG(byte *buffer, int img_filesize)
   }
 
   jpeg_create_decompress(&cinfo);
-  jpeg_array_src(&cinfo, buffer, img_filesize);
+  jpeg_mem_src(&cinfo, buffer, img_filesize);
   jpeg_read_header(&cinfo, TRUE);
   jpeg_start_decompress(&cinfo);
   map_an = cinfo.output_width;
   map_al = cinfo.output_height;
   jpeg_destroy_decompress(&cinfo);
-#endif
+
   return(1);
 }
 
 int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
 {
 	printf("divforma.cpp  - descomprime_JPG\n");
-#ifdef NOTYET
+
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   JSAMPARRAY buffer_scanline;
@@ -1012,7 +1014,7 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
     return(0);
   }
   jpeg_create_decompress(&cinfo);
-  jpeg_array_src(&cinfo, buffer, img_filesize);
+  jpeg_mem_src(&cinfo, buffer, img_filesize);
   jpeg_read_header(&cinfo, TRUE);
   cinfo.quantize_colors=TRUE;
   if (v.click_handler==(int)browser2) {
@@ -1071,7 +1073,7 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
     Codigo=0;
     Descripcion[0]=0;
   }
-#endif
+
   return(1);
 }
 
@@ -1431,7 +1433,6 @@ int cargadac_BMP(char *name)
 int cargadac_JPG(char *name)
 {
 	printf("divforma.cpp - cargadac_JPG\n");
-#ifdef NOTYET
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   int x, y, img_filesize;
@@ -1473,7 +1474,7 @@ int cargadac_JPG(char *name)
   fclose(file);
 
   jpeg_create_decompress(&cinfo);
-  jpeg_array_src(&cinfo, buffer, img_filesize);
+  jpeg_mem_src(&cinfo, buffer, img_filesize);
   jpeg_read_header(&cinfo, TRUE);
   cinfo.quantize_colors=TRUE;
   if (v.click_handler==(int)browser2) {
@@ -1518,7 +1519,6 @@ int cargadac_JPG(char *name)
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
   free(buffer);
-#endif
   return(1);
 }
 

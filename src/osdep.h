@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <setjmp.h>
 #define cprintf printf
 
 #define _MAX_PATH PATH_MAX
