@@ -3178,7 +3178,7 @@ void setdrive(void) {
 //      chdir(directorio) 1 - exito, 0 - error
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void _chdir(void) {
+void div_chdir(void) {
   if (chdir((char *)&mem[pila[sp]])) pila[sp]=0; else pila[sp]=1;
 }
 
@@ -4101,7 +4101,7 @@ void _encriptar(int encode, char * fichero, char * clave) {
 //      compress(fichero) Devuelve 0 ข 1
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-int compress    (unsigned char *dest,   unsigned long *destLen,
+int divcompress    (unsigned char *dest,   unsigned long *destLen,
                  unsigned char *source, unsigned long sourceLen);
 
 void _compress(int encode) {
@@ -4393,7 +4393,7 @@ void function(void) {
     case 131: get_fileinfo(); break;
     case 132: getdrive(); break;
     case 133: setdrive(); break;
-    case 134: _chdir(); break;
+    case 134: div_chdir(); break;
     case 135: _mkdir(); break;
     case 136: remove_file(); break;
     case 137: disk_free(); break;

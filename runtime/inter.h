@@ -78,7 +78,7 @@ void rvmode(void);
 void init_volcado(void);
 void volcado_parcial(int,int,int,int);
 void volcado(byte *);
-void restore(char *,char *);
+void restore(byte *,byte *);
 void init_ghost(void);
 void crear_ghost(void);
 void find_color(byte,byte,byte);

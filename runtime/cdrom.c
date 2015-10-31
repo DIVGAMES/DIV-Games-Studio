@@ -1,7 +1,8 @@
-#include <dos.h>
-#include <io.h>
-#include <mem.h>
-#include <i86.h>
+#include "inter.h"
+//#include <dos.h>
+//#include <io.h>
+//#include <mem.h>
+//#include <i86.h>
 
 #define CDROM           0x21
 #define EJECT_TRAY      0
@@ -231,15 +232,18 @@ static struct rminfo {
 	short flags;
 	short ES,DS,FS,GS,IP,CS,SP,SS;
 } RMI;
-
+#ifdef NOTYET
 static union REGS inregs, outregs;
 static struct SREGS sregs;
+#endif
 static short lowptr;
 static int lowptr2;
 static void *watptr, *watptr2;
 
 void allocbuffers (void)
 {
+	
+#ifdef NOTYET
   memset (&sregs, 0, sizeof(sregs));
   inregs.w.ax = 0x0100;
   inregs.w.bx = 0x20;
@@ -249,11 +253,13 @@ void allocbuffers (void)
   int386x (0x31, &inregs, &outregs, &sregs);
   lowptr2 = outregs.w.ax << 16;
   watptr2 = (void *)((outregs.x.eax & 0xffff) << 4);
+#endif
 }
 
 
 void device_request ()
 {
+#ifdef NOTYET
   memset (&sregs, 0, sizeof (sregs));
   memset (&RMI, 0, sizeof(RMI));
   RMI.EAX = 0x00001510;
@@ -270,6 +276,7 @@ void device_request ()
   int386x (0x31, &inregs, &outregs, &sregs);
 //  if (outregs.x.cflag)
 //    printf ("DEVICE REQUEST FAILED!!!\n");
+#endif
 }
 
 
@@ -772,6 +779,7 @@ void cd_getpos (struct playinfo *info)
 
 short cdrom_installed (void)
 {
+#ifdef NOTYET
   inregs.h.ah = 0x15;
   inregs.h.al = 0x00;
   inregs.w.bx = 0;
@@ -784,6 +792,8 @@ short cdrom_installed (void)
     allocbuffers ();
   cd_get_audio_info ();
   return (1);
+
+#endif
 }
 
 
