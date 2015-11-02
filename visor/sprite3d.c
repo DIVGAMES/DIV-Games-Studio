@@ -85,7 +85,7 @@ float fancho_pantalla,falto_pantalla;
 }
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-//  Crea la matriz de transformacion de la camara
+//  Create the transformation matrix of the camera
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 void sprite3d_transform(sprite3d *sprite3d_struct)

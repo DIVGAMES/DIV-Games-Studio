@@ -265,7 +265,7 @@ char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
 
 
 struct dirent **namelist;
-int n=0;
+int n=NULL;
 int np=0;
 int type=0;
 
@@ -286,9 +286,10 @@ strcpy(findmask,strlwr(name));
 
 
   //  int n;
-if(n>0) {
+if(n!=NULL) {
 //	printf("free'ing old find struct\n");
 	free(namelist);
+	n=NULL;
 }
 
     n = scandir(".", &namelist, 0, alphasort); 
@@ -298,7 +299,7 @@ type = attr;
 //n--;
 ret =_dos_findnext(result);
 
-printf("matches: %d\n",ret);
+//printf("matches: %d\n",ret);
 
 return (ret);
 
@@ -321,6 +322,8 @@ while(++np<n) {
 	result->attrib=0;
 //printf("findnext: %s\n",namelist[np]->d_name);
 
+if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
+
 	
 	if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
 		result->attrib=16;
@@ -341,6 +344,8 @@ if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 //	printf("%s %d %d \n",result->name,n,np);
 	
 //	return 0; 	
+
+}
 
 }
 	return 1;

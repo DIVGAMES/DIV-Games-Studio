@@ -15,7 +15,8 @@
 #define _MAX_FNAME 256
 #define _MAX_EXT 64
 
-#include <SDL.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
 
 
 #define far /*far*/
@@ -109,6 +110,9 @@ void _makepath(
 
 extern void compilar(void);
 extern int _chdir(const char* Directory);
+
+#define SoundInfo SDL_AudioSpec
+
 
 #endif // __OSDEP_H
 

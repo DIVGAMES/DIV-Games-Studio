@@ -822,7 +822,7 @@ void RefPalAndDlg(int no_tocar_mapas,int guardar_original)
         wwrite(ptr,an,al,2+(an-20)/2,2,1,v.titulo,c4);
       }
     }
-    call(v.paint_handler);
+    call((voidReturnType )v.paint_handler);
     if (v.primer_plano==2) { swap(v.an,v._an); swap(v.al,v._al); }
     wdown(n);
   }
@@ -1618,7 +1618,7 @@ int an=v.an/big2,al=v.al/big2;
                         {
                                 Degradar=0;Copiar=0;Intercambiar=0;
                                 Accion=0;
-                                call(v.paint_handler);
+                                call((voidReturnType )v.paint_handler);
                         }
                         v.volcar=1;
                 }                                
@@ -1715,7 +1715,7 @@ int an=v.an/big2,al=v.al/big2;
                 {                        
                         Degradar=0;Copiar=0;Intercambiar=0;
                         Accion=0;
-                        call(v.paint_handler);
+                        call((voidReturnType )v.paint_handler);
                         lRed.inicial=63-dac[SelColor*3];
                         lGre.inicial=63-dac[SelColor*3+1];
                         lBlu.inicial=63-dac[SelColor*3+2];
@@ -1732,7 +1732,7 @@ int an=v.an/big2,al=v.al/big2;
                         Intercambiar=0;                        
                 if(wCopiar)
                         Copiar=0;
-                call(v.paint_handler);
+                call((voidReturnType )v.paint_handler);
                 Accion=1;
         }
         else
@@ -1744,7 +1744,7 @@ int an=v.an/big2,al=v.al/big2;
                         Degradar=0;
                 if(wCopiar)
                         Copiar=0;
-                call(v.paint_handler);
+                call((voidReturnType )v.paint_handler);
                 Accion=2;
         }
         else
@@ -1758,7 +1758,7 @@ int an=v.an/big2,al=v.al/big2;
                 if(wIntercambiar)
                         Intercambiar=0;
                 Accion=3;
-                call(v.paint_handler);
+                call((voidReturnType )v.paint_handler);
         }
         else
                 if(!Copiar && Accion==3)
@@ -1782,7 +1782,7 @@ int an=v.an/big2,al=v.al/big2;
                                 set_dac(dac);
                                 Degradar=0;Copiar=0;Intercambiar=0;
                                 Accion=0;
-                                call(v.paint_handler);
+                                call((voidReturnType )v.paint_handler);
 
                                 boton(4,an/2,al-13,1,c0);
 

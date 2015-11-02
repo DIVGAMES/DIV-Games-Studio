@@ -25,9 +25,11 @@ void IniMath()
 void MatMult(lptmatrix matriz_c,lptmatrix matriz_a,lptmatrix matriz_b)
 {
 float *result=(float *)matriz_c;
+
 float *mat1  =(float *)matriz_a;
 float *mat2  =(float *)matriz_b;
 int i,j;
+//printf("result_addr %x\n",result);
 
   for (i=0; i<4; i++)
     for (j=0; j<4; j++)
@@ -94,9 +96,11 @@ void *lf_malloc(int size)
   num_mallocs++;
 //  printf("Reservado: %d, Total: %d\n",size,mem_mallocs);
   if (num_mallocs>=TOTAL_MALLOCS) {
+	  printf("TOTAL MALLOC REACHED\n");
     lf_free_all();
     return(NULL);
   }
+//  printf("returned: %x\n",puntero);
   return(puntero);
 }
 

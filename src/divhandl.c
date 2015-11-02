@@ -2634,8 +2634,8 @@ void nuevo_mapa0(void) {
   lmapsizes.creada=0; lmapsizes.maximo=9;
   map_an=vga_an; map_al=vga_al;
   itoa(map_an,mancho,10); itoa(map_al,malto,10);
-  _get(133,4,12,v.an-72,mancho,8,1,32767);
-  _get(134,4,34,v.an-72,malto,8,1,32767);
+  _get(133,4,12,v.an-72,(byte *)mancho,8,1,32767);
+  _get(134,4,34,v.an-72,(byte *)malto,8,1,32767);
   _button(100,7,y_nm,0);
   _button(101,v.an-8,y_nm,2);
   v_terminado=0;
@@ -2685,11 +2685,11 @@ int nuevo_mapa(byte * mapilla) {
   int n;
 
   // 1§ Pide memoria para un struct tmapa
-  if ((v_mapa=malloc(sizeof(struct tmapa)))!=NULL) {
+  if ((v_mapa=(tmapa *)malloc(sizeof(struct tmapa)))!=NULL) {
 
     // 2§ Pide memoria para el mapa
 
-    if (mapilla!=NULL) v_mapa->map=mapilla; else v_mapa->map=malloc(map_an*map_al);
+    if (mapilla!=NULL) v_mapa->map=mapilla; else v_mapa->map=(byte *)malloc(map_an*map_al);
 
     if (v_mapa->map!=NULL) {
 
@@ -2699,7 +2699,7 @@ int nuevo_mapa(byte * mapilla) {
       }
 
       // 4§ Fija el resto de variables
-      strcpy(v_mapa->filename,texto[136]);
+      strcpy(v_mapa->filename,(char *)texto[136]);
       ltoa(siguiente_codigo++,v_mapa->filename+strlen(v_mapa->filename),10);
       *v_mapa->path='\0';
       v_mapa->map_an=map_an;
@@ -2713,9 +2713,9 @@ int nuevo_mapa(byte * mapilla) {
 
       return(0);
 
-    } else { v_texto=texto[45]; dialogo((int)err0); free(v_mapa); }
+    } else { v_texto=(char *)texto[45]; dialogo((int)err0); free(v_mapa); }
 
-  } else { v_texto=texto[45]; dialogo((int)err0); }
+  } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
 
   return(1);
 }
@@ -2853,7 +2853,7 @@ void abrir_mapa(void) {
 
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
         fseek(f,0,SEEK_END); n=ftell(f);
-        if ((buffer=malloc(n))!=NULL) {
+        if ((buffer=(byte *)malloc(n))!=NULL) {
           fseek(f,0,SEEK_SET);
           if (fread(buffer,1,n,f)==n) {
 
@@ -2864,8 +2864,8 @@ void abrir_mapa(void) {
             else tipomapa=0;
 
             if (tipomapa) {
-              if ((v_mapa=malloc(sizeof(struct tmapa)))!=NULL) {
-                if ((v_mapa->map=malloc(map_an*map_al+map_an))!=NULL) {
+              if ((v_mapa=(tmapa *)malloc(sizeof(struct tmapa)))!=NULL) {
+                if ((v_mapa->map=(byte *)malloc(map_an*map_al+map_an))!=NULL) {
 
                   v_mapa->TengoNombre=0; //No tiene descripcion por defecto
 
@@ -2884,14 +2884,14 @@ void abrir_mapa(void) {
                     free(v_mapa);
                     free(buffer);
                     fclose(f);
-                    v_texto=texto[44]; dialogo((int)err0);
+                    v_texto=(char *)texto[44]; dialogo((int)err0);
                     continue;
                   }
 
                   // OJO!!! No se comprueba si se produce un error al descomprimir
                   // Ver todos los sitios donde se llame a descomprime_?
 
-                  ExternUseBufferMap=v_mapa->map;
+                  ExternUseBufferMap=(char	 *)v_mapa->map;
 
                   x=0; sum=0; do { sum+=abs((int)dac4[x]-(int)dac[x]); } while (++x<768);
 
@@ -2916,14 +2916,14 @@ void abrir_mapa(void) {
 
                   nueva_ventana((int)mapa0);
 
-                } else { v_texto=texto[45]; dialogo((int)err0); free(v_mapa); }
-              } else { v_texto=texto[45]; dialogo((int)err0); }
-            } else { v_texto=texto[46]; dialogo((int)err0); }
-          } else { v_texto=texto[44]; dialogo((int)err0); }
+                } else { v_texto=(char *)texto[45]; dialogo((int)err0); free(v_mapa); }
+              } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
+            } else { v_texto=(char *)texto[46]; dialogo((int)err0); }
+          } else { v_texto=(char *)texto[44]; dialogo((int)err0); }
           free(buffer);
-        } else { v_texto=texto[45]; dialogo((int)err0); }
+        } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
         fclose(f);
-      } else { v_texto=texto[44]; dialogo((int)err0); }
+      } else { v_texto=(char *)texto[44]; dialogo((int)err0); }
     }
   } create_dac4();
 }
@@ -2960,11 +2960,11 @@ void abrir_mapa3d(void) {
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
         fclose(f);
         nuevo_mapa3d();
-        map_read((void*)v.aux);
+        map_read((M3D_info*)v.aux);
         actualiza_titulo();
         call((voidReturnType )v.paint_handler);
         v.volcar=1;
-      } else { v_texto=texto[44]; dialogo((int)err0); }
+      } else { v_texto=(char *)texto[44]; dialogo((int)err0); }
     }
   }
 }
@@ -2999,14 +2999,14 @@ void guardar_mapa(void) {
         case 0: e=graba_MAP(map,f); break;
         case 1: e=graba_PCX(map,f); break;
         case 2: e=graba_BMP(map,f); break;
-      } if (e==2) { v_texto=texto[48]; dialogo((int)err0); }
+      } if (e==2) { v_texto=(char *)texto[48]; dialogo((int)err0); }
 
       // *** OJO, se debe borrar el fichero si no se pudo grabar entero
 
       fclose(f);
 
-    } else { v_texto=texto[47]; dialogo((int)err0); e=1; }
-  } else { v_texto=texto[47]; dialogo((int)err0); e=1; }
+    } else { v_texto=(char *)texto[47]; dialogo((int)err0); e=1; }
+  } else { v_texto=(char *)texto[47]; dialogo((int)err0); e=1; }
 
   if (!e) { // Debe cambiar la ruta y nombre del mapa/ventana guardado
     strcpy(ventana[v_ventana].mapa->path,tipo[v_tipo].path);
@@ -3040,12 +3040,12 @@ char cWork[5];
                 return;
         _show_items();
         wwrite(v.ptr,an,al,4,11,0,texto[133],c3);
-        sprintf(cWork,"%d",ventana[n].mapa->map_an);
-        wwrite(v.ptr,an,al,4,20,0,cWork,c3);
+        sprintf(cWork,"%d",(char *)ventana[n].mapa->map_an);
+        wwrite(v.ptr,an,al,4,20,0,(byte *)cWork,c3);
 
         wwrite(v.ptr,an,al,4,30,0,texto[134],c3);
-        sprintf(cWork,"%d",ventana[n].mapa->map_al);
-        wwrite(v.ptr,an,al,4,39,0,cWork,c3);
+        sprintf(cWork,"%d",(char *)ventana[n].mapa->map_al);
+        wwrite(v.ptr,an,al,4,39,0,(byte *)cWork,c3);
         v_aceptar=0;
 }
 void Tamnio2()
@@ -3081,10 +3081,10 @@ void Tamnio0()
   v.close_handler=(int)Tamnio3;
 
   sprintf(cAncho,"%d",map_an);
-  sprintf(cAlto ,"%d",map_al);
+  sprintf(cAlto ,"%d",(char *)map_al);
 
-  _get(133,42,11,30,cAncho,5,1,9999);
-  _get(134,42,30,30,cAlto,5,1,9999);
+  _get(133,42,11,30,(byte *)cAncho,5,1,9999);
+  _get(134,42,30,30,(byte *)cAlto,5,1,9999);
   Porcentajes=0;
   Gris=0;
   _flag(95,90,19,&Porcentajes);
@@ -3166,7 +3166,7 @@ int Colors[9],min_dist,i,dist;
         bufferaux=(char *)malloc(map_an*map_al);
 
         if (bufferaux==NULL) { // Esto lo a¤adi¢ dani ...
-          v_texto=texto[45];
+          v_texto=(char *)texto[45];
           dialogo((int)err0);
           return;
         }
@@ -3174,7 +3174,7 @@ int Colors[9],min_dist,i,dist;
         y=(float)0;
         for(fy=0;fy<map_al;fy++)
         {
-                Progress(texto[92],fy,map_al);
+                Progress((char *)texto[92],fy,map_al);
                 x=(float)0;
                 for(fx=0;fx<map_an;fx++)
                 {
@@ -3218,10 +3218,10 @@ int Colors[9],min_dist,i,dist;
                 }
                 y+=incy;
         }
-        Progress(texto[92],map_al,map_al);
+        Progress((char *)texto[92],map_al,map_al);
 
-        if (nuevo_mapa(bufferaux)) {
-                v_texto=texto[45];
+        if (nuevo_mapa((byte *)bufferaux)) {
+                v_texto=(char *)texto[45];
                 dialogo((int)err0);
                 free(bufferaux);
                 return;
@@ -3297,10 +3297,10 @@ void mapbus0() {
   sprintf(ccolor,"%d",color);
 
   sprintf(ctiletext,"%s [%d..%d]",texto[401],mintile,maxtile);
-  texto[546]=&ctiletext[0];
+  texto[546]=(byte *)&ctiletext[0];
 
-  _get(546,4,11,64+40,ctile,5,mintile,maxtile);
-  _get(402,4,30,64+40,ccolor,5,0,255);
+  _get(546,4,11,64+40,(byte *)ctile,5,mintile,maxtile);
+  _get(402,4,30,64+40,(byte *)ccolor,5,0,255);
 
   _flag(403,4,49,&minimos);
 
@@ -3338,14 +3338,14 @@ void mapa_busqueda() {
   if (map_an>max_map_size) map_an=max_map_size;
   if (map_al>max_map_size) map_al=max_map_size;
 
-  if((map=(char*)malloc(map_an*map_al))==NULL) {
-    v_texto=texto[45];
+  if((map=(byte*)malloc(map_an*map_al))==NULL) {
+    v_texto=(char *)texto[45];
     dialogo((int)err0);
     return;
   }
 
   for (y=0;y<map_al*itile;y+=itile) {
-    Progress(texto[404],y,map_al*itile);
+    Progress((char *)texto[404],y,map_al*itile);
     for (x=0;x<map_an*itile;x+=itile) {
       c=0; // 0/c4
       for (n=0;n<itile;n++) {
@@ -3360,7 +3360,7 @@ void mapa_busqueda() {
       } else if (c) c=c4;
       *(map+(x/itile)+(y/itile)*map_an)=c;
     }
-  } Progress(texto[404],map_al*itile,map_al*itile);
+  } Progress((char *)texto[404],map_al*itile,map_al*itile);
 
   if (nuevo_mapa(map)) {
     free(map);
@@ -3392,8 +3392,8 @@ char cwork[5];
 
         wbox(ptr,an,al,c_r_low,4,12,ProgressCurrent*(an-8)/ProgressTotal,al-16);
         wrectangulo(ptr,an,al,c0,4,12,an-8,al-16);
-        sprintf(cwork,"%d%c",ProgressCurrent*100/ProgressTotal,'%');
-        wwrite(ptr,an,al,4+(an-8)/2,(14+(al-16)/2)-2,4,cwork,c3);
+        sprintf((char *)cwork,"%d%c",ProgressCurrent*100/ProgressTotal,'%');
+        wwrite(ptr,an,al,4+(an-8)/2,(14+(al-16)/2)-2,4,(byte *)cwork,c3);
 }
 
 void Progress2()
@@ -3409,7 +3409,7 @@ char cwork[5];
         wbox(ptr,an,al,c_r_low,4,12,ProgressCurrent*(an-8)/ProgressTotal,al-16);
         wrectangulo(ptr,an,al,c0,4,12,an-8,al-16);
         sprintf(cwork,"%d%c",ProgressCurrent*100/ProgressTotal,'%');
-        wwrite(ptr,an,al,4+(an-8)/2,(14+(al-16)/2)-2,4,cwork,c3);
+        wwrite(ptr,an,al,4+(an-8)/2,(14+(al-16)/2)-2,4,(byte *)cwork,c3);
 }
 void Progress0()
 {
@@ -3418,8 +3418,8 @@ void Progress0()
         v.al=28;
         v.paint_handler=(int)Progress1;
         v.click_handler=(int)Progress2;
-        v.titulo=ProgressTitle;
-        v.nombre=ProgressTitle;
+        v.titulo=(byte *)ProgressTitle;
+        v.nombre=(byte *)ProgressTitle;
 }
 
 int Progress(char *titulo,int current,int total)
@@ -3510,7 +3510,7 @@ int Colors[9],min_dist,i,dist;
          rgb_table=(char *)malloc(32768);
          if(rgb_table==NULL)
          {
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((int)err0);
                 return;
          }
          if((rgb_tab=fopen("RGB_TAB.TMP","rb"))==NULL)
@@ -3525,7 +3525,7 @@ int Colors[9],min_dist,i,dist;
          {
           for(x=0;x<32;x++)
           {
-           Progress(texto[93],x,32);
+           Progress((char *)texto[93],x,32);
            for(y=0;y<32;y++)
             for(z=0;z<32;z++)
             {
@@ -3545,7 +3545,7 @@ int Colors[9],min_dist,i,dist;
                 rgb_table[x*1024+y*32+z]=ant;
             }
           }
-          Progress(texto[93],32,32);
+          Progress((char *)texto[93],32,32);
           fclose(rgb_tab);
           rgb_tab=fopen("RGB_TAB.TMP","wb");
           fwrite(dac,1,768,rgb_tab);
@@ -3565,7 +3565,7 @@ int Colors[9],min_dist,i,dist;
         bufferaux=(char *)malloc(map_an*map_al);
         if(bufferaux==NULL)
         {
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((int)err0);
                 if(!Gris)
                         free(rgb_table);
                 return;
@@ -3573,7 +3573,7 @@ int Colors[9],min_dist,i,dist;
         fy=(float)0.5;
         for(y=0;y<map_al;y++)
         {
-                Progress(texto[92],y,map_al);
+                Progress((char *)texto[92],y,map_al);
 
                 y0=(int)fy;
                 cy=((float)y0+(float)0.5);
@@ -3636,10 +3636,10 @@ int Colors[9],min_dist,i,dist;
                 }
                 fy+=incy;
         }
-        Progress(texto[92],map_al,map_al);
+        Progress((char *)texto[92],map_al,map_al);
 
-        if (nuevo_mapa(bufferaux)) {
-                v_texto=texto[45];
+        if (nuevo_mapa((byte *)bufferaux)) {
+                v_texto=(char *)texto[45];
                 dialogo((int)err0);
                 free(bufferaux);
                 if(!Gris)

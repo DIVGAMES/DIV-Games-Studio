@@ -19,6 +19,11 @@
 #include "divmixer.hpp"
 #include "divsb.h"
 #include "sysdac.h"
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
+void mainloop(void);
 
 //#include "inc\svga.h"
 
@@ -344,13 +349,41 @@ int DPMIalloc4k(void);
 
 
 #endif
+void print_init_flags(int flags)
+{
+#define PFLAG(a) if(flags&MIX_INIT_##a) printf(#a " ")
+        PFLAG(FLAC);
+        PFLAG(MOD);
+        PFLAG(MP3);
+        PFLAG(OGG);
+        if(!flags)
+                printf("None");
+        printf("\n");
+}
 
 int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
-  SDL_Init( SDL_INIT_VIDEO );
+  SDL_Init( SDL_INIT_EVERYTHING );
+  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC|MIX_INIT_MP3;
+  
+  int initted=Mix_Init(flags);
+	print_init_flags(initted);
+	
+  if(initted&flags != flags) {
+	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
+	  printf("Mix_Init: %s\n", Mix_GetError());
+   }
+ 
+#ifndef __EMSCRIPTEN__
   SDL_WM_SetCaption( "DIVDX - Linux 64bit", "" );
   SDL_ShowCursor( SDL_FALSE );
+#else
+SDL_WM_SetCaption( "DIVDX - Javascript HTML5", "" );
+  
+#endif
+atexit(SDL_Quit);
+
  // chdir("/home/mike/src/div2015");
   
 //  SDL_WM_GrabInput( SDL_GRAB_ON );
@@ -361,11 +394,11 @@ int main(int argc, char * argv[]) {
 // Treat all modern targets as '586' type
 	cpu_type = 5;
 
-GetFree4kBlocks();
+//GetFree4kBlocks();
 
 //  _harderr(critical_error);
 
-  remove("DEBUGDIV.TXT");
+//  remove("DEBUGDIV.TXT");
 
   modo_de_retorno=0;
   salir_del_entorno=0;
@@ -373,7 +406,7 @@ GetFree4kBlocks();
   siguiente_orden=0;
   Interpretando=1;
   safe=34; // Text in lower right corner
-  
+
   if(argc>1 && !strcmp(argv[1],"INIT")) Interpretando=0;
   else beta_status=4;
   if(argc>1 && !strcmp(argv[1],"TEST")) test_video=1;
@@ -382,15 +415,11 @@ GetFree4kBlocks();
 
   if (argc<1) exit(0);
 
-  realpath(argv[0], full);
   _fullpath(full,argv[0],_MAX_PATH+1);
   strupr(full);
-
 #ifdef SHARE
   strcpy(exe_name,full);
 #endif
-
-
   n=strlen(full);
   while (n && full[n]!='/') n--;
   full[n]=0;
@@ -410,7 +439,6 @@ GetFree4kBlocks();
   } else {
     if ((f=fopen("system/setup.bin","rb"))!=NULL) {
       fclose(f);
-      printf("setup.bin found\n");
       primera_vez=0;
     } else {
       primera_vez=1;
@@ -442,29 +470,25 @@ GetFree4kBlocks();
 
   Load_Cfgbin();
 
-// BETA CHECK pass every time in SDL version
-
   strcpy(full,"Be");
   strcat(full,"ta");
 
-  if (strstr((const char *)texto[34],(const char *)full)==NULL && 
-	strstr((const char *)texto[35],(const char *)full)==NULL) {
+  if (strstr((char *)texto[34],(char *)full)==NULL && 
+	strstr((char *)texto[35],(char *)full)==NULL) {
     strupr(full);
-    if (strstr((const char *)texto[34],(const char *)full)==NULL && 
-		strstr((const char *)texto[35],(const char *)full)==NULL) {
+    if (strstr((char *)texto[34],(char *)full)==NULL && 
+		strstr((char *)texto[35],(char *)full)==NULL) {
       beta_status=4;
     }
   }
 
-
-beta_status=4;
-
   if(!Interpretando) {
-//	  printf("Not Interpreter\n");
-//    _setvideomode(_TEXTC80);
-//    _setbkcolor(1); _settextcolor(15);
-//    _outtext(texto[1]);
-	printf("%s\n",texto[1]);
+#ifdef NOTYET
+    _setvideomode(_TEXTC80);
+    _setbkcolor(1); _settextcolor(15);
+    _outtext(texto[1]);
+#endif
+    printf("%s\n",texto[1]);
   }
 
   inicializacion();
@@ -474,7 +498,6 @@ beta_status=4;
   /////////////////////////////////////////////////////////////////////////////
   
   if(beta_status==0) dialogo((int)betatest0);
-
 #ifdef SHARE
   else {
     if (!Interpretando) {
@@ -486,11 +509,16 @@ beta_status=4;
     }
   }
 #endif
+#ifdef __EMSCRIPTEN__
+  // void emscripten_set_main_loop(em_callback_func func, int fps, int simulate_infinite_loop);
+  emscripten_set_main_loop(mainloop, 0, 0);
+	return 0;
+#else
 
   entorno(); // Environment
-
+ 
   /////////////////////////////////////////////////////////////////////////////
-  
+
   mouse_graf=3; volcado_copia();
 
   if (auto_save_session || modo_de_retorno!=0)
@@ -514,8 +542,8 @@ beta_status=4;
     _dos_setdrive((int)toupper(*tipo[0].path)-'A'+1,&n);
     _chdir(tipo[0].path);
   }
-
   return(modo_de_retorno);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -572,10 +600,8 @@ void inicializa_entorno() {
   char cWork[256];
 
   if ((f=fopen("system/user.nfo","rb"))!=NULL) {
-//	printf("Found user info file\n");
     fread(user1,1,128,f);
     fread(user2,1,128,f);
-//    printf("%s - %s\n",user1,user2);
     fclose(f);
   }
 
@@ -590,14 +616,8 @@ void inicializa_entorno() {
   // Si no existe el fichero DIV.DTF o se pide el modo a prueba de fallos
 
 //  if(!CopiaDesktop) nueva_ventana((int)menu_principal0); else UpLoad_Desktop();
-//printf("Checking if we can restore session..");
-//printf("%X %X %X\n",CopiaDesktop, nueva_sesion, primera_vez);
 
-  if(CopiaDesktop && !nueva_sesion && !primera_vez) {
-	//  printf("Restoring session!\n");
-	  UpLoad_Desktop();
-	}
-//printf("%X %X %X\n",CopiaDesktop, nueva_sesion, primera_vez);
+  if(CopiaDesktop && !nueva_sesion && !primera_vez) UpLoad_Desktop();
  
   if (!primera_vez) {
     for (n=0;n<max_windows;n++)
@@ -606,7 +626,6 @@ void inicializa_entorno() {
   }
 
   if (test_video) dialogo((int)test0);
-
 // Have we come back from running a prog?
   if (Interpretando) {
     vacia_buffer();
@@ -740,16 +759,14 @@ extern int reloj; // clock
 //      Environment
 ///////////////////////////////////////////////////////////////////////////////
 
-void entorno(void) {
+void mainloop(void) {
 
   int n,m,oldn=max_windows;
   int llamar;
   char cwork[256],*p;
-
-//  check_free();
-
-  do {
-
+#ifdef NOTYET
+  printf("%d %d %d\n",reloj, old_reloj,loop_count);
+	
     if (reloj==old_reloj) loop_count++; else loop_count=0;
     if (loop_count>=500) {
       EndSound();
@@ -757,7 +774,6 @@ void entorno(void) {
       InitSound();
     } old_reloj=reloj;
 
-/*
     if (GetIRQVector(0) != Irq0Handler) { // in dialogue environment and paint
 
       svmode(); set_dac(dac);
@@ -775,7 +791,7 @@ void entorno(void) {
     outp(0x40, (byte)(IntIncr>>8));    // Set the timer to 100 Hz.
 
     SetIRQVector(0, Irq0Handler);
-*/
+#endif
 
     if (arrastrar==3) { // drag == 3?
       goto fin_bucle_entorno; // end loop environment
@@ -865,7 +881,6 @@ void entorno(void) {
     ///////////////////////////////////////////////////////////////////////////
     // Determine the shape of the cursor (mouse pointer)
     ///////////////////////////////////////////////////////////////////////////
-   
     if (n==max_windows) mouse_graf=1;
     else switch(ventana[n].primer_plano) {
       case 0:
@@ -1111,7 +1126,6 @@ void entorno(void) {
     // Type windows control timer
     ///////////////////////////////////////////////////////////////////////////
     
-	// end loop environment
     fin_bucle_entorno:
 
     for (m=0;m<max_windows;m++) {
@@ -1285,7 +1299,6 @@ void entorno(void) {
       v_modo=0; 
       v_texto=(char *)texto[346];
       dialogo((int)browser0);
-      
       if (v_terminado) {
         if (!v_existe) {
           v_texto=(char *)texto[43]; 
@@ -1363,9 +1376,20 @@ void entorno(void) {
 
     if (key(_ESC) && key(_L_CTRL)) salir_del_entorno=1;
 
-  } while (!salir_del_entorno);
 
+}
+
+void entorno(void) {
+
+  int n,m,oldn=max_windows;
+  int llamar;
+  char cwork[256],*p;
+//  check_free();
+  do {
+	  mainloop();
+	    } while (!salir_del_entorno);
   do { read_mouse(); } while(mouse_b&1);
+
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1422,7 +1446,6 @@ void shell(void) {
 
     InitSound();
   }
-  
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1436,9 +1459,6 @@ void entorno_dialogo(void) {
   int salir_del_dialogo=0;
 
   fin_dialogo=0;
-  
-//  printf("Env Dialog\n");
-//  return;
   do { dialogo_invocado=0;
 
     if (reloj==old_reloj) loop_count++; else loop_count=0;
@@ -2426,7 +2446,6 @@ void nueva_ventana(int init_handler) {
   byte * ptr;
   int n,m,om,x,y,an,al;
   int vtipo;
-printf("New Window %d\n",v.tipo);
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -2761,7 +2780,6 @@ void dialogo(int init_handler) {
   int vtipo,_get_pos;
   byte * ptr;
   int n,m,x,y,an,al;
-//printf("Showing dialog box %d\n",v.tipo);
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -2842,7 +2860,7 @@ void dialogo(int init_handler) {
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
-      if (!strcmp((const char *)v.titulo,(const char *)texto[41]) || !strcmp((const char *)v.titulo,(const char *)texto[367]))
+      if (!strcmp((char *)v.titulo,(char *)texto[41]) || !strcmp((char *)v.titulo,(char *)texto[367]))
         wgra(ptr,an,al,c_r_low,2,2,an-12,7);
       else wgra(ptr,an,al,c_b_low,2,2,an-12,7);
       if (text_len(v.titulo)+3>an-12) {
@@ -2852,16 +2870,17 @@ void dialogo(int init_handler) {
         wwrite(ptr,an,al,3+(an-12)/2,2,1,v.titulo,c1);
         wwrite(ptr,an,al,2+(an-12)/2,2,1,v.titulo,c4);
       }
+
       call((voidReturnType )v.paint_handler);
 
       if (big) { an*=2; al*=2; }
 
       do { read_mouse(); } while((mouse_b&1) || key(_ESC));
+
       if (exploding_windows) explode(x,y,an,al);
 
       wvolcado(copia,vga_an,vga_al,ptr,x,y,an,al,0);
       volcado_parcial(x,y,an,al);
-
       do { read_mouse(); } while(mouse_b&1);
       entorno_dialogo();
 
@@ -2884,7 +2903,7 @@ int an=v.an,al=v.al;
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
-      if (!strcmp((const char *)v.titulo,(const char *)texto[41])) wgra(ptr,an,al,c_r_low,2,2,an-12,7);
+      if (!strcmp((char *)v.titulo,(char *)texto[41])) wgra(ptr,an,al,c_r_low,2,2,an-12,7);
       else wgra(ptr,an,al,c_b_low,2,2,an-12,7);
       if (text_len(v.titulo)+3>an-12) {
         wwrite_in_box(ptr,an,an-11,al,4,2,0,v.titulo,c1);
@@ -3082,7 +3101,6 @@ void inicializacion(void) {
   crea_barratitulo();
 
   svmode(); set_dac(dac); read_mouse();
-//printf("set complete copy\n");
   volcado_completo=1;
   volcado(copia);
 
@@ -3144,7 +3162,8 @@ void default_reglas(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void determina_unidades(void) {
-/*  int n,m,uni=0;
+#ifdef NOTYET
+  int n,m,uni=0;
   union REGS r;
 
   n=1; do {
@@ -3158,7 +3177,7 @@ void determina_unidades(void) {
       if (unidades[m]==unidades[uni-1]) uni--;
   } while (++n<=26);
   unidades[uni]=0;
-  */
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3202,8 +3221,8 @@ char MemoriaLibre[100];
 int MaxMemUsed=0;
 
 int GetHeapFree(int RetUsed) {
-	printf("HeapFree\n");
-/*  struct _heapinfo h_info;
+#ifdef NOTYET
+  struct _heapinfo h_info;
   int heap_status;
   int Use =0;
   int Free=0;
@@ -3216,12 +3235,11 @@ int GetHeapFree(int RetUsed) {
     heap_status=_heapwalk(&h_info);
   }
   if(RetUsed) return(Use); else return(Free);
-  */
+#endif
 }
 
 char *GetMemoryFree() {
-	printf("MemoryFree\n");
-	/*
+#ifdef NOTYET
   union  REGS  regs;
   struct SREGS sregs;
 
@@ -3234,7 +3252,7 @@ char *GetMemoryFree() {
   sprintf(MemoriaLibre,"%u %u %u [%u]",MemInfo.data1,
           MemInfo.data1+GetHeapFree(0),GetHeapFree(1),MaxMemUsed);
   return(MemoriaLibre);
-  */
+#endif
 }
 
 void DebugFile(char *Cadena,char *Nombre) {
@@ -3896,7 +3914,6 @@ void Load_Cfgbin() {
   file=fopen("system/setup.bin","rb");
   if(file==NULL) {
     if (primera_vez) {
-		printf("no setup data and first run...\n ");
       strcpy(Setupfile.Desktop_Image,(char *)texto[487]); // Informacion del tapiz
       Setupfile.Desktop_Gama=1;
       Setupfile.Desktop_Tile=0;
@@ -4038,9 +4055,7 @@ void Load_Cfgbin() {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void check_mouse(void) {
-//	printf("Mouse installed via SDL\n");
-	return;
-	/*
+#ifdef NOTYET
   struct SREGS sregs;
   union REGS inregs, outregs;
 
@@ -4058,7 +4073,7 @@ void check_mouse(void) {
       exit(0);
     }
   }
-*/
+#endif
 }
 
 
@@ -4192,6 +4207,7 @@ void DaniDel(char *name) {
 
 void DebugInfo(char *Msg)
 {
+#ifdef NOTYET
   FILE *f;
   if( (f=fopen("DEBUGDIV.TXT","a")) ) {
     fprintf(f, "%s\n", Msg);
@@ -4210,9 +4226,6 @@ void DebugData(int Val)
 
 void GetFree4kBlocks(void)
 {
-	printf("GetFree4KBlocks\n");
-//	return;
-	/*
   FILE *f;
   unsigned u, DOScount, DPMIcount;
 
@@ -4232,8 +4245,9 @@ void GetFree4kBlocks(void)
             DOScount + DPMIcount, (DOScount + DPMIcount) * 4);
     fclose(f);
   }
-*/
-//  exit(0);
+
+  exit(0);
+#endif
 }
 
 //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ

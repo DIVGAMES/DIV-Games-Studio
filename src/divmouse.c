@@ -143,7 +143,7 @@ void read_mouse(void) {
           wmouse_x=-1;
           wmouse_y=-1;
           mouse_b=0;
-          call(v.click_handler);
+          call((voidReturnType )v.click_handler);
           quien_arrastra=v.orden;
           mouse_b=1;
           mouse_graf=arrastrar_graf;
@@ -176,7 +176,7 @@ void libera_drag(void) {
       wup(n);
     }
 
-    wmouse_x=-1; wmouse_y=-1; call(v.paint_handler);
+    wmouse_x=-1; wmouse_y=-1; call((voidReturnType )v.paint_handler);
 
     if (n) {
       wdown(n);

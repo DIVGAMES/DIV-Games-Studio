@@ -3,7 +3,7 @@
 #include <math.h>
 #include "complex.hpp"
 
-//#define TAPES_ACTIVAS
+#define TAPES_ACTIVAS
 
 extern long complex_x_ini,complex_x_fin;
 extern long complex_y_ini,complex_y_fin;
@@ -50,21 +50,24 @@ wmaterial   wmat;
     return;
   fread(&complex_struct->nDummies,1,2,file);  // Numero de Dummies
   if(complex_struct->nDummies)
+ {
     if ((complex_struct->Dummies=(lptbbox)lf_malloc(sizeof(tbbox)*complex_struct->nDummies))==NULL)
-      return;
-  else
+      return;}
+ else
+{
     complex_struct->Dummies=NULL;
-
+  }
   fread(&complex_struct->nTapes,1,2,file);  // Numero de Cintas
-  if(complex_struct->nTapes)
+  if(complex_struct->nTapes) {
     if ((complex_struct->Tapes=(lpttape)lf_malloc(sizeof(ttape)*complex_struct->nTapes))==NULL)
       return;
-  else
-    complex_struct->Tapes=NULL;
+  } else {
+	complex_struct->Tapes=NULL;
+  }
 
   fread(&complex_struct->nFrames,1,2,file); // Numero de animaciones
-  if ((complex_struct->Anims=(lptmatrix)lf_malloc(sizeof(tmatrix)*complex_struct->nObjects*complex_struct->nFrames))==NULL)
-    return;
+  if ((complex_struct->Anims=(lptmatrix)lf_malloc(sizeof(tmatrix)*complex_struct->nObjects*complex_struct->nFrames))==NULL) 
+	  return;
 
   fread(&OffsetObjs,1,4,file);    // Offset a los Objetos.
   fread(&OffsetMats,1,4,file);    // Offset a los materiles.
@@ -81,11 +84,10 @@ wmaterial   wmat;
 
   for(i=0;i<complex_struct->nObjects;i++)
   {
-
     fread(&complex_struct->Objects[i]->nVertex,1,2,file); // Numero de vertices
-    if ((complex_struct->Objects[i]->Vertices=(lptvertex)lf_malloc(sizeof(tvertex)*complex_struct->Objects[i]->nVertex))==NULL)
+    if ((complex_struct->Objects[i]->Vertices=(lptvertex)lf_malloc(sizeof(tvertex)*complex_struct->Objects[i]->nVertex))==NULL) 
       return;
-
+      
     fread(&complex_struct->Objects[i]->nFaces,1,2,file);  // Numero de caras
     if (complex_struct->Objects[i]->nFaces)
       if ((complex_struct->Objects[i]->Faces=(lptface)lf_malloc(sizeof(tface)*complex_struct->Objects[i]->nFaces))==NULL)
@@ -165,12 +167,8 @@ wmaterial   wmat;
   for(i=0;i<complex_struct->nObjects;i++)
     for(j=0;j<complex_struct->Objects[i]->nFaces;j++)
       complex_struct->Objects[i]->Faces[j].tipo_map=complex_struct->Objects[i]->Faces[j].material->tipo_map;
-  
   fread(complex_struct->Dummies,sizeof(tbbox),complex_struct->nDummies,file);
-  
-  printf("%d %d %d\n",ftell(file),sizeof(short),complex_struct->nTapes);
-  
-//  fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
+  fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
 
 #ifdef TAPES_ACTIVAS
   for(i=0;i<complex_struct->nTapes;i++)
@@ -250,7 +248,11 @@ void complex_update(complex *complex_struct)
   if (complex_struct->curframe>=complex_struct->nFrames) complex_struct->curframe=1;
 
   for (i=0;i<complex_struct->nObjects;i++) {
-    MatMult(complex_struct->Objects[i]->matrix,&complex_struct->Anims[complex_struct->curframe*complex_struct->nObjects+i],&complex_struct->CompMat);
+    MatMult(
+		complex_struct->Objects[i]->matrix,
+		&complex_struct->Anims[complex_struct->curframe*complex_struct->nObjects+i],
+		&complex_struct->CompMat);
+		
   }
 //  if (++complex_struct->curframe==complex_struct->nFrames) complex_struct->curframe=0;
   memcpy(complex_struct->wobjects,complex_struct->Objects,sizeof(complex_struct->Objects));
@@ -262,7 +264,7 @@ lptobject wobj;
 int iWork=complex_struct->nObjects-1,i,j;
   for(j=0;j<complex_struct->nObjects;j++,iWork--)
   {
-    for(i=0;i<iWork;i++)
+    for(i=0;i<iWork;i++) 
       if(complex_struct->wobjects[i]->z<complex_struct->wobjects[i+1]->z)
       {
           wobj          =complex_struct->wobjects[i];

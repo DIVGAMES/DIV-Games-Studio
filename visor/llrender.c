@@ -190,7 +190,7 @@ void llrender_destroy(llrender *llrender_struct)
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-int compara(const void *op1, const void *op2)
+int compara(const lptface *op1, const lptface *op2)
 {
   return ((*((const lptface *)op1))->v1->fpz<(*((const lptface *)op2))->v1->fpz);
 }

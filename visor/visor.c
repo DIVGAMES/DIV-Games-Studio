@@ -30,26 +30,29 @@ int lib_3d=0;
 int lib_3d_ancho=0;
 int lib_3d_alto=0;
 char *lib_3d_buffer=NULL;
+#define lfset memset
 
-void lfset(void *, long, long);
 /*
+void lfset(void *, long, long);
+
 #pragma aux lfset = \
 	"rep stosw" \
         parm caller [edi] [eax] [ecx]\
 	modify exact [edi eax ecx] \
-*/
+
 
 
 void lfset(void *buf, long c, long d) {
 	printf("Should fill buffer [%x] with c [%d] for d [%d]  bytes\n",buf,c,d);
-/*	long f=0;
+	long f=0;
 	
 	while(f++<d) {
 		*buf++=c;
 	}
-	* */
+	
 	return;
 }
+*/
 
 void reescalar_sprite3d(buffer_sprite3d  *sbuffer);
 
@@ -59,7 +62,6 @@ void reescalar_sprite3d(buffer_sprite3d  *sbuffer);
 
 buffer_sprite3d *visor_init(lptvisor datos_render)
 {
-	printf("visor init\n");
   if (lib_3d)
     visor_end();
 
@@ -120,9 +122,6 @@ buffer_sprite3d *visor_init(lptvisor datos_render)
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //  Procedure that manages the viewfinder
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-
-#define lfset memset
 
 void visor_loop(lptvisor datos_render)
 {

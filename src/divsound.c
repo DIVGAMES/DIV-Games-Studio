@@ -12,6 +12,9 @@ int SoundActive=0;
 
 void InitSound(void)
 {
+//	SDL_Init(SDL_INIT_AUDIO);
+//	printf("Sound system initialised\n");
+	
 #ifdef NOTYET
   FILE *File_Cfg;
   int master=7,sound_fx=7,cd_audio=7;

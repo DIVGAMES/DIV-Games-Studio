@@ -1,6 +1,6 @@
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Mขdulo que contiene el cขdigo del generador de sprites
+//      Module containing sprite generator code
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
@@ -167,6 +167,8 @@ void FinalizaGenerador(void)
   }
   if(MapaSprite != NULL)
   {
+printf("MapaSprite mem: %x\n",MapaSprite);
+
 //    free(MapaSprite);
     MapaSprite=NULL;
   }
@@ -1057,7 +1059,7 @@ void CargarSprite(void)
 
   if(ThumbSprite!=NULL)
   {
-	printf("Thumb mem: %x\n",ThumbSprite);
+//	printf("Thumb mem: %x\n",ThumbSprite);
     //free(ThumbSprite);
     ThumbSprite=NULL;
   }

@@ -2,6 +2,7 @@
 #define __COMPLEX_HPP_
 #define MAXOBJECTS  128
 
+#include <osdep.h>
 #include "hlrender.hpp"
 #include "resource.hpp"
 #include "global.hpp"
@@ -21,7 +22,7 @@ typedef struct {
         lptmaterial     Materials;
         short           nDummies;
         lptbbox         Dummies;
-        short           nTapes;
+        uint16_t         nTapes;
         lpttape         Tapes;
         short           nFrames;
         lptmatrix       Anims;

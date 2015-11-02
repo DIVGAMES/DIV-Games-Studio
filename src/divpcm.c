@@ -427,7 +427,12 @@ typedef struct _HeadDC {
 void OpenSound(void) {
 	printf("TODO - divpcm.cpp OpenSound\n");
   pcminfo   *mypcminfo;
- // SoundInfo *SI=NULL;
+  Uint32 wav_length;
+Uint8 *wav_buffer;
+
+//  SoundInfo *SI=NULL;
+  SoundInfo SI;
+
   int       num;
 
   v_modo=0;
@@ -474,7 +479,18 @@ void OpenSound(void) {
         continue;
       }
       mypcminfo=(pcminfo *)pcminfo_aux;
-#ifdef NOT YET
+
+
+	if(SDL_LoadWAV(SoundPathName, &SI, &wav_buffer, &wav_length) == NULL) {
+		 free(pcminfo_aux);
+        //if(SI) free(SI);
+        v_texto=texto[46];
+        dialogo((int)err0);
+        continue;
+   }
+		
+	
+#ifdef NOTYET
       SI = judas_loadwav(SoundPathName);
       if(judas_error != JUDAS_OK && judas_error == JUDAS_WRONG_FORMAT)
       {
@@ -500,13 +516,19 @@ void OpenSound(void) {
 
       free(SI);
 #endif
+
+	  mypcminfo->SoundFreq = SI.freq;
+      mypcminfo->SoundBits = SI.format;
+      mypcminfo->SoundSize = wav_length;
+      mypcminfo->SoundData = (short *)wav_buffer;
+      mypcminfo->sample    = wav_buffer;
       nueva_ventana((int)PCM0);
     }
   }
   
 }
 
-#define SoundInfo char
+//#define SoundInfo char
 
 void OpenSoundFile(void) // Open the file SoundPathName
 {
@@ -868,10 +890,22 @@ printf("TODO - divpcm.cpp OpenDesktopSong\n");
 void PlaySong(char *pathname)
 {
 	printf("TODO - divpcm.cpp PlaySong\n");
+	Mix_Music *music;
+	modinfo *mymodinfo=(modinfo *)v.aux;
+
+	printf("loadsong [%s]\n",pathname);
+
+	music=Mix_LoadMUS(pathname);
+	
+	if(!music) {
+		printf("Song error : %s\n", Mix_GetError());
+		v_texto=Mix_GetError();//texto[46];
+		dialogo((int)err0);
+		return;
+	}
+//printf("%x\n",music);
+
 #ifdef NOTYET
-
-  modinfo *mymodinfo=(modinfo *)v.aux;
-
   if(judas_channel[0].smp) judas_stopsample(0);
 
   FreeMOD();

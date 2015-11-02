@@ -94,7 +94,7 @@ int modovesa;
 
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
-	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
+	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	modovesa=1;
 
 //printf("%d %d \n",vga->pitch,vga->format->BytesPerPixel);
@@ -201,14 +201,15 @@ void rvmode(void) {
 
 
 void volcadosdl(byte *p) {
-	
+	SDL_LockSurface(vga);
 	byte *q = (byte *)vga->pixels;
 	for (int vy=0; vy<vga_al;vy++) {
 		memcpy(q,p,vga_an);
 		p+=vga_an;
-		q+=vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+		q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
 	}
-	
+//	printf("draw screen\n");
+SDL_UnlockSurface(vga);
 	SDL_Flip(vga);
 }
 

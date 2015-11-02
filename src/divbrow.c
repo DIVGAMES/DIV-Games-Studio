@@ -172,7 +172,6 @@ void crear_thumbs(void) {
 	
   if (opc_img[v_thumb]) {
     do {
-	//	    printf("DIVBROW.c %d %s %d\n",__LINE__,larchivosbr.lista,v_thumb);
       switch(v_thumb) // 2-MAP, 3-PAL, 5-FNT, 6-IFS, 7-PCM
       {
         case 2: crear_un_thumb_MAP(&larchivosbr); break;
@@ -232,8 +231,9 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
     if (estado==0) { num=-1; return; }
 
     if (estado==1) { // Read a new thumbnail
+
       if (strchr(l->lista+(l->lista_an*num),'.')>0 &&
-	      strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP") &&
+	  strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PCX") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".BMP") &&
           strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".JPG") &&
@@ -241,16 +241,11 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 
         estado=0; thumb[num].status=-1;
 
-//		printf("hello [%s] [%s] [%s]\n",strchr(l->lista+(l->lista_an*num),'.'),l->lista+(l->lista_an*num),strupr(strchr(l->lista+(l->lista_an*num),'.')));
-//		printf("strcmp MAP %d\n",strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP"));
-		
-		
       } else if ((f=fopen(l->lista+(l->lista_an*num),"rb"))!=NULL) {
         fseek(f,0,SEEK_END);
         thumb[num].filesize=ftell(f);
         fseek(f,0,SEEK_SET);
         if (thumb[num].filesize<=2048) incremento=2048;
-
         if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))!=NULL) {
           if (thumb[num].filesize>incremento) {
             if (fread(thumb[num].ptr,1,incremento,f)==incremento) {
@@ -295,8 +290,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
     // Y ahora crea el thumbnail si el fichero se carg¢ ya completo
 
     if (estado==2 && thumb[num].status==thumb[num].filesize &&
-        abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0) 
-     {
+        abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0) {
 
       thumb[num].status=0;
 
@@ -584,8 +578,6 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
     if (estado==0) { num=-1; return; }
 
     // read a new thumbnail
-//	    printf("%s %d\n",l->lista,estado);
-    
     if (estado==1)
     {
       if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".FNT"));
@@ -597,7 +589,6 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       }
       if((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
       {
-		  
 	    estado=0;
         thumb[num].status=-1;
         return;
@@ -685,13 +676,11 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       fclose(f);
       return;
     }
-//		printf("687\n");
-//printf("%d %d %d %d %d %d %d %d\n",estado, thumb[num].status, thumb[num].filesize, ascii, _omx, mouse_x, _omy, mouse_y);
+
     // Now create the thumbnail if the file is complete ¢ Loaded
     if (estado==2 && thumb[num].status==thumb[num].filesize &&
         abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0)
     {
-		printf("creating thumb\n");
       thumb[num].status=0;
 
       memcpy(pal, &thumb[num].ptr[8], 768);
@@ -989,8 +978,8 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
     // Se comienza a leer un nuevo thumbnail
     if (estado==1)
     {
-//      _heapshrink();
 #ifdef NOTYET
+      _heapshrink();
       GetFreeMem(&Mi_meminfo);
       if((mem=Mem_GetHeapFree())==-1)
       {
@@ -999,7 +988,6 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
         return;
       }
 #endif
-
       mem=(Mi_meminfo.Bloque_mas_grande_disponible+mem-1000000)/2;
       if((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
       {
@@ -1457,7 +1445,6 @@ void browser0(void) {
 
   _dos_setdrive(toupper(*tipo[v_tipo].path)-'A'+1,&n);
   chdir(tipo[v_tipo].path);
-//printf("chdir %s\n",tipo[v_tipo].path);
 
   dir_abrirbr(); // Crea la lista de ficheros y directorios
 
@@ -1535,7 +1522,7 @@ int ns,chn;
 void browser2(void) {
   unsigned n, selected;
   unsigned pos1, pos2;
-//  SoundInfo *SI=NULL;
+  SoundInfo *SI=NULL;
   int need_refresh=0;
   int estado;
 //FILE *f;
@@ -1673,7 +1660,6 @@ void browser2(void) {
       browser1(); v.volcar=1;
       strcpy(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
 
-		printf("FULL: %s\n",full);
       // OJO !!! Tener en cuenta CTRL y SHIFT
       if (strcmp(input,full) || ((v_thumb==7 || v_tipo==16) && opc_pru))
       {
