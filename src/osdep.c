@@ -241,7 +241,7 @@ void _makepath(char* Path,const char* Drive,const char* Directory,
 
 int _chdir(const char* Directory)
 {
-	printf("Chdir %s\n",Directory);
+//	printf("Chdir %s\n",Directory);
 
 	if(Directory!=NULL && strlen(Directory)>0)
 		chdir(Directory);
@@ -255,7 +255,7 @@ char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
 }
 
 
-struct dirent **namelist;
+struct dirent **namelist=NULL;
 int n=NULL;
 int np=0;
 int type=0;
@@ -277,10 +277,17 @@ strcpy(findmask,strlwr(name));
 
 
   //  int n;
-if(n!=NULL) {
+
+if(n!=NULL && namelist!=NULL) {
+	while(++np<n) {
+		free(namelist[np]);
+	}
 //	printf("free'ing old find struct\n");
-	free(namelist);
-	n=NULL;
+	if(namelist!=NULL) {
+	//	printf("free'ing namelist %x\n",namelist);
+		free(namelist);
+		namelist=NULL;
+	}
 }
 
     n = scandir(".", &namelist, 0, alphasort); 
@@ -317,6 +324,7 @@ if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
 
 	
 	if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
+		free(namelist[np]);
 		result->attrib=16;
 		return 0;
 	} 
@@ -328,6 +336,7 @@ if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 	
 	
 	if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
+		free(namelist[np]);
 		result->attrib=0;
 		return 0;
 	} 
@@ -337,7 +346,7 @@ if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 //	return 0; 	
 
 }
-
+free(namelist[np]);
 }
 	return 1;
 }
