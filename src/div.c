@@ -368,20 +368,13 @@ int main(int argc, char * argv[]) {
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC|MIX_INIT_MP3;
   
   int initted=Mix_Init(flags);
-	print_init_flags(initted);
+//	print_init_flags(initted);
 	
   if(initted&flags != flags) {
 	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
 	  printf("Mix_Init: %s\n", Mix_GetError());
    }
  
-#ifndef __EMSCRIPTEN__
-  SDL_WM_SetCaption( "DIVDX - Linux 64bit", "" );
-  SDL_ShowCursor( SDL_FALSE );
-#else
-SDL_WM_SetCaption( "DIVDX - Javascript HTML5", "" );
-  
-#endif
 atexit(SDL_Quit);
 
  // chdir("/home/mike/src/div2015");
@@ -465,6 +458,15 @@ atexit(SDL_Quit);
   for (n=0;n<24;n++) { tipo[n].defecto=0; tipo[n].inicial=0; }
 
   inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+
+#ifndef __EMSCRIPTEN__
+  SDL_WM_SetCaption((char *)texto[34], "" );
+  SDL_ShowCursor( SDL_FALSE );
+#else
+SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
+  
+#endif
+
 
  check_mouse();
 
@@ -4173,7 +4175,7 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
-	printf("DaniDel %s\n",name);
+//	printf("DaniDel %s\n",name);
 	//return;
 	
   unsigned rc;
@@ -4195,7 +4197,7 @@ void DaniDel(char *name) {
     strcat(cwork3,ft.name);
     if (_fullpath(cwork1, cwork3, _MAX_PATH)==NULL) strcpy(cwork1,ft.name);
     _dos_setfileattr(cwork1,_A_NORMAL);
-    printf("deleting %s\n",cwork1);
+//    printf("deleting %s\n",cwork1);
 //    remove(cwork1);
     rc=_dos_findnext(&ft);
   }
