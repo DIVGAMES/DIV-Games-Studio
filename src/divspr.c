@@ -164,8 +164,6 @@ void FinalizaGenerador(void)
   }
   if(MapaSprite != NULL)
   {
-printf("MapaSprite mem: %x\n",MapaSprite);
-
 //    free(MapaSprite);
     MapaSprite=NULL;
   }
