@@ -134,7 +134,6 @@ void menu_programas2(void) {
   if ((old_mouse_b&1) && !(mouse_b&1)) {
 
     v_tipo=8;
-      printf("program menu %d\n",v.estado);
 
     switch (v.estado) {
 
@@ -2464,9 +2463,6 @@ extern t_thumb thumb[max_archivos];
 extern int num_taggeds;
 
 void analizar_input(void) {
-	printf("analizar_input\n");
-//	return;
-	
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
@@ -2477,56 +2473,30 @@ void analizar_input(void) {
   // Remove blank name
   while (strchr(input,' ')) strcpy(strchr(input,' '),strchr(input,' ')+1);
 
-
-printf("input: %s mascara: %s\n",input,mascara);
-
   if (strlen(input)==0) strcpy(input,mascara);
   else if ((n=strlen(input))>1)
     if (input[n-1]=='.' && input[n-2]=='.') strcat(input,"/");
-
-printf("input: %s\n",input);
 
   if (strchr(input,':')!=NULL)
     if (strchr(unidades,toupper(*(strchr(input,':')-1)))==NULL) {
     strcpy(input,mascara); return;
   }
 
-
-printf("input: %s\n",input);
-
-
   if (_fullpath(full,input,_MAX_PATH)!=NULL) {
-    
     strupr(full); 
-
 #ifdef DOS
     strcpy(input,mascara);
 #endif
     _splitpath(full,drive,dir,fname,ext);
     _dos_setdrive(drive[0]-'A'+1,&n);
     getcwd(full,PATH_MAX+1);
-    printf("full: %s\n",full);
-    printf("drive: %s\n",drive);
-    
-    printf("fname %s ext %s\n", fname, ext);
-    
-    
     if ( true || (full[0]==drive[0])) {
       if (strlen(dir)>1) if (dir[strlen(dir)-1]=='/') dir[strlen(dir)-1]=0;
-      
-      
-      printf("dir: %s\n",dir);
-      
       if (!strlen(dir) || !chdir(dir)) {
-		
-		printf("2520\n");
-
 #ifdef DOS		
         strcpy(input,fname); strcat(input,ext);
 #endif
-
         if (strlen(input)) {
-		printf("2527 input: %s\n",input);
         // L‡GICA DE TRATAMIENTO DEL NOMBRE DE FICHERO
 
         // si tiene comodines
@@ -2541,25 +2511,25 @@ printf("input: %s\n",input);
         // (la otra diferencia entre abrir/guardar es que al entrar en guardar
         // se est† en status_abrir=1 e input="")
 
+
           if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) { // Wildcards
 
             if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) { // If any... ?
-			printf("2540\n");
+
               if (_dos_findnext(&fileinfo)) { // si SOLO hay uno ...
-				printf("fileinfo.name\n",fileinfo.name);
                 strcpy(input,fileinfo.name);
+
               } else {
-				  strcpy(mascara,input); // si hay MAS de uno ...
-				printf("input: %s\n",input);
-				}
+		strcpy(mascara,input); // si hay MAS de uno ...
+		printf("input: %s\n",input);
+		}
             } else { // si no encontr¢ ninguno ...
 
               // si no tenia extensi¢n y la m†scara si la tiene ...
-printf("input: %s\n",input);
               if (strchr(input,'.')==NULL && strchr(mascara,'.')!=NULL) {
 
                 strcat(input,strchr(mascara,'.')); // le a§ade la m†scara
-printf("2558 %s\n",input);
+
         	      if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) { // si hay alguno ...
               		if (_dos_findnext(&fileinfo)) { // si SOLO hay uno
                     strcpy(input,fileinfo.name);
@@ -2570,37 +2540,32 @@ printf("2558 %s\n",input);
             }
 
           } else // No wildcards ...
-          if (_dos_findfirst(input,_A_SUBDIR,&fileinfo) != 0)
+          if (_dos_findfirst(input,_A_SUBDIR,&fileinfo) == 0)
             if (fileinfo.attrib&16) {
               printf("chdir %s\n",input);
               chdir(input); 
               strcpy(input,mascara);
             } else {
-				v_terminado=1; 
-				v_existe=1;
-			} // Fichero encontrado
+		v_terminado=1; 
+		v_existe=1;
+	    } // Fichero encontrado
           else if (strchr(input,'.')==NULL && strchr(mascara,'.')!=NULL) {
             strcat(input,strchr(mascara,'.'));
            if (!_dos_findfirst(input,_A_NORMAL,&fileinfo))
           		if (_dos_findnext(&fileinfo)) {
                 strcpy(input,fileinfo.name);
               } else {
-				  strcpy(mascara,input);
-				  printf("2584 input %s\n",input);
-
-			}
+			strcpy(mascara,input);
+			printf("2584 input %s\n",input);
+		}
             else if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) {
-			printf("2580 falling back to mask %s\n",mascara);
               strcpy(mascara,input);
             } else {v_terminado=1; v_existe=0; } // Fichero no encontrado (con extensi¢n a§adida)
           } else {v_terminado=1; v_existe=0; } // Fichero no encontrado (sin extensi¢n a§adida)
         } 
         else {
-			printf("falling back to mask %s\n",mascara);
-			strcpy(input,mascara); // Mantiene la m†scara vieja
-		}
-printf("2584\n");
-printf("input %s\n",input);
+		strcpy(input,mascara); // Mantiene la m†scara vieja
+	}
         getcwd(tipo[v_tipo].path,PATH_MAX+1); 
         imprime_rutabr();
         

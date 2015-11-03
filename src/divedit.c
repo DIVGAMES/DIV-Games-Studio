@@ -197,7 +197,7 @@ void programa1(void) {
 }
 
 void programa2(void) {
-  static int bloque=0,bloque_x,bloque_y;
+  static byte bloque=0,bloque_x,bloque_y;
   int n,m,min,max;
   int an=v.an,al=v.al;
   if (big) { an/=2; al/=2; }
@@ -2419,9 +2419,6 @@ void abrir_programa(void) {
       if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
-
-//printf("trying to open %s\n",full);
-
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
         fseek(f,0,SEEK_END); n=ftell(f)+buffer_grow;
         if ((buffer=(byte *)malloc(n))!=NULL) {
@@ -3130,7 +3127,6 @@ void lista_procesos0(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void goto_error(void) {
-	printf("error\n");
   int m,n=0;
 
   for (m=0;m<max_windows;m++) {

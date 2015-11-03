@@ -499,7 +499,6 @@ void Fonts0(void) {
         strcpy(FacePathName,tipo[6].path);
         strcat(FacePathName,"/");
         strcat(FacePathName,FaceName);
-printf("fontpath facename %s %s\n", FaceName, FacePathName);
 
         if ((f=fopen(FacePathName,"rb"))!=NULL) fclose(f);
         else {
@@ -556,11 +555,9 @@ int CreateFont(int GenCode)
 int x;
 byte _c0;
 FILE *file;
-printf("CreateFont %s\n", FacePathName);
         file=fopen(FacePathName,"rb");
         if(file==NULL)
         {
-			printf("Failed to open font\n");
                 v_texto=(char *)texto[45]; dialogo((int)err0);
                 return 0;
         } else fclose(file);

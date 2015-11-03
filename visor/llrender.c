@@ -16,7 +16,8 @@ float LMax=1.8; //1.8
 float LMin=0.7; //0.7
 
 //extern "C" {
-  extern int direccion_textura;
+  //extern 
+  int direccion_textura;
   extern int clock1,clock2;
 //}
 
@@ -1130,7 +1131,6 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
 
 void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmlevel, int tipo)
 {
-#ifdef NOTYET
   int altura;
   float faltura,temp,largo;
   int x1,u,v,dudx,dvdx;
@@ -1168,6 +1168,7 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
     color=col_r+col_g+col_b;
   }
 
+/* 
   switch (ancho) {
     case 8:   if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_8;
               else nucleo_texturas=nucleo8_8;
@@ -1194,7 +1195,7 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
               rotacion_mascara=8;
               break;
   }
-
+*/
   //Ordenamos los vertices, v1 el de m s arriba y v3 el de m s abajo
 
   if (v1->fpy > v2->fpy) { vertice=v1; v1=v2; v2=vertice; }
@@ -1211,6 +1212,8 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
       ru1=65536.0*v1->u*anchot; ru2=65536.0*v2->u*anchot; ru3=65536.0*v3->u*anchot;
     }
   }
+ 
+#ifdef NOTYET
 
   if (tipo & T_GOURAUD) {
     v1_alpha=v1->intensidad*31;

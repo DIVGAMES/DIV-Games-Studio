@@ -543,7 +543,6 @@ void help(int n){
   FILE * f;
   byte * p;
   int m,m_back;
-printf("HELP!\n");
 
   determina_prg2();
 
@@ -555,7 +554,7 @@ printf("HELP!\n");
       old_prg=(struct tprg*)ventana[v_ventana].aux;
     }
   }
-printf("HELP! 558\n");
+
   if ((m=determina_help())!=-1) {
 
     if (m) move(0,m);
@@ -566,7 +565,6 @@ printf("HELP! 558\n");
         if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
       v.primer_plano=1;
     }
-printf("HELP! 569\n");
 
     if (help_item==n) {
       while (help_line!=help_buffer+1) {
@@ -582,12 +580,9 @@ printf("HELP! 569\n");
     return;
 
   }
-printf("HELP! 585\n");
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
-	printf("loading help\n");
     if((f=fopen("help/help.div","rb"))!=NULL) {
-		
       fseek(f,helpidx[n*2],SEEK_SET);
       if ((h_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
         if ((help_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
@@ -618,8 +613,6 @@ printf("HELP! 585\n");
       } fclose(f);
     }
   }
-  printf("HELP! 621\n");
-
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -714,7 +707,6 @@ extern int linea_error;
 void get_error(int32_t n) {
   FILE * f;
   byte * p;
-printf("get error %d\n",n);
   sprintf(cerror,(char *)texto[381]); p=(byte *)cerror+strlen((char *)cerror);
 
   if (helpidx[n*2] && helpidx[n*2+1]) {

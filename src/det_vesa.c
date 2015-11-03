@@ -42,6 +42,9 @@ void detectar_vesa(void) { // Detects available video modes
   modos[5].ancho=376; modos[5].alto=282; modos[5].modo=1;
   modos[5].ancho=376; modos[5].alto=282; modos[5].modo=1;
 
+
+sprintf(marcavga,"SDL Video Driver ");
+
 #ifdef NOTYET
 
 	if (vbeInit() != 0) {

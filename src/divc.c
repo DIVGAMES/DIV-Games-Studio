@@ -967,11 +967,10 @@ void mensaje_compilacion(byte * p) {
 
 void compilar(void) {
   int n;
-  uint m;
+  uLongf m;
   struct objeto * i;
   byte * q, * p;
 
-printf("compilar\n");
   program_type=0;
 
   mensaje_compilacion(texto[201]);
@@ -1038,7 +1037,6 @@ printf("compilar\n");
   precarga_obj(); // No literals in the preloaded objects
 
   mensaje_compilacion(texto[200]);
-printf("Source len: %d\n",source_len);
 
   source=source_ptr; _source=source;
   *(source+source_len)=cr; *(source+source_len+1)=cr;
@@ -1201,8 +1199,6 @@ void save_error(word tipo) { // Guarda una posicion de error (de 0 .. 3)
 void c_error(word tipo, word e) {
   int columna=0;
   byte *_p,*p;
-
-printf("c_error %d %d\n",tipo,e);
 
   numero_error=e;
 
@@ -1735,7 +1731,7 @@ void lexico(void) {
       if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
 
       ptr=&vhash[h];
-      while (*ptr && strcmp((char *)ptr+2,((char *)_ivnom+8)))  ptr=(byte **)*ptr; 
+      while (*ptr && strcmp((char *)(ptr+2),((char *)_ivnom+8)))  ptr=(byte **)*ptr; 
       if (!strcmp((char *)(ptr+2),(char *)_ivnom+8)) { // id found
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
@@ -7308,7 +7304,6 @@ FILE * open_file(char * file) {
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
-printf("Open file %s\n",file);
 
   strcpy((char *)full,file);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
@@ -7659,7 +7654,7 @@ void plexico(void) {
       ivnom.b++; _source--; if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
       ptr=&vhash[h];
       while (*ptr && strcmp((char *)(ptr+2),(char *)(_ivnom+8))) ptr=(byte **)*ptr;
-      if (!strcmp((char *)(ptr+2),(char *)(_ivnom+8))) { // id found
+      if (!strcmp((char *)(ptr+2),(char *)_ivnom+8)) { // id found
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
         if (pieza<256 && pieza>=0) { // palabra reservada (token)

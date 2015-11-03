@@ -111,7 +111,6 @@ void init_lexcolor() {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void clexico(void) {
-//printf("clexico\n");
 
   byte ** ptr, * _ivnom, h, * _source=csource;
   struct clex_ele * e;
@@ -213,7 +212,7 @@ byte *_cbuf;
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void col_analiza_ltlex(void){
-printf("col_analiza_ltlex\n");
+
   byte * buf, cont=1;
   int len;
   struct clex_ele * e;
@@ -282,7 +281,6 @@ printf("col_analiza_ltlex\n");
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void col_analiza_ltobj(void){
-	printf("col_analiza_ltobj\n");
   byte * buf;
   int len;
 

@@ -89,7 +89,6 @@ float spr_coefred;
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void generador_sprites(void) {
-	printf("Sprite generator\n");
   if(!ParseAnimFile())
   {
     v_texto=texto[545]; dialogo((int)err0);
@@ -111,8 +110,6 @@ void generador_sprites(void) {
   InfoCfg.frame = 0;
   FloatFrame    = 0.0;
   InfoSpr = visor_init((lptvisor)&InfoCfg);
-
-printf("InfoSpr %d\n",InfoSpr);
 
   if (InfoSpr==NULL) {
     Progress(texto[434],100,100);
@@ -176,7 +173,6 @@ printf("MapaSprite mem: %x\n",MapaSprite);
   visor_end();
 }
 
-
 int ParseAnimFile(void)
 {
   FILE* f;
@@ -231,8 +227,6 @@ int ParseAnimFile(void)
           break;
       }
     }
-    printf("anim total: %d\n",anim_total);
-    
     fclose(f);
     if(!anim_total) return(0);
 
@@ -960,7 +954,6 @@ void CargarTextura(char *NombreTextura)
     v_texto=texto[45]; dialogo((int)err0);
     return;
   }
-  
   if(fread(mapa, 1, x, f) != x)
   {
     free(mapa);
@@ -1059,7 +1052,6 @@ void CargarSprite(void)
 
   if(ThumbSprite!=NULL)
   {
-//	printf("Thumb mem: %x\n",ThumbSprite);
     //free(ThumbSprite);
     ThumbSprite=NULL;
   }

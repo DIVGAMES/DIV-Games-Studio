@@ -52,7 +52,8 @@ wmaterial   wmat;
   if(complex_struct->nDummies)
  {
     if ((complex_struct->Dummies=(lptbbox)lf_malloc(sizeof(tbbox)*complex_struct->nDummies))==NULL)
-      return;}
+      return;
+}
  else
 {
     complex_struct->Dummies=NULL;
@@ -84,6 +85,7 @@ wmaterial   wmat;
 
   for(i=0;i<complex_struct->nObjects;i++)
   {
+
     fread(&complex_struct->Objects[i]->nVertex,1,2,file); // Numero de vertices
     if ((complex_struct->Objects[i]->Vertices=(lptvertex)lf_malloc(sizeof(tvertex)*complex_struct->Objects[i]->nVertex))==NULL) 
       return;

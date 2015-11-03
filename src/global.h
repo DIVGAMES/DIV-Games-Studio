@@ -438,11 +438,10 @@ void repinta_ventana(void);
 //      Functions exported by DIVASM (divasm.c)
 ///////////////////////////////////////////////////////////////////////////////
 
-
 void memcpyb(byte*,byte*,int);
 //#ifdef __llvm__
 #ifndef ARSE
-typedef void(*voidReturnType)(const char *);
+typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 #else
 typedef void(*voidReturnType)(int *);
@@ -1047,4 +1046,4 @@ void DebugData  (int Val);
 
 //////////////////////////////////////////////////////////////////////////////
 
-#endif
+#endif // __GLOBAL_Hs

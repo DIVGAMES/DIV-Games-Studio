@@ -100,29 +100,20 @@ func();
 }
 
 void call(const voidReturnType func) {	
-	func("");
+	func();
 }
 
 
 
 void comp(void)
 {
-	printf("compile\n");
 	if (!setjmp(buf))
 		compilar();
-	else
-		printf("done\n");
-		
-	return;
-
 }
 
 void comp_exit(void)
 {
-	printf("compile end\n");
-        //allegro_message("comp exit");
-     longjmp(buf,1);
-        
+     longjmp(buf,1);        
 }
 
 #include <stdio.h>

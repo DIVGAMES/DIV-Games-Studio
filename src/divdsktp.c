@@ -689,10 +689,7 @@ FILE *f;
         fclose(desktop);
         if(Interpretando)
                 actualiza_caja(0,0,vga_an,vga_al);
-
-printf("done\n");
 return(1);
-
 }
 
 

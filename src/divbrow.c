@@ -169,7 +169,6 @@ int _omx,_omy,omx,omy,oclock=0;
 int num;
 
 void crear_thumbs(void) {
-	
   if (opc_img[v_thumb]) {
     do {
       switch(v_thumb) // 2-MAP, 3-PAL, 5-FNT, 6-IFS, 7-PCM
@@ -636,16 +635,11 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
     // Se continฃa leyendo un thumbnail
     else if (estado==2 && thumb[num].status!=thumb[num].filesize)
     {
-	//	printf("estado 2\n");
-		
       if ((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
       {
-		  	  printf("failed to open font\n");
-    
         estado=0;
         thumb[num].status=-1;
       }
-//      printf("open sucess\n");
       fseek(f,thumb[num].status,SEEK_SET);
       if (thumb[num].filesize-thumb[num].status>incremento)
       {
@@ -1827,7 +1821,6 @@ void browser3(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void dir_abrirbr(void) {
-//	printf("TODO - divbrow.cpp dir_abribr\n");
   unsigned n,m;
   struct find_t fileinfo;
 

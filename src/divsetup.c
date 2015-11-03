@@ -179,8 +179,6 @@ void Get_Tapiz() {
   strcat(full,input);
 
   if (v_terminado) if (v_existe) {
-	  printf("hello %s [%s]\n",full,input);
-	  
     if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
       fseek(f,0,SEEK_END);
       len=ftell(f);

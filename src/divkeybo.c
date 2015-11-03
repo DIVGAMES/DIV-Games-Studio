@@ -25,7 +25,6 @@ int fbuf=0; // Puntero al buffer, fin de la cola
 // Interrupt handler related functions.
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-
 int ctrl_c=0;
 
 #ifdef NOTYET

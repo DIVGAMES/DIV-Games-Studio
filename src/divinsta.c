@@ -659,6 +659,7 @@ void crear_instalacion(void) {
   if (strlen(Unid)==1) { // Se supone una letra entre 'a' y 'z' como una unidad y no directorio
     strupr(Unid); if (Unid[0]>='A' && Unid[0]<='Z') strcat(Unid,":");
   }
+
   _fullpath(full,Unid,_MAX_PATH);
   _splitpath(full,drive,dir,fname,ext);
   if (strlen(dir)==0 || dir[strlen(dir)-1]!='/') strcat(dir,"/");
@@ -731,9 +732,7 @@ void crear_instalacion(void) {
       if (*ins=='+') { // Cuando el archivo no puede incluirse en el PACKFILE
         ins++; topack=0;
       } else topack=1;
-
       _splitpath(ins,drive,dir,fname,ext);
-
       strcpy(MiHeaderSetup[x].name,fname);
       strcat(MiHeaderSetup[x].name,ext);
       strupr(MiHeaderSetup[x].name);
@@ -859,7 +858,6 @@ void crear_instalacion(void) {
       }
 
       _splitpath(ins,drive,dir,fname,ext);
-
       strcpy(hdir[n].name,fname);
       strcat(hdir[n].name,ext);
       strupr(hdir[n].name);
@@ -1002,9 +1000,7 @@ void crear_instalacion(void) {
       if (*ins=='+') ins++;
       if (!strcmp(ins,"INSTALL/PACKFILE.DAT")) topack=0; else topack=1;
       fin=fopen(ins,"rb");
-
       _splitpath(ins,drive,dir,fname,ext);
-
       strcpy(MiHeaderSetup[x].name,fname);
       strcat(MiHeaderSetup[x].name,ext);
       if (!topack) strcpy(MiHeaderSetup[x].name,dirhead.pack);
