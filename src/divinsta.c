@@ -47,9 +47,9 @@ char Ierr6[128];
 char Ierr7[128];
 char Ierr8[128];
 
-char ifile1[256]="INSTALL/INSTALL.FPG",ifile1name[16]="INSTALL.FPG";
-char ifile2[256]="INSTALL/INST_SMA.FNT",ifile2name[16]="INST_SMA.FNT";
-char ifile3[256]="INSTALL/INST_BIG.FNT",ifile3name[16]="INST_BIG.FNT";
+char ifile1[256]="install/INSTALL.FPG",ifile1name[16]="INSTALL.FPG";
+char ifile2[256]="install/INST_SMA.FNT",ifile2name[16]="INST_SMA.FNT";
+char ifile3[256]="install/INST_BIG.FNT",ifile3name[16]="INST_BIG.FNT";
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -270,7 +270,7 @@ void Setup2() {
 void Setup3() {
   FILE * f;
 
-  if ((f=fopen("INSTALL/INS_TEXT.ASC","wb"))!=NULL) {
+  if ((f=fopen("install/INS_TEXT.ASC","wb"))!=NULL) {
     fwrite(MsgExe,1,128,f);
     fwrite(THelp1,1,128,f);
     fwrite(THelp2,1,128,f);
@@ -318,8 +318,8 @@ void Setup0() {
 #endif
     strcat(Copy_Right,&tbuf[20]);
     if (strlen(user2)+strlen(Copy_Right)<=127) strcat(Copy_Right,user2);
-    strcpy(Unid," :/TMP");
-    Unid[0]=toupper(tipo[1].path[0]);
+    strcpy(Unid,"/tmp");// :/TMP");
+    //Unid[0]=toupper(tipo[1].path[0]);
     strcpy(DefDir,texto[353]);
     strcat(DefDir,ExeGen);
     strcpy(AppName,ExeGen);
@@ -329,7 +329,7 @@ void Setup0() {
 
   strcat(ExeGen,".EXE");
 
-  if ((f=fopen("INSTALL/INS_TEXT.ASC","rb"))!=NULL) {
+  if ((f=fopen("install/INS_TEXT.ASC","rb"))!=NULL) {
     fread(MsgExe,1,128,f);
     fread(THelp1,1,128,f);
     fread(THelp2,1,128,f);
@@ -819,7 +819,8 @@ void crear_instalacion(void) {
 
     // 2ง Abre el fichero ("INSTALL\\PACKFILE.DAT","wb")
 
-    if ((fout=fopen("INSTALL/PACKFILE.DAT","wb"))==NULL) {
+    if ((fout=fopen("install/PACKFILE.DAT","wb"))==NULL) {
+		printf("823\n");
       v_texto=texto[358]; dialogo((int)err0);
       free(_ins); return;
     }
@@ -853,7 +854,7 @@ void crear_instalacion(void) {
       }
 
       if ((fin=fopen(ins,"rb"))==NULL) {
-        v_texto=texto[231]; dialogo((int)err0);
+		  printf("857\n");  v_texto=texto[231]; dialogo((int)err0);
         free(hdir); fclose(fout); free(_ins); return;
       }
 
@@ -891,7 +892,7 @@ void crear_instalacion(void) {
       strcpy(__ins,chr); __ins+=strlen(__ins)+1;
     }
 
-    strcpy(__ins,"INSTALL/PACKFILE.DAT"); // aคade el PACKFILE como el ฃltimo fichero
+    strcpy(__ins,"install/PACKFILE.DAT"); // aคade el PACKFILE como el ฃltimo fichero
 
     // 8ง Reescribe el hdir[] y cierra el fichero
 
@@ -910,7 +911,8 @@ void crear_instalacion(void) {
 
    // Crea el INSTALL\DIV32RUN.DLL a partir de (INSTALL\DIV32RUN.INS/386 + SYSTEM\LENGUAJE.INT)
 
-  if ((fout=fopen("INSTALL/DIV32RUN.DLL","wb"))==NULL) {
+  if ((fout=fopen("install/DIV32RUN.DLL","wb"))==NULL) {
+	printf("915\n");
     v_texto=texto[358]; dialogo((int)err0);
     free(_ins); return;
   }
@@ -919,7 +921,7 @@ void crear_instalacion(void) {
   else         fin=fopen("install/div32run.386","rb");
 
   if (fin==NULL) {
-    v_texto=texto[231]; dialogo((int)err0);
+printf("924\n");    v_texto=texto[231]; dialogo((int)err0);
     fclose(fout); free(_ins); return;
   }
 
@@ -928,6 +930,7 @@ void crear_instalacion(void) {
   fseek(fin,0,SEEK_SET);
 
   if (copiar_fichero(fin,fout,(unsigned long)x,0)==-1) {
+	printf("933\n");
     v_texto=texto[358]; dialogo((int)err0);
     fclose(fout); fclose(fin); free(_ins); return;
   }
@@ -935,7 +938,7 @@ void crear_instalacion(void) {
   fclose(fin);
 
   if ((fin=fopen("system/lenguaje.int","rb"))==NULL) {
-    v_texto=texto[231]; dialogo((int)err0);
+    printf("941\n"); v_texto=texto[231]; dialogo((int)err0);
     fclose(fout); free(_ins); return;
   }
 
@@ -944,6 +947,7 @@ void crear_instalacion(void) {
   fseek(fin,0,SEEK_SET);
 
   if (copiar_fichero(fin,fout,(unsigned long)x,0)==-1) {
+	printf("950\n");
     v_texto=texto[358]; dialogo((int)err0);
     fclose(fout); fclose(fin); free(_ins); return;
   }
@@ -951,6 +955,7 @@ void crear_instalacion(void) {
   fclose(fin);
 
   if (fwrite(&x,4,1,fout)!=1) {
+	printf("958\n");
     v_texto=texto[358]; dialogo((int)err0);
     fclose(fout); free(_ins); return;
   }
@@ -961,7 +966,8 @@ void crear_instalacion(void) {
 
   // *** Crea install.div (fichero empaquetado original)
 
-  if ((fout=fopen("INSTALL/INSTALL.DIV","wb"))==NULL) {
+  if ((fout=fopen("install/INSTALL.DIV","wb"))==NULL) {
+	printf("970\n");
     v_texto=texto[358]; dialogo((int)err0);
     free(_ins); return;
   }
@@ -998,7 +1004,7 @@ void crear_instalacion(void) {
       topack=0;
     } else {
       if (*ins=='+') ins++;
-      if (!strcmp(ins,"INSTALL/PACKFILE.DAT")) topack=0; else topack=1;
+      if (!strcmp(ins,"install/PACKFILE.DAT")) topack=0; else topack=1;
       fin=fopen(ins,"rb");
       _splitpath(ins,drive,dir,fname,ext);
       strcpy(MiHeaderSetup[x].name,fname);
@@ -1008,6 +1014,7 @@ void crear_instalacion(void) {
     }
 
     if (fin==NULL) {
+		printf("%s 1017\n",ins);
       Progress(texto[219],nfiles*100,nfiles*100);
       v_texto=texto[231]; dialogo((int)err0);
       fclose(fout); free(_ins); free(MiHeaderSetup);
@@ -1048,7 +1055,7 @@ void crear_instalacion(void) {
 
   strcpy(cWork,tipo[1].path); // Borra el PACKFILE.DAT
   strcat(cWork,"/");
-  strcat(cWork,"INSTALL/PACKFILE.DAT");
+  strcat(cWork,"install/PACKFILE.DAT");
   DaniDel(cWork);
 
   // *** Graba INSTALL.EXE con la coletilla informativa
@@ -1060,11 +1067,13 @@ void crear_instalacion(void) {
   strcpy(dWork,full);
   strcat(dWork,"INSTALL.EXE");
 
-  if(!FileCopyICE(cWork,dWork,0,237)) { v_texto=texto[231]; dialogo((int)err0); return; }
+  if(!FileCopyICE(cWork,dWork,0,237)) { 
+	  printf("1071\n"); v_texto=texto[231]; dialogo((int)err0); return; }
 
   Progress(texto[543],0,100);
 
-  if((fout=fopen(dWork,"ab"))==NULL) {
+  if((fout=fopen(cWork,"ab"))==NULL) {
+	  printf("1076\n");
     Progress(texto[543],100,100); v_texto=texto[231]; dialogo((int)err0); return;
   }
 
@@ -1096,6 +1105,7 @@ void crear_instalacion(void) {
   Progress(texto[543],25,100);
 
   if ((fin=fopen(ifile1,"rb"))==NULL) {
+	  printf("1108\n");
     fclose(fout);
     Progress(texto[543],100,100);
     v_texto=texto[231]; dialogo((int)err0); return;
@@ -1106,6 +1116,7 @@ void crear_instalacion(void) {
   fclose(fin);
 
   if (m==-1) {
+	  printf("1119\n");
     fclose(fout);
     Progress(texto[543],100,100);
     v_texto=texto[231]; dialogo((int)err0); return;
@@ -1115,6 +1126,7 @@ void crear_instalacion(void) {
   Progress(texto[543],75,100);
 
   if ((fin=fopen(ifile2,"rb"))==NULL) {
+	printf("1129\n");
     fclose(fout);
     Progress(texto[543],100,100);
     v_texto=texto[231]; dialogo((int)err0); return;
@@ -1125,6 +1137,7 @@ void crear_instalacion(void) {
   fclose(fin);
 
   if (m==-1) {
+	  printf("1140\n");
     fclose(fout);
     Progress(texto[543],100,100);
     v_texto=texto[231]; dialogo((int)err0); return;
@@ -1135,6 +1148,7 @@ void crear_instalacion(void) {
 
   if (segundo_font) {
     if ((fin=fopen(ifile3,"rb"))==NULL) {
+	printf("1151\n");
       fclose(fout);
       Progress(texto[543],100,100);
       v_texto=texto[231]; dialogo((int)err0); return;
@@ -1145,6 +1159,7 @@ void crear_instalacion(void) {
     fclose(fin);
 
     if (m==-1) {
+		printf("1162\n");
       fclose(fout);
       Progress(texto[543],100,100);
       v_texto=texto[231]; dialogo((int)err0); return;
@@ -1169,12 +1184,12 @@ void crear_instalacion(void) {
 
   strcpy(cWork,tipo[1].path);
   strcat(cWork,"/");
-  strcat(cWork,"INSTALL/INSTALL.DIV");
+  strcat(cWork,"install/INSTALL.DIV");
 
   strcpy(dWork,full);
   strcat(dWork,PackName);
 
-  if(!FileCopyICE(cWork,dWork,1,234)) { v_texto=texto[231]; dialogo((int)err0); return; }
+  if(!FileCopyICE(cWork,dWork,1,234)) { printf("1192\n"); v_texto=texto[231]; dialogo((int)err0); return; }
 
   DaniDel(cWork);              // Borra el INSTALL.DIV
 
@@ -1261,6 +1276,9 @@ int FileCopyICE(char *org,char *dest,int vols,int _texto) { // Devuelve 0-Error,
   buffer=(char *)malloc(16384);
   if(buffer==NULL) return 0;
 
+
+printf("in: %s\nout: %s\n",org, dest);
+return;
   fin=fopen(org,"rb");
   if(fin==NULL) { free(buffer); return 0; }
 
