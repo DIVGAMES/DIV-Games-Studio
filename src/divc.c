@@ -251,9 +251,6 @@ void factor_struct(void);
 void gen(int param, int op, int pa);
 void remove_code(int i);
 void add_code(int dir, int param, int op);
-void l_objetos (void);
-void l_ensamblador (void);
-
 
 
 
