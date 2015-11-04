@@ -1578,10 +1578,16 @@ void precarga_obj (void) {
 //  Adivina cual ser  la siguiente pieza lexica leida (y donde estar )
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-
+#if __WORDSIZE == 64
 #define ptr8 16
 #define ptr4 8
 #define ptr2 2
+#else
+#define ptr8 8
+#define ptr4 4
+#define ptr2 2
+
+#endif
 
 
 int next_pieza;
