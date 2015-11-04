@@ -4707,6 +4707,13 @@ void tloc_init(int tipo) {
 
 // OJO!!! tglo_init no puede llamar a test_buffer !!!
 
+#if __WORDSIZE == 64
+#define memptrsize long
+#else
+#define memptrsize int
+#endif
+
+
 void tglo_init2(int tipo) {
   int valor,dup,_imem,len,n;
   byte *oimemptr;
@@ -4716,17 +4723,17 @@ void tglo_init2(int tipo) {
     // Mira si finaliza la inicializaci¢n de datos
 
     if (pieza==p_cerrar || pieza==p_ptocoma) {
-      if (*(imemptr-(int)mem+(int)frm)==1 || tipo==1) {
+      if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) {
         imemptr+=2;
-        imem=((int)imemptr-(int)mem+3)/4;
-        if (*(imemptr-(int)mem+(int)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
-      } else if (*(imemptr-(int)mem+(int)frm)==2 || tipo==2) {
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+        if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
+      } else if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==2 || tipo==2) {
         imemptr++;
-        imem=((int)imemptr-(int)mem+3)/4;
-        if (*(imemptr-(int)mem+(int)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+        if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
       } else {
         imemptr+=4;
-        imem=((int)imemptr-(int)mem+3)/4;
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
       }
 //      test_buffer(&mem,&imem_max,imem);
       return;
@@ -4735,18 +4742,18 @@ void tglo_init2(int tipo) {
     // Una coma sola, como "3,,4", avanza una posici¢n (y define un 0)
 
     if (pieza==p_coma) {
-      if (*(imemptr-(int)mem+(int)frm)==1 || tipo==1) {
+      if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) {
         (*(word*)imemptr)=0;
         imemptr+=2;
-        imem=((int)imemptr-(int)mem+3)/4;
-        if (*(imemptr-(int)mem+(int)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
-      } else if (*(imemptr-(int)mem+(int)frm)==2 || tipo==2) {
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+        if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
+      } else if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==2 || tipo==2) {
         *imemptr++=0;
-        imem=((int)imemptr-(int)mem+3)/4;
-        if (*(imemptr-(int)mem+(int)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+        if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
       } else {
         imemptr+=4;
-        imem=((int)imemptr-(int)mem+3)/4;
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
       }
 //      test_buffer(&mem,&imem_max,imem);
       lexico(); continue;
@@ -4768,8 +4775,8 @@ void tglo_init2(int tipo) {
 
       // Mete un literal en un dato de tipo string
 
-      if ((((int)imemptr-(int)mem)%4)==0) {
-        imem=((int)imemptr-(int)mem+3)/4;
+      if ((((memptrsize)imemptr-(memptrsize)mem)%4)==0) {
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
         if (frm[imem]==0xdad00000) {
           if (strlen((char*)&mem_ory[valor])>(mem[imem]&0xFFFFF)+1) c_error(2,129);
           _imem=imem;
@@ -4784,31 +4791,31 @@ void tglo_init2(int tipo) {
 
       // Mete un valor literal en otro tipo de dato (en lugar de un string)
 
-      if (*(imemptr-(int)mem+(int)frm)==1 || tipo==1) { // Un string en words (el puntero short)
+      if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) { // Un string en words (el puntero short)
 
-        imemptr=(byte*)(((int)imemptr+1)&-2); // Lo hace par
+        imemptr=(byte*)(((memptrsize)imemptr+1)&-2); // Lo hace par
         *((word*)imemptr)=valor;
         imemptr+=2;
-        imem=((int)imemptr-(int)mem+3)/4;
-        if (*(imemptr-(int)mem+(int)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+        if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
         if (pieza!=p_coma) return;
         lexico(); continue;
 
-      } else if (*(imemptr-(int)mem+(int)frm)==2 || tipo==2) { // Un string en bytes
+      } else if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==2 || tipo==2) { // Un string en bytes
 
         oimemptr=imemptr;
-        while (*(oimemptr-(int)mem+(int)frm)==2) oimemptr++;
-        if (tipo==0) if (strlen((char*)&mem_ory[valor])>(int)(oimemptr-imemptr)) c_error(2,33);
+        while (*(oimemptr-(memptrsize)mem+(memptrsize)frm)==2) oimemptr++;
+        if (tipo==0) if (strlen((char*)&mem_ory[valor])>(memptrsize)(oimemptr-imemptr)) c_error(2,33);
         strcpy((char *)imemptr,(char*)&mem_ory[valor]);
         imemptr+=strlen((char *)imemptr);
-        imem=((int)imemptr-(int)mem+3)/4;
-        if (*(imemptr-(int)mem+(int)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+        if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
         if (pieza!=p_coma) return;
         lexico(); continue;
 
       } else { // Un string en un int (el puntero long, como en DIV 1)
 
-        imem=((int)imemptr-(int)mem+3)/4;
+        imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
         mem[imem++]=valor;
 //        test_buffer(&mem,&imem_max,imem);
         imemptr=(byte*)&mem[imem];
@@ -4822,36 +4829,36 @@ void tglo_init2(int tipo) {
       if (pieza!=p_abrir) {
         if (pieza!=p_dup) {
 
-          if ((((int)imemptr-(int)mem)%4)==0) {
-            imem=((int)imemptr-(int)mem+3)/4;
+          if ((((memptrsize)imemptr-(memptrsize)mem)%4)==0) {
+            imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
             if (frm[imem]==0xdad00000) c_error(2,128);
           }
 
           // Mete un valor num‚rico en la memoria
 
-          if (*(imemptr-(int)mem+(int)frm)==1 || tipo==1) { // En un word
+          if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) { // En un word
 
             if (valor<0 || valor>65535) c_error(2,144);
-            imemptr=(byte*)(((int)imemptr+1)&-2); // Lo hace par
+            imemptr=(byte*)(((memptrsize)imemptr+1)&-2); // Lo hace par
             *((word*)imemptr)=valor;
             imemptr+=2;
-            imem=((int)imemptr-(int)mem+3)/4;
-            if (*(imemptr-(int)mem+(int)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
+            imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+            if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=1 && tipo!=1) imemptr=(byte*)&mem[imem];
             if (pieza!=p_coma) return;
             lexico(); continue;
 
-          } else if (*(imemptr-(int)mem+(int)frm)==2 || tipo==2) { // En un byte
+          } else if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==2 || tipo==2) { // En un byte
 
             if (valor<0 || valor>255) c_error(2,143);
             *imemptr++=valor;
-            imem=((int)imemptr-(int)mem+3)/4;
-            if (*(imemptr-(int)mem+(int)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
+            imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+            if (*(imemptr-(memptrsize)mem+(memptrsize)frm)!=2 && tipo!=2) imemptr=(byte*)&mem[imem];
             if (pieza!=p_coma) return;
             lexico(); continue;
 
           } else { // En un int (lo normal en DIV 1)
 
-            imem=((int)imemptr-(int)mem+3)/4;
+            imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
             mem[imem++]=valor;
 //            test_buffer(&mem,&imem_max,imem);
             imemptr=(byte*)&mem[imem];
@@ -4887,9 +4894,9 @@ void tglo_init2(int tipo) {
         for (n=0;n<len;n++) {
 
           // Comprueba que las cadenas caigan sobre si mismas en los dup()...
-          if ((((int)imemptr-(int)mem)%4)==0) {
-            imem=((int)imemptr-(int)mem+3)/4;
-            _imem=((int)oimemptr+n-(int)mem+3)/4;
+          if ((((memptrsize)imemptr-(memptrsize)mem)%4)==0) {
+            imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
+            _imem=((memptrsize)oimemptr+n-(memptrsize)mem+3)/4;
             if (frm[imem]==0xdad00000) {
               if (frm[_imem]!=0xdad00000) c_error(3,136);
               else if (mem[imem]!=mem[_imem]) c_error(3,136);
@@ -4897,14 +4904,14 @@ void tglo_init2(int tipo) {
           }
 
           // Comprueba que los words caigan sobre words
-          if (*(byte*)((int)imemptr-(int)mem+(int)frm)==1) {
-            if (*(byte*)((int)oimemptr+n-(int)mem+(int)frm)!=1) c_error(3,136);
-          } else if (*(byte*)((int)oimemptr+n-(int)mem+(int)frm)==1) c_error(3,136);
+          if (*(byte*)((memptrsize)imemptr-(memptrsize)mem+(memptrsize)frm)==1) {
+            if (*(byte*)((memptrsize)oimemptr+n-(memptrsize)mem+(memptrsize)frm)!=1) c_error(3,136);
+          } else if (*(byte*)((memptrsize)oimemptr+n-(memptrsize)mem+(memptrsize)frm)==1) c_error(3,136);
 
           // Comprueba que los bytes caigan sobre bytes
-          if (*(byte*)((int)imemptr-(int)mem+(int)frm)==2) {
-            if (*(byte*)((int)oimemptr+n-(int)mem+(int)frm)!=2) c_error(3,136);
-          } else if (*(byte*)((int)oimemptr+n-(int)mem+(int)frm)==2) c_error(3,136);
+          if (*(byte*)((memptrsize)imemptr-(memptrsize)mem+(memptrsize)frm)==2) {
+            if (*(byte*)((memptrsize)oimemptr+n-(memptrsize)mem+(memptrsize)frm)!=2) c_error(3,136);
+          } else if (*(byte*)((memptrsize)oimemptr+n-(memptrsize)mem+(memptrsize)frm)==2) c_error(3,136);
 
           *imemptr++=*(oimemptr+n);
         }
@@ -4913,7 +4920,7 @@ void tglo_init2(int tipo) {
 
     lexico();
     if (pieza!=p_coma) {
-      imem=((int)imemptr-(int)mem+3)/4;
+      imem=((memptrsize)imemptr-(memptrsize)mem+3)/4;
       return;
     }
     lexico();
