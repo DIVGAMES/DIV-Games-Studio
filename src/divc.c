@@ -209,7 +209,7 @@
 //      DIV - Compilador Interno
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-//#define listados // Para generar los listados de objetos y EML (LST/TAB/EML)
+#define listados // Para generar los listados de objetos y EML (LST/TAB/EML)
 
 #include "global.h"
 #include "divdll.h"
@@ -235,7 +235,6 @@ void generar_expresion(void);
 void con0(void);
 void con1(void);
 void con2(void);
-void exp3(void);
 void exp00(int tipo_exp);
 void exp0(void);
 void exp1(void);
@@ -250,6 +249,9 @@ void factor_struct(void);
 void gen(int param, int op, int pa);
 void remove_code(int i);
 void add_code(int dir, int param, int op);
+void l_objetos (void);
+void l_ensamblador (void);
+
 
 
 
@@ -3273,7 +3275,7 @@ void sintactico (void) {
   if (pieza==p_setup_program) {
     program_type=1; 
     strcpy((char *)cWork,"install/setup.ins");
-  } else strcpy((char *)cWork,"system/EXEC.INS");
+  } else strcpy((char *)cWork,"system/exec.ins");
   if ((lins=fopen((char *)cWork,"wb"))==NULL) c_error(0,0);
 
   inicio_sentencia(); lexico();

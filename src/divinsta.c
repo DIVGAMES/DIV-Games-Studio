@@ -670,10 +670,10 @@ void crear_instalacion(void) {
   _dos_getdrive(&my_drive);
   _dos_setdrive((int)drive[0]-'A'+1,&_drive);
   _dos_getdrive(&_drive);
-#endif
   if (_drive!=(word)drive[0]-'A'+1) {
     v_texto=texto[356]; dialogo((int)err0); return;
   }
+#endif
 
   if (_drive<=2) { strcpy(dir,"/"); is_disk=_drive; } // En un disquete no crear  directorios
 
@@ -701,7 +701,7 @@ void crear_instalacion(void) {
 
   // *** Ficheros de la instalaci¢n (los de exec y los de setup)
 
-  fin=fopen("system/EXEC.INS","rb"); fseek(fin,0,SEEK_END); n=ftell(fin); fclose(fin);
+  fin=fopen("system/exec.ins","rb"); fseek(fin,0,SEEK_END); n=ftell(fin); fclose(fin);
 
   fin=fopen("install/setup.ins","rb"); fseek(fin,0,SEEK_END); x=ftell(fin);
   if (!include_setup) x=0;
@@ -710,7 +710,7 @@ void crear_instalacion(void) {
     fclose(fin); return;
   } fseek(fin,0,SEEK_SET); x=fread(_ins,1,x,fin); fclose(fin);
 
-  fin=fopen("system/EXEC.INS","rb"); n=fread(_ins+x,1,n,fin)+x; fclose(fin);
+  fin=fopen("system/exec.ins","rb"); n=fread(_ins+x,1,n,fin)+x; fclose(fin);
 
   nfiles=2; if (include_setup) nfiles++;
   while (ins<_ins+n) { nfiles++; ins+=strlen(ins)+1; } ins=_ins;
