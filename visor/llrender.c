@@ -219,7 +219,7 @@ void llrender_render(llrender *llrender_struct,lptface faces,int nfaces)
   for (i=0;i<nfaces;i++)
     caras[i]=&faces[i];
 
-  qsort(caras,nfaces,sizeof(lptface *),compara);
+  qsort(caras,nfaces,sizeof(lptface *),(__compar_fn_t)compara);
 
   i=0;
   do {
