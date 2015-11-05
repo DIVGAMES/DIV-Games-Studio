@@ -683,6 +683,21 @@ void sentencia(void);
 void expresion(void);
 int constante(void);
 
+static jmp_buf buf;
+
+void comp(void)
+{
+	if (!setjmp(buf))
+		compilar();
+}
+
+void comp_exit(void)
+{
+     longjmp(buf,1);        
+}
+
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Variables globales del compilador
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
