@@ -1136,6 +1136,7 @@ void test_siguiente(void) {
   // Zona a refrescar calculada
 
   cclock=(*system_clock)>>1;
+  printf("%d %d\n",cclock, system_clock);
 }
 
 void test_sel(void) {

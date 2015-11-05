@@ -221,6 +221,7 @@ int ct;
 
 void DIV_export(char *name,void *obj)
 {
+#ifdef DLL
 EXPORTENTRY *e;// ,*o;
 //printf("div export %s %x\n",name,obj);
 	// see if a export entry by this name already exists
@@ -241,7 +242,7 @@ EXPORTENTRY *e;// ,*o;
 //	   printf("out of memory\n");
 	
 // printf("pool %x %x \n",pool,obj);
-
+#endif
 }
 
 void DIV_UnLoadDll(PE *pefile)

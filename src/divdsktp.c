@@ -447,19 +447,14 @@ FILE *f;
         if(desktop==NULL)
                 return(0);
 	//	printf("loading saved session\n");
-        
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
-        
         fseek(desktop,8+4+4+768+65536,SEEK_SET);
         // Load each of the windows one by one
-//        printf("numvent: %d\n",numvent);
         for(x=0;x<numvent;x++)
         {
-//			printf("Restoring window (%d)\n",x);
                 // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
-//                printf("Type %d\n",(byte)ventana_aux.tipo);
                 switch(ventana_aux.tipo)
                 {
                         case    2: //menu
@@ -587,8 +582,7 @@ FILE *f;
                                 }
                                 break;
                         case    102: //prg
-								printf("Program file\n");
-                                fread(&iWork,1,4,desktop);
+                               fread(&iWork,1,4,desktop);
                                 if(iWork==0)
                                 {
                                         if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL)
