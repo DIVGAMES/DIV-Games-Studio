@@ -277,7 +277,7 @@ void init_debug(void) {
   if ((fondo_raton=(byte*)malloc(2048))==NULL) exer(1);
   init_big();
 
-  if ((f=fopen("system\\exec.dbg","rb"))!=NULL) {
+  if ((f=fopen("system/exec.dbg","rb"))!=NULL) {
     fseek(f,0,SEEK_END); n=ftell(f)-4;
     if ((o=(struct objeto *)malloc(n))!=NULL) {
       fseek(f,0,SEEK_SET);
@@ -295,7 +295,7 @@ void init_debug(void) {
     return;
   }
 
-  if ((f=fopen("system\\exec.lin","rb"))!=NULL) {
+  if ((f=fopen("system/exec.lin","rb"))!=NULL) {
     fseek(f,0,SEEK_END); n=ftell(f);
     if ((line=(int *)malloc(n))!=NULL) {
       fseek(f,0,SEEK_SET);
@@ -306,7 +306,7 @@ void init_debug(void) {
   } else line=NULL;
 
   if (line!=NULL)
-    if ((f=fopen("system\\exec.pgm","rb"))!=NULL) {
+    if ((f=fopen("system/exec.pgm","rb"))!=NULL) {
       fseek(f,0,SEEK_END); n=ftell(f);
       if ((source=(byte *)malloc(n))!=NULL) {
         fseek(f,0,SEEK_SET);
@@ -384,14 +384,14 @@ void init_big(void) {
     free(graf_ptr);
   } old_big=big;
 
-  if (big) f=fopen("system\\grande.fon","rb"); else f=fopen("system\\pequeno.fon","rb");
+  if (big) f=fopen("system/grande.fon","rb"); else f=fopen("system/pequeno.fon","rb");
   if (f==NULL) exer(5);
   fseek(f,0,SEEK_END); n=ftell(f);
   if ((text_font=(byte *)malloc(n))!=NULL) {
     fseek(f,0,SEEK_SET); fread(text_font,1,n,f); fclose(f);
   } else { fclose(f); exer(1); }
 
-  if (big) f=fopen("system\\graf_g.div","rb"); else f=fopen("system\\graf_p.div","rb");
+  if (big) f=fopen("system/GRAF_G.DIV","rb"); else f=fopen("system/GRAF_P.DIV","rb");
   if (f==NULL) exer(6);
   else {
     fseek(f,0,SEEK_END); n=ftell(f)-1352;
