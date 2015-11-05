@@ -794,6 +794,7 @@ short cdrom_installed (void)
   return (1);
 
 #endif
+return(0);
 }
 
 

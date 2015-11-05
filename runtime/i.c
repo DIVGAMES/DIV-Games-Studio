@@ -24,13 +24,6 @@
 #include <malloc.h>
 #include <time.h>
 
-
-#if __WORDSIZE == 32
-#define memptrsize int
-#else
-#define memptrsize long
-#endif
-
 #ifndef NET
 int inicializacion_red=0;
 #endif
@@ -212,7 +205,7 @@ void inicializacion (void) {
 
   if((ghost_inicial=(byte*)malloc(65536+512))==NULL) exer(1);
 
-  ghost=(char *)((int)(ghost_inicial+512)&0xFFFFFF00);
+  ghost=(byte *)((memptrsize)(ghost_inicial+512)&0xFFFFFF00);
 
   crea_cuad();
 
@@ -433,7 +426,7 @@ void system_font(void) {
 
   if ((sys06x08=(byte*)malloc(12288))==NULL) exer(1);
 
-  si=_06x08; di=sys06x08;
+  si=(byte *)_06x08; di=sys06x08;
 
   for (n=0;n<1536;n++) { x=*si++;
     for (m=0;m<8;m++) { if (x&128) *di++=1; else *di++=0; x*=2; } }
@@ -471,7 +464,7 @@ void guarda_pila(int id, int sp1, int sp2) {
   int n, * p;
   p=(int*)malloc((sp2-sp1+3)*sizeof(int));
   if (p!=NULL) {
-    mem[id+_SP]=(int)p; p[0]=sp1; p[1]=sp2;
+    mem[id+_SP]=(memptrsize)p; p[0]=sp1; p[1]=sp2;
     for (n=0;n<=sp2-sp1;n++) p[n+2]=pila[sp1+n];
   } else mem[id+_SP]=0;
 }
@@ -630,9 +623,9 @@ void trace_process(void) {
     mem[ide+_Executed]=1;
   }
   else {
-
+#ifdef MODE8
     _net_loop(); // Receive packets before executing process
-
+#endif
     id=ide; ip=mem[id+_IP]; carga_pila(id);
 
     continue_process:
@@ -705,7 +698,7 @@ void frame_start(void) {
           if (joy_check!=last_joy_check) ss_exit=3;
         }
         ss_frame();
-        volcado_completo=1; volcado((char*)copia);
+        volcado_completo=1; volcado((byte*)copia);
       } while (!ss_exit);
       if (ss_end!=NULL) ss_end();
       memcpy(copia,copia2,vga_an*vga_al);
@@ -773,7 +766,7 @@ void frame_start(void) {
         InitSound();
         break;
       }
-    } while (false); //get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
+    } while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
     volcados_saltados=0;
     saltar_volcado=0;
     freloj+=ireloj;
@@ -904,7 +897,7 @@ void frame_end(void) {
     if (restore_type==0 || restore_type==1) {
       if (!iscroll[0].on || iscroll[0].x || iscroll[0].y || iscroll[0].an!=vga_an || iscroll[0].al!=vga_al) {
         if (background_to_buffer!=NULL) background_to_buffer(); else {
-          if (old_restore_type==0) restore((char*)copia,(char*)copia2);
+          if (old_restore_type==0) restore((byte*)copia,(byte*)copia2);
           else memcpy(copia,copia2,vga_an*vga_al);
         }
       }
@@ -1090,7 +1083,7 @@ void frame_end(void) {
 
       if (old_dump_type) {
 
-        volcado_completo=1; volcado((char*)copia);
+        volcado_completo=1; volcado((byte*)copia);
 
       } else {
 
@@ -1110,7 +1103,7 @@ void frame_end(void) {
 
         // Realiza un volcado parcial
 
-        volcado((char*)copia);
+        volcado((byte*)copia);
 
       }
 
@@ -1297,7 +1290,7 @@ int main(int argc,char * argv[]) {
   unsigned long len,len_descomp;
   int mimem[10],n,i;
 
-  remove("C:\\DIV\\DEBUGSRC.TXT");
+  remove("DEBUGSRC.TXT");
 
   getcwd(divpath,PATH_MAX+1);
 
@@ -1340,9 +1333,9 @@ int main(int argc,char * argv[]) {
   }
 
 #ifdef DEBUG
-  inicializa_textos("system/lenguaje.int");
+  inicializa_textos((byte *)"system/lenguaje.int");
 #else
-  inicializa_textos(argv[0]);
+  inicializa_textos((byte *)argv[0]);
 #endif
 
   fseek(f,0,SEEK_END);
@@ -1494,7 +1487,7 @@ void busca_packfile(void) {
 void DebugInfo(char *Msg)
 {
   FILE *f;
-  if( (f=fopen("C:\\DIV\\DEBUGSRC.TXT","a")) != NULL ) {
+  if( (f=fopen("DEBUGSRC.TXT","a")) != NULL ) {
     fprintf(f, "%s\n", Msg);
     fclose(f);
   }
@@ -1503,7 +1496,7 @@ void DebugInfo(char *Msg)
 void DebugData(int Val)
 {
   FILE *f;
-  if( (f=fopen("C:\\DIV\\DEBUGSRC.TXT","a")) != NULL ) {
+  if( (f=fopen("DEBUGSRC.TXT","a")) != NULL ) {
     fprintf(f, "%d\n", Val);
     fclose(f);
   }

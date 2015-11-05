@@ -89,7 +89,9 @@ int quit_warning;
 
 static void Error_Reporter(char *msg)
 {
+#ifdef NOTYET
   quit_warning=(int)msg;
+#endif
 }
 
 static void Palette_Update(TFUByte (*TFpalette)[256][3]) {

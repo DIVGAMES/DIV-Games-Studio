@@ -76,7 +76,7 @@ extern int nomitidos;
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int get_reloj(void) {
-  return(reloj);
+  return(reloj/1000000);
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -93,7 +93,7 @@ void _signal(void) {
         mem[bp+_Status]=pila[sp--]-99;
         if (mem[bp+_Son]) signal_tree(mem[bp+_Son],pila[sp+1]-99);
       }
-    else pila[--sp]=0; // Devuelve el proceso o 0 si estaba muerto
+    else pila[--sp]=0; // Returns 0 if the process was dead
   } else {
     for (i=id_start; i<=id_end; i+=iloc_len)
       if (mem[i+_Status] && mem[i+_Bloque]==bp) {
@@ -268,7 +268,7 @@ int read_packfile(byte * file) {
           fseek(f,packdir[n].offset,SEEK_SET);
           fread(ptr,1,packdir[n].len,f);
           fclose(f);
-          if (!uncompress( packptr, &len_desc, ptr, packdir[n].len)) {
+          if (!uncompress( packptr, &len_desc, (byte *)ptr, packdir[n].len)) {
             free(ptr);
             return(packdir[n].len_desc);
           } else { free(ptr); free(packptr); return(-2); }
@@ -324,7 +324,7 @@ void load_pal(void) {
 
         if (strcmp((char *)pal,"map\x1a\x0d\x0a")) {
 
-          if (es_PCX((char*)pal)) { // Saca la paleta de un PCX
+          if (es_PCX((byte*)pal)) { // Saca la paleta de un PCX
 
             if (npackfiles) {
               m=read_packfile((byte*)&mem[pila[sp]]);
@@ -705,7 +705,7 @@ void load_fpg(void) {
 
   while (ptr<(byte*)g[num].fpg+file_len && *(int*)ptr<1000 && *(int*)ptr>0 ) {
     lst[*(int*)ptr]=iptr=(int*)ptr;
-    if (m!=palcrc) adaptar(ptr+64+iptr[15]*4,iptr[13]*iptr[14],(char*)(g[num].fpg)+8,&xlat[0]);
+    if (m!=palcrc) adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
     ptr+=*(int*)(ptr+4);
   }
 
@@ -1044,7 +1044,7 @@ void checkpal_font(int ifonts) {
         }
       }
 
-      if (process_fnt!=NULL) process_fnt(fonts[ifonts],file_len);
+      if (process_fnt!=NULL) process_fnt((char *)fonts[ifonts],file_len);
 
     }
 
@@ -1643,7 +1643,7 @@ FILE * open_save_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
-  packfile_del(file);
+  packfile_del((char *)file);
 
   strcpy(full,(char*)file);
   if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
@@ -1784,14 +1784,14 @@ void load_pcm(void) {
     if (m==-1) goto pcmfuera;
     if (m==-2) { pila[sp]=0; e(100); return; }
     if (m<=0) { pila[sp]=0; e(200); return; }
-    ptr=packptr; file_len=m;
+    ptr=(char *)packptr; file_len=m;
   } else {
     pcmfuera:
     if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(128); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
-      if ((ptr=(byte *)malloc(file_len))!=NULL) {
+      if ((ptr=(char *)malloc(file_len))!=NULL) {
         fseek(es,0,SEEK_SET);
         fread(ptr,1,file_len,es);
         fclose(es);
@@ -1889,14 +1889,14 @@ void load_song(void) {
     if (m==-1) goto songfuera;
     if (m==-2) { pila[sp]=0; e(100); return; }
     if (m<=0) { pila[sp]=0; e(200); return; }
-    ptr=packptr; file_len=m;
+    ptr=(char *)packptr; file_len=m;
   } else {
     songfuera:
     if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(167); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
-      if ((ptr=(byte *)malloc(file_len))!=NULL) {
+      if ((ptr=(char *)malloc(file_len))!=NULL) {
         fseek(es,0,SEEK_SET);
         fread(ptr,1,file_len,es);
         fclose(es);
@@ -2727,7 +2727,7 @@ void _strset(void) {
   sp--;
 }
 
-byte strupper[256]=
+byte strupper[270]=
   "                                                                "
   " ABCDEFGHIJKLMNOPQRSTUVWXYZ      ABCDEFGHIJKLMNOPQRSTUVWXYZ     "
   "€AAA€EEEIIIA’’OOUUY     AIOUฅฅ                          "
@@ -2746,7 +2746,7 @@ void __strupr(void) {
   }
 }
 
-byte strlower[256]=
+byte strlower[260]=
   "                                                                "
   " abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz     "
   "…‘‘“”•–—”      กขฃคค                          "
@@ -2835,9 +2835,14 @@ int sort5(int *a,int *b) {
   return(-strcmp((char*)&mem[*(a+offset_clave)],(char*)&mem[*(b+offset_clave)]));
 }
 
-int unsort0(byte *a,byte *b) {
-  return((int)(xlat_rnd[*(a+offset_clave*4)]^(xlat_rnd[*(a+1+offset_clave*4)]/2)^(xlat_rnd[*(a+2+offset_clave*4)]/4)^(xlat_rnd[*(a+3+offset_clave*4)]/8))
+int unsort00(byte *a, byte *b){
+	  return((int)(xlat_rnd[*(a+offset_clave*4)]^(xlat_rnd[*(a+1+offset_clave*4)]/2)^(xlat_rnd[*(a+2+offset_clave*4)]/4)^(xlat_rnd[*(a+3+offset_clave*4)]/8))
         -(int)(xlat_rnd[*(b+offset_clave*4)]^(xlat_rnd[*(b+1+offset_clave*4)]/2)^(xlat_rnd[*(b+2+offset_clave*4)]/4)^(xlat_rnd[*(b+3+offset_clave*4)]/8)));
+}
+
+
+int unsort0(void *a,void *b) {
+	return unsort00((byte *)a,(byte *)b);
 }
 
 void sort(void) {
@@ -2849,19 +2854,19 @@ void sort(void) {
 
   if (modo<0 || modo>1) {
     for (modo=0;modo<256;modo++) xlat_rnd[modo]=rnd();
-    qsort(&mem[offset],numreg,size*4,unsort0);
+    qsort(&mem[offset],numreg,size*4,(__compar_fn_t)unsort0);
   } else switch(tipo_clave) {
     case 0:
-      if (modo) qsort(&mem[offset],numreg,size*4,sort1);
-      else qsort(&mem[offset],numreg,size*4,sort0);
+      if (modo) qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort1);
+      else qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort0);
       break;
     case 1:
-      if (modo) qsort(&mem[offset],numreg,size*4,sort3);
-      else qsort(&mem[offset],numreg,size*4,sort2);
+      if (modo) qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort3);
+      else qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort2);
       break;
     case 2:
-      if (modo) qsort(&mem[offset],numreg,size*4,sort5);
-      else qsort(&mem[offset],numreg,size*4,sort4);
+      if (modo) qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort5);
+      else qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort4);
       break;
   }
   max_reloj+=reloj-old_reloj;
@@ -2934,7 +2939,7 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
     }
   }
 
-  if (pila[sp]=(int)f) {
+  if (pila[sp]=(memptrsize)f) {
     for (x=0;x<32;x++) if (tabfiles[x]==0) break;
     if (x==32) {
       fclose(f);
@@ -3109,7 +3114,7 @@ void get_dirinfo(void) {
     x++;
   }
 
-  qsort(filenames,x,16,strcmp);
+  qsort(filenames,x,16,(__compar_fn_t)strcmp);
 
   dirinfo->files=pila[sp]=x;
 }
@@ -3558,7 +3563,7 @@ void save_mapcx(int tipo) {
   an=ptr[13]; al=ptr[14];
   buffer=(byte*)ptr+64+ptr[15]*4;
 
-  if ((f=open_save_file(cwork))==NULL) { e(123); return; }
+  if ((f=open_save_file((byte *)cwork))==NULL) { e(123); return; }
   if (tipo) {
     if (graba_PCX(buffer,an,al,f)) { fclose(f); e(100); return; }
   } else {
@@ -3947,9 +3952,9 @@ void _malloc(void) {
 
   memset(divmalloc[con].ptr,0,pila[sp]*4+4+3);
 
-  p=(byte*) ( ( ( (int) divmalloc[con].ptr+3) /4)*4 );
+  p=(byte*) ( ( ( (memptrsize) divmalloc[con].ptr+3) /4)*4 );
 
-  divmalloc[con].imem1=((int)p-(int)mem)/4;
+  divmalloc[con].imem1=((memptrsize)p-(memptrsize)mem)/4;
 
   if (!(divmalloc[con].imem1&1)) divmalloc[con].imem1++;
 
@@ -4026,19 +4031,19 @@ void encode_file(int encode) {
 
   pila[sp]=1;
 
-  strcpy(cwork2, name);
+  strcpy(cwork2, (char *)name);
   for(x=strlen(cwork2)-1;; x--) {
     if(x==-1) { cwork2[0]=0; break; }
     if(cwork2[x]=='/') { cwork2[x+1]=0; break; }
   }
 
-  rc=_dos_findfirst(name,_A_NORMAL,&ft);
+  rc=_dos_findfirst((char *)name,_A_NORMAL,&ft);
   while(!rc) {
     strcpy(cwork3,cwork2);
     strcat(cwork3,ft.name);
     if (_fullpath(cwork1, cwork3, _MAX_PATH)==NULL) strcpy(cwork1,ft.name);
     _dos_setfileattr(cwork1,_A_NORMAL);
-    _encriptar(encode,cwork1,clave);
+    _encriptar(encode,cwork1,(char *)clave);
     rc=_dos_findnext(&ft);
   }
 
@@ -4066,9 +4071,9 @@ void _encriptar(int encode, char * fichero, char * clave) {
   } else { pila[sp]=0; e(105); return; }
 
   if (encode) {
-    if (!strcmp(ptr,"dj!\x1a\x0d\x0a\xff")) return; else p=ptr;
+    if (!strcmp((char *)ptr,"dj!\x1a\x0d\x0a\xff")) return; else p=ptr;
   } else {
-    if (strcmp(ptr,"dj!\x1a\x0d\x0a\xff")) return; else { p=ptr+8; size-=8; }
+    if (strcmp((char *)ptr,"dj!\x1a\x0d\x0a\xff")) return; else { p=ptr+8; size-=8; }
   }
 
   init_rnd_coder(size+1133,clave);
@@ -4082,7 +4087,7 @@ void _encriptar(int encode, char * fichero, char * clave) {
     pila[sp]=0; free(ptr); e(105); return;
   }
 
-  if ((f=open_save_file(fichero))==NULL) {
+  if ((f=open_save_file((byte *)fichero))==NULL) {
     rename(full,fichero); free(ptr); pila[sp]=0; e(105); return;
   }
 
@@ -4128,13 +4133,13 @@ void _compress(int encode) {
 
   pila[sp]=1;
 
-  strcpy(cwork2, name);
+  strcpy(cwork2,(char *) name);
   for(x=strlen(cwork2)-1;; x--) {
     if(x==-1) { cwork2[0]=0; break; }
     if(cwork2[x]=='/') { cwork2[x+1]=0; break; }
   }
 
-  rc=_dos_findfirst(name,_A_NORMAL,&ft);
+  rc=_dos_findfirst((char *)name,_A_NORMAL,&ft);
   while(!rc) {
     strcpy(cwork3,cwork2);
     strcat(cwork3,ft.name);
@@ -4168,7 +4173,7 @@ void _comprimir(int encode, char *fichero) {
   } else { pila[sp]=0; e(105); return; }
 
   if (encode) {
-    if (!strcmp(ptr,"zx!\x1a\x0d\x0a\xff")) return;
+    if (!strcmp((char *)ptr,"zx!\x1a\x0d\x0a\xff")) return;
     size2=size+size/100+256;
     if ((ptr_dest=(byte *)malloc(size2))==NULL) {
       free(ptr); pila[sp]=0; e(100); return;
@@ -4182,7 +4187,7 @@ void _comprimir(int encode, char *fichero) {
     if (size2>=size-12) { free(ptr_dest); free(ptr); return; }
 
   } else {
-    if (strcmp(ptr,"zx!\x1a\x0d\x0a\xff")) return;
+    if (strcmp((char *)ptr,"zx!\x1a\x0d\x0a\xff")) return;
     size2=*(int*)(ptr+8);
     if ((ptr_dest=(byte *)malloc(size2))==NULL) {
       free(ptr); pila[sp]=0; e(100); return;
@@ -4202,7 +4207,7 @@ void _comprimir(int encode, char *fichero) {
     pila[sp]=0; free(ptr_dest); e(105); return;
   }
 
-  if ((f=open_save_file(fichero))==NULL) {
+  if ((f=open_save_file((byte *)fichero))==NULL) {
     rename(full,fichero); free(ptr_dest); pila[sp]=0; e(105); return;
   }
 
@@ -4355,8 +4360,8 @@ void function(void) {
 #endif
 #ifdef MODE8
     case 81: stop_mode8(); break;
-    case 82: x_advance(); break;
 #endif
+    case 82: x_advance(); break;
     case 83: _strchar(); break;
     case 84: path_find(); break;
     case 85: path_line(); break;

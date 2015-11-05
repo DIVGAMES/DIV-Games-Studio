@@ -5,7 +5,7 @@
 #define GLOBAL extern
 #endif
 
-#include "include.div"
+//#include "include.div"
 
 #define INTERPRETE
 
@@ -22,8 +22,12 @@
 #include <ctype.h>
 //#include <direct.h>
 #include <signal.h>
-
+#include <time.h>
 #include "../src/osdep.h"
+
+typedef void(*voidReturnType)(void);
+void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
+
 
 //#include <bios.h>
 //#include <dos.h>

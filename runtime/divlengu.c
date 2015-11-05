@@ -37,7 +37,7 @@ void inicializa_textos(byte * fichero) {
 
 #ifdef DEBUG
 
-  if ((f=fopen(fichero,"rb"))!=NULL) {
+  if ((f=fopen((char *)fichero,"rb"))!=NULL) {
     fseek(f,0,SEEK_END); n=ftell(f);
     if ((textos=(byte *)malloc(n))!=NULL) {
       fseek(f,0,SEEK_SET);
@@ -50,7 +50,7 @@ void inicializa_textos(byte * fichero) {
 
 #else
 
-  if ((f=fopen(fichero,"rb"))!=NULL) {
+  if ((f=fopen((char *)fichero,"rb"))!=NULL) {
     fseek(f,-4,SEEK_END);
     fread(&n,4,1,f);
     DebugData(n);
@@ -80,7 +80,7 @@ void analiza_textos(void) {
 
   q_lengu=p_lengu=textos;
 
-  if (!strcmp(p_lengu,"Zk!")) {
+  if (!strcmp((char *)p_lengu,"Zk!")) {
     p_lengu+=4;
     coder(p_lengu,fin_textos-textos-4,"lave");
   }
