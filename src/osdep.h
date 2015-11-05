@@ -19,6 +19,13 @@
 #include <SDL/SDL_mixer.h>
 
 
+#if __WORDSIZE == 32
+#define memptrsize int
+#else
+#define memptrsize long
+#endif
+
+
 #define far /*far*/
 #define __far /*__far*/
 #define __near /*__near*/
@@ -31,8 +38,9 @@
 ///////////////////////////////////////////////////
 // DEFINED IN osdep.cpp
 ///////////////////////////////////////////////////
+#include <stdlib.h>
 
-#ifdef __llvm__
+#ifdef __llvm___
 #include <string.h>
 #else
 extern char * strupr(char *string);
@@ -41,6 +49,8 @@ extern char * strlwr(char *string);
 
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 char * itoa(long n, char *buf, int len);
+void sdlkeyinit(void);
+extern uint8_t sdl2key[255];
 
 #define ltoa itoa 
 #define stdprn stdout

@@ -214,12 +214,17 @@ while(SDL_PollEvent(&event))
 			//	printf("click\n");
 				m_b = 1;
 			}
-			if (event.type == SDL_KEYDOWN)
+			 if (event.type == SDL_KEYDOWN)
             {
-				scan_code = event.key.keysym.scancode;
+				scan_code = sdl2key[event.key.keysym.sym];
 				ascii = event.key.keysym.unicode&0x7f;
-//				printf("key pressed %c\n",ascii);
-
+				key(scan_code)=1;
+			}
+			if(event.type == SDL_KEYUP) 
+			{
+				scan_code = sdl2key[event.key.keysym.sym];
+				//scan_code = event.key.keysym.scancode;
+				key(scan_code)=0;
 			}
 
 			if (event.type == SDL_MOUSEBUTTONUP)

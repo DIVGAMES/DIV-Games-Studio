@@ -7,7 +7,7 @@
 #include "global.h"
 
 
-#ifdef __llvm__
+#ifdef __llvm___
 #include <string.h>
 
 #else
@@ -83,6 +83,7 @@ char * itoa(long n, char *buf, int len)
     snprintf(buf, len+1, "%ld", n);
     return   buf;
 }
+
 
 void call(int *(*func)() ) {
 	func();
@@ -256,7 +257,7 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 
  unsigned int ret =0;
 
-printf("name is %s\n",name);
+//printf("name is %s\n",name);
 
 strcpy(findmask,strlwr(name));
 
@@ -279,7 +280,7 @@ type = attr;
 //n--;
 ret =_dos_findnext(result);
 
-printf("matches: %d\n",nummatch);
+//printf("matches: %d\n",nummatch);
 
 return (ret);
 
@@ -302,7 +303,7 @@ while(++np<nummatch) {
 	result->attrib=0;
 	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
 		if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
-			printf("free'ing np [%d] (DIR) [%s]\n",np,result->name);
+			//printf("free'ing np [%d] (DIR) [%s]\n",np,result->name);
 			free(namelist[np]);
 			result->attrib=16;
 			return 0;
@@ -312,14 +313,14 @@ while(++np<nummatch) {
 	if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 		
 		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
-			printf("free'ing np [%d] [FILE]\n",np,result->name);
+			//printf("free'ing np [%d] [FILE]\n",np,result->name);
 			free(namelist[np]);
 			result->attrib=0;
 			return 0;
 		} 
 	}
 }
-printf("free'ing np [%d] *not matched* %s\n",np, namelist[np]->d_name);
+//printf("free'ing np [%d] *not matched* %s\n",np, namelist[np]->d_name);
 
 free(namelist[np]);
 }
@@ -334,7 +335,7 @@ unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
 	return 1;
 }
 
-#ifndef __llvm__
+#ifndef __llvm___
 void mkdir(char *dir) {
 	printf("mkdir %\n",dir);
 }
@@ -350,3 +351,130 @@ void textcolor(int attr, int fg, int bg)
 	printf("%s", command);
 }
 
+uint8_t sdl2key[255];
+//#define _s sdl2key
+
+void sdlkeyinit(void) {
+
+sdl2key[SDLK_ESCAPE]=1;
+sdl2key[SDLK_F1]=59;
+sdl2key[SDLK_F2]=60;
+sdl2key[SDLK_F3]=61;
+sdl2key[SDLK_F4]=62;
+sdl2key[SDLK_F5]=63;
+sdl2key[SDLK_F6]=64;
+sdl2key[SDLK_F7]=65;
+sdl2key[SDLK_F8]=66;
+sdl2key[SDLK_F9]=67;
+sdl2key[SDLK_F10]=68;
+sdl2key[SDLK_F11]=87;
+sdl2key[SDLK_F12]=88;
+sdl2key[SDLK_PRINT]=55;
+sdl2key[SDLK_SCROLLOCK]=70;
+
+sdl2key[SDLK_BACKQUOTE]=41;
+sdl2key[SDLK_UP]=72;
+sdl2key[SDLK_DOWN]=80;
+sdl2key[SDLK_LEFT]=75;
+sdl2key[SDLK_RIGHT]=77;
+
+sdl2key[SDLK_1]=2;
+sdl2key[SDLK_2]=3;
+sdl2key[SDLK_3]=4;
+sdl2key[SDLK_4]=5;
+sdl2key[SDLK_5]=6;
+sdl2key[SDLK_6]=7;
+sdl2key[SDLK_7]=8;
+sdl2key[SDLK_8]=9;
+sdl2key[SDLK_9]=10;
+sdl2key[SDLK_0]=11;
+sdl2key[SDLK_MINUS]=12;
+sdl2key[SDLK_PLUS]=13;
+sdl2key[SDLK_BACKSPACE]=14;
+
+
+sdl2key[SDLK_TAB]=15;
+sdl2key[SDLK_q]=16;
+sdl2key[SDLK_w]=17;
+sdl2key[SDLK_e]=18;
+sdl2key[SDLK_r]=19;
+sdl2key[SDLK_t]=20;
+sdl2key[SDLK_y]=21;
+sdl2key[SDLK_u]=22;
+sdl2key[SDLK_i]=23;
+sdl2key[SDLK_o]=24;
+sdl2key[SDLK_p]=25;
+sdl2key[SDLK_LEFTBRACKET]=26;
+sdl2key[SDLK_RIGHTBRACKET]=27;
+sdl2key[SDLK_RETURN]=28;
+
+sdl2key[SDLK_CAPSLOCK]=58;
+sdl2key[SDLK_a]=30;
+sdl2key[SDLK_s]=31;
+sdl2key[SDLK_d]=32;
+sdl2key[SDLK_f]=33;
+sdl2key[SDLK_g]=34;
+sdl2key[SDLK_h]=35;
+sdl2key[SDLK_j]=36;
+sdl2key[SDLK_k]=37;
+sdl2key[SDLK_l]=38;
+sdl2key[SDLK_SEMICOLON]=39;
+sdl2key[SDLK_QUOTE]=40;
+sdl2key[SDLK_BACKSLASH]=43;
+
+sdl2key[SDLK_LSHIFT]=42;
+sdl2key[SDLK_z]=44;
+sdl2key[SDLK_x]=45;
+sdl2key[SDLK_c]=46;
+sdl2key[SDLK_v]=47;
+sdl2key[SDLK_b]=48;
+sdl2key[SDLK_n]=49;
+sdl2key[SDLK_m]=50;
+sdl2key[SDLK_COMMA]=51;
+sdl2key[SDLK_PERIOD]=51;
+sdl2key[SDLK_SLASH]=51;
+sdl2key[SDLK_RSHIFT]=54;
+
+sdl2key[SDLK_LCTRL]=29;
+sdl2key[SDLK_RCTRL]=29;
+sdl2key[SDLK_LALT]=56;
+sdl2key[SDLK_RALT]=56;
+sdl2key[SDLK_SPACE]=57;
+sdl2key[SDLK_INSERT]=82;
+sdl2key[SDLK_HOME]=71;
+sdl2key[SDLK_PAGEUP]=73;
+sdl2key[SDLK_DELETE]=83;
+sdl2key[SDLK_END]=79;
+sdl2key[SDLK_PAGEDOWN]=81;
+
+sdl2key[SDLK_NUMLOCK]=69;
+
+sdl2key[SDLK_KP_DIVIDE]=53;
+sdl2key[SDLK_KP_MULTIPLY]=53;
+sdl2key[SDLK_KP_MINUS]=74;
+
+//sdl2key[SDLK_LSHIFT]=43;
+
+#ifdef NOTYET
+//const _wave=41
+const _enter=28
+
+const _num_lock=69
+const _c_backslash=53
+const _c_asterisk=55
+const _c_minus=74
+const _c_home=71
+const _c_up=72
+const _c_pgup=73
+const _c_left=75
+const _c_center=76
+const _c_right=77
+const _c_end=79
+const _c_down=80
+const _c_pgdn=81
+const _c_ins=82
+const _c_del=83
+const _c_plus=78
+const _c_enter=28
+#endif
+}
