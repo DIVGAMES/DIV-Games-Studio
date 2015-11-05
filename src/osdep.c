@@ -5,7 +5,6 @@
 
 #include <fnmatch.h>
 #include "global.h"
-static jmp_buf buf;
 
 
 #ifdef __llvm__
@@ -104,19 +103,6 @@ void call(const voidReturnType func) {
 }
 
 
-
-void comp(void)
-{
-	if (!setjmp(buf))
-		compilar();
-}
-
-void comp_exit(void)
-{
-     longjmp(buf,1);        
-}
-
-#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -255,22 +241,22 @@ char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
 }
 
 
-struct dirent **namelist=NULL;
-int n=NULL;
+int nummatch=0;
 int np=0;
 int type=0;
 
 char findmask[255];
 char findname[2048];
 
-unsigned int _dos_findfirst(char *name, unsigned int attr, 
-                            struct find_t *result) {
-//								printf("TODO - findfirst\n");
+struct dirent **namelist=NULL;
+
+unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result) {
+//printf("TODO - findfirst\n");
 
 
-unsigned int ret =0;
+ unsigned int ret =0;
 
-//printf("name is %s\n",name);
+printf("name is %s\n",name);
 
 strcpy(findmask,strlwr(name));
 
@@ -278,26 +264,22 @@ strcpy(findmask,strlwr(name));
 
   //  int n;
 
-if(n!=NULL && namelist!=NULL) {
-	while(++np<n) {
+if(namelist!=NULL) {
+	while(++np<nummatch) {
 		free(namelist[np]);
 	}
-//	printf("free'ing old find struct\n");
-	if(namelist!=NULL) {
-	//	printf("free'ing namelist %x\n",namelist);
-		free(namelist);
-		namelist=NULL;
-	}
+	free(namelist);
+	namelist=NULL;
 }
 
-    n = scandir(".", &namelist, 0, alphasort); 
+    nummatch = scandir(".", &namelist, 0, alphasort); 
 np=-1;
 type = attr;
 
 //n--;
 ret =_dos_findnext(result);
 
-//printf("matches: %d\n",ret);
+printf("matches: %d\n",nummatch);
 
 return (ret);
 
@@ -315,39 +297,34 @@ return (ret);
 unsigned int _dos_findnext(struct find_t *result) {
 //	printf("TODO - findnext\n");
 	
-while(++np<n) {
+while(++np<nummatch) {
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
-//printf("findnext: %s\n",namelist[np]->d_name);
+	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
+		if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
+			printf("free'ing np [%d] (DIR) [%s]\n",np,result->name);
+			free(namelist[np]);
+			result->attrib=16;
+			return 0;
+		} 
+		strcpy(findname, result->name);
 
-if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
-
-	
-	if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
-		free(namelist[np]);
-		result->attrib=16;
-		return 0;
-	} 
-	strcpy(findname, result->name);
-
-if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
-	
-//	printf("%s %s\n",findmask,strlwr(findname));
-	
-	
-	if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
-		free(namelist[np]);
-		result->attrib=0;
-		return 0;
-	} 
+	if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
+		
+		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
+			printf("free'ing np [%d] [FILE]\n",np,result->name);
+			free(namelist[np]);
+			result->attrib=0;
+			return 0;
+		} 
+	}
 }
-//	printf("%s %d %d \n",result->name,n,np);
-	
-//	return 0; 	
+printf("free'ing np [%d] *not matched* %s\n",np, namelist[np]->d_name);
 
-}
 free(namelist[np]);
 }
+//free(namelist);
+//namelist=NULL;
 	return 1;
 }
 
@@ -363,3 +340,13 @@ void mkdir(char *dir) {
 }
 
 #endif
+
+
+void textcolor(int attr, int fg, int bg)
+{	char command[13];
+
+	/* Command is the control command to the terminal */
+	sprintf(command, "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40);
+	printf("%s", command);
+}
+

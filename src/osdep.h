@@ -9,10 +9,10 @@
 #include <setjmp.h>
 #define cprintf printf
 
-#define _MAX_PATH PATH_MAX
+#define _MAX_PATH 260
 #define _MAX_DRIVE 26
-#define _MAX_DIR 2048
-#define _MAX_FNAME 256
+#define _MAX_DIR 66
+#define _MAX_FNAME 256+100
 #define _MAX_EXT 64
 
 #include <SDL/SDL.h>
@@ -113,6 +113,25 @@ extern int _chdir(const char* Directory);
 
 #define SoundInfo SDL_AudioSpec
 
+#define RESET		0
+#define BRIGHT 		1
+#define DIM		2
+#define UNDERLINE 	3
+#define BLINK		4
+#define REVERSE		7
+#define HIDDEN		8
+
+#define BLACK 		0
+#define RED		1
+#define GREEN		2
+#define YELLOW		3
+#define BLUE		4
+#define MAGENTA		5
+#define CYAN		6
+#define	WHITE		7
+
+
+void textcolor(int attr, int fg, int bg);
 
 #endif // __OSDEP_H
 
