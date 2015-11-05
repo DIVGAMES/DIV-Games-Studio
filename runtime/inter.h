@@ -126,7 +126,7 @@ extern int debug_active;
 // Assembler (a.asm - replaced with a.cpp)
 
 void memcpyb(byte * di, byte * si, int n);
-void call(void *(*func)() );
+void call(int *(*func)() );
 
 // Mode8 (vpe/vpedll.cpp)
 

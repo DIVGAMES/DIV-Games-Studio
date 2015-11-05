@@ -175,6 +175,48 @@ void tecla_bios(void) {
 }
 
 void tecla(void) {
+SDL_Event event;
+while(SDL_PollEvent(&event))
+        {
+            /* If a quit event has been sent */
+            if (event.type == SDL_QUIT)
+            {
+                /* Quit the application */
+//                salir_del_entorno=1;
+                exit(0);
+            }
+            
+            if (event.type == SDL_KEYDOWN)
+            {
+				printf("key pressed\n");
+				scan_code = event.key.keysym.scancode;
+				kbdFLAGS[scan_code]=1;
+			}
+			if(event.type == SDL_KEYUP) 
+			{
+				scan_code = event.key.keysym.scancode;
+				kbdFLAGS[scan_code]=0;
+			}
+			  if (event.type == SDL_MOUSEMOTION)
+            {
+		//		m_x+=event.motion.xrel;
+		//		m_y+=event.motion.yrel;
+			}
+            /* If a button on the mouse is pressed. */
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+				printf("click\n");
+		//		m_b = 1;
+			}
+			
+			if (event.type == SDL_MOUSEBUTTONUP)
+            {
+		//		m_b = 0;
+			}
+			
+        }
+
+
 #ifdef DOS
   union REGS r;
   struct SREGS s;

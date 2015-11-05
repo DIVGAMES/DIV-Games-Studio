@@ -47,6 +47,10 @@ void get_sector_texture(void);
 void set_wall_texture(void);
 void get_wall_texture(void);
 void _object_avance(int ide,int angulo,int velocidad);
+#ifndef MODE8
+void _object_avance(int ide,int angulo,int velocidad) {
+}
+#endif
 void set_env_color(void);
 
 void path_find(void);
@@ -142,14 +146,14 @@ FILE * open_file(byte * file) {
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='\\') strcat(full,"\\");
+    if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,(char*)file);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
       strcpy(full,fname);
       strcat(full,ext);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"\\");
+        if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
@@ -171,14 +175,16 @@ FILE * open_file(byte * file) {
   char ext[_MAX_EXT+1];
 
   strcpy(full,(char*)file);
+printf("opening file: %s\n",file);
 
-  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
-  _splitpath(full,drive,dir,fname,ext);
-  strcpy(full,fname);
-  strcat(full,ext);
+//  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
+//printf("hello\n");
+//  _splitpath(full,drive,dir,fname,ext);
+//  strcpy(full,fname);
+//  strcat(full,ext);
   if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full)) strcat(full,"\\");
+    if (strlen(full)) strcat(full,"/");
     strcat(full,fname);
     strcat(full,ext);
     if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
@@ -1582,7 +1588,7 @@ FILE * open_save_file(byte * file) {
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='\\') strcat(full,"\\");
+    if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,(char*)file);
     if ((f=fopen(full,"wb"))==NULL) {                   // "est\paz\fixero.est"
       strcpy(full,fname);
@@ -1595,7 +1601,7 @@ FILE * open_save_file(byte * file) {
         } else return(f);
       } else {
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"\\");
+        if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
         if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
@@ -1644,7 +1650,7 @@ FILE * open_save_file(byte * file) {
   _splitpath(full,drive,dir,fname,ext);
 
   if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-  if (strlen(full)) strcat(full,"\\");
+  if (strlen(full)) strcat(full,"/");
   strcat(full,fname);
   strcat(full,ext);
   if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
@@ -2323,16 +2329,19 @@ void _exit_dos(void) {
   #ifdef DEBUG
   FILE * f;
   #endif
+#ifdef DLL
   while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
+#endif
 
+#ifdef NET
   if (inicializacion_red) net_end();
-
+#endif
   rvmode();
 //EndSound();
   kbdReset();
 
   #ifdef DEBUG
-  if ((f=fopen("system\\exec.err","wb"))!=NULL) {
+  if ((f=fopen("system/exec.err","wb"))!=NULL) {
     fwrite("\x0\x0\x0\x0",4,1,f);
     fwrite(&pila[sp],4,1,f);
     fwrite(&mem[pila[sp-1]],1,strlen((char*)(&mem[pila[sp-1]]))+1,f);
@@ -2910,14 +2919,14 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
     if (_fullpath(full,(char*)&mem[pila[sp]],_MAX_PATH)==NULL) { pila[sp]=0; return; }
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && memb[pila[sp]*4]!='\\') strcat(full,"\\");
+    if (strlen(full) && memb[pila[sp]*4]!='/') strcat(full,"/");
     strcat(full,(char*)&mem[pila[sp]]);
     if ((f=fopen(full,modo))==NULL) {                   // "est\paz\fixero.est"
       strcpy(full,fname);
       strcat(full,ext);
       if ((f=fopen(full,modo))==NULL) {                 // "fixero.est"
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"\\");
+        if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
         f=fopen(full,modo);                             // "est\fixero.est"
@@ -3159,9 +3168,11 @@ void get_fileinfo(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void getdrive(void) {
+#ifdef DOS
   unsigned int drive;
   _dos_getdrive(&drive);
   pila[++sp]=drive;
+#endif
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -3194,12 +3205,12 @@ void _mkdir(void) {
   buffer=(char*)&mem[pila[sp]];
 
   if (strlen(buffer))
-    if (buffer[strlen(buffer)-1]=='\\')
+    if (buffer[strlen(buffer)-1]=='/')
       buffer[strlen(buffer)-1]=0;
 
   for(x=0;x<strlen(buffer);x++) {
     if (x>0 && buffer[x-1]==':') continue;
-    if(buffer[x]=='\\') {
+    if(buffer[x]=='/') {
       strcpy(cwork,buffer);
       cwork[x]=0;
       mkdir(cwork);
@@ -3226,7 +3237,7 @@ void remove_file(void) {
 
   for(x=strlen(cwork2)-1;; x--) {
     if(x==-1) { cwork2[0]=0; break; }
-    if(cwork2[x]=='\\') { cwork2[x+1]=0; break; }
+    if(cwork2[x]=='/') { cwork2[x+1]=0; break; }
   }
 
   rc=_dos_findfirst((char *)&mem[pila[sp]],_A_NORMAL|_A_SYSTEM|_A_HIDDEN,&ft);
@@ -4018,7 +4029,7 @@ void encode_file(int encode) {
   strcpy(cwork2, name);
   for(x=strlen(cwork2)-1;; x--) {
     if(x==-1) { cwork2[0]=0; break; }
-    if(cwork2[x]=='\\') { cwork2[x+1]=0; break; }
+    if(cwork2[x]=='/') { cwork2[x+1]=0; break; }
   }
 
   rc=_dos_findfirst(name,_A_NORMAL,&ft);
@@ -4120,7 +4131,7 @@ void _compress(int encode) {
   strcpy(cwork2, name);
   for(x=strlen(cwork2)-1;; x--) {
     if(x==-1) { cwork2[0]=0; break; }
-    if(cwork2[x]=='\\') { cwork2[x+1]=0; break; }
+    if(cwork2[x]=='/') { cwork2[x+1]=0; break; }
   }
 
   rc=_dos_findfirst(name,_A_NORMAL,&ft);
@@ -4338,14 +4349,19 @@ void function(void) {
     case 77: set_volume(); break;
 
     case 78: set_color(); break;
+#ifdef NETPLAY
     case 79: net_join_game(); break;
     case 80: net_get_games(); break;
+#endif
+#ifdef MODE8
     case 81: stop_mode8(); break;
     case 82: x_advance(); break;
+#endif
     case 83: _strchar(); break;
     case 84: path_find(); break;
     case 85: path_line(); break;
     case 86: path_free(); break;
+#ifdef MODE8
     case 87: new_map(); break;
     case 88: load_wld(); break;
     case 89: start_mode8(); break;
@@ -4360,6 +4376,8 @@ void function(void) {
     case 98: set_wall_texture(); break;
     case 99: get_wall_texture(); break;
     case 100: set_env_color(); break;
+#endif
+
     case 101: _strcpy(); break;
     case 102: _strcat(); break;
     case 103: _strlen(); break;

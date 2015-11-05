@@ -21,7 +21,7 @@ int fli_palette_update=0;
 
 int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy)
 {
-
+#ifdef NOTYET
   if(animation!=NULL) EndFli();
 
   strcpy(TFNombre,nombre);
@@ -46,36 +46,43 @@ int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy
   Nextframe();
   Nextframe();
   return(info.NumFrames);
+#endif
 }
 
 int Nextframe()
 {
+#ifdef NOTYET
 int i;
   if(animation==NULL) return 0;
   TFFrame_Decode(animation);
   for(i=0; i<info.Height; i++) memcpy(CBuffer+TFOffset+i*CBuff_anc, TFframe+i*info.Width, info.Width);
   TFAnimation_GetInfo(animation, &info);
   if(info.CurFrame<info.NumFrames) return(1);
+#endif
 return(0);
 }
 
 void EndFli()
 {
+#ifdef NOTYET
   if(animation==NULL) return;
   TFAnimation_Delete(animation);
   animation=NULL;
   free(TFframe);
   free(TFpalette);
+#endif
 }
 
 void ResetFli()
 {
+#ifdef NOTYET
   if(animation==NULL) return;
   TFAnimation_Delete(animation);
   animation=TFAnimation_NewFile(TFNombre);
   if(animation==NULL) return;
   TFBuffers_Set(animation, TFframe, TFpalette);
   Nextframe();
+#endif
 }
 
 int quit_warning;
@@ -86,6 +93,7 @@ static void Error_Reporter(char *msg)
 }
 
 static void Palette_Update(TFUByte (*TFpalette)[256][3]) {
+#ifdef NOTYET
   char *d=(char*)TFpalette;
   int n,m=0;
 
@@ -101,4 +109,5 @@ static void Palette_Update(TFUByte (*TFpalette)[256][3]) {
   paleta_cargada=1;
 
   }
+#endif
 }

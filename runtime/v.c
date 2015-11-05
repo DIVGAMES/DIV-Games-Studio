@@ -120,7 +120,21 @@ void set_paleta (void) {
 }
 
 void set_dac (void) {
-#ifdef DOS
+#ifndef DOS
+	SDL_Color colors[256];
+	int i;
+	int b=0;
+	for(i=0;i<256;i++){
+          colors[i].r=dac[b]*4;
+          colors[i].g=dac[b+1]*4;
+          colors[i].b=dac[b+2]*4;
+          b+=3;
+    }
+	if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+		printf("Failed to set palette :(\n"); 
+	
+	retrazo();
+#else
   union REGS regs;
   word n=0;
   if (fli_palette_update) return;
@@ -279,6 +293,21 @@ void rvmode(void) {
 //      Dump buffer to VGA
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+
+void volcadosdl(byte *p) {
+	SDL_LockSurface(vga);
+	byte *q = (byte *)vga->pixels;
+	for (int vy=0; vy<vga_al;vy++) {
+		memcpy(q,p,vga_an);
+		p+=vga_an;
+		q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+	}
+//	printf("draw screen\n");
+SDL_UnlockSurface(vga);
+	SDL_Flip(vga);
+}
+
+
 void volcado(byte *p) {
 
   if ((shift_status&4) && (shift_status&8) && key(_P)) {
@@ -287,6 +316,9 @@ void volcado(byte *p) {
   }
 
   if (fli_palette_update) retrazo();
+
+volcadosdl(p);
+return;
 
   if (volcado_completo) {
     if (modovesa) volcadocsvga(p);

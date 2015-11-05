@@ -4,7 +4,7 @@
 #include <string.h>
 */
 #include "inter.h"
-#include "..\inc\vesa.h"
+//#include "..\inc\vesa.h"
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Detecciขn de los modos vesa
@@ -29,6 +29,7 @@ void detectar_vesa(void) { // Detecta los modos de vกdeo disponibles
   video_modes[4].ancho=360; video_modes[4].alto=360; video_modes[4].modo=360360;
   video_modes[5].ancho=376; video_modes[5].alto=282; video_modes[5].modo=376282;
 
+#ifdef NOTYET
 	if (vbeInit() != 0) {
     VersionVesa=0;
     return;
@@ -57,7 +58,7 @@ void detectar_vesa(void) { // Detecta los modos de vกdeo disponibles
 		}
 		modelist++;
 	}
+#endif
 
   qsort((void*)&(video_modes[0].ancho),num_video_modes,sizeof(struct _video_modes),compare_mode);
-
 }

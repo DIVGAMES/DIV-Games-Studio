@@ -24,6 +24,20 @@
 #include <malloc.h>
 #include <time.h>
 
+
+#if __WORDSIZE == 32
+#define memptrsize int
+#else
+#define memptrsize long
+#endif
+
+#ifndef NET
+int inicializacion_red=0;
+#endif
+
+void busca_packfile(void);
+
+
 void _object_data_input(int ide);
 void _object_destroy(int num_object);
 int create_object(int ide);
@@ -86,10 +100,12 @@ int __far critical_error(unsigned deverr,unsigned errcode,unsigned far*devhdr)
 ///////////////////////////////////////////////////////////////////////////////
 void CMP_export(char *name,void *dir,int nparms)
 {
+#ifdef DLL
 static int nExt=0;
   nparms=nparms;
   name=name;
   ExternDirs[nExt++]=dir;
+#endif
 }
 
 void CNT_export(char *name,void *dir,int nparms)
@@ -321,7 +337,7 @@ ip = 99;
   init_volcado();
 
   // DLL_3 Exportaci¢n de funciones y variables (para utilizarlas en las DLL)
-
+#ifdef DLL
 // Exportadas desde 'C'
 // files
   DIV_export("div_fopen"  ,(void *)fopen  );
@@ -355,6 +371,7 @@ ip = 99;
   DIV_export("palette",(void *)paleta);
   DIV_export("active_palette",(void *)dac);
   DIV_export("key",(void *)kbdFLAGS);
+#endif
 
   ss_time=3000; ss_time_counter=0;
   ss_status=1; activar_paleta=0;
@@ -362,11 +379,11 @@ ip = 99;
   memset(tabfiles, 0, 32*4);
 
 /////////////////////////////////////////////////////////////
-
+#ifdef DLL
   COM_export=CNT_export;
   LookForAutoLoadDlls();
   COM_export=CMP_export;
-
+#endif
 	inicializacion_red=0;
 
 /////////////////////////////////////////////////////////////
@@ -546,9 +563,10 @@ void exec_process(void) {
     mem[ide+_Executed]=1;
   }
   else {
-
+	  
+#ifdef NET
     _net_loop(); // Recibe los paquetes justo antes de ejecutar el proceso~
-
+#endif
     id=ide; ip=mem[id+_IP]; carga_pila(id);
 
     #ifdef DEBUG
@@ -573,7 +591,7 @@ void nucleo_exec() {
 
 	do {
 	  switch ((byte)mem[ip++]){
-      #include "kernel.cpp"
+      #include "debug/kernel.cpp"
     }
  	} while (1);
 
@@ -635,7 +653,7 @@ void nucleo_trace(void) {
 
 	switch ((byte)mem[ip++]) {
     #define TRACE
-    #include "kernel.cpp"
+    #include "debug/kernel.cpp"
   }
 
   process_stoped=id; return;
@@ -755,7 +773,7 @@ void frame_start(void) {
         InitSound();
         break;
       }
-    } while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
+    } while (false); //get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
     volcados_saltados=0;
     saltar_volcado=0;
     freloj+=ireloj;
@@ -825,6 +843,7 @@ void frame_end(void) {
   int oreloj;
   #endif
 
+#ifdef DLL
   // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
   if (!dll_loaded) {
     dll_loaded=1;
@@ -867,6 +886,9 @@ void frame_end(void) {
     }
     #endif
   }
+
+#endif
+
   // Si el usuario modific¢ mouse.x o mouse.y, posiciona el rat¢n debidamente
   if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) set_mouse(mouse->x,mouse->y);
 
@@ -907,6 +929,7 @@ void frame_end(void) {
     oreloj=get_ticks();
     #endif
 
+#ifdef MODE8
     for (n=0,ide=id_start; ide<=id_end; ide+=iloc_len) {
       if (mem[ide+_Ctype]==3 && mem[ide+_Old_Ctype]!=3) {
         n=1; mem[ide+_M8_Object]=create_object(ide);
@@ -933,6 +956,7 @@ void frame_end(void) {
       if (mem[ide+_Ctype]==3)
         _object_data_output(ide);
     }
+#endif
 
     #ifdef DEBUG
     if (n) {
@@ -1147,8 +1171,9 @@ void elimina_proceso(int id) {
     } while (id2);
     mem[id_init+_Son]=mem[id+_Son];
   }
-
+#ifdef MODE8
   _object_destroy(mem[id+_M8_Object]);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1156,14 +1181,16 @@ void elimina_proceso(int id) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void finalizacion (void) {
+#ifdef DLL
   while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
+#endif
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=4;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
     set_paleta(); set_dac();
   }
-
+#ifdef NET
   if (inicializacion_red) net_end();
-
+#endif
   rvmode();
 //EndSound();
   kbdReset();
@@ -1209,9 +1236,9 @@ void exer(int e) {
 
   //printf("*** Error de ejecuci¢n:\n\n\tn§ actual de procesos = %u\n\tn§ m ximo de procesos = %u",
   //procesos,(id_end-id_start)/iloc_len+1);
-
+#ifdef NET
   if (inicializacion_red) net_end();
-
+#endif
   rvmode();
 //EndSound();
   kbdReset();
@@ -1243,9 +1270,9 @@ void e(int texto) {
   } else {
     printf("Error %d %s",texto,text[texto]);
   }
-
+#ifdef NET
   if (inicializacion_red) net_end();
-
+#endif
   rvmode();
 //EndSound();
 //  if (end_extern!=NULL) end_extern();
@@ -1262,6 +1289,7 @@ void e(int texto) {
 //////////////////////////////////////////////////////////////////////////////
 //  Main Program
 //////////////////////////////////////////////////////////////////////////////
+
 
 int main(int argc,char * argv[]) {
   FILE * f;
@@ -1312,7 +1340,7 @@ int main(int argc,char * argv[]) {
   }
 
 #ifdef DEBUG
-  inicializa_textos("system\\lenguaje.int");
+  inicializa_textos("system/lenguaje.int");
 #else
   inicializa_textos(argv[0]);
 #endif
@@ -1338,7 +1366,7 @@ int main(int argc,char * argv[]) {
 
   if ((mem=(int*)malloc(4*imem_max+1032*5+16*1025+3))!=NULL){
 
-    mem=(int*)((((int)mem+3)/4)*4);
+    mem=(int*)((((memptrsize)mem+3)/4)*4);
 
     filenames=(char*)&mem[imem_max+258*5]; // Buffer de 16*1025 para dirinfo[].name
 
@@ -1485,6 +1513,7 @@ void DebugData(int Val)
 
 void GetFree4kBlocks(void)
 {
+#ifdef DOS
   FILE *f;
   unsigned u, DOScount, DPMIcount;
 
@@ -1510,6 +1539,7 @@ void GetFree4kBlocks(void)
   chdir(divpath);
 
   exit(0);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
