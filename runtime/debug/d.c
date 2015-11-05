@@ -1860,12 +1860,14 @@ int button_status(int n) {
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Read mouse adaptado al intrprete
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+void readmouse(void);
 
 void dread_mouse(void) {
-#ifdef DOS
-  union REGS regs;
+	tecla();
   short ix,iy;
   int n=0;
+#ifdef DOS
+  union REGS regs;
 
   memset(&regs,0,sizeof(regs));
   regs.w.ax=3;
@@ -1886,7 +1888,7 @@ void dread_mouse(void) {
 
   m_x+=(float)ix/(1.0+((float)mouse->speed/3.0));
   m_y+=(float)iy/(1.0+((float)mouse->speed/3.0));
-
+#endif
   mouse_x=(int)m_x;
   mouse_y=(int)m_y;
 
@@ -1897,7 +1899,6 @@ void dread_mouse(void) {
 
   if (n) set_mouse(mouse_x,mouse_y);
 
-#endif
 
 }
 
