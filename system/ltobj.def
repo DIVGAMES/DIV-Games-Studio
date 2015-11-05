@@ -97,7 +97,7 @@ const sound_bits_16=16
 
 //컴� Scan codes 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
-// Nota: Estos c줰igos se deben corresponder con el fichero HELP.DIV
+// Note : These codes must match the HELP.DIV file (.1176)
 
 const _esc=1
 const _f1=59
