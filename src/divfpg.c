@@ -303,7 +303,7 @@ int n;
         {
           if(MiFPG->thumb[n].ptr!=NULL) free(MiFPG->thumb[n].ptr);
         }
-
+//printf("v.aux %x\n",v.aux);
         free(v.aux);
 }
 

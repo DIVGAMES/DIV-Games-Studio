@@ -2230,7 +2230,7 @@ void TratarPaleta3(void) {
 char archivo[max_archivos*an_archivo];
 struct t_listbox larchivos={3,49,archivo,an_archivo,12,64};
 
-#define max_directorios 256
+#define max_directorios 2048
 #define an_directorio (12+1)
 char directorio[max_directorios*an_directorio];
 struct t_listbox ldirectorios={80,49,directorio,an_directorio,10,64};

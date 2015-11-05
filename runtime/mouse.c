@@ -27,12 +27,15 @@ void set_mouse(int x,int y) {
 float vx=0.0,vy=0.0,vmax;
 
 void readmouse(void) {
-#ifdef DOS
-  union REGS regs;
+  
   short ix,iy;
   int keymouse=0,n=0;
+tecla();
 
-  tecla();
+#ifdef DOS
+  union REGS regs;
+
+//  tecla();
 
   mouse->left=0;
 
@@ -90,6 +93,7 @@ void readmouse(void) {
     }
 
   }
+#endif
 
   _mouse_x=(int)m_x;
   _mouse_y=(int)m_y;
@@ -103,6 +107,6 @@ void readmouse(void) {
 
   mouse->x=_mouse_x;
   mouse->y=_mouse_y;
-#endif
+
 }
 

@@ -174,10 +174,11 @@ void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Pone un gr fico
+//      Puts a graph
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void wput(byte*copia,int an_copia,int al_copia,int x,int y,int n) {
+//	printf("put graph %d at %d,%d\n",n,x,y);
   wput_in_box(copia,an_copia,an_copia,al_copia,x,y,n);
 }
 

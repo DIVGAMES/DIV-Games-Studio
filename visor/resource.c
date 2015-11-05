@@ -1,4 +1,5 @@
 #include "global.h"
+#include "osdep.h"
 #include "resource.hpp"
 #include "global.hpp"
 

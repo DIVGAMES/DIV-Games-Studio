@@ -338,7 +338,7 @@ void Explode2(void) {
   {
     gama=exp_colores;
     t_gama=exp_gama;
-    dialogo((int)gama0);
+    dialogo((memptrsize)gama0);
     if (v_aceptar) need_refresh=1;
   }
   if(need_refresh){
@@ -372,9 +372,9 @@ void Explode0(void) {
   v.titulo=texto[300];
   v.an=128;
   v.al=90+5;
-  v.paint_handler=(int)Explode1;
-  v.click_handler=(int)Explode2;
-  v.close_handler=(int)Explode3;
+  v.paint_handler=(memptrsize)Explode1;
+  v.click_handler=(memptrsize)Explode2;
+  v.close_handler=(memptrsize)Explode3;
 
   _button(100,7     ,v.al-14,0);
   _button(101,v.an-8,v.al-14,2);
@@ -422,7 +422,7 @@ int x;
         n_frames=_n_frames;
         create_dac4();
 
-        dialogo((int)Explode0);
+        dialogo((memptrsize)Explode0);
         if(!v_aceptar)
                 return;
         for(x=0;x<256;x++) ExpDac[x] = exp_colores[x/2];

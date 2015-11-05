@@ -4,6 +4,7 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
+#include <time.h>
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // IRQ Data
@@ -106,6 +107,7 @@ void kbdInit(void)
 {
 //	printf("TODO - kbdInit\n");
 	 SDL_EnableUNICODE( SDL_ENABLE );  
+sdlkeyinit();
 #ifdef NOTYET
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
       OldIrqHandler=GetIRQVector(9);       // Get old handler.
@@ -175,9 +177,16 @@ printf("tecla_bios\n");
   }
 #endif
 }
+extern int reloj;
+
 //extern float m_x=0.0,m_y;
 void tecla(void) {
-mclock++;
+mclock = (int)clock()/20000;
+reloj = (int)clock();
+
+//printf("%d %d\n",mclock,reloj);
+
+//mclock++;
 #ifdef NOTYET
     ascii=0; scan_code=0;
 //printf("Reading keyboard\n");
@@ -195,7 +204,14 @@ while(SDL_PollEvent(&event))
             if (event.type == SDL_KEYDOWN)
             {
 				printf("key pressed\n");
-				scan_code = event.key.keysym.scancode;
+				scan_code = sdl2key[event.key.keysym.sym];
+				kbgFlags[scan_code]=1;
+			}
+			if(event.type == SDL_KEYUP) 
+			{
+				scan_code = sdl2key[event.key.keysym.sym];
+				//scan_code = event.key.keysym.scancode;
+				kbdFLAGS[scan_code]=0;
 			}
 			  if (event.type == SDL_MOUSEMOTION)
             {

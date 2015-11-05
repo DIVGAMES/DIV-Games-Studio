@@ -181,6 +181,8 @@ extern float m_x,m_y;
 
 void svmode(void) {
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
+	SDL_WM_SetCaption( "DIV2015", "" );
+
 	modovesa=1;
 #ifdef DOS
   VBESCREEN Screen;

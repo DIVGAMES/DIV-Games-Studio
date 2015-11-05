@@ -423,7 +423,7 @@ int main(int argc, char * argv[]) {
   if (cpu_type==3) chdir("..");
 
   getcwd(tipo[1].path,PATH_MAX+1);
-
+	
   if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
     safe=33;
     DaniDel("sound.cfg");
@@ -490,7 +490,10 @@ SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
     _setbkcolor(1); _settextcolor(15);
     _outtext(texto[1]);
 #endif
-    printf("%s\n",texto[1]);
+textcolor(BRIGHT, WHITE, RED);	
+    printf("%s",texto[1]);
+    textcolor(RESET, WHITE, BLACK);	
+printf("\n");
   }
 
   inicializacion();
@@ -4176,8 +4179,8 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
-//	printf("DaniDel %s\n",name);
-	return;
+	//printf("DaniDel %s\n",name);
+	//return;
 	
   unsigned rc;
   struct find_t ft;
@@ -4198,8 +4201,8 @@ void DaniDel(char *name) {
     strcat(cwork3,ft.name);
     if (_fullpath(cwork1, cwork3, _MAX_PATH)==NULL) strcpy(cwork1,ft.name);
     _dos_setfileattr(cwork1,_A_NORMAL);
-//    printf("deleting %s\n",cwork1);
-//    remove(cwork1);
+    printf("deleting %s\n",cwork1);
+    remove(cwork1);
     rc=_dos_findnext(&ft);
   }
 }

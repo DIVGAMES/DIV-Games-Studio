@@ -166,7 +166,7 @@ int num_sentencias;
 //      Variables del debugger
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-int * system_clock = (void*) 0x46c; // Reloj del sistema
+clock_t system_clock;// = clock();//(void*) 0x46c; // Reloj del sistema
 
 char get[256];
 
@@ -277,7 +277,7 @@ void init_debug(void) {
   if ((fondo_raton=(byte*)malloc(2048))==NULL) exer(1);
   init_big();
 
-  if ((f=fopen("system\\exec.dbg","rb"))!=NULL) {
+  if ((f=fopen("system/exec.dbg","rb"))!=NULL) {
     fseek(f,0,SEEK_END); n=ftell(f)-4;
     if ((o=(struct objeto *)malloc(n))!=NULL) {
       fseek(f,0,SEEK_SET);
@@ -295,7 +295,7 @@ void init_debug(void) {
     return;
   }
 
-  if ((f=fopen("system\\exec.lin","rb"))!=NULL) {
+  if ((f=fopen("system/exec.lin","rb"))!=NULL) {
     fseek(f,0,SEEK_END); n=ftell(f);
     if ((line=(int *)malloc(n))!=NULL) {
       fseek(f,0,SEEK_SET);
@@ -306,7 +306,7 @@ void init_debug(void) {
   } else line=NULL;
 
   if (line!=NULL)
-    if ((f=fopen("system\\exec.pgm","rb"))!=NULL) {
+    if ((f=fopen("system/exec.pgm","rb"))!=NULL) {
       fseek(f,0,SEEK_END); n=ftell(f);
       if ((source=(byte *)malloc(n))!=NULL) {
         fseek(f,0,SEEK_SET);
@@ -384,14 +384,14 @@ void init_big(void) {
     free(graf_ptr);
   } old_big=big;
 
-  if (big) f=fopen("system\\grande.fon","rb"); else f=fopen("system\\pequeno.fon","rb");
+  if (big) f=fopen("system/grande.fon","rb"); else f=fopen("system/pequeno.fon","rb");
   if (f==NULL) exer(5);
   fseek(f,0,SEEK_END); n=ftell(f);
   if ((text_font=(byte *)malloc(n))!=NULL) {
     fseek(f,0,SEEK_SET); fread(text_font,1,n,f); fclose(f);
   } else { fclose(f); exer(1); }
 
-  if (big) f=fopen("system\\graf_g.div","rb"); else f=fopen("system\\graf_p.div","rb");
+  if (big) f=fopen("system/GRAF_G.DIV","rb"); else f=fopen("system/GRAF_P.DIV","rb");
   if (f==NULL) exer(6);
   else {
     fseek(f,0,SEEK_END); n=ftell(f)-1352;
@@ -460,10 +460,10 @@ void dialogo(int init_handler) {
 
     v.tipo=1;
     v.primer_plano=1;
-    v.titulo="?";
-    v.paint_handler=(int)dummy_handler;
-    v.click_handler=(int)dummy_handler;
-    v.close_handler=(int)dummy_handler;
+    v.titulo=(byte *)"?";
+    v.paint_handler=(memptrsize)dummy_handler;
+    v.click_handler=(memptrsize)dummy_handler;
+    v.close_handler=(memptrsize)dummy_handler;
     v.x=0;
     v.y=0;
     v.an=vga_an;
@@ -473,7 +473,7 @@ void dialogo(int init_handler) {
     v.items=0;
     v.selected_item=-1;
 
-    call(init_handler);
+    call((voidReturnType)init_handler);
 
     if (big) { v.an=v.an*2; v.al=v.al*2; }
 
@@ -487,7 +487,7 @@ void dialogo(int init_handler) {
 
     v.x=x; v.y=y;
 
-    if ((ptr=malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
+    if ((ptr=(byte *)malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
 
       //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
       // Pasa a segundo plano las ventanas que corresponda
@@ -510,7 +510,7 @@ void dialogo(int init_handler) {
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
-      if (!strcmp(v.titulo,text[1]) || !strcmp(v.titulo,text[2]))
+      if (!strcmp((char *)v.titulo,(char *)text[1]) || !strcmp((char *)v.titulo,(char *)text[2]))
         wbox(ptr,an,al,c_r_low,2,2,an-12,7);
       else wbox(ptr,an,al,c_b_low,2,2,an-12,7);
       if (text_len(v.titulo)+3>an-12) {
@@ -521,7 +521,7 @@ void dialogo(int init_handler) {
         wwrite(ptr,an,al,2+(an-12)/2,2,1,v.titulo,c4);
       }
 
-      call(v.paint_handler);
+      call((voidReturnType)v.paint_handler);
 
       if (big) { an*=2; al*=2; }
 
@@ -599,7 +599,7 @@ void entorno_dialogo(void) {
     if (n!=oldn && oldn==0) if (v.primer_plano==1) {
       dialogo_invocado=1;
       wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-      call(v.click_handler); mouse_b=m;
+      call((voidReturnType)v.click_handler); mouse_b=m;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
       salir_del_dialogo=0;
     } oldn=max_windows; if (n<0) n++;
@@ -623,7 +623,7 @@ void entorno_dialogo(void) {
       dialogo_invocado=1;
       wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
       if (big) { wmouse_x/=2; wmouse_y/=2; }
-      call(v.click_handler);
+      call((voidReturnType)v.click_handler);
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
       oldn=0;
       salir_del_dialogo=0;
@@ -644,7 +644,7 @@ void entorno_dialogo(void) {
     if (!dialogo_invocado && !salir_del_dialogo) {
       dialogo_invocado=1;
       wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-      call(v.click_handler); mouse_b=m;
+      call((voidReturnType)v.click_handler); mouse_b=m;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
       salir_del_dialogo=0;
     }
@@ -690,7 +690,7 @@ void refrescadialogo(void) {
   memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
   wrectangulo(ptr,an,al,c2,0,0,an,al);
   wput(ptr,an,al,an-9,2,35);
-  if (!strcmp(v.titulo,text[1])) wbox(ptr,an,al,c_r_low,2,2,an-12,7);
+  if (!strcmp((char *)v.titulo,(char *)text[1])) wbox(ptr,an,al,c_r_low,2,2,an-12,7);
   else wbox(ptr,an,al,c_b_low,2,2,an-12,7);
   if (text_len(v.titulo)+3>an-12) {
     wwrite_in_box(ptr,an,an-11,al,4,2,0,v.titulo,c1);
@@ -700,7 +700,7 @@ void refrescadialogo(void) {
     wwrite(ptr,an,al,2+(an-12)/2,2,1,v.titulo,c4);
   }
 
-  call(v.paint_handler);
+  call((voidReturnType)v.paint_handler);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -710,7 +710,7 @@ void refrescadialogo(void) {
 void cierra_ventana(void) {
   int x,y,an,al;
 
-  call(v.close_handler);
+  call((voidReturnType)v.close_handler);
   if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
   else wput(v.ptr,v.an,v.al,v.an-9,2,-45);
   vuelca_ventana(0);
@@ -1047,20 +1047,20 @@ void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,i
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int char_len(char c) {
-  struct { byte an; word dir; } * car;
-  car=(void*)(text_font+1); return(car[c].an);
+  struct _car { byte an; word dir; } * car;
+  car=(_car*)(text_font+1); return(car[c].an);
 }
 
 int text_len(byte * ptr) {
 
   int an;
 
-  struct {
+  struct _car {
     byte an;
     word dir;
   } * car;
 
-  car=(void*)(text_font+1); an=0;
+  car=(_car*)(text_font+1); an=0;
   while (*ptr) { an+=car[*ptr].an; ptr++; }
 
   if (big) an/=2;
@@ -1073,12 +1073,12 @@ int text_len2(byte * ptr) {
 
   int an;
 
-  struct {
+  struct _car {
     byte an;
     word dir;
   } * car;
 
-  car=(void*)(text_font+1); an=0;
+  car=(_car*)(text_font+1); an=0;
   while (*ptr) { an+=car[*ptr].an; ptr++; }
 
   if (big) an/=2;
@@ -1098,7 +1098,7 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
   int an,al,boton,multi;
   int centro=centro_org,x=x_org,y=y_org;
 
-  struct {
+  struct _car {
     byte an;
     word dir;
   } * car;
@@ -1111,7 +1111,7 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 
   if (*ptr=='\xd') { boton=1; ptr++; } else boton=0;
 
-  car=(void*)(text_font+1);
+  car=(_car*)(text_font+1);
 
   if (!an) {
     if (big&&!multi) {
@@ -1489,15 +1489,15 @@ void select_get(t_item * i,int activo,int ocultar_error) {
   int n;
   if (activo) {
     wrectangulo(v.ptr,v.an/big2,v.al/big2,c12,i->get.x-1,i->get.y+7,i->get.an+2,11);
-    if (i->estado&2) { strcpy(get,i->get.buffer); get_pos=strlen(get); }
+    if (i->estado&2) { strcpy(get,(char *)i->get.buffer); get_pos=strlen(get); }
     i->estado&=1;
   } else {
-    if (i->estado&2) if (*get) if (i->get.r0==i->get.r1) strcpy(i->get.buffer,get); else {
-      if (atoi(get)>=i->get.r0 && atoi(get)<=i->get.r1) itoa(atoi(get),i->get.buffer,10);
+    if (i->estado&2) if (*get) if (i->get.r0==i->get.r1) strcpy((char *)i->get.buffer,get); else {
+      if (atoi(get)>=i->get.r0 && atoi(get)<=i->get.r1) itoa(atoi(get),(char *)i->get.buffer,10);
       else if (!ocultar_error && !show_items_called) {
         sprintf(combo_error,"%s [%d..%d].",text[4],i->get.r0,text[5],i->get.r1,text[6]);
-        text[3]=combo_error;
-        v_texto=text[3]; dialogo((int)err0);
+        text[3]=(byte *)combo_error;
+        v_texto=(char *)text[3]; dialogo((memptrsize)err0);
       }
     }
 
@@ -1584,8 +1584,8 @@ void _process_items(void) {
         if (v.item[v.selected_item].tipo==2) {
           asc=ascii; kesc=kbdFLAGS[28]; est=v.item[v.selected_item].estado;
           ascii=0;
-          if (superget) strcpy(v.item[v.selected_item].get.buffer,"");
-          strcpy(get,v.item[v.selected_item].get.buffer);
+          if (superget) strcpy((char *)v.item[v.selected_item].get.buffer,"");
+          strcpy(get,(char *)v.item[v.selected_item].get.buffer);
           get_pos=strlen(get);
           select_get(&v.item[v.selected_item],0,1);
           select_get(&v.item[v.selected_item],1,1);
@@ -1674,7 +1674,7 @@ void process_button(int n,int e) {
 
 int get_status(int n) {
   int x=v.item[n].estado;
-  if (strcmp(v.item[n].get.texto,"")) {
+  if (strcmp((char *)v.item[n].get.texto,"")) {
     if (wmouse_in(v.item[n].get.x,v.item[n].get.y, // bit 0 "hilite"
       v.item[n].get.an,18)) x|=1; else x&=2;
   } else {
@@ -1703,7 +1703,7 @@ void process_get(int n,int e) {
   v.item[n].estado=e;
   if (!(old_e&2) && (e&2)) {
     _select_new_item(n);
-     strcpy(get,v.item[n].get.buffer);
+     strcpy(get,(char *)v.item[n].get.buffer);
      get_pos=strlen(get);
   }
 
@@ -1771,7 +1771,7 @@ void get_input(int n) {
         strcpy(&get[get_pos-1],&get[get_pos]); get_pos--;
 //        get[strlen(get)-1]=0;
       }
-      if (!*get && superget) strcpy(v.item[v.selected_item].get.buffer,"");
+      if (!*get && superget) strcpy((char *)v.item[v.selected_item].get.buffer,"");
       v.volcar=1; break;
     case 13: ascii=0; kbdFLAGS[28]=0; _select_new_item(n+1); return;
     default:
@@ -1787,7 +1787,7 @@ void get_input(int n) {
           case 83:
             get[strlen(get)+1]=0;
             strcpy(&get[get_pos],&get[get_pos+1]);
-            if (!*get && superget) strcpy(v.item[v.selected_item].get.buffer,"");
+            if (!*get && superget) strcpy((char *)v.item[v.selected_item].get.buffer,"");
             break;
           default: v.volcar=l; break;
         }
@@ -1802,14 +1802,14 @@ void get_input(int n) {
       } break;
   }
 
-  if (v.volcar || get_cursor!=(*system_clock&4)) {
+  if (v.volcar || get_cursor!=(system_clock&4)) {
     v.volcar=1;
 
     if (get_pos<0) get_pos=0; else if (get_pos>strlen(get)) get_pos=strlen(get);
 
     strcpy(cwork,get);
     cwork[get_pos]=0;
-    l=text_len2(cwork);
+    l=text_len2((byte *)cwork);
     strcat(cwork," ");
     strcat(cwork,get+get_pos);
 
@@ -1819,15 +1819,15 @@ void get_input(int n) {
 
     wbox(v.ptr,v.an/big2,v.al/big2,c0,v.item[n].get.x,v.item[n].get.y+8,v.item[n].get.an,9);
 //    wwrite_in_box(v.ptr,v.an/big2,v.item[n].get.an-1+v.item[n].get.x,v.al/big2,v.item[n].get.x+1,v.item[n].get.y+9,0,cwork,c4);
-    wwrite_in_box(v.ptr+(v.item[n].get.x+1)*big2,v.an/big2,v.item[n].get.an-2,v.al/big2,0-scroll,v.item[n].get.y+9,0,cwork,c4);
+    wwrite_in_box(v.ptr+(v.item[n].get.x+1)*big2, v.an/big2, v.item[n].get.an-2, v.al/big2, 0-scroll, v.item[n].get.y+9,0, (byte *)cwork, c4);
 
-    if (*system_clock&4) {
+    if (system_clock&4) {
 //      if (strlen(get)) x=v.item[n].get.x+text_len(get)+2; else x=v.item[n].get.x+1;
       x=l+1;
       wbox_in_box(v.ptr+(v.item[n].get.x+1)*big2,v.an/big2,v.item[n].get.an-2,v.al/big2,c3,x-scroll,v.item[n].get.y+9,2,7);
 //      wbox_in_box(v.ptr,v.an/big2,v.item[n].get.an-1+v.item[n].get.x,v.al/big2,c3,x,v.item[n].get.y+9,2,7);
     }
-  } get_cursor=(*system_clock&4);
+  } get_cursor=(system_clock&4);
 
 }
 
@@ -1983,7 +1983,7 @@ int wmouse_in(int x, int y, int an, int al) {
 void err1(void) {
   int an=v.an/big2,al=v.al/big2;
   _show_items();
-  wwrite(v.ptr,an,al,4,12,0,v_texto,c3);
+  wwrite(v.ptr,an,al,4,12,0,(byte *)v_texto,c3);
 }
 
 void err2(void) {
@@ -1993,9 +1993,9 @@ void err2(void) {
 
 void err0(void) {
   v.tipo=1; v.titulo=text[1];
-  v.an=text_len(v_texto)+8; v.al=38;
-  v.paint_handler=(int)err1;
-  v.click_handler=(int)err2;
+  v.an=text_len((byte *)v_texto)+8; v.al=38;
+  v.paint_handler=(memptrsize)err1;
+  v.click_handler=(memptrsize)err2;
   _button(text[7],v.an/2,v.al-14,1);
 }
 
@@ -3564,7 +3564,7 @@ byte * change_mode(void) {
   if (v.x<0) v.x=0; if (v.y<0) v.y=0;
   if (v.x+v.an>vga_an) v.x=vga_an-v.an;
   if (v.y+v.al>vga_al) v.y=vga_al-v.al;
-  repinta_ventana(); call(v.paint_handler);
+  repinta_ventana(); call((voidReturnType)v.paint_handler);
   v.volcar=1; volcado_completo=1;
   return(v.ptr);
 }
@@ -3706,7 +3706,7 @@ void debug2(void) {
       do {
         exec_process();
         if (new_mode) ptr=change_mode();
-        if (call_to_debug) { call(v.paint_handler); v.volcar=1; break; }
+        if (call_to_debug) { call((voidReturnType)v.paint_handler); v.volcar=1; break; }
       } while (ide);
       if (call_to_debug) {
         volcado_completo=1; call_to_debug=0;
@@ -3725,7 +3725,7 @@ void debug2(void) {
         smouse_x=mouse->x; smouse_y=mouse->y;
         set_mouse(mouse_x,mouse_y);
         memcpy(copia_debug,copia,vga_an*vga_al);
-        call(v.paint_handler);
+        call((voidReturnType)v.paint_handler);
         for (n=0;n<iids;n++) if (ids[n]==ids_old) break;
         if (n<iids) { // Si el proceso seleccionado antes sigue en la lista ...
           ids_select=n; ids_ini=ids_select-ids_inc;
@@ -3783,7 +3783,7 @@ void debug2(void) {
           breakpoint[n].code=linea_sel;
           do { trace_process();
             if (new_mode) ptr=change_mode();
-            if (call_to_debug) { call(v.paint_handler); v.volcar=1; break; }
+            if (call_to_debug) { call((voidReturnType)v.paint_handler); v.volcar=1; break; }
           } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==lasp || mem[ip]==lasiasp || mem[ip]==lcarasiasp || mem[ip]==lfunasp));
           if (call_to_debug) {
             volcado_completo=1; call_to_debug=0;
@@ -3802,7 +3802,7 @@ void debug2(void) {
       trace_proc:
       do { trace_process();
         if (new_mode) ptr=change_mode();
-        if (call_to_debug) { call(v.paint_handler); v.volcar=1; break; }
+        if (call_to_debug) { call((voidReturnType)v.paint_handler); v.volcar=1; break; }
       } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==lasp || mem[ip]==lasiasp || mem[ip]==lcarasiasp || mem[ip]==lfunasp));
       if (call_to_debug) {
         volcado_completo=1; call_to_debug=0;
@@ -3825,7 +3825,7 @@ void debug2(void) {
           volcado_completo=1;
         } else if (new_palette) set_dac();
         if (new_palette) { new_palette=0; repinta_ventana(); }
-        ids_old=-1; call(v.paint_handler); v.volcar=1;
+        ids_old=-1; call((voidReturnType)v.paint_handler); v.volcar=1;
       } else fin_dialogo=1;
       break;
     case 5: // Step
@@ -3856,7 +3856,7 @@ void debug2(void) {
       process_level=0;
       do { trace_process();
         if (new_mode) ptr=change_mode();
-        if (call_to_debug) { call(v.paint_handler); v.volcar=1; break; }
+        if (call_to_debug) { call((voidReturnType)v.paint_handler); v.volcar=1; break; }
       } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==lasp || mem[ip]==lasiasp || mem[ip]==lcarasiasp || mem[ip]==lfunasp || process_level>0));
       if (call_to_debug) {
         volcado_completo=1; call_to_debug=0;
@@ -3879,7 +3879,7 @@ void debug2(void) {
           volcado_completo=1;
         } else if (new_palette) set_dac();
         if (new_palette) { new_palette=0; repinta_ventana(); }
-        ids_old=-1; call(v.paint_handler); v.volcar=1;
+        ids_old=-1; call((voidReturnType)v.paint_handler); v.volcar=1;
       } else fin_dialogo=1;
       break;
     case 6: // Inspect
@@ -3902,7 +3902,7 @@ void debug2(void) {
       exec_process();
       if (new_mode) ptr=change_mode();
       if (call_to_debug) {
-        call(v.paint_handler); v.volcar=1;
+        call((voidReturnType)v.paint_handler); v.volcar=1;
         volcado_completo=1; call_to_debug=0;
         if (new_palette) { new_palette=0; repinta_ventana(); }
       }
@@ -3922,7 +3922,7 @@ void debug2(void) {
           volcado_completo=1;
         } else if (new_palette) set_dac();
         if (new_palette) { new_palette=0; repinta_ventana(); }
-        ids_old=-1; call(v.paint_handler); v.volcar=1;
+        ids_old=-1; call((voidReturnType)v.paint_handler); v.volcar=1;
       } else fin_dialogo=1;
       break;
   }
@@ -4378,7 +4378,7 @@ unsigned int get_ticks(void) {
   x=ticks+IntIncr-(unsigned char)inp(0x40); // MSB
   return(x);
 #else
-return 0;
+return (unsigned int)clock();
 #endif
 }
 
@@ -4828,12 +4828,12 @@ void profile2(void) {
       ffps2=0.0f;
       game_ticks=0.0f;
       game_frames=0.0f;
-      call(v.paint_handler);
+      call((voidReturnType)v.paint_handler);
       v.volcar=1;
       break;
     case 2: fin_dialogo=1; break;
     case 3:
-      call(v.paint_handler);
+      call((voidReturnType)v.paint_handler);
       v.volcar=1;
       break;
   }

@@ -83,7 +83,7 @@ extern int mul_16(int, int);
 #endif
 static int mul_24(int a, int b)
 {
-	int result = a*b;
+	int result = (float)a*(float)b;
 /*	asm ( "imull %%ebx\n\t"
 	"shrdl $24,%%edx,%%eax\n\t"
 	: "=a" (result)
@@ -100,7 +100,7 @@ static int mul_24(int a, int b)
 //{
 static unsigned int mul_16(long a, long b)
 {
-	unsigned int result = a*b;
+	unsigned int result = (float)a*(float)b;
 /*	asm ( "imull %%ebx\n\t"
 	"shrdl $16,%%edx,%%eax\n\t"
 	: "=a" (result)

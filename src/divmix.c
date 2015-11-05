@@ -43,8 +43,8 @@ void mixer0(void)
   v.an     =  59;
   v.al     =  76;
 
-  v.paint_handler=(int)mixer1;
-  v.click_handler=(int)mixer2;
+  v.paint_handler=(memptrsize)mixer1;
+  v.click_handler=(memptrsize)mixer2;
 }
 
 void mixer1(void)
@@ -154,7 +154,7 @@ void mixer2(void)
     lvol_cd.inicial=15-Setupfile.vol_cd;
     lvol_ma.inicial=15-Setupfile.vol_ma;
     set_mixer();
-    call(v.paint_handler);
+    call((voidReturnType)v.paint_handler);
     v.volcar=1;
   }
 }

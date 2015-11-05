@@ -4,6 +4,9 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "inter.h"
+#include "scancode.h"
+
+
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // IRQ Data
@@ -28,9 +31,10 @@ int fbuf=0; // Puntero al buffer, fin de la cola
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int ctrl_c=0,alt_x=0;
+#ifdef DOS
 word * kb_start = (void*) 0x41a;
 word * kb_end = (void*) 0x41c;
-
+#endif
 void __far __interrupt __loadds IrqHandler(void)
 {
 #ifdef DOS
@@ -109,7 +113,7 @@ void SetIRQVector(int n, TIRQHandler vec)
 void kbdInit(void)
 {
 	printf("kbdInit\n");
-	
+	sdlkeyinit();
 #ifdef DOS
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
       OldIrqHandler=GetIRQVector(9);       // Get old handler.
@@ -173,6 +177,7 @@ void tecla_bios(void) {
   }
 #endif
 }
+extern float m_x,m_y;
 
 void tecla(void) {
 SDL_Event event;
@@ -188,30 +193,32 @@ while(SDL_PollEvent(&event))
             
             if (event.type == SDL_KEYDOWN)
             {
-				printf("key pressed\n");
-				scan_code = event.key.keysym.scancode;
+	//			printf("key pressed\n");
+				scan_code = sdl2key[event.key.keysym.sym];
+				ascii = ascii = event.key.keysym.unicode&0x7f;
 				kbdFLAGS[scan_code]=1;
 			}
 			if(event.type == SDL_KEYUP) 
 			{
-				scan_code = event.key.keysym.scancode;
+				scan_code = sdl2key[event.key.keysym.sym];
+				//scan_code = event.key.keysym.scancode;
 				kbdFLAGS[scan_code]=0;
 			}
 			  if (event.type == SDL_MOUSEMOTION)
             {
-		//		m_x+=event.motion.xrel;
-		//		m_y+=event.motion.yrel;
+				m_x+=event.motion.xrel;
+				m_y+=event.motion.yrel;
 			}
             /* If a button on the mouse is pressed. */
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
-				printf("click\n");
-		//		m_b = 1;
+//				printf("click\n");
+				mouse->left = 1;
 			}
 			
 			if (event.type == SDL_MOUSEBUTTONUP)
             {
-		//		m_b = 0;
+				mouse->left = 0;
 			}
 			
         }

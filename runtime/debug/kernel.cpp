@@ -396,7 +396,7 @@ case lstrcpy:
   break;
 
 case lstrfix:
-  if (pila[sp-1]>=(oo=strlen(&memb[pila[sp-2]*4]))) {
+  if (pila[sp-1]>=(oo=strlen((char *)&memb[pila[sp-2]*4]))) {
     for (;oo<pila[sp-1];oo++) {
       memb[pila[sp-2]*4+oo]=' ';
     } memb[pila[sp-2]*4+oo+1]=0;

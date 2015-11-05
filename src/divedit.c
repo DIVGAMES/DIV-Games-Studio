@@ -750,6 +750,7 @@ void editor() {
       f_fin(); break;
 
   } else if ((shift_status&3) && (shift_status&4)) switch(scan_code) {
+	  printf("scancode is %d\n",scan_code);
 
     case 116: // ctrl+shift+right
       f_desmarcar();
@@ -785,6 +786,8 @@ void editor() {
       break;
 
   } else if (!(shift_status&15) && ascii==0) switch(scan_code) {
+	  printf("scancode is %d\n",scan_code);
+
 
     case 77: f_right(); break;                  // cursor right
     case 75: f_left(); break;                   // cursor left
@@ -798,11 +801,15 @@ void editor() {
     case 83: f_suprimir(); break;               // suprimir
 
   } else if (!(shift_status&15)) switch(scan_code) {
+	  printf("scancode is %d\n",scan_code);
+
 
     case 14: f_backspace(); break;              // backspace
     case 15: f_tabulador(); break;              // tabulador
 
   } else if ((shift_status&4) && !(shift_status&11)) switch(scan_code) {
+	  printf("scancode is %d\n",scan_code);
+
 
     case 14: case 21: f_delete(); break;        // ctrl+backspace,ctrl+y
     case 116:case 77: f_word_right(); break;    // ctrl+right
@@ -817,6 +824,8 @@ void editor() {
              f_desmarcar(); break;
 
   } else if ((shift_status&8) && !(shift_status&7)) switch(scan_code) {
+	  printf("scancode is %d\n",scan_code);
+
 
     case 30: f_marcar(); break;                 // alt+a
     case 22: f_desmarcar(); break;              // alt+u

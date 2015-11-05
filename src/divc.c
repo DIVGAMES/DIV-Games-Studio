@@ -1115,7 +1115,7 @@ void compilar(void) {
       memcpy(p,&mem[9],(imem-9)*4);
       memcpy(p+(imem-9)*4,loc,iloc*4);
       n=(imem-9+iloc)*4;
-      if (!compress(q,(uLongf*)&m,p,n)) {
+      if (!compress(q,(uLongf*)&m,p,(unsigned long)n)) {
         fwrite(&n,1,4,f); // mem[0]..mem[8],longitud_datos_descomp,datos comp...
         fwrite(q,1,m,f);
         free(q); free(p);

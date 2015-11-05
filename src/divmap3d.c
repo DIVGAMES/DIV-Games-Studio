@@ -252,11 +252,11 @@ void MapperVisor0(void)
   v.an     = 100;
   v.al     = 100;
 
-  v.paint_handler=(int)MapperVisor1;
-  v.click_handler=(int)MapperVisor2;
-  v.close_handler=(int)MapperVisor3;
+  v.paint_handler=(memptrsize)MapperVisor1;
+  v.click_handler=(memptrsize)MapperVisor2;
+  v.close_handler=(memptrsize)MapperVisor3;
 
-  v.aux=(void*)m3d;
+  v.aux=(byte*)m3d;
 
   my_map=&m3d->map;
 
@@ -275,7 +275,7 @@ void MapperVisor1(void)
 
 void MapperVisor2(void)
 {
-  M3D_info *m3d_aux=(void*)v.aux;
+  M3D_info *m3d_aux=(M3D_info*)v.aux;
   int n;
 
   my_map=&m3d_aux->map;
@@ -300,10 +300,10 @@ void MapperVisor2(void)
         TipoTex=FONDO;
         CrearMapperThumb(Tex[FONDO].cod, 42, 21);
       }
-      dialogo((int)MapperCreator0);
+      dialogo((memptrsize)MapperCreator0);
       my_map->fondo=Tex[FONDO].cod;
       memcpy(m3d_aux ,&m3d_edit, sizeof(M3D_info)-sizeof(tmap));
-      call(v.paint_handler);
+      call((voidReturnType)v.paint_handler);
       v.volcar=1;
 //    }
   }
@@ -312,7 +312,7 @@ void MapperVisor2(void)
 void MapperVisor3(void)
 {
   int i;
-  M3D_info *m3d_aux=(void*)v.aux;
+  M3D_info *m3d_aux=(M3D_info*)v.aux;
 
   lptmap my_map_aux=&m3d_aux->map;
 
@@ -349,9 +349,9 @@ void MapperCreator0(void)
   fade_sector=0;
   VuelcaMapa=1;
 
-  v.paint_handler=(int)MapperCreator1;
-  v.click_handler=(int)MapperCreator2;
-  v.close_handler=(int)MapperCreator3;
+  v.paint_handler=(memptrsize)MapperCreator1;
+  v.click_handler=(memptrsize)MapperCreator2;
+  v.close_handler=(memptrsize)MapperCreator3;
 
   // Modo Edicion
   _flag(443, 4, 174, &m3d_flags[0]);
@@ -364,13 +364,13 @@ void MapperCreator0(void)
   // Modo Banderas
   sprintf(cadenas[2],"%d",num_bandera);
   _flag(447, 101, 174, &m3d_flags[4]);
-  _get(414, 114, 177, 24, cadenas[2], 4, 0, 999);
+  _get(414, 114, 177, 24, (byte *)cadenas[2], 4, 0, 999);
   _button(111, 104, 186, 0);
   _button(110, 144, 186, 0);
 
   // Altura de Techo y Suelo
-  _get(414, ANCHO_VENTANA+7,    11+100+2-8+1, 48, cadenas[3], 5, 0, 4095);
-  _get(414, ANCHO_VENTANA+7, 11+150+3+11-8+2, 48, cadenas[4], 5, 0, 4095);
+  _get(414, ANCHO_VENTANA+7,    11+100+2-8+1, 48, (byte *)cadenas[3], 5, 0, 4095);
+  _get(414, ANCHO_VENTANA+7, 11+150+3+11-8+2, 48, (byte *)cadenas[4], 5, 0, 4095);
 
   // Modos Grid y Snap
   _flag(458, 155, 174, &grid);
@@ -723,15 +723,15 @@ void MapperCreator2(void)
         {
           if(comprobar_fichero())
           {
-            strcpy(m3d_edit.fpg_name,input);
-            strcpy(m3d_edit.fpg_path,full);
+            strcpy((char *)m3d_edit.fpg_name,input);
+            strcpy((char *)m3d_edit.fpg_path,full);
             M3D_crear_thumbs(&ltexturasbr,1);
           }
         }
         if(m3d_edit.fpg_path[0]!=0)
         {
           TipoTex = PARED;
-          dialogo((int)MapperBrowseFPG0);
+          dialogo((memptrsize)MapperBrowseFPG0);
           if(edit_wall != -1) my_map->walls[edit_wall]->texture=Tex[PARED].cod;
           need_refresh=1;
         }
@@ -745,15 +745,15 @@ void MapperCreator2(void)
         {
           if(comprobar_fichero())
           {
-            strcpy(m3d_edit.fpg_name,input);
-            strcpy(m3d_edit.fpg_path,full);
+            strcpy((char *)m3d_edit.fpg_name,input);
+            strcpy((char *)m3d_edit.fpg_path,full);
             M3D_crear_thumbs(&ltexturasbr,1);
           }
         }
         if(m3d_edit.fpg_path[0]!=0)
         {
           TipoTex = TECHO;
-          dialogo((int)MapperBrowseFPG0);
+          dialogo((memptrsize)MapperBrowseFPG0);
           if(edit_region != -1) my_map->regions[edit_region]->ceil_tex=Tex[TECHO].cod;
           need_refresh=1;
         }
@@ -765,15 +765,15 @@ void MapperCreator2(void)
         {
           if(comprobar_fichero())
           {
-            strcpy(m3d_edit.fpg_name,input);
-            strcpy(m3d_edit.fpg_path,full);
+            strcpy((char *)m3d_edit.fpg_name,input);
+            strcpy((char *)m3d_edit.fpg_path,full);
             M3D_crear_thumbs(&ltexturasbr,1);
           }
         }
         if(m3d_edit.fpg_path[0]!=0)
         {
           TipoTex = SUELO;
-          dialogo((int)MapperBrowseFPG0);
+          dialogo((memptrsize)MapperBrowseFPG0);
           if(edit_region != -1) my_map->regions[edit_region]->floor_tex=Tex[SUELO].cod;
           need_refresh=1;
         }
@@ -785,15 +785,15 @@ void MapperCreator2(void)
       {
         if(comprobar_fichero())
         {
-          strcpy(m3d_edit.fpg_name,input);
-          strcpy(m3d_edit.fpg_path,full);
+          strcpy((char *)m3d_edit.fpg_name,input);
+          strcpy((char *)m3d_edit.fpg_path,full);
           M3D_crear_thumbs(&ltexturasbr,1);
         }
       }
       if(m3d_edit.fpg_path[0]!=0)
       {
         TipoTex = FONDO;
-        dialogo((int)MapperBrowseFPG0);
+        dialogo((memptrsize)MapperBrowseFPG0);
         need_refresh=1;
       }
     }
@@ -801,8 +801,8 @@ void MapperCreator2(void)
     {
       if(comprobar_fichero())
       {
-        strcpy(m3d_edit.fpg_name,input);
-        strcpy(m3d_edit.fpg_path,full);
+        strcpy((char *)m3d_edit.fpg_name,input);
+        strcpy((char *)m3d_edit.fpg_path,full);
         M3D_crear_thumbs(&ltexturasbr,1);
         need_refresh=1;
       }
@@ -918,7 +918,7 @@ void MapperCreator2(void)
 
   if(need_refresh)
   {
-    call(v.paint_handler);
+    call((voidReturnType)v.paint_handler);
     map_draw();
     v.volcar=1;
   }
@@ -987,8 +987,8 @@ void MapperBrowseFPG0(void)
     v.nombre = texto[433];
   }
 
-  v.paint_handler=(int)MapperBrowseFPG1;
-  v.click_handler=(int)MapperBrowseFPG2;
+  v.paint_handler=(memptrsize)MapperBrowseFPG1;
+  v.click_handler=(memptrsize)MapperBrowseFPG2;
 
   if(modo<100) {
     if(TipoBrowser==MAPBR) {
@@ -1109,10 +1109,10 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   }
 
   if(m3d_edit.fpg_path[0]==0) return;
-  if((FPG_F=fopen(m3d_edit.fpg_path,"rb"))==NULL)
+  if((FPG_F=fopen((char *)m3d_edit.fpg_path,"rb"))==NULL)
   {
-    v_texto=texto[43];
-    dialogo((int)err0);
+    v_texto=(char *)texto[43];
+    dialogo((memptrsize)err0);
     return;
   }
   fseek(FPG_F, 0, SEEK_END);
@@ -1123,8 +1123,8 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   if(fread(&FPG_H, 1, sizeof(FPG_header), FPG_F)!=sizeof(FPG_header))
   {
     fclose(FPG_F);
-    v_texto=texto[44];
-    dialogo((int)err0);
+    v_texto=(char *)texto[44];
+    dialogo((memptrsize)err0);
     return;
   }
 
@@ -1151,8 +1151,8 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   }
 
   n=1;
-  if( v.click_handler != (int)MapperVisor2 &&
-      v.click_handler != (int)MapperCreator2 ) n=t_maximo=f_maximo=0;
+  if( v.click_handler != (memptrsize)MapperVisor2 &&
+      v.click_handler != (memptrsize)MapperCreator2 ) n=t_maximo=f_maximo=0;
   for(;;)
   {
     if(fread(&(FPG_D.info), 1, sizeof(FPG_info), FPG_F)!=sizeof(FPG_info))
@@ -1165,15 +1165,15 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       else
       {
         fclose(FPG_F);
-        if (prog) Progress(texto[93], FPG_progress.total, FPG_progress.total);
-        v_texto=texto[44];
-        dialogo((int)err0);
+        if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
+        v_texto=(char *)texto[44];
+        dialogo((memptrsize)err0);
         return;
       }
     }
     fseek( FPG_F, sizeof(FPG_points)*FPG_D.info.puntos, SEEK_CUR );
     FPG_progress.pos+=(64+4*FPG_D.info.puntos+FPG_D.info.ancho*FPG_D.info.alto);
-    if (prog) Progress(texto[93], FPG_progress.pos, FPG_progress.total);
+    if (prog) Progress((char *)texto[93], FPG_progress.pos, FPG_progress.total);
 
     thumb_tex[n].Cuad=0;
     for(con=0; con<11; con++)
@@ -1209,9 +1209,9 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
         }
       }
       fclose(FPG_F);
-      if (prog) Progress(texto[93], FPG_progress.total, FPG_progress.total);
-      v_texto=texto[45];
-      dialogo((int)err0);
+      if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
+      v_texto=(char *)texto[45];
+      dialogo((memptrsize)err0);
       return;
     }
 
@@ -1228,13 +1228,13 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       }
       fclose(FPG_F);
       free(FPG_D.imagen);
-      if (prog) Progress(texto[93], FPG_progress.total, FPG_progress.total);
-      v_texto=texto[44];
-      dialogo((int)err0);
+      if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
+      v_texto=(char *)texto[44];
+      dialogo((memptrsize)err0);
       return;
     }
 
-    thumb_tex[n].ptr = FPG_D.imagen;
+    thumb_tex[n].ptr = (char *)FPG_D.imagen;
 
     n++;
   }
@@ -1242,15 +1242,15 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   fclose(FPG_F);
 
   n=1;
-  if( v.click_handler != (int)MapperVisor2 &&
-      v.click_handler != (int)MapperCreator2 ) n=0; // Sin textura vacia
+  if( v.click_handler != (memptrsize)MapperVisor2 &&
+      v.click_handler != (memptrsize)MapperCreator2 ) n=0; // Sin textura vacia
   for(con=n; con<l->maximo; con++)
   {
     for(;;)
     {
       man  = thumb_tex[con].RealAn = thumb_tex[con].an;
       mal  = thumb_tex[con].RealAl = thumb_tex[con].al;
-      temp = thumb_tex[con].ptr;
+      temp = (byte *)thumb_tex[con].ptr;
 
       if(man<=32*big2 && mal<=32*big2) // El grafico se deja tal cual
       {
@@ -1269,7 +1269,7 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
         if(thumb_tex[con].an<2) thumb_tex[con].an=2;
         if(thumb_tex[con].al<2) thumb_tex[con].al=2;
 
-        if((temp2=(char *)malloc(thumb_tex[con].an*thumb_tex[con].al))==NULL)
+        if((temp2=(byte *)malloc(thumb_tex[con].an*thumb_tex[con].al))==NULL)
         {
           free(thumb_tex[con].ptr);
           thumb_tex[con].ptr    = NULL;
@@ -1315,19 +1315,19 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       }
       thumb_tex[con].status = 1;
       FPG_progress.pos+=(FPG_progress.total-FPG_progress.pos)/(l->maximo-con);
-      if (prog) Progress(texto[93], FPG_progress.pos, FPG_progress.total);
+      if (prog) Progress((char *)texto[93], FPG_progress.pos, FPG_progress.total);
       break;
     }
   }
 
   if(FPG_progress.pos < FPG_progress.total)
   {
-    if (prog) Progress(texto[93], FPG_progress.total, FPG_progress.total);
+    if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
   }
 
   qsort(thumb_tex,l->maximo,sizeof(struct _thumb_tex),cmpcode);
-  qsort(textura,t_maximo,an_textura,strcmp);
-  qsort(fondo,l->maximo,an_textura,strcmp);
+  qsort(textura,t_maximo,an_textura,(__compar_fn_t)strcmp);
+  qsort(fondo,l->maximo,an_textura,(__compar_fn_t)strcmp);
 
   if(TipoTex>3) return;
 
@@ -1439,8 +1439,8 @@ void M3D_muestra_thumb(struct t_listboxbr * l, int num)
       p=l->lista+l->lista_an*num;
 
       if (l->zona-10==num-l->inicial) x=c4; else x=c3;
-      wwrite(ptr,an,al,px+l->an/2+1,py,7,p,c0);
-      wwrite(ptr,an,al,px+l->an/2,py,7,p,x);
+      wwrite(ptr,an,al,px+l->an/2+1,py,7,(byte *)p,c0);
+      wwrite(ptr,an,al,px+l->an/2,py,7,(byte *)p,x);
     }
 
     v.volcar=1;
@@ -1499,7 +1499,7 @@ void M3D_actualiza_listboxbr(struct t_listboxbr * l)
     if (old_zona!=l->zona) if (old_zona>=10) { // Desmarca zona
       x=l->x+1+((old_zona-10)%l->columnas)*(l->an+1);
       y=l->y+l->al+((old_zona-10)/l->columnas)*(l->al+1);
-      p=l->lista+l->lista_an*(l->inicial+old_zona-10);
+      p=(byte *)l->lista+l->lista_an*(l->inicial+old_zona-10);
       wwrite(ptr,an,al,x+l->an/2,y,7,p,c3);
       v.volcar=1;
     }
@@ -1556,7 +1556,7 @@ void M3D_actualiza_listboxbr(struct t_listboxbr * l)
     if (old_zona!=l->zona) if (l->zona>=10) { // Marca zona
       x=l->x+1+((l->zona-10)%l->columnas)*(l->an+1);
       y=l->y+l->al+((l->zona-10)/l->columnas)*(l->al+1);
-      p=l->lista+l->lista_an*(l->inicial+l->zona-10);
+      p=(byte *)l->lista+l->lista_an*(l->inicial+l->zona-10);
       wwrite(ptr,an,al,x+l->an/2,y,7,p,c4);
       v.volcar=1;
     }
@@ -1605,15 +1605,15 @@ void PintaVisorThumb(void)
   man = M3D_ANCHO_THUMB * 2 * big2;
   mal = M3D_ALTO_THUMB  * 2 * big2;
 
-  if((temp=(char *)malloc(man*mal))==NULL)
+  if((temp=(byte *)malloc(man*mal))==NULL)
   {
-    v_texto=texto[45];
-    dialogo((int)err0);
+    v_texto=(char *)texto[45];
+    dialogo((memptrsize)err0);
     return;
   }
   memset(temp, c1, man*mal);
 
-  map_reduce(man, mal, temp);
+  map_reduce(man, mal, (char *)temp);
 
   temp2=v.ptr+10*big2*v.an+2*big2;
   for(y=0; y<mal; y+=2)
@@ -1672,15 +1672,15 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
   {
     fclose(FPG_F);
     Tex[TipoTex].cod=0;
-    v_texto=texto[45];
-    dialogo((int)err0);
+    v_texto=(char *)texto[45];
+    dialogo((memptrsize)err0);
     return;
   }
 
-  if((FPG_F=fopen(m3d_edit.fpg_path,"rb"))==NULL)
+  if((FPG_F=fopen((char *)m3d_edit.fpg_path,"rb"))==NULL)
   {
-    v_texto=texto[43];
-    dialogo((int)err0);
+    v_texto=(char *)texto[43];
+    dialogo((memptrsize)err0);
     return;
   }
   fseek(FPG_F, thumb_tex[num_tex].FilePos, SEEK_SET);
@@ -1690,8 +1690,8 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
     free(temp);
     fclose(FPG_F);
     Tex[TipoTex].cod=0;
-    v_texto=texto[44];
-    dialogo((int)err0);
+    v_texto=(char *)texto[44];
+    dialogo((memptrsize)err0);
     return;
   }
 
@@ -1705,7 +1705,7 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
   if(Tex[TipoTex].an<2) Tex[TipoTex].an=2;
   if(Tex[TipoTex].al<2) Tex[TipoTex].al=2;
 
-  if((temp2=(char *)malloc(Tex[TipoTex].an*Tex[TipoTex].al))==NULL)
+  if((temp2=(byte *)malloc(Tex[TipoTex].an*Tex[TipoTex].al))==NULL)
   {
     free(temp);
     return;
@@ -1727,7 +1727,7 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
     temp2[n]=FPG_xlat[temp2[n]];
   }
 
-  if((Tex[TipoTex].gra=(char *)malloc((Tex[TipoTex].an*Tex[TipoTex].al)/4))==NULL)
+  if((Tex[TipoTex].gra=(byte *)malloc((Tex[TipoTex].an*Tex[TipoTex].al)/4))==NULL)
   {
     free(temp2);
     return;
@@ -1846,8 +1846,8 @@ void nuevo_mapa3d(void)
 
   if((m3d=(M3D_info *)malloc(sizeof(M3D_info)))==NULL)
   {
-    v_texto=texto[45];
-    dialogo((int)err0);
+    v_texto=(char *)texto[45];
+    dialogo((memptrsize)err0);
     return;
   }
 
@@ -1866,9 +1866,9 @@ void nuevo_mapa3d(void)
     }
   }
 
-  sprintf(m3d->m3d_name,"Mapa 3D %d",m3d->numero);
+  sprintf((char *)m3d->m3d_name,"Mapa 3D %d",m3d->numero);
 
-  nueva_ventana((int)MapperVisor0);
+  nueva_ventana((memptrsize)MapperVisor0);
 
   scroll_x=FIN_GRID/2;
   scroll_y=FIN_GRID/2;
@@ -1895,8 +1895,8 @@ void mostrar_coordenadas(void)
       sprintf(cadenas[1],"%04d",y0);
 
       sprintf(distance,"D: %04d",(int)sqrt(x0*x0+y0*y0));
-      wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,distance,c12);
-      wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,distance,c3);
+      wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,(byte *)distance,c12);
+      wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,(byte *)distance,c3);
       map_draw();
     }
     else { // Coordenadas absolutas
@@ -1909,10 +1909,10 @@ void mostrar_coordenadas(void)
   }
 
   wbox(v.ptr, an, al, c12, 3, 182, 39, 15);
-  wwrite(v.ptr, an, al,  4, 183, 0,       "X:", c3);
-  wwrite(v.ptr, an, al,  4, 190, 0,       "Y:", c3);
-  wwrite(v.ptr, an, al, 40, 183, 2, cadenas[0], c3);
-  wwrite(v.ptr, an, al, 40, 190, 2, cadenas[1], c3);
+  wwrite(v.ptr, an, al,  4, 183, 0,       (byte *)"X:", c3);
+  wwrite(v.ptr, an, al,  4, 190, 0,       (byte *)"Y:", c3);
+  wwrite(v.ptr, an, al, 40, 183, 2, (byte *)cadenas[0], c3);
+  wwrite(v.ptr, an, al, 40, 190, 2, (byte *)cadenas[1], c3);
 
   // FPG en uso
   wbox(v.ptr, an, al, c12, an-63, al-11, 60, 8);
@@ -1923,23 +1923,23 @@ void mostrar_coordenadas(void)
   //---------------------------------------------------------------------------
   if (edit_point!=-1) {
     sprintf(cadenas[0],"V: %04d",edit_point);
-    wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,cadenas[0],c12);
-    wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,cadenas[0],c3);
+    wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,(byte *)cadenas[0],c12);
+    wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,(byte *)cadenas[0],c3);
   }
   else if (edit_wall!=-1) {
     sprintf(cadenas[0],"L: %04d",edit_wall);
-    wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,cadenas[0],c12);
-    wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,cadenas[0],c3);
+    wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,(byte *)cadenas[0],c12);
+    wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,(byte *)cadenas[0],c3);
   }
   else if (edit_region!=-1) {
     sprintf(cadenas[0],"S: %04d",edit_region);
-    wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,cadenas[0],c12);
-    wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,cadenas[0],c3);
+    wwrite_in_box(v.ptr,an,an-4,al,an-152,al-10,0,(byte *)cadenas[0],c12);
+    wwrite_in_box(v.ptr,an,an-4,al,an-153,al-10,0,(byte *)cadenas[0],c3);
   }
 
   if (num_bandera!=atoi(cadenas[2])) {
     itoa(num_bandera,cadenas[2],10);
-    call(v.paint_handler);
+    call((voidReturnType)v.paint_handler);
     v.volcar=1;
   }
 }
@@ -2066,7 +2066,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
   }
 
 
-  wline(v.ptr+v.an*12*big2+4*big2, v.an, ANCHO_VENTANA*big2, ALTO_VENTANA*big2,
+  wline((char *)v.ptr+v.an*12*big2+4*big2, v.an, ANCHO_VENTANA*big2, ALTO_VENTANA*big2,
     x0*big2, y0*big2, x1*big2, y1*big2, color);
 }
 
@@ -2429,7 +2429,7 @@ void map_draw()
 {
   int i,j;
   int p1,p2;
-  char *direccion=v.ptr+v.an*12*big2+4*big2;
+  char *direccion=(char *)v.ptr+v.an*12*big2+4*big2;
   int ancho=v.an/big2;
   int x0,y0,x1,y1;
   int new_scroll_x,new_scroll_y;
@@ -2568,10 +2568,10 @@ void map_draw()
       y1=y0;
       j=1;
     }
-    wput_in_box(direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x0-2,y0-2,244);
+    wput_in_box((byte *)direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x0-2,y0-2,244);
   }
   if (modo_edicion==PINTA_BANDERA && j)
-    wput_in_box(direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x1-2,y1-2,243);
+    wput_in_box((byte *)direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x1-2,y1-2,243);
 
   //---------------------------------------------------------------------------
   //  Dibujo los vertices
@@ -2581,9 +2581,9 @@ void map_draw()
     x0=zoom_level*(my_map->points[i]->x-new_scroll_x)/big2;
     y0=zoom_level*(my_map->points[i]->y-new_scroll_y)/big2;
     if (my_map->points[i]->active)
-      wput_in_box(direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x0-2,y0-2,241);
+      wput_in_box((byte *)direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x0-2,y0-2,241);
     else
-      wput_in_box(direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x0-2,y0-2,242);
+      wput_in_box((byte *)direccion,ancho,ANCHO_VENTANA,ALTO_VENTANA,x0-2,y0-2,242);
   }
 
   //---------------------------------------------------------------------------
@@ -3126,8 +3126,8 @@ void map_save()
 
   my_map=&m3d->map;
 
-  strcpy(m3d->m3d_name, input);
-  strcpy(m3d->m3d_path, full);
+  strcpy((char *)m3d->m3d_name, input);
+  strcpy((char *)m3d->m3d_path, full);
   fichero=fopen(full,"wb");
 
   map_saveedit(fichero,my_map);
@@ -3329,8 +3329,8 @@ void map_read_old( M3D_info *m3d_aux )
 
   if((fichero=fopen(full,"rb"))==NULL)
   {
-    v_texto=texto[43];
-    dialogo((int)err0);
+    v_texto=(char *)texto[43];
+    dialogo((memptrsize)err0);
     return;
   }
 
@@ -3350,22 +3350,22 @@ void map_read_old( M3D_info *m3d_aux )
   fread(m3d_aux->fpg_path,256,1,fichero);
   fread(m3d_aux->fpg_name,16,1,fichero);
 
-  strcpy(m3d_aux->m3d_path,full);
-  strcpy(m3d_aux->m3d_name,input);
+  strcpy((char *)m3d_aux->m3d_path,full);
+  strcpy((char *)m3d_aux->m3d_name,input);
 
-  if((f=fopen(m3d_aux->fpg_path,"rb"))!=NULL)
+  if((f=fopen((char *)m3d_aux->fpg_path,"rb"))!=NULL)
   {
     fclose(f);
   }
   else
   {
-    _splitpath(m3d_aux->m3d_path,drive,dir,fname,ext);
+    _splitpath((char *)m3d_aux->m3d_path,drive,dir,fname,ext);
     strcpy(full_path, drive);
     strcat(full_path, dir);
-    strcat(full_path, m3d_aux->fpg_name);
+    strcat(full_path, (char *)m3d_aux->fpg_name);
     if((f=fopen(full_path,"rb"))!=NULL)
     {
-      strcpy(m3d_aux->fpg_path, full_path);
+      strcpy((char *)m3d_aux->fpg_path, full_path);
       fclose(f);
     }
     else
@@ -3430,8 +3430,8 @@ void map_read(M3D_info *m3d_aux)
 
   if((fichero=fopen(full,"rb"))==NULL)
   {
-    v_texto=texto[43];
-    dialogo((int)err0);
+    v_texto=(char *)texto[43];
+    dialogo((memptrsize)err0);
     return;
   }
 
@@ -3462,22 +3462,22 @@ void map_read(M3D_info *m3d_aux)
   fread(m3d_aux->fpg_path,256,1,fichero);
   fread(m3d_aux->fpg_name,16,1,fichero);
 
-  strcpy(m3d_aux->m3d_path,full);
-  strcpy(m3d_aux->m3d_name,input);
+  strcpy((char *)m3d_aux->m3d_path,full);
+  strcpy((char *)m3d_aux->m3d_name,input);
 
-  if((f=fopen(m3d_aux->fpg_path,"rb"))!=NULL)
+  if((f=fopen((char *)m3d_aux->fpg_path,"rb"))!=NULL)
   {
     fclose(f);
   }
   else
   {
-    _splitpath(m3d_aux->m3d_path,drive,dir,fname,ext);
+    _splitpath((char *)m3d_aux->m3d_path,drive,dir,fname,ext);
     strcpy(full_path, drive);
     strcat(full_path, dir);
-    strcat(full_path, m3d_aux->fpg_name);
+    strcat(full_path, (char *)m3d_aux->fpg_name);
     if((f=fopen(full_path,"rb"))!=NULL)
     {
-      strcpy(m3d_aux->fpg_path, full_path);
+      strcpy((char *)m3d_aux->fpg_path, full_path);
       fclose(f);
     }
     else
@@ -3918,7 +3918,7 @@ void map_asignregions()
   //---------------------------------------------------------------------------
   for (i=0;i<my_map->num_walls;i++) {
 
-    if ((i&7)==0) Progress(texto[441],i,control);
+    if ((i&7)==0) Progress((char *)texto[441],i,control);
 
     // Inicializo las texturas de pared (partes alta y baja)
     my_map->walls[i]->texture_top=0;
@@ -4029,7 +4029,7 @@ void map_asignregions()
 
   free(muros);
   free(polys);
-  Progress(texto[441],control,control);
+  Progress((char *)texto[441],control,control);
 }
 
 
