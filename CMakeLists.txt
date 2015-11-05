@@ -13,6 +13,7 @@ IF(NOT DEFINED TARGET)
 ENDIF()
 
 SET(RUNTIME "divrun")
+SET(DEBUG "divdbg")
 
 #IF(NOT EXISTS build.conf)
 #	MESSAGE("-- NO BUILD.CONF FOUND!")
@@ -65,10 +66,11 @@ set(EXTRA_LIBS ${EXTRA_LIBS} ${SDL_LIBRARIES} ${SDLIMAGE_LIBRARIES} ${SDLMIXER_L
 # default definitions
 ADD_DEFINITIONS( -D_GNU_SOURCE )
 
-INCLUDE_DIRECTORIES(src)
+INCLUDE_DIRECTORIES(src runtime)
 FILE(GLOB DIV_SOURCES "src/*.c")
 FILE(GLOB VISOR_SOURCES "visor/*.c")
 FILE(GLOB RUNTIME_SOURCES "runtime/*.c")
+FILE(GLOB DEBUG_SOURCES "runtime/debug/*.c")
 
 #INCLUDE (tools/plugins.cmake)
 
@@ -78,11 +80,12 @@ SET(TARGET ${TARGET}-${PLATFORM} ) #-${GIT_BRANCH}-${GIT_COMMIT_HASH})
 
 # make this a c++ app
 #IF(CPLUSPLUS) 
-SET_SOURCE_FILES_PROPERTIES(${RUNTIME_SOURCES} ${DIV_SOURCES} ${VISOR_SOURCES} PROPERTIES LANGUAGE CXX )
-ADD_DEFINITIONS( -g -w -fpermissive -Wfatal-errors -funsigned-char )  
+SET_SOURCE_FILES_PROPERTIES(${RUNTIME_SOURCES} ${DEBUG_SOURCES} ${DIV_SOURCES} ${VISOR_SOURCES} PROPERTIES LANGUAGE CXX )
+ADD_DEFINITIONS( -g -fpermissive -funsigned-char -Wfatal-errors )  
 #set ( CMAKE_CXX_FLAGS "-m32")
 #SET (TARGET ${TARGET}-CXX)
 #ENDIF()
+
 
 ADD_EXECUTABLE(
 	${TARGET} 
@@ -90,23 +93,35 @@ ADD_EXECUTABLE(
 	${VISOR_SOURCES}
 	${DIV_SOURCES} 
 )
+
 ADD_EXECUTABLE(
 	${RUNTIME} 
-	runtime/inter.h runtime/include.div
+	runtime/inter.h
 	${RUNTIME_SOURCES} src/osdep.c
 )
+
+ADD_EXECUTABLE(
+	${DEBUG} 
+	runtime/inter.h runtime/include.div
+	${RUNTIME_SOURCES} ${DEBUG_SOURCES} src/osdep.c
+)
+
+TARGET_COMPILE_DEFINITIONS( ${DEBUG} PRIVATE -DDEBUG)
+
  
 find_package( ZLIB REQUIRED )
 if ( ZLIB_FOUND )
     include_directories( ${ZLIB_INCLUDE_DIRS} )
     target_link_libraries( ${TARGET} ${ZLIB_LIBRARIES} )
     target_link_libraries( ${RUNTIME} ${ZLIB_LIBRARIES} )
+    target_link_libraries( ${DEBUG} ${ZLIB_LIBRARIES} )
 
 endif( ZLIB_FOUND )
 
 
 TARGET_LINK_LIBRARIES(${TARGET} ${EXTRA_LIBS} ${SDLGFX_LIBS} jpeg)
-TARGET_LINK_LIBRARIES(${RUNTIME} ${EXTRA_LIBS} ${SDLGFX_LIBS} jpeg m)
+TARGET_LINK_LIBRARIES(${RUNTIME} ${EXTRA_LIBS} ${SDLGFX_LIBS} jpeg)
+TARGET_LINK_LIBRARIES(${DEBUG} ${EXTRA_LIBS} ${SDLGFX_LIBS} jpeg)
 
 SET_DIRECTORY_PROPERTIES(PROPERTIES  ADDITIONAL_MAKE_CLEAN_FILES div CMakeCache.txt CMakeFiles )
 
