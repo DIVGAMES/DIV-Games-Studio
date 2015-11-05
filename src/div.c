@@ -375,7 +375,7 @@ int main(int argc, char * argv[]) {
 	  printf("Mix_Init: %s\n", Mix_GetError());
    }
  
-atexit(SDL_Quit);
+//atexit(SDL_Quit);
 
  // chdir("/home/mike/src/div2015");
   
@@ -3912,6 +3912,7 @@ void Load_Cfgbin() {
   strcat(cWork,"/MOD");
   strcpy(Setupfile.Dir_mod,cWork);
   strcpy(tipo[16].path,cWork);
+printf("%s\n",texto[487]);
 
   file=fopen("system/setup.bin","rb");
   if(file==NULL) {
@@ -4176,7 +4177,7 @@ void wdown(int a) {
 
 void DaniDel(char *name) {
 //	printf("DaniDel %s\n",name);
-	//return;
+	return;
 	
   unsigned rc;
   struct find_t ft;
