@@ -1505,7 +1505,7 @@ void rellena_colin(void) {  // Funci¢n para obtener los colores de la siguiente 
   unsigned char *p=csource;
   int i=0;
 
-  if (!coloreador || strstr((const char *)v.titulo,".PRG")) {
+  if (!coloreador ) {//|| strstr((const char *)v.titulo,".PRG")) {
     memset(colin,ce4,1024);
   } else do {
     clexico();

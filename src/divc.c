@@ -1593,18 +1593,6 @@ void precarga_obj (void) {
 //  Adivina cual ser  la siguiente pieza lexica leida (y donde estar )
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-#if __WORDSIZE == 64
-#define ptr8 16
-#define ptr4 8
-#define ptr2 2
-#else
-#define ptr8 8
-#define ptr4 4
-#define ptr2 2
-
-#endif
-
-
 int next_pieza;
 int next_linea;
 byte * next_source;
@@ -1653,8 +1641,8 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
       while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
       ivnom.b++; _source--;
       ptr=&vhash[h];
-      while (*ptr!=NULL && strcmp((char *)(ptr+ptr2),(char *)_ivnom+ptr8)) ptr=(void*)*ptr;
-      if (!strcmp((char *)(ptr+ptr2),(char *)_ivnom+ptr8)) { // id encontrado
+      while (*ptr!=NULL && strcmp((char *)(ptr+2),(char *)_ivnom+ptr8)) ptr=(void*)*ptr;
+      if (!strcmp((char *)(ptr+2),(char *)_ivnom+ptr8)) { // id encontrado
         ivnom.b=_ivnom; // lo saca de vnom
         next_pieza=(int)*(ptr+1);
         if (next_pieza<256 && next_pieza>=0) { // palabra reservada (token)
@@ -1759,13 +1747,13 @@ void lexico(void) {
       if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
 
       ptr=&vhash[h];
-      while (*ptr && strcmp((char *)(ptr+ptr2),((char *)_ivnom+ptr8))!=0) {
+      while (*ptr && strcmp((char *)(ptr+2),((char *)_ivnom+ptr8))!=0) {
 //		  printf("skip [%s] [%s]\n",(char *)(ptr+2),(char *)_ivnom+ptr8);
 		  ptr=(byte**)*ptr; 
 //		  printf("new ptr: %x\n",ptr);
 	  }
 	  
-      if (!strcmp((char *)(ptr+ptr2),(char *)_ivnom+ptr8)) { // id found
+      if (!strcmp((char *)(ptr+2),(char *)_ivnom+ptr8)) { // id found
 //		printf("found [%s] [%s]\n",(char *)(ptr+2),(char *)_ivnom+ptr8);
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
@@ -7696,8 +7684,8 @@ void plexico(void) {
       while (*ivnom.b=lower[*_source++]) h=((byte)(h<<1)+(h>>7))^(*ivnom.b++);
       ivnom.b++; _source--; if (ivnom.b-vnom>max_obj*long_med_id) c_error(0,100);
       ptr=&vhash[h];
-      while (*ptr && strcmp((char *)(ptr+ptr2),(char *)(_ivnom+ptr8))) ptr=(byte **)*ptr;
-      if (!strcmp((char *)(ptr+ptr2),(char *)_ivnom+ptr8)) { // id found
+      while (*ptr && strcmp((char *)(ptr+2),(char *)(_ivnom+ptr8))) ptr=(byte **)*ptr;
+      if (!strcmp((char *)(ptr+2),(char *)_ivnom+ptr8)) { // id found
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(int)*(ptr+1);
         if (pieza<256 && pieza>=0) { // palabra reservada (token)

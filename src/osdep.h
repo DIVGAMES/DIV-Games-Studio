@@ -143,5 +143,13 @@ extern int _chdir(const char* Directory);
 
 void textcolor(int attr, int fg, int bg);
 
+#if __WORDSIZE == 64
+#define ptr8 16
+#define ptr4 8
+#else
+#define ptr8 8
+#define ptr4 4
+#endif
+
 #endif // __OSDEP_H
 
