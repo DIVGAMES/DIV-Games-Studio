@@ -81,7 +81,7 @@ SET(TARGET ${TARGET}-${PLATFORM} ) #-${GIT_BRANCH}-${GIT_COMMIT_HASH})
 # make this a c++ app
 #IF(CPLUSPLUS) 
 SET_SOURCE_FILES_PROPERTIES(${RUNTIME_SOURCES} ${DEBUG_SOURCES} ${DIV_SOURCES} ${VISOR_SOURCES} PROPERTIES LANGUAGE CXX )
-ADD_DEFINITIONS( -g -fpermissive -funsigned-char -Wfatal-errors )  
+ADD_DEFINITIONS( -w -g -fpermissive -funsigned-char -Wfatal-errors )  
 #set ( CMAKE_CXX_FLAGS "-m32")
 #SET (TARGET ${TARGET}-CXX)
 #ENDIF()
