@@ -132,6 +132,8 @@ Filename,char* Extension)
   // but considered anyway
   Drive = NULL;
 
+//printf("Input %s\n",Path);
+
   while(*CopyOfPath != '\0')
     {
       // search for the last slash
@@ -157,6 +159,7 @@ Filename,char* Extension)
   // Filename is the part behind the last slahs
   strcpy(Filename,CopyOfPath -= Rest);
   // get extension if there is any
+  char *ext = Extension;
   while(*Filename != '\0')
   {
     // the part behind the point is called extension in windows systems
@@ -164,6 +167,10 @@ Filename,char* Extension)
     // of the extension too .
     if(*Filename == '.')
       {
+		  *Filename = '\0';
+		  *Filename++;
+		  *Extension = '.';
+		  *Extension++;
         while(*Filename != '\0')
         {
           *Extension = *Filename;
@@ -175,6 +182,10 @@ Filename,char* Extension)
         {Filename++;}
   }
   *Extension = '\0';
+//  Filename[
+  Extension = ext;
+//  printf("Extension is %s\n",ext);//Extension);
+  
   return;
 }
 
@@ -237,7 +248,8 @@ int _chdir(const char* Directory)
 }
 
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
-	realpath(_Path, _FullPath);
+//	realpath(_Path, _FullPath);
+strcpy(_FullPath, _Path);
 	return _FullPath;
 }
 
@@ -337,7 +349,7 @@ unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
 
 #ifndef __llvm___
 void mkdir(char *dir) {
-	printf("mkdir %\n",dir);
+	printf("mkdir %s\n",dir);
 }
 
 #endif
