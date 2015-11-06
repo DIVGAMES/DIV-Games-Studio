@@ -298,6 +298,7 @@ ip = 99;
 
   ticks=0; reloj=0; ultimo_reloj=0;
   freloj=ireloj=100.0/24.0;
+  game_fps=24;
   max_saltos=0;
 
   joy_timeout=0;
