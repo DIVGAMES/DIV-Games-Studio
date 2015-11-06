@@ -309,9 +309,12 @@ SDL_UnlockSurface(vga);
 	SDL_Flip(vga);
 }
 
-
+long lasttick = 0;
+long newtick =0;
+long nexttick = 0;
+extern int game_fps;
 void volcado(byte *p) {
-
+//printf("%d %d %d\n",game_fps,freloj,ireloj);//,reloj);
   if ((shift_status&4) && (shift_status&8) && key(_P)) {
     snapshot(p);
     do {} while(key(_P));
@@ -320,7 +323,18 @@ void volcado(byte *p) {
   if (fli_palette_update) retrazo();
 
 volcadosdl(p);
-return;
+
+newtick = SDL_GetTicks();
+nexttick = lasttick + (1000/game_fps);
+
+//printf("%d %d\n",newtick,nexttick);
+
+if(newtick<nexttick)
+	SDL_Delay(nexttick-newtick);
+
+lasttick=SDL_GetTicks();
+
+#ifdef NOTYET
 
   if (volcado_completo) {
     if (modovesa) volcadocsvga(p);
@@ -343,7 +357,7 @@ return;
       case 376282: volcadopx(p); break;
     }
   }
-
+#endif
   if (fli_palette_update) { fli_palette_update=0; set_dac2(); }
   init_volcado();
 }
