@@ -778,6 +778,7 @@ GLOBAL int ticks;
 GLOBAL int old_reloj; // For time (timing) functions
 GLOBAL int ultimo_reloj;
 GLOBAL double freloj,ireloj;
+GLOBAL int game_fps;
 
 GLOBAL int max_saltos;                  // Ma number of skipped frames
 
