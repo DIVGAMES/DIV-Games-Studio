@@ -624,7 +624,7 @@ void trace_process(void) {
     mem[ide+_Executed]=1;
   }
   else {
-#ifdef MODE8
+#ifdef NET
     _net_loop(); // Receive packets before executing process
 #endif
     id=ide; ip=mem[id+_IP]; carga_pila(id);
