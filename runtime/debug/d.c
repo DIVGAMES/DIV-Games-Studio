@@ -4370,6 +4370,9 @@ void reset_tick(void);
 #define IntIncr (unsigned int)(11932/256)
 
 unsigned int get_ticks(void) {
+//	printf("ticks\n");
+
+	return SDL_GetTicks()/100;
 #ifdef DOS
   unsigned int x,xnull;
 

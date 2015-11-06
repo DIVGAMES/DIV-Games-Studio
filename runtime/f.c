@@ -47,6 +47,7 @@ void get_sector_texture(void);
 void set_wall_texture(void);
 void get_wall_texture(void);
 void _object_avance(int ide,int angulo,int velocidad);
+
 #ifndef MODE8
 void _object_avance(int ide,int angulo,int velocidad) {
 }
@@ -76,7 +77,15 @@ extern int nomitidos;
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 int get_reloj(void) {
-  return(reloj/1000000);
+	reloj=SDL_GetTicks()/10;
+return reloj;
+
+	return SDL_GetTicks()/100;//ireloj;
+	
+	reloj = SDL_GetTicks()/100;
+	return reloj;
+//	return(SDL_GetTicks()/50);
+//	  return(reloj/1000000);
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -1987,6 +1996,8 @@ void set_fps(void) {
   if (pila[sp]<4) pila[sp]=4;
   if (pila[sp]>100) pila[sp]=100;
   ireloj=100.0/(double)pila[sp];
+  game_fps = pila[sp];
+  //printf("new fps = %d %d\n",ireloj,pila[sp]);
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -4352,20 +4363,23 @@ void function(void) {
     case 75: unload_map(); break;
     case 76: unload_fnt(); break;
     case 77: set_volume(); break;
-
     case 78: set_color(); break;
+    
 #ifdef NETPLAY
     case 79: net_join_game(); break;
     case 80: net_get_games(); break;
 #endif
+
 #ifdef MODE8
     case 81: stop_mode8(); break;
 #endif
+
     case 82: x_advance(); break;
     case 83: _strchar(); break;
     case 84: path_find(); break;
     case 85: path_line(); break;
     case 86: path_free(); break;
+    
 #ifdef MODE8
     case 87: new_map(); break;
     case 88: load_wld(); break;
