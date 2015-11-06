@@ -158,6 +158,7 @@ while (*ff!=0) {
 }
 
 #endif
+//printf("%s\n",full);
   strcpy(full,(char*)file);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
