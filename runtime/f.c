@@ -149,7 +149,15 @@ FILE * open_file(byte * file) {
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
+#ifndef DOS
+char *ff = file;
 
+while (*ff!=0) {
+	if(*ff =='\\') *ff='/';
+	ff++;
+}
+
+#endif
   strcpy(full,(char*)file);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
@@ -158,9 +166,11 @@ FILE * open_file(byte * file) {
     if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,(char*)file);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+
       strcpy(full,fname);
       strcat(full,ext);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
@@ -184,7 +194,7 @@ FILE * open_file(byte * file) {
   char ext[_MAX_EXT+1];
 
   strcpy(full,(char*)file);
-printf("opening file: %s\n",file);
+//printf("opening file: %s\n",file);
 
 //  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
 //printf("hello\n");
