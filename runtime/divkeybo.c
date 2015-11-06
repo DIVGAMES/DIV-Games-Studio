@@ -112,7 +112,6 @@ void SetIRQVector(int n, TIRQHandler vec)
 
 void kbdInit(void)
 {
-	printf("kbdInit\n");
 	sdlkeyinit();
 #ifdef DOS
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
