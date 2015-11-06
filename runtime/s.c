@@ -81,33 +81,21 @@ extern int mul_16(int, int);
         parm caller [EDX] [EAX] value [EAX]
 
 #endif
+
+
 static int mul_24(int a, int b)
 {
-	int result = (float)a*(float)b;
-/*	asm ( "imull %%ebx\n\t"
-	"shrdl $24,%%edx,%%eax\n\t"
-	: "=a" (result)
-	: "a" (a), "b" (b)
-	: "edx");
-	*/
-	return (result);
+	long long c = (long)a*(long)b;
+	return (c>>24);
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 //  Muliply two 16:16 floating points
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
-//fixed mul_16(long a, long b)
-//{
 static unsigned int mul_16(long a, long b)
 {
-	unsigned int result = (float)a*(float)b;
-/*	asm ( "imull %%ebx\n\t"
-	"shrdl $16,%%edx,%%eax\n\t"
-	: "=a" (result)
-	: "a" (a), "b" (b)
-	: "edx");
-	*/
-	return (result);
+	long long c = a*b;
+	return c>>16;
 }
 
 
