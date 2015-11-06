@@ -85,7 +85,7 @@ extern int mul_16(int, int);
 
 static int mul_24(int a, int b)
 {
-	long long c = (long)a*(long)b;
+	uint64_t c = (uint64_t)a*(uint64_t)b;
 	return (c>>24);
 }
 
@@ -94,7 +94,7 @@ static int mul_24(int a, int b)
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 static unsigned int mul_16(long a, long b)
 {
-	long long c = a*b;
+	uint64_t c = (uint64_t)a*(uint64_t)b;
 	return c>>16;
 }
 
