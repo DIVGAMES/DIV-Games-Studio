@@ -181,15 +181,15 @@ extern int reloj;
 
 //extern float m_x=0.0,m_y;
 void tecla(void) {
-mclock = (int)clock()/20000;
-reloj = (int)clock();
+mclock = SDL_GetTicks()/100;//(int)clock()/20000;
+reloj = SDL_GetTicks()/100;//(int)clock();
 
 //printf("%d %d\n",mclock,reloj);
 
 //mclock++;
 #ifdef NOTYET
-    ascii=0; scan_code=0;
 //printf("Reading keyboard\n");
+    ascii=0; scan_code=0;
 
 SDL_Event event;
 while(SDL_PollEvent(&event))
@@ -212,6 +212,7 @@ while(SDL_PollEvent(&event))
 				scan_code = sdl2key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
 				kbdFLAGS[scan_code]=0;
+				scan_code=0;
 			}
 			  if (event.type == SDL_MOUSEMOTION)
             {
