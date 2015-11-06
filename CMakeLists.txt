@@ -47,7 +47,7 @@ include_directories(${SDL_INCLUDE_DIRS})
 include_directories(${SDLIMAGE_INCLUDE_DIRS})
 include_directories(${SDLMIXER_INCLUDE_DIRS})
 
-set(EXTRA_LIBS ${EXTRA_LIBS} ${SDL_LIBRARIES} ${SDLIMAGE_LIBRARIES} ${SDLMIXER_LIBRARIES})
+set(EXTRA_LIBS ${SDL_LIBRARIES} ${SDLIMAGE_LIBRARIES} ${SDLMIXER_LIBRARIES})
 
 # include our SDL stuff
 # this includes TTF
