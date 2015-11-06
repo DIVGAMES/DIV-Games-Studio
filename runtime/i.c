@@ -1205,7 +1205,7 @@ void exer(int e) {
   FILE *f;
 
   if (e) {
-    if ((f=fopen("system\\exec.err","wb"))!=NULL) {
+    if ((f=fopen("system/exec.err","wb"))!=NULL) {
       fwrite(&e,4,1,f);
       fclose(f);
     }
