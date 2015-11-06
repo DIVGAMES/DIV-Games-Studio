@@ -180,6 +180,8 @@ void tecla_bios(void) {
 extern float m_x,m_y;
 
 void tecla(void) {
+//printf("tecla\n");
+//ascii=0; scan_code=0;
 SDL_Event event;
 while(SDL_PollEvent(&event))
         {
@@ -195,7 +197,7 @@ while(SDL_PollEvent(&event))
             {
 	//			printf("key pressed\n");
 				scan_code = sdl2key[event.key.keysym.sym];
-				ascii = ascii = event.key.keysym.unicode&0x7f;
+				ascii = event.key.keysym.unicode&0x7f;
 				kbdFLAGS[scan_code]=1;
 			}
 			if(event.type == SDL_KEYUP) 
@@ -203,6 +205,8 @@ while(SDL_PollEvent(&event))
 				scan_code = sdl2key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
 				kbdFLAGS[scan_code]=0;
+				scan_code=0;
+				ascii=0;
 			}
 			  if (event.type == SDL_MOUSEMOTION)
             {
