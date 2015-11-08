@@ -37,7 +37,7 @@ void ReadHeadImageAndPoints(HeadFPG *MiHeadFPG,FILE *fpg)
         FPGimagen=(char *)malloc(MiHeadFPG->Ancho*MiHeadFPG->Alto);
         if(FPGimagen==NULL)
         {
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo(err0);
                 return;
         }
         if(MiHeadFPG->nPuntos!=0)
@@ -47,7 +47,7 @@ void ReadHeadImageAndPoints(HeadFPG *MiHeadFPG,FILE *fpg)
                 {
                         free(FPGimagen);
                         FPGimagen=NULL;
-                        v_texto=texto[45]; dialogo((int)err0);
+                        v_texto=(char *)texto[45]; dialogo(err0);
                         return;
                 }
                 fread(FPGpuntos,MiHeadFPG->nPuntos*2,2,fpg);
@@ -68,7 +68,7 @@ FILE *fpg;
         }
         Fpg->nIndex=0;
         Fpg->LastUsed=0;
-        strcpy(Fpg->ActualFile,Name);
+        strcpy((char *)Fpg->ActualFile,Name);
         fwrite("fpg\x1a\x0d\x0a\x00\x00",8,1,fpg);
         fwrite(dac,768,1,fpg);
 
@@ -88,7 +88,7 @@ FILE *fpg;
         }
         Fpg->lInfoFPG.x=3;
         Fpg->lInfoFPG.y=11;
-        Fpg->lInfoFPG.lista=(byte *)Fpg->CodDes;
+        Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
         Fpg->lInfoFPG.maximo=Fpg->nIndex;
         Fpg->lInfoFPG.lista_an=38+2;
 }
@@ -115,7 +115,7 @@ char buffer[768];
                 Fpg->DesIndex[x]=0;
         }
         Fpg->nIndex=0;
-        strcpy(Fpg->ActualFile,Name);
+        strcpy((char *)Fpg->ActualFile,Name);
         fread(newdac,768,1,fpg);
         memcpy(dac4,newdac,768);
         NewDacLoaded=1;
@@ -124,7 +124,7 @@ char buffer[768];
         {
                 Fpg->OffsGrf[kkhead.COD]=ftell(fpg)-FPG_HEAD;
                 Fpg->DesIndex[Fpg->nIndex]=kkhead.COD;
-                sprintf(Fpg->CodDes[Fpg->nIndex++],"%c %03d %s",255,kkhead.COD,kkhead.Descrip);
+                sprintf((char *)Fpg->CodDes[Fpg->nIndex++],"%c %03d %s",255,kkhead.COD,kkhead.Descrip);
                 fseek(fpg,Fpg->OffsGrf[kkhead.COD]+kkhead.LONG,SEEK_SET);
         }
         Sort(Fpg);
@@ -143,7 +143,7 @@ char buffer[768];
         }
         Fpg->lInfoFPG.x=3;
         Fpg->lInfoFPG.y=11;
-        Fpg->lInfoFPG.lista=(byte *)Fpg->CodDes;
+        Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
         Fpg->lInfoFPG.maximo=Fpg->nIndex;
         Fpg->lInfoFPG.lista_an=38+2;
 
@@ -164,9 +164,9 @@ char cWork[38];
                                 Fpg->DesIndex[j]=Fpg->DesIndex[j+1];
                                 Fpg->DesIndex[j+1]=iWork;
 
-                                strcpy(cWork,Fpg->CodDes[j]);
-                                strcpy(Fpg->CodDes[j],Fpg->CodDes[j+1]);
-                                strcpy(Fpg->CodDes[j+1],cWork);
+                                strcpy(cWork,(char *)Fpg->CodDes[j]);
+                                strcpy((char *)Fpg->CodDes[j],(char *)Fpg->CodDes[j+1]);
+                                strcpy((char *)Fpg->CodDes[j+1],cWork);
                         }
                 }
         }
@@ -243,10 +243,10 @@ FILE *fpg;
 
         if(Fpg->OffsGrf[COD]!=0) Borrar_FPG(Fpg,COD); // Si se machaca uno
 
-        if((fpg=fopen(Fpg->ActualFile,"ab"))==NULL)
+        if((fpg=fopen((char *)Fpg->ActualFile,"ab"))==NULL)
         {
-                v_texto=texto[43];
-                dialogo((int)err0);
+                v_texto=(char *)texto[43];
+                dialogo(err0);
                 return 0;
         }
 
@@ -279,10 +279,10 @@ FILE *fpg;
         fclose(fpg);
 
         //Relee la informacion del fichero.
-        if(!Abrir_FPG(Fpg,Fpg->ActualFile))
+        if(!Abrir_FPG(Fpg,(char *)Fpg->ActualFile))
         {
-                v_texto=texto[43];
-                dialogo((int)err0);
+                v_texto=(char *)texto[43];
+                dialogo(err0);
                 return 0;
         }
 
@@ -321,7 +321,7 @@ int y;
 byte MiTabla[256];
 
         //Nombre del fichero temporal
-        strcpy(ActualPath,Fpg->ActualFile);
+        strcpy(ActualPath,(char *)Fpg->ActualFile);
         for(x=strlen(ActualPath);x>=0;x--)
                 if(ActualPath[x]=='\\')
                         x=-1;
@@ -330,9 +330,9 @@ byte MiTabla[256];
         strcat(ActualPath,"_DIV_.FPG");
         DaniDel(ActualPath);
 
-        if((fpg=fopen(Fpg->ActualFile,"rb"))==NULL)
+        if((fpg=fopen((char *)Fpg->ActualFile,"rb"))==NULL)
                 return 0;
-        if((Oldfpg=fopen(ActualPath,"wb"))==NULL)
+        if((Oldfpg=fopen((char *)ActualPath,"wb"))==NULL)
         {
                 fclose(fpg);
                 return 0;
@@ -355,7 +355,7 @@ byte MiTabla[256];
                 {
                         fclose(fpg);
                         fclose(Oldfpg);
-                        v_texto=texto[45]; dialogo((int)err0);
+                        v_texto=(char *)texto[45]; dialogo(err0);
                         return 0;
                 }
                 //Comprobar memoria
@@ -367,7 +367,7 @@ byte MiTabla[256];
                                 fclose(fpg);
                                 fclose(Oldfpg);
                                 free(OtraImagen);
-                                v_texto=texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo(err0);
                                 return 0;
                         }
                         fread(OtrosPuntos,MiOtraHeadFPG.nPuntos*2,2,fpg);
@@ -384,9 +384,9 @@ byte MiTabla[256];
         }
         fclose(Oldfpg);
         fclose(fpg);
-        DaniDel(Fpg->ActualFile);
-        rename(ActualPath,Fpg->ActualFile);
-        if(!Abrir_FPG(Fpg,Fpg->ActualFile))
+        DaniDel((char *)Fpg->ActualFile);
+        rename(ActualPath,(char *)Fpg->ActualFile);
+        if(!Abrir_FPG(Fpg,(char *)Fpg->ActualFile))
                 return 0;
         NewDacLoaded=0;
 return 1;
@@ -403,14 +403,14 @@ char *Buffer;
         Buffer=(char *)malloc(BUFFERCOPYLEN);
         if(Buffer==NULL)
         {
-                v_texto=texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo(err0);
                 return;
         }
         strcpy(full,tipo[4].path);
         if (full[strlen(full)-1]!='/') strcat(full,"/");
         strcat(full,input);
 
-        FileOrg=fopen(Fpg->ActualFile,"rb");
+        FileOrg=fopen((char *)Fpg->ActualFile,"rb");
         if(FileOrg==NULL)
         {
                 free(Buffer);
@@ -445,8 +445,8 @@ char *Buffer;
 
         cierra_fpg(full);
 
-        strcpy(Fpg->ActualFile,full);
-        strcpy(Fpg->NombreFpg,input);
+        strcpy((char *)Fpg->ActualFile,full);
+        strcpy((char *)Fpg->NombreFpg,input);
 
         wgra(ventana[n].ptr,an,al,c_b_low,2,2,an-20,7);
         if (text_len(ventana[n].titulo)+3>an-20) {
@@ -475,7 +475,7 @@ FILE *fpg;
 FILE *Oldfpg;
 
         //Nombre del fichero temporal
-        strcpy(ActualPath,Fpg->ActualFile);
+        strcpy(ActualPath,(char *)Fpg->ActualFile);
         for(x=strlen(ActualPath);x>=0;x--)
                 if(ActualPath[x]=='\\')
                         x=-1;
@@ -484,7 +484,7 @@ FILE *Oldfpg;
         strcat(ActualPath,"_DIV_.FPG");
         DaniDel(ActualPath);
 
-        if((fpg=fopen(Fpg->ActualFile,"rb"))==NULL)
+        if((fpg=fopen((char *)Fpg->ActualFile,"rb"))==NULL)
                 return 0;
         if((Oldfpg=fopen(ActualPath,"wb"))==NULL)
         {
@@ -505,7 +505,7 @@ FILE *Oldfpg;
         fseek(fpg,0,SEEK_END);
         len=ftell(fpg);
         fseek(fpg,0,SEEK_SET);
-        Progress(texto[436],0,len);
+        Progress((char *)texto[436],0,len);
 
         //Copia Cabecera de grafico
         fread(tmp,8,1,fpg);
@@ -517,15 +517,15 @@ FILE *Oldfpg;
 
         while(ReadHead(&MiOtraHeadFPG,fpg))
         {
-                Progress(texto[436],ftell(fpg),len);
+                Progress((char *)texto[436],ftell(fpg),len);
 
                 OtraImagen=(char *)malloc(MiOtraHeadFPG.Ancho*MiOtraHeadFPG.Alto);
                 if(OtraImagen==NULL)
                 {
-                        Progress(texto[436],len,len);
+                        Progress((char *)texto[436],len,len);
                         fclose(fpg);
                         fclose(Oldfpg);
-                        v_texto=texto[45]; dialogo((int)err0);
+                        v_texto=(char *)texto[45]; dialogo(err0);
                         return 0;
                 }
                 //Comprobar memoria
@@ -534,11 +534,11 @@ FILE *Oldfpg;
                         OtrosPuntos=(short *)malloc(MiOtraHeadFPG.nPuntos*4);
                         if(OtrosPuntos==NULL)
                         {
-                                Progress(texto[436],len,len);
+                                Progress((char *)texto[436],len,len);
                                 fclose(fpg);
                                 fclose(Oldfpg);
                                 free(OtraImagen);
-                                v_texto=texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo(err0);
                                 return 0;
                         }
                         fread(OtrosPuntos,MiOtraHeadFPG.nPuntos*2,2,fpg);
@@ -562,11 +562,11 @@ FILE *Oldfpg;
         fclose(Oldfpg);
         fclose(fpg);
 
-        Progress(texto[436],len,len);
+        Progress((char *)texto[436],len,len);
 
-        DaniDel(Fpg->ActualFile);
-        rename(ActualPath,Fpg->ActualFile);
-        if(!Abrir_FPG(Fpg,Fpg->ActualFile))
+        DaniDel((char *)Fpg->ActualFile);
+        rename(ActualPath,(char *)Fpg->ActualFile);
+        if(!Abrir_FPG(Fpg,(char *)Fpg->ActualFile))
                 return 0;
 return 1;
 }
@@ -583,13 +583,13 @@ int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
   FILE *fpg;
   FILE *Oldfpg;
 
-  strcpy(ActualPath,Fpg->ActualFile); //Nombre del fichero temporal
+  strcpy(ActualPath,(char *)Fpg->ActualFile); //Nombre del fichero temporal
   for(x=strlen(ActualPath);x>=0;x--)
     if(ActualPath[x]=='\\') x=-1; else ActualPath[x]=0;
   strcat(ActualPath,"_DIV_.FPG");
   DaniDel(ActualPath);
 
-  if((fpg=fopen(Fpg->ActualFile,"rb"))==NULL) return 0;
+  if((fpg=fopen((char *)Fpg->ActualFile,"rb"))==NULL) return 0;
   if((Oldfpg=fopen(ActualPath,"wb"))==NULL)
   {
     fclose(fpg);
@@ -600,7 +600,7 @@ int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
   fseek(fpg,0,SEEK_END);
   len=ftell(fpg);
   fseek(fpg,0,SEEK_SET);
-  Progress(texto[436],0,len);
+  Progress((char *)texto[436],0,len);
 
   fread(tmp,8,1,fpg); //Copia Cabecera de grafico
   fwrite(tmp,8,1,Oldfpg);
@@ -611,26 +611,26 @@ int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
 
   while(ReadHead(&MiOtraHeadFPG,fpg)) {
 
-    Progress(texto[436],ftell(fpg),len);
+    Progress((char *)texto[436],ftell(fpg),len);
 
     OtraImagen=(char *)malloc(MiOtraHeadFPG.Ancho*MiOtraHeadFPG.Alto);
 
     if(OtraImagen==NULL) {
-      Progress(texto[436],len,len);
+      Progress((char *)texto[436],len,len);
       fclose(fpg);
       fclose(Oldfpg);
-      v_texto=texto[45]; dialogo((int)err0);
+      v_texto=(char *)texto[45]; dialogo(err0);
       return 0;
     }
 
     if(MiOtraHeadFPG.nPuntos!=0) { // Comprobar memoria
       OtrosPuntos=(short *)malloc(MiOtraHeadFPG.nPuntos*4);
       if(OtrosPuntos==NULL) {
-        Progress(texto[436],len,len);
+        Progress((char *)texto[436],len,len);
         fclose(fpg);
         fclose(Oldfpg);
         free(OtraImagen);
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo(err0);
         return 0;
       } fread(OtrosPuntos,MiOtraHeadFPG.nPuntos*2,2,fpg);
     }
@@ -672,11 +672,11 @@ int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
   fclose(Oldfpg);
   fclose(fpg);
 
-  Progress(texto[436],len,len);
+  Progress((char *)texto[436],len,len);
 
-  DaniDel(Fpg->ActualFile);
-  rename(ActualPath,Fpg->ActualFile);
+  DaniDel((char *)Fpg->ActualFile);
+  rename(ActualPath,(char *)Fpg->ActualFile);
 
-  if(!Abrir_FPG(Fpg,Fpg->ActualFile)) return 0;
+  if(!Abrir_FPG(Fpg,(char *)Fpg->ActualFile)) return 0;
   return 1;
 }

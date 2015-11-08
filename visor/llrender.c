@@ -191,7 +191,7 @@ void llrender_destroy(llrender *llrender_struct)
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-int compara(const lptface *op1, const lptface *op2)
+int compara(const void *op1, const void *op2)
 {
   return ((*((const lptface *)op1))->v1->fpz<(*((const lptface *)op2))->v1->fpz);
 }
@@ -219,7 +219,7 @@ void llrender_render(llrender *llrender_struct,lptface faces,int nfaces)
   for (i=0;i<nfaces;i++)
     caras[i]=&faces[i];
 
-  qsort(caras,nfaces,sizeof(lptface *),(__compar_fn_t)compara);
+  qsort(caras,nfaces,sizeof(lptface *),compara);
 
   i=0;
   do {

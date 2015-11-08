@@ -92,7 +92,7 @@ short initStruct()
         return(IFS_OPEN_ERROR);
     if (fread(&IFSheader,sizeof(IFSheader),1,fichIFS)<1)
         return(IFS_FORMAT_ERROR);
-    if (strcmp(IFSheader.id,"IFS"))
+    if (strcmp((char *)IFSheader.id,"IFS"))
         return(IFS_FORMAT_ERROR);
     if (ifs.tamX<8 || ifs.tamX>128 || ifs.tamY<8 || ifs.tamY>128)
         return(IFS_PARAM_ERROR);
@@ -304,8 +304,8 @@ short PintaOutline()
   short altoOut=altoBody+1+ifs.outline*2;
   char *tmpBuffer, *ptr, *ptr2, *pun, blanco, negro, gris;
 
-    tmpBuffer=malloc (anchoTotal*(altoTotal+1));
-    outBuffer=realloc (outBuffer, anchoOut*altoOut);
+    tmpBuffer=(char *)malloc (anchoTotal*(altoTotal+1));
+    outBuffer=(char *)realloc (outBuffer, anchoOut*altoOut);
     if (tmpBuffer==NULL || outBuffer==NULL)
         return (IFS_MEM_ERROR);
     memset(tmpBuffer, 0, anchoTotal*(altoTotal+1));
@@ -454,7 +454,7 @@ short PintaSombra()
   short x, y;
   short absSombraX=abs(ifs.sombraX), absSombraY=abs(ifs.sombraY);
 
-    shadowBuffer=realloc (shadowBuffer, (anchoreal+absSombraX+1) * (altoreal+absSombraY+1));
+    shadowBuffer=(char *)realloc (shadowBuffer, (anchoreal+absSombraX+1) * (altoreal+absSombraY+1));
     if (shadowBuffer==NULL) return (IFS_MEM_ERROR);
     memset (shadowBuffer, 0, (anchoreal+absSombraX+1)*(altoreal+absSombraY+1));
 
@@ -745,7 +745,7 @@ int Jorge_Crea_el_font(int GenCode)
     for (x=0, error=0; x<256 && !error; x++)
     {
 
-        Progress(texto[217],x,256);
+        Progress((char *)texto[217],x,256);
 
         tablaFNT[x].ancho=tablaFNT[x].alto=0;
         tablaFNT[x].offset=0;
@@ -767,7 +767,7 @@ int Jorge_Crea_el_font(int GenCode)
              {
                 if (ret=escalar())
                 {
-                    Progress(texto[217],256,256);
+                    Progress((char *)texto[217],256,256);
                     CloseAndFreeAll();
                     return (ret);
                 }
@@ -786,7 +786,7 @@ int Jorge_Crea_el_font(int GenCode)
                 {
                     if (ret=PintaOutline())
                     {
-                        Progress(texto[217],256,256);
+                        Progress((char *)texto[217],256,256);
                         CloseAndFreeAll();
                         return (ret);
                     }
@@ -804,7 +804,7 @@ int Jorge_Crea_el_font(int GenCode)
                 {
                     if (ret=PintaSombra())
                     {
-                        Progress(texto[217],256,256);
+                        Progress((char *)texto[217],256,256);
                         CloseAndFreeAll();
                         return (ret);
                     }
@@ -832,7 +832,7 @@ int Jorge_Crea_el_font(int GenCode)
 
     if (error)
     {
-        Progress(texto[217],256,256);
+        Progress((char *)texto[217],256,256);
         CloseAndFreeAll();
         return (IFS_WRITE_ERROR);
     }
@@ -842,7 +842,7 @@ int Jorge_Crea_el_font(int GenCode)
     fseek(fichFNT,8+768+sizeof(reglas)+4,SEEK_SET);
     fwrite(&tablaFNT,sizeof(tablaFNT),1,fichFNT);
 
-    Progress(texto[217],256,256);
+    Progress((char *)texto[217],256,256);
     CloseAndFreeAll();
     return(0);
 }

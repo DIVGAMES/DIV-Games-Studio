@@ -252,9 +252,9 @@ void MapperVisor0(void)
   v.an     = 100;
   v.al     = 100;
 
-  v.paint_handler=(memptrsize)MapperVisor1;
-  v.click_handler=(memptrsize)MapperVisor2;
-  v.close_handler=(memptrsize)MapperVisor3;
+  v.paint_handler=MapperVisor1;
+  v.click_handler=MapperVisor2;
+  v.close_handler=MapperVisor3;
 
   v.aux=(byte*)m3d;
 
@@ -300,10 +300,10 @@ void MapperVisor2(void)
         TipoTex=FONDO;
         CrearMapperThumb(Tex[FONDO].cod, 42, 21);
       }
-      dialogo((memptrsize)MapperCreator0);
+      dialogo(MapperCreator0);
       my_map->fondo=Tex[FONDO].cod;
       memcpy(m3d_aux ,&m3d_edit, sizeof(M3D_info)-sizeof(tmap));
-      call((voidReturnType)v.paint_handler);
+      call(v.paint_handler);
       v.volcar=1;
 //    }
   }
@@ -349,9 +349,9 @@ void MapperCreator0(void)
   fade_sector=0;
   VuelcaMapa=1;
 
-  v.paint_handler=(memptrsize)MapperCreator1;
-  v.click_handler=(memptrsize)MapperCreator2;
-  v.close_handler=(memptrsize)MapperCreator3;
+  v.paint_handler=MapperCreator1;
+  v.click_handler=MapperCreator2;
+  v.close_handler=MapperCreator3;
 
   // Modo Edicion
   _flag(443, 4, 174, &m3d_flags[0]);
@@ -731,7 +731,7 @@ void MapperCreator2(void)
         if(m3d_edit.fpg_path[0]!=0)
         {
           TipoTex = PARED;
-          dialogo((memptrsize)MapperBrowseFPG0);
+          dialogo(MapperBrowseFPG0);
           if(edit_wall != -1) my_map->walls[edit_wall]->texture=Tex[PARED].cod;
           need_refresh=1;
         }
@@ -753,7 +753,7 @@ void MapperCreator2(void)
         if(m3d_edit.fpg_path[0]!=0)
         {
           TipoTex = TECHO;
-          dialogo((memptrsize)MapperBrowseFPG0);
+          dialogo(MapperBrowseFPG0);
           if(edit_region != -1) my_map->regions[edit_region]->ceil_tex=Tex[TECHO].cod;
           need_refresh=1;
         }
@@ -773,7 +773,7 @@ void MapperCreator2(void)
         if(m3d_edit.fpg_path[0]!=0)
         {
           TipoTex = SUELO;
-          dialogo((memptrsize)MapperBrowseFPG0);
+          dialogo(MapperBrowseFPG0);
           if(edit_region != -1) my_map->regions[edit_region]->floor_tex=Tex[SUELO].cod;
           need_refresh=1;
         }
@@ -793,7 +793,7 @@ void MapperCreator2(void)
       if(m3d_edit.fpg_path[0]!=0)
       {
         TipoTex = FONDO;
-        dialogo((memptrsize)MapperBrowseFPG0);
+        dialogo(MapperBrowseFPG0);
         need_refresh=1;
       }
     }
@@ -918,7 +918,7 @@ void MapperCreator2(void)
 
   if(need_refresh)
   {
-    call((voidReturnType)v.paint_handler);
+    call(v.paint_handler);
     map_draw();
     v.volcar=1;
   }
@@ -987,8 +987,8 @@ void MapperBrowseFPG0(void)
     v.nombre = texto[433];
   }
 
-  v.paint_handler=(memptrsize)MapperBrowseFPG1;
-  v.click_handler=(memptrsize)MapperBrowseFPG2;
+  v.paint_handler=MapperBrowseFPG1;
+  v.click_handler=MapperBrowseFPG2;
 
   if(modo<100) {
     if(TipoBrowser==MAPBR) {
@@ -1068,6 +1068,11 @@ void MapperBrowseFPG2(void) {
   }
 }
 
+int strcmpsort(const void *a, const void *b) {
+	return strcmp((char *)a,(char *)b);
+}
+
+
 void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
 {
   FILE       *FPG_F;
@@ -1112,7 +1117,7 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   if((FPG_F=fopen((char *)m3d_edit.fpg_path,"rb"))==NULL)
   {
     v_texto=(char *)texto[43];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
   fseek(FPG_F, 0, SEEK_END);
@@ -1124,7 +1129,7 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   {
     fclose(FPG_F);
     v_texto=(char *)texto[44];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
 
@@ -1151,8 +1156,8 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   }
 
   n=1;
-  if( v.click_handler != (memptrsize)MapperVisor2 &&
-      v.click_handler != (memptrsize)MapperCreator2 ) n=t_maximo=f_maximo=0;
+  if( v.click_handler!=MapperVisor2 &&
+      v.click_handler!=MapperCreator2 ) n=t_maximo=f_maximo=0;
   for(;;)
   {
     if(fread(&(FPG_D.info), 1, sizeof(FPG_info), FPG_F)!=sizeof(FPG_info))
@@ -1167,7 +1172,7 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
         fclose(FPG_F);
         if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
         v_texto=(char *)texto[44];
-        dialogo((memptrsize)err0);
+        dialogo(err0);
         return;
       }
     }
@@ -1211,7 +1216,7 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       fclose(FPG_F);
       if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
       v_texto=(char *)texto[45];
-      dialogo((memptrsize)err0);
+      dialogo(err0);
       return;
     }
 
@@ -1230,7 +1235,7 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       free(FPG_D.imagen);
       if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
       v_texto=(char *)texto[44];
-      dialogo((memptrsize)err0);
+      dialogo(err0);
       return;
     }
 
@@ -1242,8 +1247,8 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   fclose(FPG_F);
 
   n=1;
-  if( v.click_handler != (memptrsize)MapperVisor2 &&
-      v.click_handler != (memptrsize)MapperCreator2 ) n=0; // Sin textura vacia
+  if( v.click_handler!=MapperVisor2 &&
+      v.click_handler!=MapperCreator2 ) n=0; // Sin textura vacia
   for(con=n; con<l->maximo; con++)
   {
     for(;;)
@@ -1326,8 +1331,8 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   }
 
   qsort(thumb_tex,l->maximo,sizeof(struct _thumb_tex),cmpcode);
-  qsort(textura,t_maximo,an_textura,(__compar_fn_t)strcmp);
-  qsort(fondo,l->maximo,an_textura,(__compar_fn_t)strcmp);
+  qsort(textura,t_maximo,an_textura,strcmpsort);
+  qsort(fondo,l->maximo,an_textura,strcmpsort);
 
   if(TipoTex>3) return;
 
@@ -1608,7 +1613,7 @@ void PintaVisorThumb(void)
   if((temp=(byte *)malloc(man*mal))==NULL)
   {
     v_texto=(char *)texto[45];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
   memset(temp, c1, man*mal);
@@ -1673,14 +1678,14 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
     fclose(FPG_F);
     Tex[TipoTex].cod=0;
     v_texto=(char *)texto[45];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
 
   if((FPG_F=fopen((char *)m3d_edit.fpg_path,"rb"))==NULL)
   {
     v_texto=(char *)texto[43];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
   fseek(FPG_F, thumb_tex[num_tex].FilePos, SEEK_SET);
@@ -1691,7 +1696,7 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
     fclose(FPG_F);
     Tex[TipoTex].cod=0;
     v_texto=(char *)texto[44];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
 
@@ -1847,7 +1852,7 @@ void nuevo_mapa3d(void)
   if((m3d=(M3D_info *)malloc(sizeof(M3D_info)))==NULL)
   {
     v_texto=(char *)texto[45];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
 
@@ -1868,7 +1873,7 @@ void nuevo_mapa3d(void)
 
   sprintf((char *)m3d->m3d_name,"Mapa 3D %d",m3d->numero);
 
-  nueva_ventana((memptrsize)MapperVisor0);
+  nueva_ventana(MapperVisor0);
 
   scroll_x=FIN_GRID/2;
   scroll_y=FIN_GRID/2;
@@ -1939,7 +1944,7 @@ void mostrar_coordenadas(void)
 
   if (num_bandera!=atoi(cadenas[2])) {
     itoa(num_bandera,cadenas[2],10);
-    call((voidReturnType)v.paint_handler);
+    call(v.paint_handler);
     v.volcar=1;
   }
 }
@@ -3330,7 +3335,7 @@ void map_read_old( M3D_info *m3d_aux )
   if((fichero=fopen(full,"rb"))==NULL)
   {
     v_texto=(char *)texto[43];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
 
@@ -3431,7 +3436,7 @@ void map_read(M3D_info *m3d_aux)
   if((fichero=fopen(full,"rb"))==NULL)
   {
     v_texto=(char *)texto[43];
-    dialogo((memptrsize)err0);
+    dialogo(err0);
     return;
   }
 

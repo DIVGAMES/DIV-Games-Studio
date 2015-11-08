@@ -98,12 +98,12 @@ char tDescrip[32];
         }
 
 /*
-                x=0; y=0; do { y+=abs((int)dac[x]-(int)newdac[x]); } while (++x<768);
+                x=0; y=0; do { y+=abs((memptrsize)dac[x]-(memptrsize)newdac[x]); } while (++x<768);
                 if(y)
                 {
                   v_titulo=texto[53];
                   v_texto=texto[66];
-                  dialogo((int)aceptar0);
+                  dialogo(aceptar0);
                   if(!v_aceptar)
                   {
                          //CACA
@@ -115,7 +115,7 @@ char tDescrip[32];
                      if (hay_mapas()) {
                        v_titulo=texto[348];
                        v_texto=texto[321];
-                       dialogo((int)aceptar0);
+                       dialogo(aceptar0);
                      } else v_aceptar=1;
                      if(v_aceptar) RefPalAndDlg(0,1); else RefPalAndDlg(1,1);
   //                       RefPalAndDlg(0,1);
@@ -171,7 +171,7 @@ char tDescrip[32];
                 {
                         //Error: no es un encontro el fichero.(grfxch ?????)
                         v_texto=(char *)texto[43];
-                        dialogo((int)err0);
+                        dialogo(err0);
                         return;
                 }
                 fseek(fpg,MiFPG->OffsGrf[Elemento],SEEK_SET);
@@ -235,7 +235,7 @@ char tDescrip[32];
                 if(v.mapa==NULL)
                 {
                         fclose(fpg);
-                        v_texto=(char *)texto[45]; dialogo((int)err0);
+                        v_texto=(char *)texto[45]; dialogo(err0);
                         return;
                 }
                 v.mapa->map=(byte *)malloc(map_an*map_al);
@@ -243,7 +243,7 @@ char tDescrip[32];
                 {
                         fclose(fpg);
                         free(v.mapa);
-                        v_texto=(char *)texto[45]; dialogo((int)err0);
+                        v_texto=(char *)texto[45]; dialogo(err0);
                         return;
                 }
 
@@ -317,9 +317,9 @@ int n;
         v.tipo=101; // SOLIZABLE
         v.an=159;
         v.al=72+5;
-        v.paint_handler=(int)FPG1;
-        v.click_handler=(int)FPG2;
-        v.close_handler=(int)FPG3;
+        v.paint_handler=FPG1;
+        v.click_handler=FPG2;
+        v.close_handler=FPG3;
 
         v.aux=v_aux;
         MiFPG=(FPG *)v.aux;
@@ -349,9 +349,9 @@ int n;
         v.tipo=101; // SOLIZABLE
         v.an=159;
         v.al=72+5;
-        v.paint_handler=(int)FPG1;
-        v.click_handler=(int)FPG2;
-        v.close_handler=(int)FPG3;
+        v.paint_handler=FPG1;
+        v.click_handler=FPG2;
+        v.close_handler=FPG3;
 
         v.aux=v_aux;
         MiFPG=(FPG *)v.aux;
@@ -378,7 +378,7 @@ int nuevo_fichero(void)
         v_modo=1;
         v_tipo=4;
         v_texto=(char *)texto[69];
-      	dialogo((int)browser0);
+      	dialogo(browser0);
 
         strcpy(full,tipo[v_tipo].path);
         if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -394,19 +394,19 @@ int nuevo_fichero(void)
                 {
                         v_titulo=(char *)texto[82];
                         v_texto=input;
-                        dialogo((int)aceptar0);
+                        dialogo(aceptar0);
                 }
                 if(v_aceptar)
                 {
                         v_aux=(byte *)malloc(sizeof(FPG));
                         if(v_aux==NULL)
                         {
-                                v_texto=(char *)texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo(err0);
                                 return 0;
                         }
                         cierra_fpg(full);
                         memset(v_aux, 0, sizeof(FPG));
-                        nueva_ventana((int)FPG0N);
+                        nueva_ventana(FPG0N);
                 }
                 else return 0;
 
@@ -440,7 +440,7 @@ void abrir_fichero(void) {
 
   v_modo=0; v_tipo=4;
   v_texto=(char *)texto[70];
-  dialogo((int)browser0);
+  dialogo(browser0);
   if (!v_terminado) return;
 
   if(!num_taggeds) {
@@ -475,14 +475,14 @@ void abrir_fichero(void) {
 
       if((f=fopen(full,"rb"))==NULL) {
         v_texto=(char *)texto[44];
-        dialogo((int)err0);
+        dialogo(err0);
         continue;
       }
       fread(cwork,8,1,f);
       if (strcmp(cwork,"fpg\x1a\x0d\x0a")) {
         fclose(f);
         v_texto=(char *)texto[46];
-        dialogo((int)err0);
+        dialogo(err0);
         continue;
       }
       fread(dac4,768,1,f);
@@ -491,7 +491,7 @@ void abrir_fichero(void) {
       if (n++==0) {
         memcpy(pal,dac4,768);
       } else {
-        x=0; sum=0; do { sum+=abs((int)pal[x]-(int)dac4[x]); } while (++x<768);
+        x=0; sum=0; do { sum+=abs((memptrsize)pal[x]-(memptrsize)dac4[x]); } while (++x<768);
         if (sum) {
           if (muestra==NULL) {
             muestra=(byte*)malloc(32768);
@@ -517,12 +517,12 @@ void abrir_fichero(void) {
 
   // Tenemos en pal[] la paleta de los FPGs a cargar
 
-  x=0; sum=0; do { sum+=abs((int)pal[x]-(int)dac[x]); } while (++x<768);
+  x=0; sum=0; do { sum+=abs((memptrsize)pal[x]-(memptrsize)dac[x]); } while (++x<768);
 
   if (sum)
   {
     memcpy(paltratar,pal,768);
-    dialogo((int)TratarPaleta0); // ¨Cargar paleta?
+    dialogo(TratarPaleta0); // ¨Cargar paleta?
 
     switch(v_aceptar)
     {
@@ -561,7 +561,7 @@ void abrir_fichero(void) {
             v_aux=(byte *)malloc(sizeof(FPG));
             if(v_aux==NULL) {
               v_texto=(char *)texto[45];
-              dialogo((int)err0);
+              dialogo(err0);
               continue;
             }
             MiFPG=(FPG *)v_aux;
@@ -570,10 +570,10 @@ void abrir_fichero(void) {
             MiFPG->lInfoFPG.creada=0;
             cierra_fpg(full);
             memset(v_aux, 0, sizeof(FPG));
-            nueva_ventana((int)FPG0A);
-          } else { v_texto=(char *)texto[46]; dialogo((int)err0); }
-        } else { fclose(f); v_texto=(char *)texto[44]; dialogo((int)err0); }
-      } else { v_texto=(char *)texto[44]; dialogo((int)err0); }
+            nueva_ventana(FPG0A);
+          } else { v_texto=(char *)texto[46]; dialogo(err0); }
+        } else { fclose(f); v_texto=(char *)texto[44]; dialogo(err0); }
+      } else { v_texto=(char *)texto[44]; dialogo(err0); }
     }
   } create_dac4();
 }
@@ -623,8 +623,8 @@ void Warning0(void)
         v.an=200;
         v.al=60;
         v.titulo=texto[171];
-        v.paint_handler=(int)Warning1;
-        v.click_handler=(int)Warning2;
+        v.paint_handler=Warning1;
+        v.click_handler=Warning2;
 
         _button(123,7,v.al-14,0);
         _button(119,v.an-8,v.al-14,2);
@@ -647,17 +647,17 @@ int RemapAllFiles(int vent) {
     fread(p,1,768,f);
     fclose(f);
     x=0; sum=0;
-    do { sum+=abs((int)dac[x]-(int)p[x]); } while (++x<768);
+    do { sum+=abs((memptrsize)dac[x]-(memptrsize)p[x]); } while (++x<768);
     if (!sum) return(0);
   }
 
   strcpy(cNamev2convert,(char *)ventana[vent].titulo);
-  dialogo((int)Warning0);
+  dialogo(Warning0);
   switch(v_aceptar) {
     case 0: move(0,vent); cierra_ventana(); break;
     case 1:
       v_titulo=(char *)texto[344]; v_texto=(char *)texto[345];
-      dialogo((int)aceptar0);
+      dialogo(aceptar0);
       if (v_aceptar) {
         RemapAllFileToPal(MiFPG);
       } else {
@@ -752,9 +752,9 @@ void GetCode0(void)
         v.an=180+25;
         v.al=100-12;
         v.titulo=texto[68];
-        v.paint_handler=(int)GetCode1;
-        v.click_handler=(int)GetCode2;
-        v.close_handler=(int)GetCode3;
+        v.paint_handler=GetCode1;
+        v.click_handler=GetCode2;
+        v.close_handler=GetCode3;
 
         _button(100,7,v.al-14,0);
         _button(101,v.an-8,v.al-14,2);
@@ -802,7 +802,7 @@ void InitGetCode(void)
       for(y=0;y<GetCodeAltoRed;y++) {
         b=(float)0.0;
         for(x=0;x<GetCodeAnchoRed;x++) {
-          temp2[y*GetCodeAnchoRed+x]=temp[((int)a)*man+(int)b];
+          temp2[y*GetCodeAnchoRed+x]=temp[((memptrsize)a)*man+(memptrsize)b];
           b+=coefredx;
         } a+=coefredy;
       }
@@ -833,7 +833,7 @@ void InitGetCode(void)
     }
   }
 
-  dialogo((int)GetCode0);
+  dialogo(GetCode0);
 }
 
 int determina_fpg();
@@ -976,8 +976,8 @@ void printlist0(void) {
   v.an=120;
   v.al=38+10;
   v.titulo=(byte *)v_titulo;
-  v.paint_handler=(int)printlist1;
-  v.click_handler=(int)printlist2;
+  v.paint_handler=printlist1;
+  v.click_handler=printlist2;
   _button(100,7,v.al-14,0);
   _button(101,v.an-8,v.al-14,2);
   _flag(448,4,12,&f_im);
@@ -1002,7 +1002,7 @@ void Print_List(void) {
   v_texto=n_ar;
   v_titulo=(char *)texto[438];
 
-  dialogo((int)printlist0);
+  dialogo(printlist0);
 
   if (v_aceptar) {
 
@@ -1018,11 +1018,11 @@ void Print_List(void) {
           strupr(cwork);
           v_titulo=(char *)texto[450];
           v_texto=cwork;
-          dialogo((int)aceptar0);
+          dialogo(aceptar0);
           if (!v_aceptar) return;
         }
         f=fopen(n_ar,"wb");
-        if (f==NULL) { v_texto=(char *)texto[47]; dialogo((int)err0); return; }
+        if (f==NULL) { v_texto=(char *)texto[47]; dialogo(err0); return; }
       }
 
       g=fopen((char *)MiFPG->ActualFile,"rb");
@@ -1471,7 +1471,7 @@ void crear_un_thumb_FPG(struct t_listboxbr * l){
           for(y=0;y<MiFPG->thumb[num].al;y++) {
             b=(float)0.0;
             for(x=0;x<MiFPG->thumb[num].an;x++) {
-              temp2[y*MiFPG->thumb[num].an+x]=temp[((int)a)*man+(int)b];
+              temp2[y*MiFPG->thumb[num].an+x]=temp[((memptrsize)a)*man+(memptrsize)b];
               b+=coefredx;
             } a+=coefredy;
           }
@@ -1522,7 +1522,7 @@ void MAPtoFPG(struct tmapa * mapa)
   if((imagen=(byte *)malloc(mapa->map_an*mapa->map_al))==NULL)
   {
     v_texto=(char *)texto[45];
-    dialogo((int)err0);
+    dialogo(err0);
     return;
   }
 
@@ -1556,7 +1556,7 @@ void MAPtoFPG(struct tmapa * mapa)
         {
           free(imagen);
           v_texto=(char *)texto[551];
-          dialogo((int)err0);
+          dialogo(err0);
           return;
         }
         GetGrafMAP(mapa, imagen, x+1, y+1, ancho-2, alto-2, cod++);
@@ -1579,7 +1579,7 @@ void GetGrafMAP(struct tmapa *mapa, byte *imagen, int x, int y, int ancho, int a
   if((buffer=(byte *)malloc(ancho*alto))==NULL)
   {
     v_texto=(char *)texto[45];
-    dialogo((int)err0);
+    dialogo(err0);
     return;
   }
 
@@ -1635,7 +1635,7 @@ void FPGtoMAP(FPG *MiFPG)
   if((fpg=fopen((char *)MiFPG->ActualFile,"rb"))==NULL)
   {
     v_texto=(char *)texto[43];
-    dialogo((int)err0);
+    dialogo(err0);
     return;
   }
 
@@ -1667,7 +1667,7 @@ void FPGtoMAP(FPG *MiFPG)
   {
     fclose(fpg);
     v_texto=(char *)texto[45];
-    dialogo((int)err0);
+    dialogo(err0);
     return;
   }
 
@@ -1688,7 +1688,7 @@ void FPGtoMAP(FPG *MiFPG)
       fclose(fpg);
       free(FPGmap);
       v_texto=(char *)texto[45];
-      dialogo((int)err0);
+      dialogo(err0);
       return;
     }
 
@@ -1698,7 +1698,7 @@ void FPGtoMAP(FPG *MiFPG)
       free(FPGmap);
       free(FPGimagen);
       v_texto=(char *)texto[44];
-      dialogo((int)err0);
+      dialogo(err0);
       return;
     }
 
@@ -1843,7 +1843,7 @@ int selecciona_fichero(void)
         v_modo=0;
         v_tipo=4;
         v_texto=(char *)texto[69];
-      	dialogo((int)browser0);
+      	dialogo(browser0);
 
         strcpy(full,tipo[v_tipo].path);
         if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -1859,26 +1859,26 @@ int selecciona_fichero(void)
                 {
                         v_titulo=(char *)texto[82];
                         v_texto=input;
-                        dialogo((int)sustituir_FPG_0);
+                        dialogo(sustituir_FPG_0);
                 }
                 if(v_aceptar==1)
                 {
                         v_aux=(byte *)malloc(sizeof(FPG));
                         if(v_aux==NULL)
                         {
-                                v_texto=(char *)texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo(err0);
                                 return 0;
                         }
                         cierra_fpg(full);
                         memset(v_aux, 0, sizeof(FPG));
-                        nueva_ventana((int)FPG0N);
+                        nueva_ventana(FPG0N);
                 }
                 else if(v_aceptar==2)
                 {
                         v_aux=(byte *)malloc(sizeof(FPG));
                         if(v_aux==NULL)
                         {
-                                v_texto=(char *)texto[45]; dialogo((int)err0);
+                                v_texto=(char *)texto[45]; dialogo(err0);
                                 return 0;
                         }
                         MiFPG=(FPG *)v_aux;
@@ -1887,7 +1887,7 @@ int selecciona_fichero(void)
                         MiFPG->lInfoFPG.creada=0;
                         cierra_fpg(full);
                         memset(v_aux, 0, sizeof(FPG));
-                        nueva_ventana((int)FPG0A);
+                        nueva_ventana(FPG0A);
                 }
                 else return 0;
 
@@ -1933,8 +1933,8 @@ void sustituir_FPG_0(void)
     if (text_len((byte *)v_texto)+6>v.an) v.an=text_len((byte *)v_texto)+6;
   } else v.al=29;
 
-  v.paint_handler=(int)sustituir_FPG_1;
-  v.click_handler=(int)sustituir_FPG_2;
+  v.paint_handler=sustituir_FPG_1;
+  v.click_handler=sustituir_FPG_2;
 
   _button(510, 7,v.al-14,0); // Reemplazar
   _button(511,x2,v.al-14,0); // A¤adir

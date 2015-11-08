@@ -38,7 +38,7 @@ void CDgetInfo()
 //struct playinfo songdata;
 static int CDChange=0;
 static int CDOpendoor=0;
-        if(CDPlaying && ((int)cd_head_position()>=(int)CDEnd) )
+        if(CDPlaying && ((memptrsize)cd_head_position()>=(memptrsize)CDEnd) )
         {
                 CDPlaying=0;
                 cd_stop_audio ();
@@ -355,7 +355,7 @@ void CDiv2(void) {
         case 3: CDplay_track(1); break;
         case 4: CDfsec(); break;
         case 5: CDftrack(); break;
-        case 6: nueva_ventana((int)mixer0); return;
+        case 6: nueva_ventana(mixer0); return;
       }
     }
   }
@@ -370,8 +370,8 @@ void CDiv0(void) {
   v.al=45;
   v.titulo=texto[150];
   v.nombre=texto[150];
-  v.paint_handler=(int)CDiv1;
-  v.click_handler=(int)CDiv2;
+  v.paint_handler=CDiv1;
+  v.click_handler=CDiv2;
   ODig1=-1; ODig2=-1; ODig3=-1;
   ODig4=-1; ODig5=-1; ODig6=-1;
   OCDPlaying=-1;
@@ -382,7 +382,7 @@ int get_cd_error(void);
 void muestra_cd_player() {
   if (!CDinit()) if (!CDinit()) CDinit();
   if (get_cd_error()&0x200) CDPlaying=1; else CDPlaying=0;
-  nueva_ventana((int)CDiv0);
+  nueva_ventana(CDiv0);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -493,9 +493,9 @@ void Clock0(void)
         timeinfo = localtime ( &dtime );
         sprintf(cTimeForIcon,"%s [%02d%c%02d]",texto[151],timeinfo->tm_hour,timeinfo->tm_sec%2?';':' ',timeinfo->tm_min);
         v.nombre=(byte *)cTimeForIcon;
-        v.paint_handler=(int)Clock1;
-        v.click_handler=(int)Clock2;
-        v.close_handler=(int)Clock3;
+        v.paint_handler=Clock1;
+        v.click_handler=Clock2;
+        v.close_handler=Clock3;
         ORDig1=-1;
         ORDig2=-1;
         ORDig3=-1;
@@ -504,5 +504,5 @@ void Clock0(void)
 
 void muestra_reloj()
 {
-        nueva_ventana((int)Clock0);
+        nueva_ventana(Clock0);
 }

@@ -163,9 +163,9 @@ void gama0(void)
   v.an=ancho_ga;
   v.al=alto_ga;
 
-  v.paint_handler=(int)gama1;
-  v.click_handler=(int)gama2;
-  v.close_handler=(int)gama3;
+  v.paint_handler=(voidReturnType)gama1;
+  v.click_handler=(voidReturnType)gama2;
+  v.close_handler=(voidReturnType)gama3;
 
   for(con=0; con<9; con++)
   {
@@ -255,7 +255,7 @@ void gama2(void)
       else
       if ( wmouse_in(button_coords[con].x-3, button_coords[con].y-15, 14, 14) )
       {
-        dialogo((int)Selcolor0);
+        dialogo((voidReturnType)Selcolor0);
         if(SelColorOk)
         {
           t_gama[con].selec = 1;

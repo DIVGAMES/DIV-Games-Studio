@@ -112,7 +112,7 @@ void Vid_Setup3(void) {
     VS_ALTO =stvga_al;
     v_titulo=(char *)texto[385];
     v_texto =(char *)texto[386];
-    dialogo((memptrsize)info0);
+    dialogo((voidReturnType)info0);
     salir_del_entorno=1; //Salida directa sin preguntar
     modo_de_retorno=2;
   }
@@ -126,9 +126,9 @@ void Vid_Setup0(void) {
   v.titulo=texto[881]+1;
   v.an=126+24+30;
   v.al=66+26;
-  v.paint_handler=(memptrsize)Vid_Setup1;
-  v.click_handler=(memptrsize)Vid_Setup2;
-  v.close_handler=(memptrsize)Vid_Setup3;
+  v.paint_handler=(voidReturnType)Vid_Setup1;
+  v.click_handler=(voidReturnType)Vid_Setup2;
+  v.close_handler=(voidReturnType)Vid_Setup3;
 
   stnot_big=!VS_BIG;
   stbig=VS_BIG;
@@ -172,7 +172,7 @@ void Get_Tapiz() {
 
   v_modo=1; v_tipo=9;
   v_texto=(char *)texto[182];
-  dialogo((memptrsize)browser0);
+  dialogo((voidReturnType)browser0);
 
   strcpy(full,tipo[v_tipo].path);
   if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -205,22 +205,22 @@ void Get_Tapiz() {
                 strcpy(Tap_name,input);
                 strcpy(Tap_pathname,full);
 
-              } else { v_texto=(char *)texto[46]; dialogo((memptrsize)err0); }
+              } else { v_texto=(char *)texto[46]; dialogo((voidReturnType)err0); }
 
-            } else { v_texto=(char *)texto[44]; dialogo((memptrsize)err0); }
+            } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
 
             free(ptr);
 
-          } else { v_texto=(char *)texto[45]; dialogo((memptrsize)err0); }
+          } else { v_texto=(char *)texto[45]; dialogo((voidReturnType)err0); }
 
         }
 
-      } else { v_texto=(char *)texto[44]; dialogo((memptrsize)err0); }
+      } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
 
       fclose(f);
 
-    } else { v_texto=(char *)texto[44]; dialogo((memptrsize)err0); }
-  } else { v_texto=(char *)texto[43]; dialogo((memptrsize)err0); }
+    } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
+  } else { v_texto=(char *)texto[43]; dialogo((voidReturnType)err0); }
 }
 
 void Tap_Setup1(void) {
@@ -267,7 +267,7 @@ void Tap_Setup2(void) {
   {
     gama=tapiz_gama;
     t_gama=Setupfile.t_gama;
-    dialogo((memptrsize)gama0);
+    dialogo((voidReturnType)gama0);
     if (v_aceptar) need_refresh=1;
   }
   if (need_refresh)
@@ -306,9 +306,9 @@ void Tap_Setup0(void)
   Tap_mosaico=Setupfile.Desktop_Tile;
   Tap_gama=Setupfile.Desktop_Gama;
 
-  v.paint_handler=(memptrsize)Tap_Setup1;
-  v.click_handler=(memptrsize)Tap_Setup2;
-  v.close_handler=(memptrsize)Tap_Setup3;
+  v.paint_handler=(voidReturnType)Tap_Setup1;
+  v.click_handler=(voidReturnType)Tap_Setup2;
+  v.close_handler=(voidReturnType)Tap_Setup3;
 
   _button(100,7,       v.al-14, 0);
   _button(101,v.an-8,  v.al-14, 2);
@@ -425,8 +425,8 @@ void MemInfo0(void) {
   v.titulo=texto[199];
   v.an=168;
   v.al=88;
-  v.paint_handler=(memptrsize)MemInfo1;
-  v.click_handler=(memptrsize)MemInfo2;
+  v.paint_handler=(voidReturnType)MemInfo1;
+  v.click_handler=(voidReturnType)MemInfo2;
 
 //  _heapshrink();
 
@@ -666,7 +666,7 @@ void Cfg_Setup2(void) {
   }
 
   if ((mouse_b&1) && zona>=1 && zona<=12) {
-    SelColorFont=color_cfg[zona-1]; dialogo((memptrsize)Selcolor0);
+    SelColorFont=color_cfg[zona-1]; dialogo((voidReturnType)Selcolor0);
     if(SelColorOk) {
       color_cfg[zona-1]=SelColorFont;
       Cfg_colors(); v.volcar=1;
@@ -694,9 +694,9 @@ void Cfg_Setup0(void) {
   v.titulo=texto[883];
   v.an=192;
   v.al=200;
-  v.paint_handler=(memptrsize)Cfg_Setup1;
-  v.click_handler=(memptrsize)Cfg_Setup2;
-  v.close_handler=(memptrsize)Cfg_Setup3;
+  v.paint_handler=(voidReturnType)Cfg_Setup1;
+  v.click_handler=(voidReturnType)Cfg_Setup2;
+  v.close_handler=(voidReturnType)Cfg_Setup3;
 
   _button(100,7,v.al-14,0);
   _button(101,v.an-8,v.al-14,2);
@@ -724,7 +724,7 @@ void Cfg_Setup0(void) {
   v_aceptar=0;
 }
 
-void nueva_ventana_carga(int init_handler,int nx,int ny);
+void nueva_ventana_carga(voidReturnType init_handler,int nx,int ny);
 extern struct tventana ventana_aux;
 void test_cursor(void);
 void resize_program(void);
@@ -741,7 +741,7 @@ void Cfg_Setup_end(void) {
   int i;
 
   for (i=0,n=0;n<max_windows;n++) {
-    if (ventana[n].click_handler==(memptrsize)programa2) i++;
+    if (ventana[n].click_handler==(voidReturnType)programa2) i++;
   }
 
   if (i>24 || !v_aceptar) editor_font=old_editor_font;
@@ -813,14 +813,14 @@ void Cfg_Setup_end(void) {
     ew=exploding_windows; exploding_windows=0;
 
     if (old_editor_font!=editor_font) {
-      for (n=0;n<max_windows;n++) if (ventana[n].click_handler==(memptrsize)help2) {
+      for (n=0;n<max_windows;n++) if (ventana[n].click_handler==(voidReturnType)help2) {
         move(0,n); cierra_ventana(); help_item++; break;
       } if (n==max_windows) help_item=0;
       i=0; do {
         found=0;
-        for (n=max_windows-1;n>=0;n--) if (ventana[n].click_handler==(memptrsize)programa2) {
+        for (n=max_windows-1;n>=0;n--) if (ventana[n].click_handler==(voidReturnType)programa2) {
           memcpy(&vp[i].tipo,&ventana[n].tipo,sizeof(struct tventana)); i++;
-          ventana[n].close_handler=(memptrsize)dummy_handler;
+          ventana[n].close_handler=(voidReturnType)dummy_handler;
           move(0,n); cierra_ventana();
           found=1; break;
         }
@@ -877,7 +877,7 @@ void Cfg_Setup_end(void) {
       for (n=0;n<i;n++) {
         memcpy(&ventana_aux.tipo,&vp[n].tipo,sizeof(struct tventana));
         v_prg=ventana_aux.prg; VidModeChanged=33;
-        nueva_ventana_carga((memptrsize)resize_program,ventana_aux.x,ventana_aux.y);
+        nueva_ventana_carga((voidReturnType)resize_program,ventana_aux.x,ventana_aux.y);
       }
       if (help_item) help(help_item-1);
     }
@@ -912,9 +912,9 @@ void resize_program(void) {
 
   v.titulo=(byte *)v_prg->filename;
   v.nombre=(byte *)v_prg->filename;
-  v.paint_handler=(memptrsize)programa1;
-  v.click_handler=(memptrsize)programa2;
-  v.close_handler=(memptrsize)programa3;
+  v.paint_handler=(voidReturnType)programa1;
+  v.click_handler=(voidReturnType)programa2;
+  v.close_handler=(voidReturnType)programa3;
   v.volcar=2;
   test_cursor();
 }
@@ -1033,7 +1033,7 @@ void preparar_tapiz_temp(void) {
   if(!n) {
     free(temp);
     x_mapa_tapiz=x_tapiz=NULL;
-    v_texto=(char *)texto[44]; dialogo((memptrsize)err0);
+    v_texto=(char *)texto[44]; dialogo((voidReturnType)err0);
     return;
   }
 

@@ -354,7 +354,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
               for(y=0;y<thumb[num].al;y++) {
                 b=(float)0.0;
                 for(x=0;x<thumb[num].an;x++) {
-                  temp2[y*thumb[num].an+x]=temp[((int)a)*man+(int)b];
+                  temp2[y*thumb[num].an+x]=temp[((memptrsize)a)*man+(memptrsize)b];
                   b+=coefredx;
                 } a+=coefredy;
               }
@@ -759,7 +759,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
             b=(float)0.0;
             for(x=0;x<thumb[num].an;x++)
             {
-              temp2[y*thumb[num].an+x] = temp[((int)a)*TamaX+(int)b];
+              temp2[y*thumb[num].an+x] = temp[((memptrsize)a)*TamaX+(memptrsize)b];
               b+=coefredx;
             }
             a+=coefredy;
@@ -1216,13 +1216,13 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
           if(First)
           {
             First = 0;
-            lx    = (int)position;
+            lx    = (memptrsize)position;
             ly    = y;
           }
           else
           {
-            wline(thumb[num].ptr, thumb[num].an, thumb[num].an, thumb[num].al, lx, ly, (int)position, y, c_g_low);
-            lx = (int)position;
+            wline(thumb[num].ptr, thumb[num].an, thumb[num].an, thumb[num].al, lx, ly, (memptrsize)position, y, c_g_low);
+            lx = (memptrsize)position;
             ly = y;
           }
           position += step;
@@ -1235,9 +1235,9 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
         for(x=0;x<thumb[num].an;x++)
         {
 
-          p0=(int)position;
+          p0=(memptrsize)position;
           position+=step;
-          p1=(int)position;
+          p1=(memptrsize)position;
 
           y0=y1=temp[p0]*thumb[num].al/256;
 
@@ -1404,9 +1404,9 @@ void browser0(void) {
     thumb[n].ptr=NULL;
   }
 
-  v.paint_handler=(int)browser1;
-  v.click_handler=(int)browser2;
-  v.close_handler=(int)browser3;
+  v.paint_handler=browser1;
+  v.click_handler=browser2;
+  v.close_handler=browser3;
 
   lextbr.maximo=0; n=0; // Crea la lista de extensiones
 
@@ -1665,9 +1665,9 @@ void browser2(void) {
         if(v_thumb==7 && opc_pru) {
           if ( judascfg_device == DEV_NOSOUND) {
             if ( SoundError ) {
-              v_texto=texto[549]; dialogo((int)err0);
+              v_texto=texto[549]; dialogo(err0);
             } else {
-              v_texto=texto[548]; dialogo((int)err0);
+              v_texto=texto[548]; dialogo(err0);
             } return;
           } else {
             strcpy(full,tipo[v_tipo].path);
@@ -1755,7 +1755,7 @@ void browser2(void) {
         crear_listbox(&ldirectoriosbr);
       } else {
         _dos_setdrive(tipo[v_tipo].path[0]-'A'+1,&n);
-        v_texto=(char *)texto[42]; dialogo((int)err0); return;
+        v_texto=(char *)texto[42]; dialogo(err0); return;
       }
     } else if (lextbr.zona>=10) { v.volcar=1;
       tipo[v_tipo].defecto=lextbr.zona-10+lextbr.inicial;

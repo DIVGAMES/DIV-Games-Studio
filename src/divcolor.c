@@ -86,9 +86,9 @@ void init_lexcolor() {
 
   for (n=0;n<256;n++)
     if (lower[n])
-      if (n>='0' && n<='9') clex_case[n]=(clex_ele*)l_num;
-      else clex_case[n]=(clex_ele*)l_id;
-    else clex_case[n]=(clex_ele*)l_err;
+      if (n>='0' && n<='9') clex_case[n]=(struct clex_ele*)l_num;
+      else clex_case[n]=(struct clex_ele*)l_id;
+    else clex_case[n]=(struct clex_ele*)l_err;
 
   if ((cvnom=(byte *) malloc(max_obj*long_med_id+1024))==NULL) col_error(0,0);
 
@@ -96,10 +96,10 @@ void init_lexcolor() {
 
   col_analiza_ltlex();
 
-  clex_case[' ']=(clex_ele*)l_spc;
-  clex_case[tab]=(clex_ele*)l_spc;
-  clex_case[cr]=(clex_ele*)l_cr;
-  clex_case[0]=(clex_ele*)l_cr;
+  clex_case[' ']=(struct clex_ele*)l_spc;
+  clex_case[tab]=(struct clex_ele*)l_spc;
+  clex_case[cr]=(struct clex_ele*)l_cr;
+  clex_case[0]=(struct clex_ele*)l_cr;
 
   incluye_nombres=0;
 
@@ -248,7 +248,7 @@ void col_analiza_ltlex(void){
         ptr=&cvhash[h]; while (*ptr) ptr=(byte **)*ptr; *ptr=_ivnom;
         buf--; icvnom.b++;
       } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
-        clex_case[*buf]=(clex_ele*)l_lit;
+        clex_case[*buf]=(struct clex_ele*)l_lit;
       } else {                          //Analiza un nuevo s¡mbolo
         if ((e=clex_case[*buf])==0) {
           if (cnum_nodos++==max_nodos) col_error(0,3);

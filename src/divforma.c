@@ -83,7 +83,7 @@ typedef struct tagRGBQUAD
 //NOTA: Cualquier funci¢n que requiera memoria adicional para realizar su
 //      trabajo, puede pedirla con malloc, y si no puede conseguir la memoria
 //      solicitada, entonces debe crear una ventana informativa del error de
-//      la siguiente forma: v_texto=texto[45]; dialogo((int)err0);
+//      la siguiente forma: v_texto=texto[45]; dialogo((voidReturnType)err0);
 
 //NOTA2:El £nico formato que devuelve valor al descomprimir es el JPG. OJO !!!
 
@@ -251,7 +251,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
     if ((pDest=(byte *)malloc((map_an+1)*(map_al+1)*3))==NULL)
     {
       v_texto=(char *)texto[45];
-      dialogo((int)err0);
+      dialogo((voidReturnType)err0);
       return;
     }
     memset (pDest, 0, (map_an+1)*(map_al+1)*3);
@@ -263,7 +263,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
     if ((pDest=(byte *)malloc(last_byte))==NULL)
     {
       v_texto=(char *)texto[45];
-      dialogo((int)err0);
+      dialogo((voidReturnType)err0);
       return;
     }
     memset (pDest, 0, last_byte);
@@ -354,7 +354,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
     old_muestra=muestra;
     muestra=(byte*)malloc(32768);
 
-    if ((v.click_handler==(int)browser2 && !cargar_paleta) || muestra==NULL) {
+    if ((v.click_handler==(voidReturnType)browser2 && !cargar_paleta) || muestra==NULL) {
 
       if (muestra!=NULL) free(muestra);
       muestra=old_muestra;
@@ -486,7 +486,7 @@ int graba_PCX(byte *mapa,FILE *f) {
         if ((cbuffer=(unsigned char *)malloc(map_an*map_al*2))==NULL)
         {
                 //Error reservando memoria.
-                v_texto=(char *)texto[45]; dialogo((int)err0);
+                v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
                 return(1);
         }
         ActPixel=mapa[ptr];
@@ -816,7 +816,7 @@ void descomprime_BMP(byte *buffer, byte *mapa, int vent)
     old_muestra=muestra;
     muestra=(byte*)malloc(32768);
 
-    if ((v.click_handler==(int)browser2&&!cargar_paleta) || muestra==NULL) {
+    if ((v.click_handler==(voidReturnType)browser2&&!cargar_paleta) || muestra==NULL) {
 
       if (muestra!=NULL) free(muestra);
       muestra=old_muestra;
@@ -1021,7 +1021,7 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
   jpeg_mem_src(&cinfo, buffer, img_filesize);
   jpeg_read_header(&cinfo, TRUE);
   cinfo.quantize_colors=TRUE;
-  if (v.click_handler==(int)browser2) {
+  if (v.click_handler==(voidReturnType)browser2) {
     cinfo.dither_mode=JDITHER_NONE;
     cinfo.two_pass_quantize=FALSE;
   } else {
@@ -1120,7 +1120,7 @@ int cargadac_FNT(char *name)
   if(file==NULL)
   {
     v_texto=(char *)texto[44];
-    dialogo((int)err0);
+    dialogo((voidReturnType)err0);
     return(0);
   }
   fread(par,1,8,file);
@@ -1145,7 +1145,7 @@ int cargadac_FPG(char *name)
   if(file==NULL)
   {
     v_texto=(char *)texto[44];
-    dialogo((int)err0);
+    dialogo((voidReturnType)err0);
     return(0);
   }
   fread(par,1,8,file);
@@ -1170,7 +1170,7 @@ int cargadac_PAL(char *name)
   if(file==NULL)
   {
     v_texto=(char *)texto[44];
-    dialogo((int)err0);
+    dialogo((voidReturnType)err0);
     return(0);
   }
   fread(par,1,8,file);
@@ -1206,7 +1206,7 @@ int cargadac_MAP(char *name)
   if(file==NULL)
   {
     v_texto=(char *)texto[44];
-    dialogo((int)err0);
+    dialogo((voidReturnType)err0);
     return(0);
   }
   fread(par,1,16,file);
@@ -1270,7 +1270,7 @@ int cargadac_PCX(char *name)
   if(file==NULL)
   {
     v_texto=(char *)texto[44];
-    dialogo((int)err0);
+    dialogo((voidReturnType)err0);
     return(0);
   }
   if( fread((byte *)&header,1,sizeof(pcx_header),file) != sizeof(pcx_header) )
@@ -1358,7 +1358,7 @@ int cargadac_BMP(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=(char *)texto[44]; dialogo((int)err0);
+    v_texto=(char *)texto[44]; dialogo((voidReturnType)err0);
     free(CopiaBuffer);
     return(0);
   }
@@ -1464,7 +1464,7 @@ int cargadac_JPG(char *name)
   if(file==NULL)
   {
     v_texto=texto[44];
-    dialogo((int)err0);
+    dialogo((voidReturnType)err0);
     return(0);
   }
 
@@ -1473,7 +1473,7 @@ int cargadac_JPG(char *name)
   fseek(file,0,SEEK_SET);
   if ((buffer=(byte *)malloc(img_filesize))==NULL)
   {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=texto[45]; dialogo((voidReturnType)err0);
     fclose(file);
     return(0);
   }
@@ -1484,7 +1484,7 @@ int cargadac_JPG(char *name)
   jpeg_mem_src(&cinfo, buffer, img_filesize);
   jpeg_read_header(&cinfo, TRUE);
   cinfo.quantize_colors=TRUE;
-  if (v.click_handler==(int)browser2) {
+  if (v.click_handler==(voidReturnType)browser2) {
     cinfo.dither_mode=JDITHER_NONE;
     cinfo.two_pass_quantize=TRUE;
   } else {
