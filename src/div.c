@@ -29,7 +29,7 @@ void mainloop(void);
 
 void heap_dump(void );
 void DebugFile(char *Cadena,char *Nombre);
-void save_prg_buffer(int);
+void save_prg_buffer(memptrsize);
 
 void maximizar(void);
 void test0(void);
@@ -188,9 +188,9 @@ void demo0(void) {
   v.al=76;
   v_aceptar=0;
 
-  v.paint_handler=(int)demo1;
-  v.click_handler=(int)demo2;
-  v.close_handler=(int)demo3;
+  v.paint_handler=demo1;
+  v.click_handler=demo2;
+  v.close_handler=demo3;
 
   if (exe_cola[1]-0xF31725AB>31) {
     _button(100,v.an/2,v.al-14,1);
@@ -256,8 +256,8 @@ void betatest0(void) {
   strcpy(betaname,"");
   _get(460,4,12,v.an-8,(uint8_t *)betaname,127,0,0);
 
-  v.paint_handler=(int)betatest1;
-  v.click_handler=(int)betatest2;
+  v.paint_handler=betatest1;
+  v.click_handler=betatest2;
   _button(100,v.an/2,v.al-14,1);
 }
 
@@ -417,7 +417,7 @@ int main(int argc, char * argv[]) {
   while (n && full[n]!='/') n--;
   full[n]=0;
   if (full[n-1]==':') strcat(full,"/");
-  _dos_setdrive((int)toupper(full[0])-'A'+1,&n);
+  _dos_setdrive((memptrsize)toupper(full[0])-'A'+1,&n);
   _chdir(full);
 
   if (cpu_type==3) chdir("..");
@@ -502,13 +502,13 @@ printf("\n");
   
   /////////////////////////////////////////////////////////////////////////////
   
-  if(beta_status==0) dialogo((int)betatest0);
+  if(beta_status==0) dialogo(betatest0);
 #ifdef SHARE
   else {
     if (!Interpretando) {
       chk_demo();
       if (mostrar_demo) {
-        dialogo((int)demo0);
+        dialogo(demo0);
         if (v_aceptar) help(2007);
       }
     }
@@ -541,10 +541,10 @@ printf("\n");
   Save_Cfgbin();
 
   if (modo_de_retorno==1) {
-    _dos_setdrive((int)toupper(*tipo[1].path)-'A'+1,&n);
+    _dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
     _chdir(tipo[1].path);
   } else {
-    _dos_setdrive((int)toupper(*tipo[0].path)-'A'+1,&n);
+    _dos_setdrive((memptrsize)toupper(*tipo[0].path)-'A'+1,&n);
     _chdir(tipo[0].path);
   }
   return(modo_de_retorno);
@@ -612,37 +612,37 @@ void inicializa_entorno() {
 
   if(!Interpretando) {
     if (!strlen(user1) || !strlen(user2)) {
-      dialogo((int)usuario0);
+      dialogo(usuario0);
     } else {
-      dialogo((int)copyright0);
+      dialogo(copyright0);
     }
   }
 
   // Si no existe el fichero DIV.DTF o se pide el modo a prueba de fallos
 
-//  if(!CopiaDesktop) nueva_ventana((int)menu_principal0); else UpLoad_Desktop();
+//  if(!CopiaDesktop) nueva_ventana(menu_principal0); else UpLoad_Desktop();
 
   if(CopiaDesktop && !nueva_sesion && !primera_vez) UpLoad_Desktop();
  
   if (!primera_vez) {
     for (n=0;n<max_windows;n++)
-      if (ventana[n].click_handler==(int)menu_principal2) break;
-    if (n==max_windows) nueva_ventana((int)menu_principal0);
+      if (ventana[n].click_handler==menu_principal2) break;
+    if (n==max_windows) nueva_ventana(menu_principal0);
   }
 
-  if (test_video) dialogo((int)test0);
+  if (test_video) dialogo(test0);
 // Have we come back from running a prog?
   if (Interpretando) {
     vacia_buffer();
     if ((f=fopen("system/exec.err","rb"))!=NULL) {
       fread(&error_code,4,1,f);
-      if (error_code) dialogo((int)interr0);
+      if (error_code) dialogo(interr0);
       else {
         fread(&v_modo,1,4,f);
         strcpy(cWork,(char *)texto[366]);
         fread(cWork+strlen(cWork),1,256-strlen(cWork),f);
         cWork[255]=0; if (strlen(cWork)<255) strcat(cWork,"\"");
-        v_texto=cWork; dialogo((int)intmsg0);
+        v_texto=cWork; dialogo(intmsg0);
       }
       fclose(f);
     }
@@ -656,7 +656,7 @@ void inicializa_entorno() {
     //mouse_graf=3; volcado_copia(); mouse_graf=1;
     //v_terminado=-1; // No emite error si el fichero no existe
     //abrir_programa(); if (v_terminado) maximizar();
-    nueva_ventana((int)menu_principal0);
+    nueva_ventana(menu_principal0);
     minimiza_ventana();
 //    actualiza_caja(0,0,vga_an,vga_al);
 //    volcado_completo=1; volcado(copia);
@@ -670,7 +670,7 @@ void inicializa_entorno() {
 /*
   if (!primera_vez && !Interpretando && SoundError){
     v_texto=texto[549];
-    dialogo((int)errhlp0);
+    dialogo(errhlp0);
     if (v_aceptar) help(2008);
   }
 */
@@ -710,8 +710,8 @@ void interr0(void) {
     case 5: v_texto=(char *)texto[372]; break;
     case 6: v_texto=(char *)texto[373]; break;
   } v.an=text_len((byte *)v_texto)+8; if (v.an<120) v.an=120;
-  v.paint_handler=(int)interr1;
-  v.click_handler=(int)interr2;
+  v.paint_handler=interr1;
+  v.click_handler=interr2;
   _button(100,v.an/2,v.al-14,1);
 }
 
@@ -738,8 +738,8 @@ void intmsg0(void) {
   v.an=text_len((byte *)v_texto)+8;
   if (v.an<120) v.an=120;
   v.al=38+8;
-  v.paint_handler=(int)intmsg1;
-  v.click_handler=(int)intmsg2;
+  v.paint_handler=intmsg1;
+  v.click_handler=intmsg2;
   _button(100,v.an/2,v.al-14,1);
 }
 
@@ -786,7 +786,7 @@ void mainloop(void) {
       read_mouse();
       volcado_completo=1; volcado_copia();
       v_texto="Interrupt vector lost!";
-      dialogo((int)err0);
+      dialogo(err0);
     }
 
     IntIncr = 1193180 / 100;
@@ -820,7 +820,7 @@ void mainloop(void) {
     if (arrastrar==4 && (n==max_windows || ventana[n].tipo==2)) {
       arrastrar=5; free_drag=0;
       v_titulo=(char *)texto[57]; v_texto=NULL;
-      dialogo((int)aceptar0);
+      dialogo(aceptar0);
       if (v_aceptar) {
 
         if(v.tipo==101) MustCreate=0;
@@ -829,7 +829,7 @@ void mainloop(void) {
 
           if(MustCreate==0) {
                   memcpy(v_mapa->filename,v.mapa->filename,13);
-                  nueva_ventana((int)mapa0);
+                  nueva_ventana(mapa0);
                   MustCreate=1;
           }
 
@@ -1030,7 +1030,7 @@ void mainloop(void) {
           vuelca_ventana(0);
         }
         if (!(mouse_b&1) && (old_mouse_b&1)) {
-          if (v.click_handler==(int)menu_principal2) {
+          if (v.click_handler==menu_principal2) {
             if (big) 
 				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
             else 
@@ -1049,7 +1049,7 @@ void mainloop(void) {
             
             v_titulo=(char *)texto[40]; 
             v_texto=NULL; 
-            dialogo((int)aceptar0);
+            dialogo(aceptar0);
             if (v_aceptar) 
 				salir_del_entorno=1;
           } else if (v.tipo>=100) {
@@ -1080,7 +1080,7 @@ void mainloop(void) {
 					break;
             }
             if (v.tipo==100 || (v.tipo==102 && v.prg!=NULL))
-              dialogo((int)aceptar0); else v_aceptar=1;
+              dialogo(aceptar0); else v_aceptar=1;
             if (v_aceptar) cierra_ventana();
           } else cierra_ventana();
         } else if (mouse_b&1) restore_button=3;
@@ -1216,14 +1216,14 @@ void mainloop(void) {
         }
         switch(n) {
           case 1:
-            dialogo((int)buscar_texto0);
+            dialogo(buscar_texto0);
             if (v_aceptar) buscar_texto();
             break;
           case 2:
             buscar_texto();
             break;
           case 3:
-            dialogo((int)sustituir_texto0);
+            dialogo(sustituir_texto0);
             if (v_aceptar) sustituir_texto();
             break;
           case 4:
@@ -1264,7 +1264,7 @@ void mainloop(void) {
             break;
           case 8:
             v_tipo=8; save_prg_buffer(0);
-            dialogo((int)lista_procesos0);
+            dialogo(lista_procesos0);
             scan_code=0; ascii=0;
             if (v_aceptar) {
               f_bop(); f_inicio();
@@ -1303,11 +1303,11 @@ void mainloop(void) {
       v_tipo=8; 
       v_modo=0; 
       v_texto=(char *)texto[346];
-      dialogo((int)browser0);
+      dialogo(browser0);
       if (v_terminado) {
         if (!v_existe) {
           v_texto=(char *)texto[43]; 
-          dialogo((int)err0);
+          dialogo(err0);
         } else {
           mouse_graf=3; volcado_copia(); mouse_graf=1;
           abrir_programa();
@@ -1350,7 +1350,7 @@ void mainloop(void) {
     }
 
     if ((shift_status&8) && scan_code==45) { // Alt-X Exit
-      v_titulo=(char *)texto[40]; v_texto=NULL; dialogo((int)aceptar0);
+      v_titulo=(char *)texto[40]; v_texto=NULL; dialogo(aceptar0);
       if (v_aceptar) salir_del_entorno=1;
     }
 
@@ -1426,7 +1426,7 @@ void shell(void) {
   unsigned n;
 
   if (s==NULL) {
-    v_texto=(char *)texto[390]; dialogo((int)err0);
+    v_texto=(char *)texto[390]; dialogo(err0);
   } else {
 
     EndSound();
@@ -1440,7 +1440,7 @@ void shell(void) {
   //  _heapshrink();
     system(s);
 
-    _dos_setdrive((int)toupper(*tipo[1].path)-'A'+1,&n);
+    _dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
     chdir(tipo[1].path);
 
     svmode(); set_dac(dac);
@@ -1748,11 +1748,11 @@ void cierra_ventana(void) {
     volcado_parcial(v.x,v.y,v.an,v.al);
     volcado_copia();
   }
-  if (v.click_handler!=(int)err2) free(v.ptr);
+  if (v.click_handler!=err2) free(v.ptr);
 
-  if (v.click_handler==(int)help2 && old_prg!=NULL) {
+  if (v.click_handler==help2 && old_prg!=NULL) {
     for (m=1;m<max_windows;m++) {
-      if (ventana[m].click_handler==(int)programa2 || ventana[m].click_handler==(int)calc2) {
+      if (ventana[m].click_handler==programa2 || ventana[m].click_handler==calc2) {
         if ((ventana[m].prg==old_prg || ventana[m].aux==(byte*)old_prg) && ventana[m].primer_plano<2) {
           ventana[m].estado=1;
           wgra(ventana[m].ptr,ventana[m].an/big2,ventana[m].al/big2,c_b_low,2,2,ventana[m].an/big2-20,7);
@@ -2223,7 +2223,7 @@ void vuelca_ventana(int m) {
         actualiza_caja2(m,ventana[m].x+2*big2,ventana[m].y+18*big2+ventana[m].prg->linea_vieja*font_al,ventana[m].an-12,font_al);
       return;
     }
-    if (ventana[m].click_handler==(int)MapperCreator2 && ventana[m].volcar==2) {
+    if (ventana[m].click_handler==MapperCreator2 && ventana[m].volcar==2) {
       ventana[m].volcar=0;
       actualiza_caja2(m,ventana[m].x+3*big2,ventana[m].y+182*big2,39*big2,15*big2);
       return;
@@ -2447,7 +2447,7 @@ void volcado_copia(void) {
 //      Create a new window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void nueva_ventana(int init_handler) {
+void nueva_ventana(voidReturnType init_handler) {
   byte * ptr;
   int n,m,om,x,y,an,al;
   int vtipo;
@@ -2473,9 +2473,9 @@ void nueva_ventana(int init_handler) {
     v.primer_plano=1;
     v.nombre=(byte *)"?";
     v.titulo=(byte *)"?";
-    v.paint_handler=(int)dummy_handler;
-    v.click_handler=(int)dummy_handler;
-    v.close_handler=(int)dummy_handler;
+    v.paint_handler=dummy_handler;
+    v.click_handler=dummy_handler;
+    v.close_handler=dummy_handler;
     v.x=0;
     v.y=0;
     v.an=vga_an;
@@ -2490,7 +2490,7 @@ void nueva_ventana(int init_handler) {
     v.prg=NULL;
     v.aux=NULL;
 
-    call((voidReturnType )init_handler);
+    call(init_handler);
 
     if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
 
@@ -2525,7 +2525,7 @@ void nueva_ventana(int init_handler) {
           wwrite(ventana[m].ptr,ventana[m].an/big2,ventana[m].al/big2,2+(ventana[m].an/big2-20)/2,2,1,ventana[m].titulo,c2);
         }
 
-        if (v.tipo==102 && (ventana[m].prg!=NULL || ventana[m].click_handler==(int)calc2) && ventana[m].tipo==102) { // Borra cursor
+        if (v.tipo==102 && (ventana[m].prg!=NULL || ventana[m].click_handler==calc2) && ventana[m].tipo==102) { // Borra cursor
           wup(m);
           call((voidReturnType )v.paint_handler);
           wdown(m);
@@ -2780,7 +2780,7 @@ void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
 //      Create ( it must return to the caller as is) a dialog
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void dialogo(int init_handler) {
+void dialogo(voidReturnType init_handler) {
 
   int vtipo,_get_pos;
   byte * ptr;
@@ -2807,9 +2807,9 @@ void dialogo(int init_handler) {
     v.primer_plano=1;
     v.nombre=(byte *)"?";
     v.titulo=(byte *)"?";
-    v.paint_handler=(int)dummy_handler;
-    v.click_handler=(int)dummy_handler;
-    v.close_handler=(int)dummy_handler;
+    v.paint_handler=dummy_handler;
+    v.click_handler=dummy_handler;
+    v.close_handler=dummy_handler;
     v.x=0;
     v.y=0;
     v.an=vga_an;
@@ -2832,7 +2832,7 @@ void dialogo(int init_handler) {
     x=vga_an/2-an/2; y=vga_al/2-al/2;
     v.x=x; v.y=y;
 
-    if (v.click_handler==(int)err2) ptr=error_window; else ptr=(byte *)malloc(an*al);
+    if (v.click_handler==err2) ptr=error_window; else ptr=(byte *)malloc(an*al);
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 
@@ -3383,7 +3383,7 @@ void select_get(struct t_item * i,int activo,int ocultar_error) {
       if (atoi(get)>=i->get.r0 && atoi(get)<=i->get.r1) itoa(atoi(get),(char *)i->get.buffer,10);
       else if (!ocultar_error && !show_items_called) {
         sprintf(cWork,"%s [%d..%d].",texto[49],i->get.r0,i->get.r1);
-        v_texto=cWork; dialogo((int)err0);
+        v_texto=cWork; dialogo(err0);
       }
     }
 
@@ -3559,7 +3559,7 @@ int get_status(int n) {
     x|=2;
   }
   if ((ascii&&(ascii!=0x1b)&&v.selected_item==n)) { //||superget) {
-    if (v.click_handler!=(int)MapperCreator2 || (ascii>='0' && ascii<='9')) {
+    if (v.click_handler!=MapperCreator2 || (ascii>='0' && ascii<='9')) {
       if (!(x&2)) {
         if (ascii==13) ascii=0;
         else x|=4;
@@ -3673,7 +3673,7 @@ void get_input(int n) {
           default: v.volcar=l; break;
         }
       } else if (ascii && char_len(ascii)>1 && (x=strlen(get))<v.item[n].get.lon_buffer-1) {
-        if (v.click_handler!=(int)MapperCreator2 || (ascii>='0' && ascii<='9')) {
+        if (v.click_handler!=MapperCreator2 || (ascii>='0' && ascii<='9')) {
           strcpy(cwork,get);
           cwork[get_pos]=ascii;
           cwork[get_pos+1]=0;
@@ -4097,9 +4097,9 @@ void check_free(void) {
 
   if (totfree<4096) {
     v_titulo=t1; v_texto=t2;
-    sprintf(t1,(char *)texto[377],toupper((int)tipo[1].path[0]));
+    sprintf(t1,(char *)texto[377],toupper((memptrsize)tipo[1].path[0]));
     sprintf(t2,(char *)texto[378],(char *)4096-totfree);
-    dialogo((int)info0);
+    dialogo(info0);
   }
 
 //  salir_del_entorno=1; // Para salir al MS-DOS
@@ -4123,7 +4123,7 @@ int determina_calc(void) {
   int m,n=-1;
 
   for (m=0;m<max_windows;m++) {
-    if (ventana[m].click_handler==(int)calc2 && ventana[m].estado) { n=m; break; }
+    if (ventana[m].click_handler==calc2 && ventana[m].estado) { n=m; break; }
   } return(v_ventana=n);
 }
 

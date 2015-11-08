@@ -21,7 +21,6 @@
 #include "divsound.h"
 #include "divmixer.hpp"
 #include "netlib.h"
-#include <malloc.h>
 #include <time.h>
 
 #ifndef NET
@@ -205,7 +204,7 @@ void inicializacion (void) {
 
   if((ghost_inicial=(byte*)malloc(65536+512))==NULL) exer(1);
 
-  ghost=(byte *)((memptrsize)(ghost_inicial+512)&0xFFFFFF00);
+  ghost=(byte *)((memptrsize)(ghost_inicial+512));//&0xFFFFFF00);
 
   crea_cuad();
 

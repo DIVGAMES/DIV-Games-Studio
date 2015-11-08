@@ -50,7 +50,7 @@ extern char * strlwr(char *string);
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 char * itoa(long n, char *buf, int len);
 void sdlkeyinit(void);
-extern uint8_t sdl2key[255];
+extern uint8_t sdl2key[512];
 
 #define ltoa itoa 
 #define stdprn stdout

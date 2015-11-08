@@ -522,7 +522,7 @@ void LoadPal() {
   v_modo=0;
   v_tipo=3;
   v_texto=(char *)texto[777];
-  dialogo((memptrsize)browser0);
+  dialogo(browser0);
   if (!v_terminado) return;
 
   if(!num_taggeds) {
@@ -550,7 +550,7 @@ void LoadPal() {
 
       if (!v_existe) {
         v_texto=(char *)texto[43];
-        dialogo((memptrsize)err0);
+        dialogo(err0);
       } else {
         strcpy(PalName,full);
 
@@ -566,12 +566,12 @@ void LoadPal() {
           if (hay_mapas()) {
             v_titulo=(char *)texto[53];
             v_texto=(char *)texto[321];
-            dialogo((memptrsize)aceptar0);
+            dialogo(aceptar0);
           } else v_aceptar=1;
           if(v_aceptar) RefPalAndDlg(0,1); else RefPalAndDlg(1,1);
         } else {
           v_texto=(char*)texto[46];
-          dialogo((memptrsize)err0);
+          dialogo(err0);
           return;
         }
       }
@@ -582,7 +582,7 @@ void LoadPal() {
     muestra=(byte*)malloc(32768);
     if (muestra==NULL) {
       v_texto=(char *)texto[45];
-      dialogo((memptrsize)err0);
+      dialogo(err0);
       return;
     }
     memset(muestra,0,32768);
@@ -619,7 +619,7 @@ void LoadPal() {
     if (hay_mapas()) {
       v_titulo=(char *)texto[53];
       v_texto=(char *)texto[321];
-      dialogo((memptrsize)aceptar0);
+      dialogo(aceptar0);
     } else v_aceptar=1;
     if(v_aceptar) RefPalAndDlg(0,1); else RefPalAndDlg(1,1);
   }
@@ -644,7 +644,7 @@ int x;
         else
         {
                 v_texto=(char *)texto[47];
-                dialogo((memptrsize)err0);
+                dialogo(err0);
         }
 }
 
@@ -654,14 +654,14 @@ void SaveAsPal()
         v_modo=1;
         v_tipo=10;
         v_texto=(char *)texto[778];
-	dialogo((memptrsize)browser0);
+	dialogo(browser0);
         if (v_terminado)
         {
                 if (v_existe)
                 {
                         v_titulo=(char *)texto[139];
                         v_texto=input;
-                        dialogo((memptrsize)aceptar0);
+                        dialogo(aceptar0);
                         if (v_aceptar)
                                 Guarda_Pal();
                 }
@@ -981,15 +981,15 @@ void ordena0(void){
   _button(100,7,v.al-14,0);
   _button(101,v.an-8,v.al-14,2);
 
-  v.paint_handler=(memptrsize)ordena1;
-  v.click_handler=(memptrsize)ordena2;
+  v.paint_handler=ordena1;
+  v.click_handler=ordena2;
   v_aceptar=0;
 }
 
 void ordena_paleta(void) {
   int n;
 
-  dialogo((memptrsize)ordena0);
+  dialogo(ordena0);
   if (v_aceptar) {
     for (n=0;n<256;n++) {
       dac4[n*3]=dac[paleta[n]*3];
@@ -1030,11 +1030,11 @@ word find_ord2(byte * dac) {
 void fusiona_paleta(void){
   int div_try=0;
 
-  v_modo=0; v_tipo=3; v_texto=(char *)texto[781]; dialogo((memptrsize)browser0);
+  v_modo=0; v_tipo=3; v_texto=(char *)texto[781]; dialogo(browser0);
 
   if (v_terminado) {
     if (!v_existe) {
-      v_texto=(char *)texto[43]; dialogo((memptrsize)err0);
+      v_texto=(char *)texto[43]; dialogo(err0);
     } else {
       strcpy(full,tipo[v_tipo].path);
       if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -1049,7 +1049,7 @@ void fusiona_paleta(void){
       div_try|=cargadac_PAL(PalName);
       div_try|=cargadac_JPG(PalName);
 
-      if(!div_try) { v_texto=(char *)texto[46]; dialogo((memptrsize)err0); return; }
+      if(!div_try) { v_texto=(char *)texto[46]; dialogo(err0); return; }
 
       mouse_graf=3; volcado(copia);
 
@@ -1815,8 +1815,8 @@ void InterPal0(void)
         v.an=220-46-7;
         v.al=163+24-16;
         v.titulo=texto[138];
-        v.paint_handler=(memptrsize)InterPal1;
-        v.click_handler=(memptrsize)InterPal2;
+        v.paint_handler=InterPal1;
+        v.click_handler=InterPal2;
 
         _button(100,7,v.al-14,0);
         _button(101,v.an-8,v.al-14,2);
@@ -1838,7 +1838,7 @@ byte DacAux[768];
         Retorno=0;
         memcpy(DacAux,dac,768);
         memcpy(paleta,dac,768);
-        dialogo((memptrsize)InterPal0);
+        dialogo(InterPal0);
         if(!Retorno)
         {
                 memcpy(dac,DacAux,768);
@@ -1852,7 +1852,7 @@ byte DacAux[768];
                   if (hay_mapas()) {
                     v_titulo=(char *)texto[53];
                     v_texto=(char *)texto[321];
-                    dialogo((memptrsize)aceptar0);
+                    dialogo(aceptar0);
                   } else v_aceptar=1;
                   memcpy(dac4,dac,768);
                   memcpy(dac,DacAux,768);

@@ -11,6 +11,12 @@
  
 //#define SHARE // To compile the demo (limited) version
 
+#ifndef false
+#define false 0
+#define true 1
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //      Global Variables
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,6 +27,9 @@
 #define GLOBAL_DATA extern
 #endif
 
+typedef void(*voidReturnType)(void);
+void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
+
 
 //#include <i86.h>
 //#include <bios.h>
@@ -29,7 +38,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
+
 #include <ctype.h>
 
 #include "osdep.h"
@@ -89,8 +101,8 @@
 void _fwrite(char*,byte*,int);
 void _ffwrite(byte *Buffer,unsigned int Len,FILE *file);
 void error(int);
-void nueva_ventana(int);
-void dialogo(int);
+void nueva_ventana(voidReturnType);
+void dialogo(voidReturnType);
 void refrescadialogo(void);
 void cierra_ventana(void);
 void actualiza_caja(int,int,int,int);
@@ -396,9 +408,13 @@ void MapperWarning0(void); void MapperWarning1(void); void MapperWarning2(void);
 void MapperVisor0(void); void MapperVisor1(void); void MapperVisor2(void); void MapperVisor3(void);
 void generador_sprites(void);
 
+
+#ifdef __cplusplus
 void crear_listbox(struct t_listbox *);
 void actualiza_listbox(struct t_listbox *);
-void pinta_listbox(struct t_listbox * l);
+void pinta_listbox(struct t_listbox *);
+#endif
+
 int nuevo_mapa(byte *mapilla);
 void nuevo_mapa3D(void);
 void RenderToMed();
@@ -439,15 +455,6 @@ void repinta_ventana(void);
 ///////////////////////////////////////////////////////////////////////////////
 
 void memcpyb(byte*,byte*,int);
-//#ifdef __llvm__
-#ifndef ARSE
-typedef void(*voidReturnType)(void);
-void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
-#else
-typedef void(*voidReturnType)(int *);
-
-void call(void *(*func)() );
-#endif
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions exported by DIVEFFECT (diveffect.c)
 ///////////////////////////////////////////////////////////////////////////////
@@ -655,7 +662,7 @@ struct tventana {
   int primer_plano;                     // 0-No, 1-Si, 2-Minimizada
   byte * nombre;                        // Nombre del icono representativo
   byte * titulo;                        // Nombre en la barra de t¡tulo
-  int paint_handler,click_handler,close_handler;
+  voidReturnType paint_handler,click_handler,close_handler;
   int x,y,an,al;                        // Posici¢n y dimensiones de la ventana
   int _x,_y,_an,_al;                    // Posici¢n salvada al minimizarse
   byte * ptr;                           // Buffer de la ventana

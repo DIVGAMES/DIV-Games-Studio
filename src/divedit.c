@@ -21,7 +21,7 @@ void editor(void);
 void _parcial(void);
 void error_cursor2(void);
 void delete_text_cursor(void);
-void f_cortar_bloque(int borrar);
+void f_cortar_bloque(memptrsize borrar);
 void f_pegar_bloque(void);
 int linelen(byte * p);
 void f_fin(void);
@@ -366,9 +366,9 @@ void programa0(void){
   v.titulo=(byte *)v_prg->filename;
   v.nombre=(byte *)v_prg->filename;
 
-  v.paint_handler=(int)programa1;
-  v.click_handler=(int)programa2;
-  v.close_handler=(int)programa3;
+  v.paint_handler=programa1;
+  v.click_handler=programa2;
+  v.close_handler=programa3;
 
 }
 
@@ -961,7 +961,7 @@ void f_desmarcar(void) {
 
 int t_p;
 
-void f_cortar_bloque(int borrar) {
+void f_cortar_bloque(memptrsize borrar) {
   int n;
   t_p=0; // Tipo de papelera -> chars por defecto
   if (kbloque && kprg!=v.prg) {
@@ -2344,7 +2344,7 @@ void write_line(void) {
   fin=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
 
   if (ini<v.prg->buffer+old_lon) {
-    lon=(int)v.prg->buffer+old_lon-(int)ini;
+    lon=(memptrsize)v.prg->buffer+old_lon-(memptrsize)ini;
     memmove(fin,ini,lon);
     if (kini>ini && kini<ini+lon) kini+=fin-ini;
     if (kfin>ini && kfin<ini+lon) kfin+=fin-ini;
@@ -2367,7 +2367,7 @@ void delete_line(void) {
   fin=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
 
   if (ini<v.prg->buffer+old_lon) {
-    lon=(int)v.prg->buffer+old_lon-(int)ini;
+    lon=(memptrsize)v.prg->buffer+old_lon-(memptrsize)ini;
     memmove(fin,ini,lon);
     if (kini>=ini && kini<ini+lon) kini+=fin-ini;
     if (kfin>=ini && kfin<ini+lon) kfin+=fin-ini;
@@ -2480,15 +2480,15 @@ void abrir_programa(void) {
                 v_prg->lptr=v_prg->buffer;
                 pr=v.prg; v.prg=v_prg; read_line(); v.prg=pr;
 
-                nueva_ventana((int)programa0);
+                nueva_ventana(programa0);
 
-              } else { free(v_prg); free(buffer); v_texto=(char *)texto[46]; dialogo((int)err0); }
-            } else { free(v_prg); free(buffer); v_texto=(char *)texto[44]; dialogo((int)err0); }
-          } else { free(buffer); v_texto=(char *)texto[45]; dialogo((int)err0); }
-        } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
+              } else { free(v_prg); free(buffer); v_texto=(char *)texto[46]; dialogo(err0); }
+            } else { free(v_prg); free(buffer); v_texto=(char *)texto[44]; dialogo(err0); }
+          } else { free(buffer); v_texto=(char *)texto[45]; dialogo(err0); }
+        } else { v_texto=(char *)texto[45]; dialogo(err0); }
         fclose(f);
       } else {
-        if (v_terminado!=-1) { v_texto=(char *)texto[44]; dialogo((int)err0); }
+        if (v_terminado!=-1) { v_texto=(char *)texto[44]; dialogo(err0); }
         v_terminado=0;
       }
     }
@@ -2516,9 +2516,9 @@ void programa0_nuevo(void) {
         v_prg->lptr=buffer;
         pr=v.prg; v.prg=v_prg; read_line(); v.prg=pr;
         v_prg->num_lineas=1;
-        nueva_ventana((int)programa0);
-      } else { free(buffer); v_texto=(char *)texto[45]; dialogo((int)err0); }
-    } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
+        nueva_ventana(programa0);
+      } else { free(buffer); v_texto=(char *)texto[45]; dialogo(err0); }
+    } else { v_texto=(char *)texto[45]; dialogo(err0); }
   }
 }
 
@@ -2551,7 +2551,7 @@ void guardar_prg(void) {
 
     if (!strcmp(input,"help.div")) make_helpidx();
     if (!strcmp(input,"help.idx")) load_index();
-  } else { v_texto=(char *)texto[47]; dialogo((int)err0); }
+  } else { v_texto=(char *)texto[47]; dialogo(err0); }
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -2587,8 +2587,8 @@ int may_min=0,completa=0;
 void buscar_texto0(void) {
   v.tipo=1; v.titulo=texto[160];
   v.an=126; v.al=14+y_bt;
-  v.paint_handler=(int)buscar_texto1;
-  v.click_handler=(int)buscar_texto2;
+  v.paint_handler=buscar_texto1;
+  v.click_handler=buscar_texto2;
 
 //  strcpy(buscar,"");
 
@@ -2639,7 +2639,7 @@ void buscar_texto(void) {
 
   if (!encontrado) { // Restaura variables y emite dialogo informativo
     memcpy(v.prg,&mi_prg,sizeof(struct tprg));
-    v_titulo=(char *)texto[347]; v_texto=(char *)texto[189]; dialogo((int)info0);
+    v_titulo=(char *)texto[347]; v_texto=(char *)texto[189]; dialogo(info0);
   } else {
     n=strlen(buscar); while (n--) f_right();
     n=strlen(buscar); while (n--) f_left();
@@ -2668,8 +2668,8 @@ void sustituir_texto0(void) {
 
   v.titulo=texto[165];
   v.an=126; v.al=14+y_st;
-  v.paint_handler=(int)sustituir_texto1;
-  v.click_handler=(int)sustituir_texto2;
+  v.paint_handler=sustituir_texto1;
+  v.click_handler=sustituir_texto2;
 
   //strcpy(buscar2,"");
   //strcpy(sustituir,"");
@@ -2729,7 +2729,7 @@ void sustituir_texto(void) {
       n=strlen(buscar2); while (n--) f_left();
       if (v_aceptar!=3) {
         v.volcar=2; _completo(); vuelca_ventana(0);
-        dialogo((int)sustituir0);
+        dialogo(sustituir0);
       }
       if (v_aceptar&1) {
         num_cambios++;
@@ -2750,7 +2750,7 @@ void sustituir_texto(void) {
 
   if (v_aceptar!=4) { memcpy(v.prg,&mi_prg,sizeof(struct tprg)); } // EOF
   v.volcar=2; _completo(); text_cursor();
-  dialogo((int)sustituciones0);
+  dialogo(sustituciones0);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -2776,8 +2776,8 @@ void sustituir0(void) {
   x4=x3+text_len(texto[124]+1)+10;
   v.tipo=1; v.titulo=texto[190];
   v.an=x4+text_len(texto[101]+1)+7; v.al=29;
-  v.paint_handler=(int)sustituir1;
-  v.click_handler=(int)sustituir2;
+  v.paint_handler=sustituir1;
+  v.click_handler=sustituir2;
   _button(102,7,v.al-14,0);
   _button(103,x2,v.al-14,0);
   _button(124,x3,v.al-14,0);
@@ -2802,8 +2802,8 @@ void sustituciones0(void) {
   itoa(num_cambios,sus,10);
   strcat(sus,(char *)texto[192]);
   v.an=text_len(texto[191])+28; v.al=38;
-  v.paint_handler=(int)sustituciones1;
-  v.click_handler=(int)sustituciones2;
+  v.paint_handler=sustituciones1;
+  v.click_handler=sustituciones2;
   _button(100,v.an/2,v.al-14,1);
 }
 
@@ -2869,14 +2869,14 @@ void abrir_programa_para_fernando(char *nombre,char *path) {
             v_prg->lptr=v_prg->buffer;
             pr=v.prg; v.prg=v_prg; read_line(); v.prg=pr;
 
-            nueva_ventana((int)programa0);
+            nueva_ventana(programa0);
 
-          } else { free(v_prg); free(buffer); v_texto=(char *)texto[46]; dialogo((int)err0); }
-        } else { free(v_prg); free(buffer); v_texto=(char *)texto[44]; dialogo((int)err0); }
-      } else { free(buffer); v_texto=(char *)texto[45]; dialogo((int)err0); }
-    } else { v_texto=(char *)texto[45]; dialogo((int)err0); }
+          } else { free(v_prg); free(buffer); v_texto=(char *)texto[46]; dialogo(err0); }
+        } else { free(v_prg); free(buffer); v_texto=(char *)texto[44]; dialogo(err0); }
+      } else { free(buffer); v_texto=(char *)texto[45]; dialogo(err0); }
+    } else { v_texto=(char *)texto[45]; dialogo(err0); }
     fclose(f);
-  } else { v_texto=(char *)texto[44]; dialogo((int)err0); }
+  } else { v_texto=(char *)texto[44]; dialogo(err0); }
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3122,8 +3122,8 @@ void lista_procesos0(void) {
   v.tipo=1; v.titulo=texto[380];
 
   v.an=166+100; v.al=161;
-  v.paint_handler=(int)lista_procesos1;
-  v.click_handler=(int)lista_procesos2;
+  v.paint_handler=lista_procesos1;
+  v.click_handler=lista_procesos2;
 
   _button(100,7,v.al-14,0);
   _button(101,v.an-8,v.al-14,2);
@@ -3215,8 +3215,8 @@ void printprogram0(void) {
   v.an=120;
   v.al=38+10;
   v.titulo=texto[453];
-  v.paint_handler=(int)printprogram1;
-  v.click_handler=(int)printprogram2;
+  v.paint_handler=printprogram1;
+  v.click_handler=printprogram2;
   _button(100,7,v.al-14,0);
   _button(101,v.an-8,v.al-14,2);
   _flag(454,4,12,&fp_co);
@@ -3228,7 +3228,7 @@ void Print_Program(void) {
   byte * buf;
   int lon,n;
 
-  dialogo((int)printprogram0);
+  dialogo(printprogram0);
 
   if (v_aceptar) {
 
@@ -3240,7 +3240,7 @@ void Print_Program(void) {
 
       if (!kbloque) {
         v_texto=(char *)texto[452];
-        dialogo((int)err0);
+        dialogo(err0);
         return;
       }
 

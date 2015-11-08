@@ -91,20 +91,20 @@ float spr_coefred;
 void generador_sprites(void) {
   if(!ParseAnimFile())
   {
-    v_texto=texto[545]; dialogo((int)err0);
+    v_texto=(char *)texto[545]; dialogo((voidReturnType)err0);
     return;
   }
 
-  Progress(texto[434],0,100);
+  Progress((char *)texto[434],0,100);
 
   CargarTextura("GENSPR/TEXTURA.PCX");
 
   if (TexturaSprite==NULL) {
-    Progress(texto[434],100,100);
+    Progress((char *)texto[434],100,100);
     return;
   }
 
-  Progress(texto[434],20,100);
+  Progress((char *)texto[434],20,100);
 
   IniCfg();
   InfoCfg.frame = 0;
@@ -112,38 +112,38 @@ void generador_sprites(void) {
   InfoSpr = visor_init((lptvisor)&InfoCfg);
 
   if (InfoSpr==NULL) {
-    Progress(texto[434],100,100);
-    v_texto=texto[45]; dialogo((int)err0);
+    Progress((char *)texto[434],100,100);
+    v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     v_aceptar=0; FinalizaGenerador();
     return;
   }
 
-  Progress(texto[434],33,100);
+  Progress((char *)texto[434],33,100);
 
   visor_loop((lptvisor)&InfoCfg);
 
   if (InfoSpr->buffer==NULL) {
-    Progress(texto[434],100,100);
-    v_texto=texto[45]; dialogo((int)err0);
+    Progress((char *)texto[434],100,100);
+    v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     v_aceptar=0; FinalizaGenerador();
     return;
   }
 
-  Progress(texto[434],36,100);
+  Progress((char *)texto[434],36,100);
 
   itoa(InfoCfg.num_frames, NumFrames, 10);
   CargarSprite();
 
   if (MapaSprite==NULL) {
-    Progress(texto[434],100,100);
-    v_texto=texto[45]; dialogo((int)err0);
+    Progress((char *)texto[434],100,100);
+    v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     v_aceptar=0; FinalizaGenerador();
     return;
   }
 
-  Progress(texto[434],100,100);
+  Progress((char *)texto[434],100,100);
 
-  dialogo((int)GenSpr0);
+  dialogo((voidReturnType)GenSpr0);
 
   FinalizaGenerador();
 }
@@ -262,9 +262,9 @@ void GenSpr0(void)
   v.an     = 171;
   v.al     = 193;
 
-  v.paint_handler=(int)GenSpr1;
-  v.click_handler=(int)GenSpr2;
-  v.close_handler=(int)GenSpr3;
+  v.paint_handler=(voidReturnType)GenSpr1;
+  v.click_handler=(voidReturnType)GenSpr2;
+  v.close_handler=(voidReturnType)GenSpr3;
 
   if(Armado) {
     if(TipoModelo[0]) {
@@ -303,10 +303,10 @@ void GenSpr0(void)
   _button(101, v.an-8, v.al-14, 2);
 
   // Entrada de tama¤o
-  _get(426, 3+1, 11+65+2, text_len(texto[426])+16, TamText, 5, 1, 1000);
+  _get(426, 3+1, 11+65+2, text_len(texto[426])+16, (byte *)TamText, 5, 1, 1000);
 
   // Entrada de imagenes
-  _get(429, 3+1+text_len(texto[426])+22, 11+65+2, 62, NumFrames, 4, 0, 0);
+  _get(429, 3+1+text_len(texto[426])+22, 11+65+2, 62, (byte *)NumFrames, 4, 0, 0);
 
   // Botones frame anterior/siguiente (<< y >>)
   _button(435, v.an-30, 10+70+5, 0);
@@ -323,10 +323,10 @@ void GenSpr0(void)
   _button(110, 62+65+12, 11+65+9, 0);
 */
   // Entrada de angulo
-  _get(430, 3+64+40, 95+43, 60, AngText, 5, -360, 360);
+  _get(430, 3+64+40, 95+43, 60, (byte *)AngText, 5, -360, 360);
 
   // Entrada de perspectiva
-  _get(431, 3+64+40, 95+62, 60, PerText, 5, -360, 360);
+  _get(431, 3+64+40, 95+62, 60, (byte *)PerText, 5, -360, 360);
 /*
   // Botones Iluminacion (- +)
   _button(111,  1+65+44, 95+29+2, 0);
@@ -351,11 +351,11 @@ void GenSpr1(void)
   wbox       (v.ptr, an, al, c1, 3+66+2, 12, 96, 64);
 
   // Animacion
-  wwrite(v.ptr, an, al, 3, 92+12+2, 0, texto[428], c3);
+  wwrite(v.ptr, an, al, 3, 92+12+2, 0, (byte *)texto[428], c3);
   wbox(v.ptr, an, al, c12, 3+text_len(texto[428])+1, 92+11+2,
        an-7-5-text_len(texto[428]), 9);
   wwrite(v.ptr, an, al, 3+text_len(texto[428])+2, 92+12+2, 0,
-         anim_spr[anim_actual], c3);
+         (byte *)anim_spr[anim_actual], c3);
 /*
   // Iluminacion
   wwrite(v.ptr, an, al, 3+64-1+40, 95+18+2, 0, texto[432], c3);
@@ -441,14 +441,14 @@ void GenSpr2(void)
       InfoSpr = visor_init((lptvisor)&InfoCfg);
       if (InfoSpr==NULL) {
         strcpy(TamText, "100");
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
         strcpy(TamText, "100");
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -472,7 +472,7 @@ void GenSpr2(void)
       }
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -490,7 +490,7 @@ void GenSpr2(void)
       }
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -521,13 +521,13 @@ void GenSpr2(void)
       FloatFrame    = 0.0;
       InfoSpr = visor_init((lptvisor)&InfoCfg);
       if (InfoSpr==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -559,13 +559,13 @@ void GenSpr2(void)
       FloatFrame    = 0.0;
       InfoSpr = visor_init((lptvisor)&InfoCfg);
       if (InfoSpr==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -597,13 +597,13 @@ void GenSpr2(void)
       FloatFrame    = 0.0;
       InfoSpr = visor_init((lptvisor)&InfoCfg);
       if (InfoSpr==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -662,13 +662,13 @@ void GenSpr2(void)
       FloatFrame    = 0.0;
       InfoSpr = visor_init((lptvisor)&InfoCfg);
       if (InfoSpr==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -680,7 +680,7 @@ void GenSpr2(void)
       IniCfg();
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -691,7 +691,7 @@ void GenSpr2(void)
       IniCfg();
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -760,7 +760,7 @@ void GenSpr2(void)
       } else leer_mouse=1;
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -774,13 +774,13 @@ void GenSpr2(void)
     if( (mouse_x-v.x)/big2 >  3 && (mouse_x-v.x)/big2 <  3+66 &&
         (mouse_y-v.y)/big2 > 11 && (mouse_y-v.y)/big2 < 11+66 )
     {
-      v_modo=0; v_texto=texto[433];
-    	dialogo((int)browser0);
+      v_modo=0; v_texto=(char *)texto[433];
+    	dialogo((voidReturnType)browser0);
       if (v_terminado)
       {
         if (!v_existe)
         {
-          v_texto=texto[43]; dialogo((int)err0);
+          v_texto=(char *)texto[43]; dialogo((voidReturnType)err0);
         }
         else
         {
@@ -798,13 +798,13 @@ void GenSpr2(void)
           IniCfg();
           InfoSpr = visor_init((lptvisor)&InfoCfg);
           if (InfoSpr==NULL) {
-            v_texto=texto[45]; dialogo((int)err0);
+            v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
             fin_dialogo=1;
             return;
           }
           visor_loop((lptvisor)&InfoCfg);
           if (InfoSpr->buffer==NULL) {
-            v_texto=texto[45]; dialogo((int)err0);
+            v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
             fin_dialogo=1;
             return;
           }
@@ -822,7 +822,7 @@ void GenSpr2(void)
       FloatFrame    = 0.0;
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
         fin_dialogo=1;
         return;
       }
@@ -834,7 +834,7 @@ void GenSpr2(void)
 
   if(need_refresh)
   {
-    call(v.paint_handler);
+    call((voidReturnType)v.paint_handler);
     v.volcar=1;
   }
 }
@@ -864,8 +864,8 @@ void CreaSpriteFPG(void)
     IniCfg();
     visor_loop((lptvisor)&InfoCfg);
     if (InfoSpr->buffer==NULL) {
-      Progress(texto[514], atoi(NumFrames), atoi(NumFrames));
-      v_texto=texto[45]; dialogo((int)err0);
+      Progress((char *)texto[514], atoi(NumFrames), atoi(NumFrames));
+      v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
       fin_dialogo=1;
       return;
     }
@@ -875,8 +875,8 @@ void CreaSpriteFPG(void)
     InfoCfg.frame = (int)(FloatFrame+0.5);
     if(InfoCfg.frame >= InfoCfg.num_frames || con_frame>atoi(NumFrames)) break;
   }
-  if(con_frame<=atoi(NumFrames)) Progress(texto[514], atoi(NumFrames), atoi(NumFrames));
-  call(v.paint_handler);
+  if(con_frame<=atoi(NumFrames)) Progress((char *)texto[514], atoi(NumFrames), atoi(NumFrames));
+  call((voidReturnType)v.paint_handler);
   vuelca_ventana(0);
 }
 
@@ -899,15 +899,15 @@ void DumpSpriteFPG(byte *mapa, int ancho, int alto, int cod)
 
   while(MiFPG->OffsGrf[cod]) cod++;
 
-  if(atoi(NumFrames)>1) Progress(texto[514], con_frame, atoi(NumFrames));
-  strcpy(str_file, MiFPG->NombreFpg);
+  if(atoi(NumFrames)>1) Progress((char *)texto[514], con_frame, atoi(NumFrames));
+  strcpy(str_file, (char *)MiFPG->NombreFpg);
   if(strchr(str_file,'.')) strcpy(strchr(str_file,'.'), "");
   if(strlen(str_file)>5) str_file[5]=(char)0;
   sprintf(str_file,"%s%d.MAP",strupr(str_file),cod);
   sprintf( str_desc, "%s %d/%s. %s,%s",
            anim_spr[anim_actual], con_frame++, NumFrames,
            AngText, PerText );
-  Anadir_FPG(MiFPG, cod, str_desc, str_file, ancho, alto, 1, (char *) puntos, mapa, 0, 0);
+  Anadir_FPG(MiFPG, cod, str_desc, str_file, ancho, alto, 1, (char *) puntos, (char *)mapa, 0, 0);
 }
 
 void CargarTextura(char *NombreTextura)
@@ -940,7 +940,7 @@ void CargarTextura(char *NombreTextura)
 
   if((f=fopen(full,"rb")) == NULL)
   {
-    v_texto=texto[44]; dialogo((int)err0);
+    v_texto=(char *)texto[44]; dialogo((voidReturnType)err0);
     return;
   }
   fseek(f, 0, SEEK_END);
@@ -949,14 +949,14 @@ void CargarTextura(char *NombreTextura)
   if((mapa=(byte *) malloc(x)) == NULL)
   {
     fclose(f);
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     return;
   }
   if(fread(mapa, 1, x, f) != x)
   {
     free(mapa);
     mapa = NULL;
-    v_texto=texto[44]; dialogo((int)err0);
+    v_texto=(char *)texto[44]; dialogo((voidReturnType)err0);
     return;
   }
   fclose(f);
@@ -983,7 +983,7 @@ void CargarTextura(char *NombreTextura)
       mapa=NULL;
       if(!n) {
         free(temp);
-        v_texto=texto[44]; dialogo((int)err0);
+        v_texto=(char *)texto[44]; dialogo((voidReturnType)err0);
         return;
       }
       memcpy(pal,dac4,768);
@@ -997,7 +997,7 @@ void CargarTextura(char *NombreTextura)
       if(an_final<2) an_final=2;
       if(al_final<2) al_final=2;
 
-      if ((temp2=(char *)malloc(an_final*al_final))!=NULL) {
+      if ((temp2=(byte *)malloc(an_final*al_final))!=NULL) {
         memset(temp2,0,an_final*al_final);
         a=(float)0.0;
         for(y=0;y<al_final;y++) {
@@ -1014,18 +1014,18 @@ void CargarTextura(char *NombreTextura)
         mapa=temp2;
       } else {
         mapa=NULL;
-        v_texto=texto[45]; dialogo((int)err0);
+        v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
       }
       free(temp);
     } else {
       free(mapa);
       mapa=NULL;
-      v_texto=texto[45]; dialogo((int)err0);
+      v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     }
   } else {
     free(mapa);
     mapa=NULL;
-    v_texto=texto[46]; dialogo((int)err0);
+    v_texto=(char *)texto[46]; dialogo((voidReturnType)err0);
   }
 
   TexturaSprite=mapa;
@@ -1062,7 +1062,7 @@ void CargarSprite(void)
     create_dac4();
     if((t64=(byte*)malloc(65536))==NULL)
     {
-      v_texto=texto[45]; dialogo((int)err0);
+      v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
       return;
     }
 
@@ -1075,7 +1075,7 @@ void CargarSprite(void)
           if (x) t64[n++]=x; else t64[n++]=y;
         }
       }
-      Progress(texto[434],36+blue*2,100);
+      Progress((char *)texto[434],36+blue*2,100);
     }
 
     t64[0xf81f]=0;
@@ -1087,7 +1087,7 @@ void CargarSprite(void)
 
   if((mapa=(byte*)malloc(man*mal))==NULL)
   {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     return;
   }
 
@@ -1144,11 +1144,11 @@ void CargarSprite(void)
     if (coefredy*(float)(al_final-1)>=(float)mal)
       coefredy=(float)(mal-1)/(float)(al_final-1);
 
-    if ((temp2=(char *)malloc(an_final*al_final))==NULL)
+    if ((temp2=(byte *)malloc(an_final*al_final))==NULL)
     {
       free(mapa);
       mapa = NULL;
-      v_texto=texto[45]; dialogo((int)err0);
+      v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
       return;
     }
     memset(temp2,0,an_final*al_final);
@@ -1179,7 +1179,7 @@ void IniCfg(void)
   InfoCfg.animacion     = FicheroAni;
   InfoCfg.num_animacion = anim_actual;
   InfoCfg.nombre        = FicheroMod;
-  InfoCfg.dac           = dac;
-  InfoCfg.textura       = TexturaSprite;
+  InfoCfg.dac           = (char *)dac;
+  InfoCfg.textura       = (char *)TexturaSprite;
 }
 

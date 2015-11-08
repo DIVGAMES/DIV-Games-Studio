@@ -84,21 +84,6 @@ char * itoa(long n, char *buf, int len)
     return   buf;
 }
 
-
-void call(int *(*func)() ) {
-	func();
-}
-
-void call(void *(*func)() )
-{
-	//printf("calling func\n");
-	
-//      allegro_message("call");
-func();
-//      asm("call *%eax");      
-                // Call functions! EEK
-}
-
 void call(const voidReturnType func) {	
 	func();
 }
@@ -363,7 +348,7 @@ void textcolor(int attr, int fg, int bg)
 	printf("%s", command);
 }
 
-uint8_t sdl2key[255];
+uint8_t sdl2key[512];
 //#define _s sdl2key
 
 void sdlkeyinit(void) {

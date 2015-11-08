@@ -43,8 +43,8 @@ void mixer0(void)
   v.an     =  59;
   v.al     =  76;
 
-  v.paint_handler=(memptrsize)mixer1;
-  v.click_handler=(memptrsize)mixer2;
+  v.paint_handler=(voidReturnType)mixer1;
+  v.click_handler=(voidReturnType)mixer2;
 }
 
 void mixer1(void)

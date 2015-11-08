@@ -78,9 +78,9 @@ double evaluar(void) {
   do {
     switch(expres[n].token) {
       case p_num: pila[++sp]=expres[n].numero; break;
-      case p_or:  pila[sp-1]=(double)((int)pila[sp-1]|(int)pila[sp]); sp--; break;
-      case p_xor: pila[sp-1]=(double)((int)pila[sp-1]^(int)pila[sp]); sp--; break;
-      case p_and: pila[sp-1]=(double)((int)pila[sp-1]&(int)pila[sp]); sp--; break;
+      case p_or:  pila[sp-1]=(double)((memptrsize)pila[sp-1]|(memptrsize)pila[sp]); sp--; break;
+      case p_xor: pila[sp-1]=(double)((memptrsize)pila[sp-1]^(memptrsize)pila[sp]); sp--; break;
+      case p_and: pila[sp-1]=(double)((memptrsize)pila[sp-1]&(memptrsize)pila[sp]); sp--; break;
       case p_add: pila[sp-1]+=pila[sp]; sp--; break;
       case p_sub: pila[sp-1]-=pila[sp]; sp--; break;
       case p_mul: pila[sp-1]*=pila[sp]; sp--; break;
@@ -91,15 +91,15 @@ double evaluar(void) {
           pila[sp-1]/=pila[sp]; sp--;
         } break;
       case p_mod:
-        if ((int)pila[sp]==0) {
+        if ((memptrsize)pila[sp]==0) {
           token=p_error; n=iexpres;
         } else {
-          pila[sp-1]=(double)((int)pila[sp-1]%(int)pila[sp]); sp--;
+          pila[sp-1]=(double)((memptrsize)pila[sp-1]%(memptrsize)pila[sp]); sp--;
         } break;
       case p_neg: pila[sp]=-pila[sp]; break;
-      case p_not: pila[sp]=(double)((int)pila[sp]^-1); break;
-      case p_shr: pila[sp-1]=(double)((int)pila[sp-1]>>(int)pila[sp]); sp--; break;
-      case p_shl: pila[sp-1]=(double)((int)pila[sp-1]<<(int)pila[sp]); sp--; break;
+      case p_not: pila[sp]=(double)((memptrsize)pila[sp]^-1); break;
+      case p_shr: pila[sp-1]=(double)((memptrsize)pila[sp-1]>>(memptrsize)pila[sp]); sp--; break;
+      case p_shl: pila[sp-1]=(double)((memptrsize)pila[sp-1]<<(memptrsize)pila[sp]); sp--; break;
       case p_sqrt:
         if (pila[sp]<0) {
           token=p_error; n=iexpres;
@@ -110,7 +110,7 @@ double evaluar(void) {
 
       default: token=p_error; n=iexpres; break;
     }
-    if (pcalc->cint) pila[sp]=(double)((int)pila[sp]);
+    if (pcalc->cint) pila[sp]=(double)((memptrsize)pila[sp]);
   } while (++n<iexpres);
 
   if (sp!=1) token=p_error;
@@ -302,8 +302,8 @@ void calc2(void) {
     expresion=pcalc->ctext;
     calcular();
     if (token==p_num) {
-      if (pcalc->chex) sprintf(pcalc->cresult,"0x%x",(int)tnumero);
-      else if (pcalc->cint) sprintf(pcalc->cresult,"%d",(int)tnumero);
+      if (pcalc->chex) sprintf(pcalc->cresult,"0x%x",(memptrsize)tnumero);
+      else if (pcalc->cint) sprintf(pcalc->cresult,"%d",(memptrsize)tnumero);
       else sprintf(pcalc->cresult,"%g",tnumero);
     } else strcpy(pcalc->cresult,(char *)texto[417]);
     wbox(v.ptr,an,al,c12,4,12,an-8-22-26,6);
@@ -322,9 +322,9 @@ void calc0(void) {
   v.al=34;
   v.titulo=texto[413];
   v.nombre=texto[413];
-  v.paint_handler=(int)calc1;
-  v.click_handler=(int)calc2;
-  v.close_handler=(int)calc3;
+  v.paint_handler=calc1;
+  v.click_handler=calc2;
+  v.close_handler=calc3;
 
   if (pcalc==NULL) pcalc=readcalc; else {
     pcalc->chex=0;
@@ -343,7 +343,7 @@ void calc0(void) {
 void calculadora(void) {
   pcalc=(struct _calc *)malloc(sizeof(struct _calc));
   if (pcalc!=NULL) {
-    nueva_ventana((int)calc0);
+    nueva_ventana(calc0);
   }
 }
 

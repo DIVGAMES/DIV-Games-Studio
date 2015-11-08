@@ -150,7 +150,7 @@ FILE * open_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 #ifndef DOS
-char *ff = file;
+char *ff = (char *)file;
 
 while (*ff!=0) {
 	if(*ff =='\\') *ff='/';
@@ -2833,28 +2833,28 @@ void _strdel(void) { // (cadena,n,m) borra <n> char del inicio y <m> del final
 byte xlat_rnd[256];
 int offset_clave;
 
-int sort0(int *a,int *b) {
-  return((*(a+offset_clave))-(*(b+offset_clave)));
+int sort0(const void *a,const void *b) {
+  return((*((int *)a+offset_clave))-(*((int *)b+offset_clave)));
 }
 
-int sort1(int *a,int *b) {
-  return((*(b+offset_clave))-(*(a+offset_clave)));
+int sort1(const void*a,const void *b) {
+  return((*((int *)b+offset_clave))-(*((int *)a+offset_clave)));
 }
 
-int sort2(char *a,char *b) {
-  return(strcmp(a+offset_clave*4,b+offset_clave*4));
+int sort2(const void *a,const void *b) {
+  return(strcmp((char *)a+offset_clave*4,(char *)b+offset_clave*4));
 }
 
-int sort3(char *a,char *b) {
-  return(-strcmp(a+offset_clave*4,b+offset_clave*4));
+int sort3(const void *a,const void *b) {
+  return(-strcmp((char *)a+offset_clave*4,(char *)b+offset_clave*4));
 }
 
-int sort4(int *a,int *b) {
-  return(strcmp((char*)&mem[*(a+offset_clave)],(char*)&mem[*(b+offset_clave)]));
+int sort4(const void *a,const void *b) {
+  return(strcmp((char*)&mem[*((char *)a+offset_clave)],(char*)&mem[*((char *)b+offset_clave)]));
 }
 
-int sort5(int *a,int *b) {
-  return(-strcmp((char*)&mem[*(a+offset_clave)],(char*)&mem[*(b+offset_clave)]));
+int sort5(const void *a,const void *b) {
+  return(-strcmp((char*)&mem[*((char *)a+offset_clave)],(char*)&mem[*((char *)b+offset_clave)]));
 }
 
 int unsort00(byte *a, byte *b){
@@ -2863,8 +2863,12 @@ int unsort00(byte *a, byte *b){
 }
 
 
-int unsort0(void *a,void *b) {
+int unsort0(const void *a,const void *b) {
 	return unsort00((byte *)a,(byte *)b);
+}
+
+int strcmpsort(const void *a, const void *b) {
+	return strcmp((char *)a,(char *)b);
 }
 
 void sort(void) {
@@ -2876,19 +2880,19 @@ void sort(void) {
 
   if (modo<0 || modo>1) {
     for (modo=0;modo<256;modo++) xlat_rnd[modo]=rnd();
-    qsort(&mem[offset],numreg,size*4,(__compar_fn_t)unsort0);
+    qsort(&mem[offset],numreg,size*4,unsort0);
   } else switch(tipo_clave) {
     case 0:
-      if (modo) qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort1);
-      else qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort0);
+      if (modo) qsort(&mem[offset],numreg,size*4,sort1);
+      else qsort(&mem[offset],numreg,size*4,sort0);
       break;
     case 1:
-      if (modo) qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort3);
-      else qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort2);
+      if (modo) qsort(&mem[offset],numreg,size*4,sort3);
+      else qsort(&mem[offset],numreg,size*4,sort2);
       break;
     case 2:
-      if (modo) qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort5);
-      else qsort(&mem[offset],numreg,size*4,(__compar_fn_t)sort4);
+      if (modo) qsort(&mem[offset],numreg,size*4,sort5);
+      else qsort(&mem[offset],numreg,size*4,sort4);
       break;
   }
   max_reloj+=reloj-old_reloj;
@@ -2982,7 +2986,7 @@ void _fclose(void) {
   int n;
 
   if (pila[sp]==0) {
-    pila[sp]=fcloseall();
+    pila[sp]=0;//fcloseall();
     if (pila[sp]==EOF) pila[sp]=0;
     memset(tabfiles, 0, 32*4);
   } else {
@@ -3136,7 +3140,7 @@ void get_dirinfo(void) {
     x++;
   }
 
-  qsort(filenames,x,16,(__compar_fn_t)strcmp);
+  qsort(filenames,x,16,strcmpsort);
 
   dirinfo->files=pila[sp]=x;
 }

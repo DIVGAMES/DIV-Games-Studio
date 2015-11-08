@@ -41,7 +41,7 @@ byte *cbuffer=(byte *)malloc(*LengtOff*2);
                         cnt+=rep;
                 }
         *LengtOff=cnt;
-return(cbuffer);
+return((char *)cbuffer);
 }
 
 char *CmpRLE(char *pVideoMem,int *LengtOff)
@@ -76,7 +76,7 @@ byte *cbuffer=(byte *)malloc(*LengtOff*2);
 		cntPixel=0;
 	}        
         *LengtOff=cptr;
-return(cbuffer);
+return((char *)cbuffer);
 }
 
 void ComprimeFrameySalva()
@@ -85,8 +85,8 @@ byte *BuffOff;
 byte *BuffRLE;
 int LengtOff=64000,LengtRLE=64000;
 
-        BuffOff=CmpOFF(MiCopia,&LengtOff);
-        BuffRLE=CmpRLE(MiCopia,&LengtRLE);
+        BuffOff=(byte *)CmpOFF((char *)MiCopia,&LengtOff);
+        BuffRLE=(byte *)CmpRLE((char *)MiCopia,&LengtRLE);
         
         if(LengtOff<LengtRLE)
         {

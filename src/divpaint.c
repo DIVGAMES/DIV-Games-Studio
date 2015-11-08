@@ -1048,7 +1048,7 @@ void edit_mode_10(void) {
       	  mab_y1-=mab_y0; mab_y0=y; mab_y1+=y;
           free(m);
         } else {
-          v_texto=texto[45]; dialogo((int)err0);
+          v_texto=(char *)texto[45]; dialogo(err0);
         }
       }
     } else switch(modo_seleccion) {
@@ -1163,12 +1163,12 @@ void corta_mapa(void) {
   byte *p;
 
   //1§ Pide memoria para un struct tmapa
-  if ((v_mapa=malloc(sizeof(struct tmapa)))!=NULL) {
+  if ((v_mapa=(struct tmapa *)malloc(sizeof(struct tmapa)))!=NULL) {
 
     box2mab(); an=mab_x1-mab_x0+1; al=mab_y1-mab_y0+1;
 
     // 2§ Pide memoria para el mapa
-    if ((v_mapa->map=malloc(an*al))!=NULL) {
+    if ((v_mapa->map=(byte *)malloc(an*al))!=NULL) {
 
       //2§B Copia el contenido del mapa
       p=v_mapa->map;
@@ -1176,7 +1176,7 @@ void corta_mapa(void) {
         if (is_mab(x,y)) *p++=*(map+y*map_an+x); else *p++=0;
 
       //4§ Fija el resto de variables
-      strcpy(v_mapa->filename,texto[136]);
+      strcpy(v_mapa->filename,(char *)texto[136]);
       ltoa(siguiente_codigo++,v_mapa->filename+strlen(v_mapa->filename),10);
       *v_mapa->path='\0';
       v_mapa->map_an=an;
@@ -1196,11 +1196,11 @@ void corta_mapa(void) {
       ventanas_a_crear[num_ventanas_a_crear++]=v_mapa;
 
     } else {
-      v_texto=texto[45]; dialogo((int)err0); free(v_mapa);
+      v_texto=(char *)texto[45]; dialogo(err0); free(v_mapa);
     }
 
   } else {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo(err0);
   }
 }
 
@@ -1254,7 +1254,7 @@ void mab_regla(void) {
     for (y=mab_y0;y<=mab_y1;y++)
       for (x=mab_x0;x<=mab_x1;x++)
         if (is_mab(x,y)) {
-          c=(int)*(map+x+y*map_an)*3;
+          c=(memptrsize)*(map+x+y*map_an)*3;
           c=dac[c]+dac[c+1]+dac[c+2];
           *(map+x+y*map_an)=near_regla[c];
         }
@@ -1360,7 +1360,7 @@ void mab_antialias(void) {
       free(p);
     }
   } else {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo(err0);
   }
 }
 
@@ -1838,14 +1838,14 @@ void edit_mode_12(void) {
 
     spacelen=0; cnt=0;
     for(x=0;x<255;x++) {
-      GetCharSizeBuffer(x,&fan,&fal,font);
+      GetCharSizeBuffer(x,&fan,&fal,(char *)font);
       if(fan!=1) { cnt++; spacelen+=fan; }
     } spacelen=(spacelen/cnt)/2;
 
     // Determina anmax y almax
 
     anmax=0; almax=0; for(x=0;x<255;x++) {
-      GetCharSizeBuffer(x,&fan,&fal,font);
+      GetCharSizeBuffer(x,&fan,&fal,(char *)font);
       if(fan==1) fan=spacelen;
       if(anmax<fan) anmax=fan;
       if(almax<fal) almax=fal;
@@ -1856,7 +1856,7 @@ void edit_mode_12(void) {
     if ((buffer=(byte*)malloc(anmax*almax))!=NULL) {
       memset(buffer,0,anmax*almax);
     } else {
-      v_texto=texto[45]; dialogo((int)err0);
+      v_texto=(char *)texto[45]; dialogo(err0);
       font=NULL;
     }
 
@@ -1925,7 +1925,7 @@ void edit_mode_12(void) {
             }
           }
         } else if (ascii && scan_code!=15 && scan_code!=1 && ilon<256) {
-          GetCharSizeBuffer(ascii,&fan,&fal,font);
+          GetCharSizeBuffer(ascii,&fan,&fal,(char *)font);
           if (fan==1) {
             if (save_undo(sel_x0,sel_y1,1,1)) {
               test_anterior();
@@ -1935,7 +1935,7 @@ void edit_mode_12(void) {
             memset(buffer,0,anmax*almax);
             if (save_undo(sel_x0,sel_y0,fan,almax)) {
               test_anterior(); // Para contrarrestar el efecto del save_undo()
-              ShowCharBuffer(ascii,0,0,buffer,anmax,font);
+              ShowCharBuffer(ascii,0,0,(char *)buffer,anmax,(char *)font);
               line_fx=efecto12; write_char2(sel_x0,sel_y0,buffer,anmax,almax);
               sel_x0+=fan; sel_x1+=fan; lon[ilon++]=fan;
             }
@@ -2010,7 +2010,7 @@ void write_char2(int x, int y, byte * si, int font_an, int font_al) {
     n=font_al; do {
       m=font_an; do {
         if (*si) {
-          color=*(ghost+(int)get_color(x,y)*256+*si);
+          color=*(ghost+(memptrsize)get_color(x,y)*256+*si);
           _line_pixel(x,y);
         }
         si++; x++;
@@ -2026,7 +2026,7 @@ void write_char2(int x, int y, byte * si, int font_an, int font_al) {
       x-=font_an; y++;
     } while (--n);
   } else {
-    g=ghost+(int)c*256;
+    g=ghost+(memptrsize)c*256;
     n=font_al; do {
       m=font_an; do {
         if (*si) { color=*(g+*si); _line_pixel(x,y); }
@@ -2111,8 +2111,8 @@ void edit_mode_13(void) {
     else {
       wbox(barra,vga_an/big2,vga_al,c2,barra_an-23,2,21,15);
       p=copia; copia=barra; text_color=c4;
-      writetxt(barra_an-22,3,0,"????");
-      writetxt(barra_an-22,10,0,"????");
+      writetxt(barra_an-22,3,0,(byte *)"????");
+      writetxt(barra_an-22,10,0,(byte *)"????");
       copia=p;
     }
 
@@ -2123,8 +2123,8 @@ void edit_mode_13(void) {
     num[1]=48+(num_punto/10)%10;
     num[0]=48+(num_punto/100)%10;
 
-    wwrite(barra,vga_an/big2,19,56+2*16,6,1,num,c1);
-    wwrite(barra,vga_an/big2,19,55+2*16,6,1,num,c4);
+    wwrite(barra,vga_an/big2,19,56+2*16,6,1,(byte *)num,c1);
+    wwrite(barra,vga_an/big2,19,55+2*16,6,1,(byte *)num,c4);
 
     volcado_edicion();
 
@@ -2289,90 +2289,90 @@ void pixel(byte *p) {
     break;
 
   case 1:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+n+b); d=*(ghost+n+c);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 2:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+n+b);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 3:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+n+b); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 4: // *** 25% ****
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a);
     if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 5:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+a+b*256); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 6:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+a+b*256);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 7:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+a+b*256); d=*(ghost+a+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 8: // *** 50% ****
-    n=(int)*p*256; a=*(ghost+n+color);
+    n=(memptrsize)*p*256; a=*(ghost+n+color);
     if (a!=*p) *p=a; else *p=color;
     break;
 
   case 9:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+a+b*256); d=*(ghost+a+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 10:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+a+b*256);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 11:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+a+b*256); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 12: // *** 75% ****
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a);
     if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 13:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+color256+b); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 14:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+color256+b);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 15:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+color256+b); d=*(ghost+color256+c);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
@@ -2396,90 +2396,90 @@ void pixel_sin_mask(byte *p) {
     break;
 
   case 1:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+n+b); d=*(ghost+n+c);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 2:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+n+b);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 3:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+n+b); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 4: // *** 25% ****
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a);
     if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 5:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+a+b*256); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 6:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+a+b*256);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 7:
-    n=(int)*p*256;
+    n=(memptrsize)*p*256;
     a=*(ghost+n+color); b=*(ghost+n+a); c=*(ghost+a+b*256); d=*(ghost+a+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 8: // *** 50% ****
-    n=(int)*p*256; a=*(ghost+n+color);
+    n=(memptrsize)*p*256; a=*(ghost+n+color);
     if (a!=*p) *p=a; else *p=color;
     break;
 
   case 9:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+a+b*256); d=*(ghost+a+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 10:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+a+b*256);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 11:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+a+b*256); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 12: // *** 75% ****
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a);
     if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 13:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+color256+b); d=*(ghost+b+c*256);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 14:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+color256+b);
     if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
   case 15:
-    n=(int)*p*256; color256=color*256;
+    n=(memptrsize)*p*256; color256=color*256;
     a=*(ghost+n+color); b=*(ghost+color256+a); c=*(ghost+color256+b); d=*(ghost+color256+c);
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
@@ -2633,7 +2633,7 @@ void _line_pixel(int x,int y) { // Un simple pixel (para line_pixel,spray y writ
         else c1=*(map+x+y*map_an);
       if (y<map_al-1 && y>0) c2=*(ghost+*(map+x+(y-1)*map_an)*256+*(map+x+(y+1)*map_an));
         else c2=*(map+x+y*map_an);
-      _color=color; color=*(ghost+(int)c1*256+c2); pixel(map+x+y*map_an); color=_color;
+      _color=color; color=*(ghost+(memptrsize)c1*256+c2); pixel(map+x+y*map_an); color=_color;
     } else pixel(map+x+y*map_an);
   }
 }
@@ -2796,7 +2796,7 @@ void mover(byte * sp, int an, int al) {
   if (sp==NULL) {
     an=mab_x1-mab_x0+1; al=mab_y1-mab_y0+1;
     if ((sp=(byte*)malloc(an*al))==NULL) {
-      v_texto=texto[45]; dialogo((int)err0); return; }
+      v_texto=(char *)texto[45]; dialogo(err0); return; }
     memset(sp,0,an*al); // Crea el sprite en sp
     for (y=mab_y0;y<=mab_y1;y++)
       for (x=mab_x0;x<=mab_x1;x++)
@@ -3070,9 +3070,9 @@ void cuentagotas(void) {
         wbox(barra,vga_an/big2,19,c2,80,2,31,15);
         text_color=c4;
         num[2]=col%10+48; num[1]=(col/10)%10+48; num[0]=(col/100)%10+48;
-        strcpy(&num[3],"Dec"); writetxt(109,3,2,num);
+        strcpy((char *)&num[3],"Dec"); writetxt(109,3,2,num);
         num[1]=(col%16>9)?col%16+55:col%16+48; num[0]=(col/16>9)?col/16+55:col/16+48;
-        strcpy(&num[2],"Hex"); writetxt(109,10,2,num);
+        strcpy((char *)&num[2],"Hex"); writetxt(109,10,2,num);
         copia=_copia;
       } else {
         _copia=copia; copia=barra;
@@ -3092,7 +3092,7 @@ void cuentagotas(void) {
     memcpy(barra,_barra,vga_an*19*big2); memcpy(bar,_bar,16*4); barra_an=_barra_an;
     free(_barra);
   } else {
-    v_texto=texto[45]; dialogo((int)err0);
+    v_texto=(char *)texto[45]; dialogo(err0);
   }
 
   zoom_background=0; hacer_zoom=1;
@@ -3199,7 +3199,7 @@ void dibuja_regla(void) {
   wbox(barra,vga_an/big2,19,color,80,2,7,8); // Caja del color, invoca a select_color()
 
   if (textura_color==NULL || modo==0) {
-    n=(int)c1*3; med=dac[n]+dac[n+1]+dac[n+2];
+    n=(memptrsize)c1*3; med=dac[n]+dac[n+1]+dac[n+2];
     n=color*3;
     if (dac[n]+dac[n+1]+dac[n+2]>med) n=color; else n=c1;
     wrectangulo(barra,vga_an/big2,19,n,80,2,7,8);
@@ -3309,7 +3309,7 @@ void dibuja_regla_seleccion(byte * p, int c, int d, int x, int y) {
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 extern struct tprg * old_prg;
-void help_paint(int);
+void help_paint(memptrsize);
 
 void ayuda_dibujo(int n) {
   int m=0;
@@ -3321,9 +3321,9 @@ void ayuda_dibujo(int n) {
     if ((m=determina_help())>0) {
       v.primer_plano=1; v.estado=1; v.tipo=100;
       move(0,m); call(v.close_handler);
-      if (v.click_handler==(int)help2 && old_prg!=NULL) {
+      if (v.click_handler==help2 && old_prg!=NULL) {
         for (m=1;m<max_windows;m++) {
-          if (ventana[m].click_handler==(int)programa2) {
+          if (ventana[m].click_handler==programa2) {
             if (ventana[m].prg==old_prg && ventana[m].primer_plano<2) {
               ventana[m].estado=1;
               wgra(ventana[m].ptr,ventana[m].an/big2,ventana[m].al/big2,c_b_low,2,2,ventana[m].an/big2-20,7);
@@ -3572,7 +3572,7 @@ void select_fx(int n,int * efecto) {
 
     c=88*big2; d=27*big2;
     if ((p=(byte*)malloc(c*d))==NULL) {
-     v_texto=texto[45]; dialogo((int)err0); return; }
+     v_texto=(char *)texto[45]; dialogo(err0); return; }
 
     volcar_barras(0);
 
@@ -3711,7 +3711,7 @@ int select_icon(int icono_x,int * iconos) {
     num=*iconos++; col=*iconos++; fil=(num+col-1)/col;
     c=(col*16+3)*big2; d=(fil*16+11)*big2;
     if ((p=(byte*)malloc(c*d))==NULL) {
-      v_texto=texto[45]; dialogo((int)err0); return(-1); }
+      v_texto=(char *)texto[45]; dialogo(err0); return(-1); }
 
     volcar_barras(0);
 
@@ -3836,7 +3836,7 @@ void select_mascara(int n) {
     c=(128+3)*big2; d=(128+11+8)*big2; a=barra_x;
     if (barra_y>vga_al/2-8) b=barra_y-d-1; else b=barra_y+19*big2+1;
     if ((p=(byte*)malloc(c*d))==NULL) {
-      v_texto=texto[45]; dialogo((int)err0); return; }
+      v_texto=(char *)texto[45]; dialogo(err0); return; }
 
     ajusta_caja(&a,&b,&c,&d); c/=big2; d/=big2;
     do { read_mouse(); } while (mouse_b || key(_M));
@@ -3949,8 +3949,8 @@ void pinta_ventana_mascara(byte * p,int c,int d) {
     wbox(p,c,d,y*16+x,2+x*8,10+y*8,7,7);
 
   for (n=0;n<256;n++) if (mask[n]) {
-    x=(int)c2*3; x=dac[x]+dac[x+1]+dac[x+2];
-    y=(int)n*3; y=dac[y]+dac[y+1]+dac[y+2];
+    x=(memptrsize)c2*3; x=dac[x]+dac[x+1]+dac[x+2];
+    y=(memptrsize)n*3; y=dac[y]+dac[y+1]+dac[y+2];
     if (y>=x) wbox(p,c,d,c0,4+(n%16)*8,12+(n/16)*8,3,3);
     else wbox(p,c,d,c4,4+(n%16)*8,12+(n/16)*8,3,3);
   }
@@ -4047,9 +4047,9 @@ int crear_mapbr_thumbs(struct t_listboxbr * l)
   n=m_maximo=0;
   for(con=0; con<max_windows; con++) {
     if(ventana[con].tipo==100) {
-      thumb_map[n].an   = ventana[con].mapa->map_an;
-      thumb_map[n].al   = ventana[con].mapa->map_al;
-      thumb_map[n].ptr  = ventana[con].mapa->map;
+      thumb_map[n].an   = (int)ventana[con].mapa->map_an;
+      thumb_map[n].al   = (int)ventana[con].mapa->map_al;
+      thumb_map[n].ptr  = (char *)ventana[con].mapa->map;
       thumb_map[n].Code = con;
       n++;
     }
@@ -4061,7 +4061,7 @@ int crear_mapbr_thumbs(struct t_listboxbr * l)
 
     man  = thumb_map[con].RealAn = thumb_map[con].an;
     mal  = thumb_map[con].RealAl = thumb_map[con].al;
-    temp = thumb_map[con].ptr;
+    temp = (byte *)thumb_map[con].ptr;
 
     if(man<=32*big2 && mal<=32*big2) // El grafico se deja tal cual
     {
@@ -4090,7 +4090,7 @@ int crear_mapbr_thumbs(struct t_listboxbr * l)
       if (coefredy*(float)(thumb_map[con].al-1)>=(float)mal)
         coefredy=(float)(mal-1)/(float)(thumb_map[con].al-1);
 
-      if((temp2=(char *)malloc(thumb_map[con].an*thumb_map[con].al))==NULL)
+      if((temp2=(byte *)malloc(thumb_map[con].an*thumb_map[con].al))==NULL)
       {
         thumb_map[con].ptr    = NULL;
         thumb_map[con].status = 0;
@@ -4103,7 +4103,7 @@ int crear_mapbr_thumbs(struct t_listboxbr * l)
       for(y=0;y<thumb_map[con].al;y++) {
         b=(float)0.0;
         for(x=0;x<thumb_map[con].an;x++) {
-          temp2[y*thumb_map[con].an+x]=temp[((int)a)*man+(int)b];
+          temp2[y*thumb_map[con].an+x]=temp[((memptrsize)a)*man+(memptrsize)b];
           b+=coefredx;
         } a+=coefredy;
       }
@@ -4149,7 +4149,7 @@ void select_color(int n) { // N£mero de "icono" como par metro
   if( (TipoTex&4) && ((key(_T)&&hotkey) || (mouse_in(barra_x+56+n*16,barra_y+11,barra_x+62+n*16,barra_y+17) && (mouse_b&1))) )
   {
     TipoBrowser=BRUSH;
-    dialogo((int)MapperBrowseFPG0);
+    dialogo(MapperBrowseFPG0);
 
     num_tex=ltexturasbr.inicial+ltexturasbr.zona-10; // Posicion en browser
     tex_cod=atoi(m3d_fpgcodesbr+num_tex*an_textura); // Codigo de esa posicion
@@ -4161,8 +4161,8 @@ void select_color(int n) { // N£mero de "icono" como par metro
 
     if((temp=(byte *)malloc(man*mal))==NULL)
     {
-      v_texto=texto[45];
-      dialogo((int)err0);
+      v_texto=(char *)texto[45];
+      dialogo(err0);
     }
     else
     {
@@ -4171,8 +4171,8 @@ void select_color(int n) { // N£mero de "icono" como par metro
       if(fread(temp, 1, man*mal, FilePaintFPG) != man*mal)
       {
         free(temp);
-        v_texto=texto[44];
-        dialogo((int)err0);
+        v_texto=(char *)texto[44];
+        dialogo(err0);
       }
       else
       {
@@ -4200,7 +4200,7 @@ void select_color(int n) { // N£mero de "icono" como par metro
   if( (TipoTex&8) && ((key(_U) && hotkey) || (mouse_in(barra_x+56-8+n*16,barra_y+11,barra_x+62-8+n*16,barra_y+17) && (mouse_b&1))) )
   {
     TipoBrowser=MAPBR;
-    dialogo((int)MapperBrowseFPG0);
+    dialogo(MapperBrowseFPG0);
     if(v_terminado) {
       num_tex=thumb_map[ltexturasbr.inicial+ltexturasbr.zona-10].Code;
       textura_color=ventana[num_tex].mapa->map;
@@ -4218,7 +4218,7 @@ void select_color(int n) { // N£mero de "icono" como par metro
     c=(128+3+32+64+8)*big2; d=(128+3+18+8)*big2; a=barra_x;
     if (barra_y>vga_al/2-8) b=barra_y-d-1; else b=barra_y+19*big2+1;
     if ((p=(byte*)malloc(c*d))==NULL) {
-      v_texto=texto[45]; dialogo((int)err0); return; }
+      v_texto=(char *)texto[45]; dialogo(err0); return; }
     ajusta_caja(&a,&b,&c,&d); c/=big2; d/=big2;
 
     salir=0; volcar=1; _regla=-1; boton=-1; col=color;
@@ -4523,8 +4523,8 @@ void pinta_ventana_colores(byte * p,int c,int d) {
   for (y=0;y<16;y++) for (x=0;x<16;x++)
     wbox(p,c,d,y*16+x,10+x*8,10+y*8,7,7);
 
-  x=(int)c2*3; x=dac[x]+dac[x+1]+dac[x+2];
-  y=(int)color*3; y=dac[y]+dac[y+1]+dac[y+2];
+  x=(memptrsize)c2*3; x=dac[x]+dac[x+1]+dac[x+2];
+  y=(memptrsize)color*3; y=dac[y]+dac[y+1]+dac[y+2];
 
   if (y>=x) wbox(p,c,d,c0,12+(color%16)*8,12+(color/16)*8,3,3);
   else wbox(p,c,d,c4,12+(color%16)*8,12+(color/16)*8,3,3);
@@ -4545,13 +4545,13 @@ void pinta_ventana_colores(byte * p,int c,int d) {
     }
     wbox(p,c,d,c2,208,10+y*8,11,7); x=reglas[y].numcol;
     num[2]=0; num[1]=x%10+48; num[0]=(x/10)%10+48;
-    wwrite(p,c,d,209,10+y*8,0,num,c3);
+    wwrite(p,c,d,209,10+y*8,0,(byte *)num,c3);
     wbox(p,c,d,c2,220,10+y*8,6,7); x=reglas[y].tipo;
     num[1]=0; num[0]=x+48;
-    wwrite(p,c,d,221,10+y*8,0,num,c3);
+    wwrite(p,c,d,221,10+y*8,0,(byte *)num,c3);
     wbox(p,c,d,c2,227,10+y*8,6,7);
-    if (!reglas[y].fijo) wwrite(p,c,d,228,10+y*8,0,"E",c3);
-    else wwrite(p,c,d,228,10+y*8,0,"F",c3);
+    if (!reglas[y].fijo) wwrite(p,c,d,228,10+y*8,0,(byte *)"E",c3);
+    else wwrite(p,c,d,228,10+y*8,0,(byte *)"F",c3);
   } wput(p,c,d,170,10+regla*8,36);
 
   wrectangulo(p,c,d,c0,139,65+8,9,65);
@@ -4575,9 +4575,9 @@ void pinta_ventana_colores2(byte * p,int c,int d,int col) {
 
   wbox(p,c,d,c2,138,10,31,16);
   num[2]=col%10+48; num[1]=(col/10)%10+48; num[0]=(col/100)%10+48;
-  strcpy(&num[3],"Dec"); wwrite(p,c,d,167,11,2,num,c4);
+  strcpy((char *)&num[3],"Dec"); wwrite(p,c,d,167,11,2,num,c4);
   num[1]=(col%16>9)?col%16+55:col%16+48; num[0]=(col/16>9)?col/16+55:col/16+48;
-  strcpy(&num[2],"Hex"); wwrite(p,c,d,167,19,2,num,c4);
+  strcpy((char *)&num[2],"Hex"); wwrite(p,c,d,167,19,2,num,c4);
 
   wbox(p,c,d,c1,140,66+8,7,63);
   if (x=dac[col*3]) wbox(p,c,d,c_r,140,129-x+8,7,x);
@@ -4588,11 +4588,11 @@ void pinta_ventana_colores2(byte * p,int c,int d,int col) {
 
   wbox(p,c,d,c2,138,41+8,31,23);
   num[1]=dac[col*3]%10+48; num[0]=dac[col*3]/10+48;
-  strcpy(&num[2]," Red"); wwrite(p,c,d,139,42+8,0,num,c3);
+  strcpy((char *)&num[2]," Red"); wwrite(p,c,d,139,42+8,0,num,c3);
   num[1]=dac[col*3+1]%10+48; num[0]=dac[col*3+1]/10+48;
-  strcpy(&num[2]," Grn."); wwrite(p,c,d,139,50+8,0,num,c3);
+  strcpy((char *)&num[2]," Grn."); wwrite(p,c,d,139,50+8,0,num,c3);
   num[1]=dac[col*3+2]%10+48; num[0]=dac[col*3+2]/10+48;
-  strcpy(&num[2]," Blue"); wwrite(p,c,d,139,58+8,0,num,c3);
+  strcpy((char *)&num[2]," Blue"); wwrite(p,c,d,139,58+8,0,num,c3);
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -4803,12 +4803,12 @@ void coord_barra(void) {
   if (coord_x>=0 && coord_x<map_an) {
     num[3]=coord_x%10+48; num[2]=(coord_x/10)%10+48; num[1]=(coord_x/100)%10+48;
     num[0]=(coord_x/1000)%10+48; writetxt(27,3,0,num);
-  } else writetxt(27,3,0,"000?");
+  } else writetxt(27,3,0,(byte *)"000?");
 
   if (coord_y>=0 && coord_y<map_al) {
     num[3]=coord_y%10+48; num[2]=(coord_y/10)%10+48; num[1]=(coord_y/100)%10+48;
     num[0]=(coord_y/1000)%10+48; writetxt(27,10,0,num);
-  } else writetxt(27,10,0,"000?");
+  } else writetxt(27,10,0,(byte *)"000?");
 
   copia=p;
 }
@@ -4842,7 +4842,7 @@ int nueva_barra(int an, int al) {
   for (n=0;n<10;n++) if (!barras[n].on) break; if (n==10) return(-1);
 
   if ((barras[n].ptr=(byte*)malloc(an*big2*al*big2))==NULL) {
-    v_texto=texto[45]; dialogo((int)err0); return(-1);
+    v_texto=(char *)texto[45]; dialogo(err0); return(-1);
   }
 
   barras[n].on=1; barras[n].an=an; barras[n].al=al;
@@ -4875,7 +4875,7 @@ int select_icon(int icono_x,int * iconos) {
     num=*iconos++; col=*iconos++; fil=(num+col-1)/col;
     c=(col*16+3)*big2; d=(fil*16+11)*big2;
     if ((p=(byte*)malloc(c*d))==NULL) {
-      v_texto=texto[45]; dialogo((int)err0); return(-1); }
+      v_texto=(char *)texto[45]; dialogo(err0); return(-1); }
 
     volcar_barras(0);
 

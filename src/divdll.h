@@ -10,14 +10,14 @@ extern "C" {
 #include <stdio.h>
 // Declare PE type as void *.. we don't want to bother the calling program
 // with the complex PE defines..
-#pragma align 1
+//#pragma align 1
 typedef void PE;
 void  PE_Free(PE *p);
 PE   *PE_ReadFP(FILE *in);
 PE   *PE_ReadFN(char *filename);
 void *PE_ImportFnc(PE *p,char *funcname);
 extern char *dll_error;
-#pragma align 4
+//#pragma align 4
 
 void  DIV_RemoveExport(char *name,void *obj);
 

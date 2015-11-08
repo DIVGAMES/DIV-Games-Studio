@@ -18,7 +18,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
+
 #include <ctype.h>
 //#include <direct.h>
 #include <signal.h>
@@ -130,7 +134,7 @@ extern int debug_active;
 // Assembler (a.asm - replaced with a.cpp)
 
 void memcpyb(byte * di, byte * si, int n);
-void call(int *(*func)() );
+//void call(int *(*func)() );
 
 // Mode8 (vpe/vpedll.cpp)
 
@@ -861,7 +865,7 @@ typedef struct _tventana {
   int tipo;                             // 0-n/a, 1-di logo
   int primer_plano;                     // 1-si 0-no (oscurecida)
   byte * titulo;                        // Nombre en la barra de t¡tulo
-  int paint_handler,click_handler,close_handler;
+  voidReturnType paint_handler,click_handler,close_handler;
   int x,y,an,al;                        // Posici¢n y dimensiones de la ventana
   byte * ptr;                           // Buffer de la ventana
   int estado;
