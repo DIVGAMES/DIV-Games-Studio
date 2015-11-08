@@ -349,6 +349,7 @@ int DPMIalloc4k(void);
 
 
 #endif
+#ifdef MIXER
 void print_init_flags(int flags)
 {
 #define PFLAG(a) if(flags&MIX_INIT_##a) printf(#a " ")
@@ -360,11 +361,13 @@ void print_init_flags(int flags)
                 printf("None");
         printf("\n");
 }
+#endif
 
 int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
   SDL_Init( SDL_INIT_EVERYTHING );
+#ifdef MIXER
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC|MIX_INIT_MP3;
   
   int initted=Mix_Init(flags);
@@ -374,7 +377,7 @@ int main(int argc, char * argv[]) {
 	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
 	  printf("Mix_Init: %s\n", Mix_GetError());
    }
- 
+#endif 
 //atexit(SDL_Quit);
 
  // chdir("/home/mike/src/div2015");
