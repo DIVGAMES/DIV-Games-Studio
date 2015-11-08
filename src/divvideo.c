@@ -203,8 +203,9 @@ void rvmode(void) {
 
 void volcadosdl(byte *p) {
 	SDL_LockSurface(vga);
+	int vy;
 	byte *q = (byte *)vga->pixels;
-	for (int vy=0; vy<vga_al;vy++) {
+	for (vy=0; vy<vga_al;vy++) {
 		memcpy(q,p,vga_an);
 		p+=vga_an;
 		q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;

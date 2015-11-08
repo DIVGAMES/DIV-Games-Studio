@@ -39,8 +39,8 @@ void HYB_export(char *name,void *dir,int nparms){
 
 PE *DIV_LoadDll(char *name)
 {
-#ifdef NOTYET
 PE *pefile;
+#ifdef NOTYET
 void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
 void (*entryp2)( void (*HYB_export)() );
 
@@ -103,9 +103,9 @@ pefile=dlopen(name,0);
 	
 
 
-	return pefile;
-	
 #endif
+	return (pefile);
+	
 }
 
 void DIV_UnImportDll(PE *pefile)
@@ -120,8 +120,8 @@ void DIV_UnImportDll(PE *pefile)
 
 PE *DIV_ImportDll(char *name)
 {
+PE *pefile=NULL;
 #ifdef NOTYET
-PE *pefile;
 
 void *library;
     dlfunc funcs;
@@ -164,8 +164,8 @@ void (*entryp)( void (*COM_export)() );
   	}
   }
 
-return pefile;
 #endif
+return (pefile);
 }
 static EXPORTENTRY *findexportentry(char *name)
 {
