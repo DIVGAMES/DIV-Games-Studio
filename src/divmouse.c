@@ -225,6 +225,7 @@ while(SDL_PollEvent(&event))
 				scan_code = sdl2key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
 				key(scan_code)=0;
+				scan_code=0;
 			}
 
 			if (event.type == SDL_MOUSEBUTTONUP)
