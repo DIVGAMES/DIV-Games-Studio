@@ -303,7 +303,7 @@ void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,i
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Volcado de una ventana
+//      Dump window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void wvolcado(byte*copia,int an_copia,int al_copia,
