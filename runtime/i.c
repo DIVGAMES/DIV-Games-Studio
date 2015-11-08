@@ -1317,6 +1317,8 @@ int main(int argc,char * argv[]) {
   _harderr(critical_error);
 #endif
 
+ SDL_Init( SDL_INIT_EVERYTHING );
+ atexit(SDL_Quit);
 
 
 
