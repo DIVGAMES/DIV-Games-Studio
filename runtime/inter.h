@@ -37,6 +37,7 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 //#include <dos.h>
 //#include <i86.h>
 //#include <graph.h>
+#include <math.h>
 #include "divdll.h"
 
 #include "divkeybo.h"
