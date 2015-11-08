@@ -365,6 +365,8 @@ int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
   SDL_Init( SDL_INIT_EVERYTHING );
+  atexit(SDL_Quit);
+
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC|MIX_INIT_MP3;
   
   int initted=Mix_Init(flags);
