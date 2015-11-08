@@ -333,8 +333,8 @@ while(++np<nummatch) {
 	}
 }
 //printf("free'ing np [%d] *not matched* %s\n",np, namelist[np]->d_name);
-
-free(namelist[np]);
+if(np<nummatch)
+	free(namelist[np]);
 }
 //free(namelist);
 //namelist=NULL;
