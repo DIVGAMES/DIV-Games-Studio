@@ -190,9 +190,14 @@ void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,in
   int salta_x, long_x, resto_x;
   int salta_y, long_y, resto_y;
 
-  if (big) if ((n>=32 || n<0) && n!=233) { bwput_in_box(copia,an_real_copia,an_copia,al_copia,x,y,n); return; }
-  else if (n==mouse_graf && mouse_shift) { x=mouse_shift_x; y=mouse_shift_y; }
-
+  if (big) { 
+	if ((n>=32 || n<0) && n!=233) { 
+		bwput_in_box(copia,an_real_copia,an_copia,al_copia,x,y,n); return; 
+	}
+}
+  else {
+	if (n==mouse_graf && mouse_shift) { x=mouse_shift_x; y=mouse_shift_y; }
+}
   if (n<0) { n=-n; block=1; } else block=0;
 
   p=graf[n]+8;
@@ -458,7 +463,8 @@ sscar *car;
     case 8: x=x-an+1; y=y-al+1; break;
   }
 
-  if (boton) if (c!=c0) {
+  if (boton) { 
+	if (c!=c0) {
     wbox(copia,an_real_copia,al_copia,c2,x-2,y-2,an+4,al+4);
     wrectangulo(copia,an_real_copia,al_copia,c0,x-3,y-3,an+6,al+6);
     wrectangulo(copia,an_real_copia,al_copia,c3,x-2,y-2,an+3,1);
@@ -491,7 +497,7 @@ sscar *car;
       *(copia+(2*(y+al)+3)*an_real_copia*2+2*x-3)=c2;
     }
   }
-
+	}
   if (big&&!multi) {
     an_real_copia*=2; an_copia*=2; al_copia*=2;
     x*=2; y*=2; an*=2; al*=2;
