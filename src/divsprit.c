@@ -266,7 +266,8 @@ void sp_rotado( byte * si, int x, int y, int an, int al, int xg, int yg,
       }
     }
 
-    if (h<map_al && h>=0 && x0.w[1]<map_an && x1.w[1]>=0 && x1.w[1]>x0.w[1])
+    if (h<map_al && h>=0 && x0.w[1]<map_an && x1.w[1]>=0 && x1.w[1]>x0.w[1]) {
+    
     if (!mask_on) {
       if (x0.w[1]<0) if (x1.w[1]>=map_an)
         sp_scanc(ptrmap,x1.w[1]-x0.w[1],map_an-1,-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l,flags);
@@ -287,6 +288,8 @@ void sp_rotado( byte * si, int x, int y, int an, int al, int xg, int yg,
         sp_scan_mask(ptrmap+x0.w[1],x1.w[1]-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l,flags);
     }
 
+	}
+	
     x0.l+=ix0; x1.l+=ix1; g0x.l+=ig0x; g1x.l+=ig1x; g0y.l+=ig0y; g1y.l+=ig1y;
 
     ptrmap+=map_an;
@@ -307,13 +310,14 @@ void sp_scanc(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,in
   switch(flags) {
   case 0: // None
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) *p=c; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) *p=c; p++;
       x.l+=x0; y.l+=y0;
     } while (m--); break;
 
   case 1: // Ghost
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) *p=ghost[(c<<8)+*p]; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) 
+      	*p=ghost[(c<<8)+*p]; p++;
       x.l+=x0; y.l+=y0;
     } while (m--); break;
 
@@ -342,13 +346,13 @@ void sp_scan(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1,int f
   switch(flags) {
   case 0: // None
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) *p=c; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) *p=c; p++;
       x.l+=x0; y.l+=y0;
     } while (n--); break;
 
   case 1: // Ghost
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) *p=ghost[(c<<8)+*p]; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) *p=ghost[(c<<8)+*p]; p++;
       x.l+=x0; y.l+=y0;
     } while (n--); break;
 
@@ -379,13 +383,13 @@ void sp_scanc_mask(byte * p,short n,short m,short o,byte * si,int an,int x0,int 
   switch(flags) {
   case 0: // None
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) if (!mask[*p]) *p=c; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) if (!mask[*p]) *p=c; p++;
       x.l+=x0; y.l+=y0;
     } while (m--); break;
 
   case 1: // Ghost
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) if (!mask[*p]) *p=ghost[(c<<8)+*p]; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) if (!mask[*p]) *p=ghost[(c<<8)+*p]; p++;
       x.l+=x0; y.l+=y0;
     } while (m--); break;
 
@@ -414,13 +418,13 @@ void sp_scan_mask(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1,
   switch(flags) {
   case 0: // None
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) if (!mask[*p]) *p=c; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) if (!mask[*p]) *p=c; p++;
       x.l+=x0; y.l+=y0;
     } while (n--); break;
 
   case 1: // Ghost
     do {
-      if (c=*(si+x.w[1]+y.w[1]*an)) if (!mask[*p]) *p=ghost[(c<<8)+*p]; p++;
+      if ((c=*(si+x.w[1]+y.w[1]*an))) if (!mask[*p]) *p=ghost[(c<<8)+*p]; p++;
       x.l+=x0; y.l+=y0;
     } while (n--); break;
 

@@ -370,7 +370,7 @@ int main(int argc, char * argv[]) {
   int initted=Mix_Init(flags);
 //	print_init_flags(initted);
 	
-  if(initted&flags != flags) {
+  if((initted&flags) != flags) {
 	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
 	  printf("Mix_Init: %s\n", Mix_GetError());
    }
@@ -954,8 +954,9 @@ void mainloop(void) {
     // If we are within the contents of a window ...
     //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-    if (n==0 && v.primer_plano==1) if (mouse_in(v.x+2*big2,
-      v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
+    if (n==0 && v.primer_plano==1) {
+    
+    	if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
 
       llamar=1; // Llamamos a su click_handler
 
@@ -1103,7 +1104,7 @@ void mainloop(void) {
       oldn=-1;
 
     }
-
+	}
     //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
     // Estamos sobre un icono
     //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -1418,6 +1419,7 @@ char *command_path() {
     if(fullpath[0]) return(&fullpath);
     }    return(NULL);
     */
+    return NULL;
 }
 
 void shell(void) {
@@ -1985,7 +1987,9 @@ void actualiza_caja(int x, int y, int an, int al) {
     wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-2-x,vga_al-1-y,18,texto[safe],c2);
   }
 
-  for (n=max_windows-1;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al))
+  for (n=max_windows-1;n>=0;n--) {
+  	if (ventana[n].tipo) {
+  		if (colisiona_con(n,x,y,an,al)) {
   if (ventana[n].primer_plano<2) {
 
     _ptr=ventana[n].ptr;
@@ -1998,9 +2002,13 @@ void actualiza_caja(int x, int y, int an, int al) {
     if (x>_x) { salta_x+=x-_x; _ptr+=salta_x; _x=x; _an-=salta_x; }
     if (x+an<_x+_an) { salta_x+=_x+_an-x-an; _an-=_x+_an-x-an;  }
 
-    if (_an>0 && _al>0) if (ventana[n].primer_plano==1)
-      wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-    else wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+    if (_an>0 && _al>0) {
+    	if (ventana[n].primer_plano==1) {
+    		wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+    	} else { 
+    		wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x); 
+    	}
+    }
 
   } else {
 
@@ -2013,13 +2021,17 @@ void actualiza_caja(int x, int y, int an, int al) {
       wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x+8*big2-x,ventana[n].y-y,10,ventana[n].nombre,c4);
     }
 
-    if (x<ventana[n].x+7*big2)
+    if (x<ventana[n].x+7*big2) {
       if (big) {
         wput_in_box(copia+y*vga_an+x,vga_an,-an,al,ventana[n].x-x,ventana[n].y-y,38);
-      } else wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
-
+      } else { 
+      	wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
+      }
+    }
   }
-
+}
+}
+}
   volcado_parcial(x,y,an,al);
 }
 
@@ -2048,10 +2060,13 @@ void actualiza_dialogos(int x, int y, int an, int al) {
     if (x>_x) { salta_x+=x-_x; _ptr+=salta_x; _x=x; _an-=salta_x; }
     if (x+an<_x+_an) { salta_x+=_x+_an-x-an; _an-=_x+_an-x-an;  }
 
-    if (_an>0 && _al>0) if (ventana[n].primer_plano==1)
-      wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-    else wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-
+    if (_an>0 && _al>0)  {
+    	if (ventana[n].primer_plano==1) {
+   		 	wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+   		} else {
+    		wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+		}
+	}
   }
 }
 
@@ -2074,7 +2089,9 @@ void actualiza_caja2(int vent, int x, int y, int an, int al) {
   if (y+al>vga_al) al=vga_al-y;
   if (an<=0 || al<=0) return;
 
-  for (n=vent;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al))
+  for (n=vent;n>=0;n--) {
+  	if (ventana[n].tipo) {
+  		if (colisiona_con(n,x,y,an,al)) {
   if (ventana[n].primer_plano<2) {
 
     _ptr=ventana[n].ptr;
@@ -2087,10 +2104,13 @@ void actualiza_caja2(int vent, int x, int y, int an, int al) {
     if (x>_x) { salta_x+=x-_x; _ptr+=salta_x; _x=x; _an-=salta_x; }
     if (x+an<_x+_an) { salta_x+=_x+_an-x-an; _an-=_x+_an-x-an;  }
 
-    if (_an>0 && _al>0) if (ventana[n].primer_plano==1)
-      wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-    else wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-
+    if (_an>0 && _al>0) {
+    	if (ventana[n].primer_plano==1) {
+    		wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+    	} else {
+    		wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+		}
+	}
   } else {
 
     if (n==0 && mover_ventana) {
@@ -2102,13 +2122,17 @@ void actualiza_caja2(int vent, int x, int y, int an, int al) {
       wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x+8*big2-x,ventana[n].y-y,10,ventana[n].nombre,c4);
     }
 
-    if (x<ventana[n].x+7*big2)
-      if (big) {
-        wput_in_box(copia+y*vga_an+x,vga_an,-an,al,ventana[n].x-x,ventana[n].y-y,38);
-      } else wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
-
+    if (x<ventana[n].x+7*big2) {
+    	if (big) {
+        	wput_in_box(copia+y*vga_an+x,vga_an,-an,al,ventana[n].x-x,ventana[n].y-y,38);
+        } else {
+      		wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
+		}
+	}
   }
-
+  }
+  }
+}
   volcado_parcial(x,y,an,al);
 }
 
@@ -2240,7 +2264,9 @@ void vuelca_ventana(int m) {
   if (x+an>vga_an) an=vga_an-x;
   if (y+al>vga_al) al=vga_al-y;
 
-  for (n=m;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al))
+  for (n=m;n>=0;n--) {
+  	if (ventana[n].tipo) { 
+  		if (colisiona_con(n,x,y,an,al)) {
   if (ventana[n].primer_plano<2) {
 
     _ptr=ventana[n].ptr;
@@ -2253,20 +2279,28 @@ void vuelca_ventana(int m) {
     if (x>_x) { salta_x+=x-_x; _ptr+=salta_x; _x=x; _an-=salta_x; }
     if (x+an<_x+_an) { salta_x+=_x+_an-x-an; _an-=_x+_an-x-an;  }
 
-    if (_an>0 && _al>0) if (ventana[n].primer_plano==1)
-      wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-    else wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-
+    if (_an>0 && _al>0) {
+	    if (ventana[n].primer_plano==1) {
+   		 	wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+    	} else {
+    		wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+		}
+	}
   } else {
 
     wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x+9*big2-x,ventana[n].y-y,10,ventana[n].nombre,c0);
     wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x+8*big2-x,ventana[n].y-y,10,ventana[n].nombre,c4);
 
-    if (x<ventana[n].x+7*big2)
-      if (big) {
-        wput_in_box(copia+y*vga_an+x,vga_an,-an,al,ventana[n].x-x,ventana[n].y-y,38);
-      } else wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
-
+    if (x<ventana[n].x+7*big2) {
+    	if (big) {
+      		wput_in_box(copia+y*vga_an+x,vga_an,-an,al,ventana[n].x-x,ventana[n].y-y,38);
+        } else {
+      		wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
+		}
+	}
+  }
+  }
+  }
   }
 
   volcado_parcial(x,y,an,al);
@@ -2290,7 +2324,9 @@ void emplazar(int flag,int*_x,int*_y,int an,int al) {
     *_y=-1; scan[0]=vga_al-al;
   } scanes=1;
 
-  for (n=1;n<max_windows;n++) if (ventana[n].tipo) if (flag&1) {
+  for (n=1;n<max_windows;n++) {
+  	if (ventana[n].tipo) {
+  		if (flag&1) {
     if ((y=ventana[n].y+ventana[n].al+1)<vga_al) {
       x=0; do { x++; } while (x<scanes && y>scan[x]);
       if (x==scanes) scan[scanes++]=y;
@@ -2299,7 +2335,7 @@ void emplazar(int flag,int*_x,int*_y,int an,int al) {
         scan[x]=y; scanes++;
       }
     }
-  } else {
+  		} else {
     if ((y=ventana[n].y-al-1)>=0) {
       x=0; do { x++; } while (x<scanes && y<scan[x]);
       if (x==scanes) scan[scanes++]=y;
@@ -2309,7 +2345,8 @@ void emplazar(int flag,int*_x,int*_y,int an,int al) {
       }
     }
   }
-
+	}
+}
   // Segundo ... algoritmo de colocaci줻 ...
 
   if (flag&2) {
@@ -2368,11 +2405,17 @@ int calcular_colision(int x,int y,int an,int al) {
   int n,c,colision=0;
 
   for (n=1;n<max_windows;n++) {
-    if (ventana[n].tipo)
-      if (c=cuanto_colisiona_con(n,x,y,an,al))
-        if (ventana[n].primer_plano) colision+=vga_an*vga_al+c;
-        else colision+=vga_an*vga_al/4+c;
-  } return(colision);
+    if (ventana[n].tipo)  {
+    	if ((c=cuanto_colisiona_con(n,x,y,an,al))) {
+        	if (ventana[n].primer_plano) {
+        		colision+=vga_an*vga_al+c;
+        	} else {
+        		colision+=vga_an*vga_al/4+c;
+        	}
+        }
+    }
+  } 
+  return(colision);
 }
 
 int cuanto_colisiona_con(int a, int x, int y, int an, int al) {
@@ -2492,8 +2535,11 @@ void nueva_ventana(voidReturnType init_handler) {
 
     call(init_handler);
 
-    if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
-
+    if (big) {
+    	if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } 
+    } else { 
+    	v.an=-v.an;
+	}
     an=v.an; al=v.al;
 
     //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
