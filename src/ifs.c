@@ -639,21 +639,21 @@ void unirOutlineConBody(void) { // Le a¤ade el body al outline
           continue;
         }
       }
-      if (realcolor=*ptr2) {
+      if ((realcolor=*ptr2)) {
         color=0; n=0;
         if (y<altoBody && y>=0) {
-          if (x>0) if (c=*(ptr-1)) {
+          if (x>0) if ((c=*(ptr-1))) {
             color=c; n++;
           }
-          if (x<anchoBody-1) if (c=*(ptr+1)) {
+          if (x<anchoBody-1) if ((c=*(ptr+1))) {
           if (color) color=*(ghost+color*256+c); else color=c; n++;
           }
         }
         if (x<anchoBody && x>=0) {
-          if (y<altoBody-1) if (c=*(ptr+anchoBody)) {
+          if (y<altoBody-1) if ((c=*(ptr+anchoBody))) {
             if (color) color=*(ghost+color*256+c); else color=c; n++;
           }
-          if (y>0) if (c=*(ptr-anchoBody)) {
+          if (y>0) if ((c=*(ptr-anchoBody))) {
             if (color) color=*(ghost+color*256+c); else color=c; n++;
           }
         }
@@ -723,7 +723,7 @@ int Jorge_Crea_el_font(int GenCode)
 
     Buffer=NULL; Buffer2=NULL; Buffer3=NULL;
     outBuffer=NULL; shadowBuffer=NULL;
-    if (ret=initStruct())
+    if ((ret=initStruct()))
     {
         CloseAndFreeAll();
         return (ret);
@@ -757,15 +757,15 @@ int Jorge_Crea_el_font(int GenCode)
 //            if (OEM2ANSI[x]!=0)
             if (x!=0)
             {
-//             if (ret=CargaLetra(OEM2ANSI[x]))
-             if (ret=CargaLetra(x))
+//             if ((ret=CargaLetra(OEM2ANSI[x])))
+             if ((ret=CargaLetra(x)))
              {
                 CloseAndFreeAll();
                 return (ret);
              }
              if (Alto && Ancho)
              {
-                if (ret=escalar())
+                if ((ret=escalar()))
                 {
                     Progress((char *)texto[217],256,256);
                     CloseAndFreeAll();
@@ -784,7 +784,7 @@ int Jorge_Crea_el_font(int GenCode)
 
                 if (ifs.outline)
                 {
-                    if (ret=PintaOutline())
+                    if ((ret=PintaOutline()))
                     {
                         Progress((char *)texto[217],256,256);
                         CloseAndFreeAll();
@@ -802,7 +802,7 @@ int Jorge_Crea_el_font(int GenCode)
 
                 if (ifs.sombraX || ifs.sombraY)
                 {
-                    if (ret=PintaSombra())
+                    if ((ret=PintaSombra()))
                     {
                         Progress((char *)texto[217],256,256);
                         CloseAndFreeAll();
@@ -959,7 +959,7 @@ char *rawBuffer;
             iy=tablaFNT[WhatChar].incY;
             for (y=0; y<tablaFNT[WhatChar].alto; y++) {
                 for (x=0; x<tablaFNT[WhatChar].ancho; x++) {
-                  if (c=rawBuffer[y*tablaFNT[WhatChar].ancho+x]) {
+                  if ((c=rawBuffer[y*tablaFNT[WhatChar].ancho+x])) {
                     ptr[(cy+iy)*an+cx+x+y*an]=c;
                   }
                 }
