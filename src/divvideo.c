@@ -32,7 +32,7 @@ SDL_Surface *vga;
 
 #define MAX_YRES 2048
 
-short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
+static short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
 
 struct {
   byte dot;
