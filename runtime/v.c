@@ -330,7 +330,7 @@ nexttick = lasttick + (1000/game_fps);
 //printf("%d %d\n",newtick,nexttick);
 
 if(newtick<nexttick)
-	SDL_Delay(nexttick-newtick);
+	SDL_Delay(nexttick-SDL_GetTicks());
 
 lasttick=SDL_GetTicks();
 
