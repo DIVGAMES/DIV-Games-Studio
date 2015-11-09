@@ -1289,7 +1289,7 @@ int main(int argc,char * argv[]) {
   byte * ptr;
   unsigned long len,len_descomp;
   int mimem[10],n,i;
-
+  SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   remove("DEBUGSRC.TXT");
 
   getcwd(divpath,PATH_MAX+1);

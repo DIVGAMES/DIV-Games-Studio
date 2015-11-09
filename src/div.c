@@ -367,6 +367,8 @@ int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
   SDL_Init( SDL_INIT_EVERYTHING );
+  SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+
 #ifdef MIXER
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC|MIX_INIT_MP3;
   
@@ -417,7 +419,7 @@ int main(int argc, char * argv[]) {
   full[n]=0;
   if (full[n-1]==':') strcat(full,"/");
   _dos_setdrive((memptrsize)toupper(full[0])-'A'+1,&n);
-  _chdir(full);
+//  _chdir(full);
 
   if (cpu_type==3) chdir("..");
 
@@ -4200,7 +4202,7 @@ void DaniDel(char *name) {
     strcat(cwork3,ft.name);
     if (_fullpath(cwork1, cwork3, _MAX_PATH)==NULL) strcpy(cwork1,ft.name);
     _dos_setfileattr(cwork1,_A_NORMAL);
-    printf("deleting %s\n",cwork1);
+//    printf("deleting %s\n",cwork1);
     remove(cwork1);
     rc=_dos_findnext(&ft);
   }
