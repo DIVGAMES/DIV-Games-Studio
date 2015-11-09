@@ -3,8 +3,8 @@
 
 int main(void) {
 int ret = system("./system/div INIT");
-while(ret>0) {
-	printf("%d returned\n",ret);
+while(ret==256 || ret == 512) {
+//	printf("%d returned\n",ret);
 
 	if(ret==256) {
 		system("./system/divdbg system/EXEC.EXE");
