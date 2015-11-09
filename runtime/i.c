@@ -155,6 +155,7 @@ void MAINNOD_Packet(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
 extern int find_status;
 
 #include "sysdac.h"
+time_t dtime;
 
 void inicializacion (void) {
 //  FILE * f=NULL;
@@ -247,9 +248,10 @@ void inicializacion (void) {
 
   system_font();
 
-ip = 99;
+time(&dtime);
 
-//  _bios_timeofday(_TIME_GETCLOCK,(long*)&ip); init_rnd(ip);
+//  _bios_timeofday(_TIME_GETCLOCK,(long*)&ip); 
+init_rnd(dtime);
 
   //_setvideomode(_MRES256COLOR);
 
