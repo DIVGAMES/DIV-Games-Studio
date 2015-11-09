@@ -1,0 +1,11 @@
+/*
+ * JUDAS error codes
+ */
+#define JUDAS_OK 0
+#define JUDAS_OPEN_ERROR 1
+#define JUDAS_READ_ERROR 2
+#define JUDAS_WRONG_FORMAT 3
+#define JUDAS_OUT_OF_MEMORY 4
+#define JUDAS_HARDWARE_ERROR 5
+#define JUDAS_ILLEGAL_CONFIG 6
+#define JUDAS_OUT_OF_CHANNELS 7
