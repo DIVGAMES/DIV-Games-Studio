@@ -37,8 +37,18 @@ else return " ";
 
 
  
+char * strlwr(char *s)
+{
+char *ucs = (char *) s;
+  for ( ; *ucs != '\0'; ucs++)
+    {
+      *ucs = tolower(*s++);
+    }
+  return ucs;
+}
 
-char * strlwr(char *string)
+
+char * _strlwr(char *string)
 {
 	int x=0;
 	char *st = string;
@@ -256,7 +266,9 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 
 //printf("name is %s\n",name);
 
-strcpy(findmask,strlwr(name));
+strcpy(findmask,name);
+strlwr(findmask);
+
 
 
 
@@ -306,8 +318,11 @@ while(++np<nummatch) {
 			return 0;
 		} 
 		strcpy(findname, result->name);
+		strlwr(findname);
 
-	if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
+//printf("Matching %s to %s\n",findmask,findname);
+
+	if (fnmatch(findmask, findname, FNM_PATHNAME)==0){
 		
 		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
 			//printf("free'ing np [%d] [FILE]\n",np,result->name);
