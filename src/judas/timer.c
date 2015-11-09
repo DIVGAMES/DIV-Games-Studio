@@ -5,14 +5,16 @@
  * blasphemy-ware too!
  */
 
-#include <conio.h>
-#include <dos.h>
+//#include <conio.h>
+//#include <dos.h>
 #include "judasmem.h"
+#include "osdep.h"
+
 
 int timer_init(unsigned short frequency, void (*function)());
 void timer_uninit(void);
 static int timer_lock(void);
-static int timer_unlock(void);
+static void timer_unlock(void);
 void timer_handler(void);
 unsigned short timer_get_ds(void);
 
@@ -23,7 +25,7 @@ value [ax];
 
 static unsigned char timer_initialized = 0;
 extern void (__interrupt __far *timer_oldvect)();
-extern void (__interrupt __far *timer_newvect)() = &timer_handler;
+extern void (__interrupt __far *timer_newvect)();// = &timer_handler;
 extern void (*timer_function)();
 extern unsigned timer_count;
 extern unsigned short timer_frequency;
@@ -32,6 +34,7 @@ extern unsigned short timer_ds;
 extern int timer_code_lock_start;
 extern int timer_code_lock_end;
 
+#ifdef NOTYET
 int timer_init(unsigned short frequency, void (*function)())
 {
 	if (timer_initialized) return 1;
@@ -51,7 +54,6 @@ int timer_init(unsigned short frequency, void (*function)())
         timer_initialized = 1;
         return 1;
 }
-
 void timer_uninit(void)
 {
 	if (!timer_initialized) return;
@@ -64,6 +66,7 @@ void timer_uninit(void)
         timer_unlock();
         timer_initialized = 0;
 }
+#endif
 
 static int timer_lock(void)
 {

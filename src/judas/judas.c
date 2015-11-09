@@ -32,19 +32,20 @@
  *        (Read JUDAS.DOC for complete history)
  */
 
-#include <io.h>
+//#include <io.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <conio.h>
+//#include <conio.h>
 #include <stdlib.h>
-#include <dos.h>
-#include <mem.h>
+//#include <dos.h>
+//#include <mem.h>
 #include "judasdma.h"
 #include "judasmem.h"
 #include "judascfg.h"
 #include "judasgus.h"
 #include "judaserr.h"
+#include "osdep.h"
 
 /*
  * Sound device numbers
@@ -147,11 +148,14 @@ static void gus_stopchannel(unsigned char channel);
 /*
  * Assembler functions in JUDASASM.ASM
  */
+
+//#define interrupt 
+
 void judas_update(void);
-void interrupt sb_handler(void);
-void interrupt sb_aihandler(void);
-void interrupt sb16_handler(void);
-void interrupt gus_handler(void);
+void sb_handler(void);
+void sb_aihandler(void);
+void sb16_handler(void);
+void gus_handler(void);
 void gus_poke(unsigned location, unsigned char data);
 unsigned char gus_peek(unsigned location);
 void gus_startchannels(void);

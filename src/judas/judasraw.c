@@ -4,8 +4,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <mem.h>
+//#include <mem.h>
 #include "judas.h"
+#include "osdep.h"
 
 int JudasProgressRead(int handle, void *buffer, int size);
 

@@ -2,16 +2,17 @@
  * JUDAS DMA allocation.
  */
 
-#include <dos.h>
-#include <conio.h>
+//#include <dos.h>
+//#include <conio.h>
 #include "judasmem.h"
+#include "osdep.h"
 
 #define DMA_MAXSIZE 65536
 
 int dma_reserve(int size);
 
 unsigned dma_address;
-static union REGS glenregs;
+//static union REGS glenregs;
 static char dma_initialized = 0;
 unsigned short judas_dma_selector;
 
@@ -20,6 +21,7 @@ void DebugData(int Val);
 
 int dma_reserve(int size)
 {
+#ifdef NOTYET
         if (dma_initialized) return 1;
 
         /* Round size upward to paragraph limit */
@@ -52,6 +54,7 @@ int dma_reserve(int size)
         }
 
         dma_initialized = 1;
+#endif
         return 1;
 }
 
@@ -60,12 +63,14 @@ void free_the_XXXXXXX_dma_memory(void)
   if (!judas_memunlock(&dma_address, sizeof dma_address)) {
     return;
   }
+#ifdef NOTYET
   glenregs.w.ax = 0x101;
   glenregs.w.dx = judas_dma_selector;
   int386(0x31, &glenregs, &glenregs);
   if (glenregs.w.cflag) {
     return;
   }
+#endif
   dma_initialized=0;
 }
 

@@ -30,9 +30,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <mem.h>
+//#include <mem.h>
 #include "judas.h"
 #include "judastbl.h"
+#include "osdep.h"
+
 
 #define S3M_MAXCHANNELS 32
 #define S3M_MAXPATTERNS 100

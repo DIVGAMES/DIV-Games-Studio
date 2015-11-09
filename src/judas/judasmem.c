@@ -4,8 +4,9 @@
  */
 
 #include <stdlib.h>
-#include <dos.h>
+//#include <dos.h>
 #include <malloc.h>
+#include "osdep.h"
 
 int judas_memlock(void *start, unsigned size);
 int judas_memunlock(void *start, unsigned size);
@@ -48,6 +49,7 @@ void locked_free(void *address)
 
 int judas_memlock(void *start, unsigned size)
 {
+#ifdef NOTYET
         union REGS glenregs;
 
         glenregs.w.ax = 0x600;
@@ -57,11 +59,13 @@ int judas_memlock(void *start, unsigned size)
         glenregs.w.di = size & 0xffff;
         int386(0x31, &glenregs, &glenregs);
         if (glenregs.w.cflag) return 0;
+#endif
         return 1;
 }
 
 int judas_memunlock(void *start, unsigned size)
 {
+#ifdef NOTYET
         union REGS glenregs;
 
         glenregs.w.ax = 0x601;
@@ -71,5 +75,6 @@ int judas_memunlock(void *start, unsigned size)
         glenregs.w.di = size & 0xffff;
         int386(0x31, &glenregs, &glenregs);
         if (glenregs.w.cflag) return 0;
+#endif
         return 1;
 }

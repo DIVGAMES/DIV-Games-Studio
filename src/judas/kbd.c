@@ -39,11 +39,11 @@ extern int kbd_code_lock_start;
 extern int kbd_code_lock_end;
 extern unsigned char kt[];
 extern unsigned short kbd_ds;
-extern void (kbd_handler)();
+//extern void (kbd_handler)();
 
 static unsigned char kbd_initialized = 0;
 static void (__interrupt __far *kbd_oldvect)();
-static void (__interrupt __far *kbd_newvect)() = &kbd_handler;
+//static void (__interrupt __far *kbd_newvect)() = &kbd_handler;
 
 static KEY keyname[] = {{0x0e, 8, "BACKSPACE"},
                         {0x3a, 0, "CAPSLOCK"},
@@ -140,36 +140,45 @@ static KEY keyname[] = {{0x0e, 8, "BACKSPACE"},
 
 int kbd_init(void)
 {
+#ifdef NOTYET
 	if (kbd_initialized) return 1;
         if (!kbd_lock()) return 0;
         kbd_ds = kbd_get_ds();
         _dos_setvect(9, kbd_newvect);
         kbd_initialized = 1;
+#endif
         return 1;
 }
 
 void kbd_uninit(void)
 {
+#ifdef NOTYET
 	if (!kbd_initialized) return;
         _dos_setvect(9, kbd_oldvect);
         kbd_unlock();
         kbd_initialized = 0;
+#endif
 }
 
 
 static int kbd_lock(void)
 {
+#ifdef NOTYET
         if (!judas_memlock(&kbd_code_lock_start, (int)&kbd_code_lock_end - (int)&kbd_code_lock_start)) return 0;
+#endif
         return 1;
 }
 
 static void kbd_unlock(void)
 {
+#ifdef NOTYET
         judas_memunlock(&kbd_code_lock_start, (int)&kbd_code_lock_end - (int)&kbd_code_lock_start);
+#endif
 }
 
 unsigned char waitkey(void)
 {
+#ifdef NOTYET
         int index;
 
         for (;;)
@@ -183,10 +192,12 @@ unsigned char waitkey(void)
                         }
                 }
         }
+#endif
 }
 
 unsigned char getkey(void)
 {
+#ifdef NOTYET
         int index;
 
         for (index = 0; index < 255; index++)
@@ -197,16 +208,19 @@ unsigned char getkey(void)
                         return index;
                 }
         }
+#endif
         return 0;
 }
 
 int checkkey(unsigned char rawcode)
 {
+#ifdef NOTYET
         if (kt[rawcode])
         {
                 kt[rawcode] = 0;
                 return 1;
         }
+#endif
         return 0;
 }
 

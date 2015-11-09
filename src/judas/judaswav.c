@@ -86,7 +86,7 @@ int judas_wavwriter_open(char *name)
       header.bits = 16;
     break;
   }
-  handle = open(name, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, S_IREAD | S_IWRITE);
+  handle = fopen(name, "rb");//O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, S_IREAD | S_IWRITE);
   if (handle == -1) {
     return handle;
   }
