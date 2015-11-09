@@ -2396,6 +2396,8 @@ void roll_palette(void) {
     color+=c;
     memcpy(&pal[color*3],&paleta[x*3],3);
   } memcpy(&paleta[c*3],&pal[c*3],n*3);
+  memcpy(dac,paleta,768);
+  set_dac();
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
