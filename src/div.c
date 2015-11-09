@@ -349,6 +349,7 @@ int DPMIalloc4k(void);
 
 
 #endif
+#ifdef MIXER
 void print_init_flags(int flags)
 {
 #define PFLAG(a) if(flags&MIX_INIT_##a) printf(#a " ")
@@ -360,11 +361,15 @@ void print_init_flags(int flags)
                 printf("None");
         printf("\n");
 }
+#endif
 
 int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
   SDL_Init( SDL_INIT_EVERYTHING );
+  SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+
+#ifdef MIXER
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC|MIX_INIT_MP3;
   
   int initted=Mix_Init(flags);
@@ -374,11 +379,7 @@ int main(int argc, char * argv[]) {
 	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
 	  printf("Mix_Init: %s\n", Mix_GetError());
    }
- 
-//atexit(SDL_Quit);
-
- // chdir("/home/mike/src/div2015");
-  
+#endif 
 //  SDL_WM_GrabInput( SDL_GRAB_ON );
   system_clock = &mclock;
 
@@ -418,7 +419,7 @@ int main(int argc, char * argv[]) {
   full[n]=0;
   if (full[n-1]==':') strcat(full,"/");
   _dos_setdrive((memptrsize)toupper(full[0])-'A'+1,&n);
-  _chdir(full);
+//  _chdir(full);
 
   if (cpu_type==3) chdir("..");
 
@@ -4247,7 +4248,7 @@ void DaniDel(char *name) {
     strcat(cwork3,ft.name);
     if (_fullpath(cwork1, cwork3, _MAX_PATH)==NULL) strcpy(cwork1,ft.name);
     _dos_setfileattr(cwork1,_A_NORMAL);
-    printf("deleting %s\n",cwork1);
+//    printf("deleting %s\n",cwork1);
     remove(cwork1);
     rc=_dos_findnext(&ft);
   }

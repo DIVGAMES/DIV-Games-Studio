@@ -10,7 +10,9 @@ extern "C" {
 #endif
 
 #ifndef __llvm__
+#ifdef JPGLIB
 #include <jpeglib.h>
+#endif
 static jmp_buf jmp_error_ptr;
 #endif
 
@@ -973,7 +975,7 @@ return(1);
 
 int es_JPG(byte *buffer, int img_filesize)
 {
-#ifndef __llvm__
+#ifdef JPGLIB
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
 
@@ -1002,7 +1004,7 @@ return (0);
 
 int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
 {
-#ifndef __llvm__
+#ifdef JPGLIB
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   JSAMPARRAY buffer_scanline;
@@ -1439,7 +1441,7 @@ int cargadac_BMP(char *name)
 
 int cargadac_JPG(char *name)
 {
-#ifndef __llvm__
+#ifdef JPGLIB
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
   int x, y, img_filesize;

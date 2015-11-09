@@ -890,6 +890,7 @@ printf("TODO - divpcm.cpp OpenDesktopSong\n");
 void PlaySong(char *pathname)
 {
 	printf("TODO - divpcm.cpp PlaySong\n");
+#ifdef MIXER
 	Mix_Music *music;
 	modinfo *mymodinfo=(modinfo *)v.aux;
 
@@ -941,6 +942,10 @@ void PlaySong(char *pathname)
   }
 
 #endif
+
+#endif
+
+
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
