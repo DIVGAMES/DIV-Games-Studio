@@ -94,7 +94,7 @@ tecla();
 
   }
 #endif
-
+//if(mouse->left) mouse_b=1; else mouse_b=0;
   _mouse_x=(int)m_x;
   _mouse_y=(int)m_y;
 

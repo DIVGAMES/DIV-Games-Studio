@@ -2090,8 +2090,8 @@ void _system(void) {
       flushall();
       _heapmin();
       _heapshrink();
-      system((byte*)&mem[pila[sp]]);
 #endif
+      system((byte*)&mem[pila[sp]]);
     }
   }
 }

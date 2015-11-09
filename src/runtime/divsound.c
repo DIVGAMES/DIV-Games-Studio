@@ -19,6 +19,22 @@ int SoundActive=1;
 
 void InitSound(void)
 {
+#ifdef MIXER
+
+int audio_rate = 44100;
+Uint16 audio_format = AUDIO_S16SYS;
+int audio_channels = 2;
+int audio_buffers = 4096;
+
+SDL_Init( SDL_INIT_AUDIO );
+ 
+if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
+	fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
+//	exit(1);
+}
+
+#endif
+
 #ifdef DOS
   FILE *File_Cfg;
   int con;
@@ -220,8 +236,37 @@ void ResetSound(void)
   MusicChannels=0;
 }
 
+void pcm2wav(FILE *,long, FILE *, long);
+
 int LoadSound(char *ptr, long Len, int Loop)
 {
+#ifdef MIXER
+	int channel;
+	Mix_Chunk *sound;
+	SDL_RWops *rw;
+	byte *dst = (byte *)malloc(Len+255);
+	FILE *mem = fmemopen(ptr,Len,"rb");
+	FILE *fdst = fmemopen(dst,Len+255,"wb");
+	
+	printf("loading sound %d bytes\n",Len);
+	pcm2wav(mem,Len,fdst,Len+255);
+	fclose(mem);
+	fclose(fdst);
+	fseek(fdst,0,SEEK_SET);
+	
+	rw = SDL_RWFromMem(dst, Len+255);
+	
+	sound = Mix_LoadWAV_RW(rw, 1);
+
+	if(!sound) {
+		printf("Mix_LoadWAV: %s\n", Mix_GetError());
+		return 0;
+	}
+	//free(dst);
+	
+//	channel = Mix_PlayChannel(-1, sound, 1);
+#endif
+
 #ifdef DOS
 
   SoundInfo *SI=NULL;
