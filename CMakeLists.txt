@@ -25,25 +25,7 @@ SET(RUNTIME "divrun")
 SET(DEBUG "divdbg")
 SET(RUNNER "d")
 
-#IF(NOT EXISTS build.conf)
-#	MESSAGE("-- NO BUILD.CONF FOUND!")
-#	MESSAGE("-- Creating a default one")
-#	EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy tools/build.conf.default build.conf)
-#	IF(EXISTS build.conf)
-#		MESSAGE("-- done")
-#	ENDIF()
-#ENDIF()
-
-#INCLUDE( build.conf )
-
-# Check platform
-# Currently detects osx and pi
-#IF(NOT DEFINED PLATFORM OR PLATFORM STREQUAL "AUTO")
-#	INCLUDE (tools/platform.cmake)
-#ENDIF()
-
 IF(NOT DEFINED PLATFORM OR PLATFORM STREQUAL "AUTO")
-#	MESSAGE("WHOOPS! NO PLATFORM DETECTED!")
 	SET(PLATFORM "LINUX")
 ENDIF()
 
@@ -76,18 +58,20 @@ set(EXTRA_LIBS ${SDL_LIBRARIES} ${SDLIMAGE_LIBRARIES} ${SDLMIXER_LIBRARIES})
 # default definitions
 ADD_DEFINITIONS( -D_GNU_SOURCE )
 
-INCLUDE_DIRECTORIES(src runtime)
+INCLUDE_DIRECTORIES(src src/runtime)
 FILE(GLOB DIV_SOURCES "src/*.c")
-FILE(GLOB VISOR_SOURCES "visor/*.c")
-FILE(GLOB RUNTIME_SOURCES "runtime/*.c")
-FILE(GLOB DEBUG_SOURCES "runtime/debug/*.c")
+FILE(GLOB VISOR_SOURCES "src/visor/*.c")
+FILE(GLOB RUNTIME_SOURCES "src/runtime/*.c")
+FILE(GLOB DEBUG_SOURCES "src/runtime/debug/*.c")
+FILE(GLOB DEBUG_SOURCES "src/judas/*.c")
+
 IF ( MODE8 ) 
-FILE(GLOB VPE_SOURCES "runtime/vpe/*.c")
+FILE(GLOB VPE_SOURCES "src/runtime/vpe/*.c")
 ENDIF()
 
 #INCLUDE (tools/plugins.cmake)
 
-ADD_DEFINITIONS( -D${PLATFORM} )
+ADD_DEFINITIONS( -D${PLATFORM} -DMIXER )
 
 #SET(TARGET ${TARGET}-${PLATFORM} ) #-${GIT_BRANCH}-${GIT_COMMIT_HASH})
 
@@ -111,18 +95,26 @@ ADD_EXECUTABLE(
 	src/global.h
 	${VISOR_SOURCES}
 	${DIV_SOURCES} 
+	${JUDAS_SOURCES}
 )
 
 ADD_EXECUTABLE(
 	${RUNTIME} 
-	runtime/inter.h
-	${RUNTIME_SOURCES} ${VPE_SOURCES} src/osdep.c
+	src/runtime/inter.h
+	${RUNTIME_SOURCES} 
+	${VPE_SOURCES} 
+	${JUDAS_SOURCES}
+	src/osdep.c
 )
 
 ADD_EXECUTABLE(
 	${DEBUG} 
-	runtime/inter.h runtime/include.div
-	${RUNTIME_SOURCES} ${DEBUG_SOURCES} ${VPE_SOURCES} src/osdep.c
+	src/runtime/inter.h src/runtime/include.div
+	${RUNTIME_SOURCES} 
+	${DEBUG_SOURCES} 
+	${VPE_SOURCES}
+	${JUDAS_SOURCES} 
+	src/osdep.c
 )
 
 ADD_EXECUTABLE(
