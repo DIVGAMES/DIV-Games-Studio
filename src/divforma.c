@@ -9,15 +9,12 @@
 extern "C" {
 #endif
 
-#ifndef __llvm__
 #ifdef JPGLIB
 #include <jpeglib.h>
 #endif
-static jmp_buf jmp_error_ptr;
-#endif
 
-//  #include "jpeglib\jpeglib.h"
-//  #include "jpeglib\cdjpeg.h"
+static jmp_buf jmp_error_ptr;
+
 #ifdef  __cplusplus
 }
 #endif
