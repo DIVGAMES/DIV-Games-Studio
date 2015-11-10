@@ -1844,7 +1844,14 @@ void _sound(void) {
     vol=pila[sp--];
   if (vol<0) vol=0; else if (vol>511) vol=511;
   if (fre<8) fre=8;
-  if (fre) pila[sp]=PlaySound(pila[sp],vol,fre);
+  if (fre) { 
+#ifdef MIXER
+	pila[sp]=PlaySound(pila[sp],vol,fre);
+//	printf("New sound on channel %d\n",pila[sp]);
+#else
+pila[sp]=0;
+#endif
+  }
   // if (pila[sp]==-1) e(129);
 }
 
@@ -1855,18 +1862,24 @@ void _sound(void) {
 extern int MusicChannels;
 
 void stop_sound(void) {
-  int x, InitChannel=16;
+#ifdef MIXER
+  int x;
+/*
+  int InitChannel=16;
 
   if(MusicChannels>InitChannel) InitChannel=MusicChannels;
   if(InitChannel>=32) {
     pila[sp]=0;
     return;
   }
+  */
   if(pila[sp]==-1) {
-    for(x=InitChannel; x<CHANNELS; x++) StopSound(x);
+    for(x=0; x<CHANNELS; x++) StopSound(x);
   } else {
+//	  printf("Stopping sound on chanel %d\n",pila[sp]);
     StopSound(pila[sp]);
   }
+#endif
   pila[sp]=0;
 }
 

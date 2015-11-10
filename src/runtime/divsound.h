@@ -21,8 +21,12 @@
 
 
 typedef struct _sonido {
-  SAMPLE *smp;
+  SAMPLE smp;
   int    freq;
+#ifdef MIXER
+Mix_Chunk *sound;
+char loop;
+#endif
 } tSonido;
 
 typedef struct _cancion {
