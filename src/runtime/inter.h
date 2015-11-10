@@ -5,6 +5,11 @@
 #define GLOBAL extern
 #endif
 
+#ifndef false
+#define false 0
+#define true 1
+#endif
+
 //#include "include.div"
 
 #define INTERPRETE
@@ -42,7 +47,10 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 
 #include "divkeybo.h"
 #include "divfli.h"
+
+#ifdef ZLIB
 #include  <zlib.h>
+#endif
 
 //#include "..\judas\judas.h"
 //#include "..\judas\timer.h"

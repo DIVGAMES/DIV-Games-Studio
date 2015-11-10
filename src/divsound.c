@@ -14,7 +14,22 @@ void InitSound(void)
 {
 //	SDL_Init(SDL_INIT_AUDIO);
 //	printf("Sound system initialised\n");
-	
+#ifdef MIXER
+
+int audio_rate = 44100;
+Uint16 audio_format = AUDIO_S16SYS;
+int audio_channels = 2;
+int audio_buffers = 4096;
+
+SDL_Init( SDL_INIT_AUDIO );
+ 
+if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
+	fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
+//	exit(1);
+}
+
+#endif
+
 #ifdef NOTYET
   FILE *File_Cfg;
   int master=7,sound_fx=7,cd_audio=7;

@@ -1292,6 +1292,7 @@ int main(int argc,char * argv[]) {
   unsigned long len,len_descomp;
   int mimem[10],n,i;
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+  atexit(SDL_Quit);
   remove("DEBUGSRC.TXT");
 
   getcwd(divpath,PATH_MAX+1);
@@ -1383,8 +1384,12 @@ int main(int argc,char * argv[]) {
       fclose(f);
 
       len_descomp=mem[9];
-
-      if (!uncompress((unsigned char *)&mem[9],&len_descomp,ptr,len)) {
+#ifdef ZLIB
+      if (!uncompress((unsigned char *)&mem[9],&len_descomp,ptr,len)) 
+#else
+	if(false)
+#endif
+{
 
         free(ptr);
 

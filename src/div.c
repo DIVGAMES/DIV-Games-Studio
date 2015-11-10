@@ -366,14 +366,14 @@ void print_init_flags(int flags)
 int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
-  SDL_Init( SDL_INIT_EVERYTHING );
+  SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO );
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 
 #ifdef MIXER
-  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC|MIX_INIT_MP3;
+  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
   
   int initted=Mix_Init(flags);
-//	print_init_flags(initted);
+	print_init_flags(initted);
 	
   if((initted&flags) != flags) {
 	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
