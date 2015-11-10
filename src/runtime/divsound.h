@@ -1,7 +1,7 @@
 #ifndef __DIV_SOUND_
 #define __DIV_SOUND_
 
-#define CHANNELS 0
+#define CHANNELS 128
 #define DEV_NOSOUND 0
 #define DEV_SB 1
 #define DEV_SBPRO 2

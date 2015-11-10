@@ -272,6 +272,10 @@ int LoadSound(char *ptr, long Len, int Loop)
 		free(dst);
 		return(-1);
 	}
+	if(res==1) {
+		printf("sound alread a wav\n");
+		memcpy(dst,ptr,Len);
+	}
 	rw = SDL_RWFromMem(dst, (int)(Len+255));
 	sound = Mix_LoadWAV_RW(rw, 1);
 
@@ -343,8 +347,8 @@ int UnloadSound(int NumSonido)
 
 int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
-  int con;
-
+  int con=0;
+#ifdef MIXER
 int loop = sonido[NumSonido].loop?-1:0;
 
   
@@ -368,32 +372,39 @@ int loop = sonido[NumSonido].loop?-1:0;
 //  StopSound(con);
 
 	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
+	Mix_Volume(con,Volumen/2);
+
 //	printf("playing via channel %d\n",con);
 //  judas_playsample(sonido[NumSonido].smp, con, (sonido[NumSonido].freq*Frec)/256, 32*Volumen, MIDDLE);
 
 //  Freq_original[con]=sonido[NumSonido].freq;
 
   channel(con)=1;
-
+#endif
   return(con);
 }
 
 int StopSound(int NumChannel)
 {
 //  printf("Stopping sound %d\n",NumChannel);
+#ifdef MIXER
   Mix_HaltChannel(NumChannel);
 
   if(NumChannel >= CHANNELS) return(-1);
 #ifdef DOS
   judas_stopsample(NumChannel);
 #endif
+#endif
   return(1);
 }
 
 int ChangeSound(int NumChannel,int Volumen,int Frec)
 {
+#ifdef MIXER
 //	printf("Channel %d new vol %d new freq %d\n",NumChannel, Volumen, Frec);
 	Mix_Volume(NumChannel,Volumen/2);
+#endif
+
 #ifdef DOS
   CHANNEL *chptr;
 
