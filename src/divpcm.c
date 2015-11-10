@@ -325,7 +325,7 @@ printf("TODO - JUDAS GET SONG POS\n");
 int GetSongLine(void)
 {
   int pos;
-printf("TODO - JUDAS FREEXM\n");
+printf("TODO - Get Song Line\n");
 /*
   switch(SongType)
   {
@@ -335,15 +335,13 @@ printf("TODO - JUDAS FREEXM\n");
   }
 
   return(pos);
-  * *
   */
   return 0;
 }
 
 void mostrar_mod_meters(void)
 {
-//	printf("TODO - MOD METERS\n");
-	
+	printf("TODO - MOD METERS\n");	
 	/*
   modinfo *mymodinfo=(modinfo *)v.aux;
   int     an=v.an/big2, al=v.al/big2;
@@ -430,8 +428,8 @@ void OpenSound(void) {
   Uint32 wav_length;
 Uint8 *wav_buffer;
 
-//  SoundInfo *SI=NULL;
-  SoundInfo SI;
+  SoundInfo *SI=NULL;
+//  SoundInfo *SI;
 
   int       num;
 
@@ -480,7 +478,7 @@ Uint8 *wav_buffer;
       }
       mypcminfo=(pcminfo *)pcminfo_aux;
 
-
+#ifdef NOTYET
 	if(SDL_LoadWAV(SoundPathName, &SI, &wav_buffer, &wav_length) == NULL) {
 		 free(pcminfo_aux);
         //if(SI) free(SI);
@@ -489,6 +487,7 @@ Uint8 *wav_buffer;
         continue;
    }
 		
+#endif
 	
 #ifdef NOTYET
       SI = judas_loadwav(SoundPathName);
@@ -517,11 +516,12 @@ Uint8 *wav_buffer;
       free(SI);
 #endif
 
-	  mypcminfo->SoundFreq = SI.freq;
+/*	  mypcminfo->SoundFreq = SI.freq;
       mypcminfo->SoundBits = SI.format;
       mypcminfo->SoundSize = wav_length;
       mypcminfo->SoundData = (short *)wav_buffer;
       mypcminfo->sample    = (char *)wav_buffer;
+      */
       nueva_ventana(PCM0);
     }
   }
@@ -904,6 +904,10 @@ void PlaySong(char *pathname)
 		dialogo(err0);
 		return;
 	}
+	if(Mix_PlayMusic(music, -1)==-1) {
+    printf("Mix_PlayMusic: %s\n", Mix_GetError());
+    // well, there's no music, but most games don't break without music...
+}
 //printf("%x\n",music);
 
 #ifdef NOTYET
