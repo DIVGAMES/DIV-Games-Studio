@@ -45,7 +45,7 @@ enum tokens { p_inicio, p_ultimo, p_error, p_num, p_abrir, p_cerrar, p_add,
 
 int token;      // Del tipo enumerado anterior
 double tnumero;  // Cuando token==p_num
-char * expresion;     // Puntero a la expresi¢n asciiz
+static char * expresion;     // Puntero a la expresi¢n asciiz
 
 struct {        // Para contener la expresion analizada
   int token;
