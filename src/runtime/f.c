@@ -288,7 +288,12 @@ int read_packfile(byte * file) {
           fseek(f,packdir[n].offset,SEEK_SET);
           fread(ptr,1,packdir[n].len,f);
           fclose(f);
-          if (!uncompress( packptr, &len_desc, (byte *)ptr, packdir[n].len)) {
+#ifdef ZLIB
+          if (!uncompress( packptr, &len_desc, (byte *)ptr, packdir[n].len)) 
+#else
+			if(false)
+#endif
+          {
             free(ptr);
             return(packdir[n].len_desc);
           } else { free(ptr); free(packptr); return(-2); }
@@ -1114,7 +1119,7 @@ void adaptar(byte * ptr, int len, byte * pal, byte * xlat) {
 //      Write(font,x,y,centro,ptr)
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
-void _write(void) {
+void __write(void) {
   int f=pila[sp-4];
   if (f<0 || f>=max_fonts) { e(116); f=0; }
   if (fonts[f]==0) { e(116); f=0; }
@@ -2752,7 +2757,7 @@ void _strstr(void) {
   sp--;
 }
 
-void _strset(void) {
+void __strset(void) {
   int n;
   if ((mem[pila[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
     sp--; e(164); return;
@@ -3102,7 +3107,7 @@ void _ftell(void) {
 //      filelength(handle)
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
-void _filelength(void) {
+void __filelength(void) {
   int pos,len;
 
   if (unit_size<1) unit_size=1;
@@ -4218,7 +4223,12 @@ void _comprimir(int encode, char *fichero) {
     if ((ptr_dest=(byte *)malloc(size2))==NULL) {
       free(ptr); pila[sp]=0; e(100); return;
     }
-    if (compress(ptr_dest, &size2, ptr, size)) {
+#ifdef ZLIB
+    if (compress(ptr_dest, &size2, ptr, size)) 
+#else
+	if(false)
+#endif
+{
       free(ptr_dest); free(ptr); pila[sp]=0; e(100); return;
     }
 
@@ -4232,7 +4242,12 @@ void _comprimir(int encode, char *fichero) {
     if ((ptr_dest=(byte *)malloc(size2))==NULL) {
       free(ptr); pila[sp]=0; e(100); return;
     }
-    if (uncompress(ptr_dest, &size2, ptr+12, size-12)) {
+#ifdef ZLIB
+    if (uncompress(ptr_dest, &size2, ptr+12, size-12)) 
+#else
+	if(true)
+#endif
+	{
       free(ptr_dest); free(ptr); pila[sp]=0; e(100); return;
     } size2=*(int*)(ptr+8);
   }
@@ -4330,7 +4345,7 @@ void function(void) {
     case 13: get_dist(); break;
     case 14: fade(); break;
     case 15: load_fnt(); break;
-    case 16: _write(); break;
+    case 16: __write(); break;
     case 17: write_int(); break;
     case 18: delete_text(); break;
     case 19: move_text(); break;
@@ -4432,7 +4447,7 @@ void function(void) {
     case 104: _strcmp(); break;
     case 105: _strchr(); break;
     case 106: _strstr(); break;
-    case 107: _strset(); break;
+    case 107: __strset(); break;
     case 108: __strupr(); break;
     case 109: __strlwr(); break;
     case 110: _strdel(); break;
@@ -4453,7 +4468,7 @@ void function(void) {
     case 125: _fwrite(); break;
     case 126: _fseek(); break;
     case 127: _ftell(); break;
-    case 128: _filelength(); break;
+    case 128: __filelength(); break;
     case 129: flush(); break;
     case 130: get_dirinfo(); break;
     case 131: get_fileinfo(); break;
