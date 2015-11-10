@@ -1,6 +1,9 @@
 #include "inter.h"
 #include "divsound.h"
 #include "divmixer.hpp"
+#ifdef __APPLE__
+#include "osx/fmemopen.h"
+#endif
 
 tSonido  sonido[128];
 tCancion cancion[128];
@@ -259,8 +262,8 @@ int LoadSound(char *ptr, long Len, int Loop)
 		
 	memset(dst,0,(int)Len+40);
 	
-	mem = fmemopen(ptr,(int)Len,"rb");
-	fdst = fmemopen(dst,(int)Len+255,"wb");
+	mem = fmemopen(ptr,(int)Len,(const char *)"rb");
+	fdst = fmemopen(dst,(int)Len+255,(const char *)"wb");
 	
 	res=pcm2wav(mem,Len,fdst,(int)Len+40);
 	fclose(mem);
