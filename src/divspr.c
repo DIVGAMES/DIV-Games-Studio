@@ -89,6 +89,7 @@ float spr_coefred;
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void generador_sprites(void) {
+#ifdef SPRITEGEN
   if(!ParseAnimFile())
   {
     v_texto=(char *)texto[545]; dialogo((voidReturnType)err0);
@@ -146,6 +147,7 @@ void generador_sprites(void) {
   dialogo((voidReturnType)GenSpr0);
 
   FinalizaGenerador();
+  #endif
 }
 
 void FinalizaGenerador(void)
