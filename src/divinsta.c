@@ -4,7 +4,9 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
+#ifdef ZLIB
 #include <zlib.h>
+#endif
 //#include <io.h>
 #include <time.h>
 
@@ -173,7 +175,7 @@ void Setup2() {
       strcat(tipo[4].path,"INSTALL");
       v_modo=1; v_tipo=4;
       v_texto=(char *)texto[524];
-      dialogo((voidReturnType)browser0);
+      dialogo(browser0);
 
       strcpy(full,tipo[4].path);
       if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -185,7 +187,7 @@ void Setup2() {
           fread(cwork,1,8,f);
           fclose(f);
           if (strcmp(cwork,"fpg\x1a\x0d\x0a")) {
-            v_texto=(char *)texto[46]; dialogo((voidReturnType)err0);
+            v_texto=(char *)texto[46]; dialogo(err0);
           } else {
             ptrimg=imagen_install;
             crear_imagen_install(full,1);
@@ -194,7 +196,7 @@ void Setup2() {
               strcpy(ifile1,full);
               strcpy(ifile1name,input);
             } else imagen_install=ptrimg;
-            call((voidReturnType)v.paint_handler); v.volcar=1;
+            call(v.paint_handler); v.volcar=1;
           }
         }
       }
@@ -206,7 +208,7 @@ void Setup2() {
       strcat(tipo[5].path,"INSTALL");
       v_modo=1; v_tipo=5;
       v_texto=(char *)texto[525];
-      dialogo((voidReturnType)browser0);
+      dialogo(browser0);
 
       strcpy(full,tipo[5].path);
       if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -218,11 +220,11 @@ void Setup2() {
           fread(cwork,1,8,f);
           fclose(f);
           if (strcmp(cwork,"fnt\x1a\x0d\x0a")) {
-            v_texto=(char *)texto[46]; dialogo((voidReturnType)err0);
+            v_texto=(char *)texto[46]; dialogo(err0);
           } else {
             strcpy(ifile2,full);
             strcpy(ifile2name,input);
-            call((voidReturnType)v.paint_handler); v.volcar=1;
+            call(v.paint_handler); v.volcar=1;
           }
         }
       }
@@ -234,7 +236,7 @@ void Setup2() {
       strcat(tipo[5].path,"INSTALL");
       v_modo=1; v_tipo=5;
       v_texto=(char *)texto[525];
-      dialogo((voidReturnType)browser0);
+      dialogo(browser0);
 
       strcpy(full,tipo[v_tipo].path);
       if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -246,23 +248,23 @@ void Setup2() {
           fread(cwork,1,8,f);
           fclose(f);
           if (strcmp(cwork,"fnt\x1a\x0d\x0a")) {
-            v_texto=(char *)texto[46]; dialogo((voidReturnType)err0);
+            v_texto=(char *)texto[46]; dialogo(err0);
           } else {
             strcpy(ifile3,full);
             strcpy(ifile3name,input);
-            call((voidReturnType)v.paint_handler); v.volcar=1;
+            call(v.paint_handler); v.volcar=1;
           }
         }
       }
       break;
     case 5:
-      dialogo((voidReturnType)Setupm0);
+      dialogo(Setupm0);
       break;
     case 6:
-      dialogo((voidReturnType)Setupe0);
+      dialogo(Setupe0);
       break;
     case 7:
-      call((voidReturnType)v.paint_handler);
+      call(v.paint_handler);
       break;
   }
 }
@@ -302,9 +304,9 @@ void Setup0() {
   v.al=125+16+19+20;
   v.titulo=texto[236];
 
-  v.paint_handler=(voidReturnType)Setup1;
-  v.click_handler=(voidReturnType)Setup2;
-  v.close_handler=(voidReturnType)Setup3;
+  v.paint_handler=Setup1;
+  v.click_handler=Setup2;
+  v.close_handler=Setup3;
 
   strcpy(ExeGen,(char *)ventana[v_ventana+1].titulo);
   if ((chr=strchr(ExeGen,'.'))!=NULL) *chr=0;
@@ -315,10 +317,12 @@ void Setup0() {
     strcpy(Copy_Right,(char *)texto[352]);
 #ifdef NOTYET
     t=time(NULL); _ctime(&t,tbuf); tbuf[24]=' ';
+#else
+strcpy(tbuf,"                   2015 ");
 #endif
     strcat(Copy_Right,&tbuf[20]);
     if (strlen(user2)+strlen(Copy_Right)<=127) strcat(Copy_Right,user2);
-    strcpy(Unid,"/tmp");// :/TMP");
+    strcpy(Unid,"/tmp/");// :/TMP");
     //Unid[0]=toupper(tipo[1].path[0]);
     strcpy(DefDir,(char *)texto[353]);
     strcat(DefDir,ExeGen);
@@ -412,8 +416,7 @@ void crear_imagen_install(char * file, int errores) {
   if ((es=fopen(file,"rb"))==NULL) return; else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
     if ((p=(byte *)malloc(file_len))!=NULL) {
-	fpg=p;
-	printf("fpg is %x\n",fpg);
+      fpg=p;
       fseek(es,0,SEEK_SET);
       fread(fpg,1,file_len,es);
       fclose(es);
@@ -425,19 +428,21 @@ void crear_imagen_install(char * file, int errores) {
       memcpy(pal,fpg+8,768);
 
       p+=1352; // FPG Header len
-      memset(lst,0,1000*sizeof(int));
+      memset(lst,0,1000*sizeof(memptrsize));
 
       while (p<fpg+file_len && *(int*)p<1000 && *(int*)p>0 ) {
-		  printf("p is %d\n",p);
+		  printf("p is %d %x %x\n",p, (memptrsize *)p, (memptrsize)p);
         lst[*(int*)p]=(memptrsize)p;
-        p+=*(int*)(p+4);//sizeof(int*));
+        p+=*(memptrsize*)(p+4);//sizeof(int*));
       }
 
       strcpy(cwork,"");
 
+printf("lst[3] %x\n",lst[3]);
+
       if (!lst[1]) sprintf(cwork,(char *)texto[540],1);
-/*      if (ptr=(int*)lst[2]) {
-        if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,texto[541],2);
+      if ((ptr=(int*)lst[2])) {
+        if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,(char *)texto[541],2);
       }
       if (!(ptr=(int*)lst[3])) sprintf(cwork,texto[540],3);
       if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,texto[541],3);
@@ -448,14 +453,15 @@ void crear_imagen_install(char * file, int errores) {
       if (!lst[15]) sprintf(cwork,texto[540],15);
       if (!lst[16]) sprintf(cwork,texto[540],16);
       if (!lst[17]) sprintf(cwork,texto[540],17);
-*/
+
       if (strlen(cwork)) {
         if (errores) {
           v_texto=cwork;
-          dialogo((voidReturnType)err0);
+          dialogo(err0);
         }
         return;
       }
+printf("next bit commented\n");
 /*
       if (ptr=(int*)lst[3]) {
         if (ptr[13]==640 && ptr[14]==480) {
@@ -541,7 +547,7 @@ void Setupm2() {
       strcpy(THelp2,(char *)texto[355]);
       strcpy(TDisk1,(char *)texto[515]);
       strcpy(TDisk2,(char *)texto[516]);
-      call((voidReturnType)v.paint_handler);
+      call(v.paint_handler);
       v.volcar=1;
       break;
   }
@@ -554,8 +560,8 @@ void Setupm0() {
   v.an=310;
   v.al=12+9+19*4;
   v.titulo=texto[526];
-  v.paint_handler=(voidReturnType)Setupm1;
-  v.click_handler=(voidReturnType)Setupm2;
+  v.paint_handler=Setupm1;
+  v.click_handler=Setupm2;
 
   y=12;
   _button(100,v.an-8,v.al-14,2);
@@ -589,7 +595,7 @@ void Setupe2() {
       strcpy(Ierr6,(char *)texto[534]);
       strcpy(Ierr7,(char *)texto[535]);
       strcpy(Ierr8,(char *)texto[536]);
-      call((voidReturnType)v.paint_handler);
+      call(v.paint_handler);
       v.volcar=1;
       break;
   }
@@ -602,8 +608,8 @@ void Setupe0() {
   v.an=310;
   v.al=12+9+99+8;
   v.titulo=texto[537];
-  v.paint_handler=(voidReturnType)Setupe1;
-  v.click_handler=(voidReturnType)Setupe2;
+  v.paint_handler=Setupe1;
+  v.click_handler=Setupe2;
 
   y=4;
   _button(100,v.an-8,v.al-14,2);
@@ -651,10 +657,10 @@ void crear_instalacion(void) {
   char ext[_MAX_EXT+1];
 
   if (imagen_install==NULL) {
-    crear_imagen_install(ifile1,0);
+//    crear_imagen_install(ifile1,0);
   }
 
-  dialogo((voidReturnType)Setup0); if(!v_aceptar) return;
+  dialogo(Setup0); if(!v_aceptar) return;
 
   // *** Tratamiento de la unidad de Disco destino (permite "a:","dir","\dir\new","d:\tmp",...)
 
@@ -680,17 +686,21 @@ void crear_instalacion(void) {
   if (_drive<=2) { strcpy(dir,"/"); is_disk=_drive; } // En un disquete no crear  directorios
 
   for(x=1;x<strlen(dir);x++) if(dir[x]=='/') { // Crea directorios ...
-    strcpy(cWork,drive);
-    strcat(cWork,dir);
-    cWork[x+2]=0;
+//    strcpy(cWork,drive);
+//    strcat(cWork,dir);
+//    cWork[x+2]=0;
+strcpy(cWork,full);
+
+printf("cwork %s\n",cWork);
+
 #ifdef NOTYET
     mkdir(cWork);
 #endif
   }
 
-  strcpy(full,drive); strcat(full,dir); // Destino: "full"*.*
+//  strcpy(full,drive); strcat(full,dir); // Destino: "full"*.*
 
-  _dos_setdrive(my_drive,&_drive);
+ // _dos_setdrive(my_drive,&_drive);
 
   // *** Directorio por defecto
 
@@ -708,7 +718,7 @@ void crear_instalacion(void) {
   fin=fopen("install/setup.ins","rb"); fseek(fin,0,SEEK_END); x=ftell(fin);
   if (!include_setup) x=0;
   if ((__ins=_ins=ins=(char *) malloc(n+x+32))==NULL) {
-    v_texto=(char *)texto[357]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[357]; dialogo(err0);
     fclose(fin); return;
   } fseek(fin,0,SEEK_SET); x=fread(_ins,1,x,fin); fclose(fin);
 
@@ -717,10 +727,10 @@ void crear_instalacion(void) {
   nfiles=2; if (include_setup) nfiles++;
   while (ins<_ins+n) { nfiles++; ins+=strlen(ins)+1; } ins=_ins;
 
-  // *** Elimina ficheros duplicados
-
+  // *** Eliminate duplicate files
+  
   if ((MiHeaderSetup=(HeaderSetup *)malloc(nfiles*sizeof(HeaderSetup)))==NULL) {
-    v_texto=(char *)texto[357]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[357]; dialogo(err0);
     free(_ins); return; }
 
   dirhead.nfiles=0; // Archivos que van en el PACKFILE
@@ -731,7 +741,7 @@ void crear_instalacion(void) {
     else if (x==2 && include_setup) strcpy(MiHeaderSetup[x].name,"SETUP.EXE");
     else {
       chr=(byte *)ins;
-      if (*ins=='+') { // Cuando el archivo no puede incluirse en el PACKFILE
+      if (*ins=='+') { // When the file can not be included in the PACKFILE
         ins++; topack=0;
       } else topack=1;
       _splitpath(ins,drive,dir,fname,ext);
@@ -803,7 +813,7 @@ void crear_instalacion(void) {
     dirhead.crc2=0;
     dirhead.crc3=0;
 
-    if ((fin=fopen("system/exec.exe","rb"))!=NULL) {
+    if ((fin=fopen("system/EXEC.EXE","rb"))!=NULL) {
       fseek(fin,602,SEEK_SET);
       fread(memcrc,4,9,fin);
       memcrc[0]=(memcrc[0]&1);
@@ -822,8 +832,7 @@ void crear_instalacion(void) {
     // 2ง Abre el fichero ("INSTALL\\PACKFILE.DAT","wb")
 
     if ((fout=fopen("install/PACKFILE.DAT","wb"))==NULL) {
-		printf("823\n");
-      v_texto=(char *)texto[358]; dialogo((voidReturnType)err0);
+      v_texto=(char *)texto[358]; dialogo(err0);
       free(_ins); return;
     }
 
@@ -834,7 +843,7 @@ void crear_instalacion(void) {
     // 4ง Pide memoria para el directorio (hdir[])
 
     if ((hdir=(struct tdir *)malloc(dirhead.nfiles*sizeof(struct tdir)))==NULL) {
-      v_texto=(char *)texto[357]; dialogo((voidReturnType)err0);
+      v_texto=(char *)texto[357]; dialogo(err0);
       fclose(fout); free(_ins); return;
     }
 
@@ -856,7 +865,7 @@ void crear_instalacion(void) {
       }
 
       if ((fin=fopen(ins,"rb"))==NULL) {
-		  printf("857\n");  v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
+        v_texto=(char *)texto[231]; dialogo(err0);
         free(hdir); fclose(fout); free(_ins); return;
       }
 
@@ -878,7 +887,7 @@ void crear_instalacion(void) {
 
       if (hdir[n].len1==-1) {
         Progress(cWork,dirhead.nfiles,dirhead.nfiles);
-        v_texto=(char *)texto[357]; dialogo((voidReturnType)err0);
+        v_texto=(char *)texto[357]; dialogo(err0);
         free(hdir); fclose(fout); free(_ins); return;
       }
 
@@ -914,8 +923,7 @@ void crear_instalacion(void) {
    // Crea el INSTALL\DIV32RUN.DLL a partir de (INSTALL\DIV32RUN.INS/386 + SYSTEM\LENGUAJE.INT)
 
   if ((fout=fopen("install/DIV32RUN.DLL","wb"))==NULL) {
-	printf("915\n");
-    v_texto=(char *)texto[358]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[358]; dialogo(err0);
     free(_ins); return;
   }
 
@@ -923,7 +931,7 @@ void crear_instalacion(void) {
   else         fin=fopen("install/div32run.386","rb");
 
   if (fin==NULL) {
-printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[231]; dialogo(err0);
     fclose(fout); free(_ins); return;
   }
 
@@ -932,15 +940,14 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   fseek(fin,0,SEEK_SET);
 
   if (copiar_fichero(fin,fout,(unsigned long)x,0)==-1) {
-	printf("933\n");
-    v_texto=(char *)texto[358]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[358]; dialogo(err0);
     fclose(fout); fclose(fin); free(_ins); return;
   }
 
   fclose(fin);
 
   if ((fin=fopen("system/lenguaje.int","rb"))==NULL) {
-    printf("941\n"); v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[231]; dialogo(err0);
     fclose(fout); free(_ins); return;
   }
 
@@ -949,16 +956,14 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   fseek(fin,0,SEEK_SET);
 
   if (copiar_fichero(fin,fout,(unsigned long)x,0)==-1) {
-	printf("950\n");
-    v_texto=(char *)texto[358]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[358]; dialogo(err0);
     fclose(fout); fclose(fin); free(_ins); return;
   }
 
   fclose(fin);
 
   if (fwrite(&x,4,1,fout)!=1) {
-	printf("958\n");
-    v_texto=(char *)texto[358]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[358]; dialogo(err0);
     fclose(fout); free(_ins); return;
   }
 
@@ -970,14 +975,14 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
 
   if ((fout=fopen("install/INSTALL.DIV","wb"))==NULL) {
 	printf("970\n");
-    v_texto=(char *)texto[358]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[358]; dialogo(err0);
     free(_ins); return;
   }
 
   fwrite(&nfiles,sizeof(int),1,fout);
 
   if ((MiHeaderSetup=(HeaderSetup *)malloc(nfiles*sizeof(HeaderSetup)))==NULL) {
-    v_texto=(char *)texto[357]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[357]; dialogo(err0);
     fclose(fout); free(_ins); return;
   } fwrite(MiHeaderSetup,sizeof(HeaderSetup),nfiles,fout);
 
@@ -993,7 +998,7 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
       topack=0;
     } else if (x==1) {
 
-      fin=fopen("install/div32run.dll","rb");
+      fin=fopen("install/div32run.ins","rb");
 
 //    if (pentium) fin=fopen("install\\div32run.ins","rb");
 //    else         fin=fopen("install\\div32run.386","rb");
@@ -1016,9 +1021,8 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
     }
 
     if (fin==NULL) {
-		printf("%s 1017\n",ins);
       Progress((char *)texto[219],nfiles*100,nfiles*100);
-      v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
+      v_texto=(char *)texto[231]; dialogo(err0);
       fclose(fout); free(_ins); free(MiHeaderSetup);
       return;
     }
@@ -1035,7 +1039,7 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
 
     if (MiHeaderSetup[x].len1==-1) {
       Progress((char *)texto[219],nfiles*100,nfiles*100);
-      v_texto=(char *)texto[357]; dialogo((voidReturnType)err0);
+      v_texto=(char *)texto[357]; dialogo(err0);
       fclose(fin); fclose(fout); free(_ins); free(MiHeaderSetup);
       return;
     }
@@ -1069,14 +1073,12 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   strcpy(dWork,full);
   strcat(dWork,"INSTALL.EXE");
 
-  if(!FileCopyICE(cWork,dWork,0,237)) { 
-	  printf("1071\n"); v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return; }
+  if(!FileCopyICE(cWork,dWork,0,237)) { v_texto=(char *)texto[231]; dialogo(err0); return; }
 
   Progress((char *)texto[543],0,100);
 
   if((fout=fopen(cWork,"ab"))==NULL) {
-	  printf("1076\n");
-    Progress((char *)texto[543],100,100); v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return;
+    Progress((char *)texto[543],100,100); v_texto=(char *)texto[231]; dialogo(err0); return;
   }
 
   fwrite(AppName,1,strlen(AppName)+1,fout); n=strlen(AppName)+1;
@@ -1107,10 +1109,9 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   Progress((char *)texto[543],25,100);
 
   if ((fin=fopen(ifile1,"rb"))==NULL) {
-	  printf("1108\n");
     fclose(fout);
     Progress((char *)texto[543],100,100);
-    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return;
+    v_texto=(char *)texto[231]; dialogo(err0); return;
   }
 
   fseek(fin,0,SEEK_END); x=ftell(fin); fseek(fin,0,SEEK_SET);
@@ -1118,20 +1119,18 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   fclose(fin);
 
   if (m==-1) {
-	  printf("1119\n");
     fclose(fout);
     Progress((char *)texto[543],100,100);
-    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return;
+    v_texto=(char *)texto[231]; dialogo(err0); return;
   } else n+=m;
 
   size[0]=m; size[1]=x;
   Progress((char *)texto[543],75,100);
 
   if ((fin=fopen(ifile2,"rb"))==NULL) {
-	printf("1129\n");
     fclose(fout);
     Progress((char *)texto[543],100,100);
-    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return;
+    v_texto=(char *)texto[231]; dialogo(err0); return;
   }
 
   fseek(fin,0,SEEK_END); x=ftell(fin); fseek(fin,0,SEEK_SET);
@@ -1139,10 +1138,9 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   fclose(fin);
 
   if (m==-1) {
-	  printf("1140\n");
     fclose(fout);
     Progress((char *)texto[543],100,100);
-    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return;
+    v_texto=(char *)texto[231]; dialogo(err0); return;
   } else n+=m;
 
   size[2]=m; size[3]=x;
@@ -1150,10 +1148,9 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
 
   if (segundo_font) {
     if ((fin=fopen(ifile3,"rb"))==NULL) {
-	printf("1151\n");
       fclose(fout);
       Progress((char *)texto[543],100,100);
-      v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return;
+      v_texto=(char *)texto[231]; dialogo(err0); return;
     }
 
     fseek(fin,0,SEEK_END); x=ftell(fin); fseek(fin,0,SEEK_SET);
@@ -1161,10 +1158,9 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
     fclose(fin);
 
     if (m==-1) {
-		printf("1162\n");
       fclose(fout);
       Progress((char *)texto[543],100,100);
-      v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return;
+      v_texto=(char *)texto[231]; dialogo(err0); return;
     } else n+=m;
 
     size[4]=m; size[5]=x;
@@ -1191,7 +1187,7 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   strcpy(dWork,full);
   strcat(dWork,PackName);
 
-  if(!FileCopyICE(cWork,dWork,1,234)) { printf("1192\n"); v_texto=(char *)texto[231]; dialogo((voidReturnType)err0); return; }
+  if(!FileCopyICE(cWork,dWork,1,234)) { v_texto=(char *)texto[231]; dialogo(err0); return; }
 
   DaniDel(cWork);              // Borra el INSTALL.DIV
 
@@ -1202,12 +1198,12 @@ printf("924\n");    v_texto=(char *)texto[231]; dialogo((voidReturnType)err0);
   cWork[strlen(cWork)-1]=0;
   strcat(cWork,(char *)texto[361]);
   v_texto=cWork;
-  dialogo((voidReturnType)info0);
+  dialogo(info0);
 
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Comprime de un fichero a otro, utilizando zlib (devuelve -1 si error)
+//  Compresses a file to another , using zlib (returns -1 if error)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int comprimir_fichero(FILE * fin, FILE * fout, unsigned long len) {
@@ -1221,11 +1217,15 @@ int comprimir_fichero(FILE * fin, FILE * fout, unsigned long len) {
 
   if (fread(pin,1,len,fin)!=len) { free(pout); free(pin); return(-1); }
 
-/*
-  if (compress(pout,(long)&final_len,pin,len)) {
+#ifndef ZLIB
+  if (false) 
+#else 
+ if (compress(pout,&final_len,pin,len)) 
+#endif 
+ {
     free(pout); free(pin); return(-1);
   }
-*/
+
   if (fwrite(pout,1,final_len,fout)!=final_len) { free(pout); free(pin); return(-1); }
 
   free(pout); free(pin);
@@ -1250,11 +1250,10 @@ int copiar_fichero(FILE * fin, FILE * fout, unsigned long len, int patch) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Copia al disco destino la instalaciขn
+// Copy the installation destination disk
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 unsigned int GetFreeUnid(char unidad) {
-printf("GetFreeUnid (drive)\n");
 #ifdef NOTYET
   union REGS regs;
 
@@ -1265,12 +1264,11 @@ printf("GetFreeUnid (drive)\n");
   if(regs.w.ax==0xFFFF) return 0;
   return(regs.w.ax*regs.w.bx*regs.w.cx);
 #endif
-return 0;
-
+	return 65535*65535;
 }
 
-int FileCopyICE(char *org,char *dest,int vols,int _texto) { // Devuelve 0-Error, 1-Exito
-  FILE  *fin,*fout;
+int FileCopyICE(char *org,char *dest,int vols,int _texto) { // Returns 0 -Error , 1- Success
+  FILE  *fin=NULL,*fout=NULL;
   unsigned int tlen,len,NewVolume=1,curvol=0,retval=1;
   unsigned int totfree;
   char *buffer;
@@ -1279,9 +1277,6 @@ int FileCopyICE(char *org,char *dest,int vols,int _texto) { // Devuelve 0-Error,
   buffer=(char *)malloc(16384);
   if(buffer==NULL) return 0;
 
-
-printf("in: %s\nout: %s\n",org, dest);
-return 0;
   fin=fopen(org,"rb");
   if(fin==NULL) { free(buffer); return 0; }
 
@@ -1298,45 +1293,46 @@ return 0;
         if (!is_disk) { retval=0; break; }
         v_titulo=(char *)texto[233]; // Disk full.
         v_texto=(char *)texto[232];  // Please, insert a new disk.
-        dialogo((voidReturnType)aceptar0);
+        dialogo(aceptar0);
         if (!v_aceptar) { retval=0; break; }
       }
 
       NewVolume=0;
 
       totfree=GetFreeUnid((dest[0]-'A')+1);
-
-      if(totfree<=1024) { // Disco lleno.
+      
+      if(totfree<=1024) { // Disk Full
         if (vols) {
           v_titulo=(char *)texto[362];
           v_texto=(char *)texto[232];
-          dialogo((voidReturnType)aceptar0);
+          dialogo(aceptar0);
           if (v_aceptar) { NewVolume=2; continue; }
         } retval=0; break;
       }
 
       if(vols){
         sprintf(cWork,"%s.%03d",dest,curvol+1);
+        printf("cwork: %s\n",cWork);
         fout=fopen(cWork,"wb");
       } else fout=fopen(dest,"wb");
 
-      if(fout==NULL) { // Disquete protegido
+      if(fout==NULL) { // Protected floppy(!?)
         v_titulo=(char *)texto[363];
         v_texto=(char *)texto[364];
-        dialogo((voidReturnType)aceptar0);
+        dialogo(aceptar0);
         if (v_aceptar) { NewVolume=2; continue; }
         retval=0; break;
       }
 
       if(vols) {
-        if(fwrite("stp\x1a\x0d\x0a\x00",1,8,fout)!=8) { // Algฃn otro error
+        if(fwrite("stp\x1a\x0d\x0a\x00",1,8,fout)!=8) { // Any other error
           retval=0; break;
         } totfree-=8; curvol++;
       }
     }
 
-    if(totfree>16384) { // hay espacio en el dico para grabar
-      if(len>16384) { // Se puede grabar un paquete completo
+    if(totfree>16384) { // Enough disk space to record 16384 bytes
+      if(len>16384) { // Enough to save complete 16384 bytes block
         fread(buffer,1,16384,fin);
         if (fwrite(buffer,1,16384,fout)!=16384) { retval=0; break; }
         len-=16384;
@@ -1365,13 +1361,15 @@ return 0;
         fseek(fout,7,SEEK_SET);
         fwrite("\x01",1,1,fout);
         fclose(fout);
+        fout = NULL;
         NewVolume=1;
       }
     }
 
   }
-  fclose(fin);
-  fclose(fout);
+  
+  if(fin) fclose(fin);
+  if(fout) fclose(fout);
   Progress((char *)texto[_texto],tlen,tlen);
   free(buffer);
   return(retval);
