@@ -444,15 +444,15 @@ printf("lst[3] %x\n",lst[3]);
       if ((ptr=(int*)lst[2])) {
         if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,(char *)texto[541],2);
       }
-      if (!(ptr=(int*)lst[3])) sprintf(cwork,texto[540],3);
-      if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,texto[541],3);
-      if (!is_point(ptr,1)) sprintf(cwork,texto[542],1,3);
-      if (!lst[4] && !lst[5]) sprintf(cwork,texto[540],4);
-      if (!lst[13]) sprintf(cwork,texto[540],13);
-      if (!lst[14]) sprintf(cwork,texto[540],14);
-      if (!lst[15]) sprintf(cwork,texto[540],15);
-      if (!lst[16]) sprintf(cwork,texto[540],16);
-      if (!lst[17]) sprintf(cwork,texto[540],17);
+      if (!(ptr=(int*)lst[3])) sprintf(cwork,(char *)texto[540],3);
+      if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,(char *)texto[541],3);
+      if (!is_point(ptr,1)) sprintf(cwork,(char *)texto[542],1,3);
+      if (!lst[4] && !lst[5]) sprintf(cwork,(char *)texto[540],4);
+      if (!lst[13]) sprintf(cwork,(char *)texto[540],13);
+      if (!lst[14]) sprintf(cwork,(char *)texto[540],14);
+      if (!lst[15]) sprintf(cwork,(char *)texto[540],15);
+      if (!lst[16]) sprintf(cwork,(char *)texto[540],16);
+      if (!lst[17]) sprintf(cwork,(char *)texto[540],17);
 
       if (strlen(cwork)) {
         if (errores) {
