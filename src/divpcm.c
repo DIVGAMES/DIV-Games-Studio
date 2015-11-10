@@ -900,7 +900,7 @@ void PlaySong(char *pathname)
 	
 	if(!music) {
 		printf("Song error : %s\n", Mix_GetError());
-		v_texto=Mix_GetError();//texto[46];
+		v_texto=(char *)Mix_GetError();//texto[46];
 		dialogo(err0);
 		return;
 	}
