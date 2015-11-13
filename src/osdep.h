@@ -9,14 +9,17 @@
 #include <setjmp.h>
 #define cprintf printf
 
-#define _MAX_PATH 260
+#define PATH_MAX 143
+#define _MAX_PATH 144
 #define _MAX_DRIVE 26
 #define _MAX_DIR 66
 #define _MAX_FNAME 256+100
 #define _MAX_EXT 64
 
 #include <SDL/SDL.h>
+#ifdef MIXER
 #include <SDL/SDL_mixer.h>
+#endif
 
 
 #if __WORDSIZE == 32
@@ -40,7 +43,7 @@
 ///////////////////////////////////////////////////
 #include <stdlib.h>
 
-#ifdef __llvm___
+#ifdef __llvm__
 #include <string.h>
 #else
 extern char * strupr(char *string);
@@ -48,9 +51,11 @@ extern char * strlwr(char *string);
 #endif
 
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
+#ifndef __WIN32__
 char * itoa(long n, char *buf, int len);
+#endif
 void sdlkeyinit(void);
-extern uint8_t sdl2key[512];
+extern uint8_t sdl2key[2048];
 
 #define ltoa itoa 
 #define stdprn stdout
@@ -108,7 +113,10 @@ unsigned int _dos_findnext(struct find_t *result);
 
 unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
 
+#ifndef __WIN32__
 void mkdir(char *dir);
+#endif
+
 void _dos_getdrive( unsigned int *drive);
 void _makepath(
    char *path,
@@ -121,7 +129,7 @@ void _makepath(
 extern void compilar(void);
 extern int _chdir(const char* Directory);
 
-#define SoundInfo SDL_AudioSpec
+//#define SoundInfo SDL_AudioSpec
 
 #define RESET		0
 #define BRIGHT 		1

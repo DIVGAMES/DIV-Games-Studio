@@ -7,7 +7,7 @@
 #include "global.h"
 
 
-#ifdef __llvm___
+#ifdef __llvm__
 #include <string.h>
 
 #else
@@ -348,10 +348,11 @@ unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
 }
 
 #ifndef __llvm___
+#ifdef __cplusplus
 void mkdir(char *dir) {
 	printf("mkdir %s\n",dir);
 }
-
+#endif
 #endif
 
 
@@ -363,7 +364,7 @@ void textcolor(int attr, int fg, int bg)
 	printf("%s", command);
 }
 
-uint8_t sdl2key[512];
+uint8_t sdl2key[2048];
 //#define _s sdl2key
 
 void sdlkeyinit(void) {
