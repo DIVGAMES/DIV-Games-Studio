@@ -28,7 +28,7 @@ static unsigned char timer_initialized = 0;
 extern void (__interrupt __far *timer_oldvect)();
 void (__interrupt __far *timer_newvect)() = &timer_handler;
 extern void (*timer_function)();
-extern unsigned timer_count;
+//extern unsigned timer_count;
 extern unsigned short timer_frequency;
 extern unsigned short timer_systemcount;
 extern unsigned short timer_ds;
