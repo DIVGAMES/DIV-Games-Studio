@@ -18,10 +18,6 @@ typedef void (__stdcall * dlfunc) (void *(*)(char *), void (*)(char *, char *, i
 //#undef NULL
 //#define NULL 0
 
-#define dlopen(a,b)     LoadLibrary(a)
-#define dlsym(a,b)      (dlfunc)GetProcAddress(a,b)
-#define dlclose(a)    FreeLibrary(a)
-
 char *dll_error="No error";
 
 void (*COM_export)(char *name,void *dir,int nparms);
@@ -40,7 +36,7 @@ void HYB_export(char *name,void *dir,int nparms){
 PE *DIV_LoadDll(char *name)
 {
 PE *pefile;
-#ifdef NOTYET
+#ifdef DIVDLL
 void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
 void (*entryp2)( void (*HYB_export)() );
 
@@ -110,7 +106,7 @@ pefile=dlopen(name,0);
 
 void DIV_UnImportDll(PE *pefile)
 {
-#ifdef NOTYET
+#ifdef DIVDLL
 	dlclose (pefile);
 #endif
 }
@@ -121,7 +117,8 @@ void DIV_UnImportDll(PE *pefile)
 PE *DIV_ImportDll(char *name)
 {
 PE *pefile=NULL;
-#ifdef NOTYET
+printf("Loading DLL %s\n",name);
+#ifdef DIVDLL
 
 void *library;
     dlfunc funcs;
@@ -199,7 +196,7 @@ void *DIV_import(char *name)
 
 void LookForAutoLoadDlls()
 {
-#ifdef NOTYET
+#ifdef DIVDLL
 struct find_t dllfiles;
 int ct;
   ct=_dos_findfirst("*.DLL",_A_NORMAL,&dllfiles);
@@ -221,7 +218,7 @@ int ct;
 
 void DIV_export(char *name,void *obj)
 {
-#ifdef DLL
+#ifdef DIVDLL
 EXPORTENTRY *e;// ,*o;
 //printf("div export %s %x\n",name,obj);
 	// see if a export entry by this name already exists
@@ -247,7 +244,7 @@ EXPORTENTRY *e;// ,*o;
 
 void DIV_UnLoadDll(PE *pefile)
 {
-#ifdef NOTYET
+#ifdef DIVDLL
 void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
 
 	// find the entrypoint (again)
