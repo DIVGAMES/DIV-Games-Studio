@@ -56,8 +56,8 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 #include "divmap3d.hpp"
 
   // OJO !!! JUDAS !!!
-//#include "judas\judas.h"
-//#include "judas\timer.h"
+#include "judas/judas.h"
+#include "judas/timer.h"
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //      Constants defined at the application level
