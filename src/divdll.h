@@ -11,6 +11,14 @@ extern "C" {
 // Declare PE type as void *.. we don't want to bother the calling program
 // with the complex PE defines..
 //#pragma align 1
+
+#ifdef WIN32
+#define dlopen(a,b)     LoadLibrary(a)
+#define dlsym(a,b)      (dlfunc)GetProcAddress(a,b)
+#define dlclose(a)    FreeLibrary(a)
+#endif
+
+
 typedef void PE;
 void  PE_Free(PE *p);
 PE   *PE_ReadFP(FILE *in);
