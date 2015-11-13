@@ -266,7 +266,7 @@ void add_code(int dir, int param, int op);
 #define version "0c88b" //Versi¢n del compilador
 
 #ifndef SHARE
-#define max_obj 4096    //L¡mite m ximo de objetos del compilador
+#define max_obj 8192    //Compiler object maximum limit compiler
 #define long_med_id 16  //Longitud media de los identificadores (+4+4+1)
 #else
 #define max_obj 700     //El malvado tiene 626 ...
