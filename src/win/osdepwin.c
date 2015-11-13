@@ -252,7 +252,11 @@ struct dirent **namelist=NULL;
 long hFile;
 unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result) {
 strcpy(findname,name);
-	hFile =  _findfirst(name,result);
+#ifdef __cplusplus
+	hFile =  _findfirst(name,( _finddata32_t*)result);
+#else
+hFile =  _findfirst(name,result);
+#endif
 	return hFile;
 	//printf("TODO - findfirst\n");
 
@@ -299,7 +303,11 @@ return (ret);
 							}
 unsigned int _dos_findnext(struct find_t *result) {
 //	printf("TODO - findnext\n");
+#ifdef __cplusplus
+	return _findnext(hFile,( _finddata32_t*)result);
+#else
 	return _findnext(hFile,result);
+#endif
 #ifdef NOTYET
 while(++np<nummatch) {
 	strcpy(result->name,namelist[np]->d_name);
@@ -355,7 +363,7 @@ void textcolor(int attr, int fg, int bg)
 	printf("%s", command);
 }
 
-uint8_t sdl2key[512];
+uint8_t sdl2key[2048];
 //#define _s sdl2key
 
 void sdlkeyinit(void) {
