@@ -1434,7 +1434,7 @@ void shell(void) {
     EndSound();
 
 //    _setvideomode(_TEXTC80);
-    putenv("PROMPT=[DIV] $P$G");
+    SDL_putenv("PROMPT=[DIV] $P$G");
     chdir(tipo[0].path);
 
   //  flushall();
@@ -2939,6 +2939,11 @@ void inicializacion(void) {
   int n;
   byte *ptr,*ptr2;
 
+#ifdef __EMSCRIPTEN__
+	int len_=1;
+	int num_=1;
+#endif
+
   detectar_vesa();
 //printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
   for (n=0;n<num_modos;n++) {
@@ -3047,11 +3052,63 @@ void inicializacion(void) {
 
   if ((f=fopen("help/help.fig","rb"))==NULL) error(0); else {
     fseek(f,0,SEEK_END); n=ftell(f);
+#ifndef __EMSCRIPTEN__
+//n=1352;
+#endif
     if ((ptr2=(byte *)malloc(n))!=NULL) {
       memset(graf_help,0,sizeof(graf_help));
       ptr=ptr2; fseek(f,0,SEEK_SET);
-      fread(ptr2,1,n,f); fclose(f);
+      fread(ptr2,1,n,f); 
+#ifndef __EMSCRIPTEN__
+	fclose(f);
+#endif
       ptr2+=1352;
+
+#ifdef __EMSRIPTEN__
+
+// alloc each graph	
+#ifdef NOTYET
+
+fseek(f,0,SEEK_END); file_len=ftell(es);
+fseek(f,1352,SEEK_SET);
+	
+while(ftell(f)<file_len && len_>0 && num_>0) {
+	int pos = ftell(f);
+	int an = 0;
+	int al = 0;
+	int pts = 0;
+	byte *mptr=NULL;//s&ptr[pos];
+	fread(&num_,4,1,f);
+	fread(&len_,4,1,f);
+	fseek(f,44,SEEK_CUR):
+	fread(&an,4,1,f);
+	fread(&al,4,1,f);
+	fread(&pts,4,1,f);
+	fseek(f,pts*4,SEEK_CUR);
+	
+	pos = ftell(f);
+	
+	//mptr=(byte *)malloc(an*al);
+
+	graf_help[num_].an=an;
+	graf_help[num_].al=al;
+	graf_help[num_].offset=pos;
+ 	fseek(es,len,SEEK_CUR);
+ 	
+/* 	mptr = (byte *)malloc(len_);
+ 	fread(mptr,1,an*al,es);
+ 	lst[num_]=iptr=(int *)mptr;
+// 	 printf("mem ptr is %x\n",iptr);
+ 	  	 if (m!=palcrc) {
+		 adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+ 	 } 	
+ 	 */
+}
+#endif
+
+fclose(f);
+
+#else
       while (ptr2<ptr+n && *((int*)ptr2)<384) {
         graf_help[*(int*)ptr2].an=*(int*)(ptr2+52);
         graf_help[*(int*)ptr2].al=*(int*)(ptr2+56);
@@ -3059,6 +3116,9 @@ void inicializacion(void) {
         ptr2+=*(int*)(ptr2+52)**(int*)(ptr2+56)+64+4*(*(int*)(ptr2+60));
       } free(ptr);
     } else { fclose(f); error(0); }
+#endif
+
+
   }
 
   if (!Interpretando) printf((char *)texto[10]); // *** Carga los objetos editados ***
@@ -3917,7 +3977,6 @@ void Load_Cfgbin() {
   strcat(cWork,"/MOD");
   strcpy(Setupfile.Dir_mod,cWork);
   strcpy(tipo[16].path,cWork);
-printf("%s\n",texto[487]);
 
   file=fopen("system/setup.bin","rb");
   if(file==NULL) {
