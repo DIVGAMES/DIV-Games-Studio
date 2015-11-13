@@ -15,6 +15,10 @@
 
 #define DEFINIR_AQUI
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #include "inter.h"
 
 #include "cdrom.h"
@@ -56,7 +60,11 @@ void readmouse(void);
 int dll_loaded=0;
 
 int trace_program=0;
+#ifdef __EMSCRIPTEN__
+int ignore_errors=1;
+#else
 int ignore_errors=0;
+#endif
 
 int old_dump_type;
 int old_restore_type;
@@ -92,7 +100,7 @@ int __far critical_error(unsigned deverr,unsigned errcode,unsigned far*devhdr)
 ///////////////////////////////////////////////////////////////////////////////
 void CMP_export(char *name,void *dir,int nparms)
 {
-#ifdef DLL
+#ifdef DIVDLL
 static int nExt=0;
   nparms=nparms;
   name=name;
@@ -269,8 +277,11 @@ init_rnd(dtime);
   memset(&paleta[0],0,768); memset(&dac[0],0,768);
   dacout_r=0; dacout_g=0; dacout_b=0; dacout_speed=8;
   now_dacout_r=64; now_dacout_g=64; now_dacout_b=64; paleta_cargada=0;
-  set_dac(); // tabla_ghost();
 
+  set_dac();
+//#ifdef __EMSCRIPTEN__
+//  tabla_ghost(); 
+//#endif
   dirinfo->files=0;
   memset(dirinfo->name,0,1025*4);
 
@@ -319,7 +330,9 @@ init_rnd(dtime);
   adaptar_paleta=0; // Hasta que no se llame a force_pal ...
 
   #ifdef DEBUG
+  #ifndef __EMSCRIPTEN__
   init_debug(); new_palette=0; new_mode=0;
+  #endif
   #endif
 
   strcpy(packfile,"");
@@ -332,7 +345,7 @@ init_rnd(dtime);
   init_volcado();
 
   // DLL_3 Exportaciขn de funciones y variables (para utilizarlas en las DLL)
-#ifdef DLL
+#ifdef DIVDLL
 // Exportadas desde 'C'
 // files
   DIV_export("div_fopen"  ,(void *)fopen  );
@@ -374,7 +387,7 @@ init_rnd(dtime);
   memset(tabfiles, 0, 32*4);
 
 /////////////////////////////////////////////////////////////
-#ifdef DLL
+#ifdef DIVDLL
   COM_export=CNT_export;
   LookForAutoLoadDlls();
   COM_export=CMP_export;
@@ -495,12 +508,8 @@ void actualiza_pila(int id, int valor) {
 
 int max,max_reloj;        // Process in order or _Priority and _Z 
 extern int alt_x;
-
-void interprete (void)
-{
-  inicializacion();
-  while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
-    error_vpe=0;
+void mainloop(void) {
+	    error_vpe=0;
     frame_start();
     #ifdef DEBUG
     if (kbdFLAGS[_F12] || trace_program) {
@@ -521,8 +530,20 @@ void interprete (void)
       // printf("Error: %s\n",error_vpe);
       v_function=-2; e(error_vpe);
     }
+}
+void interprete (void)
+{
+  inicializacion();
+#ifndef __EMSCRIPTEN__
+  while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
+	mainloop();
   }
   finalizacion();
+#else 
+  //emscripten_set_main_loop(mainloop, 24, 0);
+  emscripten_set_main_loop(mainloop, 24, 1);
+#endif
+//  return;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -768,7 +789,12 @@ void frame_start(void) {
         InitSound();
         break;
       }
-    } while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
+    } 
+#ifdef __EMSCRIPTEN__
+while (false); // 
+#else
+while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
+#endif
     volcados_saltados=0;
     saltar_volcado=0;
     freloj+=ireloj;
@@ -838,7 +864,7 @@ void frame_end(void) {
   int oreloj;
   #endif
 
-#ifdef DLL
+#ifdef DIVDLL
   // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
   if (!dll_loaded) {
     dll_loaded=1;
@@ -1176,7 +1202,7 @@ void elimina_proceso(int id) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void finalizacion (void) {
-#ifdef DLL
+#ifdef DIVDLL
   while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
 #endif
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=4;
@@ -1240,7 +1266,9 @@ void exer(int e) {
 
   _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
   chdir(divpath);
-
+#ifdef STDOUTLOG
+printf("exited %d\n",e);
+#endif
   exit(26);
 }
 
@@ -1328,6 +1356,11 @@ int main(int argc,char * argv[]) {
 
   vga_an=320; vga_al=200;
 
+#ifdef __EMSCRIPTEN__
+vga_an=800;
+vga_al=600;
+f=fopen("system/EXEC.EXE","rb");
+#else
   if ((f=fopen(argv[1],"rb"))==NULL) {
     #ifndef DEBUG
     printf("Error: Needs a DIV executable to load.");
@@ -1338,6 +1371,7 @@ int main(int argc,char * argv[]) {
 
     exit(26);
   }
+#endif
 
 #ifdef DEBUG
   inicializa_textos((byte *)"system/lenguaje.int");
@@ -1360,7 +1394,7 @@ int main(int argc,char * argv[]) {
   } else {
     imem_max=mimem[8]+128*(iloc_len)+iloc_len+2;
     if (imem_max<256*1024) imem_max=256*1024;
-    if (imem_max>512*1024) imem_max=512*1024;
+    if (imem_max>1024*1024) imem_max=1024*1024;
   }
 
 
@@ -1426,13 +1460,13 @@ int main(int argc,char * argv[]) {
 
         kbdInit();
 
-        interprete();
-
+        interprete();        
+#ifndef __EMSCRIPTEN__
         _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
         chdir(divpath);
 
         exit(26); // Exit without clearing screen
-
+#endif
       } else {
         free(ptr);
         exer(1);

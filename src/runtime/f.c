@@ -13,7 +13,10 @@ void readmouse(void);
 #include "divmixer.hpp"
 #include "divsound.h"
 
-
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+extern void mainloop(void);
+#endif
 
 void load_pal(void);
 int es_PCX(byte *buffer);
@@ -150,6 +153,8 @@ FILE * open_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 #ifndef DOS
+printf("trying to load [%s]\n",file);
+if(strlen((char *)file)==0) return NULL;
 char *ff = (char *)file;
 
 while (*ff!=0) {
@@ -160,24 +165,31 @@ while (*ff!=0) {
 #endif
 //printf("%s\n",full);
   strcpy(full,(char*)file);
+    printf("trying to load %s\n",full);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,(char*)file);
+    printf("Trying: %s\n",full);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
 
       strcpy(full,fname);
       strcat(full,ext);
+    printf("Trying: %s\n",full);
+
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
+    printf("Trying: %s\n",full);
+
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
           strcpy(full,"");
+          printf("failed\n");
           return(NULL);
         } else return(f);
       } else return(f);
@@ -668,16 +680,23 @@ void load_fpg(void) {
 
   int num=0,n,m;
   int * * lst;
-  byte * ptr;
+  byte * ptr , *ptr2, *ptr3;
   byte xlat[256];
   int * iptr;
 
   while (num<max_fpgs) {
-    if (g[num].fpg==0) break; num++;
+    if (g[num].fpg==0) {
+	break;
+    }
+    num++;
   } if (num==max_fpgs) { pila[sp]=0; e(104); return; }
-
+//printf("num is %d\n",num);
   if (num) {
-    if ((lst=(int**)malloc(sizeof(int*)*1000))==NULL) { pila[sp]=0; e(100); return; }
+    if ((lst=(int**)malloc(sizeof(int*)*1000))==NULL) { 
+	pila[sp]=0; 
+	e(100); 
+	return; 
+    }
   } else lst=g[0].grf;
   memset(lst,0,sizeof(int*)*1000);
 
@@ -690,14 +709,31 @@ void load_fpg(void) {
     g[num].fpg=(int**)ptr;
   } else {
     fpgfuera:
+#ifdef STDOUTLOG
+    printf("fpg wanted is [%s]\n",&mem[pila[sp]]);
+#endif
     if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(105); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
+#ifdef __EMSCRIPTEN__ 
+file_len=1352;
+#endif
       if ((ptr=(byte *)malloc(file_len))!=NULL) {
         g[num].fpg=(int**)ptr;
         fseek(es,0,SEEK_SET);
-        fread(ptr,1,file_len,es); fclose(es);
+#ifdef STDOUTLOG
+        printf("read %d bytes of %d\n",fread(ptr,1,file_len,es),file_len); 
+#else
+	fread(ptr,1,file_len,es);
+#endif
+
+#ifndef __EMSCRIPTEN__ 
+fclose(es);
+#endif
+#ifdef STDOUTLOG
+	printf("fpg pointer is %x\n",(int**)ptr);
+#endif
       } else { fclose(es); pila[sp]=0; e(100); return; }
     }
   }
@@ -705,7 +741,9 @@ void load_fpg(void) {
   if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { e(106); free(ptr); return; }
 
   if (process_fpg!=NULL) process_fpg((char *)ptr,file_len);
-
+#ifdef STDOUTLOG
+printf("fpg found\n");
+#endif
   if (!paleta_cargada) {
     for (m=0;m<768;m++) if (ptr[m+8]!=paleta[m]) break;
     if (m<768) {
@@ -726,14 +764,58 @@ void load_fpg(void) {
     }
   }
 
-  g[num].grf=lst; ptr+=1352; // Longitud cabecera fpg
+  g[num].grf=lst; 
 
-  while (ptr<(byte*)g[num].fpg+file_len && *(int*)ptr<1000 && *(int*)ptr>0 ) {
-    lst[*(int*)ptr]=iptr=(int*)ptr;
+#ifdef STDOUTLOG
+printf("num: %d ptr: %x\n",num,ptr);
+#endif
+
+#ifdef __EMSCRIPTEN__
+// do something different
+fseek(es,0,SEEK_END); file_len=ftell(es);
+fseek(es,1352,SEEK_SET);
+	int len_=1;
+	int num_=1;
+	
+while(ftell(es)<file_len && len_>0 && num_>0) {
+	int pos = ftell(es);
+	byte *mptr=&ptr[pos];
+	fread(&num_,4,1,es);
+	fread(&len_,4,1,es);
+//	printf("%d %d %d\n",len_,num_,ftell(es));
+ 	fseek(es,-8,SEEK_CUR);
+ 	mptr = (byte *)malloc(len_);
+ 	fread(mptr,1,len_,es);
+ 	lst[num_]=iptr=(int *)mptr;
+// 	 printf("mem ptr is %x\n",iptr);
+ 	  	 if (m!=palcrc) {
+		 adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+ 	 } 	
+}
+fclose(es);
+#else
+ptr+=1352; // Longitud cabecera fpg
+ptr2=ptr;
+ptr3=ptr;
+
+  while (ptr<=(ptr2+file_len) && *(int*)ptr3<1000 && *(int*)ptr3>0 ) {
+
+int *ptr_4=(int *)ptr3;
+int *ptr_8=(int*)ptr3;
+	int num = *ptr_4;
+	int len = *(ptr_8+1);
+ 
+    lst[num]=iptr=ptr_4;
     if (m!=palcrc) adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
-    ptr+=*(int*)(ptr+4);
+    ptr=(byte *)&ptr2[len];//(int*)(ptr[4]);
+    //if(num<=0 || num>1000) break;
+    ptr3=ptr;
+    ptr2=ptr;
   }
-
+#endif
+#ifdef STDOUTLOG
+printf("fpg search ended, %x: ptr: %x\n",(byte *)g[num].fpg+file_len,ptr);
+#endif
   pila[sp]=num;
   max_reloj+=reloj-old_reloj;
 }
@@ -1733,6 +1815,9 @@ void load(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void set_mode(void) {
+#ifdef __EMSCRIPTEN__
+return;
+#endif
   int n;
 
   #ifdef DEBUG
@@ -2020,13 +2105,19 @@ void is_playing_song(void) {
 
 void set_fps(void) {
   max_saltos=pila[sp--];
+  game_fps = pila[sp];
   if (max_saltos<0) max_saltos=0;
   if (max_saltos>10) max_saltos=10;
-  if (pila[sp]<4) pila[sp]=4;
-  if (pila[sp]>100) pila[sp]=100;
-  ireloj=100.0/(double)pila[sp];
-  game_fps = pila[sp];
-  //printf("new fps = %d %d\n",ireloj,pila[sp]);
+  if (game_fps<4) game_fps=4;
+  if (game_fps>200) game_fps=200;
+
+#ifdef __EMSCRIPTEN__
+//printf("game fps is %d\n",game_fps);
+//emscripten_cancel_main_loop();
+//emscripten_set_main_loop(mainloop,game_fps,0);
+#endif
+//  printf("new fps = %d %d\n",ireloj,game_fps);
+  ireloj=(double)(100.0/game_fps);
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
@@ -2081,6 +2172,11 @@ void reset_fli(void) {
 void _system(void) {
   char cwork[256];
   unsigned n;
+#ifdef STDOUTLOG
+printf("system call not implemented yet\n");
+#endif
+
+return;
 
   if (system(NULL)) {
     if (!strcmp(strupr((char*)&mem[pila[sp]]),"COMMAND.COM")) {
@@ -2109,7 +2205,7 @@ void _system(void) {
       _heapmin();
       _heapshrink();
 #endif
-      system((byte*)&mem[pila[sp]]);
+      system((char*)&mem[pila[sp]]);
     }
   }
 }
@@ -2369,7 +2465,7 @@ void _exit_dos(void) {
   #ifdef DEBUG
   FILE * f;
   #endif
-#ifdef DLL
+#ifdef DIVDLL
   while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
 #endif
 
@@ -4328,7 +4424,7 @@ void function(void) {
 
   old_reloj=reloj;
 
-  switch(v_function=mem[ip++]) {
+  switch(v_function=(byte)mem[ip++]) {
     case 0: _signal(); break;
     case 1: _key(); break;
     case 2: load_pal(); break;
@@ -4423,9 +4519,9 @@ void function(void) {
     case 84: path_find(); break;
     case 85: path_line(); break;
     case 86: path_free(); break;
+    case 87: new_map(); break;
     
 #ifdef MODE8
-    case 87: new_map(); break;
     case 88: load_wld(); break;
     case 89: start_mode8(); break;
     case 90: go_to_flag(); break;

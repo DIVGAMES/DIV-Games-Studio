@@ -20,7 +20,7 @@
 byte * vga = (byte *) 0xA0000; // Physical screen 
                                // TODO - (change this to SDL surface pixels)
 #else
-SDL_Surface *vga;
+SDL_Surface *vga=NULL;
 #endif
 
 void snapshot(byte *p);
@@ -120,6 +120,7 @@ void set_paleta (void) {
 }
 
 void set_dac (void) {
+if(!vga) return;
 #ifndef DOS
 	SDL_Color colors[256];
 	int i;
@@ -180,7 +181,23 @@ int modovesa;
 extern float m_x,m_y;
 
 void svmode(void) {
-	vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_HWPALETTE);
+#ifdef STDOUTLOG
+printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
+#endif
+#ifdef __EMSCRIPTEN__
+//	if(vga)
+//	SDL_FreeSurface(vga);
+//SDL_Quit();
+//SDL_Init(SDL_INIT_VIDEO);
+if(!vga)	
+	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
+#else
+	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
+#endif
+
+#ifdef STDOUTLOG
+	printf("SET VIDEO MODE %x\n",vga);
+#endif
 	SDL_WM_SetCaption( "DIV2015", "" );
 
 	modovesa=1;
@@ -297,6 +314,12 @@ void rvmode(void) {
 
 
 void volcadosdl(byte *p) {
+	if(!vga) {
+		printf("setting up screen for first time %d %d\n",vga_an,vga_al);
+		svmode();
+		set_dac(); // tabla_ghost();
+	}
+			
 	SDL_LockSurface(vga);
 	byte *q = (byte *)vga->pixels;
 	int vy=0;
@@ -330,8 +353,10 @@ nexttick = lasttick + (1000/game_fps);
 
 //printf("%d %d\n",newtick,nexttick);
 
+#ifndef __EMSCRIPTEN__
 if(newtick<nexttick)
 	SDL_Delay(nexttick-SDL_GetTicks());
+#endif
 
 lasttick=SDL_GetTicks();
 

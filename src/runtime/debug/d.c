@@ -2072,6 +2072,10 @@ void _err0(void) {
 extern int ignore_errors;
 
 void e(int texto) {
+#ifdef __EMSCRIPTEN__
+//	printf("ERROR: %s\n",(char *)text[texto]);
+	return;
+#endif
   int smouse_x,smouse_y;
   int reloj_e=reloj,n;
   int ticks_e=ticks;

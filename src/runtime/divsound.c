@@ -325,6 +325,7 @@ int LoadSound(char *ptr, long Len, int Loop)
 
   return(con);
 #endif
+return -1;
 }
 
 int UnloadSound(int NumSonido)
@@ -389,8 +390,9 @@ int loop = sonido[NumSonido].loop?-1:0;
 
 int StopSound(int NumChannel)
 {
-//  printf("Stopping sound %d\n",NumChannel);
+  //printf("Stopping sound %d\n",NumChannel);
 #ifdef MIXER
+if(Mix_Playing(NumChannel))
   Mix_HaltChannel(NumChannel);
 
   if(NumChannel >= CHANNELS) return(-1);

@@ -533,7 +533,7 @@ void path_line(void) {
 void path_free(void) {
   int file,code,x,y;
   int *ptr;
-
+  
   y=pila[sp--];
   x=pila[sp--];
   tile=pila[sp--];
@@ -548,19 +548,19 @@ void path_free(void) {
 
   if (file>max_fpgs || file<0) { e(109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (code<=0 || code>=max_grf) { e(110); return; }
+  if (code<=0 || code>=max_grf) { e(110); return; } 
   if (g[file].grf==NULL) { e(111); return; }
-  if ((ptr=g[file].grf[code])==NULL) { e(121); return; }
+  if ((ptr=(int *)g[file].grf[code])==NULL) { e(121); return; }
 
   // Toma puntero al mapa, ancho y alto
 
   an=ptr[13]; al=ptr[14]; map=(byte*)ptr+64+ptr[15]*4;
   if (an<1 || al<1 || an>max_map_size || al>max_map_size) { e(152); return; }
+//printf("got to 559\n");
 
   // Comprueba l¡mites de coordenadas (si est n fuera del mapa retorna 0)
-
   if (x<0 || y<0 || x>=an*tile || y>=al*tile) return;
-
+//printf("m is %d %d %d\n",m(x/tile,y/tile),x,y);
   // Determina si la casilla destino est  libre
 
   if (!m(x/tile,y/tile)) pila[sp]=1;
