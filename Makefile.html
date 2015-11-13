@@ -1,0 +1,123 @@
+# To compile with SDL 1.2,
+#
+# make SDL=1
+#
+# Under Debian-like Linux systems, you may be able to install the SDL libraries with
+#
+# apt-get install -y libsdl1.2-dev
+#
+SDL_CFLAGS = -DZLIB -DDEBUG	 -DMIXER 
+#-DJPEGLIB  
+EMBEDFILES= --emrun --preload-file system --preload-file help
+
+DEMBEDFILES= --emrun --embed-file system/lenguaje.int --preload-file system/EXEC.EXE
+#REMBEDFILES= --emrun --preload-file system/EXEC.EXE --preload-file system/lenguaje.int --preload-file fpg/tutorial/tutor2.fpg
+
+
+
+#EMBEDFILES = $(EMBEDFILES1) --embed-file sounds --embed-file resources --preload-file resources/explosion.png --preload-file resources/powerups.png --preload-file resources/saucer.png --preload-file resources/kenpixel_square.ttf  --preload-file resources/explosion17.png
+
+#REMBEDFILES=  --embed-file user/mbgame
+
+#--embed-file pcm/noid 
+
+#REMBEDFILES= --preload-file fpg/soccer --preload-file pcm/soccer --preload-file fnt/soccer --embed-file dat/soccer --embed-file map/soccer
+
+#REMBEDFILES= --preload-file fpg/tutorial/tutor1.fpg --preload-file fnt/tutorial/tutor1.fnt
+#REMBEDFILES= --preload-file fpg/tutorial/tutor6.fpg --preload-file fnt/tutorial/tutor6.fnt
+#REMBEDFILES= --preload-file fpg/tutorial/tutor5.fpg 
+
+#REMBEDFILES= --preload-file help.fpg
+
+
+
+
+#REMBEDFILES= --preload-file help.fpg
+
+#REMBEDFILES= --embed-file fnt/blastup --embed-file fpg/blastup --embed-file pcm/blastup  
+#REMBEDFILES= --embed-file fnt/noid --embed-file fpg/noid --embed-file map/noid --embed-file dat/noid --embed-file pcm/noid
+#REMBEDFILES= --embed-file fnt/galax --preload-file fpg/galax --embed-file pcm/galax
+
+#REMBEDFILES= --preload-file fpg/tutorial/tutor7.fpg
+#REMBEDFILES=  --embed-file fnt/steroid --embed-file fpg/steroid --embed-file pcm/steroid
+#REMBEDFILES= --embed-file fpg/tutorial/tutor1.fpg --embed-file fnt/tutorial/tutor1.fnt
+#REMBEDFILES= --embed-file fpg/tutorial/tutor0.fpg
+
+#REMBEDFILES= --preload-file fnt/pacoman --preload-file fpg/pacoman --preload-file dat/pacoman --preload-file pcm/pacoman   
+#REMBEDFILES= --preload-file user/evildemo
+
+#REMBEDFILES= --preload-file user/vccfin1
+#REMBEDFILES= --preload-file fpg/speed --preload-file pcm/speed --preload-file fnt/speed
+#REMBEDFILES= --preload-file user/froggold
+#REMBEDFILES=  --preload-file user/rick
+
+#REMBEDFILES=  --preload-file user/mtennis
+
+#REMBEDFILES=  --preload-file fnt/fostiato --preload-file pcm/fostiato --preload-file map/fostiato --preload-file fpg/fostiato
+#REMBEDFILES=  --preload-file user/hdragon
+
+#REMBEDFILES=  --preload-file user/owen/fnt/og --preload-file user/owen/pcm/og --preload-file user/owen/dat/og --preload-file user/owen/fpg/og 
+#REMBEDFILES=  --preload-file user/dkong
+#REMBEDFILES= --preload-file fnt/alien --preload-file fpg/alien --preload-file pcm/alien   
+
+#REMBEDFILES=  --preload-file fnt/malvado --preload-file fpg/malvado --preload-file pcm/malvado
+REMBEDFILES=  --preload-file user/flea
+
+RUNNER=html/flea.js
+
+SDL_LIBS = -lSDL 
+#-lSDL_ttf -lSDL_image
+CXX=em++
+CC=emcc
+EMC_OPTS= -w -s USE_ZLIB=1 -s ASM_JS=1 -s TOTAL_MEMORY=67108864
+# -s TOTAL_MEMORY=268435456
+#=134217728
+#=67108864
+#=67108864
+#-s TOTAL_MEMORY=536870912
+#-s ASYNCIFY=1 -s USE_ZLIB=1 -s ASM_JS=1
+# -s ASSERTIONS=2 -m32 -D__WORSIZE=32 -s TOTAL_MEMORY=268435456
+# -s SAFE_HEAP=1 
+# -s ASSERTIONS=2
+# -s ASM_JS=1 
+#-s EXPORTED_FUNCTIONS="['_getscore','_main']"
+EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
+BUILDLVL= -O2 
+CFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc -Isrc/runtime -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive
+LIBS = $(SDL_LIBS) -lm 
+
+CSRC = $(wildcard src/*.c) src/osdep/osdep.c
+RSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c src/runtime/debug/d.c
+#src/SDL_gfxPrimitives.c src/SDL_gfxBlitFunc.c src/SDL_rotozoom.c
+
+
+.PHONY : dirs
+
+all: dirs html/div.js ${RUNNER}
+
+dirs: obj/src/runtime/debug
+
+obj/src/runtime/debug: 
+	mkdir -p obj/src/runtime/debug
+	mkdir -p obj/src/osdep
+	
+obj/%.c.o : %.c
+	$(CXX) $(CFLAGS) -c $< -o obj/$<.o
+
+html/div.js : $(CSRC:%.c=obj/%.c.o) obj/src
+	$(CXX) ${CFLAGS} -o html/div.js $(CSRC:%.c=obj/%.c.o) $(LIBS) $(EMBEDFILES)
+
+${RUNNER} : $(RSRC:%.c=obj/%.c.o) obj/src
+	$(CXX) $(CFLAGS) -o ${RUNNER} $(RSRC:%.c=obj/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
+
+
+#src/main.c.o : src/main.c
+#	$(CC)  $(CFLAGS) -c $< -o $<.o 
+	
+.PHONY : clean
+clean :
+	rm obj/src/*.o html/div.js html/div.js.mem 
+	
+#src/8080emu.c.o src/main.c.o src/ai.c.o : inc/8080emu.h inc/si-ram.h
+
+
