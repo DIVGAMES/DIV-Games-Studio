@@ -318,7 +318,7 @@ void Setup0() {
 #ifdef NOTYET
     t=time(NULL); _ctime(&t,tbuf); tbuf[24]=' ';
 #else
-strcpy(tbuf,"                   2015 ");
+strcpy(tbuf,"                    2015 ");
 #endif
     strcat(Copy_Right,&tbuf[20]);
     if (strlen(user2)+strlen(Copy_Right)<=127) strcat(Copy_Right,user2);
