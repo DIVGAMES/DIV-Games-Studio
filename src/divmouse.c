@@ -205,12 +205,28 @@ while(SDL_PollEvent(&event))
             }
               if (event.type == SDL_MOUSEMOTION)
             {
-				m_x+=event.motion.xrel;
-				m_y+=event.motion.yrel;
+				m_x = event.motion.x;
+            	m_y = event.motion.y;
+//				m_x+=event.motion.xrel;
+//				m_y+=event.motion.yrel;
 			}
             /* If a button on the mouse is pressed. */
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
+				
+				if(event.button.button == SDL_BUTTON_LEFT)
+				{
+					m_b = 1;
+				}
+/*				if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					mouse->right = 1;
+				}
+				if(event.button.button == SDL_BUTTON_MIDDLE)
+				{
+					mouse->middle = 1;
+				}
+				* */
 			//	printf("click\n");
 				m_b = 1;
 			}
