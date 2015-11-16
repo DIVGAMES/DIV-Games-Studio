@@ -1515,10 +1515,10 @@ void busca_packfile(void) {
       fread(&nfiles,4,1,f);
       if (!strcmp(head,"dat\x1a\x0d\x0a") && nfiles>0) {
         if (prg_id==id[0] || prg_id==id[1] || prg_id==id[2]) {
-          packdir=(_packdir* )malloc(nfiles*sizeof(_packdir));
+          packdir=(struct packdir* )malloc(nfiles*sizeof(packdir));
           printf("packdir: %x %d\n",packdir,nfiles);
           if (packdir!=NULL) {
-            if (fread(packdir,sizeof(_packdir),nfiles,f)==nfiles) {
+            if (fread(packdir,sizeof(struct _packdir),nfiles,f)==nfiles) {
               for (n=0;n<nfiles;n++) {
 				  strcpy(buf,packdir[n].filename);
 		      }
