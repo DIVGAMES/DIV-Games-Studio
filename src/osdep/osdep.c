@@ -7,7 +7,7 @@
 #include "global.h"
 
 
-#ifdef __llvm__
+#ifdef __EMSCRIPTEN__
 #include <string.h>
 
 #else
