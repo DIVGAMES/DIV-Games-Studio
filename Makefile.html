@@ -6,7 +6,7 @@
 #
 # apt-get install -y libsdl1.2-dev
 #
-SDL_CFLAGS = -DZLIB -DDEBUG	 -DMIXER 
+SDL_CFLAGS = -DZLIB -DMIXER 
 #-DJPEGLIB  
 EMBEDFILES= --emrun --preload-file system --preload-file help
 
@@ -17,7 +17,6 @@ DEMBEDFILES= --emrun --embed-file system/lenguaje.int --preload-file system/EXEC
 
 #EMBEDFILES = $(EMBEDFILES1) --embed-file sounds --embed-file resources --preload-file resources/explosion.png --preload-file resources/powerups.png --preload-file resources/saucer.png --preload-file resources/kenpixel_square.ttf  --preload-file resources/explosion17.png
 
-#REMBEDFILES=  --embed-file user/mbgame
 
 #--embed-file pcm/noid 
 
@@ -43,7 +42,6 @@ DEMBEDFILES= --emrun --embed-file system/lenguaje.int --preload-file system/EXEC
 #REMBEDFILES= --embed-file fpg/tutorial/tutor1.fpg --embed-file fnt/tutorial/tutor1.fnt
 #REMBEDFILES= --embed-file fpg/tutorial/tutor0.fpg
 
-#REMBEDFILES= --preload-file fnt/pacoman --preload-file fpg/pacoman --preload-file dat/pacoman --preload-file pcm/pacoman   
 #REMBEDFILES= --preload-file user/evildemo
 
 #REMBEDFILES= --preload-file user/vccfin1
@@ -61,15 +59,38 @@ DEMBEDFILES= --emrun --embed-file system/lenguaje.int --preload-file system/EXEC
 #REMBEDFILES= --preload-file fnt/alien --preload-file fpg/alien --preload-file pcm/alien   
 
 #REMBEDFILES=  --preload-file fnt/malvado --preload-file fpg/malvado --preload-file pcm/malvado
-REMBEDFILES=  --preload-file user/flea
 
-RUNNER=html/flea.js
+#REMBEDFILES= --preload-file fnt/puzzle --preload-file pcm/puzzle --preload-file dat/puzzle --preload-file map/puzzle --preload-file fpg/puzzle
+#REMBEDFILES= --preload-file help/help.fpg
+#REMBEDFILES= --preload-file fnt/pacoman --preload-file fpg/pacoman --preload-file dat/pacoman --preload-file pcm/pacoman   
+#REMBEDFILES=  --preload-file user/BubDiv
+#REMBEDFILES= --preload-file fnt/soccer --preload-file pcm/soccer --preload-file dat/soccer --preload-file map/soccer --preload-file fpg/soccer --preload-file fli/soccer
+#REMBEDFILES=  --preload-file SONICPC.PAK --preload-file GREEN.WAV --preload-file START.WAV
+
+#REMBEDFILES = --preload-file TOMDX.PAK --preload-file Stage1.DAT --preload-file Stage2.DAT
+
+#REMBEDFILES = --preload-file user/FOB@/
+
+#REMBEDFILES = --preload-file BUGWARS.PAK
+#REMBEDFILES = --preload-file user/bbracers@/
+#REMBEDFILES = --preload-file BERT.PAK --preload-file BERT.DAT --preload-file LEVEL1.DAT --preload-file LEVEL2.DAT
+
+#REMBEDFILES = --preload-file ~/Desktop/div\ games/oldgames2/vc@
+REMBEDFILES = --preload-file user/vccfin1@
+
+RUNNER=html/vcc.js
+
+DRUNNER=html/debug_bbobble.js
 
 SDL_LIBS = -lSDL 
 #-lSDL_ttf -lSDL_image
 CXX=em++
 CC=emcc
-EMC_OPTS= -w -s USE_ZLIB=1 -s ASM_JS=1 -s TOTAL_MEMORY=67108864
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s USE_SDL_MIXER=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456
+#-s TOTAL_MEMORY=134217728
+# -s TOTAL_MEMORY=67108864
+# -s TOTAL_MEMORY=33554432
+# -s TOTAL_MEMORY=67108864
 # -s TOTAL_MEMORY=268435456
 #=134217728
 #=67108864
@@ -82,33 +103,44 @@ EMC_OPTS= -w -s USE_ZLIB=1 -s ASM_JS=1 -s TOTAL_MEMORY=67108864
 # -s ASM_JS=1 
 #-s EXPORTED_FUNCTIONS="['_getscore','_main']"
 EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
-BUILDLVL= -O2 
+BUILDLVL= -O3
 CFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc -Isrc/runtime -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive
 LIBS = $(SDL_LIBS) -lm 
 
 CSRC = $(wildcard src/*.c) src/osdep/osdep.c
-RSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c src/runtime/debug/d.c
+RSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c
+DSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c src/runtime/debug/d.c
 #src/SDL_gfxPrimitives.c src/SDL_gfxBlitFunc.c src/SDL_rotozoom.c
 
 
 .PHONY : dirs
 
-all: dirs html/div.js ${RUNNER}
+all: dirs html/div.js ${RUNNER} ${DRUNNER}
 
-dirs: obj/src/runtime/debug
+dirs: obj/src/runtime/debug obj_d/src/runtime/debug 
+
 
 obj/src/runtime/debug: 
 	mkdir -p obj/src/runtime/debug
 	mkdir -p obj/src/osdep
+obj_d/src/runtime/debug: dirs
+	mkdir -p obj_d/src/runtime/debug
+	mkdir -p obj_d/src/osdep
 	
 obj/%.c.o : %.c
 	$(CXX) $(CFLAGS) -c $< -o obj/$<.o
 
+obj_d/%.c.o : %.c
+	$(CXX) $(CFLAGS) -DDEBUG -c $< -o obj_d/$<.o
+
 html/div.js : $(CSRC:%.c=obj/%.c.o) obj/src
 	$(CXX) ${CFLAGS} -o html/div.js $(CSRC:%.c=obj/%.c.o) $(LIBS) $(EMBEDFILES)
 
-${RUNNER} : $(RSRC:%.c=obj/%.c.o) obj/src
+${RUNNER} : $(RSRC:%.c=obj/%.c.o) obj/src 
 	$(CXX) $(CFLAGS) -o ${RUNNER} $(RSRC:%.c=obj/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
+
+${DRUNNER} : $(DSRC:%.c=obj_d/%.c.o) obj/src
+	$(CXX) $(CFLAGS) -o ${DRUNNER} $(DSRC:%.c=obj_d/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
 
 
 #src/main.c.o : src/main.c
