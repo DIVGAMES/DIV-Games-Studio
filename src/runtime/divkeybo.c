@@ -177,7 +177,9 @@ void tecla_bios(void) {
 #endif
 }
 extern float m_x,m_y;
-
+#ifdef DEBUG
+extern int mouse_b;
+#endif
 void tecla(void) {
 //printf("tecla\n");
 //ascii=0; scan_code=0;
@@ -218,15 +220,24 @@ while(SDL_PollEvent(&event))
             {
 				if(event.button.button == SDL_BUTTON_LEFT)
 				{
-					mouse->left = 1;
+					mouse->	left = 1;
+#ifdef DEBUG
+					mouse_b|=1;
+#endif
 				}
 				if(event.button.button == SDL_BUTTON_RIGHT)
 				{
 					mouse->right = 1;
+#ifdef DEBUG
+					mouse_b|=2;
+#endif
 				}
 				if(event.button.button == SDL_BUTTON_MIDDLE)
 				{
 					mouse->middle = 1;
+#ifdef DEBUG
+					mouse_b|=4;
+#endif
 				}
 			}
 			
@@ -236,14 +247,23 @@ while(SDL_PollEvent(&event))
 				if(event.button.button == SDL_BUTTON_LEFT)
 				{
 					mouse->left = 0;
+#ifdef DEBUG
+					mouse_b ^=1;
+#endif
 				}
 				if(event.button.button == SDL_BUTTON_RIGHT)
 				{
 					mouse->right = 0;
+#ifdef DEBUG
+					mouse_b ^=2;
+#endif
 				}
 				if(event.button.button == SDL_BUTTON_MIDDLE)
 				{
 					mouse->middle = 0;
+#ifdef DEBUG
+					mouse_b ^=4;
+#endif
 				}	
 			}
         }
