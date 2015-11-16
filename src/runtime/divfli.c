@@ -173,8 +173,8 @@ return flc.HeaderFrames;
 }
 
 
-static void Palette_Update() {
 #ifdef NOTYET
+static void Palette_Update() {
   char *d=&flc.colors;
   int n,m=0;
 
@@ -190,8 +190,9 @@ static void Palette_Update() {
   paleta_cargada=1;
 
   }
-#endif
 }
+
+#endif
 
 void COLORS256()
 { Uint8 *pSrc;
