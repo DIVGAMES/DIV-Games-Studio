@@ -385,7 +385,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	tSonido *s = &sonido[channels[chan].num];
 	int pos = channels[chan].pos;
 	
-	if(channels[chan].freq>512) channels[chan].freq=512;
+	if(channels[chan].freq>1024) channels[chan].freq=1024;
 	if(channels[chan].freq<0) channels[chan].freq=0;
 
 	float ratio = channels[chan].freq/256.0f;//(22050 +10000) / 22050.0f;
@@ -396,7 +396,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	uint16_t *input = (uint16_t *)(s->sound->abuf)+pos;
 	int i = 0;
 	int j = 0;
-	for(x = 0; i < len/2-1; x += ratio) {
+	for(x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
 		//float p = x - int(x);
 		samples[i++] = input[(int)x];// + p * input[int(x) + 1];
 		if(pos+x>s->sound->alen/2) {
