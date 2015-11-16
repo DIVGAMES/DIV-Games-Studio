@@ -381,6 +381,7 @@ int UnloadSound(int NumSonido)
 // make a passthru processor function that alters the stream size
 void freqEffect(int chan, void *stream, int len, void *udata)
 {
+	float x=0;
 	tSonido *s = &sonido[channels[chan].num];
 	int pos = channels[chan].pos;
 	
@@ -394,12 +395,22 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	short* samples = (short*)stream;
 	uint16_t *input = (uint16_t *)(s->sound->abuf)+pos;
 	int i = 0;
-	for(float x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
+	int j = 0;
+	for(x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
 		//float p = x - int(x);
 		samples[i++] = input[(int)x];// + p * input[int(x) + 1];
-		if(pos+x>s->sound->alen/2) {pos=0; i=len/2;}//s->sound->alen;
+		if(pos+x>s->sound->alen/2) {
+			if(s->loop==1) {
+				x=0;
+				j=0;
+				input = (uint16_t*)(s->sound->abuf);
+			} else {
+		  		i=len/2;
+			}
+		}
+		j++;
 	}
-pos+=i*ratio;
+pos+=j*ratio;
 if(pos>=s->sound->alen/2 && s->loop==1) pos=0; 
 channels[chan].pos=pos;
 
