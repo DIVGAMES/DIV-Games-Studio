@@ -279,6 +279,9 @@ int LoadSound(char *ptr, long Len, int Loop)
 	SDL_RWops *rw;
 	byte *dst; 
 	FILE *mem, *fdst;
+#ifdef WIN32
+	FILE *wsrc, *wdst;
+#endif
 	int con=0;
 	byte res=0;
 	
@@ -292,9 +295,26 @@ int LoadSound(char *ptr, long Len, int Loop)
 		return(-1);
 		
 	memset(dst,0,(int)Len+40);
+
+#ifdef WIN32
+
+	wsrc = fopen("divpcm.tmp","wb");
+	if(wsrc==NULL)
+		return -1;
+	
+	fwrite(ptr,1,(int)Len,wsrc);
+	fclose(wsrc);
+	
+	mem = fopen("divpcm.tmp","rb"); // open our temp wav	
+
+	fdst = fopen("divwav.tmp","wb");
+	if(fdst==NULL)
+		return -1;
+#else
 	
 	mem = fmemopen(ptr,(int)Len,(const char *)"rb");
 	fdst = fmemopen(dst,(int)Len+255,(const char *)"wb");
+#endif
 	
 	res=pcm2wav(mem,Len,fdst,(int)Len+40);
 	fclose(mem);
@@ -309,14 +329,19 @@ int LoadSound(char *ptr, long Len, int Loop)
 	if(res==1) {
 		memcpy(dst,ptr,Len);
 	}
+	fclose(fdst);
+#ifdef WIN32
+	sound = Mix_LoadWAV("divwav.tmp");
+	remove("divwav.tmp");
+	remove("divpcm.tmp");
+#else
 	rw = SDL_RWFromMem(dst, (int)(Len+255));
 	sound = Mix_LoadWAV_RW(rw, 1);
-
+#endif
 	if(!sound) {
 		printf("Mix_LoadWAV: %s\n", Mix_GetError());
 		return (-1);
 	}
-	fclose(fdst);
 	free(dst);
 	// all ok. save our data to free() later
 	sonido[con].smp = 1;
@@ -403,7 +428,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 			if(s->loop==1) {
 				x=0;
 				j=0;
-				pos=50;
+				pos=0;
 				input = (uint16_t*)(s->sound->abuf)+pos;
 			} else {
 //				pos=0;
@@ -412,8 +437,15 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 		}
 		j++;
 	}
-pos+=j*ratio;
-if(pos>=s->sound->alen/2 && s->loop==1) pos=0; 
+pos+=(int)((float)j*ratio);
+
+//printf("pos: %d\n",pos);
+if(pos>=s->sound->alen/2) {
+	if(s->loop==1)
+		pos=0;
+	else
+		Mix_HaltChannel(chan);
+} 
 channels[chan].pos=pos;
 
 // fill rest with empty :(
@@ -616,10 +648,12 @@ int PlaySong(int NumSong)
   if(NumSong>127 || !cancion[NumSong].ptr) return(-1);
 
   StopSong();
+#ifdef MIXER
 	if(cancion[NumSong].music) {
 		Mix_PlayMusic(cancion[NumSong].music, cancion[NumSong].loop?-1:0);
 		//printf("Playing song %d\n",NumSong);
 	}
+#endif
 #ifdef DOS
   switch(cancion[NumSong].SongType)
   {
@@ -662,23 +696,27 @@ void StopSong(void)
   }
 
 #endif
-
+#ifdef MIXER
 Mix_HaltMusic();
+#endif
+
   MusicChannels=0;
 }
 
 void UnloadSong(int NumSong)
 {
   if(NumSong>127 || !cancion[NumSong].ptr) return;
-
+#ifdef MIXER
 Mix_FreeMusic(cancion[NumSong].music);
   free(cancion[NumSong].ptr);
   SDL_FreeRW(cancion[NumSong].rw);
-  
-  cancion[NumSong].ptr=NULL;
+
   cancion[NumSong].music=NULL;
   cancion[NumSong].rw=NULL;
+#endif  
+  cancion[NumSong].ptr=NULL;
   cancion[NumSong].loop=0;
+
 }
 
 void SetSongPos(int SongPat)
