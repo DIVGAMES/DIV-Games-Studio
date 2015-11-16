@@ -1516,7 +1516,7 @@ void busca_packfile(void) {
       fread(&nfiles,4,1,f);
       if (!strcmp(head,"dat\x1a\x0d\x0a") && nfiles>0) {
         if (prg_id==id[0] || prg_id==id[1] || prg_id==id[2]) {
-          packdir=(struct packdir* )malloc(nfiles*sizeof(packdir));
+          packdir=(struct _packdir* )malloc(nfiles*sizeof(struct _packdir));
           printf("packdir: %x %d\n",packdir,nfiles);
           if (packdir!=NULL) {
             if (fread(packdir,sizeof(struct _packdir),nfiles,f)==nfiles) {
