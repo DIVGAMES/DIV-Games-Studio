@@ -4240,8 +4240,10 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
-	//printf("DaniDel %s\n",name);
-	//return;
+#ifdef WIN32
+	printf("DaniDel %s\n",name);
+	return;
+#endif
 	
   unsigned rc;
   struct find_t ft;
