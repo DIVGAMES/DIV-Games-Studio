@@ -396,15 +396,17 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	uint16_t *input = (uint16_t *)(s->sound->abuf)+pos;
 	int i = 0;
 	int j = 0;
-	for(x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
+	for(x = 0; i < len/2-1; x += ratio) {
 		//float p = x - int(x);
 		samples[i++] = input[(int)x];// + p * input[int(x) + 1];
 		if(pos+x>s->sound->alen/2) {
 			if(s->loop==1) {
 				x=0;
 				j=0;
-				input = (uint16_t*)(s->sound->abuf);
+				pos=50;
+				input = (uint16_t*)(s->sound->abuf)+pos;
 			} else {
+//				pos=0;
 		  		i=len/2;
 			}
 		}
