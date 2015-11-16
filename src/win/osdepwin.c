@@ -12,47 +12,26 @@
 
 #else
 
-
-
-char * strupr(char *string)
+char * strupr(char *s)
 {
-	int x=0;
-	char *st = string;
-	if(string>0 && strlen(string)>0) {
-	st = (char *)malloc(strlen(string));
-	
-//printf("string: [%s]\n",string);
-
-  for(x=0;x<strlen(string);x++) 
-    st[x] = toupper((unsigned char) string[x]);
-
-st[x]=0;
-//printf("upper'd string: [%s]\n",st);
-    return st;
-
-}
-else return " ";
+char *ucs = (char *) s;
+  for ( ; *ucs != '\0'; ucs++)
+    {
+      *ucs = toupper(*s++);
+    }
+  return ucs;
 }
 
-
-
- 
-
-char * strlwr(char *string)
+char * strlwr(char *s)
 {
-	int x=0;
-	char *st = string;
-	if(strlen(string)>0) {
-st = (char *)malloc(strlen(string));
-	
-  for(x=0;x<strlen(string);x++) 
-    st[x] = tolower((unsigned char) string[x]);
+char *ucs = (char *) s;
+  for ( ; *ucs != '\0'; ucs++)
+    {
+      *ucs = tolower(*s++);
+    }
+  return ucs;
+}
 
-st[x]=0;
-//printf("lower'd string: [%s]\n",st);
-}
-   return st;
-}
 
 #endif
 
@@ -252,12 +231,13 @@ struct dirent **namelist=NULL;
 long hFile;
 unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result) {
 strcpy(findname,name);
+printf("FIND FIRST %s\n",findname);
 #ifdef __cplusplus
 	hFile =  _findfirst(name,( _finddata32_t*)result);
 #else
 hFile =  _findfirst(name,result);
 #endif
-	return hFile;
+	return 0;//hFile;
 	//printf("TODO - findfirst\n");
 
 
@@ -303,13 +283,21 @@ return (ret);
 							}
 unsigned int _dos_findnext(struct find_t *result) {
 //	printf("TODO - findnext\n");
-#ifdef __cplusplus
-	return _findnext(hFile,( _finddata32_t*)result);
-#else
-	return _findnext(hFile,result);
-#endif
+struct _finddata32_t result2;
+printf("findnext found: %s %s\n",result->name, result2.name);
+//return n;
+int n=0;
+
+while((n= _findnext(hFile,&result2))==0) {
+	
+strcpy(result->name,result2.name);
+
+	result->attrib=result2.attrib;
+	result->size = result2.size;
+	return 0;
+
+}
 #ifdef NOTYET
-while(++np<nummatch) {
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
 	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
