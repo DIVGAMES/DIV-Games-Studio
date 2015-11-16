@@ -54,9 +54,9 @@ print_init_flags(initted);
 	
   if((initted&flags) != flags) {
 	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
-	  printf("Mix_Init: %s\n", Mix_GetError());
+	  printf("Mix_Init: %d %s\n", initted, Mix_GetError());
    }
-   
+ 
 
 
 if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
@@ -64,6 +64,7 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
 //	exit(1);
 }
 
+initted = 1;
 #endif
 
 #ifdef DOS
