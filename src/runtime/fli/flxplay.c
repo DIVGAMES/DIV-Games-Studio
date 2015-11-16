@@ -71,7 +71,7 @@ void ReadU16(uint16_t *tmp1, uint8_t *tmp2) {
 	*tmp1= ((Uint8)*(tmp2+1)<<8)+(Uint8)*(tmp2);
 }
 
-void ReadU32(uint16_t *tmp1, uint8_t *tmp2) {
+void ReadU32(uint32_t *tmp1, uint8_t *tmp2) {
 	*tmp1= (((((((Uint8)*(tmp2+3)<<8)+((Uint8)*(tmp2+2)))<<8)+((Uint8)*(tmp2+1)))<<8)+(Uint8)*(tmp2));
 }
 
