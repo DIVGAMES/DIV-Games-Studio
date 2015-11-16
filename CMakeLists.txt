@@ -1,19 +1,22 @@
-# CMAKE lists file for FUZE BASIC V2.0+
-# (c) 2015 Mike Green and the FUZE Teame
+# CMAKE lists file for DIV GAMES STUDIO
+# (c) 2015 Mike Green
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(div2015)
 
+SET(OSDEP "src/osdep/osdep.c")
+SET(DLLSRC "src/mikedll.c")
+
 IF(APPLE)
 SET (PLATFORM "OSX")
+FILE(GLOB OSX_SOURCES "src/osx/*.c")
+SET(OSDEP ${OSDEP} ${OSX_SOURCES})
 ENDIF()
 
 IF(WIN32)
 SET (PLATFORM "WIN")
 ENDIF()
 
-SET(OSDEP "src/osdep/osdep.c")
-SET(DLLSRC "src/mikedll.c")
 
 IF(WINDOWS)
 INCLUDE ( tools/win.cmake )
