@@ -445,7 +445,7 @@ int loop = sonido[NumSonido].loop?-1:0;
 	
 //	if(Frec!=256)
 #ifndef __EMSCRIPTEN__
-		Mix_RegisterEffect(con, noEffect, NULL,NULL);
+		Mix_RegisterEffect(con, freqEffect, NULL,NULL);
 #endif
 	
 	Mix_Volume(con,Volumen/2);
@@ -454,7 +454,7 @@ int loop = sonido[NumSonido].loop?-1:0;
 //	printf("playing via channel %d\n",con);
 //  judas_playsample(sonido[NumSonido].smp, con, (sonido[NumSonido].freq*Frec)/256, 32*Volumen, MIDDLE);
 
-	Freq_original[con]=sonido[NumSonido].freq;
+	Freq_original[con]=channels[con].freq;
 
   channel(con)=1;
 #endif
