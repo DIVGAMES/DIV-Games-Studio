@@ -312,6 +312,10 @@ init_rnd(dtime);
   freloj=ireloj=100.0/24.0;
   game_fps=24;
   max_saltos=0;
+#ifdef __EMSCRIPTEN__
+//  max_saltos=4;
+#endif
+
 
   joy_timeout=0;
 
@@ -509,43 +513,47 @@ void actualiza_pila(int id, int valor) {
 int max,max_reloj;        // Process in order or _Priority and _Z 
 extern int alt_x;
 void mainloop(void) {
-	    error_vpe=0;
+	error_vpe=0;
     frame_start();
-    #ifdef DEBUG
+#ifdef DEBUG
     if (kbdFLAGS[_F12] || trace_program) {
       trace_program=0;
       if (debug_active) call_to_debug=1;
     }
-    #endif
+#endif
     old_dump_type=dump_type;
     old_restore_type=restore_type;
     do {
-      #ifdef DEBUG
+#ifdef DEBUG
       if (call_to_debug) { call_to_debug=0; debug(); }
-      #endif
+#endif
       exec_process();
     } while (ide);
     frame_end();
     if (error_vpe!=0) {
-      // printf("Error: %s\n",error_vpe);
       v_function=-2; e(error_vpe);
     }
 }
+
 void interprete (void)
 {
   inicializacion();
 #ifndef __EMSCRIPTEN__
+  emscripten_set_main_loop(mainloop, 24, 0);
+#else
   while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
 	mainloop();
   }
   finalizacion();
-#else 
-  //emscripten_set_main_loop(mainloop, 24, 0);
-  emscripten_set_main_loop(mainloop, 24, 1);
 #endif
-//  return;
 }
 
+#ifdef __EMSCRIPTEN__
+void es_fps(byte f) {
+  emscripten_cancel_main_loop();
+  emscripten_set_main_loop(mainloop, f, 0);
+}	
+#endif
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Procesa el siguiente proceso
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -790,11 +798,7 @@ void frame_start(void) {
         break;
       }
     } 
-#ifdef __EMSCRIPTEN__
-while (false); // 
-#else
 while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
-#endif
     volcados_saltados=0;
     saltar_volcado=0;
     freloj+=ireloj;
@@ -1319,10 +1323,12 @@ int main(int argc,char * argv[]) {
   byte * ptr;
   unsigned long len,len_descomp;
   int mimem[10],n,i;
+  uint32_t stubsize =602;
+
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   atexit(SDL_Quit);
   remove("DEBUGSRC.TXT");
-
+  
   getcwd(divpath,PATH_MAX+1);
 
 #ifdef DOS
@@ -1330,6 +1336,7 @@ int main(int argc,char * argv[]) {
 #endif
 
 #ifndef DEBUG
+#ifndef __EMSCRIPTEN__
   if (argc<2) {
     printf("DIV2015 Run time library - version 3.00a - http://div-arena.co.uk\n");
     printf("Error: Needs a DIV executable to load.");
@@ -1339,9 +1346,9 @@ int main(int argc,char * argv[]) {
 
     exit(26);
   }
-#else
-  vga_an=argc; // To remove a warning (argc unused?)
 #endif
+#endif
+  vga_an=argc; // To remove a warning (argc unused?)
 
 #ifdef DOS
   _harderr(critical_error);
@@ -1357,8 +1364,8 @@ int main(int argc,char * argv[]) {
   vga_an=320; vga_al=200;
 
 #ifdef __EMSCRIPTEN__
-vga_an=800;
-vga_al=600;
+vga_an=640;
+vga_al=480;
 f=fopen("system/EXEC.EXE","rb");
 #else
   if ((f=fopen(argv[1],"rb"))==NULL) {
@@ -1380,13 +1387,14 @@ f=fopen("system/EXEC.EXE","rb");
 #endif
 
   fseek(f,0,SEEK_END);
-  len=ftell(f)-602-4*10;
+  len=ftell(f)-stubsize-4*10;
   fseek(f,0,SEEK_SET);
 
-  fseek(f,602,SEEK_SET);
+  fseek(f,stubsize,SEEK_SET);
   fread(mimem,4,10,f);
 
   iloc_len=(mimem[5]+mimem[6]);
+
   if (iloc_len&1) iloc_len++;
 
   if (mimem[3]>0) {
@@ -1507,10 +1515,13 @@ void busca_packfile(void) {
       fread(&nfiles,4,1,f);
       if (!strcmp(head,"dat\x1a\x0d\x0a") && nfiles>0) {
         if (prg_id==id[0] || prg_id==id[1] || prg_id==id[2]) {
-          packdir=(struct _packdir* )malloc(nfiles*sizeof(struct _packdir));
+          packdir=(_packdir* )malloc(nfiles*sizeof(_packdir));
+          printf("packdir: %x %d\n",packdir,nfiles);
           if (packdir!=NULL) {
-            if (fread(packdir,sizeof(struct _packdir),nfiles,f)==nfiles) {
-              for (n=0;n<npackfiles;n++) strupr(packdir[n].filename);
+            if (fread(packdir,sizeof(_packdir),nfiles,f)==nfiles) {
+              for (n=0;n<nfiles;n++) {
+				  strcpy(buf,packdir[n].filename);
+		      }
               strcpy(packfile,fileinfo.name);
               npackfiles=nfiles;
             }
