@@ -3434,7 +3434,7 @@ float incx,incy;
 float fx,fy,cx,cy,rx,ry;
 float pp1,pp2,pp3,pp4;
 int r,b,g,regen=0;
-FILE *rgb_tab;
+FILE *rgb_tab=NULL;
 char *rgb_table;
 char Tabla[190];
 int Colors[9],min_dist,i,dist;
@@ -3511,7 +3511,8 @@ int Colors[9],min_dist,i,dist;
             }
           }
           Progress((char *)texto[93],32,32);
-          fclose(rgb_tab);
+          if(rgb_tab)
+			fclose(rgb_tab);
           rgb_tab=fopen("RGB_TAB.TMP","wb");
           fwrite(dac,1,768,rgb_tab);
           fwrite(rgb_table,1,32768,rgb_tab);
