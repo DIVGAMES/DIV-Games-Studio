@@ -1762,16 +1762,12 @@ void lexico(void) {
 
       ptr=&vhash[h];
       while (*ptr && strcmp((char *)(ptr+2),((char *)_ivnom+ptr8))!=0) {
-//		  printf("skip [%s] [%s]\n",(char *)(ptr+2),(char *)_ivnom+ptr8);
 		  ptr=(byte**)*ptr; 
-//		  printf("new ptr: %x\n",ptr);
 	  }
 	  
       if (!strcmp((char *)(ptr+2),(char *)_ivnom+ptr8)) { // id found
-//		printf("found [%s] [%s]\n",(char *)(ptr+2),(char *)_ivnom+ptr8);
         ivnom.b=_ivnom; // lo saca de vnom
         pieza=(memptrsize)*(ptr+1);
-//        printf("pieza %d\n",pieza);
         if (pieza<256 && pieza>=0) { // reserved word (t	oken)
 			
           if (pieza==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
@@ -1796,7 +1792,6 @@ void lexico(void) {
           }
         }
       } else {
-	//	printf("New id[%s] [%s]\n",(char *)(ptr+2),(char *)_ivnom+ptr8);
         *ptr=_ivnom; ptr_o=(struct objeto **)(_ivnom+ptr4); *ptr_o=o=iobj++; pieza=p_id; // id nuevo
         (*o).name=(byte *)_ivnom+ptr8;
         (*o).member=member;
@@ -7349,8 +7344,15 @@ FILE * open_file(char * file) {
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
+  
+  char *ff = file;
 
-  strcpy((char *)full,file);
+  while (*ff!=0 ) {
+	  if(*ff =='\\') *ff='/';
+	  ff++;
+  }
+  
+  strcpy((char *)full,file);  
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char *)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);

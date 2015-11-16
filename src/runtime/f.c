@@ -14,8 +14,7 @@ void readmouse(void);
 #include "divsound.h"
 
 #ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-extern void mainloop(void);
+extern void es_fps(byte);
 #endif
 
 void load_pal(void);
@@ -80,10 +79,14 @@ extern int nomitidos;
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 int get_reloj(void) {
-	reloj=SDL_GetTicks()/10;
-return reloj;
 
-	return SDL_GetTicks()/100;//ireloj;
+//#ifndef __EMSCRIPTEN__
+	reloj=SDL_GetTicks()/10;
+//#else
+	//reloj=SDL_GetTicks()/100;//ireloj;
+//#endif
+
+return reloj;
 	
 	reloj = SDL_GetTicks()/100;
 	return reloj;
@@ -144,7 +147,7 @@ void _key(void) {
 
 char full[_MAX_PATH+1];
 
-#ifdef DEBUG
+#ifndef NOTYET
 
 FILE * open_file(byte * file) {
   FILE * f;
@@ -174,11 +177,17 @@ while (*ff!=0) {
     strcat(full,(char*)file);
     printf("Trying: %s\n",full);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
-
+	strupr(full);
+	printf("Trying: %s\n",full);
+    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+		
       strcpy(full,fname);
       strcat(full,ext);
     printf("Trying: %s\n",full);
 
+      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+strupr(full);
+    printf("Trying: %s\n",full);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
@@ -188,13 +197,16 @@ while (*ff!=0) {
     printf("Trying: %s\n",full);
 
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+
           strcpy(full,"");
           printf("failed\n");
           return(NULL);
         } else return(f);
+        } else return(f);
       } else return(f);
     } else return(f);
   } else return(f);
+} else return(f);
 }
 
 #else
@@ -205,9 +217,18 @@ FILE * open_file(byte * file) {
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
+  char *ff = (char *)file;
 
+  if(strlen((char *)file)==0) return NULL;
+
+/*  while (*ff!=0) {
+	  if(*ff =='\\') *ff='/';
+	  ff++;
+  }
+*/
   strcpy(full,(char*)file);
-//printf("opening file: %s\n",file);
+  
+  printf("opening file: %s\n",file);
 
 //  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
 //printf("hello\n");
@@ -280,8 +301,18 @@ int read_packfile(byte * file) {
   char * ptr;
   int n;
   unsigned long len_desc;
+//printf("trying to read %s from %d files\n",file,npackfiles);
 
   if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(-1);
+char *ff = (char *)file;
+
+while (*ff!=0) {
+	if(*ff =='\\') *ff='/';
+	ff++;
+}
+
+  strcpy(full,(char*)file);
+
   _splitpath(full,drive,dir,fname,ext);
 
   strcpy(full,fname);
@@ -289,9 +320,10 @@ int read_packfile(byte * file) {
 
   strupr(full);
 
-  for (n=0;n<npackfiles;n++)
+  for (n=0;n<npackfiles;n++) {
+	//  printf("looking for %s against %s\n",full,packdir[n].filename);
     if (!strcmp(full,packdir[n].filename)) break;
-
+}
   if (n<npackfiles) {
     len_desc=packdir[n].len_desc;
     if ((packptr=(byte *)malloc(len_desc))!=NULL) {
@@ -683,7 +715,8 @@ void load_fpg(void) {
   byte * ptr , *ptr2, *ptr3;
   byte xlat[256];
   int * iptr;
-
+  int frompak=0;
+  
   while (num<max_fpgs) {
     if (g[num].fpg==0) {
 	break;
@@ -707,6 +740,7 @@ void load_fpg(void) {
     if (m<=0) { pila[sp]=0; e(200); return; }
     ptr=packptr; file_len=m;
     g[num].fpg=(int**)ptr;
+    frompak=1;
   } else {
     fpgfuera:
 #ifdef STDOUTLOG
@@ -741,9 +775,9 @@ fclose(es);
   if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { e(106); free(ptr); return; }
 
   if (process_fpg!=NULL) process_fpg((char *)ptr,file_len);
-#ifdef STDOUTLOG
-printf("fpg found\n");
-#endif
+//#ifdef STDOUTLOG
+//printf("fpg found\n");
+//#endif
   if (!paleta_cargada) {
     for (m=0;m<768;m++) if (ptr[m+8]!=paleta[m]) break;
     if (m<768) {
@@ -772,6 +806,9 @@ printf("num: %d ptr: %x\n",num,ptr);
 
 #ifdef __EMSCRIPTEN__
 // do something different
+if(frompak) {
+	es=fmemopen(ptr,file_len,"rb");
+}
 fseek(es,0,SEEK_END); file_len=ftell(es);
 fseek(es,1352,SEEK_SET);
 	int len_=1;
@@ -1815,9 +1852,7 @@ void load(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void set_mode(void) {
-#ifdef __EMSCRIPTEN__
-return;
-#endif
+	
   int n;
 
   #ifdef DEBUG
@@ -1825,6 +1860,8 @@ return;
   #endif
 
   vga_an=pila[sp]/1000; vga_al=pila[sp]%1000;
+
+	printf("Tring to set mode %dx%d\n",vga_an,vga_al);
 
   for (n=0;n<num_video_modes;n++) {
     if (pila[sp]==video_modes[n].modo) {
@@ -1966,7 +2003,7 @@ void stop_sound(void) {
   if(pila[sp]==-1) {
     for(x=0; x<CHANNELS; x++) StopSound(x);
   } else {
-//	  printf("Stopping sound on chanel %d\n",pila[sp]);
+
     StopSound(pila[sp]);
   }
 #endif
@@ -2006,6 +2043,7 @@ void load_song(void) {
   char * ptr;
 
   loop=pila[sp--];
+printf("Requesting song: %s\n",(char *)&mem[pila[sp]]);
 
   if (npackfiles) {
     m=read_packfile((byte*)&mem[pila[sp]]);
@@ -2026,7 +2064,7 @@ void load_song(void) {
       } else { fclose(es); pila[sp]=0; e(100); return; }
     }
   }
-
+printf("Loading Song\n");
   pila[sp]=LoadSong(ptr,file_len,loop);
 
   free(ptr);
@@ -2104,7 +2142,14 @@ void is_playing_song(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void set_fps(void) {
+	byte myfps[10];
+	myfps[0] = pila[sp-1];
   max_saltos=pila[sp--];
+
+#ifdef __EMSCRIPTEN__
+//	max_saltos=4;
+#endif
+
   game_fps = pila[sp];
   if (max_saltos<0) max_saltos=0;
   if (max_saltos>10) max_saltos=10;
@@ -2112,11 +2157,10 @@ void set_fps(void) {
   if (game_fps>200) game_fps=200;
 
 #ifdef __EMSCRIPTEN__
-//printf("game fps is %d\n",game_fps);
-//emscripten_cancel_main_loop();
-//emscripten_set_main_loop(mainloop,game_fps,0);
+es_fps(game_fps);
+max_saltos=0;
 #endif
-//  printf("new fps = %d %d\n",ireloj,game_fps);
+
   ireloj=(double)(100.0/game_fps);
 }
 

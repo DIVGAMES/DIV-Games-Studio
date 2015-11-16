@@ -1,0 +1,49 @@
+#lazy makefile 
+# for compiling on android for android
+# also should work for platforms with no cmake
+# which is why this is here in the first place!
+
+CC=g++
+EXECUTABLE=div-droid
+RUNTIME=div-run
+
+SOURCES=$(wildcard src/*.c)
+# $(wildcard src/osdep/*.c)
+RUNSOURCES=$(wildcard src/runtime/*.c) src/osdep/osdep.c
+# src/osx/fmemopen.c 
+#src/runtime/debug/d.c
+# $(wildcard src/osdep/*.c)
+
+#*/
+SDLGFX_SOURCES=$(wildcard src/visor/*.c)
+#*/
+OBJS=$(SOURCES:.c=.o)
+RUNOBJS=$(RUNSOURCES:.c=.o)
+SDLGFXOBJS=$(SDLGFX_SOURCES:.c=.o)
+
+
+#LIBFLAGS= -lm -ldl  -lz  -lSDL_image -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -lSDL
+
+
+DROIDLIBFLAGS= -lSDL -lSDL_image -lSDL_mixer -lm -lz -ljpeg
+# -lSDL_net -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -Wl,--no-undefined -lm
+
+CFLAGS= -g -w -fpermissive -Isrc -funsigned-char -DMIXER -DZLIB -DJPGLIB -DDROID -Isrc/runtime
+#-DDEBUG 
+debug :  $(EXECUTABLE) $(RUNTIME)
+release : $(EXECUTABLE) $(RUNTIME)
+
+all: $(SOURCES) $(RUNSOURCES) $(SDL_GFX_SOURCES) $(EXECUTABLE) $(RUNTIME)
+
+$(EXECUTABLE): $(OBJS) $(SDLGFXOBJS) 
+	 $(CC) $(OBJS) $(SDLGFXOBJS) $(DROIDLIBFLAGS) -o $@
+.c.o:
+	 $(CC) -c $(CFLAGS)  $< -o $@
+
+$(RUNTIME): $(RUNOBJS)
+	 $(CC) $(RUNOBJS) $(DROIDLIBFLAGS) -o $@
+#	 $(CXX) -c $(CFLAGS) $< -o $@
+
+
+clean:
+	 rm -f   $(EXECUTABLE) $(OBJS) $(RUNOBJS) $(SDLGFXOBJS) $(RUNTIME)

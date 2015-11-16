@@ -7,6 +7,7 @@
 
 tSonido  sonido[128];
 tCancion cancion[128];
+tChannels channels[64];
 
 int SongType=0;
 int MusicChannels=0;
@@ -19,18 +20,45 @@ int SongInst[128];
 int Freq_original[CHANNELS];
 
 int SoundActive=1;
-
+#ifdef MIXER
+void print_init_flags(int flags)
+{
+#define PFLAG(a) if(flags&MIX_INIT_##a) printf(#a " ")
+        PFLAG(FLAC);
+        PFLAG(MOD);
+        PFLAG(MP3);
+        PFLAG(OGG);
+        if(!flags)
+                printf("None");
+        printf("\n");
+}
+#endif
+static int initted=0;
 void InitSound(void)
 {
 #ifdef MIXER
+if(initted)
+return;
 
 int audio_rate = 44100;
 Uint16 audio_format = AUDIO_S16SYS;
 int audio_channels = 2;
 int audio_buffers = 4096;
+  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
+  
+  initted=Mix_Init(flags);
 
 SDL_Init( SDL_INIT_AUDIO );
- 
+
+print_init_flags(initted);
+	
+  if((initted&flags) != flags) {
+	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
+	  printf("Mix_Init: %s\n", Mix_GetError());
+   }
+   
+
+
 if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
 	fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
 //	exit(1);
@@ -253,7 +281,10 @@ int LoadSound(char *ptr, long Len, int Loop)
 	FILE *mem, *fdst;
 	int con=0;
 	byte res=0;
-	while(con<128 && sonido[con].smp!=NULL) con++;
+	
+	while(con<128 && sonido[con].smp!=NULL) 
+		con++;
+	
 	if(con==128) return(-1);
 	
 	dst = (byte *)malloc((int)Len+255);
@@ -276,7 +307,6 @@ int LoadSound(char *ptr, long Len, int Loop)
 		return(-1);
 	}
 	if(res==1) {
-		printf("sound alread a wav\n");
 		memcpy(dst,ptr,Len);
 	}
 	rw = SDL_RWFromMem(dst, (int)(Len+255));
@@ -292,9 +322,8 @@ int LoadSound(char *ptr, long Len, int Loop)
 	sonido[con].smp = 1;
 	sonido[con].sound = sound;
 	sonido[con].loop = Loop;
-	//free(dst);
+
 	return con;
-//	channel = Mix_PlayChannel(-1, sound, 1);
 #endif
 
 #ifdef DOS
@@ -331,8 +360,7 @@ return -1;
 int UnloadSound(int NumSonido)
 {
 #ifdef MIXER
-	if(sonido[NumSonido].smp) {
-		printf("Unloading sound %d\n",NumSonido);
+	if(sonido[NumSonido].sound) {
 		Mix_FreeChunk(sonido[NumSonido].sound);
 		sonido[NumSonido].smp=NULL;
 		sonido[NumSonido].sound=NULL;
@@ -348,6 +376,40 @@ int UnloadSound(int NumSonido)
   return(1);
 
 }
+#ifdef MIXER
+ 	
+// make a passthru processor function that alters the stream size
+void freqEffect(int chan, void *stream, int len, void *udata)
+{
+	tSonido *s = &sonido[channels[chan].num];
+	int pos = channels[chan].pos;
+	
+	if(channels[chan].freq>512) channels[chan].freq=512;
+	if(channels[chan].freq<0) channels[chan].freq=0;
+
+	float ratio = channels[chan].freq/256.0f;//(22050 +10000) / 22050.0f;
+
+//printf("Ratio: %f Freq: %d\n",ratio,channels[chan].freq);
+
+	short* samples = (short*)stream;
+	uint16_t *input = (uint16_t *)(s->sound->abuf)+pos;
+	int i = 0;
+	for(float x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
+		float p = x - int(x);
+		samples[i++] = input[int(x)];// + p * input[int(x) + 1];
+		if(pos+x>s->sound->alen/2) {pos=0; i=len/2;}//s->sound->alen;
+	}
+pos+=i*ratio;
+if(pos>=s->sound->alen/2 && s->loop==1) pos=0; 
+channels[chan].pos=pos;
+
+// fill rest with empty :(
+
+	for(; i < len/2; i++) {
+		samples[i] = 0;
+	}
+}
+#endif
 
 int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
@@ -355,7 +417,6 @@ int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 #ifdef MIXER
 int loop = sonido[NumSonido].loop?-1:0;
 
-  
   /*int InitChannel=16;
 
   if(MusicChannels>InitChannel) InitChannel=MusicChannels;
@@ -371,20 +432,33 @@ int loop = sonido[NumSonido].loop?-1:0;
     if(con>=32) con=InitChannel;
   }
   */
-//printf("Playing sound %d, %d, Vol %d, Freq %d\n",con, NumSonido, Volumen, Frec);
 
 //  StopSound(con);
 
 	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
-	Mix_Volume(con,Volumen/2);
 
+  channels[con].freq = Frec;
+  channels[con].vol = Volumen;
+  channels[con].pos = 0;
+
+//printf("Playing sound %d, %d, Vol %d, Freq %d %x\n",NumSonido, con, Volumen, Frec, sonido[NumSonido].sound);
+	
+//	if(Frec!=256)
+#ifndef __EMSCRIPTEN__
+		Mix_RegisterEffect(con, noEffect, NULL,NULL);
+#endif
+	
+	Mix_Volume(con,Volumen/2);
+	channels[con].num=NumSonido;
+	channels[con].con = con;
 //	printf("playing via channel %d\n",con);
 //  judas_playsample(sonido[NumSonido].smp, con, (sonido[NumSonido].freq*Frec)/256, 32*Volumen, MIDDLE);
 
-//  Freq_original[con]=sonido[NumSonido].freq;
+	Freq_original[con]=sonido[NumSonido].freq;
 
   channel(con)=1;
 #endif
+//printf("Playing con: %d\n",con);
   return(con);
 }
 
@@ -407,6 +481,7 @@ int ChangeSound(int NumChannel,int Volumen,int Frec)
 {
 #ifdef MIXER
 //	printf("Channel %d new vol %d new freq %d\n",NumChannel, Volumen, Frec);
+	channels[NumChannel].freq=Frec;
 	Mix_Volume(NumChannel,Volumen/2);
 #endif
 
@@ -463,11 +538,21 @@ int IsPlayingSound(int NumChannel)
 
 int LoadSong(char *ptr, int Len, int Loop)
 {
-#ifdef DOS
+#ifdef MIXER
   int con=0;
+
+SDL_RWops *rw = SDL_RWFromMem(ptr, Len); 
+Mix_Music* music = Mix_LoadMUS_RW(rw); 
+if(!music)
+	return(-1);
+
+Mix_FreeMusic(music);
+SDL_FreeRW(rw);
 
   while(con<128 && cancion[con].ptr!=NULL) con++;
   if(con==128) return(-1);
+
+#ifdef DOS
 
   judas_loadxm_mem(ptr);
   if(judas_error == JUDAS_OK)
@@ -495,22 +580,34 @@ int LoadSong(char *ptr, int Len, int Loop)
   }
 
   if(judas_error != JUDAS_OK) return(-1);
-  if((cancion[con].ptr=malloc(Len))==NULL) return(-1);
+#endif
+
+  if((cancion[con].ptr=(char *)malloc(Len))==NULL) return(-1);
 
   memcpy(cancion[con].ptr, ptr, Len);
   cancion[con].loop=Loop;
 
+rw = SDL_RWFromMem(cancion[con].ptr, Len); 
+music = Mix_LoadMUS_RW(rw); 
+
+cancion[con].music = music;
+cancion[con].rw = rw;
+//printf("Loaded song into slot %d\n",con);
   return(con);
 #endif
+return -1;
 }
 
 int PlaySong(int NumSong)
 {
-#ifdef DOS
   if(NumSong>127 || !cancion[NumSong].ptr) return(-1);
 
   StopSong();
-
+	if(cancion[NumSong].music) {
+		Mix_PlayMusic(cancion[NumSong].music, cancion[NumSong].loop?-1:0);
+		//printf("Playing song %d\n",NumSong);
+	}
+#ifdef DOS
   switch(cancion[NumSong].SongType)
   {
     case XM:
@@ -536,7 +633,6 @@ int PlaySong(int NumSong)
   SongType = cancion[NumSong].SongType;
 
 #endif
-
   return(1);
 }
 
@@ -554,6 +650,7 @@ void StopSong(void)
 
 #endif
 
+Mix_HaltMusic();
   MusicChannels=0;
 }
 
@@ -561,8 +658,14 @@ void UnloadSong(int NumSong)
 {
   if(NumSong>127 || !cancion[NumSong].ptr) return;
 
+Mix_FreeMusic(cancion[NumSong].music);
   free(cancion[NumSong].ptr);
+  SDL_FreeRW(cancion[NumSong].rw);
+  
   cancion[NumSong].ptr=NULL;
+  cancion[NumSong].music=NULL;
+  cancion[NumSong].rw=NULL;
+  cancion[NumSong].loop=0;
 }
 
 void SetSongPos(int SongPat)

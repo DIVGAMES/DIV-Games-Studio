@@ -13,8 +13,17 @@
 #else
 
 
+char * strupr(char *s)
+{
+char *ucs = (char *) s;
+  for ( ; *ucs != '\0'; ucs++)
+    {
+      *ucs = toupper(*s++);
+    }
+  return ucs;
+}
 
-char * strupr(char *string)
+char * _strupr(char *string)
 {
 	int x=0;
 	char *st = string;
@@ -368,7 +377,7 @@ uint8_t sdl2key[2048];
 //#define _s sdl2key
 
 void sdlkeyinit(void) {
-
+SDL_EnableUNICODE(1);
 sdl2key[SDLK_ESCAPE]=1;
 sdl2key[SDLK_F1]=59;
 sdl2key[SDLK_F2]=60;

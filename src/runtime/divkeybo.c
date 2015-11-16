@@ -194,7 +194,6 @@ while(SDL_PollEvent(&event))
             
             if (event.type == SDL_KEYDOWN)
             {
-	//			printf("key pressed\n");
 				scan_code = sdl2key[event.key.keysym.sym];
 				ascii = event.key.keysym.unicode&0x7f;
 				kbdFLAGS[scan_code]=1;
@@ -209,21 +208,44 @@ while(SDL_PollEvent(&event))
 			}
 			  if (event.type == SDL_MOUSEMOTION)
             {
-				m_x+=event.motion.xrel;
-				m_y+=event.motion.yrel;
+				m_x = event.motion.x;
+            	m_y = event.motion.y;
+//				m_x+=event.motion.xrel;
+//				m_y+=event.motion.yrel;
 			}
             /* If a button on the mouse is pressed. */
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
-//				printf("click\n");
-				mouse->left = 1;
+				if(event.button.button == SDL_BUTTON_LEFT)
+				{
+					mouse->left = 1;
+				}
+				if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					mouse->right = 1;
+				}
+				if(event.button.button == SDL_BUTTON_MIDDLE)
+				{
+					mouse->middle = 1;
+				}
 			}
 			
 			if (event.type == SDL_MOUSEBUTTONUP)
             {
-				mouse->left = 0;
+
+				if(event.button.button == SDL_BUTTON_LEFT)
+				{
+					mouse->left = 0;
+				}
+				if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					mouse->right = 0;
+				}
+				if(event.button.button == SDL_BUTTON_MIDDLE)
+				{
+					mouse->middle = 0;
+				}	
 			}
-			
         }
 
 

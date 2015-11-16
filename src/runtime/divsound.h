@@ -19,13 +19,19 @@
 
 #define SAMPLE char
 
+typedef struct _channels {
+  int freq;
+  int vol;
+  int con;
+  int num;
+  int pos;
+} tChannels;	
 
 typedef struct _sonido {
   SAMPLE smp;
-  int    freq;
 #ifdef MIXER
-Mix_Chunk *sound;
-char loop;
+  Mix_Chunk *sound;
+  char loop;
 #endif
 } tSonido;
 
@@ -33,6 +39,10 @@ typedef struct _cancion {
   char *ptr;
   int  loop;
   int  SongType;
+#ifdef MIXER
+  Mix_Music* music;
+  SDL_RWops *rw;
+#endif
 } tCancion;
 
 extern tSonido  sonido[128];
