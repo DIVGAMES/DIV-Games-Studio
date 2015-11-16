@@ -538,7 +538,7 @@ void mainloop(void) {
 void interprete (void)
 {
   inicializacion();
-#ifndef __EMSCRIPTEN__
+#ifdef __EMSCRIPTEN__
   emscripten_set_main_loop(mainloop, 24, 0);
 #else
   while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
@@ -1503,6 +1503,7 @@ void busca_packfile(void) {
   FILE * f;
   int n,m,nfiles;
   struct find_t fileinfo;
+  char buf[255];
 
   for (n=0;n<9;n++) { prg_id<<=1; prg_id^=mem[n]; }
 
