@@ -2913,7 +2913,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help/help.fpg");
+    file1=load_fpg("help\help.fpg");
     graph=1;
     x=160;
     y=100;
@@ -5733,7 +5733,7 @@ PRIVATE
 
 BEGIN
 
-    map1 = load_map("help.map"); // A graphic map's file is loaded.
+    map1 = load_map("help\help.map"); // A graphic map's file is loaded.
 
     put_screen(0, map1);
     LOOP
