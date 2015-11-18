@@ -192,6 +192,9 @@ reloj = SDL_GetTicks()/100;//(int)clock();
     ascii=0; scan_code=0;
 
 SDL_Event event;
+#ifdef GCW
+
+#else
 while(SDL_PollEvent(&event))
         {
             /* If a quit event has been sent */
@@ -204,7 +207,9 @@ while(SDL_PollEvent(&event))
             if (event.type == SDL_KEYDOWN)
             {
 				printf("key pressed\n");
-				scan_code = sdl2key[event.key.keysym.sym];
+#ifndef DROID
+				scan_code = sdl2key[event.key.keysym.unicode];
+#endif
 				kbgFlags[scan_code]=1;
 			}
 			if(event.type == SDL_KEYUP) 
@@ -233,6 +238,7 @@ while(SDL_PollEvent(&event))
 			
         }
 
+#endif
 
   union REGS r;
   struct SREGS s;
