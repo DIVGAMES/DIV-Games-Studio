@@ -366,8 +366,13 @@ void print_init_flags(int flags)
 int main(int argc, char * argv[]) {
   FILE *f;
   unsigned n;
-  SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO );
+  SDL_Init( SDL_INIT_EVERYTHING);
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+  
+  atexit(SDL_Quit);
+  
+  if(SDL_NumJoysticks() > 0)
+	SDL_JoystickOpen(0);
 
 #ifdef MIXER
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
