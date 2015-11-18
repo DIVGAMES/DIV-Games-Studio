@@ -7,7 +7,7 @@
 
 set(CMAKE_SYSTEM_NAME GCW)
 SET(GCW=1)
-
+SET(PLATFORM "GCW")
 set(TOOLCHAIN_PREFIX mipsel-linux)
 #set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
@@ -31,7 +31,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
 
-#ADD_DEFINITIONS( -mwindows -Dmain=SDL_main -DZLIB -DWIN32 -DMIXER) 
+ADD_DEFINITIONS( -DGCW )
+#-DMIXER) 
 
 SET(OSDEP "src/osdep/osdep.c" )
 
