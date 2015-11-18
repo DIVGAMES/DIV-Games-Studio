@@ -1,4 +1,13 @@
 #include <stdio.h>
+
+#ifndef TARGET 
+#define TARGET "div"
+#endif
+
+#ifndef RDEBUG
+#define RDEBUG "divdbg"
+#endif
+
 #ifdef WIN32
 #define ide "system\\"TARGET
 #define dbg "system\\"RDEBUG
