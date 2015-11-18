@@ -197,7 +197,7 @@ if(!vga)
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
 #else
 
-#ifdef GCW
+#ifdef GCW_SOFTSTRETCH
 if(!vga)
 	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
 #else
@@ -322,7 +322,7 @@ void rvmode(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Dump buffer to VGA
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-#ifdef GCW
+#ifdef GCW_SOFTSTRETCH
 void volcadogcw(byte *p) {
 	// blit screen to smaller 320x240 screen
 	byte *qt = (byte *)vga->pixels;
@@ -381,7 +381,7 @@ void volcadosdl(byte *p) {
 		svmode();
 		set_dac(); // tabla_ghost();
 	}
-#ifdef GCW
+#ifdef GCW_SOFTSTRETCH
 	if(vga_an>=GCW_W && vga_al>=GCW_H) {
 		volcadogcw(p);
 		SDL_Flip(vga);

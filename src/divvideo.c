@@ -100,12 +100,12 @@ float h_ratio=1.0;
 
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
-#ifdef GCW
-	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
+#ifdef GCW_SOFTSTRETCH
+	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
 	h_ratio = vga_al / (float)(GCW_H*1.0);
 #else
-	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
+	vga=SDL_SetVideoMode(vga_an, vga_al, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
 	modovesa=1;
 
@@ -210,7 +210,7 @@ void rvmode(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Dump buffer to vga (screen)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-#ifdef GCW
+#ifdef GCW_SOFTSTRETCH
 void volcadogcw(byte *p) {
 	// blit screen to smaller 320x240 screen
 	byte *q = (byte *)vga->pixels;
@@ -241,7 +241,7 @@ void volcadogcw(byte *p) {
 
 void volcadosdl(byte *p) {
 	int vy;
-#ifdef GCW
+#ifdef GCW_SOFTSTRETCH
 	if(vga_an>=GCW_W && vga_al>=GCW_H) {
 		volcadogcw(p);
 		SDL_Flip(vga);
