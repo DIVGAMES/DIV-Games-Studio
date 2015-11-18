@@ -230,13 +230,16 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
     if (estado==0) { num=-1; return; }
 
     if (estado==1) { // Read a new thumbnail
-
+		char filename[255];
+		strcpy(filename,l->lista+(l->lista_an*num));
+		strupr(filename);
+		
       if (strchr(l->lista+(l->lista_an*num),'.')>0 &&
-	  strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP") &&
-          strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PCX") &&
-          strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".BMP") &&
-          strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".JPG") &&
-          strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".JPE")) {
+	  strcmp(strchr(filename,'.'),".MAP") &&
+          strcmp(strchr(filename,'.'),".PCX") &&
+          strcmp(strchr(filename,'.'),".BMP") &&
+          strcmp(strchr(filename,'.'),".JPG") &&
+          strcmp(strchr(filename,'.'),".JPE")) {
 
         estado=0; thumb[num].status=-1;
 
@@ -417,7 +420,7 @@ void crear_un_thumb_PAL(struct t_listboxbr * l)
   byte pal[768];
   byte xlat[256];
   int x,y;
-
+  char filename[255];
   num=-1;
 
   if (n=abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b*10) {
@@ -440,23 +443,24 @@ void crear_un_thumb_PAL(struct t_listboxbr * l)
     } while (num!=l->inicial);
 
     if (estado==0) { num=-1; return; }
-
+	strcpy(filename,l->lista+(l->lista_an*num));
+	strupr(filename);
     // Se comienza a leer un nuevo thumbnail
-    if (!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".FPG"))
+    if (!strcmp(strchr(filename,'.'),".FPG"))
       tipo=1;
-    else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".FNT"))
+    else if(!strcmp(strchr(filename,'.'),".FNT"))
       tipo=2;
-    else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PCX"))
+    else if(!strcmp(strchr(filename,'.'),".PCX"))
       tipo=3;
-    else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".BMP"))
+    else if(!strcmp(strchr(filename,'.'),".BMP"))
       tipo=4;
-    else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".MAP"))
+    else if(!strcmp(strchr(filename,'.'),".MAP"))
       tipo=5;
-    else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PAL"))
+    else if(!strcmp(strchr(filename,'.'),".PAL"))
       tipo=6;
-    else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".JPG"))
+    else if(!strcmp(strchr(filename,'.'),".JPG"))
       tipo=7;
-    else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".JPE"))
+    else if(!strcmp(strchr(filename,'.'),".JPE"))
       tipo=7;
     else
     {
@@ -542,7 +546,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
   char CopiaMiTabladeLetras[256];
   float coefredy, coefredx, a, b;
   FILE *f;
-
+  char filename[255];
   num=-1;
 
   if (n=abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b*10)
@@ -579,7 +583,10 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
     // read a new thumbnail
     if (estado==1)
     {
-      if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".FNT"));
+		strcpy(filename,l->lista+(l->lista_an*num));
+		strupr(filename);
+		printf("%s %s\n",filename,l->lista+(l->lista_an*num));
+      if(!strcmp(strchr(filename,'.'),".FNT"));
       else
       {
         estado=0;
@@ -814,7 +821,8 @@ void crear_un_thumb_IFS(struct t_listboxbr * l)
 {
   int estado=0,n,pos,ancho,alto,x,y,xini;
   char *str;
-
+  char filename[255];
+  
   num=-1;
 
   if (l->maximo)
@@ -831,8 +839,10 @@ void crear_un_thumb_IFS(struct t_listboxbr * l)
     } while (num!=l->inicial);
 
     if (estado==0) { num=-1; return; }
-
-    if(strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".IFS"))
+	strcpy(filename,l->lista+(l->lista_an*num));
+	strupr(filename);
+	
+    if(strcmp(strchr(filename,'.'),".IFS"))
     {
       thumb[num].status=-1;
       return;
@@ -936,6 +946,8 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
   char   *BufferOut;
   short  *BuffAux;
 
+  char filename[255];
+  
   num=-1;
 
   if (n=abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b*10)
@@ -1000,8 +1012,11 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
         thumb[num].status=-1;
         return;
       }
+      strcpy(filename,l->lista+(l->lista_an*num));
+      strupr(filename);
+      
       if (IsWAV(l->lista+(l->lista_an*num)));
-      else if(!strcmp(strupr(strchr(l->lista+(l->lista_an*num),'.')),".PCM") );
+      else if(!strcmp(strchr(filename,'.'),".PCM") );
       else
       {
         fclose(f);
