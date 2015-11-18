@@ -5,6 +5,11 @@
 #define GLOBAL extern
 #endif
 
+#ifdef GCW
+#define GCW_W 320
+#define GCW_H 240
+#endif
+
 #ifndef false
 #define false 0
 #define true 1

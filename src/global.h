@@ -27,6 +27,11 @@
 #define GLOBAL_DATA extern
 #endif
 
+#ifdef GCW
+#define GCW_W 320
+#define GCW_H 240
+#endif
+
 typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 

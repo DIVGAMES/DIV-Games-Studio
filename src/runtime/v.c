@@ -184,6 +184,10 @@ void svmode(void) {
 #ifdef STDOUTLOG
 printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 #endif
+
+//hide the mouse
+SDL_ShowCursor(SDL_DISABLE);
+
 #ifdef __EMSCRIPTEN__
 //	if(vga)
 //	SDL_FreeSurface(vga);
@@ -192,7 +196,14 @@ printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 if(!vga)	
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
 #else
+
+#ifdef GCW
+if(!vga)
+	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+#else
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
+#endif
+
 #endif
 
 #ifdef STDOUTLOG
@@ -311,7 +322,58 @@ void rvmode(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Dump buffer to VGA
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+#ifdef GCW
+void volcadogcw(byte *p) {
+	// blit screen to smaller 320x240 screen
+	byte *qt = (byte *)vga->pixels;
+	byte *q = qt;
+	int row=0;
+	float vy=0;
+	float vx=0;
+	float wratio = vga_an / (float)(GCW_W*1.0);
+	float hratio = vga_al / (float)(GCW_H*1.0);
+	byte *c;
+	//printf("ratio is %fx%f\n",wratio,hratio);
+	
+	if(SDL_MUSTLOCK(vga))
+		SDL_LockSurface(vga);
 
+	for (vy=0; vy<vga_al;vy+=hratio) {
+		// calculate the pixel
+		c=&p[vga_an*(int)vy];
+		
+		for(vx=0;vx<vga_an;vx+=wratio) {
+			
+			*q=c[(int)vx];
+//			c+=(int)wratio;
+			q++;
+		}
+//		memcpy(q,p,vga_an);
+//			p=p[(int)(vga_an*hratio)];
+		//q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+	}
+	
+	return;
+	for (vy=0; vy<vga_al;vy+=hratio) {
+//printf("%d %d %d vy is %f %d\n",row,GCW_W, GCW_H, vy,(int)vy);
+		// calculate the pixel
+		c=&p[GCW_W*(int)(row/hratio)];
+		q=&qt[vga->pitch*(int)row];
+//		qt = &q[(int)vy *GCW_W];
+		for(vx=0;vx<vga_an;vx+=wratio) {
+//printf("plotting %f %f %x %x\n",vy,vx,q,vga->pixels);		
+			*q=c[(int)vx];
+//			c+=(int)wratio;
+			q++;
+		}
+		row++;
+//		memcpy(q,p,vga_an);
+//			p=p[(int)(vga_an*hratio)];
+		//q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+	}
+	
+}
+#endif
 
 void volcadosdl(byte *p) {
 	if(!vga) {
@@ -319,8 +381,16 @@ void volcadosdl(byte *p) {
 		svmode();
 		set_dac(); // tabla_ghost();
 	}
-			
-	SDL_LockSurface(vga);
+#ifdef GCW
+	if(vga_an>=GCW_W && vga_al>=GCW_H) {
+		volcadogcw(p);
+		SDL_Flip(vga);
+		return;
+	}
+#endif
+	if(SDL_MUSTLOCK(vga))
+		SDL_LockSurface(vga);
+
 	byte *q = (byte *)vga->pixels;
 	int vy=0;
 	for (vy=0; vy<vga_al;vy++) {
@@ -328,8 +398,11 @@ void volcadosdl(byte *p) {
 		p+=vga_an;
 		q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
 	}
+
 //	printf("draw screen\n");
-SDL_UnlockSurface(vga);
+	if(SDL_MUSTLOCK(vga))
+		SDL_UnlockSurface(vga);
+	
 	SDL_Flip(vga);
 }
 
