@@ -43,7 +43,7 @@ return;
 int audio_rate = 44100;
 Uint16 audio_format = AUDIO_S16SYS;
 int audio_channels = 2;
-int audio_buffers = 4096;
+int audio_buffers = 1024;
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
   
   initted=Mix_Init(flags);
@@ -421,7 +421,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	short* samples = (short*)stream;
 	uint16_t *input = (uint16_t *)(s->sound->abuf)+pos;
 	int i = 0;
-	int j = 0;
+	float j = 0;
 	for(x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
 		//float p = x - int(x);
 		samples[i++] = input[(int)x];// + p * input[int(x) + 1];
@@ -436,11 +436,11 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 		  		i=len/2;
 			}
 		}
-		j++;
+		j+=ratio;
 	}
-pos+=(int)((float)j*ratio);
+pos+=(int)j;
 
-//printf("pos: %d\n",pos);
+//printf("pos: %d %f\n",pos,j);
 if(pos>=s->sound->alen/2) {
 	if(s->loop==1)
 		pos=0;
@@ -460,8 +460,13 @@ channels[chan].pos=pos;
 int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
   int con=0;
+  int loop=-1;
+
 #ifdef MIXER
-int loop = sonido[NumSonido].loop?-1:0;
+
+#ifdef __EMSCRIPTEN__
+  loop = sonido[NumSonido].loop?-1:0;
+#endif
 
   /*int InitChannel=16;
 
@@ -480,8 +485,8 @@ int loop = sonido[NumSonido].loop?-1:0;
   */
 
 //  StopSound(con);
-
-	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
+// always play as loop, let
+	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, -1);
 
   channels[con].freq = Frec;
   channels[con].vol = Volumen;
