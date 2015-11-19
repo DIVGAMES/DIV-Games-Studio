@@ -2945,7 +2945,10 @@ void abrir_mapa3d(void) {
 void guardar_mapa(void) {
   int e,tipomapa;
   int an=ventana[v_ventana].an,al=ventana[v_ventana].al;
+  char filename[255];
+  
   if (big) { an/=2; al/=2; }
+
 
   strcpy(full,tipo[v_tipo].path);
   if (full[strlen(full)-1]!='/') strcat(full,"/");
@@ -2953,9 +2956,10 @@ void guardar_mapa(void) {
 
   if (strchr(input,' ')==NULL) {
     if ((f=fopen(full,"wb"))!=NULL) { // Se ha elegido uno
-
-      if (!strcmp(strupr(strchr(input,'.')),".PCX")) tipomapa=1;
-      else if (!strcmp(strupr(strchr(input,'.')),".BMP")) tipomapa=2;
+		strcpy(filename,input);
+		strupr(filename);
+      if (!strcmp(strupr(strchr(filename,'.')),".PCX")) tipomapa=1;
+      else if (!strcmp(strupr(strchr(filename,'.')),".BMP")) tipomapa=2;
       else 
       
       tipomapa=0;
