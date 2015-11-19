@@ -728,7 +728,7 @@ int optimizar;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-FILE * open_file(char * file);
+FILE * div_open_file(char * file);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -1830,7 +1830,7 @@ void lexico(void) {
       n=(strlen((char *)ivnom.b)+ptr4)/4;
       memcpy(&mem_ory[itxt],ivnom.b,strlen((char *)ivnom.b)+1);
 
-      if ((f=open_file((char *)ivnom.b))!=NULL) {
+      if ((f=div_open_file((char *)ivnom.b))!=NULL) {
         empaquetable=0;
 
         // Determinar si el archivo es empaquetable ...
@@ -7338,7 +7338,7 @@ void l_ensamblador (void) {
 //  Esta funciขn debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-FILE * open_file(char * file) {
+FILE * div_open_file(char * file) {
   FILE * f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
