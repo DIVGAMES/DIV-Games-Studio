@@ -265,7 +265,11 @@ while(SDL_PollEvent(&event))
 				}
 				checkmod((SDLMod) event.key.keysym.mod);
 				scan_code = sdl2key[event.key.keysym.sym];
-				ascii = event.key.keysym.unicode&0x7f;
+// unicode not working on android
+#ifndef DROID				
+				if(event.key.keysym.unicode>0 &&  event.key.keysym.unicode<80)
+					ascii = event.key.keysym.unicode;
+#endif				
 				kbdFLAGS[scan_code]=1;				
 			}
 			if(event.type == SDL_KEYUP) 
