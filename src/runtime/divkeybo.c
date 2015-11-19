@@ -180,6 +180,50 @@ extern float m_x,m_y;
 #ifdef DEBUG
 extern int mouse_b;
 #endif
+
+
+// shift status:
+// R_SHIFT = 1
+// L_SHIFT = 2
+// CTRL = 4
+// ALT = 8
+
+void checkmod(SDLMod mod) {
+	
+//	shift_status = 0;
+	if( mod == KMOD_NONE ){
+//            printf( "None\n" );
+            return;
+        }
+	// if( mod & KMOD_NUM ) printf( "NUMLOCK " );
+    //    if( mod & KMOD_CAPS ) printf( "CAPSLOCK " );
+        if( mod & KMOD_LCTRL ) shift_status |=4; 
+       if( mod & KMOD_RCTRL ) shift_status |=4;
+        if( mod & KMOD_RSHIFT ) shift_status |=1;
+        if( mod & KMOD_LSHIFT ) shift_status |=2;
+        if( mod & KMOD_RALT ) shift_status |=8;
+        if( mod & KMOD_LALT ) shift_status |=8;
+        if( mod & KMOD_CTRL ) shift_status |=4;
+        if( mod & KMOD_ALT ) shift_status |=8;
+        
+        if (mod & KMOD_CAPS) shift_status |=64;
+        if (mod & KMOD_NUM) shift_status |=32;
+        /*
+         if( mod & KMOD_NUM ) printf( "NUMLOCK " );
+        if( mod & KMOD_CAPS ) printf( "CAPSLOCK " );
+        if( mod & KMOD_LCTRL ) printf( "LCTRL " );
+        if( mod & KMOD_RCTRL ) printf( "RCTRL " );
+        if( mod & KMOD_RSHIFT ) printf( "RSHIFT " );
+        if( mod & KMOD_LSHIFT ) printf( "LSHIFT " );
+        if( mod & KMOD_RALT ) printf( "RALT " );
+        if( mod & KMOD_LALT ) printf( "LALT " );
+        if( mod & KMOD_CTRL ) printf( "CTRL " );
+//        if( mod & KMOD_SHIFT ) printf( "SHIFT " );
+        if( mod & KMOD_ALT ) printf( "ALT " );
+        
+        printf("\n");
+        * */
+}
 void tecla(void) {
 //printf("tecla\n");
 //ascii=0; scan_code=0;
@@ -196,12 +240,39 @@ while(SDL_PollEvent(&event))
             
             if (event.type == SDL_KEYDOWN)
             {
+				switch(event.key.keysym.sym) {
+					case SDLK_LSHIFT:
+						shift_status|=2;
+						break;
+					case SDLK_RSHIFT:
+						shift_status|=1;
+						break;
+					case SDLK_LCTRL:
+						shift_status|=4;
+						break;
+					case SDLK_RCTRL:
+						shift_status|=4;
+						break;
+					case SDLK_LALT:
+						shift_status|=8;
+						break;
+					case SDLK_RALT:
+						shift_status|=8;
+						break;
+					case SDLK_INSERT:
+						shift_status|=128;
+
+				}
+				checkmod((SDLMod) event.key.keysym.mod);
 				scan_code = sdl2key[event.key.keysym.sym];
 				ascii = event.key.keysym.unicode&0x7f;
-				kbdFLAGS[scan_code]=1;
+				kbdFLAGS[scan_code]=1;				
 			}
 			if(event.type == SDL_KEYUP) 
 			{
+				shift_status=0;
+				checkmod((SDLMod) event.key.keysym.mod);
+				
 				scan_code = sdl2key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
 				kbdFLAGS[scan_code]=0;
@@ -257,7 +328,7 @@ while(SDL_PollEvent(&event))
 #ifdef DEBUG
 					mouse_b ^=2;
 #endif
-				}
+					}
 				if(event.button.button == SDL_BUTTON_MIDDLE)
 				{
 					mouse->middle = 0;
@@ -268,6 +339,7 @@ while(SDL_PollEvent(&event))
 			}
         }
 
+    if ((shift_status&8) && scan_code==_x) alt_x=1; 
 
 #ifdef DOS
   union REGS r;
@@ -284,7 +356,6 @@ while(SDL_PollEvent(&event))
     s.ds=s.es=s.fs=s.gs=FP_SEG(&s);
     r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
   }
-
 #endif
 }
 
