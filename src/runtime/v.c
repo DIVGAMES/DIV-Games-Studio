@@ -189,8 +189,10 @@ printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 SDL_ShowCursor(SDL_DISABLE);
 
 #ifdef __EMSCRIPTEN__
-//	if(vga)
-//	SDL_FreeSurface(vga);
+	if(vga)
+		SDL_FreeSurface(vga);
+	
+	vga=NULL;
 //SDL_Quit();
 //SDL_Init(SDL_INIT_VIDEO);
 if(!vga)	
