@@ -2911,7 +2911,7 @@ void __strset(void) {
 byte strupper[270]=
   "                                                                "
   " ABCDEFGHIJKLMNOPQRSTUVWXYZ      ABCDEFGHIJKLMNOPQRSTUVWXYZ     "
-  "���A�AA�EEEIII�A���O�OUUY��     AIOU��                          "
+  "   A AA EEEIII A   O OUUY       AIOU                            "
   "                                                                ";
 
 void __strupr(void) {
@@ -2930,7 +2930,7 @@ void __strupr(void) {
 byte strlower[260]=
   "                                                                "
   " abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz     "
-  "���������������������������     ������                          "
+  "                                                                "
   "                                                                ";
 
 void __strlwr(void) {
