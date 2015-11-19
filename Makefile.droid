@@ -7,10 +7,8 @@ CC=g++
 EXECUTABLE=div-droid
 RUNTIME=div-run
 
-SOURCES=$(wildcard src/*.c)
-# $(wildcard src/osdep/*.c)
-RUNSOURCES=$(wildcard src/runtime/*.c) src/osdep/osdep.c
-# src/osx/fmemopen.c 
+SOURCES=$(wildcard src/*.c) $(wildcard src/osdep/*.c)
+RUNSOURCES=$(wildcard src/runtime/*.c) src/osdep/osdep.c src/osx/fmemopen.c 
 #src/runtime/debug/d.c
 # $(wildcard src/osdep/*.c)
 
