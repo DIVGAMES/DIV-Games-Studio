@@ -1,17 +1,17 @@
 
 // Strings, nuevo: p_string, cglo, cloc, p_*char, l*chr, ...
-// 00 - optimizacion de cï¿½digo intermedio
+// 00 - optimizacion de c¢digo intermedio
 // 00 - tablas y estructuras de hasta 3 dimensiones
-// 01 - aï¿½adir strings globales
+// 01 - a¤adir strings globales
 // 02 - probar en PRG, y provocar todos los nuevos errores
-// 03 - aï¿½adir nuevo set de instrucciones al intï¿½rprete
+// 03 - a¤adir nuevo set de instrucciones al int‚rprete
 // 04 - Preparar el debugger para el soporte de strings
-// 05 - aï¿½adir strings locales y privadas
-// 06 - comprobacion de rango en ejecuciï¿½n (strings con prefijo 0xdad00000)
+// 05 - a¤adir strings locales y privadas
+// 06 - comprobacion de rango en ejecuci¢n (strings con prefijo 0xdad00000)
 // 07 - long_header=9, en lugar de 36
 // 08 - strings globales miembros
 // 09 - strings locales miembros
-// 10 - inicializaciï¿½n de estructuras contemplando los strings miembros
+// 10 - inicializaci¢n de estructuras contemplando los strings miembros
 // 11 - STRING p,q; define 2 cadenas (en lugar de una cadena y un int)
 // 12 - Poder inicializar los registros en las estructuras globalmente (struct pepe[9] x=10; end)
 // 13 - Sentencia compiler_options (_max_process,_extended_conditions,_simple_conditions,_case_sensitive,_ignore_errors,_free_sintax)
@@ -19,7 +19,7 @@
 // 15 - Nuevo sistema de tipos (int/char/string) en expresiones y condiciones (tipo_expresion)
 // 16 - Auto conversion de "A" a char("A") en asignaciones a char (literal/constante literal/string -> char)
 // 17 - Sobrecarga de = += + en operaciones de cadenas (strcpy,strcat,stradd)
-// 18 - Aï¿½adir y quitar caracteres con string++/--, string-=n, string-n (strdec,strsub,strlen)
+// 18 - A¤adir y quitar caracteres con string++/--, string-=n, string-n (strdec,strsub,strlen)
 // 19 - Poder definir literales en varias lineas del fuente (varios consecutivos se convierten en uno)
 // 20 - Corregido fallo del coloreador de listados (al llegar un eof con /* sin cerrar)
 // 21 - Comparaciones entre cadenas (strigu/dis/may/men/mai/mei)
@@ -28,56 +28,56 @@
 //      bytes y words: pero en [ptr+n] no se puede saber por cuanto multiplicar n)
 // 24 - Solucionados algunos fallos relacionados con los accesos remotos
 // 25 - Unidas las reservadas del modo7 con las del modo 8
-// 26 - Aï¿½adidas la opciones _no_check (no comprobar rangos ni ides) y _no_strfix
+// 26 - A¤adidas la opciones _no_check (no comprobar rangos ni ides) y _no_strfix
 // 27 - Funciones ascii: char,strcpy,strcat,strlen,strcmp,strchr,strstr,strset,upper,lower y strdel
 // 28 - Habilitado un 'parche' para indicar al compilador que algunas funciones devuelven un string
 // 29 - Poder recibir un parametro en un string/char global o local (cpachr, cpastr)
 // 30 - Habilitado un sistema multi-par/pri y arreglados algunos temas de las llamadas a procesos
-// 31 - Habilitada la idea de recibir un parï¿½metro en un string private, incluso indicando su longitud (ej, proc(string s[2]))
-// 32 - Permitir la redeclaracion del parï¿½metro string dentro de la seccion private (con la misma longitud)
+// 31 - Habilitada la idea de recibir un par metro en un string private, incluso indicando su longitud (ej, proc(string s[2]))
+// 32 - Permitir la redeclaracion del par metro string dentro de la seccion private (con la misma longitud)
 // 33 - Procesos tipo "function" (no retornan al llamador hasta haber terminado) (FCount,CallerId)
-// 34 - Arreglado el tema de los retornos de function (al caller del ï¿½ltimo proceso)
+// 34 - Arreglado el tema de los retornos de function (al caller del £ltimo proceso)
 // 35 - Poder hacer STEP sobre funciones (se hace un go here! a la siguiente sentencia)
-// 36 - Aï¿½adir bytes globales y un nuevo, nuevamente, sistema de inicializaciï¿½n de datos
+// 36 - A¤adir bytes globales y un nuevo, nuevamente, sistema de inicializaci¢n de datos
 //      (ver p_byte, bglo y p_pointerbyte)
 // 37 - Preparar el debugger para el soporte de bytes y words
-// 38 - Ultimos cambios en el Debugger (en Ver datos), y conversiï¿½n al Castellano.
-// 39 - Aï¿½adir bytes locales y privados (bloc)
+// 38 - Ultimos cambios en el Debugger (en Ver datos), y conversi¢n al Castellano.
+// 39 - A¤adir bytes locales y privados (bloc)
 // 40 - Bytes miembros de estructuras (globales/locales y privados)
-// 41 - Inicializaciï¿½n de estructuras contemplando los bytes miembros (frm,ifrm_max)
-// 42 - Aï¿½adidas al intï¿½rprete instrucciones para el manejo de words (???wor)
+// 41 - Inicializaci¢n de estructuras contemplando los bytes miembros (frm,ifrm_max)
+// 42 - A¤adidas al int‚rprete instrucciones para el manejo de words (???wor)
 // 43 - Words al igual que bytes (wglo wloc *word ???wor)
-// 44 - Poder recibir un byte o word como parï¿½metro (y redeclararlo como private)
+// 44 - Poder recibir un byte o word como par metro (y redeclararlo como private)
 // 45 - Fallo del coloreador (debajo de process ... poner ?????????)
-// 46 - Que en las listas de procesos (F5) aparezcan tambiï¿½n las funciones (editor y debugger)
+// 46 - Que en las listas de procesos (F5) aparezcan tambi‚n las funciones (editor y debugger)
 // 47 - Fallo de que desaparezcan (completamente) los sprites en los modos 8
 // 48 - Pasar los IMPORT al comienzo del programa y emitir un error adecuado para los IMPORT antiguos (y adaptar help)
 // 49 - Quitado el formateador de listados (dejado todo en divfrm.cpp por si en el futuro se quiere hacer, de forma separada a divc.cpp)
 // 50 - Que las funciones puedan devolver un valor con return despues de haber hecho FRAME (sistema multipila)
-// 51 - Aï¿½adido el tipo INT opcional para los datos enteros convencionales en DIV 1
-// 52 - Declaraciï¿½n de punteros a INT globales/locales/privados y miembros de estructuras (tpigl,tpilo) de hasta 3 dimensiones
-// 53 - Utilizaciï¿½n de punteros INT, generaciï¿½n de cï¿½digo para los mismos (y pruebas)
+// 51 - A¤adido el tipo INT opcional para los datos enteros convencionales en DIV 1
+// 52 - Declaraci¢n de punteros a INT globales/locales/privados y miembros de estructuras (tpigl,tpilo) de hasta 3 dimensiones
+// 53 - Utilizaci¢n de punteros INT, generaci¢n de c¢digo para los mismos (y pruebas)
 // 54 - Soporte en el debugger para punteros INT globales y locales (p, p[0], p[1], ...)
-// 55 - Punteros a int como parï¿½metros y redeclaraciï¿½n en secciï¿½n PRIVATE
-// 56 - Prohibir la redeclaraciï¿½n de variables private (solo si es 1 vez como parametro y otra como private)
-// 57 - Punteros a byte/word, tanto global como local y private, member o no, declaraciï¿½n y cï¿½digo
+// 55 - Punteros a int como par metros y redeclaraci¢n en secci¢n PRIVATE
+// 56 - Prohibir la redeclaraci¢n de variables private (solo si es 1 vez como parametro y otra como private)
+// 57 - Punteros a byte/word, tanto global como local y private, member o no, declaraci¢n y c¢digo
 // 58 - Soporte en el debugger de punteros de tipo byte y word (globales y locales)
 // 59 - Eliminada la posibilidad de utilizar * para definir un puntero (y en el debugger se usa POINTER)
-//      (esto es importante para no animar a utilizar *puntero despuï¿½s ...)
+//      (esto es importante para no animar a utilizar *puntero despu‚s ...)
 // 60 - Probar punteros int/word/byte (glo/loc/pri/mem/par)
-// 61 - Implementados "string pointer" exactamente igual que los "byte pointer" (sï¿½lo varia la visualizaciï¿½n en el debug)
+// 61 - Implementados "string pointer" exactamente igual que los "byte pointer" (s¢lo varia la visualizaci¢n en el debug)
 // 62 - Punteros a estructuras STRUCT POINTER NOMBRESTRUCT tal; (por defecto a 0)
 // 63 - Resuelto el problema del acceso a los miembros de la estructura original
 // 64 - Soporte en el debugger para punteros a estructuras (!!! mas chungo de lo que yo pensaba)
 // 65 - Funcion de "capar()" direcciones en DEBUG para evitar en lo posible los page fault
-// 66 - Resueltos "n-mil" problemas con los putos punteros, el debugger y la madre que lo pariï¿½ ...
+// 66 - Resueltos "n-mil" problemas con los putos punteros, el debugger y la madre que lo pari¢ ...
 // 67 - Hacer que int/byte/word/string pointer p1,p2; defina dos punteros
-// 68 - Funcion screen_copy que puede pasar una region de pantalla a una region de un grï¿½fico
-// 69 - Argc/argv al igual que en C, con los parï¿½metros del programa
-// 70 - Nuevo sistema de carga de funciones, definiendo el retorno y el tipo de los parï¿½metros
+// 68 - Funcion screen_copy que puede pasar una region de pantalla a una region de un gr fico
+// 69 - Argc/argv al igual que en C, con los par metros del programa
+// 70 - Nuevo sistema de carga de funciones, definiendo el retorno y el tipo de los par metros
 //      (y eliminadas las excepciones antes contempladas con las funciones de cadenas)
-// 71 - Funcion de ordenaciï¿½n y desordenaciï¿½n (nombre_estructura,campo,modo)
-// 72 - Minimizado el buffer circular de teclado en la ejecuciï¿½n de los juegos
+// 71 - Funcion de ordenaci¢n y desordenaci¢n (nombre_estructura,campo,modo)
+// 72 - Minimizado el buffer circular de teclado en la ejecuci¢n de los juegos
 // 73 - Comprobar accesos a "NULL pointed data" de lectura/escritura
 // 74 - Opciones _no_id_check _no_range_check _no_null_check (englobadas en _no_check)
 // 75 - Opcion de compilacion _no_optimize (para poder deshabiliatar la optimizacion)
@@ -96,118 +96,118 @@
 // E - Finalizar el autoformateador de listados
 // F - Generar un NFO informativo del programa compilado (TAB+LST+EML)
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 // SOLUCION 1: POINTERS BYTE/WORD LIMITADOS A TABLAS BYTE/WORD
 
-// OJO! No se podrï¿½ hacer ptrbyte++ (ya que incrementarï¿½ 4 bytes)
-//      ni ptrword++, que incrementarï¿½ 2 words
+// OJO! No se podr  hacer ptrbyte++ (ya que incrementar  4 bytes)
+//      ni ptrword++, que incrementar  2 words
 
-// (*)  A la hora de hacer que *ptrbyte sea ptrbyte[0] (supongo que aï¿½adiendo
-//      un nuevo tipo de ï¿½p_pointerb?), se deberï¿½a emitir un error al hacer
+// (*)  A la hora de hacer que *ptrbyte sea ptrbyte[0] (supongo que a¤adiendo
+//      un nuevo tipo de ¨p_pointerb?), se deber¡a emitir un error al hacer
 //      ++, --, +=, etc. sobre un p_pointerb/w ...
-//    - Problema, ï¿½como prohibir ptrbyte=ptrbyte+1;?
-//    - Tambiï¿½n se podrï¿½an permitir las operaciones, aunque los resultados fueran errï¿½neos
+//    - Problema, ¨como prohibir ptrbyte=ptrbyte+1;?
+//    - Tambi‚n se podr¡an permitir las operaciones, aunque los resultados fueran err¢neos
 
-//    - Aun asï¿½, ï¿½como explicar a la gente que ptrint++ funciona, pero que ptrbyte++ no?
+//    - Aun as¡, ¨como explicar a la gente que ptrint++ funciona, pero que ptrbyte++ no?
 
-//    - Ventajas: ya estï¿½ (casi) hecho, no presenta incompatibilidades con
-//      DIV1, hay poco tiempo disponible ..., aun asï¿½, se permite el uso
-//      de memoria dinï¿½mica ... y siempre se podrï¿½ pasar a la SOLUCION 3 mï¿½s
+//    - Ventajas: ya est  (casi) hecho, no presenta incompatibilidades con
+//      DIV1, hay poco tiempo disponible ..., aun as¡, se permite el uso
+//      de memoria din mica ... y siempre se podr  pasar a la SOLUCION 3 m s
 //      adelante
 
-//    - aunque quizï¿½ esto no se deberï¿½a llamar pointer ... sino algo como
-//      "tï¿½blas dinï¿½micas" (por que se pueden hacer mallocs de las mismas)
+//    - aunque quiz  esto no se deber¡a llamar pointer ... sino algo como
+//      "t blas din micas" (por que se pueden hacer mallocs de las mismas)
 
-//    - Hombre, tambiï¿½n servirï¿½a para pasar tablas y estructuras por parï¿½metros.
-//    - Quizï¿½ se deberï¿½a prohibir utilizar "p_mul" (*) para diferenciarlos de
+//    - Hombre, tambi‚n servir¡a para pasar tablas y estructuras por par metros.
+//    - Quiz  se deber¡a prohibir utilizar "p_mul" (*) para diferenciarlos de
 //      los punteros en C.
 
-//    - El problema es: ï¿½Se prohibe operar (sumas y demï¿½s) con ptrbyte/word? -> NO
+//    - El problema es: ¨Se prohibe operar (sumas y dem s) con ptrbyte/word? -> NO
 
-//    - ï¿½Poder utilizar *ptrbyte como ptrbyte[0] ? -> NO, ya que ello inducirï¿½a
+//    - ¨Poder utilizar *ptrbyte como ptrbyte[0] ? -> NO, ya que ello inducir¡a
 //      al acceso de bytes con *ptrbyte, cuando no es posible
 
 // SOLUCION 2: POINTERS BYTE/WORD RELATIVOS A &MEM[0]
 
-//    - OJO, quizï¿½ los punteros a byte y word deberï¿½an ser diferentes
+//    - OJO, quiz  los punteros a byte y word deber¡an ser diferentes
 //    - (que pointerb/w fueran un offset byte/word relativo a &memb[0])
-//    - ï¿½Nuevo diseï¿½o para: tpwgl tpwlo tpbgl tpblo? (teniï¿½ndolos siempre multiplicados *2 o *4)
+//    - ¨Nuevo dise¤o para: tpwgl tpwlo tpbgl tpblo? (teni‚ndolos siempre multiplicados *2 o *4)
 //    - a) en incializacion se debe multiplicar *2 o *4 la constante (ptrbyte=&tablabyte)
-//    - b) como cojones se hace ptrbyte=&loquesea ? (como paso de parï¿½metro, asignaciï¿½n, etc...)
-//    - c) y que pasa con ï¿½ptrword=ptrbyte?
-//    - d) es mï¿½s, ï¿½y que pasa si se envia como parï¿½metro un ptrbyte y se recibe un ptrint?
+//    - b) como cojones se hace ptrbyte=&loquesea ? (como paso de par metro, asignaci¢n, etc...)
+//    - c) y que pasa con ¨ptrword=ptrbyte?
+//    - d) es m s, ¨y que pasa si se envia como par metro un ptrbyte y se recibe un ptrint?
 
-//    - Solo podrï¿½a hacerse de forma que todos los accesos de lectura a ptrbyte se dividiera por 4
-//      y en los de escritura se multiplicara por cuatro, y aun asï¿½:
-//      ï¿½ï¿½ï¿½ fallarï¿½a ptrbyte1=ptrbyte2 !!! (o pasando y recibiendo un ptrbyte parï¿½metro)
-//      ï¿½[ptrbyte+n] ... y *ptrbyte?
+//    - Solo podr¡a hacerse de forma que todos los accesos de lectura a ptrbyte se dividiera por 4
+//      y en los de escritura se multiplicara por cuatro, y aun as¡:
+//      ­­­ fallar¡a ptrbyte1=ptrbyte2 !!! (o pasando y recibiendo un ptrbyte par metro)
+//      ¨[ptrbyte+n] ... y *ptrbyte?
 
-//    - Es una gilipollez, ya que ptrbyte=ptrbyte+1 le seguirï¿½a sumando 4 !!!
+//    - Es una gilipollez, ya que ptrbyte=ptrbyte+1 le seguir¡a sumando 4 !!!
 
-//    - Ventajas: Pues que no sï¿½ si en este caso la virtud estarï¿½ en el
-//      tï¿½rmino medio ...
+//    - Ventajas: Pues que no s‚ si en este caso la virtud estar  en el
+//      t‚rmino medio ...
 
 // SOLUCION 3: PASAR TODOS LOS OFFSET A BYTE
 
-//    - Deberï¿½a haber alguna forma de tener todos los offset multiplicados por 4 (en bytes)
+//    - Deber¡a haber alguna forma de tener todos los offset multiplicados por 4 (en bytes)
 
-//    - Problemas: ["ptr"+n] (por cuanto multiplicar n), ademï¿½s de como resolver
-//      [ptrint+ptrbyte+2*x...], acceso en el intï¿½rprete a todos los datos de mem
+//    - Problemas: ["ptr"+n] (por cuanto multiplicar n), adem s de como resolver
+//      [ptrint+ptrbyte+2*x...], acceso en el int‚rprete a todos los datos de mem
 //      mem[id+_Graph], los propios id (multiplicarlos o no?- > mejor no, y hacer que el p_punto los multiplique,
-//      ya que, ademï¿½s deben ser impares), programas antiguos que hicieran uso de punteros
-//      (p=&kk; *p..., p++, *p... para ello se deberï¿½a emitir un error de compilaciï¿½n al utilizar *p o [p],
+//      ya que, adem s deben ser impares), programas antiguos que hicieran uso de punteros
+//      (p=&kk; *p..., p++, *p... para ello se deber¡a emitir un error de compilaci¢n al utilizar *p o [p],
 //      obligando a que redeclaren p como un ptrint), que ptrint++ sea ptrint+=4 y ptrword++ sea ptrword+=2,
 
 //    - Cambiarian tambien los sizeof(), ahora en bytes, y las operaciones con
-//      ficheros, aumentando la incompatibilidad con DIV1 (ya que la gente podrï¿½a
+//      ficheros, aumentando la incompatibilidad con DIV1 (ya que la gente podr¡a
 //      haber utilizado un save("pepe.dat",&tabla,10) ...
 
-//    - Resumiendo: que los problemas gordos son el intï¿½rprete (sobre todo, ya
+//    - Resumiendo: que los problemas gordos son el int‚rprete (sobre todo, ya
 //      que era un rollo eso del "#define memo(x) *(int*)(memb+x)" ),
 //      el de [ptr???+???] (y ptrint++), y las incompatibilidades con DIV1
 
-//    - Ventajas: El acceso libre a cualquier tipo de dato, la simplificaciï¿½n
-//      de strings, el poder hacer que "byte a" ocupe realmente sï¿½lo un byte, ...
-//      que es la forma correcta de hacerlo, y que si no se hace ahora quizï¿½
+//    - Ventajas: El acceso libre a cualquier tipo de dato, la simplificaci¢n
+//      de strings, el poder hacer que "byte a" ocupe realmente s¢lo un byte, ...
+//      que es la forma correcta de hacerlo, y que si no se hace ahora quiz 
 //      no se pueda hacer nunca.
 
 // SOLUCION 4: PASAR LOS OFFSET A FLOAT
 
-//    - Se que a bote pronto parace una gilipollez, pero ï¿½no serï¿½a lo ideal
+//    - Se que a bote pronto parace una gilipollez, pero ¨no ser¡a lo ideal
 //      poder tener como offset de bytes numeros .25, .50 y .75?
 
-//    - Lo guay serï¿½a que ptrint++ seguirï¿½a sumando 1.0
+//    - Lo guay ser¡a que ptrint++ seguir¡a sumando 1.0
 
-//    - y para los accesos a bytes se sumarï¿½a .25, el problema es que todo
-//      se llenarï¿½a de llamadas a _CHP e iria muy lento
+//    - y para los accesos a bytes se sumar¡a .25, el problema es que todo
+//      se llenar¡a de llamadas a _CHP e iria muy lento
 
-//    - Ademï¿½s, ï¿½como iban a devolver offset o sizeof() un float si el
+//    - Adem s, ¨como iban a devolver offset o sizeof() un float si el
 //      lenguaje no los maneja?
 
 // OJO! EN ESTA VERSION TODAVIA NO HE HECHO NINGUNA BURRADA
 //      RELATIVA A MULTIPLICAR LOS OFFSET POR 4 !!!!!!!!!!!
-//      (en una ocasiï¿½n lo intentï¿½ .. y lo acabï¿½ deshaciendo todo)
+//      (en una ocasi¢n lo intent‚ .. y lo acab‚ deshaciendo todo)
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-// Optimizaciï¿½n de codigo intermedio
+// Optimizaci¢n de codigo intermedio
 
-// 1er paso: Crear una funciï¿½n de generaciï¿½n de mnemï¿½nicos, en lugar de un
-//           acceso libre a mem[], para localizar el problema de la optimizaciï¿½n
+// 1er paso: Crear una funci¢n de generaci¢n de mnem¢nicos, en lugar de un
+//           acceso libre a mem[], para localizar el problema de la optimizaci¢n
 
 // no se puede generar codigo a byte, pero si utilizar el sistema de "byte"
-// como compresion de los EXE, descomprimiendo en el intï¿½rprete al cargar
+// como compresion de los EXE, descomprimiendo en el int‚rprete al cargar
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 // Tablas y estructuras multidimensionales
 // revisar errores: 35, ...
-// OJO en la ayuda con las tablas y las estrucuturas de SOLO una dimensiï¿½n
+// OJO en la ayuda con las tablas y las estrucuturas de SOLO una dimensi¢n
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      DIV - Compilador Interno
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #define listados // Para generar los listados de objetos y EML (LST/TAB/EML)
 
@@ -259,11 +259,11 @@ void add_code(int dir, int param, int op);
 
 
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Constantes
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-#define version "0c88b" //Versiï¿½n del compilador
+#define version "0c88b" //Versi¢n del compilador
 
 #ifndef SHARE
 #define max_obj 8192    //Compiler object maximum limit compiler
@@ -273,10 +273,10 @@ void add_code(int dir, int param, int op);
 #define long_med_id 20  //Longitud media de los identificadores (+4+4+1)
 #endif
 
-#define max_nodos 128   //Mï¿½ximo nï¿½mero de nodos del lï¿½xico para sï¿½mbolos
-#define max_exp 512     //Mï¿½ximo nï¿½mero de elementos en una expresiï¿½n
+#define max_nodos 128   //M ximo n£mero de nodos del l‚xico para s¡mbolos
+#define max_exp 512     //M ximo n£mero de elementos en una expresi¢n
 #define long_header 9   //Longitud de la cabecera al inicio de los programas
-#define long_pila 2048  //Longitud de la pila en ejecuciï¿½n
+#define long_pila 2048  //Longitud de la pila en ejecuci¢n
 
 #define default_buffer    (16384*8)
 #define security_distance (4096*8)
@@ -284,20 +284,20 @@ void add_code(int dir, int param, int op);
 
 #define cr 13           //Retorno de carro
 #define lf 10           //Salto de linea
-#define tab 9           //Tabulaciï¿½n
+#define tab 9           //Tabulaci¢n
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #define l_err 0         //Valores de lex_case, si no son punteros a lex_simb
-#define l_cr  1         //Fin de linea (l_err Carï¿½cter no esperado)
+#define l_cr  1         //Fin de linea (l_err Car cter no esperado)
 #define l_id  2         //Identificador o palabra reservada
 #define l_spc 3         //Espacios y tabulaciones
 #define l_lit 4         //Literal
-#define l_num 5         //Constante numï¿½rica
+#define l_num 5         //Constante num‚rica
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Valores sintï¿½cticos o tokens (pieza)
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Valores sint cticos o tokens (pieza)
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #define p_ultima        0x00 //Fin de fichero <EOF>
 
@@ -475,9 +475,9 @@ void add_code(int dir, int param, int op);
 
 #define p_lit           0xfc //Puntero al literal (txt) en pieza_num
 #define p_id            0xfd //o es un ptr a vnom (a un ptr al objeto)
-#define p_num           0xfe //Nï¿½mero en pieza_num
+#define p_num           0xfe //N£mero en pieza_num
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #define tnone   0       // Tipos de objetos en obj[]
 #define tcons   1
@@ -491,7 +491,7 @@ void add_code(int dir, int param, int op);
 #define tfunc   9
 #define tsglo   10
 #define tsloc   11
-#define tfext   12      // Funciï¿½n de una librerï¿½a externa
+#define tfext   12      // Funci¢n de una librer¡a externa
 
 #define tbglo   13      // Byte global
 #define twglo   14
@@ -511,58 +511,58 @@ void add_code(int dir, int param, int op);
 #define tpsgl   25      // Punteros a struct
 #define tpslo   26
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #define econs   0       // Constante          // Tipos de elementos en tabexp[]
 #define eoper   1       // Operador
-#define erango  2       // Comprobaciï¿½n de rango
+#define erango  2       // Comprobaci¢n de rango
 #define ewhoami 3       // Identificador de proceso
-#define ecall   4       // Creaciï¿½n de un proceso
-#define efunc   5       // Llamada a una funciï¿½n interna
-#define efext   6       // Llamada a una funciï¿½n externa
-#define echeck  7       // Comprobaciï¿½n de validez de un identificador
+#define ecall   4       // Creaci¢n de un proceso
+#define efunc   5       // Llamada a una funci¢n interna
+#define efext   6       // Llamada a una funci¢n externa
+#define echeck  7       // Comprobaci¢n de validez de un identificador
 #define estring 8       // Cadena de texto (su offset constante)
-#define enull   9       // Comprobaciï¿½n de NULL pointer
+#define enull   9       // Comprobaci¢n de NULL pointer
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-//ï¿½Mnemï¿½nicoï¿½Cï¿½dg.ï¿½Operandos (Generaciï¿½n de cï¿½digo EML, "*" ï¿½ "aï¿½n no usado")
+//ÄMnem¢nicoÄC¢dg.ÄOperandos (Generaci¢n de c¢digo EML, "*" ğ "a£n no usado")
 
-#define lnop  0 // *            No operaciï¿½n
+#define lnop  0 // *            No operaci¢n
 #define lcar  1 // valor        Carga una constante en pila
 #define lasi  2 //              Saca valor, offset y mete el valor en [offset]
-#define lori  3 //              Or lï¿½gico
+#define lori  3 //              Or l¢gico
 #define lxor  4 //              Xor, or exclusivo
-#define land  5 //              And lï¿½gico, operador sobre condiciones
-#define ligu  6 //              Igual, operador logico de comparaciï¿½n
+#define land  5 //              And l¢gico, operador sobre condiciones
+#define ligu  6 //              Igual, operador logico de comparaci¢n
 #define ldis  7 //              Distinto, true si los 2 valores son diferentes
-#define lmay  8 //              Mayor, comparaciï¿½n con signo
+#define lmay  8 //              Mayor, comparaci¢n con signo
 #define lmen  9 //              Menor, idem
 #define lmei 10 //              Menor o igual
 #define lmai 11 //              Mayor o igual
 #define ladd 12 //              Suma dos constantes
-#define lsub 13 //              Resta, operaciï¿½n binaria
-#define lmul 14 //              Multiplicaciï¿½n
-#define ldiv 15 //              Divisiï¿½n de enteros
-#define lmod 16 //              Mï¿½dulo, resto de la divisiï¿½n
-#define lneg 17 //              Negaciï¿½n, cambia de signo una constante
+#define lsub 13 //              Resta, operaci¢n binaria
+#define lmul 14 //              Multiplicaci¢n
+#define ldiv 15 //              Divisi¢n de enteros
+#define lmod 16 //              M¢dulo, resto de la divisi¢n
+#define lneg 17 //              Negaci¢n, cambia de signo una constante
 #define lptr 18 //              Pointer, saca offset y mete [offset]
-#define lnot 19 //              Negaciï¿½n binaria, bit a bit
+#define lnot 19 //              Negaci¢n binaria, bit a bit
 #define laid 20 //              Suma id a la constante de la pila
 #define lcid 21 //              Carga id en la pila
-#define lrng 22 // rango        Realiza una comparaciï¿½n de rango
-#define ljmp 23 // offset       Salta a una direcciï¿½n de mem[]
-#define ljpf 24 // offset       Salta si un valor es falso a una direcciï¿½n
-#define lfun 25 // cï¿½digo       Llamada a un proceso interno, ej. signal()
+#define lrng 22 // rango        Realiza una comparaci¢n de rango
+#define ljmp 23 // offset       Salta a una direcci¢n de mem[]
+#define ljpf 24 // offset       Salta si un valor es falso a una direcci¢n
+#define lfun 25 // c¢digo       Llamada a un proceso interno, ej. signal()
 #define lcal 26 // offset       Crea un nuevo proceso en el programa
-#define lret 27 //              Auto-eliminaciï¿½n del proceso
+#define lret 27 //              Auto-eliminaci¢n del proceso
 #define lasp 28 //              Desecha un valor apilado
-#define lfrm 29 //              Detiene por este frame la ejecuciï¿½n del proceso
-#define lcbp 30 // num_par      Inicializa el puntero a los parï¿½metros locales
-#define lcpa 31 //              Saca offset, lee parï¿½metro [offset] y bp++
+#define lfrm 29 //              Detiene por este frame la ejecuci¢n del proceso
+#define lcbp 30 // num_par      Inicializa el puntero a los par metros locales
+#define lcpa 31 //              Saca offset, lee par metro [offset] y bp++
 #define ltyp 32 // bloque       Define el tipo de proceso actual (colisiones)
-#define lpri 33 // offset       Salta a la direcciï¿½n, y carga var. privadas
-#define lcse 34 // offset       Si switch <> expresiï¿½n, salta al offset
+#define lpri 33 // offset       Salta a la direcci¢n, y carga var. privadas
+#define lcse 34 // offset       Si switch <> expresi¢n, salta al offset
 #define lcsr 35 // offset       Si switch no esta en el rango, salta al offset
 #define lshr 36 //              Rotacion a la derecha (modo C, >>)
 #define lshl 37 //              Rotacion a la izquierda (modo C, <<)
@@ -570,26 +570,26 @@ void add_code(int dir, int param, int op);
 #define lpti 39 //              Pointer e incremento
 #define ldpt 40 //              Decremento y pointer
 #define lptd 41 //              Pointer y decremento
-#define lada 42 //              Add-asignaciï¿½n
-#define lsua 43 //              Sub-asignaciï¿½n
-#define lmua 44 //              Mul-asignaciï¿½n
-#define ldia 45 //              Div-asignaciï¿½n
-#define lmoa 46 //              Mod-asignaciï¿½n
-#define lana 47 //              And-asignaciï¿½n
-#define lora 48 //              Or-asignaciï¿½n
-#define lxoa 49 //              Xor-asignaciï¿½n
-#define lsra 50 //              Shr-asignaciï¿½n
-#define lsla 51 //              Shl-asignaciï¿½n
-#define lpar 52 // num_par_pri  Define el nï¿½mero de parï¿½metros privados
-#define lrtf 53 //              Auto-eliminaciï¿½n del proceso, devuelve un valor
+#define lada 42 //              Add-asignaci¢n
+#define lsua 43 //              Sub-asignaci¢n
+#define lmua 44 //              Mul-asignaci¢n
+#define ldia 45 //              Div-asignaci¢n
+#define lmoa 46 //              Mod-asignaci¢n
+#define lana 47 //              And-asignaci¢n
+#define lora 48 //              Or-asignaci¢n
+#define lxoa 49 //              Xor-asignaci¢n
+#define lsra 50 //              Shr-asignaci¢n
+#define lsla 51 //              Shl-asignaci¢n
+#define lpar 52 // num_par_pri  Define el n£mero de par metros privados
+#define lrtf 53 //              Auto-eliminaci¢n del proceso, devuelve un valor
 #define lclo 54 // offset       Crea un clon del proceso actual
 #define lfrf 55 //              Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
 #define limp 56 // offset text  Importa una DLL externa
-#define lext 57 // cï¿½digo       Llama a una funciï¿½n externa
+#define lext 57 // c¢digo       Llama a una funci¢n externa
 #define lchk 58 //              Comprueba la validez de un identificador
 #define ldbg 59 //              Invoca al debugger
 
-// Instrucciones aï¿½adidas para la optimizaciï¿½n (DIV 2.0)
+// Instrucciones a¤adidas para la optimizaci¢n (DIV 2.0)
 
 #define lcar2 60
 #define lcar3 61
@@ -610,7 +610,7 @@ void add_code(int dir, int param, int op);
 #define lcarsub 76
 #define lcardiv 77
 
-// Instrucciones aï¿½adidas para el manejo de caracteres
+// Instrucciones a¤adidas para el manejo de caracteres
 
 #define lptrchr 78  // Pointer, saca (index, offset) y mete [offset+byte index]
 #define lasichr 79  // Saca (valor, index, offset) y mete el valor en [offset+byte index]
@@ -618,25 +618,25 @@ void add_code(int dir, int param, int op);
 #define lptichr 81  // Pointer e incremento
 #define ldptchr 82  // Decremento y pointer
 #define lptdchr 83  // Pointer y decremento
-#define ladachr 84  // Add-asignaciï¿½n
-#define lsuachr 85  // Sub-asignaciï¿½n
-#define lmuachr 86  // Mul-asignaciï¿½n
-#define ldiachr 87  // Div-asignaciï¿½n
-#define lmoachr 88  // Mod-asignaciï¿½n
-#define lanachr 89  // And-asignaciï¿½n
-#define lorachr 90  // Or-asignaciï¿½n
-#define lxoachr 91  // Xor-asignaciï¿½n
-#define lsrachr 92  // Shr-asignaciï¿½n
-#define lslachr 93  // Shl-asignaciï¿½n
-#define lcpachr 94  // Saca offset, lee parï¿½metro [offset] y bp++
+#define ladachr 84  // Add-asignaci¢n
+#define lsuachr 85  // Sub-asignaci¢n
+#define lmuachr 86  // Mul-asignaci¢n
+#define ldiachr 87  // Div-asignaci¢n
+#define lmoachr 88  // Mod-asignaci¢n
+#define lanachr 89  // And-asignaci¢n
+#define lorachr 90  // Or-asignaci¢n
+#define lxoachr 91  // Xor-asignaci¢n
+#define lsrachr 92  // Shr-asignaci¢n
+#define lslachr 93  // Shl-asignaci¢n
+#define lcpachr 94  // Saca offset, lee par metro [offset] y bp++
 
-// Instrucciones aï¿½adidas para el manejo de cadenas
+// Instrucciones a¤adidas para el manejo de cadenas
 
 #define lstrcpy 95  // Saca si, di, y hace strcpy(mem[di],[si]) (deja di en pila)
 #define lstrfix 96  // Amplia una cadena antes de meter un char en ella
 #define lstrcat 97  // Concatena dos cadenas (opera como strcpy)
 #define lstradd 98  // Suma dos strings "en el aire" y deja en pila el puntero al aire
-#define lstrdec 99  // Aï¿½ade o quita caracteres a una cadena
+#define lstrdec 99  // A¤ade o quita caracteres a una cadena
 #define lstrsub 100 // Quita caracteres a una cadena (-=)
 #define lstrlen 101 // Sustituye una cadena por su longitud
 #define lstrigu 102 // Comparacion de igualdad de dos cadenas
@@ -645,9 +645,9 @@ void add_code(int dir, int param, int op);
 #define lstrmen 105 // Cadena menor
 #define lstrmei 106 // Cadena mayor o igual
 #define lstrmai 107 // Cadena menor o igual
-#define lcpastr 108 // Carga un parï¿½metro en una cadena
+#define lcpastr 108 // Carga un par metro en una cadena
 
-// Instrucciones aï¿½adidas para el manejo de Words
+// Instrucciones a¤adidas para el manejo de Words
 
 #define lptrwor 109 // Pointer, saca (index, offset) y mete [offset+byte index]
 #define lasiwor 110 // Saca (valor, index, offset) y mete el valor en [offset+byte index]
@@ -655,25 +655,25 @@ void add_code(int dir, int param, int op);
 #define lptiwor 112 // Pointer e incremento
 #define ldptwor 113 // Decremento y pointer
 #define lptdwor 114 // Pointer y decremento
-#define ladawor 115 // Add-asignaciï¿½n
-#define lsuawor 116 // Sub-asignaciï¿½n
-#define lmuawor 117 // Mul-asignaciï¿½n
-#define ldiawor 118 // Div-asignaciï¿½n
-#define lmoawor 119 // Mod-asignaciï¿½n
-#define lanawor 120 // And-asignaciï¿½n
-#define lorawor 121 // Or-asignaciï¿½n
-#define lxoawor 122 // Xor-asignaciï¿½n
-#define lsrawor 123 // Shr-asignaciï¿½n
-#define lslawor 124 // Shl-asignaciï¿½n
-#define lcpawor 125 // Saca offset, lee parï¿½metro [offset] y bp++
+#define ladawor 115 // Add-asignaci¢n
+#define lsuawor 116 // Sub-asignaci¢n
+#define lmuawor 117 // Mul-asignaci¢n
+#define ldiawor 118 // Div-asignaci¢n
+#define lmoawor 119 // Mod-asignaci¢n
+#define lanawor 120 // And-asignaci¢n
+#define lorawor 121 // Or-asignaci¢n
+#define lxoawor 122 // Xor-asignaci¢n
+#define lsrawor 123 // Shr-asignaci¢n
+#define lslawor 124 // Shl-asignaci¢n
+#define lcpawor 125 // Saca offset, lee par metro [offset] y bp++
 
-// Miscelï¿½nea
+// Miscel nea
 
 #define lnul    126 // Comprueba que un puntero no sea NULL
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Prototipos
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void c_error(word,word);
 void analiza_comandos(word,byte**);
@@ -701,9 +701,9 @@ void comp_exit(void)
 
 
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Variables globales del compilador
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #include "div_stub.h"
 
@@ -726,20 +726,20 @@ int comprueba_null;
 int hacer_strfix;
 int optimizar;
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-static FILE * open_file(char * file);
+FILE * open_file(char * file);
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-int old_linea; // Situaciï¿½n en el fichero del token anterior al ï¿½ltimo leido
+int old_linea; // Situaci¢n en el fichero del token anterior al £ltimo leido
 byte * old_ierror, * old_ierror_end;
 
-// El ï¿½ltimo token leido estï¿½ en (linea,ierror,ierror_end)
+// El £ltimo token leido est  en (linea,ierror,ierror_end)
 
 byte * ultima_linea,cero=0;
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 // Informacion para EXEC.LIN (posicion en mem y fuente de cada sentencia)
 
@@ -751,17 +751,17 @@ void inicio_sentencia(void);  // Fija inicio, linea1, columna1
 void final_sentencia(void);   // Fija final, linea2, columna2
 void grabar_sentencia(void);  // Guarda las seis variables en el fichero
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-// Tabla de objetos ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ *iobj primer objeto libre
+// Tabla de objetos ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ *iobj primer objeto libre
 
 struct objeto {
   byte tipo;    // Tipo de objeto
   byte usado;   // Indica si el objeto ha sido usado antes de definirse
-  byte * name;  // Puntero al nombre, para algï¿½n listado
-  byte * ierror;// Puntero al cï¿½digo para determinar la columna si es necesario
-  int linea;    // Lï¿½nea de cï¿½digo fuente, para informar del error
-  int param;    // Indica que es un objeto declarado en los parï¿½metros
+  byte * name;  // Puntero al nombre, para alg£n listado
+  byte * ierror;// Puntero al c¢digo para determinar la columna si es necesario
+  int linea;    // L¡nea de c¢digo fuente, para informar del error
+  int param;    // Indica que es un objeto declarado en los par metros
   struct objeto * anterior; // Anterior objeto de igual nombre
   struct objeto * bloque;   // Bloque de este proceso (0-global/local N-private)
   struct objeto * member;   // Indica a que struct pertenece (0-n/a)
@@ -794,14 +794,14 @@ struct objeto {
     } cglo,pcgl;
     struct {                                            // Struct
       int offset;
-      int len_item;                                     // Nï¿½mero de campos
+      int len_item;                                     // N£mero de campos
       int totalitems;                                   // Numero total de registros
       int items1,items2,items3;                         // -1 si n/a
     } sglo,sloc;
     struct {                                            // Struct pointer
       int offset;
       struct objeto * ostruct;                          // Puntero al struct
-      int totalitems;                                   // Nï¿½mero total de registros
+      int totalitems;                                   // N£mero total de registros
       int items1,items2,items3;                         // -1 si n/a
     } psgl,pslo;
     struct {                                            // Variable local
@@ -842,9 +842,9 @@ struct objeto {
       int num_par;
     } fext;
   };
-} obj[max_obj], * iobj; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+} obj[max_obj], * iobj; // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 byte * vnom=NULL; // Vector de nombres (cad_hash:int, pieza (o iobj):int, asciiz)
 union { byte*b; byte**p; } ivnom;
@@ -853,7 +853,7 @@ byte * inicio_objetos; // Para el crear listado de la tabla de objetos
 
 byte * vhash[256]; // Pointer to the vector of names
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 struct exp_ele {
   byte tipo; // econs, eoper, erango, ewhoami, ecall
@@ -881,13 +881,13 @@ int linea, num_nodos, num_obj;
 
 int num_obj_predefinidos;
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int parametros;
 
 int acceso_remoto; // Para no permitir id.private
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #define max_break 512
 int tbreak[max_break];
@@ -897,9 +897,9 @@ int itbreak;
 int tcont[max_cont];
 int itcont;
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-int pila[long_pila+max_exp+64]; // cï¿½lculo de expresiones (compilaciï¿½n y ejecuciï¿½n)
+int pila[long_pila+max_exp+64]; // c lculo de expresiones (compilaci¢n y ejecuci¢n)
 
 int * mem_ory=NULL, * frm=NULL;
 int * mem=NULL, * loc=NULL;
@@ -912,12 +912,12 @@ byte * imemptr;
 int iloc_len; // final de las variables locales incluyendo las privadas
 
 // mem[]        vector de memoria destino
-// imem         puntero para la generaciï¿½n de datos y cï¿½digo
-// imem_max     fin de la memoria destino (indice mï¿½ximo de mem[])
+// imem         puntero para la generaci¢n de datos y c¢digo
+// imem_max     fin de la memoria destino (indice m ximo de mem[])
 // iloc         inicio en mem[] de las variables locales (inicializadas)
 // iloc_len     longitud de las variables locales
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Inserciï¿½n en la tabla de expresiones, acceso a variables
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄ Inserci¢n en la tabla de expresiones, acceso a variables
 
 //vglo           &vglo ptr
 //tglo[_exp]     &tglo <_exp> add rng ptr
@@ -928,16 +928,16 @@ int iloc_len; // final de las variables locales incluyendo las privadas
 //proc.vloc      &proc ptr &vloc add ptr
 //proc.tloc[_exp] &proc ptr &tloc <_exp> add rng add ptr
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Variables relacionadas con el listado formateado
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-int coment=0;           // 0-Cï¿½digo, 1-Dentro de comentario, 2-Anidado, ...
+int coment=0;           // 0-C¢digo, 1-Dentro de comentario, 2-Anidado, ...
 int convert=0;          // Indica si se deben generar ya los token en ls
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Informaciï¿½n sobre los errores
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Informaci¢n sobre los errores
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int numero_error=-1;
 int linea_error;
@@ -945,21 +945,21 @@ int columna_error;
 
 int error_27=27;        // Para emitir "se esperaba una sentencia"
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int program_type=0;
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 struct {      // Peephole, "mirilla" para el optimizador
-  int dir;    // Direcciï¿½n
-  int param;  // Indica si ese opcode tiene parï¿½metro
+  int dir;    // Direcci¢n
+  int param;  // Indica si ese opcode tiene par metro
   int op;     // Opcode
-} code[16];   // En code[15] debe quedar siempre la ï¿½ltima instrucciï¿½n generada
+} code[16];   // En code[15] debe quedar siempre la £ltima instrucci¢n generada
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Inicializaciï¿½n del compilador
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Inicializaci¢n del compilador
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 FILE * linf; // EXEC.LIN
 FILE * lprg; // EXEC.PGM
@@ -973,9 +973,9 @@ void inicializa_compilador(void) {
   for (n=0;n<256;n++) if (lower[n]==' ') lower[n]=0;
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Prepara la compilacion para un programa
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void mensaje_compilacion(byte * p) {
   wbox(v.ptr,v.an/big2,v.al/big2,c2,2,20,v.an/big2-4,7);
@@ -1089,7 +1089,7 @@ void compilar(void) {
   mem[5]=iloc_len-iloc;
   mem[6]=iloc;
   mem[7]=0; // Antes imem+iloc (inicio textos), ahora no se utiliza
-  mem[8]=imem+iloc; // Nï¿½mero de elementos ocupados en mem[]
+  mem[8]=imem+iloc; // N£mero de elementos ocupados en mem[]
 
   mensaje_compilacion(texto[204]);
 
@@ -1184,9 +1184,9 @@ void compilar(void) {
   }
 
   // _case_sensitive
-  memcpy(lower+129,"ueaaaaï¿½eeeiiiaaeï¿½ï¿½ooouuyouï¿½ï¿½ï¿½ï¿½ï¿½aiou",35);
+  memcpy(lower+129,"ueaaaa‡eeeiiiaae‘‘ooouuyou›œŸaiou",35);
   memcpy(lower+'A',"abcdefghijklmnopqrstuvwxyz",26);
-  lower['ï¿½']='ï¿½';
+  lower['¥']='¤';
 
   comp_exit();
 
@@ -1204,9 +1204,9 @@ void free_resources(void) {
   if (vnom!=NULL) free(vnom);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Errores internos del compilador
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int _le,_t;
 byte *_ie;
@@ -1254,16 +1254,16 @@ void c_error(word tipo, word e) {
   columna_error=columna;
 
   // _case_sensitive
-  memcpy(lower+129,"ueaaaaï¿½eeeiiiaaeï¿½ï¿½ooouuyouï¿½ï¿½ï¿½ï¿½ï¿½aiou",35);
+  memcpy(lower+129,"ueaaaa‡eeeiiiaae‘‘ooouuyou›œŸaiou",35);
   memcpy(lower+'A',"abcdefghijklmnopqrstuvwxyz",26);
-  lower['ï¿½']='ï¿½';
+  lower['¥']='¤';
 
   comp_exit();
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //  Con el primer token leido guarda el inicio de una sentencia
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void inicio_sentencia(void) {
   byte * p=ierror-1;
@@ -1273,9 +1273,9 @@ void inicio_sentencia(void) {
   while (*p!=cr && *p!=lf && p>_source) { columna1++; p--; }
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //  Con el primer token que no es de la sentecia guarda el fin de una sentencia
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void final_sentencia(void) {
   byte * p=old_ierror_end-1;
@@ -1285,9 +1285,9 @@ void final_sentencia(void) {
   while (*p!=cr && *p!=lf && p>=_source) { columna2++; p--; }
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //  Guarda un registro (inicio,final,linea1,...) en EXEC.LIN
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void grabar_sentencia(void) {
   fwrite(&inicio,4,1,linf);
@@ -1298,9 +1298,9 @@ void grabar_sentencia(void) {
   fwrite(&columna2,4,1,linf);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Comprueba los lï¿½mites de un buffer de generaciï¿½n de cï¿½digo
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Comprueba los l¡mites de un buffer de generaci¢n de c¢digo
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void test_buffer(int * * buffer,int * maximo,int n) {
   int max;
@@ -1318,9 +1318,9 @@ void test_buffer(int * * buffer,int * maximo,int n) {
   }
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Precarga de las estructuras lï¿½xicas, analiza el fichero ltlex.def
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Precarga de las estructuras l‚xicas, analiza el fichero ltlex.def
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void analiza_ltlex(void){
 
@@ -1368,7 +1368,7 @@ void analiza_ltlex(void){
 	buf--; ivnom.b++;
       } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
         lex_case[*buf]=(struct lex_ele*)l_lit;
-      } else {                          //Analiza un nuevo sï¿½mbolo
+      } else {                          //Analiza un nuevo s¡mbolo
         if ((e=lex_case[*buf])==0) {
           if (num_nodos++==max_nodos) c_error(0,3);
           e=lex_case[*buf]=ilex_simb++; (*e).caracter=*buf++;
@@ -1396,11 +1396,11 @@ void analiza_ltlex(void){
 
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Precarga de la tabla de objetos, analiza el fichero ltobj.def
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-//      OJO, en este proceso no se comprueban los lï¿½mites de memoria
+//      OJO, en este proceso no se comprueban los l¡mites de memoria
 
 
 void precarga_obj (void) {
@@ -1603,9 +1603,9 @@ void precarga_obj (void) {
 
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//  Adivina cual serï¿½ la siguiente pieza lexica leida (y donde estarï¿½)
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//  Adivina cual ser  la siguiente pieza lexica leida (y donde estar )
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int next_pieza;
 int next_linea;
@@ -1711,9 +1711,9 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
 }
 
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Lexico (lee una nueva pieza del *source)
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int IsWAV(char *FileName);
 int en_fopen=0;
@@ -1912,9 +1912,9 @@ void lexico(void) {
   } source=_source; ierror_end=_source-1;
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Pasa varias comas o puntos y coma seguidos
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void pasa_ptocoma(void) {
   do {
@@ -1922,9 +1922,9 @@ void pasa_ptocoma(void) {
   } while (pieza==p_ptocoma);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Anï¿½lisis de una declaraciï¿½n pointer (int, word o byte)
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      An lisis de una declaraci¢n pointer (int, word o byte)
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 struct objeto * analiza_pointer(int tipo, int offset) {
   struct objeto * ob;
@@ -1933,7 +1933,7 @@ struct objeto * analiza_pointer(int tipo, int offset) {
   if (pieza!=p_id) c_error(1,148);
   ob=o; if ((*ob).tipo!=tnone) {
     if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-      if ((*ob).tipo==tipo) { // Se repite un pointer parï¿½metro como private
+      if ((*ob).tipo==tipo) { // Se repite un pointer par metro como private
         save_error(0); lexico();
         len1=-1; len2=-1; len3=-1;
         if (pieza==p_corab) { lexico();
@@ -1980,7 +1980,7 @@ struct objeto * analiza_pointer(int tipo, int offset) {
   return(ob);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int analiza_pointer_struct(int tipo, int offset, struct objeto * estructura) {
   struct objeto * ob;
@@ -1989,7 +1989,7 @@ int analiza_pointer_struct(int tipo, int offset, struct objeto * estructura) {
   if (pieza!=p_id) c_error(1,148);
   ob=o; if ((*ob).tipo!=tnone) {
     if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-      if ((*ob).tipo==tipo) { // Se repite un pointer parï¿½metro como private
+      if ((*ob).tipo==tipo) { // Se repite un pointer par metro como private
         save_error(0); lexico();
         items1=-1; items2=-1; items3=-1;
         if (pieza==p_corab) { lexico();
@@ -2033,16 +2033,16 @@ int analiza_pointer_struct(int tipo, int offset, struct objeto * estructura) {
   (*ob).psgl.offset=offset;       // del pointer
   (*ob).psgl.ostruct=estructura;  // struct original
 
-  // (*ob).psgl.len_item ï¿½ (*((*ob).psgl.ostruct)).len_item;
+  // (*ob).psgl.len_item ğ (*((*ob).psgl.ostruct)).len_item;
 
   return(1);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Analisis sintï¿½ctico (dirige todo el proceso de compilaciï¿½n)
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Analisis sint ctico (dirige todo el proceso de compilaci¢n)
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½member
+int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmember
   int len=0,dup,i,_itxt,_imem;
   struct objeto * ob;
   struct objeto * old_member,* member2;
@@ -2052,7 +2052,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½me
 
   while (pieza!=p_end) {
 
-    if (pieza==p_struct) {                              // Miembro struct ï¿½ï¿½ï¿½
+    if (pieza==p_struct) {                              // Miembro struct ÄÄÄ
 
       lexico();
 
@@ -2061,7 +2061,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½me
         old_member=member; member=NULL; lexico(); member=old_member;
         if (pieza!=p_id) c_error(1,110); ob=o;
 
-        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asï¿½
+        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
         if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
         lexico();
         puntero_a_struct:
@@ -2188,7 +2188,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½me
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_byte) {                         // Miembro byte ï¿½ï¿½ï¿½
+    } else if (pieza==p_byte) {                         // Miembro byte ÄÄÄ
 
       lexico();
 
@@ -2263,7 +2263,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½me
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_word) {                         // Miembro word ï¿½ï¿½ï¿½
+    } else if (pieza==p_word) {                         // Miembro word ÄÄÄ
 
       lexico();
 
@@ -2360,7 +2360,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½me
       } else {
 
         ob=o; if ((*ob).tipo!=tnone) c_error(0,114); lexico();
-        if (pieza==p_corab) { lexico();                   // Miembro tabla ï¿½ï¿½ï¿½
+        if (pieza==p_corab) { lexico();                   // Miembro tabla ÄÄÄ
           (*ob).tipo=ttglo; (*ob).tglo.offset=len;
           if (((*ob).tglo.len1=constante())<0) c_error(4,35);
           if (pieza==p_coma) {
@@ -2384,7 +2384,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½me
             imem=_imem;
           } len+=(*ob).tglo.totalen;
 
-        } else {                                          // Miembro variable ï¿½ï¿½ï¿½
+        } else {                                          // Miembro variable ÄÄÄ
 
           (*ob).tipo=tvglo; (*ob).vglo.offset=len;
           test_buffer(&mem,&imem_max,offstruct+len);
@@ -2400,9 +2400,9 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idï¿½me
   } return(len);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // idï¿½member
+int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // idğmember
   int len=0,dup,i,_itxt,_iloc;
   struct objeto * ob;
   struct objeto * old_member,* member2;
@@ -2412,7 +2412,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
 
   while (pieza!=p_end) {
 
-    if (pieza==p_struct) {                              // Miembro struct ï¿½ï¿½ï¿½
+    if (pieza==p_struct) {                              // Miembro struct ÄÄÄ
 
       lexico();
 
@@ -2421,7 +2421,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         old_member=member; member=NULL; lexico(); member=old_member;
         if (pieza!=p_id) c_error(1,110); ob=o;
 
-        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asï¿½
+        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
         if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
         lexico();
         puntero_a_struct:
@@ -2549,7 +2549,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_byte) {                         // Miembro byte ï¿½ï¿½ï¿½
+    } else if (pieza==p_byte) {                         // Miembro byte ÄÄÄ
 
       lexico();
 
@@ -2624,7 +2624,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_word) {                         // Miembro word ï¿½ï¿½ï¿½
+    } else if (pieza==p_word) {                         // Miembro word ÄÄÄ
 
       lexico();
 
@@ -2722,7 +2722,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
       } else {
 
         ob=o; if ((*ob).tipo!=tnone) c_error(0,114); lexico();
-        if (pieza==p_corab) { lexico();    // Miembro tabla ï¿½ï¿½ï¿½
+        if (pieza==p_corab) { lexico();    // Miembro tabla ÄÄÄ
           (*ob).tipo=ttloc; (*ob).tloc.offset=len;
           if (((*ob).tloc.len1=constante())<0) c_error(4,35);
           if (pieza==p_coma) {
@@ -2746,7 +2746,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
             iloc=_iloc;
           } len+=(*ob).tloc.totalen;
 
-        } else {                                          // Miembro variable ï¿½ï¿½ï¿½
+        } else {                                          // Miembro variable ÄÄÄ
 
           (*ob).tipo=tvloc; (*ob).vloc.offset=len;
           test_buffer(&loc,&iloc_max,offstruct+len);
@@ -2763,9 +2763,9 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
   } return(len);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " // idï¿½member
+int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " // idğmember
   int len=0,dup,i,_itxt,_imem;
   struct objeto * ob;
   struct objeto * old_member,* member2;
@@ -2775,7 +2775,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
 
   while (pieza!=p_end) {
 
-    if (pieza==p_struct) {                              // Miembro struct ï¿½ï¿½ï¿½
+    if (pieza==p_struct) {                              // Miembro struct ÄÄÄ
 
       lexico();
 
@@ -2784,7 +2784,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         old_member=member; member=NULL; lexico(); member=old_member;
         if (pieza!=p_id) c_error(1,110); ob=o;
 
-        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asï¿½
+        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
         if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
         lexico();
         puntero_a_struct:
@@ -2912,7 +2912,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_byte) {                         // Miembro byte ï¿½ï¿½ï¿½
+    } else if (pieza==p_byte) {                         // Miembro byte ÄÄÄ
 
       lexico();
 
@@ -2986,7 +2986,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_word) {                         // Miembro word ï¿½ï¿½ï¿½
+    } else if (pieza==p_word) {                         // Miembro word ÄÄÄ
 
       lexico();
 
@@ -3083,7 +3083,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
       } else {
 
         ob=o; if ((*ob).tipo!=tnone) c_error(0,114); lexico();
-        if (pieza==p_corab) { lexico();    // Miembro tabla ï¿½ï¿½ï¿½
+        if (pieza==p_corab) { lexico();    // Miembro tabla ÄÄÄ
           (*ob).tipo=ttloc; (*ob).tloc.offset=len;
           if (((*ob).tloc.len1=constante())<0) c_error(4,35);
           if (pieza==p_coma) {
@@ -3107,7 +3107,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
             imem=_imem;
           } len+=(*ob).tloc.totalen;
 
-        } else {                                          // Miembro variable ï¿½ï¿½ï¿½
+        } else {                                          // Miembro variable ÄÄÄ
 
           (*ob).tipo=tvloc; (*ob).vloc.offset=len;
 
@@ -3127,7 +3127,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
   } return(len);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 typedef struct _DLL{
         char    *Name;
@@ -3188,7 +3188,7 @@ struct _dlls {
 
 int idlls;              // Indice de la estructura anterior
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 void sintactico (void) {
 
@@ -3202,11 +3202,11 @@ void sintactico (void) {
 
   lexico();
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Opciones de compilacion
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // p_compiler_options {opcion} {;}
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   max_process=0; // Valores de las opciones por defecto
   ignore_errors=0;
@@ -3243,9 +3243,9 @@ void sintactico (void) {
             break;
           case 3: // _case_sensitive
             lexico();
-            memcpy(lower+129,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",35);
+            memcpy(lower+129,"‚ƒ„…†‡ˆ‰Š‹Œ„†‚‘‘“”•–—˜”›œŸ ¡¢£",35);
             memcpy(lower+'A',"ABCDEFGHIJKLMNOPQRSTUVWXYZ",26);
-            lower['ï¿½']='ï¿½';
+            lower['¥']='¥';
             break;
           case 4: // _ignore_errors
             lexico();
@@ -3294,11 +3294,11 @@ void sintactico (void) {
     } while (1);
   }
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Cabecera
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // p_program p_id {;}
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   save_error(0);
   if (pieza!=p_program && pieza!=p_setup_program) c_error(4,20);
@@ -3325,11 +3325,11 @@ void sintactico (void) {
   dlls[0].columna2=columna2;
   idlls=1;
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-  // Import de librerias dinï¿½micas
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  // Import de librerias din micas
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // {p_import p_lit {;}}
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   PrevOrder=0;
 
@@ -3372,11 +3372,11 @@ void sintactico (void) {
     }
   }
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Zona de constantes
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // [ p_const {;} { p_id p_asig <exp> {; | ,} } ]
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   if (pieza==p_const) {
     pasa_ptocoma();
@@ -3393,9 +3393,9 @@ void sintactico (void) {
     }
   }
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Variables globales, pueden usarse en expresiones constantes
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // <variable> := p_id [ p_asig <exp> ] {;}
   //
   // <tabla> := p_id p_corab ( p_corce p_asig <init>
@@ -3403,7 +3403,7 @@ void sintactico (void) {
   //
   // <init>  := ( <string> | <exp> [ [p_dup] p_abrir <init> p_cerrar ] )
   //            [ p_coma <init>]
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   if (pieza==p_global) {
     pasa_ptocoma();
@@ -3416,7 +3416,7 @@ void sintactico (void) {
         if (pieza==p_pointer) { // Se define un puntero a struct
 
           lexico(); if (pieza!=p_id) c_error(1,110); ob=o;
-          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asï¿½
+          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
           if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
           lexico();
           puntero_a_struct:
@@ -3754,14 +3754,14 @@ void sintactico (void) {
     }
   }
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Variables locales, no se pueden usar en expresiones constantes
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // <variable> := p_id [ p_asig <exp> ] {;}
   //
   // <tabla> := p_id p_corab ( p_corce p_asig <init>
   //                       | <exp> p_corce [ p_asig <init> ] ) {;}
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   if (pieza==p_local) {
     pasa_ptocoma();
@@ -3774,7 +3774,7 @@ void sintactico (void) {
         if (pieza==p_pointer) { // Se define un puntero a struct
 
           lexico(); if (pieza!=p_id) c_error(1,110); ob=o;
-          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asï¿½
+          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
           if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
           lexico();
           puntero_a_struct_local:
@@ -4110,11 +4110,11 @@ void sintactico (void) {
     }
   }
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-  // Cï¿½digo principal
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  // C¢digo principal
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-  // Genera el salto al inicio del cï¿½digo (long_header)
+  // Genera el salto al inicio del c¢digo (long_header)
 
   mem[0]=program_type; mem[1]=imem; iloc_len=iloc;
 
@@ -4129,7 +4129,7 @@ void sintactico (void) {
 
   if (pieza==p_import) c_error(0,147); // Advertir a usuarios de DIV 1
 
-  // Genera el cï¿½digo para cargar las librerï¿½as
+  // Genera el c¢digo para cargar las librer¡as
 
   for (n=1;n<idlls;n++) {
     inicio=imem; final=imem+1;
@@ -4164,11 +4164,11 @@ void sintactico (void) {
   g1(lret);
   pasa_ptocoma(); final_sentencia(); grabar_sentencia();
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Procesos
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // p_process p_id p_abrir [ id { , id } ] p_cerrar { ; } p_begin ... p_end
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
   save_error(0);
   while (pieza==p_process || pieza==p_function) {
@@ -4204,7 +4204,7 @@ void sintactico (void) {
       g2(lpar,parametros-1);
     }
 
-    parametros=-1; // Para que los parï¿½metros se puedan repetir como PRIVATE
+    parametros=-1; // Para que los par metros se puedan repetir como PRIVATE
 
     num_par=mem[_imem]=(*ob).proc.num_par;
 
@@ -4226,12 +4226,12 @@ void sintactico (void) {
 
 }
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Analiza las variables privadas de un bloque, como las locales
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
     // *** OJO *** No se debe permitir #id.tvpri
-    //             pues fallarï¿½a a no ser que #id fuera del mismo tipo que el
+    //             pues fallar¡a a no ser que #id fuera del mismo tipo que el
     //             proceso actual (hermano)
 
 void analiza_private(void) {
@@ -4253,7 +4253,7 @@ void analiza_private(void) {
         if (pieza==p_pointer) { // Se define un puntero a struct
 
           lexico(); if (pieza!=p_id) c_error(1,110); ob=o;
-          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asï¿½
+          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
           if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
           lexico();
           puntero_a_struct:
@@ -4344,7 +4344,7 @@ void analiza_private(void) {
         } else {
 
           if (pieza!=p_id) c_error(1,125);
-          ob=o; if ((*ob).tipo!=tnone) { // Mira si se repite un parï¿½metro ...
+          ob=o; if ((*ob).tipo!=tnone) { // Mira si se repite un par metro ...
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
               if ((*ob).tipo==tcloc) { // Se repite un string
                 save_error(0);
@@ -4432,7 +4432,7 @@ void analiza_private(void) {
           if (pieza!=p_id) c_error(1,142);
           ob=o; if ((*ob).tipo!=tnone) {
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-              if ((*ob).tipo==tbloc) { // Se repite un byte parï¿½metro
+              if ((*ob).tipo==tbloc) { // Se repite un byte par metro
                 lexico();
                 if (pieza==p_corab) c_error(2,53);
                 else if (pieza==p_asig) c_error(0,54);
@@ -4524,7 +4524,7 @@ void analiza_private(void) {
           if (pieza!=p_id) c_error(1,145);
           ob=o; if ((*ob).tipo!=tnone) {
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-              if ((*ob).tipo==twloc) { // Se repite un word parï¿½metro
+              if ((*ob).tipo==twloc) { // Se repite un word par metro
                 lexico();
                 if (pieza==p_corab) c_error(2,53);
                 else if (pieza==p_asig) c_error(0,54);
@@ -4616,7 +4616,7 @@ void analiza_private(void) {
 
         } else {
 
-          // Si el objeto no es tnone, se repite un parï¿½metro o bien es un error
+          // Si el objeto no es tnone, se repite un par metro o bien es un error
 
           ob=o; if ((*ob).tipo!=tnone) {
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
@@ -4685,12 +4685,12 @@ void analiza_private(void) {
 
 }
 
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-  // Inicializaciï¿½n de tablas (a mem[imem++])
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  // Inicializaci¢n de tablas (a mem[imem++])
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // <init>  := ( <string> | <exp> [ [p_dup] p_abrir <init> p_cerrar ] )
   //            [ p_coma <init>]
-  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 
 void tglo_init(memptrsize tipo) { // Tipo: 0-Int o variado (struct), 1-Word, 2-Byte
@@ -4732,7 +4732,7 @@ void tglo_init2(int tipo) {
 
   while (1) {
 
-    // Mira si finaliza la inicializaciï¿½n de datos
+    // Mira si finaliza la inicializaci¢n de datos
 
     if (pieza==p_cerrar || pieza==p_ptocoma) {
       if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) {
@@ -4751,7 +4751,7 @@ void tglo_init2(int tipo) {
       return;
     }
 
-    // Una coma sola, como "3,,4", avanza una posiciï¿½n (y define un 0)
+    // Una coma sola, como "3,,4", avanza una posici¢n (y define un 0)
 
     if (pieza==p_coma) {
       if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) {
@@ -4846,7 +4846,7 @@ void tglo_init2(int tipo) {
             if (frm[imem]==0xdad00000) c_error(2,128);
           }
 
-          // Mete un valor numï¿½rico en la memoria
+          // Mete un valor num‚rico en la memoria
 
           if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) { // En un word
 
@@ -4891,13 +4891,13 @@ void tglo_init2(int tipo) {
     if (dup<1) c_error(2,38);
     lexico();
 
-    // Analiza la secuencia como otra inicializaciï¿½n ...
+    // Analiza la secuencia como otra inicializaci¢n ...
 
     oimemptr=imemptr;
     tglo_init2(tipo);
     if (pieza!=p_cerrar) c_error(3,25);
 
-    // Y la duplica el nï¿½mero de veces indicado
+    // Y la duplica el n£mero de veces indicado
 
     if (dup>1) {
       len=imemptr-oimemptr;
@@ -4939,9 +4939,9 @@ void tglo_init2(int tipo) {
   }
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Analisis de un bloque de sentencias;
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void sentencia() {
 
@@ -5060,12 +5060,12 @@ void sentencia() {
         } else {
           if (from<to) step=1; else step=-1;
         }
-        g2(lcar,from); // Asignaciï¿½n del from
+        g2(lcar,from); // Asignaci¢n del from
         g1(lasi); g1(lasp);
 
         im1=imem; // Inicio del bucle
 
-        if (dir>=0) { // Comparaciï¿½n de la condiciï¿½n de permanencia
+        if (dir>=0) { // Comparaci¢n de la condici¢n de permanencia
           g2(lcar,dir);
         } else {
           g2(lcar,-dir); g1(laid);
@@ -5082,7 +5082,7 @@ void sentencia() {
         if (pieza!=p_end) c_error(0,40); inicio_sentencia();
         lexico();
 
-        im3=imem; // Posiciï¿½n del continue
+        im3=imem; // Posici¢n del continue
 
         if (dir>=0) { // Incremento y vuelta al inicio del bucle
           g2(lcar,dir); 
@@ -5273,9 +5273,9 @@ void sentencia() {
   }
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Analisis de una condiciï¿½n (genera cï¿½digo para calcularla)
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Analisis de una condici¢n (genera c¢digo para calcularla)
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int tipo_expresion=0; // 0 - int, 1 - char o byte, 2 - string
 int tipo_factor=0;    // idem
@@ -5351,9 +5351,9 @@ void con2() {
   }
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Analisis de una expresiï¿½n (genera cï¿½digo para calcularla)
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Analisis de una expresi¢n (genera c¢digo para calcularla)
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void expresion(void) {
   byte * __ierror, * _ierror;
@@ -5513,10 +5513,10 @@ void generar_expresion(void) {
   } while (++e!=_exp);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Analisis de una expresiï¿½n constante
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Analisis de una expresi¢n constante
 //      No se procesan valores locales ni llamadas a otros procesos
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 int constante (void) {
 
@@ -5555,7 +5555,7 @@ int constante (void) {
       case p_mod: if (pila[i]==0) c_error(4,34); pila[i-1]%=pila[i]; i--; break;
       case p_neg: pila[i]=-pila[i]; break;
 
-// Creo que se quitï¿½ los pointer (y los rangos, por consiguiente) por los FROM,
+// Creo que se quit¢ los pointer (y los rangos, por consiguiente) por los FROM,
 // ya que provocaba confusion el tomar como constante una variable ...
 
 //      case p_pointer: pila[i]=mem[pila[i]]; break;
@@ -5571,9 +5571,9 @@ int constante (void) {
   linea=_linea; ierror=__ierror; return(pila[i]);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Anï¿½lisis de una expresiï¿½n a *tabexp
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      An lisis de una expresi¢n a *tabexp
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void exp00(int tipo_exp) {
   int te=tipo_expresion;
@@ -5646,7 +5646,7 @@ void div_exp2() {
     tf=tipo_factor;
     lexico(); exp3();
     if (tf==2 || tipo_factor==2) {
-      // OJO, p==q no se harï¿½ el strcmp() si son dos punteros a cadenas
+      // OJO, p==q no se har  el strcmp() si son dos punteros a cadenas
       p+=p_strigu-p_igu;
       (*_exp).tipo=eoper; (*_exp++).token=p;
       tipo_factor=0;
@@ -5724,7 +5724,7 @@ void unario() {
         if ((*(_exp-2)).tipo==econs && (*(_exp-2)).valor==0) _exp-=2;
         else c_error(4,132); // &words[<exp>] ???
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_string) {
-        // &cadena ï¿½ cadena
+        // &cadena ğ cadena
       } else c_error(4,32);
     } else if (p==p_inc || p==p_dec) {
       if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointer) {
@@ -5748,11 +5748,11 @@ void unario() {
       } else c_error(4,122);
     } else if (p==p_pointer) {
       if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerchar) {
-        // *cadena[0] ï¿½ cadena[0]
+        // *cadena[0] ğ cadena[0]
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerbyte) {
-        // *cadena[0] ï¿½ cadena[0]
+        // *cadena[0] ğ cadena[0]
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerword) {
-        // *cadena[0] ï¿½ cadena[0]
+        // *cadena[0] ğ cadena[0]
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_string) {
         // *cadena == cadena
       } else {
@@ -5776,8 +5776,8 @@ void exp6() { // Operador de acceso a variables o tablas locales ajenas
     acceso_remoto=1; lexico(); factor(); acceso_remoto=0;
 
     // OJO, el <p_punto> DEBE SER LO SEGUNDO que el <factor>
-    // introduzca en la <expresiï¿½n>, no quedan mï¿½s cojones.
-    // (bueno, si, hacer aquï¿½ una bï¿½squeda del p_punto entre e-1 y _exp ...)
+    // introduzca en la <expresi¢n>, no quedan m s cojones.
+    // (bueno, si, hacer aqu¡ una b£squeda del p_punto entre e-1 y _exp ...)
 
     if ((*e).tipo==eoper && (*e).token==p_punto)
       (*e).token=p_add; else c_error(4,43);
@@ -5831,7 +5831,7 @@ void factor(void) {
         case tproc:
           (*_exp).tipo=econs; (*_exp++).valor=(memptrsize)o; break;
         case tsglo:
-          if ((*o).sglo.offset==long_header) { // type mouse ï¿½ 0
+          if ((*o).sglo.offset==long_header) { // type mouse ğ 0
             (*_exp).tipo=econs; (*_exp++).valor=0; break;
           }
         default: c_error(0,60);
@@ -5859,14 +5859,14 @@ void factor(void) {
       } lexico(); if (pieza!=p_cerrar) c_error(3,25); lexico();
       break;
 
-    case p_struct: // Se comprueba la declaraciï¿½n de un puntero a struct parï¿½metro
+    case p_struct: // Se comprueba la declaraci¢n de un puntero a struct par metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
         lexico();
-        if (pieza!=p_pointer) c_error(0,151); // No se define el pointer asï¿½
+        if (pieza!=p_pointer) c_error(0,151); // No se define el pointer as¡
         lexico(); if (pieza!=p_id) c_error(1,110); obs=o;
-        if ((*obs).tipo==tnone) c_error(0,150); // No se define el pointer asï¿½
+        if ((*obs).tipo==tnone) c_error(0,150); // No se define el pointer as¡
         if ((*obs).tipo!=tsglo && (*obs).tipo!=tsloc) c_error(0,150);
         lexico(); ob=o;
         analiza_pointer_struct(tpslo,iloc++,obs);
@@ -5877,7 +5877,7 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_pointer;
       } break;
 
-    case p_string: // Se comprueba la declaraciï¿½n de un string parï¿½metro
+    case p_string: // Se comprueba la declaraci¢n de un string par metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -5925,7 +5925,7 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_string;
       } break;
 
-    case p_byte: // Se comprueba la declaraciï¿½n de un byte parï¿½metro
+    case p_byte: // Se comprueba la declaraci¢n de un byte par metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -5957,7 +5957,7 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_pointerbyte;
       } break;
 
-    case p_word: // Se comprueba la declaraciï¿½n de un word parï¿½metro
+    case p_word: // Se comprueba la declaraci¢n de un word par metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -5989,14 +5989,14 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_pointerword;
       } break;
 
-    case p_int: // Se comprueba la declaraciï¿½n de un int parï¿½metro
+    case p_int: // Se comprueba la declaraci¢n de un int par metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
         lexico();
         if (pieza==p_pointer) {
 
-    case p_pointer: // Declaraciï¿½n de un puntero a int parï¿½metro
+    case p_pointer: // Declaraci¢n de un puntero a int par metro
           if (parametros<=0) {
             if (error_27==27) c_error(1,27); else c_error(0,error_27);
           } parametros++;
@@ -6127,7 +6127,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ï¿½ mi_byte[0]
+        } else { // mi_byte ğ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerbyte ; break;
 
@@ -6165,7 +6165,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ï¿½ mi_byte[0]
+        } else { // mi_byte ğ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerword; break;
 
@@ -6323,7 +6323,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ï¿½ mi_byte[0]
+        } else { // mi_byte ğ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerbyte ; break;
 
@@ -6364,7 +6364,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ï¿½ mi_byte[0]
+        } else { // mi_byte ğ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerword; break;
 
@@ -6446,7 +6446,7 @@ void factor(void) {
 
       case tproc:
         ob=o; lexico(); if (pieza!=p_abrir) c_error(3,36); lexico();
-        p=0; while (pieza!=p_cerrar) { // pï¿½num_par
+        p=0; while (pieza!=p_cerrar) { // pğnum_par
           p++;
           exp00(0);
           if (pieza!=p_cerrar) if (pieza!=p_coma) c_error(3,25);
@@ -6464,9 +6464,9 @@ void factor(void) {
           en_fopen=0;
         } else lexico();
 
-        p=0; while (pieza!=p_cerrar) { // pï¿½num_par
+        p=0; while (pieza!=p_cerrar) { // pğnum_par
 
-          if ((*ob).func.par[p]==1) { // Parï¿½metro del tipo 1 (struct,campo)
+          if ((*ob).func.par[p]==1) { // Par metro del tipo 1 (struct,campo)
 
             // RECIBE: nombre_struct,nombre_campo
             // GENERA: offset_struct,len_item,totalen,offset_campo,tipo_campo
@@ -6491,7 +6491,7 @@ void factor(void) {
             else if ((*o).tipo==tpcgl || (*o).tipo==tpclo) (*_exp++).valor=2;
             else (*_exp++).valor=0;
             lexico();
-          } else {                           // Parï¿½metro del tipo 0 (genï¿½rico)
+          } else {                           // Par metro del tipo 0 (gen‚rico)
             exp00(0);
           } p++;
 
@@ -6505,7 +6505,7 @@ void factor(void) {
 
       case tfext:
         ob=o; lexico(); if (pieza!=p_abrir) c_error(3,36); lexico();
-        p=0; while (pieza!=p_cerrar) { // pï¿½num_par
+        p=0; while (pieza!=p_cerrar) { // pğnum_par
           p++;
           exp00(0);
           if (pieza!=p_cerrar) if (pieza!=p_coma) c_error(3,25);
@@ -6639,7 +6639,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ï¿½ mi_byte[0]
+      } else { // mi_byte ğ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerbyte; break;
 
@@ -6676,7 +6676,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ï¿½ mi_byte[0]
+      } else { // mi_byte ğ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerword; break;
 
@@ -6822,7 +6822,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ï¿½ mi_byte[0]
+      } else { // mi_byte ğ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerbyte; break;
 
@@ -6859,7 +6859,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ï¿½ mi_byte[0]
+      } else { // mi_byte ğ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerword; break;
 
@@ -6935,9 +6935,9 @@ void factor_struct(void) {
   }
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Graba el fichero de la tabla de objetos
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #ifdef listados
 
@@ -6947,7 +6947,7 @@ void l_objetos (void) {
 
   sta=fopen("div.tab","wb");
 
-  fprintf(sta,"ï¿½ Objetos de %s - DIV Versiï¿½n " version "\n\n",file_in);
+  fprintf(sta,"ş Objetos de %s - DIV Versi¢n " version "\n\n",file_in);
 
   for (n=1;n<=8;n++) fprintf(sta,"[%u]: %u\n",n,mem[n]); fprintf(sta,"\n");
 
@@ -7112,9 +7112,9 @@ void l_objetos (void) {
 
 #endif
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Graba el fichero con informaciï¿½n para debugging
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Graba el fichero con informaci¢n para debugging
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 // Ojo, falta grabar items1,items2 e items3 (o len1,len2,len3 para tablas)
 
@@ -7151,7 +7151,7 @@ void save_dbg(void) {
     ob.v4=(memptrsize)obj[n].sglo.items2;
     ob.v5=(memptrsize)obj[n].sglo.items3;
     if (obj[n].tipo==tpsgl || obj[n].tipo==tpslo) ob.v1=(ob.v1-(memptrsize)&obj[0])/sizeof(struct objeto);
-    // OJO ! que no se pueden aï¿½adir objetos aquï¿½ (ver uso de &obj[0] y sizeof(struct objeto))
+    // OJO ! que no se pueden a¤adir objetos aqu¡ (ver uso de &obj[0] y sizeof(struct objeto))
     fwrite(&ob,sizeof(ob),1,sta);
   }
 
@@ -7163,9 +7163,9 @@ void save_dbg(void) {
   fclose(sta);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//    Graba los parï¿½metros de ejecuciï¿½n para el intï¿½rprete
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//    Graba los par metros de ejecuci¢n para el int‚rprete
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void save_exec_bin(void) {
   FILE * sta;
@@ -7179,9 +7179,9 @@ void save_exec_bin(void) {
   fclose(sta);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Graba el fichero ensamblador
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #ifdef listados
 
@@ -7192,7 +7192,7 @@ void l_ensamblador (void) {
 
   sta=fopen("div.eml","wt");
 
-  fprintf(sta,"ï¿½ Cï¿½digo EML de %s - DIV Versiï¿½n " version "\n",file_in);
+  fprintf(sta,"ş C¢digo EML de %s - DIV Versi¢n " version "\n",file_in);
 
   while (i<imem) { switch ((byte)mem[i]) {
     case lnop: fprintf(sta,"%5u\tnop",i); break;
@@ -7333,10 +7333,10 @@ void l_ensamblador (void) {
 
 #endif
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //  Funcion para localizar y abrir un fichero (pal,fpg,fnt,...)
-//  Esta funciï¿½n debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//  Esta funci¢n debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 FILE * open_file(char * file) {
   FILE * f;
@@ -7376,9 +7376,9 @@ FILE * open_file(char * file) {
   } else return(f);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Dialogo de compilar
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 uint8_t e_msg[32];
 int compilado=0;
@@ -7438,24 +7438,24 @@ void compilar_programa(void) {
   tecla(); scan_code=0; ascii=0; mouse_b=0;
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//  Funciones de generaciï¿½n de cï¿½digo
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//  Funciones de generaci¢n de c¢digo
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 // void g1(int op) { mem[imem++]=op; }
 // void g2(int op, int pa) { mem[imem++]=op; mem[imem++]=pa; }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//  Optimizaciï¿½n peephole de cï¿½digo intermedio EML
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//  Optimizaci¢n peephole de c¢digo intermedio EML
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-// *** OJO!!! *** quizï¿½ se pueda quitar "dir" y esa comprobaciï¿½n absurda ...
+// *** OJO!!! *** quiz  se pueda quitar "dir" y esa comprobaci¢n absurda ...
 
 //struct {      // Peephole, "mirilla" de optimizacion
-//  int dir;    // Direcciï¿½n
-//  int param;  // Indica el nï¿½mero de parametros de la instruccion
+//  int dir;    // Direcci¢n
+//  int param;  // Indica el n£mero de parametros de la instruccion
 //  int op;     // Opcode
-//} code[16];   // En code[15] debe quedar siempre la ï¿½ltima instrucciï¿½n generada
+//} code[16];   // En code[15] debe quedar siempre la £ltima instrucci¢n generada
 
 void g1(int op) {
   if (optimizar) gen(0,op,0); else mem[imem++]=op;
@@ -7621,7 +7621,7 @@ void gen(int param, int op, int pa) {
       } else if (code[15].op==lcar){
         if (mem[imem-1]==1) remove_code(1);
         else if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-2]=lcardiv; // Un cardiv nunca serï¿½ "cardiv 0"
+          code[15].op=mem[imem-2]=lcardiv; // Un cardiv nunca ser  "cardiv 0"
           optimizado=1;
         }
       } break;
@@ -7674,9 +7674,9 @@ void add_code(int dir, int param, int op) {
   } code[15].dir=dir; code[15].param=param; code[15].op=op;
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//      Precompilaciï¿½n
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//      Precompilaci¢n
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void plexico(void) {
   byte ** ptr, * _ivnom, h, * _source=source;
