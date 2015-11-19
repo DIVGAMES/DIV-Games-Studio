@@ -321,10 +321,13 @@ while(++np<nummatch) {
 	result->attrib=0;
 	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
 		if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
-			//printf("free'ing np [%d] (DIR) [%s]\n",np,result->name);
-			free(namelist[np]);
-			result->attrib=16;
-			return 0;
+			
+			// only if searching via wildcard - fixes "new"
+			if(strchr(findmask,'*')) {
+				free(namelist[np]);
+				result->attrib=16;
+				return 0;
+			}
 		} 
 		strcpy(findname, result->name);
 		strlwr(findname);
