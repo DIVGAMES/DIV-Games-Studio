@@ -210,6 +210,7 @@ while(SDL_PollEvent(&event))
 	switch(event.type)
 	{
 		case SDL_QUIT:
+			salir_del_entorno=1;
 		break;
 		case SDL_KEYDOWN:			// Button press
 			switch(event.key.keysym.sym)
