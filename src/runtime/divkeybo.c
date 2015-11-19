@@ -226,7 +226,7 @@ void checkmod(SDLMod mod) {
 }
 void tecla(void) {
 //printf("tecla\n");
-//ascii=0; scan_code=0;
+ascii=0; scan_code=0;
 SDL_Event event;
 while(SDL_PollEvent(&event))
         {
@@ -235,7 +235,8 @@ while(SDL_PollEvent(&event))
             {
                 /* Quit the application */
 //                salir_del_entorno=1;
-                exit(0);
+				alt_x=1;
+                //exit(0);
             }
             
             if (event.type == SDL_KEYDOWN)
@@ -265,9 +266,10 @@ while(SDL_PollEvent(&event))
 				}
 				checkmod((SDLMod) event.key.keysym.mod);
 				scan_code = sdl2key[event.key.keysym.sym];
+				ascii = event.key.keysym.scancode;
 // unicode not working on android
-#ifndef DROID				
-				if(event.key.keysym.unicode>0 &&  event.key.keysym.unicode<80)
+#ifndef DROID
+				if(event.key.keysym.unicode>=0 &&  event.key.keysym.unicode<0x80)
 					ascii = event.key.keysym.unicode;
 #endif				
 				kbdFLAGS[scan_code]=1;				
@@ -280,8 +282,6 @@ while(SDL_PollEvent(&event))
 				scan_code = sdl2key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
 				kbdFLAGS[scan_code]=0;
-				scan_code=0;
-				ascii=0;
 			}
 			  if (event.type == SDL_MOUSEMOTION)
             {
