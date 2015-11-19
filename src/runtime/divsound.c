@@ -485,8 +485,11 @@ int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
   */
 
 //  StopSound(con);
-// always play as loop, let
-	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, -1);
+
+// always play as loop, let the freqEffect manage stop_sound when loop is zero
+// this permits slow playing sound to run for the correct length.
+
+	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
 
   channels[con].freq = Frec;
   channels[con].vol = Volumen;
