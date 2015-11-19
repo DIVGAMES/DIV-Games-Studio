@@ -61,7 +61,7 @@ void path_line(void);
 void path_free(void);
 
 void signal_tree(int p, int s);
-static FILE * open_file(byte * file);
+static FILE * div_open_file(byte * file);
 void fade_on(void);
 void fade_off(void);
 void stop_scroll(void);
@@ -149,7 +149,7 @@ char full[_MAX_PATH+1];
 
 #ifndef NOTYET
 
-static FILE * open_file(byte * file) {
+static FILE * div_open_file(byte * file) {
   FILE * f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
@@ -211,7 +211,7 @@ strupr(full);
 
 #else
 
-FILE * open_file(byte * file) {
+FILE * div_open_file(byte * file) {
   FILE * f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
@@ -380,7 +380,7 @@ void load_pal(void) {
     free(packptr);
   } else {
     palfuera:
-    if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(102); return;
     } else {
       fread(pal,1,1352,es); fclose(es);
@@ -404,7 +404,7 @@ void load_pal(void) {
               free(packptr);
             } else {
               palfuera2:
-              if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+              if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
                 pila[sp]=0; e(102); return;
               } else {
                 fseek(es,-768,SEEK_END);
@@ -594,7 +594,7 @@ void load_map(void) {
     ptr=packptr; file_len=m;
   } else {
     mapfuera:
-    if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(143); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -746,7 +746,7 @@ void load_fpg(void) {
 #ifdef STDOUTLOG
     printf("fpg wanted is [%s]\n",&mem[pila[sp]]);
 #endif
-    if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(105); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1106,7 +1106,7 @@ void load_fnt(void) {
     fonts[ifonts]=ptr;
   } else {
     fntfuera:
-    if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(114); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1179,7 +1179,7 @@ void checkpal_font(int ifonts) {
         free(packptr);
       } else {
         fntfuera:
-        if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) return; else {
+        if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) return; else {
           fseek(es,0,SEEK_END); file_len=ftell(es);
           if (file_len!=f_i[ifonts].len) return;
           fseek(es,0,SEEK_SET);
@@ -1839,7 +1839,7 @@ void load(void) {
 
   offset=pila[sp--];
   if (!capar(offset)) { pila[sp]=0; e(125); return; }
-  if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) { pila[sp]=0; e(126); return; }
+  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) { pila[sp]=0; e(126); return; }
   fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
   lon=(lon*4)/unit_size;
@@ -1934,7 +1934,7 @@ void load_pcm(void) {
     ptr=(char *)packptr; file_len=m;
   } else {
     pcmfuera:
-    if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(128); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2053,7 +2053,7 @@ printf("Requesting song: %s\n",(char *)&mem[pila[sp]]);
     ptr=(char *)packptr; file_len=m;
   } else {
     songfuera:
-    if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(167); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2172,7 +2172,7 @@ void start_fli(void) {
   int x,y;
   y=pila[sp--]; x=pila[sp--];
 
-  if ((es=open_file((byte*)&mem[pila[sp]]))==NULL) {
+  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
     pila[sp]=0; e(147);
   } else {
     fclose(es);

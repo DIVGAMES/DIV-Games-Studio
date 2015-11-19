@@ -9,7 +9,7 @@
 #define GLOBALS
 #define FIN_GRID (32768-2560)
 
-FILE * open_file(unsigned char * file);
+FILE * div_open_file(unsigned char * file);
 #include "../inter.h"
 #include "vpe.h"
 
@@ -90,7 +90,7 @@ void load_wld(void)
     buffer=packptr; size=m;
   } else {
     wldfuera:
-    if ((fichero=open_file((byte*)&mem[text_offset+nombre]))==NULL) {
+    if ((fichero=div_open_file((byte*)&mem[text_offset+nombre]))==NULL) {
       e(159); vpe_inicializada=0; return;
     } else {
       fseek(fichero,0,SEEK_END); size=ftell(fichero);
