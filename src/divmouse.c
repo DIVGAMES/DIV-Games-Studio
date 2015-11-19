@@ -398,7 +398,11 @@ while(SDL_PollEvent(&event))
 			 if (event.type == SDL_KEYDOWN)
             {
 				scan_code = sdl2key[event.key.keysym.sym];
-				ascii = event.key.keysym.unicode&0x7f;
+		//		ascii = scan_code;
+#ifndef DROID
+				if(event.key.keysym.unicode<0x80 && event.key.keysym.unicode>=0)
+					ascii = event.key.keysym.unicode&0xFF;
+#endif
 				key(scan_code)=1;
 #ifdef GCW
 					if(event.key.keysym.sym ==SDLK_LALT)		// B
