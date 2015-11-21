@@ -8,7 +8,7 @@ cross platform IDE, compiler and runtime for
 * OSX
 * Android
 * Linux
-* HTML / Javascript (emscripten)
+* HTML / Javascript (emscripten - runtime export only)
 * Raspberry Pi
 * GCW-Zero
 
