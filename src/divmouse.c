@@ -199,6 +199,43 @@ void libera_drag(void) {
 extern float w_ratio;
 extern float h_ratio;
 #endif
+void checkmod(SDLMod mod) {
+	
+//	shift_status = 0;
+	if( mod == KMOD_NONE ){
+//            printf( "None\n" );
+            return;
+        }
+	// if( mod & KMOD_NUM ) printf( "NUMLOCK " );
+    //    if( mod & KMOD_CAPS ) printf( "CAPSLOCK " );
+        if( mod & KMOD_LCTRL ) shift_status |=4; 
+       if( mod & KMOD_RCTRL ) shift_status |=4;
+        if( mod & KMOD_RSHIFT ) shift_status |=1;
+        if( mod & KMOD_LSHIFT ) shift_status |=2;
+        if( mod & KMOD_RALT ) shift_status |=8;
+        if( mod & KMOD_LALT ) shift_status |=8;
+        if( mod & KMOD_CTRL ) shift_status |=4;
+        if( mod & KMOD_ALT ) shift_status |=8;
+        
+        if (mod & KMOD_CAPS) shift_status |=64;
+        if (mod & KMOD_NUM) shift_status |=32;
+        /*
+         if( mod & KMOD_NUM ) printf( "NUMLOCK " );
+        if( mod & KMOD_CAPS ) printf( "CAPSLOCK " );
+        if( mod & KMOD_LCTRL ) printf( "LCTRL " );
+        if( mod & KMOD_RCTRL ) printf( "RCTRL " );
+        if( mod & KMOD_RSHIFT ) printf( "RSHIFT " );
+        if( mod & KMOD_LSHIFT ) printf( "LSHIFT " );
+        if( mod & KMOD_RALT ) printf( "RALT " );
+        if( mod & KMOD_LALT ) printf( "LALT " );
+        if( mod & KMOD_CTRL ) printf( "CTRL " );
+//        if( mod & KMOD_SHIFT ) printf( "SHIFT " );
+        if( mod & KMOD_ALT ) printf( "ALT " );
+        
+        printf("\n");
+        * */
+}
+
 void read_mouse2(void) {
 	scan_code  =0;
 	ascii=0;
@@ -398,6 +435,8 @@ while(SDL_PollEvent(&event))
 			}
 			 if (event.type == SDL_KEYDOWN)
             {
+				
+			checkmod((SDLMod)event.key.keysym.mod);
 				scan_code = sdl2key[event.key.keysym.sym];
 		//		ascii = scan_code;
 #ifndef DROID
@@ -412,6 +451,9 @@ while(SDL_PollEvent(&event))
 			}
 			if(event.type == SDL_KEYUP) 
 			{
+				shift_status =0;
+				checkmod((SDLMod)event.key.keysym.mod);
+
 				scan_code = sdl2key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
 				key(scan_code)=0;
