@@ -191,11 +191,11 @@ void inicializacion (void) {
 //  setup->master=15; setup->sound_fx=15; setup->cd_audio=15;
   }
 */
-  iloc=mem[2];            // Inicio de la imagen de las variables locales
-  iloc_len=mem[6]+mem[5]; // Longitud de las locales (p£blicas y privadas)
-  iloc_pub_len=mem[6];  	// Longitud de las variables locales p£blicas
+  iloc=mem[2];            // Start of local variables | Inicio de la imagen de las variables locales
+  iloc_len=mem[6]+mem[5]; // Length of local ( public and private ) | Longitud de las locales (p£blicas y privadas)
+  iloc_pub_len=mem[6];  	// Length of local public variables | Longitud de las variables locales p£blicas
   inicio_privadas=iloc_pub_len;
-  imem=mem[8];            // Final de c¢digo, locales y textos (longitud del cmp)
+  imem=mem[8];            // Final code , local and texts ( length cmp ) | Final de c¢digo, locales y textos (longitud del cmp)
 
   if (iloc_len&1) iloc_len++; if (!(imem&1)) imem++;
 
@@ -592,7 +592,7 @@ void exec_process(void) {
     _net_loop(); // Recibe los paquetes justo antes de ejecutar el proceso~
 #endif
     id=ide; ip=mem[id+_IP]; carga_pila(id);
-
+//printf("sp: %d ide: %d ip %d\n",sp,id, ip);
     #ifdef DEBUG
     continue_process:
     #endif
@@ -614,7 +614,9 @@ int oo; // Para usos internos en el kernel
 void nucleo_exec() {
 
 	do {
+//		printf("Kernel: %d\n",mem[ip]);
 	  switch ((byte)mem[ip++]){
+		  
       #include "debug/kernel.cpp"
     }
  	} while (1);
@@ -1318,13 +1320,817 @@ void e(int texto) {
 //////////////////////////////////////////////////////////////////////////////
 
 
+
+#define STACK_SIZE 128
+
+int stack[STACK_SIZE];
+byte stp[STACK_SIZE];
+char cstack[STACK_SIZE][64];
+
+#define getvarref(X) cstack[ X ]
+
+
+
+void getvarname(int i, char *name) {
+	char mousestruct[12][8]={
+		"x","y","z","file",
+		"graph","angle","size",
+		"flags","region","left",
+		"middle","right"};
+		
+	switch(i) {
+
+			case 22:
+				strcpy(name,"x");
+				break;
+			case 23:
+				strcpy(name,"y");
+				break;
+			case 24:
+				strcpy(name,"z");
+				break;
+			case 25:
+				strcpy(name,"graph");
+				break;
+			case 26:
+				strcpy(name,"flags");
+				break;
+			case 27:
+				strcpy(name,"size");
+				break;
+			case 28:
+				strcpy(name,"angle");
+				break;
+			case 29:
+				strcpy(name,"region");
+				break;
+			case 30:
+				strcpy(name,"file");
+				break;
+			default:
+				sprintf(name,"var%d",i);
+				break;
+		}	
+		if(i>=iloc_len && i<255) {
+
+// default name
+			sprintf(name,"sysvar%d",i,mem[1]-1);
+
+			if(i>=iloc_len && i<=iloc_len+12) {
+				
+				sprintf(name,"mouse.%s",mousestruct[i-iloc_len]);
+				
+			
+			}
+		}
+}
+
+FILE *prg=NULL;
+
+void printglobals(void) {
+	int i=255;//mem[1];
+	fprintf(prg,"GLOBAL // %u %u\n",i,mem[1]-1);	
+	while(i<=mem[1]-1) {
+		fprintf(prg,"var%u=%u;\n",i,mem[i]);
+		i++;
+	}
+}
+void printlocal(void) {
+
+	int i=mem[2]+35;
+
+//	if(i<mem[7]-36)
+		fprintf(prg,"LOCAL\n");
+
+	while(i<mem[7]) {
+		fprintf(prg,"var%u=%u;\n",i,mem[i]);
+		i++;
+	}
+
+	fprintf(prg,"BEGIN\n");
+}
+
+
+
+void dump(int size) {
+	int i=mem[1]-1,itmp=0;
+	int sp=0,spp=0;
+	int jmp[65535];
+	int jpf[65535];
+	int j=0;
+	int args=0;
+	int ifloop=0;
+	
+	int f=0;
+	//					0    1     2    3    4    5    6    7    8    9  
+	char keys[128][12]={"","_esc","_1","_2","_3","_4","_5","_6","_7","_8",
+	//				   10    11     12       13         14       15 
+					   "_9","_0","_minus","_plus","_backspace","_tab",
+					   
+	//				   16    17   18   19   20   21   22   23   24   25   26           27          28
+					   "_q","_w","_e","_r","_t","_y","_u","_i","_o","_p","_l_bracket","_r_bracket","_enter",
+	//				   29          30   31   32   33   34   35   36   37   38    39          40            41
+					   "_control","_a","_s","_d","_f","_g","_h","_j","_k","_l","_semicolon","_apostrophe","_wave"
+	//				   42          43           44   45   46   47   48   49   50    51           52
+					   "_l_shift","_backslash","_z","_x","_c","_v","_b","_n","_m","_comma","","_c_backslash",
+	//					53
+						"_c_backslash","_r_shift","_c_asterisk","_alt","_space","_caps_lock",
+	//					59		60    61    62   63    64     65    66    67    68
+						"_f1","_f2","_f3","_f4","_f5","_f6","_f7","_f8","_f9","_f10",
+						
+	//					
+						"_num_lock","_scroll_lock","_home","_up","_pgup","_c_minus","_left","_c_center",
+						
+						"_right","_plus","_end","_down","_c_pgdn","_c_ins","_c_del"
+						//						"_f11","_f12"
+					   };
+
+	memset(jmp,-1,65535);
+	memset(jpf,-1,65535);
+	char name[255];
+	
+	char cmd[255];
+	memset(cmd,0,255);
+	printf("pos is %d %d\n",i,size);
+	
+	FILE *sta = fopen("dump.txt","w+");
+	prg = fopen("prg.prg","w+");
+
+
+// find the jmps
+
+while(i++<mem[7]-36) {
+	switch ((byte)mem[i]) {
+	    case lnop: fprintf(sta,"%5u\tnop",i); break;
+    case lcar: fprintf(sta,"%5u\tcar %u",i,mem[i+1]); i++; break;
+    case lasi: fprintf(sta,"%5u\tasi",i); break;
+    case lori: fprintf(sta,"%5u\tori",i); break;
+    case lxor: fprintf(sta,"%5u\txor",i); break;
+    case land: fprintf(sta,"%5u\tand",i); break;
+    case ligu: fprintf(sta,"%5u\tigu",i); break;
+    case ldis: fprintf(sta,"%5u\tdis",i); break;
+    case lmay: fprintf(sta,"%5u\tmay",i); break;
+    case lmen: fprintf(sta,"%5u\tmen",i); break;
+    case lmei: fprintf(sta,"%5u\tmei",i); break;
+    case lmai: fprintf(sta,"%5u\tmai",i); break;
+    case ladd: fprintf(sta,"%5u\tadd",i); break;
+    case lsub: fprintf(sta,"%5u\tsub",i); break;
+    case lmul: fprintf(sta,"%5u\tmul",i); break;
+    case ldiv: fprintf(sta,"%5u\tdiv",i); break;
+    case lmod: fprintf(sta,"%5u\tmod",i); break;
+    case lneg: fprintf(sta,"%5u\tneg",i); break;
+    case lptr: fprintf(sta,"%5u\tptr",i); break;
+    case lnot: fprintf(sta,"%5u\tnot",i); break;
+    case laid: fprintf(sta,"%5u\taid",i); break;
+    case lcid: fprintf(sta,"%5u\tcid",i); break;
+    case lrng: fprintf(sta,"%5u\trng %u",i,mem[i+1]); i++; break;
+    case ljmp: 
+		fprintf(sta,"%5u\tjmp %u",i,mem[i+1]); 
+//		if(mem[i+1]<i) {
+			jmp[j]=mem[i+1];
+			j++;
+//		}
+		i++; 
+		break;
+    case ljpf: 
+		fprintf(sta,"%5u\tjpf %u",i,mem[i+1]); 
+		if(mem[i+1]<i) {
+			printf("jumpf %d %d\n",i,mem[i+1]);
+			jpf[f]=mem[i+1];
+			f++;
+		}
+		i++; 
+		break;
+    case lfun: 
+		fprintf(sta,"%5u\tfun %u",i,mem[i+1]); 
+//			printf("func %d\n",mem[i+1]);
+		switch(mem[i+1]) {
+			case 2: // load_pal
+			case 3: // load_fpg
+			case 15: // load_fnt
+			case 16: // write
+				// check if ref is ptr or static
+
+					// ptr
+			case 34: // save
+			case 35: // load
+			case 37: // load_pcm
+			case 47: // system
+			case 67: // exit 
+				printf("text used at %u\n",i);
+
+			if(mem[i+1]==16) { // write 
+				if(mem[i-2]==lcar) // static
+					printf("static text val\n");
+				else
+					printf("by ref\n");
+			}
+
+			break;
+//			default:
+//				printf("called func %d\n",mem[i]);
+		}
+		i++; 		
+		break;
+    case lcal: fprintf(sta,"%5u\tcal %u",i,mem[i+1]); i++; break;
+    case lret: fprintf(sta,"%5u\tret",i); break;
+    case lasp: fprintf(sta,"%5u\tasp",i); break;
+    case lfrm: fprintf(sta,"%5u\tfrm",i); break;
+    case lcbp: fprintf(sta,"%5u\tcbp %u",i,mem[i+1]); i++; break;
+    case lcpa: fprintf(sta,"%5u\tcpa",i); break;
+    case ltyp: fprintf(sta,"\n%5u\ttyp %u",i,mem[i+1]); i++; break;
+    case lpri: fprintf(sta,"%5u\tpri %u",i,mem[i+1]); i++; break;
+    case lcse: fprintf(sta,"%5u\tcse %u",i,mem[i+1]); i++; break;
+    case lcsr: fprintf(sta,"%5u\tcsr %u",i,mem[i+1]); i++; break;
+    case lshr: fprintf(sta,"%5u\tshr",i); break;
+    case lshl: fprintf(sta,"%5u\tshl",i); break;
+    case lipt: fprintf(sta,"%5u\tipt",i); break;
+    case lpti: fprintf(sta,"%5u\tpti",i); break;
+    case ldpt: fprintf(sta,"%5u\tdpt",i); break;
+    case lptd: fprintf(sta,"%5u\tptd",i); break;
+    case lada: fprintf(sta,"%5u\tada",i); break;
+    case lsua: fprintf(sta,"%5u\tsua",i); break;
+    case lmua: fprintf(sta,"%5u\tmua",i); break;
+    case ldia: fprintf(sta,"%5u\tdia",i); break;
+    case lmoa: fprintf(sta,"%5u\tmoa",i); break;
+    case lana: fprintf(sta,"%5u\tana",i); break;
+    case lora: fprintf(sta,"%5u\tora",i); break;
+    case lxoa: fprintf(sta,"%5u\txoa",i); break;
+    case lsra: fprintf(sta,"%5u\tsra",i); break;
+    case lsla: fprintf(sta,"%5u\tsla",i); break;
+    case lpar: fprintf(sta,"%5u\tpar %u",i,mem[i+1]); i++; break;
+    case lrtf: fprintf(sta,"%5u\trtf",i); break;
+    case lclo: fprintf(sta,"%5u\tclo %u",i,mem[i+1]); i++; break;
+    case lfrf: fprintf(sta,"%5u\tfrf",i); break;
+    case limp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
+    case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
+    case lchk: fprintf(sta,"%5u\tchk",i); break;
+    case ldbg: fprintf(sta,"%5u\tdbg",i); break;
+}
+}
+
+
+rewind(sta);
+j=0;
+f=0;
+
+// GLOBAL vars;
+
+
+i=mem[1]-1;
+	while (i++<mem[2]-1) { 
+//		printf("%d:%5u\n",i,mem[i]); 
+		fprintf(sta,"\n");
+//		fprintf(prg,"// %d %d\n",mem[i],mem[i+1]);
+		if(i==jmp[j]) {
+			j++;
+			fprintf(prg,"\nLOOP\n");
+		}
+		if(i==jpf[f]) {
+			f++;
+			fprintf(prg,"\nREPEAT // %d\n",i);
+		}
+		switch ((byte)mem[i]) {
+			// no op
+    case lnop:
+		fprintf(sta,"%5u\tnop",i); 
+		fprintf(prg,"// NOP\n");
+		break;
+    
+			// load val to stack
+    case lcar: 
+		fprintf(sta,"%5u\tcar %u",i,mem[i+1]); 
+		stack[sp++]=mem[i+1];
+		sprintf(cstack[sp-1],"%u%c",mem[i+1],0);
+		stp[sp-1]=0; // not a pointer
+		i++; 
+		break;
+    case lasi: 
+		fprintf(sta,"%5u\tasi",i); 
+		
+		if(strlen(cmd)==0) 
+			sprintf(cmd,"%s",cstack[1]);
+			
+/*		
+local struct reserved[0]
+        process_id     // Identificador del proceso
+        id_scan        // Para scanear procesos (colisiones)
+        process_type   // Tipo de proceso
+        type_scan      // Para scanear procesos por tipo
+        status         // Estado actual de este proceso
+        param_offset   // Puntero a los par metros pasados
+        program_index  // Contador de programa para este proceso
+        is_executed    // Indica si el proceso ya ha sido ejecutado
+        is_painted     // Indica si el proceso ya ha sido pintado
+        distance_1     // Distancia 1 del proceso (reservado modo 7)
+        distance_2     // Distancia 2 del proceso (idem)
+        frame_percent  // Porcentaje de frame recorrido
+        box_x0         // Caja ocupada por el sprite cada
+        box_y0         // vez que se pinta para realizar
+        box_x1         // volcado y restauraci¢n de fondo
+        box_y1         // parcial (dump_type==partial_dump)
+end
+
+local father=0          // Identificador del padre
+local son=0             // Identificador del £ltimo hijo
+local smallbro=0        // Identificador del hermano menor
+local bigbro=0          // Identificador del hermano mayor
+local priority=0        // Prioridad de proceso (a mayor se procesa antes)
+local ctype=0           // Tipo de coordenada
+local x=0               // Coordenada X
+local y=0               // Coordenada Y
+local z=0               // Prioridad de impresi¢n del gr fico
+local graph=0           // C¢digo del gr fico para este proceso
+local flags=0           // +1 iversi¢n horiz., +2 inversion vert., +4 Ghost
+local size=100          // Tama¤o del proceso (en tanto por ciento)
+local angle=0           // Angulo del proceso
+local region=0          // Regi¢n de clipping para este proceso
+local file=0            // Fichero del que tomar los gr ficos
+local xgraph=0          // Puntero a tabla: n§graficos, graf_angulo_0, ...
+local height=1          // Altura de los procesos en el modo-7 (pix/4)
+local cnumber=0         // N§ de scroll o m7 en el que est  (0 en todos, o bien: +1 en el 0, +2 en el 1, +4 en el 2, ...)
+local resolution=0 
+
+*/
+		
+		memset(name,0,255);
+//		fprintf(prg,"// %d\n",stack[0]);
+
+		getvarname(stack[0],name);
+		
+		fprintf(prg,"%s=%s",name,cmd);
+		memset(cmd,0,255);
+		sp=0;
+		break;
+    case lori: 
+		fprintf(sta,"%5u\tori",i); 
+		fprintf(prg,"// UNIMP! || (ORI)\n");
+		break;
+    case lxor: 
+		fprintf(sta,"%5u\txor",i); 
+		fprintf(prg,"// UNIMP! XOR\n");
+		break;
+    case land: 
+		fprintf(sta,"%5u\tand",i); 
+		fprintf(prg,"// UNIMP! && (AND)\n");
+		break;
+    case ligu: 
+		fprintf(sta,"%5u\tigu",i); 
+		fprintf(prg,"// %s UNIMP! == (IGU)\n",cmd);		
+		break;
+    case ldis: 
+		fprintf(sta,"%5u\tdis",i); 
+		fprintf(prg,"// UNIMP! != (DIS)\n");		
+		break;
+    case lmay: 
+		fprintf(sta,"%5u\tmay",i); 
+		fprintf(prg,"// UNIMP! > (MAY)\n");		
+		break;
+    case lmen: 
+		fprintf(sta,"%5u\tmen",i); 
+		fprintf(prg,"// UNIMP! < (MEN)\n");				
+		break;
+    case lmei: 
+		fprintf(sta,"%5u\tmei",i); 
+		fprintf(prg,"// UNIMP! <= (MEI)\n");	
+		break;
+    case lmai: 
+		fprintf(sta,"%5u\tmai",i); 
+		fprintf(prg,"// UNIMP! >= (MAI)\n");			
+		break;
+    case ladd: 
+		fprintf(sta,"%5u\tadd",i); 
+		stack[sp-2]+=stack[sp-1];
+		sp--;
+		break;
+    case lsub: 
+		fprintf(sta,"%5u\tsub",i); 
+		fprintf(prg,"// %d-%d\n",stack[sp-2],stack[sp-1]);
+		//stack[sp-2]-=stack[sp-1];
+		strcat(cstack[sp-2],"-");
+		strcat(cstack[sp-2],cstack[sp-1]);
+		
+		sp--;
+		break;
+    case lmul: fprintf(sta,"%5u\tmul",i); break;
+    case ldiv: fprintf(sta,"%5u\tdiv",i); break;
+    case lmod: fprintf(sta,"%5u\tmod",i); break;
+    case lneg: fprintf(sta,"%5u\tneg",i); break;
+    case lptr: 
+		fprintf(sta,"%5u\tptr",i); 
+		// get var names
+		getvarname(stack[sp-1],name);
+		sprintf(cstack[sp-1],"%s",name);
+		stp[sp-1]=1;
+		break;
+    case lnot: fprintf(sta,"%5u\tnot",i); break;
+    case laid: 
+		fprintf(sta,"%5u\taid",i); 
+		break;
+    case lcid: 
+		fprintf(sta,"%5u\tcid",i); 
+		stack[sp]=0;
+		strcpy(cstack[sp],"id");
+		stp[sp]=1;
+		sp++;
+		break;
+    case lrng: fprintf(sta,"%5u\trng %u",i,mem[i+1]); i++; break;
+    case ljmp: 
+		fprintf(sta,"%5u\tjmp %u",i,mem[i+1]); 
+		if(mem[i+1]<i) {
+			fprintf(prg,"// JMP BACK TO %u\nEND\n\n",mem[i+1]);
+		}
+		i++; 
+		break;
+    case ljpf: 
+		fprintf(sta,"%5u\tjpf %u",i,mem[i+1]); 
+		
+		if(mem[i+1]<i) 
+			fprintf(prg,"UNTIL (%s)\n",cmd);
+		else
+			fprintf(prg,"IF(%s) // TODO at %u\n",cmd,i);
+
+		memset(cmd,0,255);
+		i++; 
+		sp=0;
+		break;
+    case lfun: 
+		fprintf(sta,"%5u\tfun %u",i,mem[i+1]); 
+
+		// calling function
+		switch(mem[i+1]) {
+			
+			case 0: // signal
+
+				sprintf(cmd,"signal(%s,",cstack[sp-2]);
+
+				switch(stack[sp-1]) {
+					case 0:
+						strcat(cmd,"s_kill");
+						break;
+					case 1:
+						strcat(cmd,"s_wakeup");
+						break;
+					case 2:
+						strcat(cmd,"s_sleep");
+						break;
+					case 3:
+						strcat(cmd,"s_freeze");
+						break;
+					case 100:
+						strcat(cmd,"s_kill_tree");
+						break;
+					case 101:
+						strcat(cmd,"s_wakeup_tree");
+						break;
+					case 102:
+						strcat(cmd,"s_sleet_tree");
+						break;
+					case 103:
+						strcat(cmd,"s_freeze_tree");
+						break;
+					default:
+						strcat(cmd,"0");
+						break;
+				}
+				strcat(cmd,")");
+				sp=0;
+				break;
+
+			case 1:
+				sprintf(cmd, "key(%s)",keys[stack[sp-1]]);
+				sp=0;
+				break;
+
+			case 2: // load_pal
+				sprintf(cmd,"load_pal(\"%s\")",(byte*)&mem[mem[7]+stack[sp-1]]);
+				sp=0;
+				break;
+				
+			case 3:
+				if(stp[sp-1])
+					sprintf(cmd,"load_fpg(%s)",cstack[sp-1]);
+				else
+					sprintf(cmd,"load_fpg(\"%s\")",(byte*)&mem[mem[7]+stack[sp-1]]);
+				sp=0;
+				break;
+			
+			case 4: // start_scroll (6)
+				sprintf(cmd,"start_scroll(%s, %s, %s, %s, %s, %s)",cstack[sp-6],cstack[sp-5],cstack[sp-4],cstack[sp-3],cstack[sp-2],cstack[sp-1]);
+				sp=0;
+				break;
+			
+			case 5: // stop_scroll
+				sprintf(cmd,"stop_scroll(%s)",cstack[sp-1]);
+				sp=0;
+				break;
+				
+			case 8:
+				sprintf(cmd,"collision(type proc%s)",cstack[sp-1]);
+				sp=0;
+				break;
+				
+			case 15:
+				sprintf(cmd,"load_fnt(\"%s\")",(byte*)&mem[mem[7]+stack[sp-1]]);
+				sp=0;
+				break;	
+			
+			case 16:
+				sprintf(cmd,"write(%d,%d,%d,%d,\"%s\")",stack[sp-5],stack[sp-4],stack[sp-3],stack[sp-2],(byte*)&mem[mem[7]+stack[sp-1]]);
+				sp=0;
+				break;
+
+			case 17:
+				sprintf(cmd,"write_int(%d,%d,%d,%d,&var%d)",stack[sp-5],stack[sp-4],stack[sp-3],stack[sp-2],stack[sp-1]);
+				sp=0;
+				break;
+
+			case 18:
+				if(stack[sp-1]==0)
+					sprintf(cmd,"delete_text(all_text)",stack[sp-1]);
+				else
+					sprintf(cmd,"delete_text(%d)",stack[sp-1]);
+				sp=0;
+				break;
+
+			case 21:
+				sprintf(cmd,"random(%d,%d)",stack[sp-2],stack[sp-1]);
+				sp=0;
+				break;
+
+			case 22: // define region (5)
+				sprintf(cmd,"define_region(%d,%d,%d,%d,%d)",stack[sp-5],stack[sp-4],stack[sp-3],stack[sp-2],stack[sp-1]);
+				sp=0;
+				break;
+				
+			case 24:
+				sprintf(cmd,"put(%d,%d,%d,%d)",stack[sp-4],stack[sp-3],stack[sp-2],stack[sp-1]);
+				sp=0;
+				break;
+
+			
+			case 25:
+				sprintf(cmd,"put_screen(%d,%d)",stack[sp-2],stack[sp-1]);
+				sp=0;
+				break;
+
+			case 33: // clear_screen
+				sprintf(cmd,"clear_screen()");
+				sp=0;
+				break;
+			
+			case 35: //load				
+				sprintf(cmd,"load(\"%s\",offset var%d)",(byte*)&mem[mem[7]+stack[sp-2]],stack[sp-1]);
+				sp=0;
+				break;
+
+			case 36:
+				sprintf(cmd,"set_mode(%d)",stack[sp-1]);
+				sp=0;
+				break;
+			
+			case 37:
+				sprintf(cmd,"load_pcm(\"%s\",%d)",(byte*)&mem[mem[7]+stack[sp-2]],stack[sp-1]);
+				sp=0;
+				break;
+				
+			case 39: // sound
+				sprintf(cmd,"sound(%s,%s,%s)",getvarref(sp-3),getvarref(sp-2),getvarref(sp-1));
+				sp=0;
+				break;
+
+			case 40: // stop_sound
+				sprintf(cmd,"stop_sound(%d)",stack[sp-1]);
+				sp=0;
+				break;
+				
+			case 42:
+				sprintf(cmd,"set_fps(%d,%d)",stack[sp-2],stack[sp-1]);
+				sp=0;
+				break;
+				
+			case 58: // fade_on
+				sprintf(cmd,"fade_on()");
+				sp=0;
+				break;
+
+			case 56: // advance
+				sprintf(cmd,"advance(%d)",stack[sp-1]);
+				sp=0;
+				break;
+			
+			case 66: // let_me_alone
+				sprintf(cmd,"let_me_alone()");
+				sp=0;
+				break;
+				
+			default: 
+				sprintf(cmd,"func(%d)",mem[i+1]);
+				sp=0;
+				break;
+		}
+		i++; break;
+    case lcal: 
+		fprintf(sta,"%5u\tcal %u",i,mem[i+1]); 
+		sprintf(cmd,"proc%u(",mem[mem[i+1]+1]);
+		spp=sp;
+		while(sp>0) {
+			strcat(cmd,cstack[spp-sp]);
+			sp--;
+			if(sp>0)
+			strcat(cmd,",");
+		}
+		strcat(cmd,")");
+		i++; 
+		break;
+    
+    case lret: 
+		fprintf(sta,"%5u\tret",i); 
+		fprintf(prg,"\nEND\n\n");
+		if(i&&1)
+			i++;
+		break;
+    case lasp: 
+		fprintf(sta,"%5u\tasp",i); 
+		fprintf(prg,"%s;\n",cmd);
+		memset(cmd,0,255);
+		sp=0;
+		break;
+    case lfrm: 
+		fprintf(sta,"%5u\tfrm",i); 
+		fprintf(prg,"frame;\n"); 
+		break;
+		
+    case lcbp: 
+		fprintf(sta,"%5u\tcbp %u",i,mem[i+1]); 
+	//	fprintf(prg,"// %d args\n",mem[i+1]);
+		args=mem[i+1];
+		
+		if(args==0)
+			fprintf(prg,");\n");
+
+		i++; break;
+    case lcpa: 
+		fprintf(sta,"%5u\tcpa",i); 
+//		fprintf(prg,"// args[]\n");
+		if(args>0) {
+			args--;
+			getvarname(stack[0],name);
+			fprintf(prg,"%s ",name);
+			if(args==0)
+				fprintf(prg,");\n\nBEGIN\n\n");
+			else 
+				fprintf(prg,",");
+		}
+		sp=0;
+		break;
+    case ltyp: 
+		fprintf(sta,"\n%5u\ttyp %u",i,mem[i+1]); 
+		if(mem[i+2]==lfrm) {
+			fprintf(prg,"PROGRAM myprg;\n");
+			i+=2;
+			printglobals();
+			printlocal();
+//			if(mem[i+3]==lnop) 
+//				fprintf(prg,"BEGIN\n");
+		} else {
+			fprintf(prg,"\n\nPROCESS proc%u(",mem[i+1]);
+		}
+		
+		i++; break;
+    case lpri: 
+		fprintf(sta,"%5u\tpri %u",i,mem[i+1]); 
+		fprintf(prg,"PRIVATE\n");
+		itmp=i;
+		i++;
+		while(i<(mem[itmp+1]-1)) {
+			fprintf(prg,"var%u=%u; // %d\n",mem[6]-1+(i-itmp),mem[i+1],i);
+			i++;
+		}
+		fprintf(prg,"\nBEGIN\n");	
+//		i=mem[i+1]-1;
+		sp=0;
+		break;
+    case lcse: fprintf(sta,"%5u\tcse %u",i,mem[i+1]); i++; break;
+    case lcsr: fprintf(sta,"%5u\tcsr %u",i,mem[i+1]); i++; break;
+    case lshr: fprintf(sta,"%5u\tshr",i); break;
+    case lshl: fprintf(sta,"%5u\tshl",i); break;
+    case lipt: fprintf(sta,"%5u\tipt",i); break;
+    case lpti: fprintf(sta,"%5u\tpti",i); break;
+    case ldpt: fprintf(sta,"%5u\tdpt",i); break;
+    case lptd: fprintf(sta,"%5u\tptd",i); break;
+    case lada: fprintf(sta,"%5u\tada",i); break;
+    case lsua: 
+		fprintf(sta,"%5u\tsua",i); 
+		fprintf(prg,"// -= \n");
+		break;
+    case lmua: fprintf(sta,"%5u\tmua",i); break;
+    case ldia: fprintf(sta,"%5u\tdia",i); break;
+    case lmoa: fprintf(sta,"%5u\tmoa",i); break;
+    case lana: fprintf(sta,"%5u\tana",i); break;
+    case lora: fprintf(sta,"%5u\tora",i); break;
+    case lxoa: fprintf(sta,"%5u\txoa",i); break;
+    case lsra: fprintf(sta,"%5u\tsra",i); break;
+    case lsla: fprintf(sta,"%5u\tsla",i); break;
+    case lpar: fprintf(sta,"%5u\tpar %u",i,mem[i+1]); i++; break;
+    case lrtf: fprintf(sta,"%5u\trtf",i); break;
+    case lclo: fprintf(sta,"%5u\tclo %u",i,mem[i+1]); i++; break;
+    case lfrf: fprintf(sta,"%5u\tfrf",i); break;
+    case limp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
+    case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
+    case lchk: fprintf(sta,"%5u\tchk",i); break;
+    case ldbg: fprintf(sta,"%5u\tdbg",i); break;
+
+    case lcar2: fprintf(sta,"%5u\tcar2 %u %u",i,mem[i+1],mem[i+2]); i+=2; break;
+    case lcar3: fprintf(sta,"%5u\tcar3 %u %u %u",i,mem[i+1],mem[i+2],mem[i+3]); i+=3; break;
+    case lcar4: fprintf(sta,"%5u\tcar4 %u %u %u %u",i,mem[i+1],mem[i+2],mem[i+3],mem[i+4]); i+=4; break;
+    case lasiasp: fprintf(sta,"%5u\tasiasp",i); break;
+    case lcaraid: fprintf(sta,"%5u\tcaraid %u",i,mem[i+1]); i++; break;
+    case lcarptr: fprintf(sta,"%5u\tcarptr %u",i,mem[i+1]); i++; break;
+    case laidptr: fprintf(sta,"%5u\taidptr",i); break;
+    case lcaraidptr: fprintf(sta,"%5u\tcaraidptr %u",i,mem[i+1]); i++; break;
+    case lcaraidcpa: fprintf(sta,"%5u\tcaraidcpa %u",i,mem[i+1]); i++; break;
+    case laddptr: fprintf(sta,"%5u\taddptr",i); break;
+    case lfunasp: fprintf(sta,"%5u\tfunasp %u",i,mem[i+1]); i++; break;
+    case lcaradd: fprintf(sta,"%5u\tcaradd %u",i,mem[i+1]); i++; break;
+    case lcaraddptr: fprintf(sta,"%5u\tcaraddptr %u",i,mem[i+1]); i++; break;
+    case lcarmul: fprintf(sta,"%5u\tcarmul %u",i,mem[i+1]); i++; break;
+    case lcarmuladd: fprintf(sta,"%5u\tcarmuladd %u",i,mem[i+1]); i++; break;
+    case lcarasiasp: fprintf(sta,"%5u\tcarasiasp %u",i,mem[i+1]); i++; break;
+    case lcarsub: fprintf(sta,"%5u\tcarsub %u",i,mem[i+1]); i++; break;
+    case lcardiv: fprintf(sta,"%5u\tcardiv %u",i,mem[i+1]); i++; break;
+
+    case lptrwor: fprintf(sta,"%5u\tptrwor",i); break;
+    case lasiwor: fprintf(sta,"%5u\tasiwor",i); break;
+    case liptwor: fprintf(sta,"%5u\tiptwor",i); break;
+    case lptiwor: fprintf(sta,"%5u\tptiwor",i); break;
+    case ldptwor: fprintf(sta,"%5u\tdptwor",i); break;
+    case lptdwor: fprintf(sta,"%5u\tptdwor",i); break;
+    case ladawor: fprintf(sta,"%5u\tadawor",i); break;
+    case lsuawor: fprintf(sta,"%5u\tsuawor",i); break;
+    case lmuawor: fprintf(sta,"%5u\tmuawor",i); break;
+    case ldiawor: fprintf(sta,"%5u\tdiawor",i); break;
+    case lmoawor: fprintf(sta,"%5u\tmoawor",i); break;
+    case lanawor: fprintf(sta,"%5u\tanawor",i); break;
+    case lorawor: fprintf(sta,"%5u\torawor",i); break;
+    case lxoawor: fprintf(sta,"%5u\txoawor",i); break;
+    case lsrawor: fprintf(sta,"%5u\tsrawor",i); break;
+    case lslawor: fprintf(sta,"%5u\tslawor",i); break;
+    case lcpawor: fprintf(sta,"%5u\tcpawor",i); break;
+
+    case lptrchr: fprintf(sta,"%5u\tptrchr",i); break;
+    case lasichr: fprintf(sta,"%5u\tasichr",i); break;
+    case liptchr: fprintf(sta,"%5u\tiptchr",i); break;
+    case lptichr: fprintf(sta,"%5u\tptichr",i); break;
+    case ldptchr: fprintf(sta,"%5u\tdptchr",i); break;
+    case lptdchr: fprintf(sta,"%5u\tptdchr",i); break;
+    case ladachr: fprintf(sta,"%5u\tadachr",i); break;
+    case lsuachr: fprintf(sta,"%5u\tsuachr",i); break;
+    case lmuachr: fprintf(sta,"%5u\tmuachr",i); break;
+    case ldiachr: fprintf(sta,"%5u\tdiachr",i); break;
+    case lmoachr: fprintf(sta,"%5u\tmoachr",i); break;
+    case lanachr: fprintf(sta,"%5u\tanachr",i); break;
+    case lorachr: fprintf(sta,"%5u\torachr",i); break;
+    case lxoachr: fprintf(sta,"%5u\txoachr",i); break;
+    case lsrachr: fprintf(sta,"%5u\tsrachr",i); break;
+    case lslachr: fprintf(sta,"%5u\tslachr",i); break;
+    case lcpachr: fprintf(sta,"%5u\tcpachr",i); break;
+
+    case lstrcpy: fprintf(sta,"%5u\tstrcpy",i); break;
+    case lstrfix: fprintf(sta,"%5u\tstrfix",i); break;
+    case lstrcat: fprintf(sta,"%5u\tstrcat",i); break;
+    case lstradd: fprintf(sta,"%5u\tstradd",i); break;
+    case lstrdec: fprintf(sta,"%5u\tstrdec",i); break;
+    case lstrsub: fprintf(sta,"%5u\tstrsub",i); break;
+    case lstrlen: fprintf(sta,"%5u\tstrlen",i); break;
+    case lstrigu: fprintf(sta,"%5u\tstrigu",i); break;
+    case lstrdis: fprintf(sta,"%5u\tstrdis",i); break;
+    case lstrmay: fprintf(sta,"%5u\tstrmay",i); break;
+    case lstrmen: fprintf(sta,"%5u\tstrmen",i); break;
+    case lstrmei: fprintf(sta,"%5u\tstrmei",i); break;
+    case lstrmai: fprintf(sta,"%5u\tstrmai",i); break;
+    case lcpastr: fprintf(sta,"%5u\tcpastr",i); break;
+
+    default: fprintf(sta,"***"); break;
+  } 
+}
+fclose(sta);
+fclose(prg);
+printf("stack: %d\n",sp);
+}
+
 int main(int argc,char * argv[]) {
   FILE * f;
+  int a=0;
   byte * ptr;
+  byte *dp;
+  char DIV_VER=' ';
   unsigned long len,len_descomp;
   int mimem[10],n,i;
-  uint32_t stubsize =602;
-
+  uint32_t stubsize = 602;
+  uint32_t winstubsize = 11984;
+  uint32_t div1stubsize = 8819;
+  
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   atexit(SDL_Quit);
   remove("DEBUGSRC.TXT");
@@ -1364,9 +2170,9 @@ int main(int argc,char * argv[]) {
   vga_an=320; vga_al=200;
 
 #ifdef __EMSCRIPTEN__
-vga_an=640;
-vga_al=480;
-f=fopen("system/EXEC.EXE","rb");
+f=fopen(HTML_EXE,"rb");
+printf("FILE: %s %x\n",HTML_EXE,f);
+
 #else
   if ((f=fopen(argv[1],"rb"))==NULL) {
     #ifndef DEBUG
@@ -1386,12 +2192,74 @@ f=fopen("system/EXEC.EXE","rb");
   inicializa_textos((byte *)argv[0]);
 #endif
 
+// check if div1 or div2 exe
+fseek(f,0x1c,SEEK_SET);
+fread(&DIV_VER,1,1,f);
+printf("%s\n",DIV_VER=='D'?"DIV 1":"DIV 2");
   fseek(f,0,SEEK_END);
-  len=ftell(f)-stubsize-4*10;
+  len=ftell(f);
+
+  if(DIV_VER!='D')
+	len-=stubsize-4*10;
+  
   fseek(f,0,SEEK_SET);
+
+if(DIV_VER=='D') {
+printf("Cannot load DIV1 exe (yet)\n");
+fseek(f,div1stubsize,SEEK_SET);
+fread(mimem,4,10,f);
+
+for(a=0;a<10;a++){ 
+printf("offset %d is %x (%d)\n",a,mimem[a],mimem[a]);
+//printf("Text offset is %x\n",(uint16_t*)mimem[6]);
+}
+
+  iloc_len=(mimem[5]+mimem[6]);
+
+  if (iloc_len&1) iloc_len++;
+
+  if (mimem[3]>0) {
+    imem_max=mimem[8]+mimem[3]*(iloc_len)+iloc_len+2;
+  } else {
+    imem_max=mimem[8]+128*(iloc_len)+iloc_len+2;
+    if (imem_max<256*1024) imem_max=256*1024;
+    if (imem_max>1024*1024) imem_max=1024*1024;
+  }
+
+dp=(byte*)malloc(len);
+mem=(int*)malloc(4*len);//imem_max+1032*5+16*1025+3);
+mem=(int*)((((memptrsize)mem+3)/4)*4);
+        memb=(byte*)mem;
+        memw=(word*)mem;
+fseek(f,div1stubsize,SEEK_SET);
+//rewind(f);
+printf("FILE AT: %d\n",ftell(f));
+fread(mem,1,len-div1stubsize,f);
+printf("FILE AT: %d %d\n",ftell(f),len);
+dump(len-div1stubsize);
+//for(a=0;a<40;a++){ 
+//printf("ptr offset %d is %x (%d)\n",a,dp[a],dp[a]);
+//printf("Text offset is %x\n",(uint16_t*)mimem[6]);
+//}
+//memcpy(mem,mimem,40);
+//memcpy(mem,ptr,len-div1stubsize);//4*imem_max+1032*5+16*1025+3);
+
+printf("ptrsize %d\nmem: %x iloc: %d iloc_len: %d iloc_max %d\nvars: %d\n",sizeof(ptr),mem,mem[6],iloc_len,imem_max,mem[2]);
+  kbdInit();
+
+
+printf("first op: %d\n",mem[mem[1]]);
+        interprete();        
+} else {
 
   fseek(f,stubsize,SEEK_SET);
   fread(mimem,4,10,f);
+
+for(a=0;a<10;a++){ 
+printf("offset %d is %x (%d)\n",a,mimem[a],mimem[a]);
+//printf("Text offset is %x\n",(uint16_t*)mimem[6]);
+}
+//exit(0);
 
   iloc_len=(mimem[5]+mimem[6]);
 
@@ -1432,7 +2300,14 @@ f=fopen("system/EXEC.EXE","rb");
 	if(false)
 #endif
 {
-
+//#ifdef DUMP_BYTECODE
+FILE *m = fopen("exec.m","wb");
+if(m) {
+//	fwrite((uint32_t *)&mem[9],1,len_descomp,m);
+	fwrite((uint32_t *)mem,1,len_descomp+80,m);
+	fclose(m);
+}
+//#endif
         free(ptr);
 
         if ((mem[0]&128)==128) { trace_program=1; mem[0]-=128; }
@@ -1486,7 +2361,7 @@ f=fopen("system/EXEC.EXE","rb");
     }
 
   } else { fclose(f); exer(1); }
-
+}
 return 0;
 
 }
