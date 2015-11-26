@@ -1320,6 +1320,7 @@ void e(int texto) {
 //////////////////////////////////////////////////////////////////////////////
 
 
+#ifndef __EMSCRIPTEN__
 
 #define STACK_SIZE 128
 
@@ -1329,17 +1330,26 @@ char cstack[STACK_SIZE][64];
 
 #define getvarref(X) cstack[ X ]
 
+FILE *prg=NULL;
 
 
 void getvarname(int i, char *name) {
-	char mousestruct[12][8]={
+	char mousestruct[12][10]={
 		"x","y","z","file",
 		"graph","angle","size",
 		"flags","region","left",
-		"middle","right"};
+		"middle","right"
+	};
 		
+	char m7struct[8][10]={
+		"z","camera","height",
+		"distance","horizon","focus",
+		"color"
+	};
 	switch(i) {
-
+			case 21:
+				strcpy(name,"ctype");
+				break;
 			case 22:
 				strcpy(name,"x");
 				break;
@@ -1374,7 +1384,8 @@ void getvarname(int i, char *name) {
 		if(i>=iloc_len && i<255) {
 
 // default name
-			sprintf(name,"sysvar%d",i,mem[1]-1);
+fprintf(prg,"// getvarname %d iloc_len %d\n",i,iloc_len);
+			sprintf(name,"var%d",i,mem[1]-1);
 
 			if(i>=iloc_len && i<=iloc_len+12) {
 				
@@ -1382,16 +1393,22 @@ void getvarname(int i, char *name) {
 				
 			
 			}
+			if(i>=iloc_len+112 && i<=iloc_len+120) {
+				
+				sprintf(name,"m7.%s",m7struct[i-iloc_len-112]);
+				
+			
+			}
+			
 		}
 }
 
-FILE *prg=NULL;
 
 void printglobals(void) {
 	int i=255;//mem[1];
 	fprintf(prg,"GLOBAL // %u %u\n",i,mem[1]-1);	
 	while(i<=mem[1]-1) {
-		fprintf(prg,"var%u=%u;\n",i,mem[i]);
+		fprintf(prg,"var%u=%d;\n",i,mem[i]);
 		i++;
 	}
 }
@@ -1403,24 +1420,29 @@ void printlocal(void) {
 		fprintf(prg,"LOCAL\n");
 
 	while(i<mem[7]) {
-		fprintf(prg,"var%u=%u;\n",i,mem[i]);
+		fprintf(prg,"var%u=%d;\n",i,mem[i]);
 		i++;
 	}
 
-	fprintf(prg,"BEGIN\n");
+//	fprintf(prg,"BEGIN\n");
 }
+
 
 
 
 void dump(int size) {
 	int i=mem[1]-1,itmp=0;
 	int sp=0,spp=0;
-	int jmp[65535];
-	int jpf[65535];
+	
+	int *jmp;
+	int *jpf;
+	int *jpb;
+	int *end;
 	int j=0;
 	int args=0;
 	int ifloop=0;
-	
+	char condstack[255][100];
+	int con=0;
 	int f=0;
 	//					0    1     2    3    4    5    6    7    8    9  
 	char keys[128][12]={"","_esc","_1","_2","_3","_4","_5","_6","_7","_8",
@@ -1444,9 +1466,15 @@ void dump(int size) {
 						"_right","_plus","_end","_down","_c_pgdn","_c_ins","_c_del"
 						//						"_f11","_f12"
 					   };
-
-	memset(jmp,-1,65535);
-	memset(jpf,-1,65535);
+jmp = (int *)malloc(size*5);
+jpf = (int *)malloc(size*5);
+jpb = (int *)malloc(size*5);
+end = (int *)malloc(size*5);
+	memset(jmp,0,size*4);
+	memset(jpf,0,size*4);
+	memset(jpb,0,size*4);
+	memset(end,0,size*4);
+	
 	char name[255];
 	
 	char cmd[255];
@@ -1487,17 +1515,28 @@ while(i++<mem[7]-36) {
     case ljmp: 
 		fprintf(sta,"%5u\tjmp %u",i,mem[i+1]); 
 //		if(mem[i+1]<i) {
-			jmp[j]=mem[i+1];
-			j++;
+//			printf("jump %d %d\n",i,mem[i+1]);
+			jmp[mem[i+1]]++;
+//			j++;
 //		}
 		i++; 
 		break;
     case ljpf: 
 		fprintf(sta,"%5u\tjpf %u",i,mem[i+1]); 
 		if(mem[i+1]<i) {
-			printf("jumpf %d %d\n",i,mem[i+1]);
-			jpf[f]=mem[i+1];
-			f++;
+				printf("jump backward %d %d\n",i,mem[i+1]);
+			jpb[mem[i+1]]++;
+//			f++;
+		} else {
+			printf("jump forward %d %d\n",i,mem[i+1]);
+			jpf[mem[i+1]]++;
+		}
+		// check if there is a back jump before
+		if(mem[mem[i+1]-2]==ljmp) {
+			printf("jpf followed by jump %d %d %d\n",i,mem[i+1],mem[mem[i+1]-1]);
+			jmp[mem[mem[i+1]-1]]--;
+			printf("jmp[%d]=%d\n",mem[mem[i+1]-1],jmp[mem[mem[i+1]-1]]);
+
 		}
 		i++; 
 		break;
@@ -1534,7 +1573,10 @@ while(i++<mem[7]-36) {
 		break;
     case lcal: fprintf(sta,"%5u\tcal %u",i,mem[i+1]); i++; break;
     case lret: fprintf(sta,"%5u\tret",i); break;
-    case lasp: fprintf(sta,"%5u\tasp",i); break;
+    case lasp: 
+		fprintf(sta,"%5u\tasp",i); 
+//		printf("LASP: %d\n",i);
+		break;
     case lfrm: fprintf(sta,"%5u\tfrm",i); break;
     case lcbp: fprintf(sta,"%5u\tcbp %u",i,mem[i+1]); i++; break;
     case lcpa: fprintf(sta,"%5u\tcpa",i); break;
@@ -1576,20 +1618,42 @@ f=0;
 
 // GLOBAL vars;
 
+	
 
 i=mem[1]-1;
 	while (i++<mem[2]-1) { 
 //		printf("%d:%5u\n",i,mem[i]); 
 		fprintf(sta,"\n");
-//		fprintf(prg,"// %d %d\n",mem[i],mem[i+1]);
-		if(i==jmp[j]) {
-			j++;
-			fprintf(prg,"\nLOOP\n");
+
+		if(end[i]>0) {
+			while(end[i]>0) {
+				fprintf(prg,"END // endstop %d %d\n\n",i,end[i]);
+				end[i]--;
+			}
 		}
-		if(i==jpf[f]) {
-			f++;
-			fprintf(prg,"\nREPEAT // %d\n",i);
+
+		if(jmp[i] || jpb[i] || jpf[i]) {
+			fprintf(prg,"// i: %d jmp %d jpb %d jpf: %d\n",i,jmp[i],jpb[i],jpf[i]);
+		
+			if(jmp[i]>0) {
+				fprintf(prg,"\nLOOP // %d %d\n\n",i,jmp[i]);
+			}
+			
+			if(jpb[i]>0) {
+				fprintf(prg,"\nREPEAT // %d %d\n",i,jpb[i]);
+			} else {
 		}
+/*			if(jpf[i]>0) {
+				while(jpf[i]>0) {
+					fprintf(prg,"END // %d %d\n\n",i,jpf[i]);
+					jpf[i]--;
+				}
+			}
+			* */
+				
+		
+	}
+	
 		switch ((byte)mem[i]) {
 			// no op
     case lnop:
@@ -1599,10 +1663,13 @@ i=mem[1]-1;
     
 			// load val to stack
     case lcar: 
-		fprintf(sta,"%5u\tcar %u",i,mem[i+1]); 
-		stack[sp++]=mem[i+1];
-		sprintf(cstack[sp-1],"%u%c",mem[i+1],0);
-		stp[sp-1]=0; // not a pointer
+		fprintf(sta,"%5u\tcar %d",i,mem[i+1]); 
+//		fprintf(prg,"// sp: %d\n",sp);
+		stack[sp]=mem[i+1];
+		sprintf(cstack[sp],"%d%c",mem[i+1],0);
+		strcpy(cmd,cstack[sp]);
+		stp[sp]=0; // not a pointer
+		sp++;
 		i++; 
 		break;
     case lasi: 
@@ -1656,66 +1723,137 @@ local resolution=0
 		memset(name,0,255);
 //		fprintf(prg,"// %d\n",stack[0]);
 
-		getvarname(stack[0],name);
+		getvarname(stack[sp-2],name);
 		
+		fprintf(prg,"// asi stack %d %d\n",sp,i);
 		fprintf(prg,"%s=%s",name,cmd);
 		memset(cmd,0,255);
-		sp=0;
+		con=1;
+		sp--;
 		break;
     case lori: 
-		fprintf(sta,"%5u\tori",i); 
-		fprintf(prg,"// UNIMP! || (ORI)\n");
+		fprintf(sta,"%5u\tori",i);
+//		fprintf(prg,"// UNIMP! || (ORI)\n");
+//		fprintf(prg,"// stack: %d\n",sp);
+		sprintf(condstack[con],"(%s || %s)",condstack[con-2],condstack[con-1]);
+		strcpy(condstack[con-2],condstack[con]);
+		strcpy(cmd,condstack[con-2]);
+		con-=1;
+
 		break;
     case lxor: 
 		fprintf(sta,"%5u\txor",i); 
 		fprintf(prg,"// UNIMP! XOR\n");
+		fprintf(prg,"// stack: %d\n",sp);
 		break;
     case land: 
 		fprintf(sta,"%5u\tand",i); 
-		fprintf(prg,"// UNIMP! && (AND)\n");
+//		fprintf(prg,"// UNIMP! && (AND)\n");
+//		fprintf(prg,"// stack: %d\n",sp);
+		sprintf(condstack[con],"(%s && %s)",condstack[con-2],condstack[con-1]);
+		strcpy(condstack[con-2],condstack[con]);
+		con-=1;
+//		fprintf(prg,"// condstack %s\n",condstack[con]);
+		strcpy(cmd,condstack[con-1]);
 		break;
     case ligu: 
 		fprintf(sta,"%5u\tigu",i); 
-		fprintf(prg,"// %s UNIMP! == (IGU)\n",cmd);		
+//		fprintf(prg,"// %s UNIMP! == (IGU)\n",cmd);		
+//		fprintf(prg,"// stack: %d\n",sp);
+		sprintf(condstack[con],"%s == %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[con]);
+		con++;
 		break;
     case ldis: 
 		fprintf(sta,"%5u\tdis",i); 
 		fprintf(prg,"// UNIMP! != (DIS)\n");		
+		fprintf(prg,"// stack: %d\n",sp);
+		sprintf(condstack[con],"(%s != %s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[con]);
+		con++;
+
 		break;
     case lmay: 
 		fprintf(sta,"%5u\tmay",i); 
-		fprintf(prg,"// UNIMP! > (MAY)\n");		
+//		fprintf(prg,"// UNIMP! > (MAY)\n");		
+		sprintf(condstack[con],"%s > %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[con]);
+		con++;
+//		fprintf(prg,"// stack: %d %s\n",sp,cmd);
 		break;
     case lmen: 
 		fprintf(sta,"%5u\tmen",i); 
-		fprintf(prg,"// UNIMP! < (MEN)\n");				
+//		fprintf(prg,"// UNIMP! < (MEN)\n");				
+//		fprintf(prg,"// stack: %d\n",sp);
+		sprintf(condstack[con],"%s < %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[con]);
+		con++;
+
 		break;
     case lmei: 
 		fprintf(sta,"%5u\tmei",i); 
-		fprintf(prg,"// UNIMP! <= (MEI)\n");	
+//		fprintf(prg,"// UNIMP! <= (MEI)\n");	
+//		fprintf(prg,"// stack: %d\n",sp);
+		sprintf(condstack[con],"%s <= %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[con]);
+		con++;
+
 		break;
     case lmai: 
 		fprintf(sta,"%5u\tmai",i); 
-		fprintf(prg,"// UNIMP! >= (MAI)\n");			
+//		fprintf(prg,"// UNIMP! >= (MAI)\n");			
+//		fprintf(prg,"// stack: %d\n",sp);
+		sprintf(condstack[con],"%s >= %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[con]);
+		con++;
 		break;
     case ladd: 
-		fprintf(sta,"%5u\tadd",i); 
-		stack[sp-2]+=stack[sp-1];
+		fprintf(sta,"%5u\tadd",i);
+		fprintf(prg,"// %d+%d\n",stack[sp-2],stack[sp-1]);
+		stack[sp-2]+=stack[sp-1]; 
+		sprintf(cstack[sp],"(%s+%s)",cstack[sp-2],cstack[sp-1]);
+
+//		sp--;
+//		sprintf(cstack[sp-1],"%s",stack[sp-1]);
+//		strcpy(cstack[sp-2],cstack[sp]);
 		sp--;
 		break;
     case lsub: 
 		fprintf(sta,"%5u\tsub",i); 
 		fprintf(prg,"// %d-%d\n",stack[sp-2],stack[sp-1]);
 		//stack[sp-2]-=stack[sp-1];
-		strcat(cstack[sp-2],"-");
-		strcat(cstack[sp-2],cstack[sp-1]);
+		sprintf(cstack[sp],"(%s-%s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cstack[sp-2],cstack[sp]);		
 		
 		sp--;
 		break;
-    case lmul: fprintf(sta,"%5u\tmul",i); break;
-    case ldiv: fprintf(sta,"%5u\tdiv",i); break;
-    case lmod: fprintf(sta,"%5u\tmod",i); break;
-    case lneg: fprintf(sta,"%5u\tneg",i); break;
+    case lmul:
+		fprintf(sta,"%5u\tmul",i); 
+//		fprintf(prg,"// %s*%s\n",cstack[sp-2],cstack[sp-1]);
+		sprintf(cstack[sp],"(%s*%s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cstack[sp-2],cstack[sp]);
+		sp-=1;
+		
+		break;
+    case ldiv: 
+		fprintf(sta,"%5u\tdiv",i); 
+		sprintf(cstack[sp],"(%s/%s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cstack[sp-2],cstack[sp]);
+		sp-=1;
+	
+		break;
+    case lmod: 
+		fprintf(sta,"%5u\tmod",i); 
+		sprintf(cstack[sp],"(%s MOD %s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cstack[sp-2],cstack[sp]);
+		sp-=1;
+			
+		break;
+    case lneg: 
+		fprintf(sta,"%5u\tneg",i); 
+		stack[sp-1]=-stack[sp-1];
+		sprintf(cstack[sp-1],"-%u",stack[sp-1]);
+		break;
     case lptr: 
 		fprintf(sta,"%5u\tptr",i); 
 		// get var names
@@ -1726,38 +1864,64 @@ local resolution=0
     case lnot: fprintf(sta,"%5u\tnot",i); break;
     case laid: 
 		fprintf(sta,"%5u\taid",i); 
+//		fprintf(prg,"// UNIMP LAID %d %s\n",i,cstack[sp-1]);
+		
 		break;
     case lcid: 
 		fprintf(sta,"%5u\tcid",i); 
 		stack[sp]=0;
 		strcpy(cstack[sp],"id");
+		strcpy(cmd,cstack[sp]);
 		stp[sp]=1;
 		sp++;
 		break;
-    case lrng: fprintf(sta,"%5u\trng %u",i,mem[i+1]); i++; break;
+    case lrng: 
+		fprintf(sta,"%5u\trng %u",i,mem[i+1]); 
+		fprintf(prg,"// UNIMP range %d %d\n",i,mem[i+1]);
+		i++; 
+		break;
     case ljmp: 
 		fprintf(sta,"%5u\tjmp %u",i,mem[i+1]); 
 		if(mem[i+1]<i) {
-			fprintf(prg,"// JMP BACK TO %u\nEND\n\n",mem[i+1]);
+			fprintf(prg,"// jmp[%d]=%d JMP BACK TO %d %d\nEND\n\n",i,jmp[i],i,mem[i+1]);
 		}
 		i++; 
 		break;
-    case ljpf: 
+    case ljpf:
 		fprintf(sta,"%5u\tjpf %u",i,mem[i+1]); 
 		
 		if(mem[i+1]<i) 
 			fprintf(prg,"UNTIL (%s)\n",cmd);
-		else
-			fprintf(prg,"IF(%s) // TODO at %u\n",cmd,i);
+		else {
+			if(strlen(cmd)==0) 
+				strcpy(cmd,cstack[sp-1]);
+			// check if the jpf goes past a jmp
 
+			fprintf(prg,"// jpf %d %d %d\n",mem[mem[i]-2],i,mem[i+1]-2);
+			if(mem[mem[i+1]-2]==ljmp) { 
+				fprintf(prg,"WHILE");
+			}
+			else {
+				fprintf(prg,"IF");
+				// ifs need an end, set an endstop 
+			fprintf(prg,"// endstop added at %d\n",mem[i+1]);
+			end[mem[i+1]]++;
+
+			}
+			fprintf(prg,"(%s) // jpf %u\n",cmd,i);
+		}
 		memset(cmd,0,255);
-		i++; 
+		i++;
+		con=0;
 		sp=0;
 		break;
     case lfun: 
 		fprintf(sta,"%5u\tfun %u",i,mem[i+1]); 
-
+//		fprintf(prg,"// LFUN stack: %d i: %u con: %u\n",sp,i,con);
 		// calling function
+
+		fprintf(prg,"// fun stack %d %d\n",sp,i);
+
 		switch(mem[i+1]) {
 			
 			case 0: // signal
@@ -1794,17 +1958,17 @@ local resolution=0
 						break;
 				}
 				strcat(cmd,")");
-				sp=0;
+				sp--;
 				break;
 
 			case 1:
 				sprintf(cmd, "key(%s)",keys[stack[sp-1]]);
-				sp=0;
+//				sp=0;
 				break;
 
 			case 2: // load_pal
 				sprintf(cmd,"load_pal(\"%s\")",(byte*)&mem[mem[7]+stack[sp-1]]);
-				sp=0;
+//				sp=0;
 				break;
 				
 			case 3:
@@ -1812,37 +1976,54 @@ local resolution=0
 					sprintf(cmd,"load_fpg(%s)",cstack[sp-1]);
 				else
 					sprintf(cmd,"load_fpg(\"%s\")",(byte*)&mem[mem[7]+stack[sp-1]]);
-				sp=0;
+//				sp=0;
 				break;
 			
 			case 4: // start_scroll (6)
 				sprintf(cmd,"start_scroll(%s, %s, %s, %s, %s, %s)",cstack[sp-6],cstack[sp-5],cstack[sp-4],cstack[sp-3],cstack[sp-2],cstack[sp-1]);
-				sp=0;
+//				sp=0;
 				break;
 			
 			case 5: // stop_scroll
 				sprintf(cmd,"stop_scroll(%s)",cstack[sp-1]);
-				sp=0;
+//				sp=0;
 				break;
 				
 			case 8:
 				sprintf(cmd,"collision(type proc%s)",cstack[sp-1]);
-				sp=0;
+				strcpy(cstack[sp-1],cmd);
+//				sp=0;
 				break;
 				
+			case 9: // get_id (1)
+				fprintf(prg,"// GET_ID\n");
+				sprintf(cmd,"get_id(type proc%s)",cstack[sp-1]);
+				strcpy(condstack[con],cmd);
+				strcpy(cstack[sp-1],cmd);
+				con++;
+				break;
+//				sp=1;
+			
+			case 12:
+				sprintf(cmd,"get_angle(%s)",cstack[sp-1]);
+				strcpy(condstack[con],cmd);
+				strcpy(cstack[0],cmd);
+				con++;
+//				sp=1;
+				break;
 			case 15:
 				sprintf(cmd,"load_fnt(\"%s\")",(byte*)&mem[mem[7]+stack[sp-1]]);
-				sp=0;
+//				sp=0;
 				break;	
 			
 			case 16:
 				sprintf(cmd,"write(%d,%d,%d,%d,\"%s\")",stack[sp-5],stack[sp-4],stack[sp-3],stack[sp-2],(byte*)&mem[mem[7]+stack[sp-1]]);
-				sp=0;
+				sp-=4;
 				break;
 
 			case 17:
 				sprintf(cmd,"write_int(%d,%d,%d,%d,&var%d)",stack[sp-5],stack[sp-4],stack[sp-3],stack[sp-2],stack[sp-1]);
-				sp=0;
+				sp-=4;
 				break;
 
 			case 18:
@@ -1850,72 +2031,91 @@ local resolution=0
 					sprintf(cmd,"delete_text(all_text)",stack[sp-1]);
 				else
 					sprintf(cmd,"delete_text(%d)",stack[sp-1]);
-				sp=0;
+//				sp=0;
 				break;
 
 			case 21:
-				sprintf(cmd,"random(%d,%d)",stack[sp-2],stack[sp-1]);
-				sp=0;
+	//			fprintf(prg,"// rand(%d %d)\n",sp,i);
+				fflush(prg);
+				sprintf(cmd,"rand(%d,%d)",stack[sp-2],stack[sp-1]);
+				strcpy(cstack[sp-2],cmd);
+				strcpy(condstack[con],cmd);
+				con++;
+				sp--;
 				break;
 
 			case 22: // define region (5)
 				sprintf(cmd,"define_region(%d,%d,%d,%d,%d)",stack[sp-5],stack[sp-4],stack[sp-3],stack[sp-2],stack[sp-1]);
-				sp=0;
+				sp-=4;
 				break;
 				
 			case 24:
 				sprintf(cmd,"put(%d,%d,%d,%d)",stack[sp-4],stack[sp-3],stack[sp-2],stack[sp-1]);
-				sp=0;
+				sp-=3;
 				break;
 
 			
 			case 25:
 				sprintf(cmd,"put_screen(%d,%d)",stack[sp-2],stack[sp-1]);
-				sp=0;
+				sp--;
+				break;
+			
+			case 29:
+				sprintf(cmd,"get_pixel(%s,%s)",cstack[sp-2],cstack[sp-1]);
+				strcpy(condstack[con],cmd);
+				strcpy(cstack[0],cmd);
+				con++;
+				sp--;
 				break;
 
 			case 33: // clear_screen
 				sprintf(cmd,"clear_screen()");
-				sp=0;
+//				sp=0;
 				break;
 			
 			case 35: //load				
 				sprintf(cmd,"load(\"%s\",offset var%d)",(byte*)&mem[mem[7]+stack[sp-2]],stack[sp-1]);
-				sp=0;
+				sp--;
 				break;
 
 			case 36:
 				sprintf(cmd,"set_mode(%d)",stack[sp-1]);
-				sp=0;
+//				sp--;
 				break;
 			
 			case 37:
 				sprintf(cmd,"load_pcm(\"%s\",%d)",(byte*)&mem[mem[7]+stack[sp-2]],stack[sp-1]);
-				sp=0;
+				sp--;
 				break;
 				
 			case 39: // sound
 				sprintf(cmd,"sound(%s,%s,%s)",getvarref(sp-3),getvarref(sp-2),getvarref(sp-1));
-				sp=0;
+				sp-=2;
 				break;
 
 			case 40: // stop_sound
 				sprintf(cmd,"stop_sound(%d)",stack[sp-1]);
-				sp=0;
+//				sp=0;
 				break;
 				
 			case 42:
+				fprintf(prg,"// set_fps stack %d %d\n",sp,i);
 				sprintf(cmd,"set_fps(%d,%d)",stack[sp-2],stack[sp-1]);
-				sp=0;
+				sp--;
+				break;
+			
+			case 54: // start_mode7 (6)
+				sprintf(cmd,"start_mode7(%s,%s,%s,%s,%s,%s)",cstack[sp-6],cstack[sp-5],cstack[sp-4],cstack[sp-3],cstack[sp-2],cstack[sp-1]);
+				sp-=5;
 				break;
 				
-			case 58: // fade_on
-				sprintf(cmd,"fade_on()");
+			case 56: // advance
+				sprintf(cmd,"advance(%d)",stack[sp-1]);
 				sp=0;
 				break;
 
-			case 56: // advance
-				sprintf(cmd,"advance(%d)",stack[sp-1]);
+			case 58: // fade_on
+				sprintf(cmd,"fade_on()");
 				sp=0;
 				break;
 			
@@ -1929,10 +2129,14 @@ local resolution=0
 				sp=0;
 				break;
 		}
+		strcpy(condstack[con],cmd);
+		con++;
 		i++; break;
     case lcal: 
 		fprintf(sta,"%5u\tcal %u",i,mem[i+1]); 
+		fprintf(prg,"// lcal %u\n",mem[i+1]);
 		sprintf(cmd,"proc%u(",mem[mem[i+1]+1]);
+		
 		spp=sp;
 		while(sp>0) {
 			strcat(cmd,cstack[spp-sp]);
@@ -1941,24 +2145,30 @@ local resolution=0
 			strcat(cmd,",");
 		}
 		strcat(cmd,")");
+		sp=0;
+		strcpy(cstack[sp],cmd);
+		sp++;
 		i++; 
 		break;
     
     case lret: 
 		fprintf(sta,"%5u\tret",i); 
-		fprintf(prg,"\nEND\n\n");
+		fprintf(prg,"\nEND // %d\n\n",i);
 		if(i&&1)
 			i++;
 		break;
     case lasp: 
 		fprintf(sta,"%5u\tasp",i); 
 		fprintf(prg,"%s;\n",cmd);
+//		fprintf(prg,"// reset stack\n");
 		memset(cmd,0,255);
-		sp=0;
+		con=0;
+		sp--;
+
 		break;
     case lfrm: 
 		fprintf(sta,"%5u\tfrm",i); 
-		fprintf(prg,"frame;\n"); 
+		fprintf(prg,"FRAME;\n"); 
 		break;
 		
     case lcbp: 
@@ -2016,13 +2226,31 @@ local resolution=0
     case lshr: fprintf(sta,"%5u\tshr",i); break;
     case lshl: fprintf(sta,"%5u\tshl",i); break;
     case lipt: fprintf(sta,"%5u\tipt",i); break;
-    case lpti: fprintf(sta,"%5u\tpti",i); break;
+    case lpti: 
+		fprintf(sta,"%5u\tpti",i); 
+		getvarname(stack[0],cmd);
+		strcat(cmd,"++");
+		break;
     case ldpt: fprintf(sta,"%5u\tdpt",i); break;
-    case lptd: fprintf(sta,"%5u\tptd",i); break;
-    case lada: fprintf(sta,"%5u\tada",i); break;
+
+    case lptd: 
+		fprintf(sta,"%5u\tptd",i);
+    	getvarname(stack[0],cmd);
+		strcat(cmd,"++");
+		break;		
+
+    case lada: 
+		fprintf(sta,"%5u\tada",i); 
+		getvarname(stack[sp-2],name);
+		strcpy(cstack[sp-2],name);
+		sprintf(cmd,"%s+=%s",name,cstack[sp-1]);
+		fprintf(prg,"// %s %i\n",cmd,i);
+		sp--;
+		break;
     case lsua: 
 		fprintf(sta,"%5u\tsua",i); 
-		fprintf(prg,"// -= \n");
+		getvarname(stack[sp-2],name);
+		sprintf(cmd,"%s-=%s",name,cstack[sp-1]);
 		break;
     case lmua: fprintf(sta,"%5u\tmua",i); break;
     case ldia: fprintf(sta,"%5u\tdia",i); break;
@@ -2038,9 +2266,24 @@ local resolution=0
     case lfrf: fprintf(sta,"%5u\tfrf",i); break;
     case limp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
     case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
-    case lchk: fprintf(sta,"%5u\tchk",i); break;
+    case lchk: 
+		fprintf(sta,"%5u\tchk",i); 
+		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
+		switch(mem[i+2]) {
+			
+			case 28:
+//				strcat(cstack[sp-1],".angle");
+				strcpy(cmd,cstack[sp-1]);
+				strcat(cmd,".angle");
+//				sp++;
+				break;
+		}
+		i++;
+		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
+		break;
+		
     case ldbg: fprintf(sta,"%5u\tdbg",i); break;
-
+/*
     case lcar2: fprintf(sta,"%5u\tcar2 %u %u",i,mem[i+1],mem[i+2]); i+=2; break;
     case lcar3: fprintf(sta,"%5u\tcar3 %u %u %u",i,mem[i+1],mem[i+2],mem[i+3]); i+=3; break;
     case lcar4: fprintf(sta,"%5u\tcar4 %u %u %u %u",i,mem[i+1],mem[i+2],mem[i+3],mem[i+4]); i+=4; break;
@@ -2110,14 +2353,19 @@ local resolution=0
     case lstrmei: fprintf(sta,"%5u\tstrmei",i); break;
     case lstrmai: fprintf(sta,"%5u\tstrmai",i); break;
     case lcpastr: fprintf(sta,"%5u\tcpastr",i); break;
-
+*/
     default: fprintf(sta,"***"); break;
   } 
 }
+fflush(sta);
+fflush(prg);
 fclose(sta);
 fclose(prg);
 printf("stack: %d\n",sp);
 }
+
+
+#endif
 
 int main(int argc,char * argv[]) {
   FILE * f;
@@ -2236,7 +2484,10 @@ fseek(f,div1stubsize,SEEK_SET);
 printf("FILE AT: %d\n",ftell(f));
 fread(mem,1,len-div1stubsize,f);
 printf("FILE AT: %d %d\n",ftell(f),len);
+#ifndef __EMSCRIPTEN__
 dump(len-div1stubsize);
+#endif
+
 //for(a=0;a<40;a++){ 
 //printf("ptr offset %d is %x (%d)\n",a,dp[a],dp[a]);
 //printf("Text offset is %x\n",(uint16_t*)mimem[6]);
