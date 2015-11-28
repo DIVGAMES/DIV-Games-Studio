@@ -332,7 +332,11 @@ int LoadSound(char *ptr, long Len, int Loop)
 	}
 	fclose(fdst);
 #ifdef WIN32
+if(res==1)
+	sound = Mix_LoadWAV("divpcm.tmp");
+else
 	sound = Mix_LoadWAV("divwav.tmp");
+
 	remove("divwav.tmp");
 	remove("divpcm.tmp");
 #else
@@ -593,6 +597,7 @@ int IsPlayingSound(int NumChannel)
 
 int LoadSong(char *ptr, int Len, int Loop)
 {
+#ifndef __EMSCRIPTEN__
 #ifdef MIXER
   int con=0;
 
@@ -649,6 +654,7 @@ cancion[con].music = music;
 cancion[con].rw = rw;
 //printf("Loaded song into slot %d\n",con);
   return(con);
+#endif
 #endif
 return -1;
 }
