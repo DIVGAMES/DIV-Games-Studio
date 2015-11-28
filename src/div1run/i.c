@@ -26,10 +26,13 @@ void elimina_proceso(int id);
 
 
 
+
 // external prototypes
 void InitHandler(int);
 int DetectBlaster(int*,int*,int*,int*,int*);
 int DetectGUS(int*,int*,int*,int*,int*);
+
+extern int get_reloj();
 
 void deb(void);
 
@@ -474,7 +477,7 @@ void exec_process(void) {
     continue_process:
     #endif
 
-    max_reloj=reloj+max_process_time;
+    max_reloj=get_reloj()+max_process_time;
 //    printf("running bytecode: %d %d\n",ip+1,mem[ip+1]);
 //printf("process entered at %d \n",ip);
   	do {
@@ -748,7 +751,7 @@ void trace_process(void) {
 #endif
     id=ide; ip=mem[id+_IP]; sp=64; pila[64]=0;
     continue_process:
-    max_reloj=reloj+max_process_time;
+    max_reloj=get_reloj()+max_process_time;
   	switch ((byte)mem[ip++]) {
       case lnop: break;
       case lcar: pila[++sp]=mem[ip++]; break;
@@ -922,7 +925,6 @@ printf("lext\n");
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 float ffps=18.2;
-extern int get_reloj();
 
 void frame_start(void) {
 
@@ -951,7 +953,7 @@ void frame_start(void) {
       if (ss_end!=NULL) ss_end();
       memcpy(copia,copia2,vga_an*vga_al);
       volcado_parcial(0,0,vga_an,vga_al);
-      ss_time_counter=reloj+ss_time;
+      ss_time_counter=get_reloj()+ss_time;
     }
   }
 
@@ -974,14 +976,14 @@ void frame_start(void) {
     } fading=0;
   }
 
-  for (max=0;max<10;max++) timer(max)+=reloj-ultimo_reloj;
+  for (max=0;max<10;max++) timer(max)+=get_reloj()-ultimo_reloj;
 
   if (reloj>ultimo_reloj) {
     ffps=(ffps*49.0+100.0/(float)(reloj-ultimo_reloj))/50.0;
     fps=(int)ffps;
   }
 
-  ultimo_reloj=reloj;
+  ultimo_reloj=get_reloj();
 
   //LoopSound();
 
@@ -1040,20 +1042,20 @@ void frame_start(void) {
     joy_check=joy->button1+joy->button2+joy->left+joy->right+joy->up+joy->down;
     if (joy_check!=last_joy_check) {
       last_joy_check=joy_check;
-      ss_time_counter=reloj+ss_time;
+      ss_time_counter=get_reloj()+ss_time;
     }
   }
 
   key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
   if (key_check!=last_key_check) {
     last_key_check=key_check;
-    ss_time_counter=reloj+ss_time;
+    ss_time_counter=get_reloj()+ss_time;
   }
 
   mou_check=mouse->x+mouse->y+mouse->left+mouse->right+mouse->middle;
   if (mou_check!=last_mou_check) {
     last_mou_check=mou_check;
-    ss_time_counter=reloj+ss_time;
+    ss_time_counter=get_reloj()+ss_time;
   }
 
 }
@@ -1098,7 +1100,7 @@ void frame_end(void) {
     ss_frame              =DIV_import("ss_frame"); //ok
     ss_end                =DIV_import("ss_end"); //ok
 
-    ss_time_counter=reloj+ss_time;
+    ss_time_counter=get_reloj()+ss_time;
 
     // DLL_1 Aquก se llama a uno.
 

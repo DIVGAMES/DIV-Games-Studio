@@ -333,8 +333,11 @@ while(SDL_PollEvent(&event))
 				ascii = event.key.keysym.scancode;
 // unicode not working on android
 #ifndef DROID
-				if(event.key.keysym.unicode>=0 &&  event.key.keysym.unicode<0x80)
+				if(event.key.keysym.unicode>=0 &&  event.key.keysym.unicode<0x80) {
 					ascii = event.key.keysym.unicode;
+					//printf("ascii val: %d\n",ascii);
+				}
+					
 #endif				
 				kbdFLAGS[scan_code]=1;				
 #endif

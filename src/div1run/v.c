@@ -452,7 +452,46 @@ SDL_RenderPresent(divRender);
 //      Volcado de un buffer a vga
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+static byte recording=0;
+int framecount=0;
+
+extern int alt_x;
+
+#define maxframes 30000
+
+
 void volcado(byte *p) {
+
+//printf("shift_status: %d ascii: %d                     \r",shift_status,ascii);
+	
+if ((shift_status&4) && (shift_status&8) && key(_0)) {
+	printf("Recording output\n");
+	recording = 1;
+}
+if ((shift_status&4) && (shift_status&8) && key(_9)) {
+	printf("Stopped recording output\n");
+
+	recording = 0;
+}
+
+	if(recording) {
+
+//		if(programRunning )  {
+			
+			framecount++;
+//		}
+			if(!(framecount%(fps/12)) && framecount>5 && framecount<maxframes) { // && framecount%3==1) {
+				char filename[255];
+				memset(filename,0,255);
+				sprintf(filename,"/home/mike/Desktop/out/out%05d.bmp",framecount);
+				SDL_SaveBMP(vga, filename);
+			} else {
+				if(framecount>maxframes)
+				alt_x = 1;
+			}
+	//	}
+	}
+	// CTRL + ALT +
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 
 #ifndef DOS

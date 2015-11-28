@@ -69,4 +69,6 @@ int  GetSongLine            (void);
 int  IsPlayingSong          (void);
 void EndSound               (void);
 
+// PCM2WAV
+int pcm2wav(FILE *in, long inlen, FILE *out, long outlen);
 #endif
