@@ -13,6 +13,18 @@
 #include "net.h"
 #include <malloc.h>
 
+
+// FILE PROTOTYPES
+void interprete (void);
+void crea_cuad(void);
+void system_font(void);
+void exec_process(void);
+void finalizacion (void);
+void elimina_proceso(int id);
+
+
+
+// external prototypes
 void InitHandler(int);
 int DetectBlaster(int*,int*,int*,int*,int*);
 int DetectGUS(int*,int*,int*,int*,int*);
@@ -66,7 +78,7 @@ void CNT_export(char *name,void *dir,int nparms)
 // Programa principal
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void main(int argc,char * argv[]) {
+int main(int argc,char * argv[]) {
 
   FILE * f;
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
@@ -141,11 +153,11 @@ void inicializacion (void) {
   FILE * f=NULL;
   int n;
 
-  mouse=(void*)&mem[long_header];
-  scroll=(void*)&mem[long_header+12];
-  m7=(void*)&mem[long_header+12+10*10];
-  joy=(void*)&mem[long_header+12+10*10+10*7];
-  setup=(void*)&mem[long_header+12+10*10+10*7+8];
+  mouse=(_mouse*)&mem[long_header];
+  scroll=(_scroll*)&mem[long_header+12];
+  m7=(_m7*)&mem[long_header+12+10*10];
+  joy=(_joy*)&mem[long_header+12+10*10+10*7];
+  setup=(_setup*)&mem[long_header+12+10*10+10*7+8];
 
   if (mem[0]!=1) f=fopen("sound.cfg","rb");
 
@@ -168,17 +180,17 @@ void inicializacion (void) {
 
   if (iloc_len&1) iloc_len++; if (!(imem&1)) imem++;
 
-  if((copia=(char*)malloc(vga_an*vga_al))==NULL) exer(1);
+  if((copia=(byte*)malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia,0,vga_an*vga_al);
 
-  if((copia2=(char*)malloc(vga_an*vga_al))==NULL) exer(1);
+  if((copia2=(byte*)malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia2,0,vga_an*vga_al);
 
   #ifdef DEBUG
   if((copia_debug=(char*)malloc(vga_an*vga_al))==NULL) exer(1);
   #endif
 
-  if((ghost=(char*)malloc(65536))==NULL) exer(1);
+  if((ghost=(byte*)malloc(65536))==NULL) exer(1);
 
   crea_cuad();
 
@@ -211,7 +223,7 @@ void inicializacion (void) {
 
   memset(g,0,sizeof(g));
 
-  if((g[0].grf=malloc(sizeof(int32_t*)*2000))==NULL) exer(1);
+  if((g[0].grf=(int**)malloc(sizeof(int32_t*)*2000))==NULL) exer(1);
   memset(g[0].grf,0,sizeof(int32_t*)*2000); next_map_code=1000;
 
   memset(fonts,0,sizeof(fonts));
@@ -336,7 +348,7 @@ void inicializacion (void) {
 void crea_cuad(void) {
   int a,b;
 
-  if((cuad=(char*)malloc(16384))==NULL) exer(1);
+  if((cuad=(byte*)malloc(16384))==NULL) exer(1);
 
   a=0; do {
     b=0; do {
@@ -360,7 +372,7 @@ void system_font(void) {
 
   if ((sys06x08=(byte*)malloc(12288))==NULL) exer(1);
 
-  si=_06x08; di=sys06x08;
+  si=(byte *)_06x08; di=sys06x08;
 
   for (n=0;n<1536;n++) { x=*si++;
     for (m=0;m<8;m++) { if (x&128) *di++=1; else *di++=0; x*=2; } }

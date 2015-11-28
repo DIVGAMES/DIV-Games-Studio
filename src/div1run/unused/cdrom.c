@@ -1,7 +1,7 @@
-#include <dos.h>
-#include <io.h>
-#include <mem.h>
-#include <i86.h>
+//#include <dos.h>
+//#include <io.h>
+//#include <mem.h>
+//#include <i86.h>
 
 #define CDROM           0x21
 #define EJECT_TRAY      0

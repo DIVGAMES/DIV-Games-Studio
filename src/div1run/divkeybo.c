@@ -28,8 +28,8 @@ int fbuf=0; // Puntero al buffer, fin de la cola
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int ctrl_c=0,alt_x=0;
-word * kb_start = (void*) 0x41a;
-word * kb_end = (void*) 0x41c;
+//word * kb_start = (void*) 0x41a;
+//word * kb_end = (void*) 0x41c;
 
 void __far __interrupt __loadds IrqHandler(void)
 {
@@ -390,8 +390,8 @@ while(SDL_PollEvent(&event))
 			}
 			  if (event.type == SDL_MOUSEMOTION)
             {
-//				m_x = event.motion.x;
-//           	m_y = event.motion.y;
+				mouse->x = event.motion.x;
+	           	mouse->y = event.motion.y;
 
 //				m_x+=event.motion.xrel;
 //				m_y+=event.motion.yrel;

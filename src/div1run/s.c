@@ -18,6 +18,19 @@
 #define grados_360  4096
 #define grados_giro 16
 
+
+// file prototypes
+void move_scroll(int plano,int x,int y);
+void save_region(void);
+void sp_scanc(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1);
+void sp_scancg(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1);
+void sp_scang(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1);
+void texc(byte * p, int x, int y, byte an, int al);
+void texn(byte * p, int x, int y, byte an, int al);
+void pinta_modo7(int n,int camara_x, int camara_y, int camara_z, int angulo);
+void pinta_sprite_m7(int n,int ide,int x,int y,int size,int ang);
+
+
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Variables del mขdulo
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1307,7 +1320,7 @@ void text_out(char *ptr,int x,int y)
 int an,al;
 byte * ptr2;
 
-        ptr2=ptr;
+        ptr2=(byte *)ptr;
         an=0;
         while(*ptr2)
         {
@@ -1364,8 +1377,8 @@ void pinta_textos(void) { // E: texto[]
       case 0: ptr=(byte*)&mem[texto[n].ptr]; break;
       case 1: if (mem[texto[n].ptr]<0) {
           numero[0]='-';
-          ltoa(-mem[texto[n].ptr],numero+1,10);
-        }else ltoa(mem[texto[n].ptr],numero,10);
+          ltoa(-mem[texto[n].ptr],(char *)numero+1,10);
+        }else ltoa(mem[texto[n].ptr],(char *)numero,10);
         ptr=numero; break;
     }
 

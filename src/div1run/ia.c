@@ -11,6 +11,15 @@
 
 #include "inter.h"
 
+// file prototypes
+int init_find(void);
+void expand(void);
+void expand2(void);
+int calcula_vertices(int * ptr, int max_ver, int x0, int y0, int x1, int y1);
+void add(int x, int y, word, word step);
+void add2(word, word step);
+void puede_ir(int x0,int y0,int x1,int y1);
+
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Datos del mขdulo
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -236,39 +245,39 @@ void expand2(void) { // Versiขn exacta
 //  Aคade una nueva casilla
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void add(int x, int y, word new, word step) { // Versiขn r pida
+void add(int x, int y, word _new, word step) { // Versiขn r pida
   word cdis;    // Distancia
   word i,a;     // Siguiente y anterior
 
-  dis(new)=dis(c)+step; // Guarda su distancia
+  dis(_new)=dis(c)+step; // Guarda su distancia
 
-  i=abs(x-bx); a=abs(y-by); cdis=dis2(new)=(i<a)?(i>>2)+a:i+(a>>2);
+  i=abs(x-bx); a=abs(y-by); cdis=dis2(_new)=(i<a)?(i>>2)+a:i+(a>>2);
 
   a=c; do { // Busca el lugar para esta nueva casilla
     i=a; a=sig(a);
     if (a==65535) break;
   } while (cdis>dis2(a));
 
-  sig(i)=new;
-  sig(new)=a;
+  sig(i)=_new;
+  sig(_new)=a;
 
-  if (new==b) fin=1;
+  if (_new==b) fin=1;
 }
 
-void add2(word new, word step) { // Versiขn exacta
+void add2(word _new, word step) { // Versiขn exacta
   word i,a;     // Siguiente y anterior
 
-  dis(new)=dis(c)+step; // Guarda su distancia
+  dis(_new)=dis(c)+step; // Guarda su distancia
 
   a=c; do { // Busca el lugar para esta nueva casilla
     i=a; a=sig(a);
     if (a==65535) break;
-  } while (dis(new)>dis(a));
+  } while (dis(_new)>dis(a));
 
-  sig(i)=new;
-  sig(new)=a;
+  sig(i)=_new;
+  sig(_new)=a;
 
-  if (new==b) fin=1;
+  if (_new==b) fin=1;
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

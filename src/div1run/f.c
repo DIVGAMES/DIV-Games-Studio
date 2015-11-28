@@ -8,6 +8,102 @@
 #include "cdrom.h"
 #include "net.h"
 
+
+// file prototypes
+
+void _signal(void);
+void _key(void);
+void load_pal(void);
+void load_fpg(void);
+void stop_scroll(void);
+void start_scroll(void);
+void get_id(void);
+void get_disx(void);
+void get_disy(void);
+void get_dist(void);
+void get_angle(void);
+void load_fnt(void); 
+void load_fpg(void); 
+void fade(void); 
+void _write(void); 
+void write_int(void); 
+void delete_text(void); 
+void unload_fpg(void);
+void move_text(void); 
+void define_region(void); 
+void divrandom(void); 
+void _xput(void); 
+void _put(void); 
+void put_screen(void); 
+void map_xput(void); 
+void map_put(void); 
+void put_pixel(void); 
+void get_pixel(void); 
+void map_put_pixel(void); 
+void map_get_pixel(void); 
+void get_point(void); 
+void clear_screen(void); 
+void save(void); 
+void load(void); 
+void set_mode(void); 
+void load_pcm(void); 
+void unload_pcm(void); 
+void _sound(void); 
+void stop_sound(void); 
+void change_sound(void); 
+void set_fps(void); 
+void start_fli(void); 
+void frame_end(void); 
+void frame_fli(void); 
+void end_fli(void); 
+void reset_fli(void); 
+void _system(void); 
+void fget_dist(void); 
+void get_dist(void); 
+void fget_angle(void); 
+void get_angle(void); 
+void refresh_scroll(void); 
+void _play_cd(void); 
+void _stop_cd(void); 
+void _is_playing_cd(void); 
+void start_mode7(void); 
+void stop_mode7(void); 
+void advance(void); 
+void _abs(void); 
+void fade_off(void); 
+void fade_on(void); 
+void rand_seed(void); 
+void _sqrt(void); 
+void _pow(void); 
+void map_block_copy(void); 
+void _move_scroll(void); 
+void near_angle(void); 
+void let_me_alone(void); 
+void _exit_dos(void); 
+void roll_palette(void); 
+void get_real_point(void); 
+void get_joy_button(void); 
+void get_joy_position(void); 
+void convert_palette(void); 
+void load_map(void); 
+void reset_sound(void); 
+void unload_map(void); 
+void unload_fnt(void); 
+void set_volume(void); 
+
+
+void signal_tree(int p, int s);
+void kill_invisible(void);
+int joy_position(int eje);
+
+// sound prototypes
+
+void UnloadSound(int n);
+int PlaySound(int n, int m, int o);
+void StopSound(int n);
+void ChangeSound(int n, int m, int o);
+
+
 void read_mouse(void);
 void path_find(void);
 void path_line(void);
@@ -291,10 +387,10 @@ void load_pal(void) {
     pila[sp]=0; e(e102);
   } else {
     fread(pal,1,1352,es); fclose(es);
-    if (strcmp(pal,"pal\x1a\x0d\x0a"))
-      if (strcmp(pal,"fpg\x1a\x0d\x0a"))
-        if (strcmp(pal,"fnt\x1a\x0d\x0a"))
-          if (strcmp(pal,"map\x1a\x0d\x0a")) { e(e103); return; } else offs=48;
+    if (strcmp((char *)pal,"pal\x1a\x0d\x0a"))
+      if (strcmp((char *)pal,"fpg\x1a\x0d\x0a"))
+        if (strcmp((char *)pal,"fnt\x1a\x0d\x0a"))
+          if (strcmp((char *)pal,"map\x1a\x0d\x0a")) { e(e103); return; } else offs=48;
     for (m=0;m<768;m++) if (pal[m+offs]!=paleta[m]) break;
     if (m<768) {
       dr=dacout_r; dg=dacout_g; db=dacout_b;
@@ -366,9 +462,9 @@ void load_map(void) {
       fseek(es,0,SEEK_SET);
       fread(ptr,1,file_len,es);
       fclose(es);
-      if (strcmp(ptr,"map\x1a\x0d\x0a")) { e(e144); free(ptr); return; }
+      if (strcmp((char *)ptr,"map\x1a\x0d\x0a")) { e(e144); free(ptr); return; }
 
-      if (process_map!=NULL) process_map(ptr,file_len);
+      if (process_map!=NULL) process_map((char *)ptr,file_len);
 
       if (!paleta_cargada) {
         for (m=0;m<768;m++) if (ptr[m+48]!=paleta[m]) break;
@@ -390,7 +486,7 @@ void load_map(void) {
       *((int*)ptr+14)=alto;
       *((int*)ptr+15)=npuntos;
 
-      g[0].grf[next_map_code]=(void*)ptr;
+      g[0].grf[next_map_code]=(int*)ptr;
 
       pila[sp]=next_map_code++;
 
@@ -421,7 +517,7 @@ void new_map(void) {
     *((int*)ptr+15)=1; // Se define un punto de control (el centro)
     *((word*)ptr+32)=cx; *((word*)ptr+33)=cy;
     memset(ptr+4+64,color,ancho*alto);
-    g[0].grf[next_map_code]=(void*)ptr;
+    g[0].grf[next_map_code]=(int*)ptr;
     pila[sp]=next_map_code++;
   } else e(e100);
 }
@@ -442,7 +538,7 @@ void load_fpg(void) {
   } if (n==max_fpgs) { pila[sp]=0; e(e104); return; }
 
   if (n) {
-    if ((lst=malloc(sizeof(int*)*1000))==NULL) { pila[sp]=0; e(e100); return; }
+    if ((lst=(int **)malloc(sizeof(int*)*1000))==NULL) { pila[sp]=0; e(e100); return; }
   } else lst=g[0].grf;
   memset(lst,0,sizeof(int*)*1000);
 
@@ -455,9 +551,9 @@ void load_fpg(void) {
       fseek(es,0,SEEK_SET);
       fread(ptr,1,file_len,es); fclose(es);
 
-      if (strcmp(ptr,"fpg\x1a\x0d\x0a")) { e(e106); free(ptr); return; }
+      if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { e(e106); free(ptr); return; }
 
-      if (process_fpg!=NULL) process_fpg(ptr,file_len);
+      if (process_fpg!=NULL) process_fpg((char *)ptr,file_len);
 
       if (!paleta_cargada) {
         for (m=0;m<768;m++) if (ptr[m+8]!=paleta[m]) break;
@@ -728,10 +824,10 @@ printf("load font %s\n",(byte*)&mem[itxt+pila[sp]]);
     if ((ptr=(byte*)malloc(file_len))!=NULL) {
       fonts[ifonts]=ptr; fseek(es,0,SEEK_SET);
       fread(ptr,1,file_len,es); fclose(es);
-      if (strcmp(ptr,"fnt\x1a\x0d\x0a")) {
+      if (strcmp((char *)ptr,"fnt\x1a\x0d\x0a")) {
         fonts[ifonts]=0; e(e115); free(ptr); return;
       }
-      if (process_fnt!=NULL) process_fnt(ptr,file_len);
+      if (process_fnt!=NULL) process_fnt((char *)ptr,file_len);
       an=0; al=0; nan=0; fnt=(TABLAFNT*)((byte*)ptr+1356);
       for (n=0;n<256;n++) {
         if (fnt[n].ancho) { an+=fnt[n].ancho; nan++; }
@@ -856,7 +952,7 @@ int _random(int min,int max) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void init_rnd(int n){
-  register a;
+  int a;
   for (a=0;a<32;a++)seed.d[a]=n;
   for (a=0;a<2048;a++) rnd();
 }
@@ -1240,7 +1336,7 @@ void save(void) {
 
   lon=pila[sp--]; offset=pila[sp--];
   if (offset<long_header || offset+lon>imem_max) { pila[sp]=0; e(e122); return; }
-  es=open_save_file((byte*)&mem[itxt+pila[sp]]);
+  es=open_save_file((char*)&mem[itxt+pila[sp]]);
   if (es==NULL) {
     pila[sp]=0;
 //    e(e123); // OJO! Para que no de error en los CD-ROM
@@ -1295,10 +1391,10 @@ void set_mode(void) {
   free(copia_debug);
   #endif
 
-  if((copia=(char *) malloc(vga_an*vga_al))==NULL) exer(1);
+  if((copia=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia,0,vga_an*vga_al);
 
-  if((copia2=(char *) malloc(vga_an*vga_al))==NULL) exer(1);
+  if((copia2=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia2,0,vga_an*vga_al);
 
   #ifdef DEBUG
@@ -1411,7 +1507,7 @@ void start_fli(void) {
     pila[sp]=0; e(e147);
   } else {
     fclose(es);
-    pila[sp]=StartFLI(full,copia2,vga_an,vga_al,x,y);
+    pila[sp]=StartFLI(full,(char *)copia2,vga_an,vga_al,x,y);
     if (pila[sp]==0) e(e130);
   }
 //  pila[sp]=StartFLI((byte*)&mem[itxt+pila[sp]],copia2,vga_an,vga_al,x,y);
@@ -1477,7 +1573,7 @@ return;
 
 
   if (system(NULL)) {
-    if (!strcmp(strupr((byte*)&mem[itxt+pila[sp]]),"COMMAND.COM")) {
+    if (!strcmp(strupr((char*)&mem[itxt+pila[sp]]),"COMMAND.COM")) {
 #ifdef DOS
       _setvideomode(_TEXTC80);
 #endif
@@ -1489,7 +1585,7 @@ return;
       set_mouse(mouse->x,mouse->y);
       read_mouse();
       volcado_completo=1;
-    } else system((byte*)&mem[itxt+pila[sp]]);
+    } else system((char*)&mem[itxt+pila[sp]]);
   }
 }
 

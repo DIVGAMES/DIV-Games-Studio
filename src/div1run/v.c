@@ -9,6 +9,15 @@
 //#include "vesa.h"
 //#include "..\inc\svga.h"
 
+
+// file prototypes
+
+void snapshot(byte *p);
+int graba_PCX(byte *mapa,FILE *f);
+void crear_ghost_vc(int m);
+void crear_ghost_slow (void);
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //	Declaraciones y datos a nivel de mขdulo
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -581,7 +590,7 @@ void restore(byte *q, byte *p) {
 
 void volcadop320200(byte *p) {
   int y=0,n;
-  byte * q=vga;
+  byte * q=copia;//vga;
 
   #ifdef GRABADORA
   RegScreen(p);
