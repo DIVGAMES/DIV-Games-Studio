@@ -12,7 +12,9 @@
 #include "cdrom.h"
 #include "net.h"
 #include <malloc.h>
-
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 // FILE PROTOTYPES
 void interprete (void);
@@ -77,6 +79,21 @@ void CNT_export(char *name,void *dir,int nparms)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Programa principal
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+void mainloop(void) {
+    frame_start();
+    #ifdef DEBUG
+    if (kbdFLAGS[_F12] || trace_program) { trace_program=0; call_to_debug=1; }
+    #endif
+    old_dump_type=dump_type;
+    old_restore_type=restore_type;
+    do {
+      #ifdef DEBUG
+      if (call_to_debug) { call_to_debug=0; debug(); }
+      #endif
+      exec_process();
+    } while (ide);
+    frame_end();
+}
 
 int main(int argc,char * argv[]) {
 
@@ -84,12 +101,16 @@ int main(int argc,char * argv[]) {
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);
+printf("argc: %d\n");
+printf("argv[1]=%s\n",argv[0]);
   #ifndef DEBUG
+  #ifndef __EMSCRIPTEN__
   if (argc<2) {
     printf("DIV32RUN Run time library - version 1.03b - Freeware by Hammer Technologies\n");
     printf("Error: Needs a DIV32RUN executable to load.");
     exit(0);
   }
+  #endif
   #else
   vga_an=argc; // Para quitar un warning
   #endif
@@ -99,17 +120,23 @@ int main(int argc,char * argv[]) {
 #endif
 
   vga_an=320; vga_al=200;
-
-  if ((mem=(int32_t*)malloc(4*imem_max))!=NULL){
+  if ((mem=(int*)malloc(4*imem_max))!=NULL){
     memset(mem,0,4*imem_max);
+
+#ifdef __EMSCRIPTEN__
+f=fopen(HTML_EXE,"rb");
+printf("FILE: %s %x\n",HTML_EXE,f);
+
+#else
 
     if ((f=fopen(argv[1],"rb"))==NULL) {
       #ifndef DEBUG
-      printf("Error: Needs a DIV32RUN executable to load.");
+      printf("Error: FILE NOT FOUND.");
       #endif
-      exit(0);
+      exit(0); 
     }
-
+#endif
+	
     fseek(f,8819,SEEK_SET);
     fread(mem,4,imem_max,f); fclose(f);
 
@@ -117,7 +144,7 @@ int main(int argc,char * argv[]) {
 
     if (mem[0]!=0 && mem[0]!=1) {
       #ifndef DEBUG
-      printf("Error: Needs a DIV32RUN executable to load.");
+      printf("Error: %d %d Needs a DIV32RUN executable to load.",mem[0],mem[1]);
       #endif
       exit(0);
     }
@@ -153,11 +180,11 @@ void inicializacion (void) {
   FILE * f=NULL;
   int n;
 
-  mouse=(_mouse*)&mem[long_header];
-  scroll=(_scroll*)&mem[long_header+12];
-  m7=(_m7*)&mem[long_header+12+10*10];
-  joy=(_joy*)&mem[long_header+12+10*10+10*7];
-  setup=(_setup*)&mem[long_header+12+10*10+10*7+8];
+  mouse=(struct _mouse*)&mem[long_header];
+  scroll=(struct _scroll*)&mem[long_header+12];
+  m7=(struct _m7*)&mem[long_header+12+10*10];
+  joy=(struct _joy*)&mem[long_header+12+10*10+10*7];
+  setup=(struct _setup*)&mem[long_header+12+10*10+10*7+8];
 
   if (mem[0]!=1) f=fopen("sound.cfg","rb");
 
@@ -404,22 +431,13 @@ extern int alt_x;
 void interprete (void) {
 
   inicializacion();
-
+#ifdef __EMSCRIPTEN__
+  emscripten_set_main_loop(mainloop, 0, 0);
+#else
   while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !(alt_x)) {
-    frame_start();
-    #ifdef DEBUG
-    if (kbdFLAGS[_F12] || trace_program) { trace_program=0; call_to_debug=1; }
-    #endif
-    old_dump_type=dump_type;
-    old_restore_type=restore_type;
-    do {
-      #ifdef DEBUG
-      if (call_to_debug) { call_to_debug=0; debug(); }
-      #endif
-      exec_process();
-    } while (ide);
-    frame_end();
+	  mainloop();
   } finalizacion();
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

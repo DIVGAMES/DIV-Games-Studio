@@ -97,12 +97,12 @@ void kill_invisible(void);
 int joy_position(int eje);
 
 // sound prototypes
-
+/*
 void UnloadSound(int n);
 int PlaySound(int n, int m, int o);
 void StopSound(int n);
 void ChangeSound(int n, int m, int o);
-
+*/
 
 void read_mouse(void);
 void path_find(void);
@@ -1436,9 +1436,8 @@ void load_pcm(void) {
   if ((f=open_file((byte*)&mem[itxt+pila[sp]]))!=NULL) {
     fclose(f);
 
-#ifdef NOTYET
     pila[sp]=LoadSound(full,loop);
-#endif
+
 //    if (pila[sp]==-1) e(e128);
   } else e(e128);
   reloj=old_reloj;

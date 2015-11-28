@@ -7,6 +7,25 @@
 #include "osdep.h"
 
 
+#ifdef GCW
+
+#define GCW_L SDLK_TAB
+#define GCW_R SDLK_BACKSPACE
+#define GCW_UP SDLK_UP
+#define GCW_DOWN SDLK_DOWN
+#define GCW_LEFT SDLK_LEFT
+#define GCW_RIGHT SDLK_RIGHT
+#define GCW_A SDLK_LALT
+#define GCW_B SDLK_x
+#define GCW_X SDLK_LSHIFT
+#define GCW_Y SDLK_SPACE
+#define GCW_START SDLK_RETURN
+#define GCW_SELECT SDLK_ESCAPE
+#define GCW_LOCK SDLK_PAUSE
+
+#endif
+
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // IRQ Data
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

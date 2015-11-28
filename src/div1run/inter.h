@@ -6,6 +6,14 @@
 #define GLOBAL extern
 #endif
 
+
+#ifdef GCW
+#define GCW_W 320
+#define GCW_H 240
+#endif
+
+
+
 //#define DEBUG // Para compilar la versiขn con debugger
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -366,7 +374,7 @@ GLOBAL byte * cuad;
 GLOBAL struct t_g { // Estructura para un fpg
   int * * fpg; // Fichero cargado en memoria
   int * * grf; // Punteros a los gr ficos (g[n].grf[000..999])
-};
+} _t_g;
 
 // El primer fpg puede contener hasta 2000 gr ficos, a partir de 1000 son los
 // gr ficos cargados con load_map (sus cขdigos 1000..1999)
@@ -400,7 +408,7 @@ GLOBAL float angulo;    // Angulo genrico para su uso en funciones internas
 GLOBAL struct t_region { // Zonas de clipping, referidas a pantalla
   int x0,x1;
   int y0,y1;
-};
+} _t_region;
 
 GLOBAL struct t_region region[max_region]; // Array de regiones
 
@@ -447,7 +455,7 @@ GLOBAL struct t_texto {
   int region;   // Regiขn de clipping
   int x0,y0;    // Region ocupada por el texto
   int an,al;    // para los volcados parciales
-};
+} _t_texto;
 
 GLOBAL struct t_texto texto[max_textos];
 
