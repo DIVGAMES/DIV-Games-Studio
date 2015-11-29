@@ -270,7 +270,7 @@ void signal_tree(int p, int s) {
 
 void _key(void) {
   if (pila[sp]<=0 || pila[sp]>=128) { e(e101); return; }
-//printf("Looking for key: %d\n",pila[sp]);
+  //printf("Looking for key: %d\n",pila[sp]);
   pila[sp]=key(pila[sp]);
 }
 
@@ -532,7 +532,7 @@ void load_fpg(void) {
   int * * lst;
   byte * ptr;
   int old_reloj=reloj;
-
+ int * iptr;
   while (n<max_fpgs) {
     if (g[n].fpg==0) break; n++;
   } if (n==max_fpgs) { pila[sp]=0; e(e104); return; }
@@ -546,12 +546,23 @@ void load_fpg(void) {
     pila[sp]=0; e(e105);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
+#ifdef __EMSCRIPTEN__ 
+printf("File len: %d\n",file_len);
+file_len=1352; // just palette
+#endif
     if ((ptr=(byte *)malloc(file_len))!=NULL) {
       g[n].fpg=(int**)ptr;
       fseek(es,0,SEEK_SET);
       fread(ptr,1,file_len,es); fclose(es);
 
-      if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { e(e106); free(ptr); return; }
+#ifdef STDOUTLOG
+	printf("fpg pointer is %x\n",(int**)ptr);
+#endif
+      } else { fclose(es); pila[sp]=0; e(e100); return; }
+    }
+  
+
+  if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { e(e106); free(ptr); return; }
 
       if (process_fpg!=NULL) process_fpg((char *)ptr,file_len);
 
@@ -565,15 +576,47 @@ void load_fpg(void) {
         } paleta_cargada=1;
       }
 
-      g[n].grf=lst; ptr+=1352; // Longitud cabecera fpg
+      g[n].grf=lst; 
+
+#ifdef __EMSCRIPTEN__
+// do something different
+es=open_file((byte*)&mem[itxt+pila[sp]]);
+printf("File pointer: %x\n",es);
+fseek(es,0,SEEK_END); file_len=ftell(es);
+printf("File len: %d\n",file_len);
+
+fseek(es,1352,SEEK_SET);
+	int len_=1;
+	int num_=1;
+	
+while(ftell(es)<file_len && len_>0 && num_>0) {
+	int pos = ftell(es);
+	byte *mptr=&ptr[pos];
+	fread(&num_,4,1,es);
+	fread(&len_,4,1,es);
+	printf("%d %d %d\n",len_,num_,ftell(es));
+ 	fseek(es,-8,SEEK_CUR);
+ 	mptr = (byte *)malloc(len_);
+ 	fread(mptr,1,len_,es);
+ 	lst[num_]=iptr=(int *)mptr;
+ 	 printf("mem ptr is %x\n",iptr);
+// 	  	 if (m!=palcrc) {
+//		 adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+// 	 } 	
+}
+fclose(es);
+#else
+
+ptr+=1352; // Longitud cabecera fpg
       while (ptr<(byte*)g[n].fpg+file_len && *(int*)ptr<1000 && *(int*)ptr>0 ) {
         lst[*(int*)ptr]=(int*)ptr;
         ptr+=*(int*)(ptr+4);
       }
 
-      pila[sp]=n;
-    } else { fclose(es); pila[sp]=0; e(e100); }
-  } reloj=old_reloj;
+#endif
+      
+pila[sp]=n;
+reloj=old_reloj;
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
