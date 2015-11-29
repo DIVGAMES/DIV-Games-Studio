@@ -7,6 +7,11 @@
 //#include "..\inc\svga.h"
 //#include "..\inc\vesa.h"
 
+#ifdef GCW
+float w_ratio=1.0;
+float h_ratio=1.0;
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 //	Declarations and module-level data
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,6 +26,12 @@ byte * vga = (byte *) 0xA0000; // Physical screen
                                // TODO - (change this to SDL surface pixels)
 #else
 SDL_Surface *vga=NULL;
+#ifdef SDL2
+SDL_Window *divWindow=NULL;
+SDL_Renderer *divRender=NULL;
+SDL_Texture *divTexture=NULL;
+#endif
+
 #endif
 
 void snapshot(byte *p);
@@ -181,32 +192,51 @@ int modovesa;
 extern float m_x,m_y;
 
 void svmode(void) {
-#ifdef STDOUTLOG
+//#ifdef STDOUTLOG
 printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
-#endif
+//#endif
 
 //hide the mouse
 SDL_ShowCursor(SDL_DISABLE);
 
 #ifdef __EMSCRIPTEN__
+#ifdef SDL2
+
+divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
+                             SDL_WINDOWPOS_UNDEFINED,
+                             SDL_WINDOWPOS_UNDEFINED,
+                             vga_an,vga_al,
+                             SDL_WINDOW_SHOWN);
+divRender = SDL_CreateRenderer(divWindow, -1, 0);
+
+divTexture = SDL_CreateTexture(divRender,
+                               SDL_PIXELFORMAT_ARGB8888,
+                               SDL_TEXTUREACCESS_STREAMING,
+                               vga_an,vga_al);
+#else
+
 	if(vga)
 		SDL_FreeSurface(vga);
 	
 	vga=NULL;
-//SDL_Quit();
-//SDL_Init(SDL_INIT_VIDEO);
-if(!vga)	
-	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
+	if(!vga)	
+		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
+#endif
 #else
 
 #ifdef GCW_SOFTSTRETCH
-if(!vga)
-	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+	if(!vga)
+		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+	w_ratio = vga_an / (float)(GCW_W*1.0);
+	h_ratio = vga_al / (float)(GCW_H*1.0);
 #else
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
+	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+
 #endif
 
 #endif
+
 
 #ifdef STDOUTLOG
 	printf("SET VIDEO MODE %x\n",vga);
@@ -378,11 +408,18 @@ void volcadogcw(byte *p) {
 #endif
 
 void volcadosdl(byte *p) {
+#ifndef SDL2
 	if(!vga) {
 		printf("setting up screen for first time %d %d\n",vga_an,vga_al);
 		svmode();
 		set_dac(); // tabla_ghost();
 	}
+#else
+	SDL_UpdateTexture(divTexture, NULL, copia, vga_an * sizeof (Uint8));
+SDL_RenderClear(divRender);
+SDL_RenderCopy(divRender, divTexture, NULL, NULL);
+SDL_RenderPresent(divRender);
+#endif
 #ifdef GCW_SOFTSTRETCH
 	if(vga_an>=GCW_W && vga_al>=GCW_H) {
 		volcadogcw(p);
@@ -412,13 +449,46 @@ long lasttick = 0;
 long newtick =0;
 long nexttick = 0;
 extern int game_fps;
+int framecount=0;
+int recording = 0;
+
+extern int alt_x;
+
+#define maxframes 30000
+
 void volcado(byte *p) {
 //printf("%d %d %d\n",game_fps,freloj,ireloj);//,reloj);
+#ifndef __EMSCRIPTEN__
+if ((shift_status&4) && (shift_status&8) && key(_0)) {
+	recording = 1;
+}
+if ((shift_status&4) && (shift_status&8) && key(_9)) {
+	recording = 0;
+}
+
+	if(recording) {
+
+//		if(programRunning )  {
+			
+			framecount++;
+//		}
+			if(!(framecount%(fps/12)) && framecount>5 && framecount<maxframes) { // && framecount%3==1) {
+				char filename[255];
+				memset(filename,0,255);
+				sprintf(filename,"/home/mike/Desktop/out/out%05d.bmp",framecount);
+				SDL_SaveBMP(vga, filename);
+			} else {
+				if(framecount>maxframes)
+				alt_x = 1;
+			}
+	//	}
+	}
+	// CTRL + ALT + P
   if ((shift_status&4) && (shift_status&8) && key(_P)) {
     snapshot(p);
-    do {} while(key(_P));
+    do {tecla();} while(key(_P));
   }
-
+#endif
   if (fli_palette_update) retrazo();
 
 volcadosdl(p);
