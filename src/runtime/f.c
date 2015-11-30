@@ -83,7 +83,7 @@ int get_reloj(void) {
 //#ifndef __EMSCRIPTEN__
 	reloj=SDL_GetTicks()/10;
 //#else
-	//reloj=SDL_GetTicks()/100;//ireloj;
+	//get_reloj()=SDL_GetTicks()/100;//ireloj;
 //#endif
 
 return reloj;
@@ -91,7 +91,7 @@ return reloj;
 	reloj = SDL_GetTicks()/100;
 	return reloj;
 //	return(SDL_GetTicks()/50);
-//	  return(reloj/1000000);
+//	  return(get_reloj()/1000000);
 }
 
 //����������������������������������������������������������������������������
@@ -668,7 +668,7 @@ void load_map(void) {
 
   } else { e(144); free(ptr); return; }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -854,7 +854,7 @@ int *ptr_8=(int*)ptr3;
 printf("fpg search ended, %x: ptr: %x\n",(byte *)g[num].fpg+file_len,ptr);
 #endif
   pila[sp]=num;
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -1154,7 +1154,7 @@ void load_fnt(void) {
     f_i[ifonts].syspal=palcrc;
   }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -1775,7 +1775,7 @@ void save(void) {
   if (es==NULL) { pila[sp]=0; e(123); return; }
   if (fwrite(&mem[offset],unit_size,lon,es)!=lon) e(124);
   fclose(es);
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 #else         // Versi�n instalaciones.
@@ -1823,7 +1823,7 @@ void save(void) {
 //  if (fwrite(&mem[offset],unit_size,lon,es)!=lon) e(124);
   fwrite(&mem[offset],unit_size,lon,es);
   fclose(es);
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 #endif
@@ -1844,7 +1844,7 @@ void load(void) {
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
   lon=(lon*4)/unit_size;
   if (fread(&mem[offset],unit_size,lon,es)!=lon) e(127); fclose(es);
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -1861,7 +1861,7 @@ void set_mode(void) {
 
   vga_an=pila[sp]/1000; vga_al=pila[sp]%1000;
 
-	printf("Tring to set mode %dx%d\n",vga_an,vga_al);
+//	printf("Tring to set mode %dx%d\n",vga_an,vga_al);
 
   for (n=0;n<num_video_modes;n++) {
     if (pila[sp]==video_modes[n].modo) {
@@ -1950,7 +1950,7 @@ void load_pcm(void) {
 
   free(ptr);
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -2069,7 +2069,7 @@ printf("Loading Song\n");
 
   free(ptr);
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -2157,8 +2157,8 @@ void set_fps(void) {
   if (game_fps>200) game_fps=200;
 
 #ifdef __EMSCRIPTEN__
-es_fps(game_fps);
-max_saltos=0;
+//es_fps(game_fps);
+//max_saltos=0;
 #endif
 
   ireloj=(double)(100.0/game_fps);
@@ -2446,7 +2446,7 @@ void fade_off(void) {
     set_paleta(); set_dac(); //LoopSound();
   } fading=0;
   pila[++sp]=0;
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3054,7 +3054,7 @@ void sort(void) {
       else qsort(&mem[offset],numreg,size*4,sort4);
       break;
   }
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3183,7 +3183,7 @@ void _fread(void) {
     if (n/unit_size<lon) memset(&memb[offset*4+n],0,lon*unit_size-n);
     pila[sp]=1;
   }
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3205,7 +3205,7 @@ void _fwrite(void) {
   f=(FILE *)tabfiles[handle/2];
   if (!capar(offset) || !capar(offset+(lon*unit_size)/4)) { pila[sp]=0; e(122); return; }
   if (fwrite(&mem[offset],unit_size,lon,f)!=lon) { pila[sp]=0; e(124); } else pila[sp]=1;
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3756,7 +3756,7 @@ void save_mapcx(int tipo) {
   }
   fclose(f); pila[sp]=1;
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -4232,7 +4232,7 @@ void encode_file(int encode) {
     rc=_dos_findnext(&ft);
   }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 void _encriptar(int encode, char * fichero, char * clave) {
@@ -4334,7 +4334,7 @@ void _compress(int encode) {
     rc=_dos_findnext(&ft);
   }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 void _comprimir(int encode, char *fichero) {
@@ -4466,7 +4466,7 @@ void function(void) {
   int oticks=get_ticks();
   #endif
 
-  old_reloj=reloj;
+  old_reloj=get_reloj();
 
   switch(v_function=(byte)mem[ip++]) {
     case 0: _signal(); break;

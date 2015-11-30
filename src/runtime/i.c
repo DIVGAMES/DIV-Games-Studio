@@ -50,6 +50,8 @@ void finalizacion (void);
 void elimina_proceso(int id);
 void nucleo_exec(void);
 void nucleo_trace(void);
+int get_reloj(void);
+
 
 void deb(void);
 extern int ids_old;
@@ -539,7 +541,7 @@ void interprete (void)
 {
   inicializacion();
 #ifdef __EMSCRIPTEN__
-  emscripten_set_main_loop(mainloop, 24, 0);
+  emscripten_set_main_loop(mainloop, 0, 0);
 #else
   while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
 	mainloop();
@@ -550,8 +552,8 @@ void interprete (void)
 
 #ifdef __EMSCRIPTEN__
 void es_fps(byte f) {
-  emscripten_cancel_main_loop();
-  emscripten_set_main_loop(mainloop, f, 0);
+//  emscripten_cancel_main_loop();
+//  emscripten_set_main_loop(mainloop, f, 0);
 }	
 #endif
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -597,7 +599,7 @@ void exec_process(void) {
     continue_process:
     #endif
 
-    max_reloj=reloj+max_process_time;
+    max_reloj=get_reloj()+max_process_time;
 
     nucleo_exec();
 
@@ -663,7 +665,7 @@ void trace_process(void) {
 
     continue_process:
 
-    max_reloj=reloj+max_process_time;
+    max_reloj=get_reloj()+max_process_time;
 
     nucleo_trace();
   }
@@ -706,18 +708,17 @@ double game_ticks=0.0f;
 double game_frames=0.0f;
 #endif
 
-int get_reloj(void);
 
 void frame_start(void) {
   int n,old_reloj;
   #ifdef DEBUG
   int oreloj;
   #endif
-
+tecla();
   // Control screensaver
 
   if (ss_status && ss_frame!=NULL) {
-    if (reloj>ss_time_counter) {
+    if (get_reloj()>ss_time_counter) {
       if (ss_init!=NULL) ss_init();
       ss_exit=0; do {
         key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
@@ -736,7 +737,7 @@ void frame_start(void) {
       if (ss_end!=NULL) ss_end();
       memcpy(copia,copia2,vga_an*vga_al);
       volcado_parcial(0,0,vga_an,vga_al);
-      ss_time_counter=reloj+ss_time;
+      ss_time_counter=get_reloj()+ss_time;
     }
   }
 
@@ -757,14 +758,14 @@ void frame_start(void) {
   oreloj=get_ticks();
   #endif
 
-  for (max=0;max<10;max++) timer(max)+=(reloj-ultimo_reloj);
+  for (max=0;max<10;max++) timer(max)+=(get_reloj()-ultimo_reloj);
 
-  if (reloj>ultimo_reloj) {
-    ffps=(ffps*9.0f+100.0f/(float)(reloj-ultimo_reloj))/10.0f;
+  if (get_reloj()>ultimo_reloj) {
+    ffps=(ffps*9.0f+100.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
     fps=(int)ffps;
   }
 
-  ultimo_reloj=reloj;
+  ultimo_reloj=get_reloj();
 
   //LoopSound();
 
@@ -777,13 +778,13 @@ void frame_start(void) {
   } function_exec(255,get_ticks()-oreloj);
   #endif
 
-  if (reloj>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
+  if (get_reloj()>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
     if (volcados_saltados<max_saltos) {
       volcados_saltados++;
       saltar_volcado=1;
       freloj+=ireloj;
     } else {
-      freloj=(float)reloj+ireloj;
+      freloj=(float)get_reloj()+ireloj;
       volcados_saltados=0;
       saltar_volcado=0;
     }
@@ -835,7 +836,7 @@ while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
     joy_check=joy->button1+joy->button2+joy->left+joy->right+joy->up+joy->down;
     if (joy_check!=last_joy_check) {
       last_joy_check=joy_check;
-      ss_time_counter=reloj+ss_time;
+      ss_time_counter=get_reloj()+ss_time;
     }
 
   }
@@ -843,13 +844,13 @@ while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
   key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
   if (key_check!=last_key_check) {
     last_key_check=key_check;
-    ss_time_counter=reloj+ss_time;
+    ss_time_counter=get_reloj()+ss_time;
   }
 
   mou_check=mouse->x+mouse->y+mouse->left+mouse->right+mouse->middle;
   if (mou_check!=last_mou_check) {
     last_mou_check=mou_check;
-    ss_time_counter=reloj+ss_time;
+    ss_time_counter=get_reloj()+ss_time;
   }
 
   #ifdef DEBUG
@@ -902,7 +903,7 @@ void frame_end(void) {
     ss_frame              =DIV_import("ss_frame"); //ok
     ss_end                =DIV_import("ss_end"); //ok
 
-    ss_time_counter=reloj+ss_time;
+    ss_time_counter=get_reloj()+ss_time;
 
     // DLL_1 Aquก se llama a uno.
 
@@ -1345,7 +1346,7 @@ int main(int argc,char * argv[]) {
 
 #ifndef DEBUG
 #ifndef __EMSCRIPTEN__
-  if (argc<2) {
+  if (argc<1) {
     printf("DIV2015 Run time library - version 3.00a - http://div-arena.co.uk\n");
     printf("Error: Needs a DIV executable to load.");
 
@@ -1414,11 +1415,13 @@ fclose(f);
 fseek(f,div1stubsize,SEEK_SET);
 fread(mimem,4,10,f);
 
+#ifdef PRGDUMP
 for(a=0;a<10;a++){ 
-printf("offset %d is %x (%d)\n",a,mimem[a],mimem[a]);
+//printf("offset %d is %x (%d)\n",a,mimem[a],mimem[a]);
 //printf("Text offset is %x\n",(uint16_t*)mimem[6]);
 }
 
+#endif
   iloc_len=(mimem[5]+mimem[6]);
 
   if (iloc_len&1) iloc_len++;
@@ -1601,7 +1604,7 @@ void busca_packfile(void) {
       if (!strcmp(head,"dat\x1a\x0d\x0a") && nfiles>0) {
         if (prg_id==id[0] || prg_id==id[1] || prg_id==id[2]) {
           packdir=(struct _packdir* )malloc(nfiles*sizeof(struct _packdir));
-          printf("packdir: %x %d\n",packdir,nfiles);
+          //printf("packdir: %x %d\n",packdir,nfiles);
           if (packdir!=NULL) {
             if (fread(packdir,sizeof(struct _packdir),nfiles,f)==nfiles) {
               for (n=0;n<nfiles;n++) {
