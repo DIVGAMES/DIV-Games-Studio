@@ -3,7 +3,7 @@
 # also should work for platforms with no cmake
 # which is why this is here in the first place!
 
-CC=g++
+CC=gcc
 EXECUTABLE=div2-ide
 RUNTIME=div2-run
 RUNTIME1=div1-run
@@ -30,7 +30,7 @@ VISOROBJS=$(VISOR_SOURCES:.c=.o)
 DROIDLIBFLAGS= -lSDL -lSDL_image -lSDL_mixer -lm -lz -ljpeg
 # -lSDL_net -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -Wl,--no-undefined -lm
 
-CFLAGS= -g -w -fpermissive -Isrc -funsigned-char -DMIXER -DZLIB -DJPGLIB -DDROID 
+CFLAGS= -O3 -w -fpermissive -Isrc -funsigned-char -DMIXER -DZLIB -DJPGLIB -DDROID 
 #-Isrc/div1run
 #-Isrc/runtime
 #-DDEBUG 
