@@ -901,8 +901,8 @@ int itcont;
 
 int pila[long_pila+max_exp+64]; // c lculo de expresiones (compilaci¢n y ejecuci¢n)
 
-int * mem_ory=NULL, * frm=NULL;
-int * mem=NULL, * loc=NULL;
+int32_t * mem_ory=NULL, * frm=NULL;
+int32_t * mem=NULL, * loc=NULL;
 int imem, imem_max;
 int iloc, iloc_max;
 int itxt, ifrm_max;
