@@ -104,8 +104,12 @@ int main(int argc,char * argv[]) {
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);
-printf("argc: %d\n");
-printf("argv[1]=%s\n",argv[0]);
+//printf("argc: %d\n");
+//printf("argv[1]=%s\n",argv[0]);
+
+  if(SDL_NumJoysticks() > 0)
+		divjoy = SDL_JoystickOpen(0);
+
   #ifndef DEBUG
   #ifndef __EMSCRIPTEN__
   if (argc<2) {
@@ -128,7 +132,7 @@ printf("argv[1]=%s\n",argv[0]);
 
 #ifdef __EMSCRIPTEN__
 f=fopen(HTML_EXE,"rb");
-printf("FILE: %s %x\n",HTML_EXE,f);
+//printf("FILE: %s %x\n",HTML_EXE,f);
 
 #else
 
@@ -552,8 +556,8 @@ void exec_process(void) {
       #endif
       #ifdef DEBUG
       case ljmp: ip=mem[ip];
-        if (reloj>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+reloj;
+        if (get_reloj()>max_reloj) {
+          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
       #else
@@ -561,8 +565,8 @@ void exec_process(void) {
       #endif
       #ifdef DEBUG
       case ljpf: if (pila[sp--]&1) ip++; else ip=mem[ip];
-        if (reloj>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+reloj;
+        if (get_reloj()>max_reloj) {
+          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
       #else
@@ -792,13 +796,13 @@ void trace_process(void) {
           if (call_to_debug) { ip++; process_stoped=id; return; }
         } ip++; break;
       case ljmp: ip=mem[ip];
-        if (reloj>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+reloj;
+        if (get_reloj()>max_reloj) {
+          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
       case ljpf: if (pila[sp--]&1) ip++; else ip=mem[ip];
-        if (reloj>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+reloj;
+        if (get_reloj()>max_reloj) {
+          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
       case lfun: function();
@@ -933,7 +937,7 @@ void frame_start(void) {
   // Control del screen saver
 
   if (ss_status && ss_frame!=NULL) {
-    if (reloj>ss_time_counter) {
+    if (get_reloj()>ss_time_counter) {
       if (ss_init!=NULL) ss_init();
       ss_exit=0; do {
         key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
@@ -978,8 +982,8 @@ void frame_start(void) {
 
   for (max=0;max<10;max++) timer(max)+=get_reloj()-ultimo_reloj;
 
-  if (reloj>ultimo_reloj) {
-    ffps=(ffps*49.0+100.0/(float)(reloj-ultimo_reloj))/50.0;
+  if (get_reloj()>ultimo_reloj) {
+    ffps=(ffps*49.0+100.0/(float)(get_reloj()-ultimo_reloj))/50.0;
     fps=(int)ffps;
   }
 
@@ -989,13 +993,13 @@ void frame_start(void) {
 
   tecla();
 
-  if (reloj>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
+  if (get_reloj()>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
     if (volcados_saltados<max_saltos) {
       volcados_saltados++;
       saltar_volcado=1;
       freloj+=ireloj;
     } else {
-      freloj=(float)reloj+ireloj;
+      freloj=(float)get_reloj()+ireloj;
       volcados_saltados=0;
       saltar_volcado=0;
     }
@@ -1025,7 +1029,7 @@ void frame_start(void) {
     mouse->middle=(cbd.mouse_bx&4)/4;
     mouse->right=(cbd.mouse_bx&2)/2;
     cbd.mouse_action=0;
-    ss_time_counter=reloj+ss_time;
+    ss_time_counter=get_reloj()+ss_time;
   }
 */
 
@@ -1169,7 +1173,7 @@ void frame_end(void) {
 //      	    mouse->middle=(cbd.mouse_bx&4)/4;
 //      	    mouse->right=(cbd.mouse_bx&2)/2;
 //      	    cbd.mouse_action=0;
-//            ss_time_counter=reloj+ss_time;
+//            ss_time_counter=get_reloj()+ss_time;
 //          }
           x1s=-1; v_function=-1; // No se producen errores
           put_sprite(mouse->file,mouse->graph,mouse->x,mouse->y,mouse->angle,mouse->size,mouse->flags,mouse->region,copia,vga_an,vga_al);
