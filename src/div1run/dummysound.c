@@ -2,6 +2,9 @@
 #include "osdep.h"
 #include "divsound.h"
 
+#ifdef __APPLE__
+#include "osx/fmemopen.h"
+#endif
 
 tSonido  sonido[128];
 tCancion cancion[128];
@@ -175,12 +178,13 @@ if(!src)
 	mem = fopen(file,"rb"); // open our temp wav	
 
 #ifdef WIN32
+//  __APPLE__
 
 	fdst = fopen("divwav.tmp","wb");
 	if(fdst==NULL)
 		return -1;
 #else
-	fdst = fmemopen(dst,(int)Len+255,(const char *)"wb");
+	fdst = fmemopen((void *)dst,(int)Len+255,(const char *)"wb");
 #endif
 	
 	res=pcm2wav(mem,Len,fdst,(int)Len+40);
