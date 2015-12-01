@@ -11,7 +11,9 @@
 #include "divsound.h"
 #include "cdrom.h"
 #include "net.h"
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -104,8 +106,6 @@ int main(int argc,char * argv[]) {
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);
-printf("argc: %d\n");
-printf("argv[1]=%s\n",argv[0]);
   #ifndef DEBUG
   #ifndef __EMSCRIPTEN__
   if (argc<2) {
