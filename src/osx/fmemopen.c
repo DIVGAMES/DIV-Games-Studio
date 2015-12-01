@@ -15,6 +15,9 @@
 // limitations under the License.
 //
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -104,3 +107,8 @@ FILE *fmemopen(void *buf, int size, const char *mode) {
   // funopen's man page: https://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man3/funopen.3.html
   return funopen(mem, readfn, writefn, seekfn, closefn);
 }
+
+
+#ifdef __cplusplus
+}
+#endif

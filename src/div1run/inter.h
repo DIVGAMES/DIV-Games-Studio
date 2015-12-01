@@ -20,6 +20,7 @@
 // Includes
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+#include "osdep.h"
 //#include <i86.h>
 //#include <bios.h>
 //#include <dos.h>
@@ -27,7 +28,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
 #include <ctype.h>
 //#include <graph.h>
 //#include <direct.h>
@@ -41,7 +44,6 @@
 #include "divfli.h"
 
 
-#include "osdep.h"
 
 GLOBAL SDL_Joystick *divjoy;
 
