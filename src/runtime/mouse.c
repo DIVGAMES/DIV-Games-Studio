@@ -30,7 +30,7 @@ void readmouse(void) {
   
   short ix,iy;
   int keymouse=0,n=0;
-tecla();
+//tecla();
 
 #ifdef DOS
   union REGS regs;

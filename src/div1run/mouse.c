@@ -111,7 +111,7 @@ void set_mouse(int x,int y) {
 }
 
 void readmouse(void) {
-tecla();
+//tecla();
 #ifdef DOS
   union REGS regs;
 

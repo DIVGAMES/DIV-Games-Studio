@@ -53,7 +53,7 @@ void inicializa_textos(byte * fichero) {
   if ((f=fopen((char *)fichero,"rb"))!=NULL) {
     fseek(f,-4,SEEK_END);
     fread(&n,4,1,f);
-    DebugData(n);
+    //DebugData(n);
     fseek(f,-4-n,SEEK_END);
     if ((textos=(byte *)malloc(n))!=NULL) {
       n=fread(textos,1,n,f);

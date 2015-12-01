@@ -112,7 +112,7 @@ int audio_buffers = 1024;
 
 SDL_Init( SDL_INIT_AUDIO );
 
-print_init_flags(initted);
+//print_init_flags(initted);
 	
   if((initted&flags) != flags) {
 	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
@@ -222,7 +222,7 @@ if(!src)
 	sonido[con].smp = 1;
 	sonido[con].sound = sound;
 	sonido[con].loop = Loop;
-printf("loaded sound in slot: %d\n",con);
+//printf("loaded sound in slot: %d\n",con);
 	return con;
 #endif
 

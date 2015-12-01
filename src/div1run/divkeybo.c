@@ -9,22 +9,45 @@
 
 #ifdef GCW
 
+
+// GCW DEFAULT BUTTON MAPPING
+
+
+/*
 #define GCW_L SDLK_TAB
 #define GCW_R SDLK_BACKSPACE
 #define GCW_UP SDLK_UP
 #define GCW_DOWN SDLK_DOWN
 #define GCW_LEFT SDLK_LEFT
 #define GCW_RIGHT SDLK_RIGHT
-#define GCW_A SDLK_LALT
-#define GCW_B SDLK_x
+#define GCW_A SDLK_LCTRL
+#define GCW_B SDLK_LALT
+#define GCW_X SDLK_LSHIFT
+#define GCW_Y SDLK_SPACE
+#define GCW_START SDLK_RETURN
+#define GCW_SELECT SDLK_ESCAPE
+#define GCW_LOCK SDLK_PAUSE
+*/
+
+#define GCW_L SDLK_TAB
+#define GCW_R SDLK_BACKSPACE
+#define GCW_UP SDLK_UP
+#define GCW_DOWN SDLK_DOWN
+#define GCW_LEFT SDLK_LEFT
+#define GCW_RIGHT SDLK_RIGHT
+#define GCW_A SDLK_LCTRL
+#define GCW_B SDLK_LALT
 #define GCW_X SDLK_LSHIFT
 #define GCW_Y SDLK_SPACE
 #define GCW_START SDLK_RETURN
 #define GCW_SELECT SDLK_ESCAPE
 #define GCW_LOCK SDLK_PAUSE
 
+
 #endif
 
+#define JOY_DEADZONE 500
+int joymx = 0, joymy=0;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // IRQ Data
@@ -226,252 +249,363 @@ void checkmod(SDLMod mod) {
 }
 
 
+int8_t hx=0,hy=0; // hat xy positions
 
 
 void tecla(void) {
 //printf("tecla\n");
 ascii=0; scan_code=0;
 SDL_Event event;
-while(SDL_PollEvent(&event))
-        {
-            /* If a quit event has been sent */
-            if (event.type == SDL_QUIT)
-            {
-                /* Quit the application */
-//                salir_del_entorno=1;
-				alt_x=1;
-                //exit(0);
-            }
-            
-            if (event.type == SDL_KEYDOWN)
-            {
-				switch(event.key.keysym.sym) {
 #ifdef GCW
-				case SDLK_LEFT:		// D-PAD LEFT
-					key(sdl2key[GCW_LEFT])=1;
-				break;
-				
-				case SDLK_RIGHT:	// D-PAD RIGHT
-					key(sdl2key[GCW_RIGHT])=1;
+	byte hatval;
 
-				break;
-				case SDLK_UP:		// D-PAD UP
-					key(sdl2key[GCW_UP])=1;
-				break;
-				
-				case SDLK_DOWN:		// D-PAD DOWN
-					key(sdl2key[GCW_DOWN])=1;
-				break;
-				
-				case SDLK_LCTRL:	// A
-					key(sdl2key[GCW_A])=1;
-				break;
-				
-				case SDLK_LALT:		// B
-					key(sdl2key[GCW_B])=1;
-					mouse->left=1;
-				break;
-				
-				case SDLK_LSHIFT:	// X
-					key(sdl2key[GCW_X])=1;
-				break;
-				
-				case SDLK_SPACE:	// Y
-					key(sdl2key[GCW_Y])=1;
-				break;
+// reset hat positions (D-PAD)
+	key(sdl2key[GCW_LEFT])=0;
+	key(sdl2key[GCW_RIGHT])=0;
+	key(sdl2key[GCW_DOWN])=0;
+	key(sdl2key[GCW_UP])=0;
 
-				case SDLK_TAB:		// Left shoulder
-					key(sdl2key[GCW_L])=1;
-				break;
+// get new positions (D-PAD)
+	hatval = SDL_JoystickGetHat(divjoy,0);
 
-				case SDLK_BACKSPACE:	// Right shoulder
-					key(sdl2key[GCW_R])=1;
-				break;
+	if(hatval & SDL_HAT_RIGHT) 
+		key(sdl2key[GCW_RIGHT])=1;
+
+	if(hatval & SDL_HAT_LEFT)
+		key(sdl2key[GCW_LEFT])=1;
+	
+	if(hatval & SDL_HAT_UP)
+		key(sdl2key[GCW_UP])=1;
+
+	if(hatval & SDL_HAT_DOWN)
+		key(sdl2key[GCW_DOWN])=1;
+
+#endif
+	
+
+	while(SDL_PollEvent(&event)) {	
+		// check keys
+		if(event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP)  {
+			
+			if(event.type == SDL_JOYBUTTONDOWN)
+				event.type = SDL_KEYDOWN;
 				
-				case SDLK_RETURN:	// Start
-					key(sdl2key[GCW_START])=1;
-				break;
+			if(event.type == SDL_JOYBUTTONUP)
+				event.type = SDL_KEYUP;
+/*
+	ELEMENT_B,
+	ELEMENT_A,
+	ELEMENT_Y,
+	ELEMENT_X,
+	ELEMENT_SELECT,
+	ELEMENT_START,
+	ELEMENT_L,
+	ELEMENT_R,
+	*/			
+
+			switch(event.jbutton.button) {
+
+		// these buttons probably arent correcct.
+
+				case 0: // B
+					event.key.keysym.sym=SDLK_LALT;
+					break;
+				case 3: // A
+					event.key.keysym.sym=SDLK_LCTRL;
+					break;
+				case 2: // Y
+					event.key.keysym.sym=SDLK_SPACE;
+					break;
+				case 1: // X
+					event.key.keysym.sym=SDLK_LSHIFT;
+					break;
+				case 4: // SELECT
+					event.key.keysym.sym=SDLK_ESCAPE;
+					break;
+				case 5: // START
+					event.key.keysym.sym=SDLK_RETURN;
+					break;	
+				case 6: // LEFT
+					event.key.keysym.sym=SDLK_TAB;
+					break;	
+				case 7: // RIGHT
+					event.key.keysym.sym=SDLK_BACKSPACE;
+					break;	
+
+			}
+		}
+		
+		// Analog joystick mapped to mouse movement
+		if(event.type == SDL_JOYAXISMOTION) {			
 				
-				case SDLK_ESCAPE:	// Select
-					key(sdl2key[GCW_SELECT])=1;			
-					if(key(sdl2key[GCW_X])==1)
-						alt_x=1;
+			switch(event.jaxis.axis)
+			{
+				case 0:		// axis 0 (left-right)
+					joymx=0;
+					if(event.jaxis.value < -JOY_DEADZONE)
+					{
+						joymx=-2;
+						// left movement
+					}
+					else if(event.jaxis.value > JOY_DEADZONE)
+					{
+						joymx=2;
+						// right movement
+					}
 				break;
-				
-				case SDLK_PAUSE:	// Lock
-					key(sdl2key[GCW_LOCK])=1;
+				case 1:		// axis 1 (up-down)
+					joymy=0;
+					if(event.jaxis.value < -JOY_DEADZONE)
+					{
+						joymy=-2;
+						// up movement
+					}
+					else if(event.jaxis.value > JOY_DEADZONE)
+					{
+						joymy=2;
+						// down movement
+					}
 				break;
 
 				default:
 				break;
+			}
+		}
+            /* If a quit event has been sent */
+		if (event.type == SDL_QUIT)
+			alt_x=1;
+            
+		if (event.type == SDL_KEYDOWN) {
+			switch(event.key.keysym.sym) {
+#ifdef GCW
+			case SDLK_LEFT:		// D-PAD LEFT
+				key(sdl2key[GCW_LEFT])=1;
+			break;
+			
+			case SDLK_RIGHT:	// D-PAD RIGHT
+				key(sdl2key[GCW_RIGHT])=1;
+
+			break;
+			case SDLK_UP:		// D-PAD UP
+				key(sdl2key[GCW_UP])=1;
+			break;
+			
+			case SDLK_DOWN:		// D-PAD DOWN
+				key(sdl2key[GCW_DOWN])=1;
+			break;
+			
+			case SDLK_LCTRL:	// A
+				key(sdl2key[GCW_A])=1;
+				mouse->left=1;
+			break;
+			
+			case SDLK_LALT:		// B
+				key(sdl2key[GCW_B])=1;
+				mouse->left=1;
+			break;
+			
+			case SDLK_LSHIFT:	// X
+				key(sdl2key[GCW_X])=1;
+			break;
+			
+			case SDLK_SPACE:	// Y
+				key(sdl2key[GCW_Y])=1;
+			break;
+
+			case SDLK_TAB:		// Left shoulder
+				key(sdl2key[GCW_L])=1;
+			break;
+
+			case SDLK_BACKSPACE:	// Right shoulder
+				key(sdl2key[GCW_R])=1;
+			break;
+			
+			case SDLK_RETURN:	// Start
+				scan_code = sdl2key[GCW_START];
+				key(sdl2key[GCW_START])=1;
+			break;
+			
+			case SDLK_ESCAPE:	// Select
+				key(sdl2key[GCW_SELECT])=1;			
+				if(key(sdl2key[GCW_X])==1)
+					alt_x=1;
+			break;
+			
+			case SDLK_PAUSE:	// Lock
+				key(sdl2key[GCW_LOCK])=1;
+			break;
+
+			default:
+			break;
 #else
-					case SDLK_LSHIFT:
-						shift_status|=2;
-						break;
-					case SDLK_RSHIFT:
-						shift_status|=1;
-						break;
-					case SDLK_LCTRL:
-						shift_status|=4;
-						break;
-					case SDLK_RCTRL:
-						shift_status|=4;
-						break;
-					case SDLK_LALT:
-						shift_status|=8;
-						break;
-					case SDLK_RALT:
-						shift_status|=8;
-						break;
-					case SDLK_INSERT:
-						shift_status|=128;
+// handle special keys
+			case SDLK_LSHIFT:
+				shift_status|=2;
+				break;
+			case SDLK_RSHIFT:
+				shift_status|=1;
+				break;
+			case SDLK_LCTRL:
+				shift_status|=4;
+				break;
+			case SDLK_RCTRL:
+				shift_status|=4;
+				break;
+			case SDLK_LALT:
+				shift_status|=8;
+				break;
+			case SDLK_RALT:
+				shift_status|=8;
+				break;
+			case SDLK_INSERT:
+				shift_status|=128;
 #endif
-				}
-#ifndef GCW
-				checkmod((SDLMod) event.key.keysym.mod);
-				scan_code = sdl2key[event.key.keysym.sym];
-				ascii = event.key.keysym.scancode;
+		}
+
+		if(scan_code==0)
+			scan_code = sdl2key[event.key.keysym.sym];
+		
+		ascii = event.key.keysym.scancode;
+		checkmod((SDLMod) event.key.keysym.mod);
+
 // unicode not working on android
 #ifndef DROID
-				if(event.key.keysym.unicode>=0 &&  event.key.keysym.unicode<0x80) {
-					ascii = event.key.keysym.unicode;
-					//printf("ascii val: %d\n",ascii);
-				}
+		if(event.key.keysym.unicode>=0 &&  event.key.keysym.unicode<0x80) {
+			ascii = event.key.keysym.unicode;
+			//printf("ascii val: %d\n",ascii);
+		}
 					
-#endif				
-				kbdFLAGS[scan_code]=1;				
 #endif
-			}
-			if(event.type == SDL_KEYUP) 
-			{
+#ifndef GCW				
+		kbdFLAGS[scan_code]=1;				
+#endif
+	}
+	
+	
+	if(event.type == SDL_KEYUP) {
 #ifdef GCW
-				switch(event.key.keysym.sym) {
-				case SDLK_LEFT:		// D-PAD LEFT
-					key(sdl2key[GCW_LEFT])=0;
+		switch(event.key.keysym.sym) {
+			case SDLK_LEFT:		// D-PAD LEFT
+				key(sdl2key[GCW_LEFT])=0;
 				break;
-				
-				case SDLK_RIGHT:	// D-PAD RIGHT
-					key(sdl2key[GCW_RIGHT])=0;
+			
+			case SDLK_RIGHT:	// D-PAD RIGHT
+				key(sdl2key[GCW_RIGHT])=0;
+				break;
+			
+			case SDLK_UP:		// D-PAD UP
+				key(sdl2key[GCW_UP])=0;
+				break;
+			
+			case SDLK_DOWN:		// D-PAD DOWN
+				key(sdl2key[GCW_DOWN])=0;
+				break;
+			
+			case SDLK_LCTRL:	// A
+				key(sdl2key[GCW_A])=0;
+				mouse->left=0;
+				break;
+			
+			case SDLK_LALT:		// B
+				key(sdl2key[GCW_B])=0;
+				mouse->left=0;
+				break;
+			
+			case SDLK_LSHIFT:	// X
+				key(sdl2key[GCW_X])=0;
+				break;
+			
+			case SDLK_SPACE:	// Y
+				key(sdl2key[GCW_Y])=0;
+				break;
+	
+			case SDLK_TAB:		// Left shoulder
+				key(sdl2key[GCW_L])=0;
+				break;
 
+			case SDLK_BACKSPACE:	// Right shoulder
+				key(sdl2key[GCW_R])=0;
 				break;
-				case SDLK_UP:		// D-PAD UP
-					key(sdl2key[GCW_UP])=0;
+			
+			case SDLK_RETURN:	// Start
+				key(sdl2key[GCW_START])=0;
 				break;
-				
-				case SDLK_DOWN:		// D-PAD DOWN
-					key(sdl2key[GCW_DOWN])=0;
+			
+			case SDLK_ESCAPE:	// Select
+				key(sdl2key[GCW_SELECT])=0;			
 				break;
-				
-				case SDLK_LCTRL:	// A
-					key(sdl2key[GCW_A])=0;
+			
+			case SDLK_PAUSE:	// Lock
+				key(sdl2key[GCW_LOCK])=0;
 				break;
-				
-				case SDLK_LALT:		// B
-					key(sdl2key[GCW_B])=0;
-					mouse->left=1;
+			
+			default:
 				break;
-				
-				case SDLK_LSHIFT:	// X
-					key(sdl2key[GCW_X])=0;
-				break;
-				
-				case SDLK_SPACE:	// Y
-					key(sdl2key[GCW_Y])=0;
-				break;
-
-				case SDLK_TAB:		// Left shoulder
-					key(sdl2key[GCW_L])=0;
-				break;
-
-				case SDLK_BACKSPACE:	// Right shoulder
-					key(sdl2key[GCW_R])=0;
-				break;
-				
-				case SDLK_RETURN:	// Start
-					key(sdl2key[GCW_START])=0;
-				break;
-				
-				case SDLK_ESCAPE:	// Select
-					key(sdl2key[GCW_SELECT])=0;			
-				break;
-				
-				case SDLK_PAUSE:	// Lock
-					key(sdl2key[GCW_LOCK])=0;
-				break;
-				default:
-				break;
-			}
+		}
 #else
-				shift_status=0;
-				checkmod((SDLMod) event.key.keysym.mod);
-				
-				scan_code = sdl2key[event.key.keysym.sym];
-				//scan_code = event.key.keysym.scancode;
-				kbdFLAGS[scan_code]=0;
+		shift_status=0;
+		checkmod((SDLMod) event.key.keysym.mod);
+		
+		scan_code = sdl2key[event.key.keysym.sym];
+		//scan_code = event.key.keysym.scancode;
+		kbdFLAGS[scan_code]=0;
 #endif
-			}
-			  if (event.type == SDL_MOUSEMOTION)
-            {
-				mouse->x = event.motion.x;
-	           	mouse->y = event.motion.y;
+	}
+	
+	if (event.type == SDL_MOUSEMOTION) {
+		mouse->x = event.motion.x;
+		mouse->y = event.motion.y;
 
 //				m_x+=event.motion.xrel;
 //				m_y+=event.motion.yrel;
+	}
+		/* If a button on the mouse is pressed. */
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			if(event.button.button == SDL_BUTTON_LEFT) {
+				mouse->	left = 1;
+#ifdef DEBUG
+				mouse_b|=1;
+#endif
 			}
-            /* If a button on the mouse is pressed. */
-            if (event.type == SDL_MOUSEBUTTONDOWN)
-            {
-				if(event.button.button == SDL_BUTTON_LEFT)
-				{
-					mouse->	left = 1;
+			if(event.button.button == SDL_BUTTON_RIGHT) {
+				mouse->right = 1;
 #ifdef DEBUG
-					mouse_b|=1;
+				mouse_b|=2;
 #endif
-				}
-				if(event.button.button == SDL_BUTTON_RIGHT)
-				{
-					mouse->right = 1;
-#ifdef DEBUG
-					mouse_b|=2;
-#endif
-				}
-				if(event.button.button == SDL_BUTTON_MIDDLE)
-				{
-					mouse->middle = 1;
-#ifdef DEBUG
-					mouse_b|=4;
-#endif
-				}
 			}
-			
-			if (event.type == SDL_MOUSEBUTTONUP)
-            {
+			if(event.button.button == SDL_BUTTON_MIDDLE) {
+				mouse->middle = 1;
+#ifdef DEBUG
+				mouse_b|=4;
+#endif
+			}
+		}
+		
+		if (event.type == SDL_MOUSEBUTTONUP) {
 
-				if(event.button.button == SDL_BUTTON_LEFT)
-				{
-					mouse->left = 0;
+			if(event.button.button == SDL_BUTTON_LEFT) {
+				mouse->left = 0;
 #ifdef DEBUG
-					mouse_b ^=1;
+				mouse_b ^=1;
+#endif
+			}
+			if(event.button.button == SDL_BUTTON_RIGHT) {
+				mouse->right = 0;
+#ifdef DEBUG
+				mouse_b ^=2;
 #endif
 				}
-				if(event.button.button == SDL_BUTTON_RIGHT)
-				{
-					mouse->right = 0;
+			if(event.button.button == SDL_BUTTON_MIDDLE) {
+				mouse->middle = 0;
 #ifdef DEBUG
-					mouse_b ^=2;
+				mouse_b ^=4;
 #endif
-					}
-				if(event.button.button == SDL_BUTTON_MIDDLE)
-				{
-					mouse->middle = 0;
-#ifdef DEBUG
-					mouse_b ^=4;
-#endif
-				}	
-			}
-        }
+			}	
+		}
+	}
 
-    if ((shift_status&8) && scan_code==_x) alt_x=1; 
+    if ((shift_status&8) && scan_code==_x) 
+		alt_x=1; 
 
 #ifdef DOS
   union REGS r;
@@ -489,6 +623,13 @@ while(SDL_PollEvent(&event))
     r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
   }
 #endif
+
+#ifdef GCW
+	mouse->x+=joymx;
+	mouse->y+=joymy;
+#endif
+
+
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

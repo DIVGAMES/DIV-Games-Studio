@@ -1,4 +1,3 @@
-
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Cขdigo de las funciones de detecciขn de colisiขn
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -7,20 +6,15 @@
 
 
 // C.C Prototypes
-
 int comprobar_colisiones(int i,int bloque,int scroll);
 void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags);
 void sp_rotado_p(byte * si, int an, int al, int flags);
-void test_rotado(byte * si, int an, int al, int flags);
-void test_escalado(byte * old_si, int x, int y, int an, int al, int xg, int yg,
-                   int size, int flags);
-
 void test_normal(byte * p, int x, int y, int an, int al, int flags);
 void test_cortado(byte * p, int x, int y, int an, int al, int flags);
+void test_escalado(byte * old_si, int x, int y, int an, int al, int xg, int yg,int size, int flags);
+void test_rotado(byte * si, int an, int al, int flags);
 void test_scanc(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1);
 void test_scan(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1);
-
-
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Variables definidas a nivel de mขdulo

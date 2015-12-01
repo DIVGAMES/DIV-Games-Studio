@@ -414,12 +414,6 @@ void MapperVisor0(void); void MapperVisor1(void); void MapperVisor2(void); void 
 void generador_sprites(void);
 
 
-#ifdef __cplusplus
-void crear_listbox(struct t_listbox *);
-void actualiza_listbox(struct t_listbox *);
-void pinta_listbox(struct t_listbox *);
-#endif
-
 int nuevo_mapa(byte *mapilla);
 void nuevo_mapa3D(void);
 void RenderToMed();
@@ -868,6 +862,14 @@ void muestra_papelera(); // trash shows (?)
 
 void OpenGenFont();
 void OpenFont();
+
+
+// divbrow.c
+
+void crear_listbox(struct t_listbox *l);
+void actualiza_listbox(struct t_listbox *l);
+void pinta_listbox(struct t_listbox *l);
+
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //      Funciones y estructuras exportadas por DIVPCM

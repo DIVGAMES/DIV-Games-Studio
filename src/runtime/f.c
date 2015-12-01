@@ -78,20 +78,16 @@ extern int nomitidos;
 //  Para arreglar el puto bug de /oneatx /fp5 en i.cpp
 //����������������������������������������������������������������������������
 
+static int n_reloj=0, o_reloj=0;
+
 int get_reloj(void) {
-
-//#ifndef __EMSCRIPTEN__
-	reloj=SDL_GetTicks()/10;
-//#else
-	//reloj=SDL_GetTicks()/100;//ireloj;
-//#endif
-
-return reloj;
-	
-	reloj = SDL_GetTicks()/100;
+	/*
+	n_reloj=SDL_GetTicks()/10;
+	reloj+=(n_reloj-o_reloj);
+	o_reloj=n_reloj;
+*/
+reloj=SDL_GetTicks()/10;
 	return reloj;
-//	return(SDL_GetTicks()/50);
-//	  return(reloj/1000000);
 }
 
 //����������������������������������������������������������������������������
@@ -156,7 +152,9 @@ static FILE * div_open_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 #ifndef DOS
-printf("trying to load [%s]\n",file);
+  printf("opening file: %s\n",file);
+
+//printf("trying to load [%s]\n",file);
 if(strlen((char *)file)==0) return NULL;
 char *ff = (char *)file;
 
@@ -168,33 +166,33 @@ while (*ff!=0) {
 #endif
 //printf("%s\n",full);
   strcpy(full,(char*)file);
-    printf("trying to load %s\n",full);
+//    printf("trying to load %s\n",full);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,(char*)file);
-    printf("Trying: %s\n",full);
+//    printf("Trying: %s\n",full);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
 	strupr(full);
-	printf("Trying: %s\n",full);
+//	printf("Trying: %s\n",full);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
 		
       strcpy(full,fname);
       strcat(full,ext);
-    printf("Trying: %s\n",full);
+//    printf("Trying: %s\n",full);
 
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
-strupr(full);
-    printf("Trying: %s\n",full);
+		strupr(full);
+//    printf("Trying: %s\n",full);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
-    printf("Trying: %s\n",full);
+//    printf("Trying: %s\n",full);
 
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
@@ -668,7 +666,7 @@ void load_map(void) {
 
   } else { e(144); free(ptr); return; }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -854,7 +852,7 @@ int *ptr_8=(int*)ptr3;
 printf("fpg search ended, %x: ptr: %x\n",(byte *)g[num].fpg+file_len,ptr);
 #endif
   pila[sp]=num;
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -1154,7 +1152,7 @@ void load_fnt(void) {
     f_i[ifonts].syspal=palcrc;
   }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -1775,7 +1773,7 @@ void save(void) {
   if (es==NULL) { pila[sp]=0; e(123); return; }
   if (fwrite(&mem[offset],unit_size,lon,es)!=lon) e(124);
   fclose(es);
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 #else         // Versi�n instalaciones.
@@ -1823,7 +1821,7 @@ void save(void) {
 //  if (fwrite(&mem[offset],unit_size,lon,es)!=lon) e(124);
   fwrite(&mem[offset],unit_size,lon,es);
   fclose(es);
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 #endif
@@ -1844,7 +1842,7 @@ void load(void) {
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
   lon=(lon*4)/unit_size;
   if (fread(&mem[offset],unit_size,lon,es)!=lon) e(127); fclose(es);
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -1861,7 +1859,7 @@ void set_mode(void) {
 
   vga_an=pila[sp]/1000; vga_al=pila[sp]%1000;
 
-	printf("Tring to set mode %dx%d\n",vga_an,vga_al);
+//	printf("Tring to set mode %dx%d\n",vga_an,vga_al);
 
   for (n=0;n<num_video_modes;n++) {
     if (pila[sp]==video_modes[n].modo) {
@@ -1950,7 +1948,7 @@ void load_pcm(void) {
 
   free(ptr);
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -2043,7 +2041,7 @@ void load_song(void) {
   char * ptr;
 
   loop=pila[sp--];
-printf("Requesting song: %s\n",(char *)&mem[pila[sp]]);
+//printf("Requesting song: %s\n",(char *)&mem[pila[sp]]);
 
   if (npackfiles) {
     m=read_packfile((byte*)&mem[pila[sp]]);
@@ -2064,12 +2062,12 @@ printf("Requesting song: %s\n",(char *)&mem[pila[sp]]);
       } else { fclose(es); pila[sp]=0; e(100); return; }
     }
   }
-printf("Loading Song\n");
+//printf("Loading Song\n");
   pila[sp]=LoadSong(ptr,file_len,loop);
 
   free(ptr);
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -2147,7 +2145,7 @@ void set_fps(void) {
   max_saltos=pila[sp--];
 
 #ifdef __EMSCRIPTEN__
-//	max_saltos=4;
+	max_saltos=2;
 #endif
 
   game_fps = pila[sp];
@@ -2157,9 +2155,10 @@ void set_fps(void) {
   if (game_fps>200) game_fps=200;
 
 #ifdef __EMSCRIPTEN__
-es_fps(game_fps);
-max_saltos=0;
+//es_fps(game_fps);
+//max_saltos=0;
 #endif
+  printf("setting fps(%d,%d)\n",pila[sp],max_saltos);
 
   ireloj=(double)(100.0/game_fps);
 }
@@ -2172,6 +2171,7 @@ void start_fli(void) {
   int x,y;
   y=pila[sp--]; x=pila[sp--];
 
+#ifdef USE_FLI
   if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
     pila[sp]=0; e(147);
   } else {
@@ -2181,6 +2181,10 @@ void start_fli(void) {
   }
 //  pila[sp]=StartFLI((byte*)&mem[pila[sp]],copia2,vga_an,vga_al,x,y);
 //  if (pila[sp]==0) e(130);
+#endif
+
+pila[sp]=0;
+
 }
 
 //����������������������������������������������������������������������������
@@ -2196,7 +2200,9 @@ void frame_fli(void) {
 //����������������������������������������������������������������������������
 
 void end_fli(void) {
+#ifdef USE_FLI
   EndFli();
+#endif
   pila[++sp]=0;
 }
 
@@ -2205,7 +2211,9 @@ void end_fli(void) {
 //����������������������������������������������������������������������������
 
 void reset_fli(void) {
+#ifdef USE_FLU
   ResetFli();
+#endif
   pila[++sp]=0;
 }
 
@@ -2310,9 +2318,11 @@ unsigned int get_cd_error(void);
 
 void _is_playing_cd(void) {
 //CACA
+#ifdef DOS
   if (get_cd_error()&0x200)
         pila[++sp]=1;
     else
+#endif
         pila[++sp]=0;
 }
 
@@ -2446,7 +2456,7 @@ void fade_off(void) {
     set_paleta(); set_dac(); //LoopSound();
   } fading=0;
   pila[++sp]=0;
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3054,7 +3064,7 @@ void sort(void) {
       else qsort(&mem[offset],numreg,size*4,sort4);
       break;
   }
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3183,7 +3193,7 @@ void _fread(void) {
     if (n/unit_size<lon) memset(&memb[offset*4+n],0,lon*unit_size-n);
     pila[sp]=1;
   }
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3205,7 +3215,7 @@ void _fwrite(void) {
   f=(FILE *)tabfiles[handle/2];
   if (!capar(offset) || !capar(offset+(lon*unit_size)/4)) { pila[sp]=0; e(122); return; }
   if (fwrite(&mem[offset],unit_size,lon,f)!=lon) { pila[sp]=0; e(124); } else pila[sp]=1;
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -3756,7 +3766,7 @@ void save_mapcx(int tipo) {
   }
   fclose(f); pila[sp]=1;
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -4232,7 +4242,7 @@ void encode_file(int encode) {
     rc=_dos_findnext(&ft);
   }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 void _encriptar(int encode, char * fichero, char * clave) {
@@ -4334,7 +4344,7 @@ void _compress(int encode) {
     rc=_dos_findnext(&ft);
   }
 
-  max_reloj+=reloj-old_reloj;
+  max_reloj+=get_reloj()-old_reloj;
 }
 
 void _comprimir(int encode, char *fichero) {
@@ -4466,7 +4476,7 @@ void function(void) {
   int oticks=get_ticks();
   #endif
 
-  old_reloj=reloj;
+  old_reloj=get_reloj();
 
   switch(v_function=(byte)mem[ip++]) {
     case 0: _signal(); break;
