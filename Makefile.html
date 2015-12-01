@@ -96,7 +96,7 @@ HTML_EXE = system/EXEC.EXE
 #REMBEDFILES = --preload-file FROGGER.PAK
 #REMBEDFILES = --preload-file BERT.PAK --preload-file BERT.DAT --preload-file LEVEL1.DAT --preload-file LEVEL2.DAT
 #REMBEDFILES=  --preload-file user/BubDiv
-REMBEDFILES=  --preload-file ~/Desktop/wip/maniac@/
+REMBEDFILES=  --preload-file ~/Desktop/DIVGAMES/wip/maniac@/
 RUNNER=html/maniac.js
 
 DRUNNER=html/debug_bbobble.js
@@ -115,7 +115,7 @@ DRUNNER=html/debug_bbobble.js
 
 D1EMBEDFILES= --preload-file $(HTML_EXE)
 #R1EMBEDFILES = --preload-file ~/Desktop/wip/18-SKULL@/
-R1EMBEDFILES = --preload-file ~/Desktop/wip/skull4@/
+R1EMBEDFILES = --preload-file ~/Desktop/DIVGAMES/wip/skull4@/
 
 DIV1RUN=html/skull4.js
 
@@ -125,8 +125,9 @@ DEMBEDFILES= --preload-file $(HTML_EXE)
 SDL_LIBS = -lSDL
 #-lSDL_ttf -lSDL_image
 CXX=emcc
-CC=em++
-EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=67108864
+CC=emcc
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456 
+# -s TOTAL_MEMORY=67108864
 # -s TOTAL_MEMORY=268435456 
 # -s TOTAL_MEMORY=134217728
 # -s TOTAL_MEMORY=67108864
@@ -162,8 +163,9 @@ DSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c src/runtime/debug/d.c
 
 .PHONY : dirs
 
-all: dirs html/div.js ${RUNNER} ${DRUNNER} ${DIV1RUN}
-
+all: dirs  ${RUNNER} ${DIV1RUN}
+#${DRUNNER}
+#html/div.js 
 dirs: obj/src/runtime/debug obj_d/src/runtime/debug obj/src/div1run
 
 
@@ -201,7 +203,7 @@ ${DIV1RUN} : $(D1SRC:%.c=obj/%.c.o) obj/src
 	
 .PHONY : clean
 clean :
-	rm obj/src/*.o html/div.js html/div.js.mem 
+	rm -rf obj/ obj_d ${RUNNER} ${DRUNNER} ${DIV1RUN}
 	
 #src/8080emu.c.o src/main.c.o src/ai.c.o : inc/8080emu.h inc/si-ram.h
 

@@ -11,6 +11,7 @@ RUNTIME1=div1-run
 SOURCES=$(wildcard src/*.c) $(wildcard src/osdep/*.c)
 RUNSOURCES=$(wildcard src/runtime/*.c) src/osdep/osdep.c src/osx/fmemopen.c 
 RUN1SOURCES=$(wildcard src/div1run/*.c) src/osdep/osdep.c src/osx/fmemopen.c 
+
 #src/runtime/debug/d.c
 # $(wildcard src/osdep/*.c)
 
