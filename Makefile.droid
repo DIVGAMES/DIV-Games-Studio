@@ -4,26 +4,24 @@
 # which is why this is here in the first place!
 
 CC=g++
-EXECUTABLE=div-droid
-RUNTIME=div-run
+EXECUTABLE=div2-ide
+RUNTIME=div2-run
 RUNTIME1=div1-run
 
 SOURCES=$(wildcard src/*.c) $(wildcard src/osdep/*.c)
 RUNSOURCES=$(wildcard src/runtime/*.c) src/osdep/osdep.c src/osx/fmemopen.c 
 RUN1SOURCES=$(wildcard src/div1run/*.c) src/osdep/osdep.c src/osx/fmemopen.c 
-
-src/osx/fmemopen.c 
 #src/runtime/debug/d.c
 # $(wildcard src/osdep/*.c)
 
 #*/
-SDLGFX_SOURCES=$(wildcard src/visor/*.c)
+VISOR_SOURCES=$(wildcard src/visor/*.c)
 #*/
 OBJS=$(SOURCES:.c=.o)
 RUNOBJS=$(RUNSOURCES:.c=.o)
 RUN1OBJS=$(RUN1SOURCES:.c=.o)
 
-SDLGFXOBJS=$(SDLGFX_SOURCES:.c=.o)
+VISOROBJS=$(VISOR_SOURCES:.c=.o)
 
 
 #LIBFLAGS= -lm -ldl  -lz  -lSDL_image -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -lSDL
@@ -39,10 +37,10 @@ CFLAGS= -g -w -fpermissive -Isrc -funsigned-char -DMIXER -DZLIB -DJPGLIB -DDROID
 debug :  $(EXECUTABLE) $(RUNTIME) $(RUNTIME1)
 release : $(EXECUTABLE) $(RUNTIME) $(RUNTIME1)
 
-all: $(SOURCES) $(RUNSOURCES) $(RUN1SOURCES) $(SDL_GFX_SOURCES)
+all: $(EXECUTABLE) $(RUNTIME) $(RUNTIME1)
 
-$(EXECUTABLE): $(OBJS) $(SDLGFXOBJS) 
-	 $(CC) $(OBJS) $(SDLGFXOBJS) $(DROIDLIBFLAGS) -o $@
+$(EXECUTABLE): $(OBJS) $(VISOROBJS) 
+	 $(CC) $(OBJS) $(VISOROBJS) $(DROIDLIBFLAGS) -o $@
 .c.o:
 	 $(CC) -c $(CFLAGS)  $< -o $@
 
@@ -55,4 +53,4 @@ $(RUNTIME1): $(RUN1OBJS)
 
 
 clean:
-	 rm -f   $(EXECUTABLE) $(OBJS) $(RUNOBJS) $(RUN1OBJS) $(SDLGFXOBJS) $(RUNTIME) $(RUNTIME1)
+	 rm -f   $(EXECUTABLE) $(OBJS) $(RUNOBJS) $(RUN1OBJS) $(VISOROBJS) $(RUNTIME) $(RUNTIME1)
