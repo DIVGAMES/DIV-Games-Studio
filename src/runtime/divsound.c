@@ -313,8 +313,8 @@ int LoadSound(char *ptr, long Len, int Loop)
 		return -1;
 #else
 	
-	mem = fmemopen(ptr,(int)Len,(const char *)"rb");
-	fdst = fmemopen(dst,(int)Len+255,(const char *)"wb");
+	mem = fmemopen((void *)ptr,(int)Len,(const char *)"rb");
+	fdst = fmemopen((void *)dst,(int)Len+255,(const char *)"wb");
 #endif
 	
 	res=pcm2wav(mem,Len,fdst,(int)Len+40);
