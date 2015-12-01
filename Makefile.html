@@ -6,11 +6,11 @@
 #
 # apt-get install -y libsdl1.2-dev
 #
-SDL_CFLAGS = -DZLIB -DMIXER 
+SDL_CFLAGS = -DZLIB -DMIXER -DSDL
 #-DJPEGLIB  
 EMBEDFILES= --emrun --preload-file system --preload-file help
 
-DEMBEDFILES= --emrun --embed-file system/lenguaje.int --preload-file system/EXEC.EXE
+#DEMBEDFILES= --emrun --embed-file system/lenguaje.int 
 #REMBEDFILES= --emrun --preload-file system/EXEC.EXE --preload-file system/lenguaje.int --preload-file fpg/tutorial/tutor2.fpg
 
 
@@ -63,7 +63,6 @@ DEMBEDFILES= --emrun --embed-file system/lenguaje.int --preload-file system/EXEC
 #REMBEDFILES= --preload-file fnt/puzzle --preload-file pcm/puzzle --preload-file dat/puzzle --preload-file map/puzzle --preload-file fpg/puzzle
 #REMBEDFILES= --preload-file help/help.fpg
 #REMBEDFILES= --preload-file fnt/pacoman --preload-file fpg/pacoman --preload-file dat/pacoman --preload-file pcm/pacoman   
-#REMBEDFILES=  --preload-file user/BubDiv
 #REMBEDFILES= --preload-file fnt/soccer --preload-file pcm/soccer --preload-file dat/soccer --preload-file map/soccer --preload-file fpg/soccer --preload-file fli/soccer
 #REMBEDFILES=  --preload-file SONICPC.PAK --preload-file GREEN.WAV --preload-file START.WAV
 
@@ -73,20 +72,67 @@ DEMBEDFILES= --emrun --embed-file system/lenguaje.int --preload-file system/EXEC
 
 #REMBEDFILES = --preload-file BUGWARS.PAK
 #REMBEDFILES = --preload-file user/bbracers@/
-#REMBEDFILES = --preload-file BERT.PAK --preload-file BERT.DAT --preload-file LEVEL1.DAT --preload-file LEVEL2.DAT
 
 #REMBEDFILES = --preload-file ~/Desktop/div\ games/oldgames2/vc@
-REMBEDFILES = --preload-file user/vccfin1@
+#REMBEDFILES = --preload-file user/vccfin1@/
+#REMBEDFILES = --preload-file ~/Desktop/div\ games/2games/yout@/
 
-RUNNER=html/vcc.js
+#REMBEDFILES= --preload-file help/help.fpg
+
+#REMBEDFILES= --preload-file fnt/heliobal --preload-file pcm/heliobal --preload-file map/heliobal --preload-file fpg/heliobal
+
+#REMBEDFILES = --preload-file user/wip/bubbob@/
+#REMBEDFILES= --preload-file help/help.fpg
+#REMBEDFILES = --preload-file PANIC.PAK
+HTML_EXE = system/EXEC.EXE
+#REMBEDFILES = --preload-file user/quadzle@/
+#REMBEDFILES = --preload-file ~/Desktop/mrbike@/
+#REMBEDFILES= --preload-file help/help.fpg
+#REMBEDFILES = --preload-file ~/Desktop/DivWindowsCompoEntries/Menace@/
+#REMBEDFILES = --preload-file ~/Desktop/divgames/prixon@/
+#REMBEDFILES = --preload-file /home/mike/Desktop/RRSummer2003/GNG@/
+#REMBEDFILES = --preload-file /home/mike/Desktop/Lemming@/
+#REMBEDFILES = --preload-file /home/mike/Downloads/shoot@/
+#REMBEDFILES = --preload-file FROGGER.PAK
+#REMBEDFILES = --preload-file BERT.PAK --preload-file BERT.DAT --preload-file LEVEL1.DAT --preload-file LEVEL2.DAT
+#REMBEDFILES=  --preload-file user/BubDiv
+REMBEDFILES=  --preload-file ~/Desktop/wip/maniac@/
+RUNNER=html/maniac.js
 
 DRUNNER=html/debug_bbobble.js
 
-SDL_LIBS = -lSDL 
+#R1EMBEDFILES = --preload-file ~/Desktop/wip/288-Phoenix@/
+#R1EMBEDFILES = --preload-file ~/Desktop/games/122-SONIC@/
+#R1EMBEDFILES = --preload-file ~/Desktop/wip/97-BERZERK@/
+#R1EMBEDFILES = --preload-file ~/Desktop/remakes/3-remake-FZERO@/
+#R1EMBEDFILES = --preload-file ~/Desktop/remakes/WOLF3DON-9@/
+#R1EMBEDFILES = --preload-file ~/Desktop/remakes/4-remake-RAINBOW@/
+#R1EMBEDFILES = --preload-file ~/Desktop/remakes/2-remake-SINVADER@/
+#R1EMBEDFILES = --preload-file ~/Desktop/xmasrush@/
+#R1EMBEDFILES = --preload-file ~/Desktop/wip/psycho2k@/
+
+#### DIV 1 EXPORT
+
+D1EMBEDFILES= --preload-file $(HTML_EXE)
+#R1EMBEDFILES = --preload-file ~/Desktop/wip/18-SKULL@/
+R1EMBEDFILES = --preload-file ~/Desktop/wip/skull4@/
+
+DIV1RUN=html/skull4.js
+
+DEMBEDFILES= --preload-file $(HTML_EXE)
+
+
+SDL_LIBS = -lSDL
 #-lSDL_ttf -lSDL_image
-CXX=em++
-CC=emcc
-EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s USE_SDL_MIXER=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456
+CXX=emcc
+CC=em++
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=67108864
+# -s TOTAL_MEMORY=268435456 
+# -s TOTAL_MEMORY=134217728
+# -s TOTAL_MEMORY=67108864
+# -s TOTAL_MEMORY=134217728
+#-s TOTAL_MEMORY=67108864
+# -s TOTAL_MEMORY=268435456
 #-s TOTAL_MEMORY=134217728
 # -s TOTAL_MEMORY=67108864
 # -s TOTAL_MEMORY=33554432
@@ -104,37 +150,42 @@ EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s USE_SDL_MIXER=1 -s ASM_JS=1 -s TOTAL_
 #-s EXPORTED_FUNCTIONS="['_getscore','_main']"
 EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
 BUILDLVL= -O3
-CFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc -Isrc/runtime -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive
+CFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc -Isrc/runtime -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2
 LIBS = $(SDL_LIBS) -lm 
 
 CSRC = $(wildcard src/*.c) src/osdep/osdep.c
 RSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c
+D1SRC = $(wildcard src/div1run/*.c) src/osdep/osdep.c
 DSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c src/runtime/debug/d.c
 #src/SDL_gfxPrimitives.c src/SDL_gfxBlitFunc.c src/SDL_rotozoom.c
 
 
 .PHONY : dirs
 
-all: dirs html/div.js ${RUNNER} ${DRUNNER}
+all: dirs html/div.js ${RUNNER} ${DRUNNER} ${DIV1RUN}
 
-dirs: obj/src/runtime/debug obj_d/src/runtime/debug 
+dirs: obj/src/runtime/debug obj_d/src/runtime/debug obj/src/div1run
 
 
 obj/src/runtime/debug: 
 	mkdir -p obj/src/runtime/debug
 	mkdir -p obj/src/osdep
-obj_d/src/runtime/debug: dirs
+	
+obj_d/src/runtime/debug: 
 	mkdir -p obj_d/src/runtime/debug
 	mkdir -p obj_d/src/osdep
+
+obj/src/div1run:
+	mkdir -p obj/src/div1run
 	
 obj/%.c.o : %.c
-	$(CXX) $(CFLAGS) -c $< -o obj/$<.o
+	$(CXX) $(CFLAGS) -DHTML_EXE=\"$(HTML_EXE)\" -c $< -o obj/$<.o
 
 obj_d/%.c.o : %.c
-	$(CXX) $(CFLAGS) -DDEBUG -c $< -o obj_d/$<.o
+	$(CXX) $(CFLAGS) -DDEBUG -DHTML_EXE=\"system/EXEC.EXE\" -c $< -o obj_d/$<.o
 
 html/div.js : $(CSRC:%.c=obj/%.c.o) obj/src
-	$(CXX) ${CFLAGS} -o html/div.js $(CSRC:%.c=obj/%.c.o) $(LIBS) $(EMBEDFILES)
+	$(CXX) ${CFLAGS} -o html/div.html $(CSRC:%.c=obj/%.c.o) $(LIBS) $(EMBEDFILES)
 
 ${RUNNER} : $(RSRC:%.c=obj/%.c.o) obj/src 
 	$(CXX) $(CFLAGS) -o ${RUNNER} $(RSRC:%.c=obj/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
@@ -142,6 +193,8 @@ ${RUNNER} : $(RSRC:%.c=obj/%.c.o) obj/src
 ${DRUNNER} : $(DSRC:%.c=obj_d/%.c.o) obj/src
 	$(CXX) $(CFLAGS) -o ${DRUNNER} $(DSRC:%.c=obj_d/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
 
+${DIV1RUN} : $(D1SRC:%.c=obj/%.c.o) obj/src 
+	$(CXX) $(CFLAGS) -o ${DIV1RUN} $(D1SRC:%.c=obj/%.c.o) $(LIBS) $(D1EMBEDFILES) $(R1EMBEDFILES)
 
 #src/main.c.o : src/main.c
 #	$(CC)  $(CFLAGS) -c $< -o $<.o 
