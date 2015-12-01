@@ -1468,7 +1468,7 @@ printf("first op: %d\n",mem[mem[1]]);
   fread(mimem,4,10,f);
 
 for(a=0;a<10;a++){ 
-printf("offset %d is %x (%d)\n",a,mimem[a],mimem[a]);
+//printf("offset %d is %x (%d)\n",a,mimem[a],mimem[a]);
 //printf("Text offset is %x\n",(uint16_t*)mimem[6]);
 }
 //exit(0);
