@@ -29,7 +29,7 @@
 #define GCW_LOCK SDLK_PAUSE
 */
 
-#define GCW_L SDLK_TAB
+#define GCW_L SDLK_F1
 #define GCW_R SDLK_BACKSPACE
 #define GCW_UP SDLK_UP
 #define GCW_DOWN SDLK_DOWN
@@ -149,6 +149,7 @@ void SetIRQVector(int n, TIRQHandler vec)
 void kbdInit(void)
 {
 	sdlkeyinit();
+	
 #ifdef DOS
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
       OldIrqHandler=GetIRQVector(9);       // Get old handler.
@@ -251,22 +252,24 @@ void checkmod(SDLMod mod) {
 
 int8_t hx=0,hy=0; // hat xy positions
 
-
+byte oldhatval;
 void tecla(void) {
 //printf("tecla\n");
 ascii=0; scan_code=0;
 SDL_Event event;
 #ifdef GCW
+if(divjoy) {
 	byte hatval;
 
 // reset hat positions (D-PAD)
-	key(sdl2key[GCW_LEFT])=0;
-	key(sdl2key[GCW_RIGHT])=0;
-	key(sdl2key[GCW_DOWN])=0;
-	key(sdl2key[GCW_UP])=0;
 
 // get new positions (D-PAD)
 	hatval = SDL_JoystickGetHat(divjoy,0);
+if(hatval!=oldhatval) {
+		key(sdl2key[GCW_LEFT])=0;
+		key(sdl2key[GCW_RIGHT])=0;
+		key(sdl2key[GCW_DOWN])=0;
+		key(sdl2key[GCW_UP])=0;
 
 	if(hatval & SDL_HAT_RIGHT) 
 		key(sdl2key[GCW_RIGHT])=1;
@@ -280,6 +283,10 @@ SDL_Event event;
 	if(hatval & SDL_HAT_DOWN)
 		key(sdl2key[GCW_DOWN])=1;
 
+}
+oldhatval = hatval;
+
+}
 #endif
 	
 
@@ -376,6 +383,7 @@ SDL_Event event;
 			alt_x=1;
             
 		if (event.type == SDL_KEYDOWN) {
+//			printf("KEYDOWN %d\n",event.key.keysym.sym);
 			switch(event.key.keysym.sym) {
 #ifdef GCW
 			case SDLK_LEFT:		// D-PAD LEFT
@@ -476,13 +484,14 @@ SDL_Event event;
 		}
 					
 #endif
-#ifndef GCW				
+//#ifndef GCW				
 		kbdFLAGS[scan_code]=1;				
-#endif
+//#endif
 	}
 	
 	
 	if(event.type == SDL_KEYUP) {
+//		printf("KEYUP %d\n",event.key.keysym.sym);
 #ifdef GCW
 		switch(event.key.keysym.sym) {
 			case SDLK_LEFT:		// D-PAD LEFT
@@ -560,52 +569,56 @@ SDL_Event event;
 //				m_y+=event.motion.yrel;
 	}
 		/* If a button on the mouse is pressed. */
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			if(event.button.button == SDL_BUTTON_LEFT) {
-				mouse->	left = 1;
+	if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if(event.button.button == SDL_BUTTON_LEFT) {
+			mouse->	left = 1;
 #ifdef DEBUG
-				mouse_b|=1;
+			mouse_b|=1;
 #endif
-			}
-			if(event.button.button == SDL_BUTTON_RIGHT) {
-				mouse->right = 1;
-#ifdef DEBUG
-				mouse_b|=2;
-#endif
-			}
-			if(event.button.button == SDL_BUTTON_MIDDLE) {
-				mouse->middle = 1;
-#ifdef DEBUG
-				mouse_b|=4;
-#endif
-			}
 		}
-		
-		if (event.type == SDL_MOUSEBUTTONUP) {
-
-			if(event.button.button == SDL_BUTTON_LEFT) {
-				mouse->left = 0;
+		if(event.button.button == SDL_BUTTON_RIGHT) {
+			mouse->right = 1;
 #ifdef DEBUG
-				mouse_b ^=1;
+			mouse_b|=2;
 #endif
-			}
-			if(event.button.button == SDL_BUTTON_RIGHT) {
-				mouse->right = 0;
+		}
+		if(event.button.button == SDL_BUTTON_MIDDLE) {
+			mouse->middle = 1;
 #ifdef DEBUG
-				mouse_b ^=2;
+			mouse_b|=4;
 #endif
-				}
-			if(event.button.button == SDL_BUTTON_MIDDLE) {
-				mouse->middle = 0;
-#ifdef DEBUG
-				mouse_b ^=4;
-#endif
-			}	
 		}
 	}
+		
+	if (event.type == SDL_MOUSEBUTTONUP) {
 
-    if ((shift_status&8) && scan_code==_x) 
+		if(event.button.button == SDL_BUTTON_LEFT) {
+			mouse->left = 0;
+#ifdef DEBUG
+			mouse_b ^=1;
+#endif
+		}
+	
+		if(event.button.button == SDL_BUTTON_RIGHT) {
+			mouse->right = 0;
+#ifdef DEBUG
+			mouse_b ^=2;
+#endif
+		}
+	
+		if(event.button.button == SDL_BUTTON_MIDDLE) {
+			mouse->middle = 0;
+#ifdef DEBUG
+			mouse_b ^=4;
+#endif
+		}	
+	}
+
+	if ((shift_status&8) && scan_code==_x) 
 		alt_x=1; 
+
+	} // end while
+
 
 #ifdef DOS
   union REGS r;
