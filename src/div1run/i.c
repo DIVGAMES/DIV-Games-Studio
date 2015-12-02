@@ -100,6 +100,8 @@ void mainloop(void) {
     frame_end();
 }
 
+char benzel_boy=0;
+
 int main(int argc,char * argv[]) {
 
   FILE * f;
@@ -107,24 +109,45 @@ int main(int argc,char * argv[]) {
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-  if(SDL_NumJoysticks() > 0)
+//printf("RUM\n");
+
+//exit;
+printf("Numjoy: %d\n",SDL_NumJoysticks());
+  if(SDL_NumJoysticks() > 0) { 
 		divjoy = SDL_JoystickOpen(0);
+		
+
+printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
+
+	if (SDL_JoystickNumHats(divjoy)==0)  {
+		SDL_JoystickClose(divjoy);
+		divjoy=NULL;
+	}
+		
+	}
 
   #ifndef DEBUG
   #ifndef __EMSCRIPTEN__
   if (argc<2) {
     printf("DIV32RUN Run time library - version 1.03b - Freeware by Hammer Technologies\n");
-    printf("Error: Needs a DIV32RUN executable to load.");
+    printf("Error: Needs a DIV32RUN executable to load.\n");
     exit(0);
   }
+  
+  
   #endif
   #else
   vga_an=argc; // Para quitar un warning
   #endif
 
+  
 #ifdef DOS
   _harderr(critical_error);
 #endif
+
+//printf("argc: %d %s %s %s\n",argc,argv[0],argv[1],argv[2]);
+if((argc>1 && !strcmp(argv[1],"bb")) || (argc>2 && !strcmp(argv[2],"bb"))) 
+	benzel_boy=1;
 
   vga_an=320; vga_al=200;
   if ((mem=(int*)malloc(4*imem_max))!=NULL){
@@ -1068,16 +1091,37 @@ void frame_start(void) {
 // Finaliza un frame e imprime los gr ficos
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+void dprocess_active_palette(void);
+void dset_video_mode(void);
+void dbuffer_to_video(void);
+void dprocess_sound(char *sound,int sound_lenght);
+void dpost_process(void);
+void dprocess_active_palette(void);
+void dprocess_palette(void);
+
+
+
+
 void frame_end(void) {
   int mouse_pintado=0,textos_pintados=0;
   int mouse_x0,mouse_x1,mouse_y0,mouse_y1;
   int n,m7ide,scrollide,otheride;
 
   // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
-#ifdef DIVDLL
+
   if (!dll_loaded) {
     dll_loaded=1;
 
+	if(benzel_boy) {
+		 process_palette=dprocess_palette;
+		 set_video_mode=dset_video_mode;
+		buffer_to_video=dbuffer_to_video;
+		process_sound=dprocess_sound;
+		post_process=dpost_process;
+		process_active_palette=dprocess_active_palette;
+	}
+
+#ifdef DIVDLL
     // Los importa
 
     set_video_mode        =DIV_import("set_video_mode"); //ok
@@ -1103,7 +1147,7 @@ void frame_end(void) {
     ss_init               =DIV_import("ss_init"); //ok
     ss_frame              =DIV_import("ss_frame"); //ok
     ss_end                =DIV_import("ss_end"); //ok
-
+#endif
     ss_time_counter=get_reloj()+ss_time;
 
     // DLL_1 Aquก se llama a uno.
@@ -1115,12 +1159,12 @@ void frame_end(void) {
     }
     #endif
   }
-#endif
+
   // Si el usuario modificข mouse.x o mouse.y, posiciona el ratขn debidamente
   if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) set_mouse(mouse->x,mouse->y);
 
   if (!saltar_volcado) {
-
+//printf("Restore type: %d DUmp type: %d\n",restore_type,dump_type);
     // *** OJO *** Restaura las zonas de copia fuera del scroll y del modo 7
 
     if (restore_type==0 || restore_type==1) {
