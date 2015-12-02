@@ -717,7 +717,7 @@ void load_fpg(void) {
   
   while (num<max_fpgs) {
     if (g[num].fpg==0) {
-	break;
+		break;
     }
     num++;
   } if (num==max_fpgs) { pila[sp]=0; e(104); return; }
@@ -1784,8 +1784,17 @@ FILE * open_save_file(byte * file) {
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
+  char *ff = (char *)file;
 
   packfile_del((char *)file);
+
+  while (*ff!=0) {
+	if(*ff =='\\') *ff='/';
+	ff++;
+  }
+  
+  printf("Looking for save file: %s\n",file);
+
 
   strcpy(full,(char*)file);
   if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
@@ -1809,7 +1818,6 @@ void save(void) {
   int offset,lon;
 
   if (unit_size<1) unit_size=1;
-
   lon=pila[sp--]; offset=pila[sp--];
   if (offset<long_header || offset+lon>imem_max) { pila[sp]=0; e(122); return; }
   es=open_save_file((byte*)&mem[pila[sp]]);
