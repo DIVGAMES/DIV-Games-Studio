@@ -272,28 +272,30 @@ int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 #endif
 
 //	printf("playing sound %d at vol %d, feq %d\n",NumSonido, Volumen, Frec);
-  /*int InitChannel=16;
+  int InitChannel=1;
 
   if(MusicChannels>InitChannel) InitChannel=MusicChannels;
   if(InitChannel>=32) return(-1);
   if(!sonido[NumSonido].smp) return(-1);
 
   con=InitChannel;
+
   while(con<32 && IsPlayingSound(con)) con++;
+
   if(con==32) {
     con=InitChannel+NextChannel;
     NextChannel++;
     if(InitChannel+NextChannel>=32) NextChannel=0;
     if(con>=32) con=InitChannel;
   }
-  */
+  
 
 //  StopSound(con);
 
 // always play as loop, let the freqEffect manage stop_sound when loop is zero
 // this permits slow playing sound to run for the correct length.
 
-	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
+	con = Mix_PlayChannel(con, sonido[NumSonido].sound, loop);
 
 if(con==-1) return -1;
   channels[con].freq = Frec;
@@ -317,13 +319,11 @@ if(con==-1) return -1;
 
 //  channel(con)=1;
 #endif
-//printf("Playing con: %d\n",con);
   return(con);
 }
 
 int StopSound(int NumChannel)
 {
-  //printf("Stopping sound %d\n",NumChannel);
 #ifdef MIXER
 if(Mix_Playing(NumChannel))
   Mix_HaltChannel(NumChannel);
