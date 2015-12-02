@@ -215,20 +215,17 @@ void function(void) {
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Signal(proceso,seคal)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+static int n_reloj=0, o_reloj=0;
+
 int get_reloj(void) {
-
-//#ifndef __EMSCRIPTEN__
+/*	n_reloj=SDL_GetTicks()/10;
+	reloj+=(n_reloj-o_reloj);
+	o_reloj=n_reloj;
+	*/
 	reloj=SDL_GetTicks()/10;
-//#else
-	//reloj=SDL_GetTicks()/100;//ireloj;
-//#endif
-
-return reloj;
-	
-	reloj = SDL_GetTicks()/100;
 	return reloj;
-//	return(SDL_GetTicks()/50);
-//	  return(reloj/1000000);
+	
 }
 
 void _signal(void) {
@@ -288,7 +285,7 @@ static FILE * open_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 #ifndef DOS
-printf("trying to load [%s]\n",file);
+//printf("trying to load [%s]\n",file);
 if(strlen((char *)file)==0) return NULL;
 char *ff = (char *)file;
 
@@ -300,38 +297,38 @@ while (*ff!=0) {
 #endif
 //printf("%s\n",full);
   strcpy(full,(char*)file);
-    printf("trying to load %s\n",full);
+//    printf("trying to load %s\n",full);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,(char*)file);
-    printf("Trying: %s\n",full);
+    //printf("Trying: %s\n",full);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
 	strupr(full);
-	printf("Trying: %s\n",full);
+	//printf("Trying: %s\n",full);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
 		
       strcpy(full,fname);
       strcat(full,ext);
-    printf("Trying: %s\n",full);
+//    printf("Trying: %s\n",full);
 
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 strupr(full);
-    printf("Trying: %s\n",full);
+    //printf("Trying: %s\n",full);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
-    printf("Trying: %s\n",full);
+    //printf("Trying: %s\n",full);
 
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
           strcpy(full,"");
-          printf("failed\n");
+          printf("failed %s\n",file);
           return(NULL);
         } else return(f);
         } else return(f);
@@ -452,7 +449,7 @@ void unload_map(void) {
 void load_map(void) {
   int ancho,alto,npuntos,m;
   byte * ptr;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e143);
@@ -531,7 +528,7 @@ void load_fpg(void) {
   int n=0,m;
   int * * lst;
   byte * ptr;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
  int * iptr;
   while (n<max_fpgs) {
     if (g[n].fpg==0) break; n++;
@@ -547,7 +544,7 @@ void load_fpg(void) {
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
 #ifdef __EMSCRIPTEN__ 
-printf("File len: %d\n",file_len);
+//printf("File len: %d\n",file_len);
 file_len=1352; // just palette
 #endif
     if ((ptr=(byte *)malloc(file_len))!=NULL) {
@@ -556,7 +553,7 @@ file_len=1352; // just palette
       fread(ptr,1,file_len,es); fclose(es);
 
 #ifdef STDOUTLOG
-	printf("fpg pointer is %x\n",(int**)ptr);
+	//printf("fpg pointer is %x\n",(int**)ptr);
 #endif
       } else { fclose(es); pila[sp]=0; e(e100); return; }
     }
@@ -581,9 +578,9 @@ file_len=1352; // just palette
 #ifdef __EMSCRIPTEN__
 // do something different
 es=open_file((byte*)&mem[itxt+pila[sp]]);
-printf("File pointer: %x\n",es);
+//printf("File pointer: %x\n",es);
 fseek(es,0,SEEK_END); file_len=ftell(es);
-printf("File len: %d\n",file_len);
+//printf("File len: %d\n",file_len);
 
 fseek(es,1352,SEEK_SET);
 	int len_=1;
@@ -594,12 +591,12 @@ while(ftell(es)<file_len && len_>0 && num_>0) {
 	byte *mptr=&ptr[pos];
 	fread(&num_,4,1,es);
 	fread(&len_,4,1,es);
-	printf("%d %d %d\n",len_,num_,ftell(es));
+//	printf("%d %d %d\n",len_,num_,ftell(es));
  	fseek(es,-8,SEEK_CUR);
  	mptr = (byte *)malloc(len_);
  	fread(mptr,1,len_,es);
  	lst[num_]=iptr=(int *)mptr;
- 	 printf("mem ptr is %x\n",iptr);
+// 	 printf("mem ptr is %x\n",iptr);
 // 	  	 if (m!=palcrc) {
 //		 adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
 // 	 } 	
@@ -855,9 +852,9 @@ void unload_fnt(void) {
 
 void load_fnt(void) {
   byte * ptr;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
   int n,an,al,nan,ifonts;
-printf("load font %s\n",(byte*)&mem[itxt+pila[sp]]);
+//printf("load font %s\n",(byte*)&mem[itxt+pila[sp]]);
   for (ifonts=1;ifonts<max_fonts;ifonts++) if (!fonts[ifonts]) break;
   if (ifonts==max_fonts) { pila[sp]=0; e(e113); return; }
   if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
@@ -1117,7 +1114,7 @@ void map_block_copy(void) {
   y=pila[sp--]; x=pila[sp--]; graf=pila[sp--];
   yd=pila[sp--]; xd=pila[sp--]; grafd=pila[sp--];
   file=pila[sp];
-printf("map block_copy file: %d\n,");
+//printf("map block_copy file: %d\n,");
   if (file>max_fpgs || file<0) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
   if (grafd<=0 || grafd>=max_grf) { e(e110); return; }
@@ -1336,14 +1333,14 @@ FILE * open_save_file(char * file) {
 
 void save(void) {
   int offset,lon;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   lon=pila[sp--]; offset=pila[sp--];
   if (offset<long_header || offset+lon>imem_max) { pila[sp]=0; e(e122); return; }
   es=open_save_file((byte*)&mem[itxt+pila[sp]]);
   if (es==NULL) { pila[sp]=0; e(e123); return; }
   if (fwrite(&mem[offset],4,lon,es)!=lon) e(e124);
-  fclose(es); reloj=old_reloj;
+  fclose(es); get_reloj()=old_reloj;
 }
 
 #else         // Versiขn instalaciones.
@@ -1354,7 +1351,15 @@ FILE * open_save_file(char * file) {
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
-
+  // fix the path
+  char *ff = (char *)file;
+  
+  while (*ff!=0) {
+	if(*ff =='\\') *ff='/';
+	ff++;
+  }
+  
+  printf("Looking for save file: %s\n",file);
   strcpy(full,file);
   if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
   _splitpath(full,drive,dir,fname,ext);
@@ -1363,6 +1368,8 @@ FILE * open_save_file(char * file) {
   if (strlen(full)) strcat(full,"\\");
   strcat(full,fname);
   strcat(full,ext);
+  printf("Looking for save file: %s\n",full);
+
   if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
     strcpy(full,fname);
     strcat(full,ext);
@@ -1375,7 +1382,7 @@ FILE * open_save_file(char * file) {
 
 void save(void) {
   int offset,lon;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   lon=pila[sp--]; offset=pila[sp--];
   if (offset<long_header || offset+lon>imem_max) { pila[sp]=0; e(e122); return; }
@@ -1399,7 +1406,7 @@ void save(void) {
 
 void load(void) {
   int offset,lon;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   offset=pila[sp--];
   if (offset<long_header) { pila[sp]=0; e(e125); return; }
@@ -1473,7 +1480,7 @@ void set_mode(void) {
 void load_pcm(void) {
   FILE * f;
   int loop;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   loop=pila[sp--];
   if ((f=open_file((byte*)&mem[itxt+pila[sp]]))!=NULL) {
@@ -1530,10 +1537,14 @@ void change_sound(void) {
 
 void set_fps(void) {
   max_saltos=pila[sp--];
+#ifdef __EMSCRIPTEN__
+	max_saltos=2;
+#endif
   if (max_saltos<0) max_saltos=0;
   if (max_saltos>10) max_saltos=10;
   if (pila[sp]<4) pila[sp]=4;
   if (pila[sp]>100) pila[sp]=100;
+  printf("setting fps(%d,%d)\n",pila[sp],max_saltos);
   ireloj=100.0/(double)pila[sp];
 }
 
@@ -1799,7 +1810,7 @@ void fade_on(void) {
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void fade_off(void) {
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=8;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
     set_paleta(); set_dac(); //LoopSound();
@@ -1888,7 +1899,7 @@ void _exit_dos(void) {
     fclose(f);
   }
   #else
-  printf("%s",&mem[itxt+pila[sp-1]]);
+  //printf("%s",&mem[itxt+pila[sp-1]]);
   #endif
 
   exit(pila[sp]);
@@ -2177,7 +2188,7 @@ void set_color(void) {
 
 void _net_init_ipx(void) { // Ojo, emitir los errores, e(...)
   int s,j,t;
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   t=pila[sp--];
   j=pila[sp--];
@@ -2197,7 +2208,7 @@ void _net_init_ipx(void) { // Ojo, emitir los errores, e(...)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void _net_init_modem(void) {
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   sp-=6;
   pila[sp]=-1; // ญญญOJO!!! **************************************************
@@ -2210,7 +2221,7 @@ void _net_init_modem(void) {
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void _net_init_serial(void) {
-  int old_reloj=reloj;
+  int old_reloj=get_reloj();
 
   sp-=2;
   pila[sp]=-1; // ญญญOJO!!! **************************************************
