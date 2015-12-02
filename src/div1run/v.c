@@ -175,7 +175,7 @@ int LinealMode;
 
 void svmode(void) {
 //#ifdef STDOUTLOG
-printf("vga is %x setting new video mode %d %d %x\n",vga,vga_an,vga_al,vga);
+//printf("vga is %x setting new video mode %d %d %x\n",vga,vga_an,vga_al,vga);
 //#endif
 
 //hide the mouse
