@@ -9,6 +9,10 @@
 //#include "vesa.h"
 //#include "..\inc\svga.h"
 
+#ifdef GCW
+float w_ratio=1.0;
+float h_ratio=1.0;
+#endif
 
 // file prototypes
 
@@ -171,7 +175,7 @@ int LinealMode;
 
 void svmode(void) {
 //#ifdef STDOUTLOG
-printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
+printf("vga is %x setting new video mode %d %d %x\n",vga,vga_an,vga_al,vga);
 //#endif
 
 //hide the mouse
@@ -193,17 +197,21 @@ divTexture = SDL_CreateTexture(divRender,
                                vga_an,vga_al);
 #else
 
-//	if(vga)
-//		SDL_FreeSurface(vga);
-//	vga=NULL;
+	if(vga)
+		SDL_FreeSurface(vga);
+	vga=NULL;
 	if(!vga)	
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
 #endif
+
 #else
 
 #ifdef GCW_SOFTSTRETCH
 	if(!vga)
 		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+	
+	w_ratio = vga_an / (float)(GCW_W*1.0);
+	h_ratio = vga_al / (float)(GCW_H*1.0);
 #else
 	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
@@ -213,7 +221,7 @@ divTexture = SDL_CreateTexture(divRender,
 
 
 #ifdef STDOUTLOG
-	printf("SET VIDEO MODE %x\n",vga);
+//	printf("SET VIDEO MODE %x\n",vga);
 #endif
 	SDL_WM_SetCaption( "DIV2015", "" );
 
@@ -530,6 +538,7 @@ if ((shift_status&4) && (shift_status&8) && key(_9)) {
 #endif
 
   init_volcado();
+//  memset(copia,0,vga_an*vga_al);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
