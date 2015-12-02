@@ -1346,9 +1346,9 @@ int main(int argc,char * argv[]) {
 
 #ifndef DEBUG
 #ifndef __EMSCRIPTEN__
-  if (argc<1) {
+  if (argc<2) {
     printf("DIV2015 Run time library - version 3.00a - http://div-arena.co.uk\n");
-    printf("Error: Needs a DIV executable to load.");
+    printf("Error: Needs a DIV executable to load.\n");
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
     chdir(divpath);
@@ -1379,7 +1379,7 @@ printf("FILE: %s %x\n",HTML_EXE,f);
 #else
   if ((f=fopen(argv[1],"rb"))==NULL) {
     #ifndef DEBUG
-    printf("Error: Needs a DIV executable to load.");
+    printf("Error: Needs a DIV executable to load.\n");
     #endif
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
@@ -1544,7 +1544,7 @@ if(m) {
 
         if (mem[0]!=0 && mem[0]!=1) {
           #ifndef DEBUG
-          printf("Error: Needs a DIV executable to load.");
+          printf("Error: Needs a DIV executable to load.\n");
           #endif
 
           _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
