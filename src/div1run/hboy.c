@@ -25,8 +25,8 @@ byte *dbuffer;
 
 extern char *background;
 
-char *palette=paleta;
-char  *active_palette=dac;
+char *palette;
+char  *active_palette;
 extern int   set_palette;        // -1:siempre, 0:nunca, 1:una vez, 2:dos, ...
 extern byte  *ghost;
 //extern char  key[];              // Actual scancodes
@@ -927,6 +927,8 @@ void put_hboy() {
 //	if(SDL_MUSTLOCK(vga))
 //		SDL_LockSurface(vga);
 
+palette=(char *)paleta[0];
+active_palette=(char *)dac[0];
   while(!fExit) {
     ch=*hboy++;
     rep=1;
@@ -1023,7 +1025,7 @@ void dbuffer_to_video3() {
   int yr,xr,xr2,iyr,ixr,an,al,c;
 
   ixr=(wide<<8)/160; iyr=(height<<8)/100; yr=0;
-  di=(char*)vga->pixels;
+  di=(byte*)vga->pixels;
   di+=(vga->pitch*50+80); 
   al=100;
 
