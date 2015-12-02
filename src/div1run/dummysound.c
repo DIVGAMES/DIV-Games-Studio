@@ -263,7 +263,7 @@ return -1;
 int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
   int con=0;
-  int loop=-1;
+  int loop=-1; // always loop if callback used
 
 #ifdef MIXER
 
@@ -295,6 +295,7 @@ int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 
 	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
 
+if(con==-1) return -1;
   channels[con].freq = Frec;
   channels[con].vol = Volumen;
   channels[con].pos = 0;
