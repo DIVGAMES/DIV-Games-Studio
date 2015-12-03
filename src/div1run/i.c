@@ -99,8 +99,7 @@ void mainloop(void) {
     } while (ide);
     frame_end();
 }
-
-char benzel_boy=0;
+char *jschar;
 
 int main(int argc,char * argv[]) {
 
@@ -109,10 +108,12 @@ int main(int argc,char * argv[]) {
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);
 
+
+
 //printf("RUM\n");
 
 //exit;
-printf("Numjoy: %d\n",SDL_NumJoysticks());
+//printf("Numjoy: %d\n",SDL_NumJoysticks());
   if(SDL_NumJoysticks() > 0) { 
 		divjoy = SDL_JoystickOpen(0);
 		
@@ -145,18 +146,20 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
   _harderr(critical_error);
 #endif
 
-//printf("argc: %d %s %s %s\n",argc,argv[0],argv[1],argv[2]);
-if((argc>1 && !strcmp(argv[1],"bb")) || (argc>2 && !strcmp(argv[2],"bb"))) 
-	benzel_boy=1;
-
   vga_an=320; vga_al=200;
   if ((mem=(int*)malloc(4*imem_max))!=NULL){
     memset(mem,0,4*imem_max);
 
 #ifdef __EMSCRIPTEN__
-f=fopen(HTML_EXE,"rb");
-//printf("FILE: %s %x\n",HTML_EXE,f);
 
+jschar=emscripten_run_script_string("$('#exename').text()");
+
+emscripten_wget (jschar, "exe");//, loadmarvin, errormarvin);
+
+//while(!f) {
+f=fopen(HTML_EXE,"rb");
+printf("FILE: %s %x exename: %s\n",HTML_EXE,f,jschar);
+//}
 #else
 
     if ((f=fopen(argv[1],"rb"))==NULL) {
@@ -357,6 +360,7 @@ void inicializacion (void) {
   DIV_export("wide",(void *)&vga_an);
   DIV_export("height",(void *)&vga_al);
   DIV_export("buffer",(void *)&copia);
+  
   DIV_export("background",(void *)&copia2);
   DIV_export("ss_time",(void *)&ss_time);
   DIV_export("ss_status",(void *)&ss_status);
@@ -1106,20 +1110,15 @@ void frame_end(void) {
   int mouse_pintado=0,textos_pintados=0;
   int mouse_x0,mouse_x1,mouse_y0,mouse_y1;
   int n,m7ide,scrollide,otheride;
-
+char buf[255];
   // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
 
+#ifdef __EMSCRIPTEN__
+sprintf (buf, "$('#fps').text(\"FPS: %d/%d (max frameskip: %d)\");", fps,dfps,max_saltos);
+emscripten_run_script (buf);
+#endif
   if (!dll_loaded) {
     dll_loaded=1;
-
-	if(benzel_boy) {
-		 process_palette=dprocess_palette;
-		 set_video_mode=dset_video_mode;
-		buffer_to_video=dbuffer_to_video;
-		process_sound=dprocess_sound;
-		post_process=dpost_process;
-		process_active_palette=dprocess_active_palette;
-	}
 
 #ifdef DIVDLL
     // Los importa
@@ -1322,6 +1321,9 @@ void finalizacion (void) {
 #ifdef DIVDLL
   while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
 #endif
+
+  process_active_palette=NULL;
+
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=4;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
     set_paleta(); set_dac();
