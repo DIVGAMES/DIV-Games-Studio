@@ -6,7 +6,7 @@
 #define GLOBALS
 #include "div.h"
 
-#define HEIGHT 20
+#define HEIGHT 40
 
 char    *water=NULL;
 
@@ -47,6 +47,10 @@ void __export divmain(COMMON_PARAMS) {
 }
 
 void __export divend(COMMON_PARAMS) {
-  div_free(water);
+	printf("free'ing mem %x\n",water);
+//	if(water)
+//		div_free(water);
+	
+	water=NULL;
 }
 
