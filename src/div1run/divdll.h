@@ -25,7 +25,7 @@ PE    *DIV_LoadDll(char *);
 PE    *DIV_ImportDll(char *);
 void  DIV_UnLoadDll(PE *);
 void  DIV_UnImportDll(PE *pefile);
-void  LookForAutoLoadDlls();
+void  LookForAutoLoadDlls(void);
 
 extern void (*COM_export)(char *name,void *dir,int nparms);
 extern PE      *pe[128];
