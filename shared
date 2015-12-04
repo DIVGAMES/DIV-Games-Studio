@@ -5,6 +5,12 @@
 
 #include "global.h"
 #include "divdll.h"
+#include <dlfcn.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 typedef struct EXPORTENTRY{
 	struct EXPORTENTRY *next;
@@ -35,20 +41,24 @@ void HYB_export(char *name,void *dir,int nparms){
 
 PE *DIV_LoadDll(char *name)
 {
-PE *pefile;
+	PE *pefile;
+	char dllname[255];
 #ifdef DIVDLL
-void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
-void (*entryp2)( void (*HYB_export)() );
+	void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
+	void (*entryp2)( void (*HYB_export)() );
 
-//printf("div loaddll %s\n",name);
 	// reset error condition
 
 	dll_error=NULL;
 
+// make the dll "here"
+	strcpy(dllname,"./");
+	strcat(dllname,name);
+	printf("Loading dll %s\n",dllname);
 	// try to read the file (portable executable format)
-pefile=dlopen(name,0);
+	pefile=dlopen(dllname,RTLD_LAZY);
+
 	if(!pefile) return NULL;
-//	printf("loaded %s %x\n",name,pefile);
 	// find the entrypoint
 
 	entryp=(void *)dlsym(pefile,"divmain");
@@ -114,38 +124,44 @@ void DIV_UnImportDll(PE *pefile)
 
 
 
-PE *DIV_ImportDll(char *name)
-{
-PE *pefile=NULL;
-printf("Loading DLL %s\n",name);
+PE *DIV_ImportDll(char *name) {
 #ifdef DIVDLL
 
-void *library;
-    dlfunc funcs;
-void (*entryp)( void (*COM_export)() );
+	PE *pefile=NULL;
+	char dllname[255];
+	
+	printf("Loading dll %s\n",name);
 
+	void *library;
+    dlfunc funcs;
+	void (*entryp)( void (*COM_export)() );
 	// reset error condition
 
 	dll_error=NULL;
 
 	// try to read the file (portable executable format)
 
-	
-	if((pefile=dlopen(name,0))==NULL) return NULL;
+	strcpy(dllname,"./");
+	strcat(dllname,name);
+
+	if((pefile=dlopen(dllname,RTLD_LAZY))==NULL) return NULL;
 	
 
 	// find the entrypoint
 
 	entryp=(void *)dlsym(pefile, "divlibrary"); 
-// printf("entryp %x\n",entryp);
-//	entryp=PE_ImportFnc(pefile,"divlibrary_");
-//	if(entryp==NULL){
-//		entryp=PE_ImportFnc(pefile,"_divlibrary");
-//	}
-//	if(entryp==NULL){
-//		entryp=PE_ImportFnc(pefile,"W?divlibrary");
-//	}
+	
+	if(entryp==NULL)
+		entryp=(void *)dlsym(pefile,"divlibrary_");
 
+	if(entryp==NULL)
+		entryp=(void *)dlsym(pefile,"_divlibrary");
+	
+	if(entryp==NULL)
+		entryp=(void *)dlsym(pefile,"W?divlibrary");
+	
+	printf("Entry point is %x\n",entryp);
+	
 	if(entryp!=NULL)
 	{
 	  // execute entrypoint
@@ -183,26 +199,28 @@ static EXPORTENTRY *findexportentry(char *name)
 void *DIV_import(char *name)
 {
     EXPORTENTRY *e;
-//    printf("NULL: %x\n",NULL);
-    //printf("%s\n",name);
-	if(dll_error!=NULL) return NULL;
+
+	if(dll_error!=NULL) 
+		return NULL;
+
 	e=findexportentry(name);    
-//	printf("div_import %s %x\n",name,e);
+
 	if(e==NULL)
 		return NULL;
-//	printf("h1\n");
+
 	return e->obj;
 }
 
-void LookForAutoLoadDlls()
+void LookForAutoLoadDlls(void)
 {
 #ifdef DIVDLL
 struct find_t dllfiles;
 int ct;
-  ct=_dos_findfirst("*.DLL",_A_NORMAL,&dllfiles);
+  ct=_dos_findfirst("*.so",_A_NORMAL,&dllfiles);
   nDLL=0;
   while(ct==0)
   {
+	  
     pe[nDLL]=DIV_LoadDll(dllfiles.name);
     if(pe[nDLL]!=NULL)
     {
@@ -210,6 +228,7 @@ int ct;
         dlclose(pe[nDLL]);
       else
         nDLL++;
+       
     }
     ct=_dos_findnext(&dllfiles);
   }
@@ -223,7 +242,6 @@ EXPORTENTRY *e;// ,*o;
 //printf("div export %s %x\n",name,obj);
 	// see if a export entry by this name already exists
 	if(findexportentry(name)!=NULL) {
-//	 printf("FOUND!\n");
 	  return;
  }
  e=malloc(sizeof(EXPORTENTRY));
@@ -280,3 +298,6 @@ void DIV_RemoveExport(char *name,void *obj)
 	}
 }
 
+#ifdef __cplusplus
+}
+#endif
