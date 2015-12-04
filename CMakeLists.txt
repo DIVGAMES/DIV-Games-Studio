@@ -29,10 +29,10 @@ SET(DLL_EXT ".dll")
 ENDIF()
 
 IF(NOT OSDEP)
-SET(OSDEP "src/osdep/osdep.c")
+SET(OSDEP "src/shared/osdep.c")
 ENDIF()
 
-SET(DLLSRC "src/mikedll.c")
+SET(DLLSRC "src/shared/mikedll.c")
 
 # The name of our binary
 IF(NOT DEFINED TARGET)
@@ -90,7 +90,7 @@ ENDIF()
 # default definitions
 ADD_DEFINITIONS( -D_GNU_SOURCE)
 
-INCLUDE_DIRECTORIES(src src/runtime src/div1run)
+INCLUDE_DIRECTORIES(src/shared src/)
 SET(RUNNER_SOURCES "src/runner/r.c")
 FILE(GLOB DIV_SOURCES "src/*.c")
 FILE(GLOB DLL_SOURCES "dll/*.c")
@@ -146,6 +146,7 @@ ADD_EXECUTABLE(
 	${DIV_SOURCES} 
 	${JUDAS_SOURCES}
 	${OSDEP}
+	${DLLSRC}
 )
 
 ADD_EXECUTABLE(
