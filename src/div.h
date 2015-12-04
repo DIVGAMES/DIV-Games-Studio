@@ -3,7 +3,22 @@
 
 #define long_header             36
 #define end_struct              long_header+12+10*10+10*7+8+8
+
+#ifndef NULL
 #define NULL                    0
+#endif
+//#include "divdll.h"
+#define COMMON_PARAMS   void *(*DIV_import)(char *name),\
+                        void (*DIV_export)(char *name,void *obj)
+#define LIBRARY_PARAMS  void (*COM_export)(char *name,void *obj,int nparms)
+void divmain(COMMON_PARAMS);
+
+void  DIV_export(char *name,void *obj());
+void *DIV_import(char *name);
+#define AutoLoad()      DIV_export("Autoload",divmain)
+
+#define     __export       /* __EXPORT */
+// __declspec(dllexport)
 
 // typedef's
 typedef struct __reserved{
@@ -140,8 +155,8 @@ typedef struct _FNTBODY{
 }FNTBODY;
 
 ///////////////////////////////////////////////////////////////////
+//typedef unsigned int size_t;
 
-typedef unsigned size_t;
 typedef struct	__iobuf {
         unsigned char   *_ptr;
         int             _cnt;
@@ -151,7 +166,7 @@ typedef struct	__iobuf {
         unsigned        _bufsize;
         unsigned char   _ungotten;
         unsigned char   _tmpfchar;
-} FILE;
+} DIV_FILE;
 
 struct DWORDREGS {
 	unsigned int eax;
@@ -191,8 +206,8 @@ struct SREGS {
 /*  System exported funcs.                                              */
 /************************************************************************/
 // File Functions
-extern FILE	*fopen( const char *__filename, const char *__mode );
-extern int	fclose( FILE *__fp );
+extern FILE	*div_fopen( const char *__filename, const char *__mode );
+extern int	div_fclose( FILE *__fp );
 extern size_t	fread( void *__ptr, size_t __size, size_t __n, FILE *__fp );
 extern size_t	fwrite( const void *__ptr, size_t __size, size_t __n, FILE *__fp );
 extern long int ftell( FILE *__fp );
@@ -200,8 +215,8 @@ extern int	fseek( FILE *__fp, long int __offset, int __whence );
 extern int	remove( const char *__filename );
 
 // Memory Functions
-extern void     free( void *__ptr );
-extern void     *malloc( size_t __size );
+extern void     div_free( void *__ptr );
+extern void     *div_malloc( size_t __size );
 extern void     *memcpy( void *__s1, const void *__s2, size_t __n );
 extern void     *memset( void *__s, int __c, size_t __n );
 extern int	sprintf( char *__s, const char *__format, ... );
