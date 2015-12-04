@@ -3,6 +3,11 @@
 // OSDEP includes
 // should be good for most SDL ports
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
+
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -15,6 +20,8 @@
 #define _MAX_DIR 66
 #define _MAX_FNAME 256+100
 #define _MAX_EXT 64
+
+
 
 #include <SDL/SDL.h>
 #ifdef MIXER
