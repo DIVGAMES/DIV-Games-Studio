@@ -581,7 +581,6 @@ return;
 
   static int init=0,type_dump=0,f1_pressed=0;
 
-if(screen->w>0 && screen->h>0) {
 	if (!init) { init=1; put_hboy(); }
 
   if (key[59]) {
@@ -596,14 +595,14 @@ if(screen->w>0 && screen->h>0) {
       case 1: dbuffer_to_video2(); break;
       case 2: dbuffer_to_video3(); break;
   }
-}
+
 	if(SDL_MUSTLOCK(screen))
 		SDL_UnlockSurface(screen);
 
 SDL_Flip(screen);
 }
 
-void process_sound(char *sound,uint32_t sound_lenght) {
+void process_sound(char *sound,int32_t sound_lenght) {
   int x,y;
 
   for(x=0;x<sound_lenght-6;x+=6) for(y=x;y<x+6;y++) sound[y]=sound[x];
@@ -638,6 +637,8 @@ void __export divmain(COMMON_PARAMS) {
   DIV_export("process_active_palette",process_active_palette);
 //printf("screen %x\n",screen);
 //printf("buffer %x\n",_buffer);
+screen=SDL_SetVideoMode(320,200,8,0);
+
 
 }
 

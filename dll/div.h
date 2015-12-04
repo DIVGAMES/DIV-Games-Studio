@@ -35,7 +35,7 @@ typedef unsigned char byte;
 
 #define COMMON_PARAMS   void *(*DIV_import)(char *name),\
                         void (*DIV_export)(char *name,void *obj)
-#define LIBRARY_PARAMS  void (*COM_export)(char *name,void *obj,uint32_t nparms)
+#define LIBRARY_PARAMS  void (*COM_export)(char *name,void *obj,int32_t nparms)
 
 #define AutoLoad()      DIV_export("Autoload",divmain)
 
@@ -44,167 +44,167 @@ typedef unsigned char byte;
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
 typedef struct __reserved{
-        uint32_t     id;            // Process Identifier
-        uint32_t     idscan;        // Collisions
-        uint32_t     block;         // Process type
-        uint32_t     blscan;        // Last getid()
-        uint32_t     status;        // Actual status
-        uint32_t     param_number;  // Number of parameters
-        uint32_t     param;         // Pointer to parameters
-        uint32_t     ip;            // Program counter
-        uint32_t     sp;            // Stack pointer
-        uint32_t     executed;      // Is process executed?
-        uint32_t     painted;       // Is process painted?
-        uint32_t     object;        // Number of object
-        uint32_t     old_ctype;     // Old coordinate type
-        uint32_t     frame;         // Percent of frame complete
-        uint32_t     x0,y0,x1,y1;   // Bounding box
-        uint32_t     f_count;       // Function call count
-        uint32_t     caller_id;     // Caller identifier
+        int32_t     id;            // Process Identifier
+        int32_t     idscan;        // Collisions
+        int32_t     block;         // Process type
+        int32_t     blscan;        // Last getid()
+        int32_t     status;        // Actual status
+        int32_t     param_number;  // Number of parameters
+        int32_t     param;         // Pointer to parameters
+        int32_t     ip;            // Program counter
+        int32_t     sp;            // Stack pointer
+        int32_t     executed;      // Is process executed?
+        int32_t     painted;       // Is process painted?
+        int32_t     object;        // Number of object
+        int32_t     old_ctype;     // Old coordinate type
+        int32_t     frame;         // Percent of frame complete
+        int32_t     x0,y0,x1,y1;   // Bounding box
+        int32_t     f_count;       // Function call count
+        int32_t     caller_id;     // Caller identifier
 }_reserved;
 
 typedef struct _process{
         _reserved       reserved;       // See above.
-        uint32_t             father;         // Father's id
-        uint32_t             son;            // Son's id
-        uint32_t             smallbro;       // Small brother's id
-        uint32_t             bigbro;         // Big brother's id
-        uint32_t             priority;       // Process priority
-        uint32_t             ctype;          // Type of coordinates
-        uint32_t             x;              // X of process
-        uint32_t             y;              // Y of process
-        uint32_t             z;              // Z of process
-        uint32_t             graph;          // Code of process graphic
-        uint32_t             flags;          // Flags of process
-        uint32_t             size;           // Size of process
-        uint32_t             angle;          // Angle of process
-        uint32_t             region;         // Region of process
-        uint32_t             file;           // File of process
-        uint32_t             xgraph;         // Pointer to angular graphic table
-        uint32_t             height;         // Height of process in mode 7
-        uint32_t             cnumber;        // Scroll or mode 7 for that process
-        uint32_t             resolution;     // Coordinates resolution of process
-        uint32_t             radius;         // Radius for collision
-        uint32_t             wall;           // World wall
-        uint32_t             sector;         // Wordl sector
-        uint32_t             nextsector;     // Next sector number
-        uint32_t             step;           // Height step
+        int32_t             father;         // Father's id
+        int32_t             son;            // Son's id
+        int32_t             smallbro;       // Small brother's id
+        int32_t             bigbro;         // Big brother's id
+        int32_t             priority;       // Process priority
+        int32_t             ctype;          // Type of coordinates
+        int32_t             x;              // X of process
+        int32_t             y;              // Y of process
+        int32_t             z;              // Z of process
+        int32_t             graph;          // Code of process graphic
+        int32_t             flags;          // Flags of process
+        int32_t             size;           // Size of process
+        int32_t             angle;          // Angle of process
+        int32_t             region;         // Region of process
+        int32_t             file;           // File of process
+        int32_t             xgraph;         // Pointer to angular graphic table
+        int32_t             height;         // Height of process in mode 7
+        int32_t             cnumber;        // Scroll or mode 7 for that process
+        int32_t             resolution;     // Coordinates resolution of process
+        int32_t             radius;         // Radius for collision
+        int32_t             wall;           // World wall
+        int32_t             sector;         // Wordl sector
+        int32_t             nextsector;     // Next sector number
+        int32_t             step;           // Height step
 }process;
 
 typedef struct __mouse{
-        uint32_t     x;      // Mouse x
-        uint32_t     y;      // Mouse y
-        uint32_t     z;      // Mouse z
-        uint32_t     file;   // File code for mouse graphic
-        uint32_t     graph;  // Mouse graphic code
-        uint32_t     angle;  // Pointer angle
-        uint32_t     size;   // Pointer size (percent)
-        uint32_t     flags;  // Mouse flags
-        uint32_t     region; // Mouse region (clipping)
-        uint32_t     left;   // Left mouse button
-        uint32_t     middle; // Middle mouse button
-        uint32_t     right;  // Right mouse button
-        uint32_t     cursor; // Cursor emulation
-        uint32_t     speed;  // Pointer speed
+        int32_t     x;      // Mouse x
+        int32_t     y;      // Mouse y
+        int32_t     z;      // Mouse z
+        int32_t     file;   // File code for mouse graphic
+        int32_t     graph;  // Mouse graphic code
+        int32_t     angle;  // Pointer angle
+        int32_t     size;   // Pointer size (percent)
+        int32_t     flags;  // Mouse flags
+        int32_t     region; // Mouse region (clipping)
+        int32_t     left;   // Left mouse button
+        int32_t     middle; // Middle mouse button
+        int32_t     right;  // Right mouse button
+        int32_t     cursor; // Cursor emulation
+        int32_t     speed;  // Pointer speed
 }_mouse;
 
 typedef struct __scroll{
-        uint32_t     z;              // Scroll Z
-        uint32_t     camera;         // Process identifier code
-        uint32_t     ratio;          // Background speed ratio
-        uint32_t     speed;          // Maximum scrolling speed
-        uint32_t     region1;        // First region
-        uint32_t     region2;        // Second region
-        uint32_t     x0;             // First map coordinates
-        uint32_t     y0;
-        uint32_t     x1;             // Second map coordinates
-        uint32_t     y1;
+        int32_t     z;              // Scroll Z
+        int32_t     camera;         // Process identifier code
+        int32_t     ratio;          // Background speed ratio
+        int32_t     speed;          // Maximum scrolling speed
+        int32_t     region1;        // First region
+        int32_t     region2;        // Second region
+        int32_t     x0;             // First map coordinates
+        int32_t     y0;
+        int32_t     x1;             // Second map coordinates
+        int32_t     y1;
 }_scroll;
 
 typedef struct __m7{
-        uint32_t     z;              // Mode 7 Z
-        uint32_t     camera;         // Process identifier code
-        uint32_t     height;         // Camera height
-        uint32_t     distance;       // Distance between process and camera
-        uint32_t     horizon;        // Horizon position
-        uint32_t     focus;          // Camera focus
-        uint32_t     color;          // Ground colour
+        int32_t     z;              // Mode 7 Z
+        int32_t     camera;         // Process identifier code
+        int32_t     height;         // Camera height
+        int32_t     distance;       // Distance between process and camera
+        int32_t     horizon;        // Horizon position
+        int32_t     focus;          // Camera focus
+        int32_t     color;          // Ground colour
 }_m7;
 
 typedef struct __joy{
-        uint32_t     button1;        // Joystick buttons (0/1)
-        uint32_t     button2;
-        uint32_t     button3;
-        uint32_t     button4;
-        uint32_t     left;           // Joystick moves (0/1)
-        uint32_t     right;
-        uint32_t     up;
-        uint32_t     down;
+        int32_t     button1;        // Joystick buttons (0/1)
+        int32_t     button2;
+        int32_t     button3;
+        int32_t     button4;
+        int32_t     left;           // Joystick moves (0/1)
+        int32_t     right;
+        int32_t     up;
+        int32_t     down;
 }_joy;
 
 typedef struct __setup{
-        uint32_t     card;
-        uint32_t     port;
-        uint32_t     irq;
-        uint32_t     dma;
-        uint32_t     dma2;
-        uint32_t     master;
-        uint32_t     sound_fx;
-        uint32_t     cd_audio;
-        uint32_t     mixer;
-        uint32_t     rate;
-        uint32_t     bits;
+        int32_t     card;
+        int32_t     port;
+        int32_t     irq;
+        int32_t     dma;
+        int32_t     dma2;
+        int32_t     master;
+        int32_t     sound_fx;
+        int32_t     cd_audio;
+        int32_t     mixer;
+        int32_t     rate;
+        int32_t     bits;
 }_setup;
 
 
 typedef struct __net{
-        uint32_t     device;
-        uint32_t     com;
-        uint32_t     speed;
-        uint32_t     number;
-        uint32_t     init;
-        uint32_t     mode;
-        uint32_t     server;
-        uint32_t     max_players;
-        uint32_t     num_players;
+        int32_t     device;
+        int32_t     com;
+        int32_t     speed;
+        int32_t     number;
+        int32_t     init;
+        int32_t     mode;
+        int32_t     server;
+        int32_t     max_players;
+        int32_t     num_players;
 }_net;
 
 typedef struct __m8{
-        uint32_t     z;
-        uint32_t     camera;
-        uint32_t     height;
-        uint32_t     angle;
+        int32_t     z;
+        int32_t     camera;
+        int32_t     height;
+        int32_t     angle;
 }_m8;
 
 typedef struct __dirinfo{
-        uint32_t     files;
-        uint32_t     name[1024];
+        int32_t     files;
+        int32_t     name[1024];
 }_dirinfo;
 
 typedef struct __fileinfo{
-        uint32_t     fullpath_fix;
+        int32_t     fullpath_fix;
         char    fullpath[256];
-        uint32_t     drive;
-        uint32_t     dir_fix;
+        int32_t     drive;
+        int32_t     dir_fix;
         char    dir[256];
-        uint32_t     name_fix;
+        int32_t     name_fix;
         char    name[12];
-        uint32_t     ext_fix;
+        int32_t     ext_fix;
         char    ext[8];
-        uint32_t     size;
-        uint32_t     day;
-        uint32_t     month;
-        uint32_t     year;
-        uint32_t     hour;
-        uint32_t     min;
-        uint32_t     sec;
-        uint32_t     attrib;
+        int32_t     size;
+        int32_t     day;
+        int32_t     month;
+        int32_t     year;
+        int32_t     hour;
+        int32_t     min;
+        int32_t     sec;
+        int32_t     attrib;
 }_fileinfo;
 
 typedef struct __video_modes{
-        uint32_t     wide;
-        uint32_t     height;
-        uint32_t     mode;
+        int32_t     wide;
+        int32_t     height;
+        int32_t     mode;
 }_video_modes;
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
@@ -218,13 +218,13 @@ typedef struct _FPGHEADER{
 }FPGHEADER;
 
 typedef struct _FPGBODY{
-        uint32_t      code;
-        uint32_t      lenght;
+        int32_t      code;
+        int32_t      lenght;
         char     description[32];
         char     filename[12];
-        uint32_t      wide;
-        uint32_t      height;
-        uint32_t      number_of_points;
+        int32_t      wide;
+        int32_t      height;
+        int32_t      number_of_points;
         //short  *points;   // 2*number_of_points
         //char   *graphic;  // wide*height
 }FPGBODY;
@@ -235,10 +235,10 @@ typedef struct _FNTHEADER{
 } FNTHEADER;
 
 typedef struct _FNTBODY{
-    uint32_t    wide;
-    uint32_t    height;
-    uint32_t    screen_offset;
-    uint32_t    file_offset;
+    int32_t    wide;
+    int32_t    height;
+    int32_t    screen_offset;
+    int32_t    file_offset;
 }FNTBODY;
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
@@ -249,18 +249,18 @@ typedef struct _FNTBODY{
 void set_video_mode(void);                  // Set new video mode (wide x height)
 void process_palette(void);                 // Modify a new palette
 void process_active_palette(void);          // Modify a new active palette (fadings)
-void process_sound(char *sound,uint32_t lenght); // Modify a new sound effect
-void process_fpg(char *fpg,uint32_t fpg_lenght); // Modify a new FPG
-void process_map(char *map,uint32_t map_lenght); // Modify a new MAP
-void process_fnt(char *fnt,uint32_t fnt_lenght); // Modify a new FNT
+void process_sound(char *sound,int32_t lenght); // Modify a new sound effect
+void process_fpg(char *fpg,int32_t fpg_lenght); // Modify a new FPG
+void process_map(char *map,int32_t map_lenght); // Modify a new MAP
+void process_fnt(char *fnt,int32_t fnt_lenght); // Modify a new FNT
 void background_to_buffer(void);            // Dump background to buffer
 void buffer_to_video(void);                 // Dump buffer to video
 void post_process_scroll(void);             // Apply effect on scroll window
 void post_process_m7(void);                 // Apply effect on mode 7 window
 void post_process_buffer(void);             // Apply effect on buffer (video)
 void post_process(void);                    // Modify process variables
-void put_sprite(unsigned char * si, uint32_t x,  // Put one sprite
-     uint32_t y, uint32_t an, uint32_t al, uint32_t xg, uint32_t yg, uint32_t ang, uint32_t size, uint32_t flags);
+void put_sprite(unsigned char * si, int32_t x,  // Put one sprite
+     int32_t y, int32_t an, int32_t al, int32_t xg, int32_t yg, int32_t ang, int32_t size, int32_t flags);
 void ss_init(void);                         // Screen Saver initialisation function
 void ss_frame(void);                        // Screen Saver frame function
 void ss_end(void);                          // Screen Saver ending function
@@ -269,7 +269,7 @@ void ss_end(void);                          // Screen Saver ending function
 // DIV exported (shared) variables
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
-#define mem             (_mem)              // Memory of all programs (mem[], uint32_t array)
+#define mem             (_mem)              // Memory of all programs (mem[], int32_t array)
 #define stack           (_stack)            // mem[] index of stack
 #define palette         (_palette)          // Pointer to game palette
 #define active_palette  (_active_palette)   // Pointer to active palette (fadings)
@@ -297,24 +297,24 @@ void ss_end(void);                          // Screen Saver ending function
 // DIV exported variables - Internal - You must use above definitions!
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
-EXTERN uint32_t  *_stack;
-EXTERN uint32_t  *_mem;
+EXTERN int32_t  *_stack;
+EXTERN int32_t  *_mem;
 EXTERN char *_palette;
 EXTERN char *_active_palette;
 EXTERN char *_key;
 
-EXTERN uint32_t  *_sp;
-EXTERN uint32_t  *_wide;
-EXTERN uint32_t  *_height;
-EXTERN uint32_t  *_ss_time;
-EXTERN uint32_t  *_ss_status;
-EXTERN uint32_t  *_ss_exit;
-EXTERN uint32_t  *_process_size;
-EXTERN uint32_t  *_id_offset;
-EXTERN uint32_t  *_id_init_offset;
-EXTERN uint32_t  *_id_start_offset;
-EXTERN uint32_t  *_id_end_offset;
-EXTERN uint32_t  *_set_palette;
+EXTERN int32_t  *_sp;
+EXTERN int32_t  *_wide;
+EXTERN int32_t  *_height;
+EXTERN int32_t  *_ss_time;
+EXTERN int32_t  *_ss_status;
+EXTERN int32_t  *_ss_exit;
+EXTERN int32_t  *_process_size;
+EXTERN int32_t  *_id_offset;
+EXTERN int32_t  *_id_init_offset;
+EXTERN int32_t  *_id_start_offset;
+EXTERN int32_t  *_id_end_offset;
+EXTERN int32_t  *_set_palette;
 
 EXTERN unsigned long _buffer;
 EXTERN unsigned long _background;
@@ -329,8 +329,8 @@ EXTERN void  (*div_free  )( void *__ptr );             // Don't use free()!!!
 EXTERN FILE *(*div_fopen )(char *,char *);             // Don't use fopen()!!!
 EXTERN void  (*div_fclose)(FILE *);                    // Don't use fclose()!!!
 
-EXTERN uint32_t   (*div_rand)(uint32_t rang_low,uint32_t rang_hi);    // Random between two numbers
-EXTERN void  (*div_text_out)(char *texto,uint32_t x,uint32_t y); // Screen print function
+EXTERN int32_t   (*div_rand)(int32_t rang_low,int32_t rang_hi);    // Random between two numbers
+EXTERN void  (*div_text_out)(char *texto,int32_t x,int32_t y); // Screen print function
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Macros to get parameters and return values in new functions
@@ -385,31 +385,31 @@ EXTERN void  (*div_text_out)(char *texto,uint32_t x,uint32_t y); // Screen print
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
 #define GLOBAL_IMPORT()                                       \
-stack            =(uint32_t *)DIV_import("stack");                 \
-mem              =(uint32_t *)DIV_import("mem");                   \
+stack            =(int32_t *)DIV_import("stack");                 \
+mem              =(int32_t *)DIV_import("mem");                   \
 palette          =(byte*)DIV_import("palette");               \
 active_palette   =(byte*)DIV_import("active_palette");        \
 key              =(byte*)DIV_import("key");                   \
 _buffer          =(unsigned long)DIV_import("buffer");        \
 _background      =(unsigned long)DIV_import("background");    \
 _ghost           =(unsigned long)DIV_import("ghost");         \
-_sp              =(uint32_t *)DIV_import("sp");                    \
-_wide            =(uint32_t *)DIV_import("wide");                  \
-_height          =(uint32_t *)DIV_import("height");                \
-_ss_time         =(uint32_t *)DIV_import("ss_time");               \
-_ss_status       =(uint32_t *)DIV_import("ss_status");             \
-_ss_exit         =(uint32_t *)DIV_import("ss_exit");               \
-_process_size    =(uint32_t *)DIV_import("process_size");          \
-_id_offset       =(uint32_t *)DIV_import("id_offset");             \
-_id_init_offset  =(uint32_t *)DIV_import("id_init_offset");        \
-_id_start_offset =(uint32_t *)DIV_import("id_start_offset");       \
-_id_end_offset   =(uint32_t *)DIV_import("id_end_offset");         \
-_set_palette     =(uint32_t *)DIV_import("set_palette");           \
+_sp              =(int32_t *)DIV_import("sp");                    \
+_wide            =(int32_t *)DIV_import("wide");                  \
+_height          =(int32_t *)DIV_import("height");                \
+_ss_time         =(int32_t *)DIV_import("ss_time");               \
+_ss_status       =(int32_t *)DIV_import("ss_status");             \
+_ss_exit         =(int32_t *)DIV_import("ss_exit");               \
+_process_size    =(int32_t *)DIV_import("process_size");          \
+_id_offset       =(int32_t *)DIV_import("id_offset");             \
+_id_init_offset  =(int32_t *)DIV_import("id_init_offset");        \
+_id_start_offset =(int32_t *)DIV_import("id_start_offset");       \
+_id_end_offset   =(int32_t *)DIV_import("id_end_offset");         \
+_set_palette     =(int32_t *)DIV_import("set_palette");           \
 div_malloc  = ( void *(*)(size_t )       ) DIV_import("div_malloc"); \
 div_free    = ( void  (*)(void * )       ) DIV_import("div_free"  ); \
 div_fopen   = ( FILE *(*)(char *,char *) ) DIV_import("div_fopen" ); \
 div_fclose  = ( void  (*)(FILE *)        ) DIV_import("div_fclose"); \
-div_rand    = ( uint32_t   (*)(uint32_t ,uint32_t )     ) DIV_import("div_rand"  ); \
-div_text_out= ( void  (*)(char *,uint32_t,uint32_t)) DIV_import("div_text_out");
+div_rand    = ( int32_t   (*)(int32_t ,int32_t )     ) DIV_import("div_rand"  ); \
+div_text_out= ( void  (*)(char *,int32_t,int32_t)) DIV_import("div_text_out");
 
 #endif
