@@ -32,6 +32,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
 
-ADD_DEFINITIONS( -mwindows -Dmain=SDL_main -DZLIB -DWIN32 -DMIXER) 
+ADD_DEFINITIONS( -mwindows -Dmain=SDL_main -DZLIB -DWIN32 -DMIXER)
+# -DDIVDLL) 
 
 SET(OSDEP "src/win/osdepwin.c" )
