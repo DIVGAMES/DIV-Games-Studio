@@ -380,6 +380,8 @@ uint8_t sdl2key[2048];
 //#define _s sdl2key
 
 void sdlkeyinit(void) {
+	printf("SDL KEY INIT\n");
+//	exit(0);
 	SDL_EnableUNICODE( SDL_ENABLE );  
 	SDL_EnableKeyRepeat( SDL_DEFAULT_REPEAT_DELAY,  SDL_DEFAULT_REPEAT_INTERVAL);
 	

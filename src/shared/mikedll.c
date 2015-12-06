@@ -5,7 +5,12 @@
 
 #include "global.h"
 #include "divdll.h"
+
+#ifndef __WIN32
 #include <dlfcn.h>
+#else
+#include <windows.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,6 +28,12 @@ static EXPORTENTRY *pool=NULL;
 typedef void (__stdcall * dlfunc) (void *(*)(char *), void (*)(char *, char *, int, void *));
 //#undef NULL
 //#define NULL 0
+
+#ifdef __WIN32
+#define dlopen(a,b)     LoadLibrary(a)
+#define dlsym(a,b)      (dlfunc)GetProcAddress(a,b)
+#define dlclose(a)    FreeLibrary(a)
+#endif
 
 char *dll_error="No error";
 
@@ -176,9 +187,11 @@ PE *DIV_ImportDll(char *name) {
 	  	return NULL;
   	}
   }
+return (pefile);
 
 #endif
-return (pefile);
+
+return NULL;
 }
 static EXPORTENTRY *findexportentry(char *name)
 {
