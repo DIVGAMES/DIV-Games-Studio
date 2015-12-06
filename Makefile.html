@@ -6,6 +6,9 @@
 #
 # apt-get install -y libsdl1.2-dev
 #
+
+DIVIDE = html/div.html
+
 SDL_CFLAGS = -DZLIB -DMIXER -DSDL
 #-DJPEGLIB  
 EMBEDFILES= --emrun --preload-file system --preload-file help
@@ -62,7 +65,6 @@ EMBEDFILES= --emrun --preload-file system --preload-file help
 
 #REMBEDFILES= --preload-file fnt/puzzle --preload-file pcm/puzzle --preload-file dat/puzzle --preload-file map/puzzle --preload-file fpg/puzzle
 #REMBEDFILES= --preload-file help/help.fpg
-#REMBEDFILES= --preload-file fnt/pacoman --preload-file fpg/pacoman --preload-file dat/pacoman --preload-file pcm/pacoman   
 #REMBEDFILES= --preload-file fnt/soccer --preload-file pcm/soccer --preload-file dat/soccer --preload-file map/soccer --preload-file fpg/soccer --preload-file fli/soccer
 #REMBEDFILES=  --preload-file SONICPC.PAK --preload-file GREEN.WAV --preload-file START.WAV
 
@@ -96,8 +98,12 @@ HTML_EXE = system/EXEC.EXE
 #REMBEDFILES = --preload-file FROGGER.PAK
 #REMBEDFILES = --preload-file BERT.PAK --preload-file BERT.DAT --preload-file LEVEL1.DAT --preload-file LEVEL2.DAT
 #REMBEDFILES=  --preload-file user/BubDiv
-REMBEDFILES=  --preload-file ~/Desktop/DIVGAMES/wip/maniac@/
-RUNNER=html/maniac.js
+#REMBEDFILES=  --preload-file ~/Desktop/DIVGAMES/wip/maniac@/
+REMBEDFILES= --preload-file fnt/pacoman --preload-file fpg/pacoman --preload-file dat/pacoman --preload-file pcm/pacoman   
+
+#REMBEDFILES=  --preload-file ~/Desktop/DIVGAMES/comp1/WETRIS@/
+
+RUNNER=html/pacoman.js
 
 DRUNNER=html/debug_bbobble.js
 
@@ -126,7 +132,7 @@ SDL_LIBS = -lSDL
 #-lSDL_ttf -lSDL_image
 CXX=emcc
 CC=emcc
-EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456 
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s ASYNCIFY=1 -s TOTAL_MEMORY=268435456 
 # -s TOTAL_MEMORY=67108864
 # -s TOTAL_MEMORY=268435456 
 # -s TOTAL_MEMORY=134217728
@@ -151,13 +157,16 @@ EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456
 #-s EXPORTED_FUNCTIONS="['_getscore','_main']"
 EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
 BUILDLVL= -O3
-CFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc -Isrc/runtime -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2
-LIBS = $(SDL_LIBS) -lm 
+SCFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc -Isrc/shared -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2 
+LIBS = $(SDL_LIBS) -lm --emrun
 
-CSRC = $(wildcard src/*.c) src/osdep/osdep.c
-RSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c
-D1SRC = $(wildcard src/div1run/*.c) src/osdep/osdep.c
-DSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c src/runtime/debug/d.c
+OSDEP = src/shared/osdep.c
+
+CSRC = $(wildcard src/*.c) ${OSDEP}
+SHAREDSRC = $(wildcard src/shared/run/*.c) 
+RSRC = $(wildcard src/runtime/*.c)  ${OSDEP} ${SHAREDSRC}
+D1SRC = $(wildcard src/div1run/*.c)  ${OSDEP} ${SHAREDSRC}
+DSRC = $(wildcard src/runtime/*.c)  ${OSDEP} src/runtime/debug/d.c ${SHAREDSRC}
 #src/SDL_gfxPrimitives.c src/SDL_gfxBlitFunc.c src/SDL_rotozoom.c
 
 
@@ -166,9 +175,12 @@ DSRC = $(wildcard src/runtime/*.c) src/osdep/osdep.c src/runtime/debug/d.c
 all: dirs  ${RUNNER} ${DIV1RUN}
 #${DRUNNER}
 #html/div.js 
-dirs: obj/src/runtime/debug obj_d/src/runtime/debug obj/src/div1run
+dirs: obj/src/runtime/debug obj_d/src/runtime/debug obj/src/div1run obj/src/shared/run
 
-
+obj/src/shared/run:
+	mkdir -p obj/src/shared/run
+	mkdir -p objd1/src/shared/run
+	
 obj/src/runtime/debug: 
 	mkdir -p obj/src/runtime/debug
 	mkdir -p obj/src/osdep
@@ -178,7 +190,7 @@ obj_d/src/runtime/debug:
 	mkdir -p obj_d/src/osdep
 
 obj/src/div1run:
-	mkdir -p obj/src/div1run
+	mkdir -p objd1/src/div1run
 	
 obj/%.c.o : %.c
 	$(CXX) $(CFLAGS) -DHTML_EXE=\"$(HTML_EXE)\" -c $< -o obj/$<.o
@@ -186,17 +198,24 @@ obj/%.c.o : %.c
 obj_d/%.c.o : %.c
 	$(CXX) $(CFLAGS) -DDEBUG -DHTML_EXE=\"system/EXEC.EXE\" -c $< -o obj_d/$<.o
 
-html/div.js : $(CSRC:%.c=obj/%.c.o) obj/src
+objd1/%.c.o : %.c
+	$(CXX) $(CFLAGS) -DHTML_EXE=\"system/EXEC.EXE\" -c $< -o objd1/$<.o
+
+${DIVIDE} : CFLAGS = -DDIV2 ${SCFLAGS}
+${DIVIDE} : $(CSRC:%.c=obj/%.c.o) obj/src
 	$(CXX) ${CFLAGS} -o html/div.html $(CSRC:%.c=obj/%.c.o) $(LIBS) $(EMBEDFILES)
 
+${RUNNER} : CFLAGS = -DDIV2 -Isrc/runtime ${SCFLAGS}
 ${RUNNER} : $(RSRC:%.c=obj/%.c.o) obj/src 
-	$(CXX) $(CFLAGS) -o ${RUNNER} $(RSRC:%.c=obj/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
+	$(CXX) $(CFLAGS) -Isrc/runtime -o ${RUNNER} $(RSRC:%.c=obj/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
 
+${DRUNNER} : CFLAGS = -DDIV2 -Isrc/runtime ${SCFLAGS}
 ${DRUNNER} : $(DSRC:%.c=obj_d/%.c.o) obj/src
-	$(CXX) $(CFLAGS) -o ${DRUNNER} $(DSRC:%.c=obj_d/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
+	$(CXX) $(CFLAGS) -Isrc/runtime  -o ${DRUNNER} $(DSRC:%.c=obj_d/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
 
-${DIV1RUN} : $(D1SRC:%.c=obj/%.c.o) obj/src 
-	$(CXX) $(CFLAGS) -o ${DIV1RUN} $(D1SRC:%.c=obj/%.c.o) $(LIBS) $(D1EMBEDFILES) $(R1EMBEDFILES)
+${DIV1RUN} : CFLAGS = -DDIV1 -Isrc/div1run ${SCFLAGS}
+${DIV1RUN} : $(D1SRC:%.c=objd1/%.c.o) objd1/src 
+	$(CXX) $(CFLAGS) -Isrc/div1run -o ${DIV1RUN} $(D1SRC:%.c=objd1/%.c.o) $(LIBS) $(D1EMBEDFILES) $(R1EMBEDFILES)
 
 #src/main.c.o : src/main.c
 #	$(CC)  $(CFLAGS) -c $< -o $<.o 
