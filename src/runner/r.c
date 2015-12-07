@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+//#include <SDL/SDL.h>
 
 #ifndef TARGET 
 #define TARGET "div"
@@ -17,7 +19,7 @@
 
 #endif
 
-int main(void) {
+int main(int argc, char *argv[]) {
 printf("[%s]\n",ide);
 printf("[%s]\n",dbg);
 
