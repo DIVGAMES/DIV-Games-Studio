@@ -575,7 +575,9 @@ int ChangeChannel(int NumChannel,int Volumen,int Panning)
 
 int IsPlayingSound(int NumChannel)
 {
+#ifdef MIXER
 	return Mix_Playing(NumChannel);
+#endif
 #ifdef DOS
   SAMPLE *smp = judas_channel[NumChannel].smp;
   char *pos   = judas_channel[NumChannel].pos;
