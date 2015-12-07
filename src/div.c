@@ -7,7 +7,7 @@
  ***/
  
  
-// NOTE - To see things in the DEMO version, searh for "SHARE" in the cpp files
+// NOTE - To see things in the DEMO version, search for "SHARE" in the cpp files
 
 ///////////////////////////////////////////////////////////////////////////////
 //      DIV Operating System
@@ -363,8 +363,14 @@ void print_init_flags(int flags)
 }
 #endif
 
+void get_error(int n);
+extern uint8_t cerror[128];
+void mensaje_compilacion(byte * p);
+extern int compilado;
+
 int main(int argc, char * argv[]) {
   FILE *f;
+  byte *prgbuf;
   unsigned n;
   SDL_Init( SDL_INIT_EVERYTHING);
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
@@ -405,10 +411,15 @@ int main(int argc, char * argv[]) {
   siguiente_orden=0;
   Interpretando=1;
   safe=34; // Text in lower right corner
-
+  compilemode = 0;
+  
   if(argc>1 && !strcmp(argv[1],"INIT")) Interpretando=0;
   else beta_status=4;
   if(argc>1 && !strcmp(argv[1],"TEST")) test_video=1;
+
+  if(argc>1 && !strcmp(argv[1],"-c")) {
+	  compilemode=1;
+  }
 
   getcwd(tipo[0].path,PATH_MAX+1);
 
@@ -464,6 +475,43 @@ int main(int argc, char * argv[]) {
   for (n=0;n<24;n++) { tipo[n].defecto=0; tipo[n].inicial=0; }
 
   inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+
+if(compilemode==1) {	
+	inicializa_compilador();
+	compilado=1; mouse_graf=3; numero_error=-1;
+	if(argc<3) {
+		printf("Usage: -c [program name] [output.exe]\n");
+		exit(-1);
+	}
+	f=fopen(argv[2],"rb");
+	if(f) {
+		fseek(f,0,SEEK_END);
+		source_len = ftell(f);
+		fseek(f,0,SEEK_SET);
+		prgbuf = (byte *)malloc(source_len);
+		if(prgbuf) {
+			printf("Loaded %d bytes\n",fread(prgbuf,1,source_len,f));
+			source_ptr=prgbuf;
+			comp();
+			if (numero_error>=0) {
+				get_error(500+numero_error);
+				mensaje_compilacion(cerror);
+			} else {
+				mensaje_compilacion(texto[202]);
+			}
+			free(prgbuf);
+		} else {
+			printf("Out of memory\n");
+			exit(-1);
+		}
+		fclose(f);	
+  } else {
+	  printf("Failed to open %s\n",argv[2]);
+	  exit(-1);
+  }
+  exit(0);
+
+}
 
 #ifndef __EMSCRIPTEN__
   SDL_WM_SetCaption((char *)texto[34], "" );
@@ -522,6 +570,7 @@ printf("\n");
 #endif
 #ifdef __EMSCRIPTEN__
   // void emscripten_set_main_loop(em_callback_func func, int fps, int simulate_infinite_loop);
+  emscripten_cancel_main_loop();
   emscripten_set_main_loop(mainloop, 0, 0);
 	return 0;
 #else
@@ -1464,22 +1513,22 @@ void shell(void) {
 //    Secondary loop DIV / OS ( management of a dialog box )
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void entorno_dialogo(void) {
-
   int n,m,oldn=max_windows;
   int dialogo_invocado;
   int salir_del_dialogo=0;
 
-  fin_dialogo=0;
-  do { dialogo_invocado=0;
 
-    if (reloj==old_reloj) loop_count++; else loop_count=0;
+void dialog_loop(void) {
+
+	dialogo_invocado=0;
+
+/*    if (reloj==old_reloj) loop_count++; else loop_count=0;
     if (loop_count>=500) {
       EndSound();
       loop_count=0;
       InitSound();
     } old_reloj=reloj;
-
+*/
     tecla();
 
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
@@ -1498,6 +1547,7 @@ void entorno_dialogo(void) {
 
     if (n!=oldn && oldn==0) if (v.primer_plano==1) {
       dialogo_invocado=1;
+//      printf("%d\n", dialogo_invocado);
       wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
       call((voidReturnType )v.click_handler); mouse_b=m;
       volcados_parciales=1;
@@ -1567,6 +1617,16 @@ void entorno_dialogo(void) {
 
     if (fin_dialogo && !salir_del_dialogo) {
       cierra_ventana(); salir_del_dialogo=1;
+#ifdef __EMSCRIPTEN__
+printf("resuming main loop\n");
+ emscripten_cancel_main_loop();
+  emscripten_set_main_loop(mainloop,0,0);
+   fin_dialogo=0;
+
+  get[0]=0;
+
+  wmouse_x=-1; wmouse_y=-1;
+#endif
     }
 
     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
@@ -1597,7 +1657,27 @@ void entorno_dialogo(void) {
   // ???
 
 
-  } while (!salir_del_dialogo); fin_dialogo=0;
+   	
+	
+}
+
+void entorno_dialogo(void) {
+	
+	salir_del_dialogo=0;
+
+  fin_dialogo=0;
+
+#ifdef __EMSCRIPTEN__
+// kill main loop and start new one
+  emscripten_cancel_main_loop();
+  emscripten_set_main_loop(dialog_loop,0,0);
+
+#else
+  do { 
+	  dialog_loop();
+  }
+  while (!salir_del_dialogo); 
+  fin_dialogo=0;
 
   get[0]=0;
 
@@ -1606,6 +1686,8 @@ void entorno_dialogo(void) {
 //  if (flushall()>10) fcloseall();
 
   do { read_mouse(); } while((mouse_b) || key(_ESC));
+
+#endif  
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1926,11 +2008,13 @@ void mueve_ventana_completa(void) {
 
   if (v.primer_plano==2) mover_ventana=1;
 
+#ifndef __EMSCRIPTEN__
   do {
     x=v.x; y=v.y;
     v.x=mouse_x-ix; v.y=mouse_y-iy;
     se_ha_movido_desde(x,y,an,al); volcado_copia();
   } while(mouse_b&1);
+#endif
 
   if (mover_ventana) {
     mover_ventana=0;
