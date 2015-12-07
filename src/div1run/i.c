@@ -325,7 +325,9 @@ void inicializacion (void) {
   }
 
   reloj=0; ultimo_reloj=0; freloj=ireloj=5.5; max_saltos=0;
-
+	
+	game_fps=24;
+	
   joy_timeout=0;
 
   #ifdef DEBUG
@@ -1018,6 +1020,8 @@ void frame_start(void) {
 
   //LoopSound();
 
+  ascii=0;scan_code=0;
+  
   tecla();
 
   if (get_reloj()>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
@@ -1318,16 +1322,16 @@ void elimina_proceso(int id) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void finalizacion (void) {
-#ifdef DIVDLL
-  while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
-#endif
-
-  process_active_palette=NULL;
 
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=4;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
     set_paleta(); set_dac();
   }
+
+#ifdef DIVDLL
+  while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
+#endif
+
 #ifdef NETLIB
   if (inicializacion_red) net_end();
 #endif
