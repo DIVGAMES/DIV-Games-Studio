@@ -9,13 +9,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "SDL/SDL.h"
+//#ifndef __WIN32
+//#include "SDL/SDL.h"
+//#endif
 
 typedef unsigned char byte;
 
 #ifdef GLOBALS
   #define EXTERN
-  void main(){};
+//  #ifndef __WIN32
+//  void main(){};
+//  #endif
 #else
   #define EXTERN extern
 #endif
