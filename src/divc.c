@@ -978,9 +978,13 @@ void inicializa_compilador(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void mensaje_compilacion(byte * p) {
-  wbox(v.ptr,v.an/big2,v.al/big2,c2,2,20,v.an/big2-4,7);
-  wwrite(v.ptr,v.an/big2,v.al/big2,3,20,0,p,c3);
-  vuelca_ventana(0); volcado_copia();
+  if(compilemode) {
+	  printf("%s\n",p);
+  } else {
+   wbox(v.ptr,v.an/big2,v.al/big2,c2,2,20,v.an/big2-4,7);
+   wwrite(v.ptr,v.an/big2,v.al/big2,3,20,0,p,c3);
+   vuelca_ventana(0); volcado_copia();
+ }
 }
 
 #ifndef ZLIB
@@ -3138,7 +3142,8 @@ typedef struct _DLL{
 DLL *ImpDLL;
 int PrevOrder;
 int nFuns;
-extern PE    *pe;
+
+PE    *divcpe;
 
 void CNT_export(char *name,void *dir,int nparms)
 {
@@ -3158,26 +3163,30 @@ void CMP_export(char *name,void *dir,int nparms)
 
 int ImportDll(char *name)
 {
+printf("Looking for funcs in %s\n",name);
   nFuns=0;
+#ifdef DIVDLL
   COM_export=CNT_export;
-  pe=DIV_ImportDll(name);
-  if (pe==NULL) return 0;
-  DIV_UnImportDll(pe);
+  divcpe=DIV_ImportDll(name);
+  if (divcpe==NULL) return 0;
+  DIV_UnImportDll(divcpe);
   //
   if (nFuns==0) return -1;
   ImpDLL=(DLL*)malloc(sizeof(DLL)*nFuns);
   if (ImpDLL==NULL) return 0;
   nFuns=0;
   COM_export=CMP_export;
-  pe=DIV_ImportDll(name);
-  if (pe==NULL) { free(ImpDLL); return 0; }
-
+  divcpe=DIV_ImportDll(name);
+  if (divcpe==NULL) { free(ImpDLL); return 0; }
 return nFuns;
+#endif
 }
 
 void UnimportDll()
 {
-  DIV_UnImportDll(pe);
+#ifdef DIVDLL
+  DIV_UnImportDll(divcpe);
+#endif
 }
 
 struct _dlls {
@@ -3341,10 +3350,13 @@ void sintactico (void) {
     nombre_dll=(byte*)&mem[pieza_num];
 
     if (idlls<64) dlls[idlls].filename=pieza_num;
+printf("DLL: %s\n",nombre_dll);
 
     if (nombre_dll==NULL) c_error(0,63);
     if ((num_extern=ImportDll((char *)nombre_dll))==0) c_error(0,63);
     if (num_extern>0) {
+		printf("num funcs: %d\n",num_extern);
+		
       save_error(0);
       for (n=0;n<num_extern;n++) {
         source=(byte *)ImpDLL[n].Name;
