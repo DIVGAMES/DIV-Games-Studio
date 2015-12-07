@@ -12,6 +12,8 @@
 #define GCW_H 240
 #endif
 
+typedef void(*voidReturnType)(void);
+void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 
 
 //#define DEBUG // Para compilar la versiขn con debugger
@@ -131,7 +133,7 @@ void debug(void);
 // A-ssembler
 
 void memcpyb(byte * di, byte * si, int n);
-void call(int);
+//void call(int);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Constantes
@@ -310,6 +312,13 @@ void read_joy(void);
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Memoria de la m quina destino
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+GLOBAL int demo;
+
+GLOBAL byte * ghost_inicial;
+
+GLOBAL int game_fps;
+
 
 GLOBAL int pila[long_pila+max_exp+64]; // c lculo de expresiones (compilaciขn y ejecuciขn)
 
@@ -552,7 +561,7 @@ GLOBAL int ultimo_reloj;
 GLOBAL double freloj,ireloj;
 
 GLOBAL int max_saltos;                  // M ximo nง de volcados saltados
-
+GLOBAL int dfps;
 GLOBAL int saltar_volcado,volcados_saltados;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
