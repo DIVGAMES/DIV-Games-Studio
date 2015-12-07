@@ -4,7 +4,7 @@
 //      *** OJO *** La funcion trace_process() est  en i.cpp
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-#include "inter.h"
+#include "../inter.h"
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -1889,8 +1889,8 @@ void dread_mouse(void) {
   m_x+=(float)ix/(1.0+((float)mouse->speed/3.0));
   m_y+=(float)iy/(1.0+((float)mouse->speed/3.0));
 #endif
-  mouse_x=(int)m_x;
-  mouse_y=(int)m_y;
+  mouse_x=(int)mouse->x;
+  mouse_y=(int)mouse->y;
 
   if (mouse_x<0) { mouse_x=0; n++; }
   else if (mouse_x>=vga_an) { mouse_x=vga_an-1; n++; }
