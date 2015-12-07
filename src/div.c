@@ -376,21 +376,7 @@ int main(int argc, char * argv[]) {
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   
   atexit(SDL_Quit);
-  
-  if(SDL_NumJoysticks() > 0)
-	SDL_JoystickOpen(0);
-
-#ifdef MIXER
-  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
-  
-  int initted=Mix_Init(flags);
-	print_init_flags(initted);
-	
-  if((initted&flags) != flags) {
-	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
-	  printf("Mix_Init: %s\n", Mix_GetError());
-   }
-#endif 
+ 
 //  SDL_WM_GrabInput( SDL_GRAB_ON );
   system_clock = &mclock;
 
@@ -480,6 +466,7 @@ if(compilemode==1) {
 	inicializa_compilador();
 	compilado=1; mouse_graf=3; numero_error=-1;
 	if(argc<3) {
+		printf("DIV Compiler V2.02 - http://www.div-arena.co.uk\n");
 		printf("Usage: -c [program name] [output.exe]\n");
 		exit(-1);
 	}
@@ -512,6 +499,23 @@ if(compilemode==1) {
   exit(0);
 
 }
+
+
+ 
+  if(SDL_NumJoysticks() > 0)
+	SDL_JoystickOpen(0);
+
+#ifdef MIXER
+  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
+  
+  int initted=Mix_Init(flags);
+	print_init_flags(initted);
+	
+  if((initted&flags) != flags) {
+	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
+	  printf("Mix_Init: %s\n", Mix_GetError());
+   }
+#endif 
 
 #ifndef __EMSCRIPTEN__
   SDL_WM_SetCaption((char *)texto[34], "" );
