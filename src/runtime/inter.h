@@ -37,7 +37,7 @@
 //#include <direct.h>
 #include <signal.h>
 #include <time.h>
-#include "../src/osdep.h"
+#include "osdep.h"
 
 typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
@@ -798,7 +798,8 @@ GLOBAL double freloj,ireloj;
 GLOBAL int game_fps;
 
 GLOBAL int max_saltos;                  // Ma number of skipped frames
-
+GLOBAL int dfps;
+GLOBAL int divjoy;
 GLOBAL int saltar_volcado,volcados_saltados;
 
 //////////////////////////////////////////////////////////////////////////////
