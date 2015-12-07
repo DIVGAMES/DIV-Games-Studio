@@ -267,8 +267,8 @@ void signal_tree(int p, int s) {
 
 void _key(void) {
   if (pila[sp]<=0 || pila[sp]>=128) { e(e101); return; }
-  //printf("Looking for key: %d\n",pila[sp]);
-  pila[sp]=key(pila[sp]);
+//  printf("Looking for key: %d %d\n",pila[sp],key(pila[sp]));
+  pila[sp]=kbdFLAGS[pila[sp]];
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1340,7 +1340,8 @@ void save(void) {
   es=open_save_file((byte*)&mem[itxt+pila[sp]]);
   if (es==NULL) { pila[sp]=0; e(e123); return; }
   if (fwrite(&mem[offset],4,lon,es)!=lon) e(e124);
-  fclose(es); get_reloj()=old_reloj;
+
+  fclose(es); reloj=old_reloj;
 }
 
 #else         // Versiขn instalaciones.
@@ -1545,6 +1546,7 @@ void set_fps(void) {
   if (pila[sp]<4) pila[sp]=4;
   if (pila[sp]>100) pila[sp]=100;
   printf("setting fps(%d,%d)\n",pila[sp],max_saltos);
+  dfps = pila[sp];
   ireloj=100.0/(double)pila[sp];
 }
 
