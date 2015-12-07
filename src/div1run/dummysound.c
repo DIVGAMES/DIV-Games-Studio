@@ -376,7 +376,9 @@ int ChangeChannel(int NumChannel,int Volumen,int Panning)
 
 int IsPlayingSound(int NumChannel)
 {
+#ifdef MIXER
 	return Mix_Playing(NumChannel);
+#endif
 #ifdef DOS
   SAMPLE *smp = judas_channel[NumChannel].smp;
   char *pos   = judas_channel[NumChannel].pos;
@@ -398,9 +400,5 @@ int IsPlayingSound(int NumChannel)
 int UnloadSound(int NumSonido) {}
 
 
-int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy) {return 0;}
-int Nextframe(void) {return 0;}
-void ResetFli(void) {}
-void EndFli(void) {}
 
 
