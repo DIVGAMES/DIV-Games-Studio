@@ -316,6 +316,7 @@ GLOBAL_DATA int undo_memory;
 GLOBAL_DATA int Interpretando;
 GLOBAL_DATA int SoundError;
 GLOBAL_DATA int CopiaDesktop;
+GLOBAL_DATA int compilemode;
 
 int an_setup(void);
 void Save_Cfgbin();
