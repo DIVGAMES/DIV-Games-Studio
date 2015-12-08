@@ -1,15 +1,29 @@
 #!/bin/bash
+echo "Setting up GCW0 cross compiler"
 export PATH=$PATH:/opt/gcw0-toolchain/usr/bin
+
+echo "Creating build dir"
 rm -rf buildgcw
 mkdir buildgcw
-cp -r $1/* buildgcw
-rm buildgcw/*.exe > /dev/null
-rm buildgcw/*.EXE > /dev/null
-rm buildgcw/div*run.* > /dev/null
-rm buildgcw/DIV*RUN.* > /dev/null
 
-cp "$1/$2" "buildgcw/$3.dat"
+echo "Copying source files"
+cp -r $1/* buildgcw
+
+echo "Removing old div exe"
 rm "buildgcw/$2"
+
+echo "Removing extra exe files"
+find buildgcw -iname "*.exe" | xargs rm
+
+echo "Removing dll files"
+find buildgcw -iname "div*run.dll" | xargs rm
+
+echo "Removing flic files"
+find buildgcw -iname "*.fl*" | xargs rm
+
+echo "Copying new exe files"
+cp "$1/$2" "buildgcw/$3.dat"
+echo "Creating desktop file"
 cat << EOF > buildgcw/default.gcw0.desktop
 [Desktop Entry]
 
