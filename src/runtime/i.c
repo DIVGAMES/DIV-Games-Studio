@@ -15,10 +15,6 @@
 
 #define DEFINIR_AQUI
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
-
 #include "inter.h"
 
 #include "cdrom.h"
@@ -106,7 +102,11 @@ void CMP_export(char *name,void *dir,int nparms)
 static int nExt=0;
   nparms=nparms;
   name=name;
+
+  printf("%s[%d] %x %d \n",name,nExt,dir,nparms);
+
   ExternDirs[nExt++]=dir;
+
 #endif
 }
 
@@ -170,7 +170,7 @@ time_t dtime;
 void inicializacion (void) {
 //  FILE * f=NULL;
   int n;
-
+  
   mouse=(struct _mouse*)&mem[long_header];
   scroll=(struct _scroll*)&mem[long_header+14];
   m7=(struct _m7*)&mem[long_header+14+10*10];
@@ -714,11 +714,18 @@ void frame_start(void) {
   #ifdef DEBUG
   int oreloj;
   #endif
+  ascii=0;
+  scan_code=0;
 tecla();
+//printf("ascii: %d, scan_code: %d\n",ascii,scan_code);
   // Control screensaver
 
+//printf("%d %d %d %x\n",ss_time_counter,reloj,ss_status,ss_frame);
+
   if (ss_status && ss_frame!=NULL) {
+
     if (get_reloj()>ss_time_counter) {
+
       if (ss_init!=NULL) ss_init();
       ss_exit=0; do {
         key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
@@ -732,7 +739,12 @@ tecla();
           if (joy_check!=last_joy_check) ss_exit=3;
         }
         ss_frame();
-        volcado_completo=1; volcado((byte*)copia);
+        volcado_completo=1; 
+        if (buffer_to_video!=NULL) 
+			buffer_to_video(); 
+        else
+			volcado((byte*)copia);
+		
       } while (!ss_exit);
       if (ss_end!=NULL) ss_end();
       memcpy(copia,copia2,vga_an*vga_al);
@@ -790,7 +802,8 @@ tecla();
     }
   } else {
     n=0; old_reloj=get_reloj();
-    do {
+    do { }
+    /*
       n++;
       if (n>60000 && get_reloj()==old_reloj) {
         retrazo();
@@ -800,7 +813,7 @@ tecla();
         InitSound();
         break;
       }
-    } 
+    } */		
 while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
     volcados_saltados=0;
     saltar_volcado=0;
@@ -867,9 +880,15 @@ void frame_end(void) {
   int mouse_pintado=0,textos_pintados=0,drawings_pintados=0;
   int mouse_x0,mouse_x1,mouse_y0,mouse_y1;
   int n,m7ide,scrollide,otheride,retra=0;
+	char buf[255];
+
   #ifdef DEBUG
   int oreloj;
   #endif
+#ifdef __EMSCRIPTEN__
+sprintf (buf, "$('#fps').text(\"FPS: %d/%d (max frameskip: %d)\");", fps,dfps,max_saltos);
+emscripten_run_script (buf);
+#endif
 
 #ifdef DIVDLL
   // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
@@ -1328,6 +1347,8 @@ int main(int argc,char * argv[]) {
   byte * ptr;
   byte *dp;
   char DIV_VER=' ';
+  char *jschar;
+  
   unsigned long len,len_descomp;
   int mimem[10],n,i;
   uint32_t stubsize = 602;
@@ -1336,6 +1357,22 @@ int main(int argc,char * argv[]) {
   
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
   atexit(SDL_Quit);
+  SDL_Init( SDL_INIT_EVERYTHING);
+  if(SDL_NumJoysticks() > 0) { 
+		divjoy = SDL_JoystickOpen(0);
+		
+
+printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
+
+	if (SDL_JoystickNumHats(divjoy)==0)  {
+		SDL_JoystickClose(divjoy);
+		divjoy=NULL;
+	}
+		
+	}
+
+
+
   remove("DEBUGSRC.TXT");
   
   getcwd(divpath,PATH_MAX+1);
@@ -1347,7 +1384,7 @@ int main(int argc,char * argv[]) {
 #ifndef DEBUG
 #ifndef __EMSCRIPTEN__
   if (argc<2) {
-    printf("DIV2015 Run time library - version 3.00a - http://div-arena.co.uk\n");
+    printf("DIV2015 Run time library - version 2.02a - http://div-arena.co.uk\n");
     printf("Error: Needs a DIV executable to load.\n");
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
@@ -1363,16 +1400,17 @@ int main(int argc,char * argv[]) {
   _harderr(critical_error);
 #endif
 
- SDL_Init( SDL_INIT_VIDEO );
- 
- 
- atexit(SDL_Quit);
-
 
 
   vga_an=320; vga_al=200;
 
 #ifdef __EMSCRIPTEN__
+
+//jschar=emscripten_run_script_string("$('#exename').text()");
+
+//emscripten_wget (jschar, "exe");//, loadmarvin, errormarvin);
+
+
 f=fopen(HTML_EXE,"rb");
 printf("FILE: %s %x\n",HTML_EXE,f);
 
