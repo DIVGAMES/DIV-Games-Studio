@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export PATH=$PATH:/opt/gcw0-toolchain/usr/bin
 rm -rf buildgcw
 mkdir buildgcw
 cp -r $1/* buildgcw
@@ -34,7 +34,7 @@ make -j5 div1run-GCW divrun-GCW > /dev/null
 
 echo "Copying $3 to buildgcw/$3"
 
-if [ -z "$4" ]
+if [[ -z $5 ]]
 then
 echo "DIV2 runtime"
 cp system/divrun-GCW "buildgcw/$3"
@@ -45,8 +45,6 @@ fi
 
 echo "Compressing binary"
 upx -9 "buildgcw/$3" > /dev/null
-
-#make -f Makefile.html dirs R1EMBED="--preload-file $1@" D1HTML_EXE="$2" DIV1RUN=html/$3.js html/$3.js
 
 echo "Making opk file"
 
