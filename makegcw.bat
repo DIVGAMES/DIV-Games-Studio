@@ -8,7 +8,8 @@ rm buildgcw/*.EXE > /dev/null
 rm buildgcw/div*run.* > /dev/null
 rm buildgcw/DIV*RUN.* > /dev/null
 
-cp $1/$2 buildgcw/$3.dat
+cp "$1/$2" "buildgcw/$3.dat"
+rm "buildgcw/$2"
 cat << EOF > buildgcw/default.gcw0.desktop
 [Desktop Entry]
 
@@ -34,7 +35,11 @@ make -j5 div1run-GCW divrun-GCW > /dev/null
 
 echo "Copying $3 to buildgcw/$3"
 
-if [[ -z $5 ]]
+VER=`dd if=buildgcw/$3.dat bs=1 count=1 skip=2 2>/dev/null`
+#echo $VER
+
+# s= div1 j=div2
+if [ $VER = "j" ]
 then
 echo "DIV2 runtime"
 cp system/divrun-GCW "buildgcw/$3"
@@ -49,7 +54,7 @@ upx -9 "buildgcw/$3" > /dev/null
 echo "Making opk file"
 
 mksquashfs buildgcw $3.opk -all-root -noappend -no-exports -no-xattrs > /dev/null
-rm -rf buildgcw
+#rm -rf buildgcw
 
 echo "Done! - created $3.opk"
 
