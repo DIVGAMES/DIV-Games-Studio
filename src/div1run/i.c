@@ -84,7 +84,16 @@ void CNT_export(char *name,void *dir,int nparms)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Programa principal
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+int splashtime=0;
+int oldticks = 0;
+void madewith(void);
 void mainloop(void) {
+	
+	if(splashtime>0 && SDL_GetTicks()-oldticks<splashtime) {
+		tecla();
+		return;
+	} 
+    splashtime=0;
     frame_start();
     #ifdef DEBUG
     if (kbdFLAGS[_F12] || trace_program) { trace_program=0; call_to_debug=1; }
@@ -147,14 +156,19 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
 #endif
 
   vga_an=320; vga_al=200;
+    ireloj=100.0/24.0;
+    max_saltos = 0;
+    game_fps=dfps=24;
+
   if ((mem=(int*)malloc(4*imem_max))!=NULL){
     memset(mem,0,4*imem_max);
 
 #ifdef __EMSCRIPTEN__
+max_saltos=2;
 
-jschar=emscripten_run_script_string("$('#exename').text()");
+//jschar=emscripten_run_script_string("$('#exename').text()");
 
-emscripten_wget (jschar, "exe");//, loadmarvin, errormarvin);
+//emscripten_wget (jschar, "exe");//, loadmarvin, errormarvin);
 
 //while(!f) {
 f=fopen(HTML_EXE,"rb");
@@ -324,8 +338,12 @@ void inicializacion (void) {
     (m7+n)->focus=256;
   }
 
-  reloj=0; ultimo_reloj=0; freloj=ireloj=5.5; max_saltos=0;
+  get_reloj(); ultimo_reloj=0; freloj=ireloj=5.5; max_saltos=0;
 	
+#ifdef __EMSCRIPTEN__
+max_saltos=2;
+#endif
+
 	game_fps=24;
 	
   joy_timeout=0;

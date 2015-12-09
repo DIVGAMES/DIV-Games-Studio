@@ -7,6 +7,9 @@
 //#include "..\inc\svga.h"
 //#include "..\inc\vesa.h"
 
+#include "madewith.h"
+
+
 #ifdef GCW
 float w_ratio=1.0;
 float h_ratio=1.0;
@@ -95,7 +98,7 @@ byte color_oscuro;
 
 void set_paleta (void) {
   word n;
-
+//printf("set paleta\n");
   n=abs(dacout_speed); // if (n>64) n=64;
 
   if (now_dacout_r<dacout_r) {
@@ -129,9 +132,14 @@ void set_paleta (void) {
 
   if (process_active_palette!=NULL) process_active_palette();
 }
+extern int splashtime;
 
 void set_dac (void) {
-if(!vga) return;
+	if(splashtime>0)	
+		return;
+
+	if(vga==NULL) 
+		return;
 #ifndef DOS
 	SDL_Color colors[256];
 	int i;
@@ -191,7 +199,44 @@ int modovesa;
 
 extern float m_x,m_y;
 
+
+extern int oldticks;
+
+void madewith(void) {
+//	printf("madewith");
+	SDL_RWops *rwops = NULL;
+	SDL_Surface *mwsurface, *image;
+
+	rwops = SDL_RWFromMem(madewithsplash,256138);
+//	rwops = SDL_RWFromMem(madewithsplash,	307338);
+//	mwsurface = SDL_LoadBMP("/home/mike/Desktop/madewith.bmp");
+
+	
+	mwsurface = SDL_LoadBMP_RW(rwops,1);
+
+//	image = SDL_DisplayFormat(mwsurface);
+
+//	printf("%x %x %x\n",mwsurface,image,vga);
+
+	SDL_BlitSurface(mwsurface,NULL,vga,NULL);
+
+	SDL_FreeSurface(image);
+	SDL_FreeSurface(mwsurface);
+
+	SDL_Flip(vga);
+
+//	oldticks = SDL_GetTicks();
+//	splashtime = 10000;
+}
+
 void svmode(void) {
+#ifndef __EMSCRIPTEN__
+if(vga==NULL) {
+	splashtime=5000;
+	oldticks = SDL_GetTicks();
+}
+#endif
+
 //#ifdef STDOUTLOG
 printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 //#endif
@@ -314,6 +359,10 @@ divTexture = SDL_CreateTexture(divRender,
     texto[max_textos].x=vga_an/2;
     texto[max_textos].font=(byte*)fonts[0];
   } else texto[max_textos].font=0;
+
+	if(splashtime>0)
+		madewith();
+
 
 }
 

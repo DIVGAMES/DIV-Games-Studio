@@ -318,6 +318,8 @@ while (*ff!=0) {
 strupr(full);
     //printf("Trying: %s\n",full);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+strlwr(full);
+      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
@@ -326,10 +328,15 @@ strupr(full);
     //printf("Trying: %s\n",full);
 
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
-
-          strcpy(full,"");
+			strlwr(full);
+        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+			
           printf("failed %s\n",file);
+          strcpy(full,"");
+
           return(NULL);
+        } else return(f);
+        } else return(f);
         } else return(f);
         } else return(f);
       } else return(f);
@@ -1355,18 +1362,20 @@ FILE * open_save_file(char * file) {
   // fix the path
   char *ff = (char *)file;
   
+//  printf("incoming file: %s\n",file);
+  
   while (*ff!=0) {
 	if(*ff =='\\') *ff='/';
 	ff++;
   }
   
-  printf("Looking for save file: %s\n",file);
+//  printf("Looking for save file: %s\n",file);
   strcpy(full,file);
   if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
   _splitpath(full,drive,dir,fname,ext);
 
   if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-  if (strlen(full)) strcat(full,"\\");
+  if (strlen(full)) strcat(full,"/");
   strcat(full,fname);
   strcat(full,ext);
   printf("Looking for save file: %s\n",full);
@@ -1374,6 +1383,8 @@ FILE * open_save_file(char * file) {
   if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
     strcpy(full,fname);
     strcat(full,ext);
+  printf("Looking for save file: %s\n",full);
+
     if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
       strcpy(full,"");
       return(NULL);

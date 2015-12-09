@@ -81,12 +81,15 @@ extern int nomitidos;
 static int n_reloj=0, o_reloj=0;
 
 int get_reloj(void) {
-	/*
+	
+	reloj = SDL_GetTicks()/10;
+		return reloj;
+		
 	n_reloj=SDL_GetTicks()/10;
 	reloj+=(n_reloj-o_reloj);
 	o_reloj=n_reloj;
-*/
-reloj=SDL_GetTicks()/10;
+
+//reloj=SDL_GetTicks()/10;
 	return reloj;
 }
 
@@ -146,13 +149,18 @@ char full[_MAX_PATH+1];
 #ifndef NOTYET
 
 static FILE * div_open_file(byte * file) {
-  FILE * f;
+  FILE * f,*fe;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
+
+
+char remote[255];
 #ifndef DOS
-  printf("opening file: %s\n",file);
+//  printf("opening file: [%s]\n",file);
+  if(strlen(file)<1)
+	return NULL;
 
 //printf("trying to load [%s]\n",file);
 if(strlen((char *)file)==0) return NULL;
@@ -164,6 +172,7 @@ while (*ff!=0) {
 }
 
 #endif
+
 //printf("%s\n",full);
   strcpy(full,(char*)file);
 //    printf("trying to load %s\n",full);
@@ -182,23 +191,54 @@ while (*ff!=0) {
       strcpy(full,fname);
       strcat(full,ext);
 //    printf("Trying: %s\n",full);
-
+//	strcpy(remote,"pacoman/");
+//	strcat(remote,full);
+/*
+#ifdef __EMSCRIPTEN__
+	if((fe=fopen(full,"rb"))==NULL) {
+		printf("trying to wget %s\n",remote);
+		emscripten_wget (remote,full);//, loadmarvin, errormarvin);
+	} else 
+		return(fe);
+#endif
+*/
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 		strupr(full);
 //    printf("Trying: %s\n",full);
+//strcpy(remote,"pacoman/");
+//strcat(remote,full);
+
+//emscripten_wget (remote,full);//, loadmarvin, errormarvin);
+//	    printf("Trying: %s\n",full);
+
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+
+		strlwr(full);
+
+//    printf("Trying: %s\n",full);
+
+      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+		
 
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
+
 //    printf("Trying: %s\n",full);
 
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
+		strlwr(full);
+        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+
+  //        printf("failed to load %s\n",full);
+			
+
           strcpy(full,"");
-          printf("failed\n");
           return(NULL);
+	  } else return(f);
+	  } else return(f);
         } else return(f);
         } else return(f);
       } else return(f);
@@ -2148,27 +2188,16 @@ void is_playing_song(void) {
 //����������������������������������������������������������������������������
 
 void set_fps(void) {
-	byte myfps[10];
-	myfps[0] = pila[sp-1];
   max_saltos=pila[sp--];
-
 #ifdef __EMSCRIPTEN__
 	max_saltos=2;
 #endif
-
-  game_fps = pila[sp];
   if (max_saltos<0) max_saltos=0;
   if (max_saltos>10) max_saltos=10;
-  if (game_fps<4) game_fps=4;
-  if (game_fps>200) game_fps=200;
-
-#ifdef __EMSCRIPTEN__
-//es_fps(game_fps);
-//max_saltos=0;
-#endif
-  printf("setting fps(%d,%d)\n",pila[sp],max_saltos);
-
-  ireloj=(double)(100.0/game_fps);
+  if (pila[sp]<4) pila[sp]=4;
+  if (pila[sp]>100) pila[sp]=100;
+  dfps=pila[sp];
+  ireloj=100.0/(double)pila[sp];
 }
 
 //����������������������������������������������������������������������������
@@ -4485,6 +4514,8 @@ void function(void) {
   #endif
 
   old_reloj=get_reloj();
+
+//printf("func: %s\n",fname[mem[ip+1]]);
 
   switch(v_function=(byte)mem[ip++]) {
     case 0: _signal(); break;

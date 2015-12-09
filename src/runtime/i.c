@@ -312,10 +312,10 @@ init_rnd(dtime);
 
   ticks=0; reloj=0; ultimo_reloj=0;
   freloj=ireloj=100.0/24.0;
-  game_fps=24;
+  game_fps=dfps=24;
   max_saltos=0;
 #ifdef __EMSCRIPTEN__
-//  max_saltos=4;
+  max_saltos=2;
 #endif
 
 
@@ -514,7 +514,17 @@ void actualiza_pila(int id, int valor) {
 
 int max,max_reloj;        // Process in order or _Priority and _Z 
 extern int alt_x;
+int splashtime =0;
+int oldticks = 0;
+void madewith(void);
+
 void mainloop(void) {
+	if(splashtime>0 && SDL_GetTicks()-oldticks<splashtime) {
+		tecla();
+		return;
+	} 
+    splashtime=0;
+    
 	error_vpe=0;
     frame_start();
 #ifdef DEBUG
@@ -1403,6 +1413,8 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
 
 
   vga_an=320; vga_al=200;
+    ireloj=100.0/24.0;
+    max_saltos = 0;
 
 #ifdef __EMSCRIPTEN__
 
