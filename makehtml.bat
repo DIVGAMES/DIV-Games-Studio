@@ -6,23 +6,23 @@ source ~/emsdk_portable/emsdk_env.sh > /dev/null
 
 rm -rf obj obj_d objd1
 
-dd if="$1/$2" bs=1 count=1 skip=2
+#dd if="$1/$2" bs=1 count=1 skip=2
 VER=`dd if="$1/$2" bs=1 count=1 skip=2 2>/dev/null`
-#echo $VER
+#echo "VER = '$VER'"
 
-echo "Building $4 $3.html"
+echo "Building $4"
 
 # s= div1 j=div2
 if [ $VER = "s" ] 
 then
 echo "USING DIV1 RUNTIME"
-make -f Makefile.html dirs R1EMBED="--preload-file \"$1@\"" D1HTML_EXE="$2" DIV1RUN="html/$3.js" html/$3.js
+make -f Makefile.html dirs R1EMBED="--preload-file \"$1@\"" D1HTML_EXE="$2" DIV1RUN="html/$3.js" html/$3.js > /dev/null
+DIVVER="DIV1"
 else
-echo "USING DIV2 RUNTIME"
-make -f Makefile.html dirs DEMBEDFILES="--preload-file \"$1@\"" HTML_EXE="$2" RUNNER="html/$3.js" html/$3.js
+echo "USING DIV2 RUNTIME"	
+make -f Makefile.html dirs DEMBEDFILES="--preload-file \"$1@\"" HTML_EXE="$2" RUNNER="html/$3.js" html/$3.js > /dev/null
+DIVVER="DIV2"
 fi
-
-
 
 
 #make -f Makefile.html dirs R1EMBED="--preload-file $1@" D1HTML_EXE="$2" DIV1RUN="html/$3.js" html/$3.js > /dev/null
@@ -68,7 +68,7 @@ cat << EOF > html/$3.html
 						DIV GAMES STUDIO - $4 
 			</h2>
 			
-			<p>Original DIV Engine ported to C / SDL, compiled to
+			<p>$DIVVER Engine ported to C / SDL, compiled to
 				Javascript using Emscripten</p>
 				<p>By $5</p>
 				<p>$controls<br />
@@ -108,6 +108,10 @@ cat << EOF > html/$3.html
 
 EOF
 
+echo "Files copied to html/$3.*"
+echo "Use emrun html/$3.html to run / test"
 
 echo "Done!"
+
+
  

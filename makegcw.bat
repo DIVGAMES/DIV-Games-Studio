@@ -8,18 +8,19 @@ mkdir buildgcw
 
 echo "Copying source files"
 cp -r $1/* buildgcw
+cp tools/dx.png buildgcw/$3.png
 
 echo "Removing old div exe"
 rm "buildgcw/$2"
 
 echo "Removing extra exe files"
-find buildgcw -iname "*.exe" | xargs rm
+find buildgcw -iname "*.exe" | xargs rm 2>/dev/null
 
 echo "Removing dll files"
-find buildgcw -iname "div*run.dll" | xargs rm
+find buildgcw -iname "div*run.dll" | xargs rm 2>/dev/null
 
 echo "Removing flic files"
-find buildgcw -iname "*.fl*" | xargs rm
+find buildgcw -iname "*.fl*" | xargs rm 2>/dev/null
 
 echo "Copying new exe files"
 cp "$1/$2" "buildgcw/$3.dat"
