@@ -2958,8 +2958,9 @@ void guardar_mapa(void) {
     if ((f=fopen(full,"wb"))!=NULL) { // Se ha elegido uno
 		strcpy(filename,input);
 		strupr(filename);
-      if (!strcmp(strupr(strchr(filename,'.')),".PCX")) tipomapa=1;
-      else if (!strcmp(strupr(strchr(filename,'.')),".BMP")) tipomapa=2;
+
+      if (!strcmp(strchr(filename,'.'),".PCX")) tipomapa=1;
+      else if (!strcmp(strchr(filename,'.'),".BMP")) tipomapa=2;
       else 
       
       tipomapa=0;
