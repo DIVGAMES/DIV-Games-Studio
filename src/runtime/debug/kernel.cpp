@@ -246,7 +246,7 @@ case lfrf:
   } break;
 case limp:
 #ifdef DIVDLL
-    if ((pe[nDLL]=DIV_LoadDll((byte*)&mem[mem[ip++]]))==NULL)
+    if ((pe[nDLL]=DIV_LoadDll((char*)&mem[mem[ip++]]))==NULL)
     break;
 //      exer(4);
     else
