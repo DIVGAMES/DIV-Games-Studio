@@ -52,7 +52,7 @@ extern int ChannelCon;
 
 void InitSound              (void);
 void ResetSound             (void);
-int  LoadSound              (char *file, int Loop);
+int  LoadSound              (char *ptr, long Len, int Loop);
 int  UnloadSound            (int NumSonido);
 int  PlaySound              (int NumSonido,int Volumen,int Frec);
 int  StopSound              (int NumChannel);
@@ -69,6 +69,4 @@ int  GetSongLine            (void);
 int  IsPlayingSong          (void);
 void EndSound               (void);
 
-// PCM2WAV
-int pcm2wav(FILE *in, long inlen, FILE *out, long outlen);
 #endif

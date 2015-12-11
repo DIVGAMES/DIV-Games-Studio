@@ -1,6 +1,6 @@
 #include "inter.h"
 #include "divsound.h"
-#include "divmixer.hpp"
+//#include "divmixer.hpp"
 #ifdef __APPLE__
 #include "osx/fmemopen.h"
 #endif
@@ -514,7 +514,7 @@ int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 
 	Freq_original[con]=channels[con].freq;
 
-  channel(con)=1;
+//  channel(con)=1;
 #endif
 //printf("Playing con: %d\n",con);
   return(con);
@@ -597,6 +597,7 @@ int IsPlayingSound(int NumChannel)
   return(1);
 }
 
+#ifdef DIV2
 int LoadSong(char *ptr, int Len, int Loop)
 {
 #ifndef __EMSCRIPTEN__
@@ -795,6 +796,8 @@ int IsPlayingSong(void)
   return(0);
 #endif
 }
+
+#endif
 
 void EndSound(void)
 {
