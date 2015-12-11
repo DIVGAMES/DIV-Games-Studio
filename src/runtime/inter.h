@@ -799,7 +799,7 @@ GLOBAL int game_fps;
 
 GLOBAL int max_saltos;                  // Ma number of skipped frames
 GLOBAL int dfps;
-GLOBAL int divjoy;
+GLOBAL SDL_Joystick * divjoy;
 GLOBAL int saltar_volcado,volcados_saltados;
 
 //////////////////////////////////////////////////////////////////////////////
