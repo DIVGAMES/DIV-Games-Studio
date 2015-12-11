@@ -180,9 +180,9 @@ return f;
 #endif
 
 
-printf("%s\n",full);
+//printf("%s\n",full);
   strcpy(full,(char*)file);
-    printf("trying to load %s\n",full);
+  //  printf("trying to load %s\n",full);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
@@ -222,7 +222,7 @@ printf("%s\n",full);
 
 		strlwr(full);
 
-    printf("Trying: %s\n",full);
+//    printf("Trying: %s\n",full);
 
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 		
@@ -232,7 +232,7 @@ printf("%s\n",full);
         strcat(full,fname);
         strcat(full,ext);
 
-    printf("Trying: %s\n",full);
+//    printf("Trying: %s\n",full);
 
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
