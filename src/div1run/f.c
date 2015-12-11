@@ -97,12 +97,12 @@ void kill_invisible(void);
 int joy_position(int eje);
 
 // sound prototypes
-/*
-void UnloadSound(int n);
+int LoadSound(char *ptr, long Len, int Loop);
 int PlaySound(int n, int m, int o);
-void StopSound(int n);
-void ChangeSound(int n, int m, int o);
-*/
+int UnloadSound(int n);
+int StopSound(int n);
+int ChangeSound(int n, int m, int o);
+
 
 void read_mouse(void);
 void path_find(void);
@@ -295,6 +295,14 @@ while (*ff!=0) {
 }
 
 #endif
+
+#ifndef _WIN32
+if(f=memz_open_file(file))
+return f;
+
+#endif
+
+
 //printf("%s\n",full);
   strcpy(full,(char*)file);
 //    printf("trying to load %s\n",full);
@@ -1491,16 +1499,23 @@ void set_mode(void) {
 
 void load_pcm(void) {
   FILE * f;
+  char *ptr;
   int loop;
   int old_reloj=get_reloj();
 
   loop=pila[sp--];
   if ((f=open_file((byte*)&mem[itxt+pila[sp]]))!=NULL) {
-    fclose(f);
+      fseek(f,0,SEEK_END); file_len=ftell(f);
+      if ((ptr=(char *)malloc(file_len))!=NULL) {
+        fseek(f,0,SEEK_SET);
+        fread(ptr,1,file_len,f);
+        fclose(f);
+       
+		pila[sp]=LoadSound(ptr,file_len,loop);
 
-    pila[sp]=LoadSound(full,loop);
+		free(ptr);
 
-//    if (pila[sp]==-1) e(e128);
+      } else { fclose(f); pila[sp]=0; e(e128); return; }
   } else e(e128);
   reloj=old_reloj;
 }

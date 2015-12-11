@@ -173,9 +173,16 @@ while (*ff!=0) {
 
 #endif
 
-//printf("%s\n",full);
+#ifndef _WIN32
+if(f=memz_open_file(file))
+return f;
+
+#endif
+
+
+printf("%s\n",full);
   strcpy(full,(char*)file);
-//    printf("trying to load %s\n",full);
+    printf("trying to load %s\n",full);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
@@ -215,7 +222,7 @@ while (*ff!=0) {
 
 		strlwr(full);
 
-//    printf("Trying: %s\n",full);
+    printf("Trying: %s\n",full);
 
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
 		
@@ -225,14 +232,14 @@ while (*ff!=0) {
         strcat(full,fname);
         strcat(full,ext);
 
-//    printf("Trying: %s\n",full);
+    printf("Trying: %s\n",full);
 
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
 		strlwr(full);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
-  //        printf("failed to load %s\n",full);
+          printf("failed to load %s\n",full);
 			
 
           strcpy(full,"");
@@ -2196,7 +2203,7 @@ void set_fps(void) {
   if (max_saltos>10) max_saltos=10;
   if (pila[sp]<4) pila[sp]=4;
   if (pila[sp]>100) pila[sp]=100;
-  dfps=pila[sp];
+  dfps = pila[sp];
   ireloj=100.0/(double)pila[sp];
 }
 
