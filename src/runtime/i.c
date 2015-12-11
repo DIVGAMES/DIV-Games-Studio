@@ -1447,12 +1447,33 @@ printf("FILE: %s %x\n",HTML_EXE,f);
 #endif
 
 // check if div1 or div2 exe
-fseek(f,0x1c,SEEK_SET);
+fseek(f,0x2,SEEK_SET);
 fread(&DIV_VER,1,1,f);
 //printf("%s\n",DIV_VER=='D'?"DIV 1":"DIV 2");
   fseek(f,0,SEEK_END);
   len=ftell(f);
 
+//printf("div ver: [%d] [%c]\n",DIV_VER,DIV_VER);
+
+switch(DIV_VER) {
+	case 'j':
+	break;
+	case 's':
+//		printf("Cannot load DIV1 exe (yet!)\n");
+		fclose(f);
+		exit(26);
+	break;
+	case 144:
+//	case -112:
+		printf("Found Div Windows exe\n");
+		stubsize = winstubsize;
+		
+	break;
+	default:
+		printf("Unknown div code, aborting\n");
+		fclose(f);
+    exit(26);
+}
   if(DIV_VER!='D')
 	len-=stubsize-4*10;
   
