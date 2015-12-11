@@ -271,7 +271,7 @@ extern int ZEXPORT unzGetLocalExtrafield OF((unzFile file,
 */
 
 extern int divz_open_file(char *name);
-FILE * memz_open_file(char *file) ;
+FILE * memz_open_file(unsigned char *file) ;
 
 
 #ifdef __cplusplus

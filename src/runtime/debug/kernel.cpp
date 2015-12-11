@@ -256,7 +256,7 @@ case limp:
 case lext:
 #ifdef DIVDLL
 if(ExternDirs[mem[ip++]])
-    call(ExternDirs[mem[ip++]]);
+    call((voidReturnType)ExternDirs[mem[ip++]]);
 #endif
   break;
 case lchk:

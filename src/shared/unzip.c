@@ -16,6 +16,10 @@
 #include "unzip.h"
 #include "osdep.h"
 
+#ifdef __APPLE__
+#include "fmemopen.h"
+#endif
+
 #ifdef STDC
 #  include <stddef.h>
 #  include <string.h>
@@ -78,7 +82,7 @@
 
 unsigned char *zipptr=NULL;
 
-FILE * memz_open_file(char *file) {
+FILE * memz_open_file(unsigned char *file) {
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
@@ -138,10 +142,12 @@ int divz_open_file(char *full) {
 if(zip!=NULL)			
 	unzClose(zip);
 
-zip = unzOpen("data.div");
+zip = (unzFile*)unzOpen("data.div");
 //printf("loaded zip: %x\n",zip);
 
 //printf("Looking for %s\n",full);
+if(zip==NULL)
+return 0;
 
 unzGoToFirstFile(zip);
 				if(unzLocateFile (zip,full,2)==UNZ_OK)
@@ -174,6 +180,7 @@ if(zip!=NULL)
 unzClose(zip);
 zip=NULL;
 
+return 0;
 	
 }
 

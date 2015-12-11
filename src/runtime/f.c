@@ -159,7 +159,7 @@ static FILE * div_open_file(byte * file) {
 char remote[255];
 #ifndef DOS
 //  printf("opening file: [%s]\n",file);
-  if(strlen(file)<1)
+  if(strlen((const char *)file)<1)
 	return NULL;
 
 //printf("trying to load [%s]\n",file);
@@ -174,9 +174,10 @@ while (*ff!=0) {
 #endif
 
 #ifndef _WIN32
-if(f=memz_open_file(file))
+if(f=memz_open_file(file)) {
+printf("memz is %d\n",f);
 return f;
-
+}
 #endif
 
 
@@ -801,11 +802,12 @@ file_len=1352;
       if ((ptr=(byte *)malloc(file_len))!=NULL) {
         g[num].fpg=(int**)ptr;
         fseek(es,0,SEEK_SET);
-#ifdef STDOUTLOG
+        printf("ptr is %x\n",ptr);
+//#ifdef STDOUTLOG
         printf("read %d bytes of %d\n",fread(ptr,1,file_len,es),file_len); 
-#else
-	fread(ptr,1,file_len,es);
-#endif
+//#else
+//	fread(ptr,1,file_len,es);
+//#endif
 
 #ifndef __EMSCRIPTEN__ 
 fclose(es);
