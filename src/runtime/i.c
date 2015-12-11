@@ -519,12 +519,13 @@ int oldticks = 0;
 void madewith(void);
 
 void mainloop(void) {
+#ifndef DEBUG
 	if(splashtime>0 && SDL_GetTicks()-oldticks<splashtime) {
 		tecla();
 		return;
 	} 
     splashtime=0;
-    
+#endif
 	error_vpe=0;
     frame_start();
 #ifdef DEBUG
