@@ -12,15 +12,50 @@ VER=`dd if="$1/$2" bs=1 count=1 skip=2 2>/dev/null`
 
 echo "Building $4"
 
+echo "Compressing dir $1"
+
+rm -rf buildhtml
+mkdir buildhtml
+cp -R "$1/"* buildhtml
+rm -rf buildhtml2
+mkdir buildhtml2
+
+if [ $1 != "1" ] 
+then
+
+rm buildhtml/$2
+
+#rm data.div
+cd buildhtml
+
+find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
+
+rm *.exe
+mv *.pak ../buildhtml2
+rm *.prg
+rm *.dll
+
+echo "Creating data.div"
+zip ../buildhtml2/data.div -r -9 * > /dev/null
+cd -
+
+cp "$1/$2" buildhtml2
+
+else
+rm -rf buildhtml2
+mv buildhtml buildhtml2
+
+fi
+
 # s= div1 j=div2
 if [ $VER = "s" ] 
 then
 echo "USING DIV1 RUNTIME"
-make -f Makefile.html dirs R1EMBED="--preload-file \"$1@\"" D1HTML_EXE="$2" DIV1RUN="html/$3.js" html/$3.js > /dev/null
+make -f Makefile.html dirs R1EMBED="--preload-file ./buildhtml2@" D1HTML_EXE="$2" DIV1RUN="html/$3.js" html/$3.js > /dev/null
 DIVVER="DIV1"
 else
 echo "USING DIV2 RUNTIME"	
-make -f Makefile.html dirs DEMBEDFILES="--preload-file \"$1@\"" HTML_EXE="$2" RUNNER="html/$3.js" html/$3.js > /dev/null
+make -f Makefile.html dirs DEMBEDFILES="--preload-file ./buildhtml2@" HTML_EXE="$2" RUNNER="html/$3.js" html/$3.js > /dev/null
 DIVVER="DIV2"
 fi
 

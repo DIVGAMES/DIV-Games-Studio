@@ -7,30 +7,16 @@
 # apt-get install -y libsdl1.2-dev
 #
 
-#DIVIDE = html/div.html
+BUILDLVL= -O3
 
 SDL_CFLAGS = -DZLIB -DMIXER -DSDL
-#-DJPEGLIB  
-#EMBEDFILES= --emrun --preload-file system --preload-file help
-
-#HTML_EXE = system/EXEC.EXE
-#REMBEDFILES=  --preload-file user/BubDiv
-#RUNNER=html/bbobble.js
-
-#### DIV 1 EXPORT
-
-#D1EMBEDFILES= --preload-file $(HTML_EXE)
-#R1EMBED = --preload-file ~/Desktop/DIVGAMES/wip/starharrier-446@/
-#DIV1RUN=html/starharrier.js
-
-#DEMBEDFILES= --preload-file $(HTML_EXE)
-
 
 SDL_LIBS = -lSDL
-#-lSDL_ttf -lSDL_image
+
 CXX=emcc
 CC=emcc
-EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s ASYNCIFY=1 -s TOTAL_MEMORY=268435456 
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s ASYNCIFY=1 -s TOTAL_MEMORY=268435456  
+#-s ASSERTIONS=2
 # -s TOTAL_MEMORY=67108864
 # -s TOTAL_MEMORY=268435456 
 # -s TOTAL_MEMORY=134217728
@@ -54,11 +40,10 @@ EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s ASYNCIFY=1 -s TOTAL_MEMOR
 # -s ASM_JS=1 
 #-s EXPORTED_FUNCTIONS="['_getscore','_main']"
 EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
-BUILDLVL= -O3
-SCFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc -Isrc/shared -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2 
+SCFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc/shared -Isrc -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2 
 LIBS = $(SDL_LIBS) -lm --emrun
 
-OSDEP = src/shared/osdep.c
+	OSDEP = src/shared/osdep.c src/shared/unzip.c
 
 CSRC = $(wildcard src/*.c) ${OSDEP}
 SHAREDSRC = $(wildcard src/shared/run/*.c) 

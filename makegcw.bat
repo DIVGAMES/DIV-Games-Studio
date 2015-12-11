@@ -8,7 +8,12 @@ mkdir buildgcw
 
 echo "Copying source files"
 cp -r $1/* buildgcw
+
 cp tools/dx.png buildgcw/$3.png
+
+#echo "renaming files to owercase"
+
+#find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
 
 echo "Removing old div exe"
 rm "buildgcw/$2"
