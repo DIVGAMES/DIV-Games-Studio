@@ -7783,7 +7783,9 @@ byte *prgbuf;
 	inicializa_compilador();
 	compilado=1; mouse_graf=3; numero_error=-1;
 	if(argc<3) {
-		printf("Usage: -c [program name] [output.exe]\n");
+		printf("DIV Games studio command line compiler ");
+		printf("(c) 2015 MikeDX and Daniel Navarro\n");
+		printf("Usage: [%s] -c [program name] [output.exe]\n",argv[0]);
 		exit(-1);
 	}
 	f=fopen(argv[2],"rb");
