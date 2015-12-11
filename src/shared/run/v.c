@@ -135,9 +135,10 @@ void set_paleta (void) {
 extern int splashtime;
 
 void set_dac (void) {
+#ifndef DEBUG
 	if(splashtime>0)	
 		return;
-
+#endif
 	if(vga==NULL) 
 		return;
 #ifndef DOS
@@ -269,16 +270,20 @@ divTexture = SDL_CreateTexture(divRender,
 #endif
 #else
 
-#ifdef GCW_SOFTSTRETCH
-	if(!vga)
-		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
-	w_ratio = vga_an / (float)(GCW_W*1.0);
-	h_ratio = vga_al / (float)(GCW_H*1.0);
-#else
-	vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
-	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+#ifdef GCW
 
+	if(vga_an>640 || vga_al>480) {
+		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+		printf("Setting soft mode %d,%d\n",GCW_W,GCW_H);
+		w_ratio = vga_an / (float)(GCW_W*1.0);
+		h_ratio = vga_al / (float)(GCW_H*1.0);
+	} 
+	
+	else  // hardware scale
 #endif
+		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0); 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+	
+	
 
 #endif
 
@@ -360,9 +365,10 @@ divTexture = SDL_CreateTexture(divRender,
     texto[max_textos].font=(byte*)fonts[0];
   } else texto[max_textos].font=0;
 
+#ifndef DEBUG
 	if(splashtime>0)
 		madewith();
-
+#endif
 
 }
 
@@ -403,7 +409,7 @@ void rvmode(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Dump buffer to VGA
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-#ifdef GCW_SOFTSTRETCH
+#ifdef GCW
 void volcadogcw(byte *p) {
 	// blit screen to smaller 320x240 screen
 	byte *qt = (byte *)vga->pixels;
@@ -469,13 +475,15 @@ SDL_RenderClear(divRender);
 SDL_RenderCopy(divRender, divTexture, NULL, NULL);
 SDL_RenderPresent(divRender);
 #endif
-#ifdef GCW_SOFTSTRETCH
-	if(vga_an>=GCW_W && vga_al>=GCW_H) {
+
+#ifdef GCW 
+	if(vga_an>640 || vga_al>480) {
 		volcadogcw(p);
 		SDL_Flip(vga);
 		return;
 	}
 #endif
+
 	if(SDL_MUSTLOCK(vga))
 		SDL_LockSurface(vga);
 
