@@ -7,6 +7,9 @@
 #include <emscripten.h>
 #endif
 
+#ifdef ZLIB
+#include "unzip.h"
+#endif
 
 #include <limits.h>
 #include <unistd.h>
