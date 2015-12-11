@@ -72,12 +72,15 @@ PE *DIV_LoadDll(char *name)
 	if(!pefile) return NULL;
 	// find the entrypoint
 
-	entryp=(void *)dlsym(pefile,"divmain");
+	entryp=(void (*)(void *(*)(), void (*)())) dlsym(pefile,"divmain");
+//void (*)(void *(*)(), void (*)()) dlsym(pefile,"divmain");
 	if(entryp==NULL){
-		entryp=(void *)dlsym(pefile,"_divmain");
+		//entryp=(void *)dlsym(pefile,"_divmain");
+		entryp=(void (*)(void *(*)(), void (*)())) dlsym(pefile,"_divmain");
 	}
 	if(entryp==NULL){
-		entryp=(void *)dlsym(pefile,"W?divmain");
+		entryp=(void (*)(void *(*)(), void (*)())) dlsym(pefile,"W?divmain");
+		//entryp=(void *)dlsym(pefile,"W?divmain");
 	}
 	if(entryp==NULL){
 		dlclose(pefile);
@@ -86,7 +89,7 @@ PE *DIV_LoadDll(char *name)
 		return NULL;
 	}
 	// execute entrypoint
-	entryp(DIV_import,DIV_export);
+	entryp((void *(*)())DIV_import,(void (*)())DIV_export);
 	// check if entrypoint was successfull
 	if(dll_error!=NULL){
 		// no ? free pefile and return NULL;
@@ -94,12 +97,15 @@ PE *DIV_LoadDll(char *name)
 		return NULL;
 	}
 
-	entryp2=(void *)dlsym(pefile,"divlibrary");	
+	//entryp2=(void *)dlsym(pefile,"divlibrary");	
+	entryp2=(void (*)(void (*)())) dlsym(pefile,"divlibrary");
 	if(entryp2==NULL){
-		entryp2=(void *)dlsym(pefile,"_divlibrary");
+		entryp2=(void (*)(void (*)())) dlsym(pefile,"_divlibrary");
+		//entryp2=(void *)dlsym(pefile,"_divlibrary");
 	}
 	if(entryp2==NULL){
-		entryp2=(void *)dlsym(pefile,"W?divlibrary");
+		entryp2=(void (*)(void (*)())) dlsym(pefile,"W?divlibrary");
+		//entryp2=(void *)dlsym(pefile,"W?divlibrary");
 	}
 	if(entryp2==NULL){
 		dlclose(pefile);
@@ -110,7 +116,7 @@ PE *DIV_LoadDll(char *name)
 
 	
  // execute entrypoint
-	entryp2(COM_export);
+	entryp2((void(*)())(char *)COM_export);
 	// check if entrypoint was successfull
 	if(dll_error!=NULL){
 		// no ? free pefile and return NULL;
@@ -160,23 +166,28 @@ PE *DIV_ImportDll(char *name) {
 
 	// find the entrypoint
 
-	entryp=(void *)dlsym(pefile, "divlibrary"); 
+	entryp=(void (*)(void (*)())) dlsym(pefile,"divlibrary");
+	//entryp=(void *)dlsym(pefile, "divlibrary"); 
 	
 	if(entryp==NULL)
-		entryp=(void *)dlsym(pefile,"divlibrary_");
+		entryp=(void (*)(void (*)())) dlsym(pefile,"divlibrary_");
+	//	entryp=(void *)dlsym(pefile,"divlibrary_");
 
 	if(entryp==NULL)
-		entryp=(void *)dlsym(pefile,"_divlibrary");
+		entryp=(void (*)(void (*)())) dlsym(pefile,"_divlibrary");
+	//	entryp=(void *)dlsym(pefile,"_divlibrary");
 	
 	if(entryp==NULL)
-		entryp=(void *)dlsym(pefile,"W?divlibrary");
+		entryp=(void (*)(void (*)())) dlsym(pefile,"W?divlibrary");
+	//	entryp=(void *)dlsym(pefile,"W?divlibrary");
 	
 	printf("Entry point is %x\n",entryp);
 	
 	if(entryp!=NULL)
 	{
 	  // execute entrypoint
-  	entryp(COM_export); // call the dll's entrypoints and get the func names :)
+	entryp((void(*)())(char *)COM_export);
+//  	entryp(COM_export); // call the dll's entrypoints and get the func names :)
 //  	printf("51!\n");
   	// check if entrypoint was successfull
 	  if(dll_error!=NULL)
@@ -257,7 +268,7 @@ EXPORTENTRY *e;// ,*o;
 	if(findexportentry(name)!=NULL) {
 	  return;
  }
- e=malloc(sizeof(EXPORTENTRY));
+ e=(EXPORTENTRY *)malloc(sizeof(EXPORTENTRY));
 	if(e)
 	{
 		e->next=NULL;
@@ -279,19 +290,23 @@ void DIV_UnLoadDll(PE *pefile)
 void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
 
 	// find the entrypoint (again)
-	entryp=(void *)dlsym(pefile,"divend");
+	entryp=(void (*)(void *(*)(), void (*)())) dlsym(pefile,"divend");
+	//entryp=(void *)dlsym(pefile,"divend");
 	if(entryp==NULL){
-		entryp=(void *)dlsym(pefile,"_divend");
+		//entryp=(void *)dlsym(pefile,"_divend");
+		entryp=(void (*)(void *(*)(), void (*)())) dlsym(pefile,"_divend");
 	}
 	if(entryp==NULL){
-		entryp=(void *)dlsym(pefile,"W?divend");
+		entryp=(void (*)(void *(*)(), void (*)())) dlsym(pefile,"W?divend");
+	//	entryp=(void *)dlsym(pefile,"W?divend");
 	}
 //	entryp=PE_ImportFnc(pefile,"divend_");
 //	if(entryp==NULL){
 //		entryp=PE_ImportFnc(pefile,"_divend");
 //	}
 	if(entryp!=NULL)
-    entryp(DIV_import,DIV_RemoveExport);
+	entryp((void *(*)())DIV_import,(void (*)())DIV_RemoveExport);
+    //entryp(DIV_import,DIV_RemoveExport);
 
 //	PE_Free(pefile);
 	dlclose(pefile);

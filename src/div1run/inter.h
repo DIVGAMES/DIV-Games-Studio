@@ -798,6 +798,10 @@ GLOBAL int ss_exit;
 
 void e(char * texto);
 
+#ifdef __cplusplus
+void e(int texto);
+#endif
+
 #define e100 "No hay memoria suficiente para ejecutar el juego."
 #define e101 "Llamada a key() con un c¢digo de tecla inexistente."
 #define e102 "No se pudo cargar la paleta, archivo no encontrado."

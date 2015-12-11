@@ -908,30 +908,30 @@ emscripten_run_script (buf);
 
     // Los importa
 
-    set_video_mode        =DIV_import("set_video_mode"); //ok
-    process_palette       =DIV_import("process_palette"); //ok
-    process_active_palette=DIV_import("process_active_palette"); //ok
+    set_video_mode        =(void (*)())DIV_import("set_video_mode"); //ok
+    process_palette       =(void (*)())DIV_import("process_palette"); //ok
+    process_active_palette=(void (*)())DIV_import("process_active_palette"); //ok
 
-    process_sound         =DIV_import("process_sound"); //ok
+    process_sound         =(void (*)(char *,int))DIV_import("process_sound"); //ok
 
-    process_fpg           =DIV_import("process_fpg"); //ok
-    process_map           =DIV_import("process_map"); //ok
-    process_fnt           =DIV_import("process_fnt"); //ok
+    process_fpg           =(void (*)(char *,int))DIV_import("process_fpg"); //ok
+    process_map           =(void (*)(char *,int))DIV_import("process_map"); //ok
+    process_fnt           =(void (*)(char *,int))DIV_import("process_fnt"); //ok
 
-    background_to_buffer  =DIV_import("background_to_buffer"); //ok
-    buffer_to_video       =DIV_import("buffer_to_video"); //ok
+    background_to_buffer  =(void (*)())DIV_import("background_to_buffer"); //ok
+    buffer_to_video       =(void (*)())DIV_import("buffer_to_video"); //ok
 
-    post_process_scroll   =DIV_import("post_process_scroll"); //ok
-    post_process_m7       =DIV_import("post_process_m7"); //ok
-    post_process_buffer   =DIV_import("post_process_buffer"); //ok
-    pre_process_buffer    =DIV_import("pre_process_buffer"); //ok
-    post_process          =DIV_import("post_process"); //ok
+    post_process_scroll   =(void (*)())DIV_import("post_process_scroll"); //ok
+    post_process_m7       =(void (*)())DIV_import("post_process_m7"); //ok
+    post_process_buffer   =(void (*)())DIV_import("post_process_buffer"); //ok
+    pre_process_buffer    =(void (*)())DIV_import("pre_process_buffer"); //ok
+    post_process          =(void (*)())DIV_import("post_process"); //ok
 
-    putsprite             =DIV_import("put_sprite"); //ok
+    putsprite             =(void (*)(byte *,int,int,int,int,int,int,int,int,int))DIV_import("put_sprite"); //ok
 
-    ss_init               =DIV_import("ss_init"); //ok
-    ss_frame              =DIV_import("ss_frame"); //ok
-    ss_end                =DIV_import("ss_end"); //ok
+    ss_init               =(void (*)())DIV_import("ss_init"); //ok
+    ss_frame              =(void (*)())DIV_import("ss_frame"); //ok
+    ss_end                =(void (*)())DIV_import("ss_end"); //ok
 
     ss_time_counter=get_reloj()+ss_time;
 
@@ -1370,7 +1370,7 @@ int main(int argc,char * argv[]) {
   atexit(SDL_Quit);
   SDL_Init( SDL_INIT_EVERYTHING);
   if(SDL_NumJoysticks() > 0) { 
-		divjoy = SDL_JoystickOpen(0);
+		divjoy = (SDL_Joystick*)SDL_JoystickOpen(0);
 		
 
 printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));

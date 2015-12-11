@@ -246,7 +246,7 @@ case lfrf:
   } break;
 case limp:
 #ifdef DIVDLL
-    if ((pe[nDLL]=DIV_LoadDll((byte*)&mem[mem[ip++]]))==NULL)
+    if ((pe[nDLL]=DIV_LoadDll((char*)&mem[mem[ip++]]))==NULL)
       exer(4);
     else
       nDLL++;
@@ -254,7 +254,7 @@ case limp:
   break;
 case lext:
 #ifdef DIVDLL
-    call((unsigned int)ExternDirs[mem[ip++]]);
+    call((voidReturnType)ExternDirs[mem[ip++]]);
 #endif
   break;
 case lchk:
