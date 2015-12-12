@@ -251,11 +251,13 @@ case limp:
 //      exer(4);
     else
       nDLL++;
+#else
+printf("skipping dll %s\n",(char*)&mem[mem[ip++]]);
 #endif
   break;
 case lext:
 #ifdef DIVDLL
-if(ExternDirs[mem[ip++]])
+if(ExternDirs[mem[ip]])
     call((voidReturnType)ExternDirs[mem[ip++]]);
 #endif
   break;
