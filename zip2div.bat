@@ -5,7 +5,7 @@ mkdir zipdiv
 cd zipdiv
 echo "unzipping file"
 
-unzip $1 > /dev/null
+unzip -j $1 > /dev/null
 
 echo "converting files to lowercase"
 
@@ -20,7 +20,7 @@ then
 PRG=`ls *.prg 2>/dev/null | head -1`
 echo "Compiling PRG $PRG"
 cd -
-./divc -c zipdiv/$PRG EXEC.EXE
+./system/div-LINUX -c zipdiv/$PRG 
 cp -r system/EXEC.EXE zipdiv/EXEC.EXE
 cd - > /dev/null
 EXE=EXEC.EXE
@@ -47,7 +47,7 @@ echo "Creating html"
 echo "Creating gcw opk"
 ./makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
 
-rm -rf zipdiv
+#rm -rf zipdiv
 
 
 scp $2.opk root@192.168.0.12:/media/data/apps
