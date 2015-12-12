@@ -59,13 +59,13 @@ VER=`dd if=buildgcw/$3.dat bs=1 count=1 skip=2 2>/dev/null`
 #echo $VER
 
 # s= div1 j=div2
-if [ $VER = "j" ]
+if [ $VER = "s" ]
 then
-echo "DIV2 runtime"
-cp system/divrun-GCW "buildgcw/$3"
-else
 echo "DIV1 runtime"
 cp ./div1run-GCW "buildgcw/$3"
+else
+echo "DIV2 runtime"
+cp system/divrun-GCW "buildgcw/$3"
 fi
 
 echo "Compressing binary"
