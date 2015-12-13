@@ -8,9 +8,9 @@ EXECUTABLE=div2-ide
 RUNTIME=div2-run
 RUNTIME1=div1-run
 
-OSDEP = src/shared/osdep.c
+OSDEP = src/shared/osdep.c src/shared/unzip.c src/shared/mikedll.c
 FMEMOPEN = src/osx/fmemopen.c 
-SOURCES=$(wildcard src/*.c) ${OSDEP}
+SOURCES=$(wildcard src/*.c) ${OSDEP} ${FMEMOPEN}
 SHAREDSRC=$(wildcard src/shared/run/*.c)
 
 RUNSOURCES=$(wildcard src/runtime/*.c) ${SHAREDSRC} ${OSDEP} ${FMEMOPEN}
@@ -36,7 +36,7 @@ VISOROBJS=$(VISOR_SOURCES:.c=.o)
 DROIDLIBFLAGS= -lSDL -lSDL_image -lSDL_mixer -lm -lz -ljpeg
 # -lSDL_net -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -Wl,--no-undefined -lm
 
-SCFLAGS= -O3 -w -fpermissive -Isrc -Isrc/shared -funsigned-char -DMIXER -DZLIB -DJPGLIB -DDROID 
+SCFLAGS= -g -w -fpermissive  -Isrc/shared -funsigned-char -DMIXER -DZLIB -DJPGLIB -DDROID -DDIVDLL
 #-Isrc/div1run
 #-Isrc/runtime
 #-DDEBUG 
@@ -48,29 +48,31 @@ dirs: divide div1 div2
 
 divide:
 	mkdir -p divide/src/shared/
+	mkdir -p divide/src/osx
 	
 div1:
 	mkdir -p div1/src/shared/run
 	mkdir -p div1/src/div1run
 
-div2:
+div2: 
 	mkdir -p div2/src/shared/run
 	mkdir -p div2/src/runtime/
+	mkdir -p div2/src/osx
 
 ${EXECUTABLE}: CFLAGS = ${SCFLAGS} -DDIV2
 $(EXECUTABLE): $(OBJS) $(VISOROBJS) 
 	 $(CC) $(OBJS) $(VISOROBJS) $(DROIDLIBFLAGS) -o $@
 
 divide/%.c.o: %.c
-	$(CC) $(CFLAGS) -c $< -o divide/$<.o
+	$(CC) $(CFLAGS) -Isrc -c $< -o divide/$<.o
 
 #	 $(CC) -c $(CFLAGS)  $< -o $@
 
 div1/%.c.o: %.c
-	 $(CC) -c $(CFLAGS)  $< -o div1/$<.o
+	 $(CC) -c $(CFLAGS)  -Isrc $< -o div1/$<.o
 
 div2/%.c.o: %.c
-	 $(CC) -c $(CFLAGS)  $< -o div2/$<.o
+	 $(CC) -c $(CFLAGS) -Isrc $< -o div2/$<.o
 
 ${RUNTIME}: CFLAGS = -DDIV2 -Isrc/runtime ${SCFLAGS}
 $(RUNTIME): $(RUNOBJS)
