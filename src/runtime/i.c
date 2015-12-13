@@ -1429,7 +1429,8 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
 f=fopen(HTML_EXE,"rb");
 printf("FILE: %s %x\n",HTML_EXE,f);
 
-#elseifndef #DROID
+#else
+#ifndef DROID
   if ((f=fopen(argv[1],"rb"))==NULL) {
     #ifndef DEBUG
     printf("Error: Needs a DIV executable to load.\n");
@@ -1440,6 +1441,7 @@ printf("FILE: %s %x\n",HTML_EXE,f);
 
     exit(26);
   }
+#endif
 #endif
 
 #ifdef DROID
