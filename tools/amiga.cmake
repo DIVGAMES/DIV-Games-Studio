@@ -30,11 +30,13 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
 
-ADD_DEFINITIONS( -DAMIGAOS -noixemul )
-# -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/vbcc-include)
+ADD_DEFINITIONS( -DAMIGAOS -noixemul -I/opt/m68k-amigaos/include -I/opt/m68k-amigaos/vbcc-include -D__NOINLINE__)
 #-I${CMAKE_FIND_ROOT_PATH}/include)
 #-DGCW_SOFTSTRETCH)	
 #-DMIXER) 
 
-SET(OSDEP "src/osdep/osdep.c" )
+set ( CMAKE_EXE_LINKER_FLAGS "-L/opt/m68k-amigaos/lib -Wl,-rpath,/opt/m68k-amigaos/lib -lSDL -lpthread")
+
+
+SET(OSDEP "src/shared/osdep.c" )
 

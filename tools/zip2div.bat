@@ -42,10 +42,13 @@ FOUR="$2"
 fi
 
 echo "Creating html"
-./makehtml.bat ./zipdiv $EXE "$2" "$THREE" "$FOUR"
+./tools/makehtml.bat ./zipdiv $EXE "$2" "$THREE" "$FOUR"
 
 echo "Creating gcw opk"
-./makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
+./tools/makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
+
+echo "Creating Android apk"
+./tools/makedroid.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
 
 #rm -rf zipdiv
 
