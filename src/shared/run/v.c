@@ -6,11 +6,17 @@
 #include "inter.h"
 //#include "..\inc\svga.h"
 //#include "..\inc\vesa.h"
-
+#ifndef __EMSCRIPTEN__
 #include "madewith.h"
-
+#endif
 
 #ifdef GCW
+//#define GCW_W 640
+//#define GCW_H 480
+
+#define GCW_W 320
+#define GCW_H 240
+
 float w_ratio=1.0;
 float h_ratio=1.0;
 #endif
@@ -202,7 +208,7 @@ extern float m_x,m_y;
 
 
 extern int oldticks;
-
+#ifndef __EMSCRIPTEN__
 void madewith(void) {
 //	printf("madewith");
 	SDL_RWops *rwops = NULL;
@@ -221,7 +227,7 @@ void madewith(void) {
 
 	SDL_BlitSurface(mwsurface,NULL,vga,NULL);
 
-	SDL_FreeSurface(image);
+//	SDL_FreeSurface(image);
 	SDL_FreeSurface(mwsurface);
 
 	SDL_Flip(vga);
@@ -229,7 +235,7 @@ void madewith(void) {
 //	oldticks = SDL_GetTicks();
 //	splashtime = 10000;
 }
-
+#endif
 void svmode(void) {
 #ifndef __EMSCRIPTEN__
 if(vga==NULL) {
@@ -271,19 +277,34 @@ divTexture = SDL_CreateTexture(divRender,
 #else
 
 #ifdef GCW
-
-	if(vga_an>640 || vga_al>480) {
-		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
-		printf("Setting soft mode %d,%d\n",GCW_W,GCW_H);
-		w_ratio = vga_an / (float)(GCW_W*1.0);
-		h_ratio = vga_al / (float)(GCW_H*1.0);
-	} 
+	if(vga)
+		SDL_FreeSurface(vga);
 	
+	vga=NULL;
+		
+	if(vga_an>640 || vga_al>480) {
+		
+		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+
+		if(vga) {
+//		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+//		if(!vga) {
+//			vga=SDL_SetVideoMode(320,240, 8, 0);
+//		}
+
+//		w_ratio = vga_an / (float)(vga->w*1.0);
+//		h_ratio = vga_al / (float)(vga->h*1.0);		
+
+			printf("Setting soft mode %d %d\n",vga->w,vga->h);
+		
+		} 
+	}
 	else  // hardware scale
 #endif
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0); 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
-	
+		printf("Set mode: %d,%d\n",vga->w,vga->h);
+		
 
 #endif
 
@@ -366,8 +387,10 @@ divTexture = SDL_CreateTexture(divRender,
   } else texto[max_textos].font=0;
 
 #ifndef DEBUG
+#ifndef __EMSCRIPTEN__
 	if(splashtime>0)
 		madewith();
+#endif
 #endif
 
 }
@@ -417,8 +440,8 @@ void volcadogcw(byte *p) {
 	int row=0;
 	float vy=0;
 	float vx=0;
-	float wratio = vga_an / (float)(GCW_W*1.0);
-	float hratio = vga_al / (float)(GCW_H*1.0);
+	float wratio = vga_an / (float)(vga->w*1.0);
+	float hratio = vga_al / (float)(vga->h*1.0);
 	byte *c;
 	//printf("ratio is %fx%f\n",wratio,hratio);
 	
@@ -439,12 +462,14 @@ void volcadogcw(byte *p) {
 //			p=p[(int)(vga_an*hratio)];
 		//q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
 	}
-	
+	if(SDL_MUSTLOCK(vga))
+		SDL_UnlockSurface(vga);
+
 	return;
 	for (vy=0; vy<vga_al;vy+=hratio) {
 //printf("%d %d %d vy is %f %d\n",row,GCW_W, GCW_H, vy,(int)vy);
 		// calculate the pixel
-		c=&p[GCW_W*(int)(row/hratio)];
+		c=&p[vga->w*(int)(row/hratio)];
 		q=&qt[vga->pitch*(int)row];
 //		qt = &q[(int)vy *GCW_W];
 		for(vx=0;vx<vga_an;vx+=wratio) {
