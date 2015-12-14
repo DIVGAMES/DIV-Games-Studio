@@ -810,7 +810,7 @@ void descomprime_BMP(byte *buffer, byte *mapa, int vent)
     }
     for(; x<256; x++) dac4[y++] = 0, dac4[y++] = 0, dac4[y++] = 0;
   }
-  else // BMP de 24 bpp
+  else if(InfoHeader.biBitCount==24) // BMP de 24 bpp
   {
     old_muestra=muestra;
     muestra=(byte*)malloc(32768);
@@ -919,9 +919,13 @@ BITMAPFILEHEADER     FileHeader;
 BITMAPINFOHEADER     InfoHeader;
 RGBQUAD              Bmpdac[256];
 int x,y=0;
+
+byte pad[4]={0,0,0,0};
+int pad_an = map_an + 4-(map_an%4);
+
 //BITMAPFILEHEADER
         FileHeader.bfType=0x4D42;
-        FileHeader.bfSize=1078+map_an*map_al;
+        FileHeader.bfSize=1078+pad_an*map_al;
         FileHeader.bfReserved1=0;
         FileHeader.bfReserved2=0;
         FileHeader.bfOffBits=1078;
@@ -937,7 +941,7 @@ int x,y=0;
         InfoHeader.biPlanes=1;
         InfoHeader.biBitCount=8;
         InfoHeader.biCompression=0;
-        InfoHeader.biSizeImage=map_an*map_al;
+        InfoHeader.biSizeImage=pad_an*map_al;
         InfoHeader.biXPelsPerMeter=0;
         InfoHeader.biYPelsPerMeter=0;
         InfoHeader.biClrUsed=0;
@@ -961,8 +965,11 @@ int x,y=0;
                 Bmpdac[x].rgbBlue=dac[y++]*4;
         }
         fwrite(&Bmpdac,1024,1,f);
-        for(x=0;x<map_al;x++)
-                fwrite(mapa+((map_al-1)-x)*map_an,1,map_an,f);
+        for(x=0;x<map_al;x++) {
+			fwrite(mapa+((map_al-1)-x)*map_an,1,map_an,f);
+			if(pad_an!=map_an)
+				fwrite(pad,1,pad_an-map_an,f);
+		}
 return(1);
 }
 
