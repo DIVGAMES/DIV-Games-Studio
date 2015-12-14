@@ -30,16 +30,45 @@ find android/resources -iname "div*run.dll" | xargs rm 2>/dev/null
 echo "Removing flic files"
 find android/resources -iname "*.fl*" | xargs rm 2>/dev/null
 
+
+PAK=`find android/resources -iname '*.pak' | wc -l`
+
+echo "PAK FOUND: $PAK"
+
+if [ $PAK == "0" ]
+then
+
+echo "Compressing resources to data.div file"
+
 cd android/resources
 zip ../data.div -9 -r *
 rm -rf *
 mv ../data.div .
 cd -
+fi
 
 echo "Copying new exe files"
+
+
+VER=`dd if="$1/$2" bs=1 count=1 skip=2 2>/dev/null`
+#echo $VER
+
+# s= div1 j=div2
+if [ $VER = "s" ]
+then
+echo "DIV1 runtime"
+cp android/div1.so android/div2-droid/lib/armeabi/libapplication.so
+cp "$1/$2" "android/resources/run"
+
+else
+echo "DIV2 runtime"
+cp android/div2.so android/div2-droid/lib/armeabi/libapplication.so
 cp "$1/$2" "android/resources/EXEC.EXE"
 
-echo "Creating desktop file"
+fi
+
+
+echo "Creating yml config"
 cat << EOF > android/div2-droid/apktool.yml
 version: 2.0.2
 apkFileName: $3.apk
@@ -60,7 +89,7 @@ sharedLibrary: false
 
 EOF
 
-
+echo "Creating strings file def"
 cat << EOF > android/div2-droid/res/values/strings.xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -189,6 +218,22 @@ The application can't start."</string>
     <string name="qt_libs">Qt5Core,Qt5Gui,Qt5Widgets,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</string>
 </resources>
 
+EOF
+
+
+echo "Creating prefs file"
+cat << EOF > android/div2-droid/res/xml/sdlprefs.xml
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference android:title="Enable default on-screen buttons" android:key="hudenabled" android:defaultValue="true" />
+    <ListPreference android:title="Button 1" android:key="btn1pref" android:defaultValue="32" />
+    <ListPreference android:title="Button 2" android:key="btn2pref" android:defaultValue="304" />
+    <ListPreference android:title="Button 3" android:key="btn3pref" android:defaultValue="308" />
+    <ListPreference android:title="Button 4" android:key="btn4pref" android:defaultValue="306" />
+    <ListPreference android:title="Button 5" android:key="btn5pref" android:defaultValue="8" />
+    <ListPreference android:title="Button 6" android:key="btn6pref" android:defaultValue="9" />
+</PreferenceScreen>
 EOF
 
 echo "Making resources file"
