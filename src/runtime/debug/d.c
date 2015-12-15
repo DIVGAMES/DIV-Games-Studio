@@ -579,6 +579,7 @@ void entorno_dialogo(void) {
 
   fin_dialogo=0;
   do {
+	ascii=0;scan_code=0; 
     tecla();
     dialogo_invocado=0;
 
