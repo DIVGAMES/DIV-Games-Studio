@@ -151,7 +151,7 @@ void collision(void) {
   int i,bloque; // Recorre procesos de _IdScan en adelante, si _IdScan=0 desde start
   int file,graph,angle;
   int x,y,n,m;  // Coordenadas del proceso actual
-  short xg,yg;  // Centro gravitatorio del gr fico del proceso actual
+  int64_t xg,yg;  // Centro gravitatorio del gr fico del proceso actual
   int * ptr;
 
   bloque=pila[sp]; pila[sp]=0; // Por defecto no colisiona
