@@ -133,7 +133,7 @@ cat << EOF > html/$3.html
 			</textarea>
 		</div>
 		
-		<script async="" src="$3.js" type="text/javascript"></script>
+		<script async="" src="$3.js?i99" type="text/javascript"></script>
 		<script async="" src="site/analytics.js" type="text/javascript"></script>
 		
 	</body>

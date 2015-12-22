@@ -50,7 +50,8 @@ EOF
 
 
 echo "Making $4 GCW BINARY"
-cmake . -DGCW=1 -DWINDOWS=0 -DAMIGA=0 -DRPI=0 > /dev/null
+cmake . -DTARGETOS=GCW > /dev/null
+
 make -j5 div1run-GCW divrun-GCW > /dev/null
 
 echo "Copying $3 to buildgcw/$3"

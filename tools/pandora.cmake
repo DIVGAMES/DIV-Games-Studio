@@ -31,7 +31,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
 set ( CMAKE_EXE_LINKER_FLAGS "-L${CMAKE_FIND_ROOT_PATH}usr/lib/ -Wl,-rpath,${CMAKE_FIND_ROOT_PATH}usr/lib" )
-ADD_DEFINITIONS(  -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -I${CMAKE_FIND_ROOT_PATH}/usr/include )
+ADD_DEFINITIONS(  -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -I${CMAKE_FIND_ROOT_PATH}/usr/include -DPANDORA )
 #-DMIXER) 
 
 #SET(OSDEP "src/osdep/osdep.c" )
