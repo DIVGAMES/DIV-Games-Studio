@@ -5,7 +5,7 @@
 #    *) cd build
 #    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-Ubuntu-mingw64.cmake ..
 
-set(CMAKE_SYSTEM_NAME PANDORA)
+set(CMAKE_SYSTEM_NAME Linux)
 SET(PANDORA=1)
 SET(PLATFORM "PANDORA")
 set(TOOLCHAIN_PREFIX pandora)

@@ -5,7 +5,7 @@
 #    *) cd build
 #    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-Ubuntu-mingw64.cmake ..
 
-set(CMAKE_SYSTEM_NAME AMIGA)
+set(CMAKE_SYSTEM_NAME Amiga)
 SET(AMIGA=1)
 SET(PLATFORM "AMIGA")
 set(TOOLCHAIN_PREFIX m68k-amigaos)

@@ -5,7 +5,7 @@
 #    *) cd build
 #    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-Ubuntu-mingw64.cmake ..
 
-set(CMAKE_SYSTEM_NAME GCW)
+set(CMAKE_SYSTEM_NAME Linux)
 SET(GCW=1)
 SET(PLATFORM "GCW")
 set(TOOLCHAIN_PREFIX mipsel-linux)
