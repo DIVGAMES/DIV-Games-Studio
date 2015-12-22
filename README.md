@@ -4,6 +4,7 @@ DIV Games Studio 2, ported, translated and upgraded.
 
 cross platform IDE, compiler and runtime for
 
+* DOS
 * Windows
 * OSX
 * Android
@@ -20,4 +21,4 @@ Future Possible Platforms:
 * Nintendo DS
 * Nintendo Wii
 
-100% compatible with existing DIV2 code (except mode8!)
+100% compatible with existing DIV1 and DIV2 code including plugin dlls (except mode8!)
