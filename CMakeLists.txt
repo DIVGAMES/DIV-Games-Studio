@@ -4,7 +4,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(div2015)
 
-SET(BUILD_LEVEL "-O3 ")
+SET(BUILD_LEVEL "-O0 ")
+#ggdb3 -O0 ")
 #ggdb3 -O0 ") 
 #"-O3 ")
 
@@ -29,6 +30,11 @@ ENDIF()
 IF(TARGETOS STREQUAL "GCW")
 INCLUDE ( tools/gcw.cmake )
 ENDIF()
+
+IF(TARGETOS STREQUAL "GP2X")
+INCLUDE ( tools/gp2x.cmake )
+ENDIF()
+
 
 IF(TARGETOS STREQUAL "AMIGA")
 INCLUDE ( tools/amiga.cmake )

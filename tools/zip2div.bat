@@ -46,12 +46,14 @@ echo "Creating html"
 
 echo "Creating gcw opk"
 ./tools/makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
+scp $2.opk root@192.168.0.12:/media/data/apps
 
 echo "Creating Android apk"
 ./tools/makedroid.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
 
-#rm -rf zipdiv
+echo "Creating Pandora PND"
+./tools/makepnd.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
 
+rm -rf zipdiv
 
-scp $2.opk root@192.168.0.12:/media/data/apps
 emrun html/$2.html
