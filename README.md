@@ -8,12 +8,12 @@ cross platform IDE, compiler and runtime for
 * Windows
 * OSX
 * Android 
-* Amazon Fire
-* Amazon Kindle
-* Ouya Console
-* Linux
+* Amazon Fire TV Stick (WIP)
+* Amazon Kindle (WIP)
+* Ouya Console (WIP)
+* Linux (X86 / X84)
 * HTML / Javascript (emscripten - runtime export only)
-* Raspberry Pi
+* Raspberry Pi (B+, 2, zero)
 * GCW-Zero
 * Pandora Console
 * GP2X Console
@@ -28,7 +28,7 @@ Future Possible Platforms:
 * Windows Mobile
 * PS2
 * Dreamcast
-
+* Pyra Handheld
 
 
 
