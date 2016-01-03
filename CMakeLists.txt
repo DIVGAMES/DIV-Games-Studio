@@ -40,6 +40,11 @@ IF(TARGETOS STREQUAL "AMIGA")
 INCLUDE ( tools/amiga.cmake )
 ENDIF()
 
+IF(TARGETOS STREQUAL "PS2")
+INCLUDE ( tools/ps2.cmake )
+ENDIF()
+
+
 IF(TARGETOS STREQUAL "WINDOWS")
 INCLUDE ( tools/win.cmake )
 SET(DLL_EXT ".dll")
