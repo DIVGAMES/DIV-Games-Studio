@@ -104,8 +104,11 @@ void init_ghost(void) {
 
   create_dac4();
 
-  for (n=0;n<512;n++) vcubos[n]=NULL;
-
+  for (n=0;n<512;n++) {
+	  memset(&vcubos[n],0,sizeof(tpuntos));	
+	  vcubos[n]=NULL;
+  }
+  
   for (n=0;n<256;n++) {
     tpuntos[n].r=*d++*4; tpuntos[n].g=*d++*4; tpuntos[n].b=*d++*4;
     m=(((int)tpuntos[n].r&224)<<1)+(((int)tpuntos[n].g&224)>>2)+((int)tpuntos[n].b>>5);
@@ -249,7 +252,8 @@ void crear_ghost_vc(int m) {
   int dif;
   struct t_tpuntos * p;
 
-  if ((p=vcubos[m])!=NULL) do { num_puntos++;
+  if ((p=vcubos[m])!=NULL) do { 
+	  num_puntos++;
     dif=*(int*)(cuad+r+(*p).r);
     dif+=*(int*)(cuad+g+(*p).g);
     dif+=*(int*)(cuad+b+(*p).b);
@@ -1217,8 +1221,8 @@ void crear_paleta(void){
     }
   }
 
-  if ((paleta=(word*)malloc(num_colores*2))==NULL) { free(pal); return; }
-  if ((dist=(int*)malloc(num_colores*4))==NULL) { free(paleta); free(pal); return; }
+  if ((paleta=(word*)malloc(num_colores*2+10))==NULL) { free(pal); return; }
+  if ((dist=(int*)malloc(num_colores*4+10))==NULL) { free(paleta); free(pal); return; }
 
   // pal[num_colores] preparado con { R,G,B,0 }
 
