@@ -43,6 +43,12 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifndef PS2
+#include <stdint.h>
+#else
+typedef unsigned short uint16_t;
+#endif
+
 #ifndef __APPLE__
 #include <malloc.h>
 #endif
@@ -87,6 +93,11 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 #define dword uint32_t
 //unsigned int
 
+
+#define max_archivos 512 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� Listbox de archivos
+#define an_archivo (255)
+#define max_directorios 2048
+#define an_directorio (255)
 
 
 
@@ -881,7 +892,7 @@ void pinta_listbox(struct t_listbox *l);
 #define XM  3
 
 typedef struct _pcminfo{
-        char   name[14];
+        char   name[255];
         char   pathname[256];
         int    SoundFreq;
         int    SoundBits;
@@ -892,7 +903,7 @@ typedef struct _pcminfo{
 } pcminfo;
 
 typedef struct _modinfo{
-        char   name[14];
+        char   name[255];
         char   pathname[256];
         int    SongCode;
 } modinfo;
@@ -900,9 +911,9 @@ typedef struct _modinfo{
 GLOBAL_DATA char *ExternUseBufferMap;
 void PCM0(void);void PCM1(void);void PCM2(void);
 void EditSound0(void); void EditSound1(void); void EditSound2(void);
-extern char SoundName[14];
+extern char SoundName[255];
 extern char SoundPathName[256];
-extern char SongName[14];
+extern char SongName[255];
 extern char SongPathName[256];
 extern byte *pcminfo_aux;
 extern byte *modinfo_aux;
