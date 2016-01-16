@@ -205,23 +205,35 @@ void chk_demo(void) {
 
   _dos_setfileattr(exe_name, _A_NORMAL);
 
-  f=fopen(exe_name, "rb+");
-  fseek(f, -8, SEEK_END);
+  f=fopen(exe_name, "rb");
+  printf("DEMO VERSION: %s %x\n",exe_name,f);
+  
+  if(f) {
+
+  fseek(f, 0, SEEK_END);
+	fseek(f,-8,SEEK_CUR);
+	
   fread(&exe_cola[0], 1, 8, f);
+printf("0x%x\n",exe_cola[0]);
+
   if(exe_cola[0]==0xDABACA2A) {
     if (exe_cola[1]-0xF31725AB>1024) beta_status=1; else exe_cola[1]++;
     fseek(f, -4, SEEK_END);
-    fwrite(&exe_cola[1], 1, 4, f);
+//    fwrite(&exe_cola[1], 1, 4, f);
   } else {
     fclose(f);
     f=fopen(exe_name, "ab");
-    fseek(f, 0, SEEK_END);
-    exe_cola[0]=0xDABACA2A;
-    exe_cola[1]=1+0xF31725AB;
-    fwrite(&exe_cola[0], 1, 8, f);
+    if(f) {
+		fseek(f, 0, SEEK_END);
+		exe_cola[0]=0xDABACA2A;
+		exe_cola[1]=1+0xF31725AB;
+		fwrite(&exe_cola[0], 1, 8, f);
+	}
   }
-  fclose(f);
+  if(f)
+	fclose(f);
 
+}
 }
 
 #endif
@@ -349,6 +361,8 @@ int DPMIalloc4k(void);
 
 
 #endif
+#ifndef GP2X
+#ifndef PS2
 #ifdef MIXER
 void print_init_flags(int flags)
 {
@@ -362,6 +376,8 @@ void print_init_flags(int flags)
         printf("\n");
 }
 #endif
+#endif
+#endif
 
 void get_error(int n);
 extern uint8_t cerror[128];
@@ -373,10 +389,14 @@ int main(int argc, char * argv[]) {
   byte *prgbuf;
   unsigned n;
   SDL_Init( SDL_INIT_EVERYTHING);
+#ifndef GP2X
+#ifndef PS2
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
-  
+#endif
+#endif
   atexit(SDL_Quit);
- 
+  atexit(free_resources);
+  
 //  SDL_WM_GrabInput( SDL_GRAB_ON );
   system_clock = &mclock;
 
@@ -412,10 +432,10 @@ int main(int argc, char * argv[]) {
   if (argc<1) exit(0);
 
   _fullpath(full,argv[0],_MAX_PATH+1);
-  strupr(full);
 #ifdef SHARE
   strcpy(exe_name,full);
 #endif
+  strupr(full);
   n=strlen(full);
   while (n && full[n]!='/') n--;
   full[n]=0;
@@ -466,7 +486,7 @@ if(compilemode==1) {
 	inicializa_compilador();
 	compilado=1; mouse_graf=3; numero_error=-1;
 	if(argc<3) {
-		printf("DIV Compiler V2.02 - http://www.div-arena.co.uk\n");
+		printf("DIV Games Studio Compiler V2.02 - http://www.div-arena.co.uk\n");
 		printf("Usage: -c [program name] [output.exe]\n");
 		exit(-1);
 	}
@@ -505,6 +525,8 @@ if(compilemode==1) {
   if(SDL_NumJoysticks() > 0)
 	SDL_JoystickOpen(0);
 
+#ifndef GP2X
+#ifndef PS2
 #ifdef MIXER
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
   
@@ -516,6 +538,8 @@ if(compilemode==1) {
 	  printf("Mix_Init: %s\n", Mix_GetError());
    }
 #endif 
+#endif
+#endif
 
 #ifndef __EMSCRIPTEN__
   SDL_WM_SetCaption((char *)texto[34], "" );
@@ -1492,7 +1516,11 @@ void shell(void) {
     EndSound();
 
 //    _setvideomode(_TEXTC80);
+#ifndef GP2X
+#ifndef PS2
     SDL_putenv("PROMPT=[DIV] $P$G");
+#endif
+#endif
     chdir(tipo[0].path);
 
   //  flushall();
@@ -1841,6 +1869,7 @@ void cierra_ventana(void) {
     volcado_parcial(v.x,v.y,v.an,v.al);
     volcado_copia();
   }
+
   if (v.click_handler!=err2) free(v.ptr);
 
   if (v.click_handler==help2 && old_prg!=NULL) {
@@ -2930,7 +2959,8 @@ void dialogo(voidReturnType init_handler) {
     if (v.click_handler==err2) ptr=error_window; else ptr=(byte *)malloc(an*al);
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
-
+		memset(ptr,0,an*al);
+		
       //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
       // Pasa a segundo plano las ventanas que corresponda
       //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -3276,7 +3306,6 @@ fclose(f);
 
 void finalizacion(void) {
 
-/*
   free(undo);
   free(graf_ptr);
   free(text_font);
@@ -3290,7 +3319,7 @@ void finalizacion(void) {
   free(copia-6);
   free(fondo_raton);
   free(tundo);
-*/
+
 
   if(modo_de_retorno==0 || modo_de_retorno==3)
         rvmode();
