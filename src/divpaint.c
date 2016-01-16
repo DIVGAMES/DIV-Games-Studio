@@ -1136,7 +1136,7 @@ void test_siguiente(void) {
   // Zona a refrescar calculada
 
   cclock=(*system_clock)>>1;
-  printf("%d %d\n",cclock, system_clock);
+//	  printf("%d %d\n",cclock, system_clock);
 }
 
 void test_sel(void) {
@@ -4647,7 +4647,13 @@ void select_zoom(void) {
     } else if (!big) mouse_shift=1;
   }
 
-  if (z=(key(_Z)&&hotkey)) { zoom=(zoom+1)%4; r=0;
+  if (z=(key(_Z)&&hotkey) || (mouse_b&4 && zoom<3) || (mouse_b&8 && zoom>0)) { 
+	  if(mouse_b&8) {
+		zoom=(zoom-1)%4;
+	  } else {
+		zoom=(zoom+1)%4; 
+      }
+      r=0;
     if (!mouse_shift) { zoom_cx=coord_x; zoom_cy=coord_y; }
   } else { r=select_icon(barra_x+48,iconos_zoom); if (r>=0) zoom=r; }
 
