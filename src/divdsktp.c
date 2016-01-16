@@ -921,7 +921,8 @@ int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla)
 
   //1§ Pide memoria para un struct tmapa
   if ((v_mapa=(struct tmapa *)malloc(sizeof(struct tmapa)))!=NULL) {
-
+	memset(v_mapa,0,sizeof(struct tmapa));
+	
     // 2§ Pide memoria para el mapa
     v_mapa->map=mapilla;
 
