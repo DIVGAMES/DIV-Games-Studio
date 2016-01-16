@@ -85,7 +85,7 @@ void load_index(void) {
 
 void make_helpidx(void) {
   long m=-1,n,len;
-  byte * help,* i,* help_end;
+  byte * help=NULL,* i=NULL,* help_end;
   FILE * f;
 
   i_back=a_back=f_back=0; // La cola se vac¡a
@@ -93,19 +93,30 @@ void make_helpidx(void) {
   memset(helpidx,0,sizeof(helpidx));
   if((f=fopen("help/help.div","rb"))!=NULL) {
     fseek(f,0,SEEK_END); len=ftell(f);
-    if ((help=(byte*)malloc(len))!=NULL) {
+    if ((help=(byte*)malloc(len+10))!=NULL) {
+		memset(help,0,len+10);
       fseek(f,0,SEEK_SET); fread(help,1,len,f); fclose(f);
       help_end=help+len; i=help;
       do {
-        if (*(word*)i=='{'+'.'*256) { len=(long)(i-help);
-          n=0; i+=2; while (*i>='0' && *i<='9') n=n*10+*i++-0x30;
+        if (*(word*)i=='{'+('.'*256)) { 
+			len=(long)(i-help);
+          n=0; 
+          i+=2; 
+          while (*i>='0' && *i<='9') 
+			n=n*10+*i++-0x30;
+          
           helpidx[n*2]=(long)(i+1-help); // Fija el inicio del t‚rmino n
-          if (m>=0) helpidx[m*2+1]=len-helpidx[m*2]; // Fija la longitud del anterior
+          
+          if (m>=0) 
+			helpidx[m*2+1]=len-helpidx[m*2]; // Fija la longitud del anterior
+          
           m=n;
         }
       } while (++i<help_end);
-      if (m>=0) helpidx[m*2+1]=(long)(i-help)-helpidx[m*2];
-      //free(help);
+
+      if (m>=0) 
+		helpidx[m*2+1]=(long)(i-help)-helpidx[m*2];
+      free(help);
     }
   }
 }
@@ -215,8 +226,8 @@ void help2(void) {
       } vuelca_help();
     } else if (v.botones&2) { wput(v.ptr,an,al,an-9,10,-39); v.botones^=2; v.volcar++; }
 
-    if (scan_code==73) {
-      for (n=0;n<help_al;n++) {
+    if (scan_code==73 || mouse_b&8) {
+      for (n=0;n<(mouse_b&8?3:help_al);n++) {
         if (help_line!=help_buffer+1) {
           help_line--; while (*(--help_line)); help_line++; help_l--;
         }
@@ -231,8 +242,8 @@ void help2(void) {
       vuelca_help();
     } else if (v.botones&4) { wput(v.ptr,an,al,an-9,al-17,-40); v.botones^=4; v.volcar++; }
 
-    if (scan_code==81) {
-      for (n=0;n<help_al;n++) {
+    if (scan_code==81 || mouse_b&4) {
+      for (n=0;n<(mouse_b&4?3:help_al);n++) {
         if (help_l+help_al<help_lines) { while (*(help_line++)); help_l++; }
       } vuelca_help(); v.volcar++;
     }
@@ -324,6 +335,8 @@ void help2(void) {
                 } di-=2;
 
                 if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
+					memset(v_prg,0,sizeof(struct tprg));
+					
                   v_prg->buffer_lon=16384;
                   strcpy(v_prg->filename,(char *)texto[220]);
                   strcpy(v_prg->path,(char *)tipo[1].path);
