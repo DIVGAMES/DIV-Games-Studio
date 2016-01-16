@@ -50,9 +50,9 @@ void linea_pixel            (char * ptr, int an, int realan, int al, int x, int 
 void set_mixer(void);
 int  determina_pcm(void);
 
-char SoundName[14];
+char SoundName[255];
 char SoundPathName[256];
-char SongName[14];
+char SongName[255];
 char SongPathName[256];
 byte *pcminfo_aux;
 byte *modinfo_aux;
@@ -476,6 +476,9 @@ Uint8 *wav_buffer;
         dialogo(err0);
         continue;
       }
+      
+      memset(pcminfo_aux,0,sizeof(pcminfo));  
+
       mypcminfo=(pcminfo *)pcminfo_aux;
 
 #ifdef NOTYET
