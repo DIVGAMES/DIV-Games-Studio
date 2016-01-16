@@ -133,9 +133,9 @@ short CargaLetra(short letra)
 
     if (!Ancho || !Alto) return 0;
 
-    Buffer=(char *) realloc (Buffer, Alto*Ancho*8);
+    Buffer=(char *) realloc (Buffer, Alto*Ancho*8+10);
     if (Buffer==NULL) return (IFS_MEM_ERROR);
-    memset(Buffer, 0, Alto*Ancho*8);
+    memset(Buffer, 0, Alto*Ancho*8+10);
 
     for (y=0; y<Alto-despY; y++)
         for (x=0; x<Ancho; x++)
@@ -729,6 +729,7 @@ int Jorge_Crea_el_font(int GenCode)
         return (ret);
     }
 
+
     if ((fichFNT=fopen(ifs.fntName,"wb"))==NULL)
     {
         CloseAndFreeAll();
@@ -739,8 +740,9 @@ int Jorge_Crea_el_font(int GenCode)
     fwrite(reglas,sizeof(reglas),1,fichFNT);
     fwrite(&GenCode,1,4,fichFNT);
 
-    if (fwrite(tablaFNT,sizeof(tablaFNT),1,fichFNT)<1)
+    if (fwrite(tablaFNT,sizeof(tablaFNT),1,fichFNT)<1) {
         error=1;
+	}
 
     for (x=0, error=0; x<256 && !error; x++)
     {
