@@ -19,10 +19,14 @@ static void timer_unlock(void);
 void timer_handler(void) {}
 unsigned short timer_get_ds(void);
 
+#ifdef DOS
+
 #pragma aux timer_get_ds = \
 "mov ax, ds" \
 modify [ax] \
 value [ax];
+
+#endif
 
 static unsigned char timer_initialized = 0;
 extern void (__interrupt __far *timer_oldvect)();
