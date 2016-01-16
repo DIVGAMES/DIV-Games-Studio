@@ -6,7 +6,7 @@
 #include "global.h"
 
 extern int help_paint_active;
-int m_b;
+byte m_b;
 
 float m_x=0.0,m_y=0.0;
 int joymx = 0, joymy=0;
@@ -47,14 +47,14 @@ void read_mouse(void) {
   old_mouse_b=mouse_b;
 
   read_mouse2();
-
+	
 #ifdef GCW
 m_x+=joymx;
 m_y+=joymy;
 #endif
 
   if (modo<100 && hotkey && !help_paint_active) tecla();
-
+  
   real_mouse_x=(int)m_x; real_mouse_y=(int)m_y;
 
   if (mouse_x!=(int)m_x || mouse_y!=(int)m_y || mouse_b!=m_b) {
@@ -62,6 +62,7 @@ m_y+=joymy;
     mouse_x=(int)m_x;
     mouse_y=(int)m_y;
     mouse_b=m_b;
+  
     shift=1;
 
     if (modo<100 && hotkey && !help_paint_active) {
@@ -69,7 +70,9 @@ m_y+=joymy;
         if (mouse_b!=0xfffd) {
           mouse_b=0xfffd;
         }
-      } else if (mouse_b==0xfffd) mouse_b=0;
+      } else if (mouse_b==0xfffd) {
+		  mouse_b=0;
+	  }
     }
 
   } else if (modo<100 && hotkey && !help_paint_active) { // Las teclas est n solo activas en edici¢n
@@ -105,7 +108,9 @@ m_y+=joymy;
         if (mouse_b!=0xfffd) {
           mouse_b=0xfffd;
         }
-      } else if (mouse_b==0xfffd) mouse_b=0;
+      } else if (mouse_b==0xfffd) {
+		  	mouse_b=0;
+		}
 
       if (shift) {
         real_mouse_x=mouse_x; real_mouse_y=mouse_y;
@@ -147,10 +152,10 @@ m_y+=joymy;
           arrastrar=3;
           wmouse_x=-1;
           wmouse_y=-1;
-          mouse_b=0;
+          mouse_b &=~1;
           call((voidReturnType )v.click_handler);
           quien_arrastra=v.orden;
-          mouse_b=1;
+          mouse_b |=1;
           mouse_graf=arrastrar_graf;
         }
       } else {
@@ -239,6 +244,7 @@ void checkmod(SDLMod mod) {
 void read_mouse2(void) {
 	scan_code  =0;
 	ascii=0;
+	
 //printf("divmouse.c- read_mouse2 REPLACE WITH SDL VERSION\n");
 SDL_Event event;
 #ifdef GCW_
@@ -263,7 +269,7 @@ while(SDL_PollEvent(&event))
 				case SDLK_LCTRL:	// A
 				break;
 				case SDLK_LALT:		// B
-					m_b=1;
+					m_b |=1;
 				break;
 				case SDLK_LSHIFT:	// X
 				break;
@@ -298,7 +304,7 @@ while(SDL_PollEvent(&event))
 				case SDLK_LCTRL:	// A
 				break;
 				case SDLK_LALT:		// B
-					m_b=0;
+					m_b &= ~1;
 				break;
 				case SDLK_LSHIFT:	// X
 				break;
@@ -358,7 +364,7 @@ while(SDL_PollEvent(&event))
 }
 #else
 
-while(SDL_PollEvent(&event))
+while(SDL_PollEvent(&event) )
         {
 			if(event.type == SDL_JOYAXISMOTION) {			// Analog joystick movement
 				
@@ -419,8 +425,25 @@ while(SDL_PollEvent(&event))
 				
 				if(event.button.button == SDL_BUTTON_LEFT)
 				{
-					m_b = 1;
+					m_b |= 1;
+
 				}
+				if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					m_b |= 2;
+				}
+
+				if(event.button.button == SDL_BUTTON_WHEELUP)
+				{
+					m_b |= 8;
+					break;
+				}
+				if(event.button.button == SDL_BUTTON_WHEELDOWN)
+				{
+					m_b |= 4;
+					break;
+				}
+
 /*				if(event.button.button == SDL_BUTTON_RIGHT)
 				{
 					mouse->right = 1;
@@ -431,7 +454,7 @@ while(SDL_PollEvent(&event))
 				}
 				* */
 			//	printf("click\n");
-				m_b = 1;
+//				m_b = 1;
 			}
 			 if (event.type == SDL_KEYDOWN)
             {
@@ -446,7 +469,7 @@ while(SDL_PollEvent(&event))
 				key(scan_code)=1;
 #ifdef GCW
 					if(event.key.keysym.sym ==SDLK_LALT)		// B
-						m_b=1;
+						m_b |=1;
 #endif
 			}
 			if(event.type == SDL_KEYUP) 
@@ -460,13 +483,30 @@ while(SDL_PollEvent(&event))
 				scan_code=0;
 #ifdef GCW
 				if(event.key.keysym.sym ==SDLK_LALT)		// B
-					m_b=0;
+					m_b &= ~1;
 #endif
 			}
 
 			if (event.type == SDL_MOUSEBUTTONUP)
-            {
-				m_b = 0;
+            {	
+				
+				if(event.button.button ==SDL_BUTTON_LEFT)
+					m_b &= ~1;
+
+				if(event.button.button ==SDL_BUTTON_RIGHT)
+					m_b &= ~2;
+					
+				if(event.button.button == SDL_BUTTON_WHEELUP)
+				{
+					m_b &= ~8;
+				}
+
+				if(event.button.button == SDL_BUTTON_WHEELDOWN)
+				{
+					m_b &= ~4;
+
+				}
+
 			}
 			
                 /* If the left button was pressed. */
