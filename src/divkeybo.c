@@ -106,7 +106,7 @@ void SetIRQVector(int n, TIRQHandler vec)
 void kbdInit(void)
 {
 //	printf("TODO - kbdInit\n");
-	 SDL_EnableUNICODE( SDL_ENABLE );  
+
 sdlkeyinit();
 #ifdef NOTYET
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
@@ -227,13 +227,12 @@ while(SDL_PollEvent(&event))
             /* If a button on the mouse is pressed. */
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
-				printf("click\n");
-				m_b = 1;
+	//			m_b = 1;
 			}
 			
 			if (event.type == SDL_MOUSEBUTTONUP)
             {
-				m_b = 0;
+//				m_b = 0;
 			}
 			
         }
