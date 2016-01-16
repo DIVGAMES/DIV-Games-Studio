@@ -56,14 +56,11 @@ int song_playing=0;
   int creada;           // Indica si ya est  creada la lista en pantalla
 };*/
 
-#define max_archivos 512 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Listbox de archivos
-#define an_archivo (12+1)
+
 extern char archivo[max_archivos*an_archivo];
 //[?*max_archivos]
 struct t_listboxbr larchivosbr={77,27,archivo,an_archivo,4,4,51,31};
 
-#define max_directorios 256
-#define an_directorio (12+1)
 extern char directorio[max_directorios*an_directorio];
 struct t_listbox ldirectoriosbr={3,27,directorio,an_directorio,10,65};
 
@@ -306,6 +303,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 
       if (tipomapa) {
         if ((temp=(byte*)malloc(man*mal+man))!=NULL) {
+		  memset(temp,0,man*mal+man);
           swap(man,map_an); swap(mal,map_al);
           n=1;
           switch (tipomapa) {
@@ -369,7 +367,8 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
               }
 
               if ((thumb[num].ptr=(char *)malloc((thumb[num].an*thumb[num].al)/4))!=NULL) {
-
+				memset(thumb[num].ptr,0,(thumb[num].an*thumb[num].al)/4)	;
+				
                 for (y=0;y<thumb[num].al;y+=2) {
                   for (x=0;x<thumb[num].an;x+=2) {
                     n=*(ghost+temp2[x+y*thumb[num].an]*256+temp2[x+1+y*thumb[num].an]);
@@ -499,6 +498,8 @@ void crear_un_thumb_PAL(struct t_listboxbr * l)
       thumb[num].status=-1;
       return;
     }
+    memset(thumb[num].ptr,0,(thumb[num].an*thumb[num].al));
+    
     for (y=0; y<thumb[num].al; y+=big2)
     {
       for (x=0; x<thumb[num].an; x+=big2*2)
@@ -610,6 +611,8 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
         thumb[num].status=-1;
         return;
       }
+      memset(thumb[num].ptr,0,thumb[num].filesize);
+      
       if (thumb[num].filesize > incremento)
       {
         if (fread(thumb[num].ptr,1,incremento,f)!=incremento)
@@ -760,6 +763,8 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
 
         if ((temp2=(byte *)malloc(thumb[num].an*thumb[num].al))!=NULL)
         {
+		  memset(temp2,0,thumb[num].an*thumb[num].al);
+			
           a=(float)0.0;
           for(y=0;y<thumb[num].al;y++)
           {
@@ -774,6 +779,8 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
 
           if ((thumb[num].ptr=(char *)malloc((thumb[num].an*thumb[num].al)/4))!=NULL)
           {
+			memset(thumb[num].ptr,0,(thumb[num].an*thumb[num].al)/4);
+			
             for (y=0;y<thumb[num].al;y+=2)
             {
               for (x=0;x<thumb[num].an;x+=2)
@@ -879,7 +886,8 @@ void crear_un_thumb_IFS(struct t_listboxbr * l)
       fclose(fifs);
       return;
     }
-
+	memset(thumb[num].ptr,0,ancho*alto);
+	
     thumb[num].an=ancho;
     thumb[num].al=alto;
 
@@ -1003,6 +1011,7 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
       }
       fseek(f,0,SEEK_END);
       thumb[num].filesize=ftell(f);
+      mem=thumb[num].filesize*2;
       fseek(f,0,SEEK_SET);
 //    printf("thumb[num].filesize:%d, mem:%d\n", thumb[num].filesize, mem);
       if(thumb[num].filesize>mem)
@@ -1032,6 +1041,8 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
         thumb[num].status=-1;
         return;
       }
+      memset(thumb[num].ptr,0,thumb[num].filesize);
+      
       if (thumb[num].filesize > incremento)
       {
         if (fread(thumb[num].ptr,1,incremento,f)!=incremento)
@@ -1984,7 +1995,7 @@ void actualiza_listboxbr(struct t_listboxbr * l) {
     } v.volcar=1;
   }
 
-  if (l->zona==2 && (mouse_b&1)) {
+  if ((l->zona>0 && mouse_b&8) || (l->zona==2 && (mouse_b&1))) {
     if (old_mouse_b&1) { retrazo(); retrazo(); retrazo(); retrazo(); }
       if (l->inicial) {
         l->inicial-=l->columnas; pinta_listboxbr(l); v.volcar=1; }
@@ -1995,7 +2006,7 @@ void actualiza_listboxbr(struct t_listboxbr * l) {
     l->botones^=1; v.volcar=1;
   }
 
-  if (l->zona==3 && (mouse_b&1)) {
+  if ((l->zona>0 && mouse_b&4) || (l->zona==3 && (mouse_b&1))) {
     if (old_mouse_b&1) { retrazo(); retrazo(); retrazo(); retrazo(); }
     n=l->maximo-l->inicial;
     if (n>l->lineas*l->columnas) {
