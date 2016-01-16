@@ -2225,13 +2225,13 @@ void TratarPaleta3(void) {
 //      Listas para la ventana de abrir fichero
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-#define max_archivos 512 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ File listbox
-#define an_archivo (12+1)
+//#define max_archivos 512 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ File listbox
+//#define an_archivo (255)
 char archivo[max_archivos*an_archivo];
 struct t_listbox larchivos={3,49,archivo,an_archivo,12,64};
 
-#define max_directorios 2048
-#define an_directorio (12+1)
+//#define max_directorios 2048
+//#define an_directorio (255)
 char directorio[max_directorios*an_directorio];
 struct t_listbox ldirectorios={80,49,directorio,an_directorio,10,64};
 
@@ -2359,8 +2359,9 @@ void actualiza_listbox(struct t_listbox * l) {
     wwrite_in_box(ptr+(l->x+2)*big2,an,l->an-4,al,0,l->y+2+(old_zona-10)*8,0,
       (byte *)l->lista+l->lista_an*(l->inicial+old_zona-10),c3); v.volcar=1;
   }
+//printf("zona: %d\n",l->zona);
 
-  if (l->zona==2 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1)))) {
+  if ((mouse_b&8 && l->zona>0) || (l->zona==2 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
     if (!v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
         if ((old_mouse_b&1)&&!v_pausa) { retrazo(); retrazo(); }
         if (l->inicial) {
@@ -2371,7 +2372,7 @@ void actualiza_listbox(struct t_listbox * l) {
     wput(ptr,an,al,l->x+l->an,l->y+1,-39); l->botones^=1; v.volcar=1;
   }
 
-  if (l->zona==3 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1)))) {
+  if ((mouse_b&4 && l->zona>0) || (l->zona==3 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
     if (!v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
       if ((old_mouse_b&1)&&!v_pausa) { retrazo(); retrazo(); }
       n=l->maximo-l->inicial;
@@ -2489,7 +2490,7 @@ void analizar_input(void) {
 #endif
     _splitpath(full,drive,dir,fname,ext);
     _dos_setdrive(drive[0]-'A'+1,&n);
-    getcwd(full,PATH_MAX+1);
+//    getcwd(full,PATH_MAX);
     if ( true || (full[0]==drive[0])) {
       if (strlen(dir)>1) if (dir[strlen(dir)-1]=='/') dir[strlen(dir)-1]=0;
       if (!strlen(dir) || !chdir(dir)) {
@@ -2830,8 +2831,11 @@ void abrir_mapa(void) {
 
             if (tipomapa) {
               if ((v_mapa=(struct tmapa *)malloc(sizeof(struct tmapa)))!=NULL) {
-                if ((v_mapa->map=(byte *)malloc(map_an*map_al+map_an))!=NULL) {
-
+				  memset(v_mapa,0,sizeof(struct tmapa));
+				  
+				if ((v_mapa->map=(byte *)malloc(map_an*map_al+map_an))!=NULL) {
+					//memset(v_mapa->map,0,map_an*map_al+map_an);
+				  
                   v_mapa->TengoNombre=0; //No tiene descripcion por defecto
 
                   for (x=0;x<512;x++) v_mapa->puntos[x]=-1;
