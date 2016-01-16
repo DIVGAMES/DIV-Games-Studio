@@ -200,7 +200,7 @@ char tDescrip[32];
                 return;
         }
 
-        if ((MiFPG->lInfoFPG.zona>=10) && (mouse_b!=old_mouse_b) && (arrastrar<3))
+        if ((MiFPG->lInfoFPG.zona>=10) && (mouse_b&1 || old_mouse_b&1) && (mouse_b!=old_mouse_b) && (arrastrar<3))
         {
                         Elemento=(MiFPG->lInfoFPG.zona-10)+MiFPG->lInfoFPG.inicial;
                         if(MiFPG->CodDes[Elemento][0]==255)
@@ -1239,8 +1239,10 @@ void FPG_actualiza_listboxbr(struct t_listboxbr * l) {
 //if (l->zona==2 && (mouse_b&1)) {
 //  if (old_mouse_b&1) { retrazo(); retrazo(); retrazo(); retrazo(); }
 //---
-  if (l->zona==2 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1)))) {
-    if (!v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
+//printf("zona: %d\n",l->zona);
+
+  if (mouse_b&8 || (l->zona==2 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
+    if (mouse_b&8 || !v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
         if ((old_mouse_b&1)&&!v_pausa) { retrazo(); retrazo(); }
 //---
       if (l->inicial) {
@@ -1258,8 +1260,8 @@ void FPG_actualiza_listboxbr(struct t_listboxbr * l) {
 //if (l->zona==3 && (mouse_b&1)) {
 //  if (old_mouse_b&1) { retrazo(); retrazo(); retrazo(); retrazo(); }
 //---
-  if (l->zona==3 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1)))) {
-    if (!v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
+  if (mouse_b&4 || (l->zona==3 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
+    if (mouse_b&4 || !v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
       if ((old_mouse_b&1)&&!v_pausa) { retrazo(); retrazo(); }
 //---
     n=l->maximo-l->inicial;
