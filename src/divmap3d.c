@@ -3422,6 +3422,8 @@ void map_read(M3D_info *m3d_aux)
 
   char full_path[_MAX_PATH+1];
   char drive[_MAX_DRIVE+1];
+  memset(drive,0,_MAX_DRIVE+1);
+  
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
