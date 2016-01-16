@@ -1016,6 +1016,8 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
   int x, y;
 
   vent=vent;
+  memset(&cinfo,0,sizeof(jpeg_decompress_struct));
+  
   cinfo.err = jpeg_std_error(&my_err_mgr);
 
   if (setjmp(jmp_error_ptr))
@@ -1231,6 +1233,8 @@ int cargadac_MAP(char *name)
       fclose(file);
       return(0);
     }
+    memset(buffer,0,n);
+    
     fseek(file,0,SEEK_SET);
     if (fread(buffer,1,n,file)!=n) {
       free(buffer);
@@ -1242,7 +1246,8 @@ int cargadac_MAP(char *name)
       fclose(file);
       return(0);
     }
-
+	memset(temp,0,man*mal+man);
+	
     swap(man,map_an); swap(mal,map_al);
     descomprime_MAP(buffer,temp,0);
 
