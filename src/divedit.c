@@ -28,6 +28,8 @@ void f_fin(void);
 void f_word_right2(void);
 void f_word_left(void);
 void f_avpag(void);
+void f_scroll(int n);
+void f_mscroll(int n);
 void f_repag(void);
 void f_destabulador(void);
 void f_insert(void);
@@ -331,6 +333,7 @@ void programa2(void) {
   if (v.estado) editor();
 
 }
+extern byte m_b;
 
 void programa3(void) {
   if (kbloque && kprg==v.prg) kbloque=0;
@@ -750,8 +753,6 @@ void editor() {
       f_fin(); break;
 
   } else if ((shift_status&3) && (shift_status&4)) switch(scan_code) {
-	  printf("scancode is %d\n",scan_code);
-
     case 116: // ctrl+shift+right
       f_desmarcar();
       bloque_edit=1;
@@ -786,9 +787,6 @@ void editor() {
       break;
 
   } else if (!(shift_status&15) && ascii==0) switch(scan_code) {
-	  printf("scancode is %d\n",scan_code);
-
-
     case 77: f_right(); break;                  // cursor right
     case 75: f_left(); break;                   // cursor left
     case 80: f_down(); break;                   // cursor down
@@ -801,15 +799,11 @@ void editor() {
     case 83: f_suprimir(); break;               // suprimir
 
   } else if (!(shift_status&15)) switch(scan_code) {
-	  printf("scancode is %d\n",scan_code);
-
 
     case 14: f_backspace(); break;              // backspace
     case 15: f_tabulador(); break;              // tabulador
 
   } else if ((shift_status&4) && !(shift_status&11)) switch(scan_code) {
-	  printf("scancode is %d\n",scan_code);
-
 
     case 14: case 21: f_delete(); break;        // ctrl+backspace,ctrl+y
     case 116:case 77: f_word_right(); break;    // ctrl+right
@@ -824,8 +818,6 @@ void editor() {
              f_desmarcar(); break;
 
   } else if ((shift_status&8) && !(shift_status&7)) switch(scan_code) {
-	  printf("scancode is %d\n",scan_code);
-
 
     case 30: f_marcar(); break;                 // alt+a
     case 22: f_desmarcar(); break;              // alt+u
@@ -836,6 +828,14 @@ void editor() {
     case 50: if (kbloque) {                     // alt+m
       f_cortar_bloque(1); f_pegar_bloque(); } break;
 
+  }
+  
+  if(mouse_b &4) {
+	  f_scroll(3);
+  }
+	 
+  if(mouse_b &8) {
+	  f_mscroll(3);
   }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1192,22 +1192,26 @@ void f_fin(void) {
   }
 }
 
-void f_avpag(void) {
-  int n;
+void f_scroll(int n) {
   write_line();
-  n=v.prg->al;
   while (n--) { avanza_vptr(); avanza_lptr(); }
   read_line();
   v.volcar++;
 }
 
-void f_repag(void) {
-  int n;
+void f_mscroll(int n) {
   write_line();
-  n=v.prg->al;
   while (n--) { retrocede_vptr(); retrocede_lptr(); }
   read_line();
   v.volcar++;
+}
+
+void f_avpag(void) {
+  f_scroll(v.prg->al);
+}
+
+void f_repag(void) {
+  f_mscroll(v.prg->al);
 }
 
 void f_insert(void) {
@@ -2431,6 +2435,8 @@ void abrir_programa(void) {
       if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
         fseek(f,0,SEEK_END); n=ftell(f)+buffer_grow;
         if ((buffer=(byte *)malloc(n))!=NULL) {
+			memset(buffer,0,n);
+			
           if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
               v_prg->buffer_lon=n;
               strcpy(v_prg->filename,input);
