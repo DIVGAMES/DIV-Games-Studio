@@ -248,7 +248,7 @@ int an,al;
 
 void zoom_map(void) {
 
-  int n,m,c;
+  int32_t n,m,c;
   byte *p,*q;
   int _big=big;
 
