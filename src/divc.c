@@ -209,7 +209,7 @@
 //      DIV - Compilador Interno
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-#define listados // Para generar los listados de objetos y EML (LST/TAB/EML)
+//#define listados // Para generar los listados de objetos y EML (LST/TAB/EML)
 
 #include "global.h"
 #include "divdll.h"
@@ -999,6 +999,8 @@ void compilar(void) {
 
   program_type=0;
 
+free_resources();
+
   mensaje_compilacion(texto[201]);
 
   vnom=NULL; mem_ory=NULL;
@@ -1197,7 +1199,7 @@ void compilar(void) {
 }
 
 void free_resources(void) {
-  if (def!=NULL) fclose(def);
+  if (def!=NULL) fclose(def); 
   if (_buf!=NULL) free(_buf);
   if (frm!=NULL) free(frm);
   if (loc!=NULL) free(loc);
@@ -1206,6 +1208,16 @@ void free_resources(void) {
   if (lprg!=NULL) fclose(lprg);
   if (linf!=NULL) fclose(linf);
   if (vnom!=NULL) free(vnom);
+
+  def = NULL;
+  _buf = NULL;
+  frm = NULL;
+  loc = NULL;
+  mem = NULL;
+  lins = NULL;
+  lprg = NULL;
+  linf = NULL;
+  vnom = NULL;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1274,6 +1286,9 @@ void inicio_sentencia(void) {
   inicio=imem;
   linea1=linea;
   columna1=0;
+  if(p<_source)
+		p=_source;
+		
   while (*p!=cr && *p!=lf && p>_source) { columna1++; p--; }
 }
 
@@ -1286,7 +1301,11 @@ void final_sentencia(void) {
   final=imem-1;
   linea2=old_linea;
   columna2=0;
-  while (*p!=cr && *p!=lf && p>=_source) { columna2++; p--; }
+
+    if(p<_source)
+		p=_source;
+
+  while (*p!=cr && *p!=lf && p>_source) { columna2++; p--; }
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -3350,7 +3369,7 @@ void sintactico (void) {
     nombre_dll=(byte*)&mem[pieza_num];
 
     if (idlls<64) dlls[idlls].filename=pieza_num;
-printf("DLL: %s\n",nombre_dll);
+printf("DLL: %s %d %s\n",&mem[pieza_num],pieza_num,nombre_dll);
 
     if (nombre_dll==NULL) c_error(0,63);
     if ((num_extern=ImportDll((char *)nombre_dll))==0) c_error(0,63);
@@ -7359,12 +7378,20 @@ FILE * div_open_file(char * file) {
   
   char *ff = file;
 
+if(strlen(file)>_MAX_PATH+1) 
+	return NULL;
+	
+//printf("input string: %s %d %d\n",file,strlen(file),_MAX_PATH+1);
+
   while (*ff!=0 ) {
 	  if(*ff =='\\') *ff='/';
 	  ff++;
   }
   
   strcpy((char *)full,file);  
+
+//printf("full: %s\n",full);
+
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char *)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
