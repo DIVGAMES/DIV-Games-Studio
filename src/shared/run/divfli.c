@@ -521,8 +521,13 @@ return(flc.FrameCount);
 
 void EndFli()
 {
-	fclose(flc.file);
-	free(flc.pMembuf);
+	if(flc.file!=NULL)
+		fclose(flc.file);
+	if(flc.pMembuf!=NULL)
+		free(flc.pMembuf);
+
+	flc.pMembuf=NULL;
+	flc.file=NULL;
 
 #ifdef NOTYET
   if(animation==NULL) return;
