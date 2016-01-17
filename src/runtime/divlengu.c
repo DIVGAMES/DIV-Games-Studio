@@ -55,7 +55,7 @@ void inicializa_textos(byte * fichero) {
     fread(&n,4,1,f);
     //DebugData(n);
     fseek(f,-4-n,SEEK_END);
-    if ((textos=(byte *)malloc(n))!=NULL) {
+    if ((textos=(byte *)malloc(n+1))!=NULL) {
       n=fread(textos,1,n,f);
       fclose(f);
       fin_textos=textos+n;
@@ -151,7 +151,7 @@ int rnd2(int min,int max) {
 }
 
 void init_rnd_coder(int n, char * clave){
-  register byte a;
+  volatile int a;
   for (a=0;a<32;a++) seed_coder.d[a]=n;
   if (clave!=NULL) {
     for (a=0;a<127;a++) {
