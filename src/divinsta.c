@@ -83,7 +83,7 @@ extern char user2[];
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-struct {
+struct _dirhead {
   char pack[16];        // Nombre del propio packfile (no va en el archivo)
   char head[8];         // Cabecera inicial del packfile (dat<-\n00)
   int crc1,crc2,crc3;   // CRC's de hasta tres programas que lo utilicen
@@ -410,7 +410,8 @@ void crear_imagen_install(char * file, int errores) {
   float coefredy,coefredx,a,b;
   byte * temp2;
   int x,y,n,m,an,al;
-
+	int fl=0;
+	
   imagen_install=NULL;
 
   if ((es=fopen(file,"rb"))==NULL) return; else {
@@ -428,23 +429,25 @@ void crear_imagen_install(char * file, int errores) {
       memcpy(pal,fpg+8,768);
 
       p+=1352; // FPG Header len
-      memset(lst,0,1000*sizeof(memptrsize));
+      while(fl++<1000) {
+		  lst[fl]=0;
+	  }
+//      memset(lst,0,1000*sizeof(memptrsize));
 
-      while (p<fpg+file_len && *(int*)p<1000 && *(int*)p>0 ) {
-		  printf("p is %d %x %x\n",p, (memptrsize *)p, (memptrsize)p);
-        lst[*(int*)p]=(memptrsize)p;
+      while (p<fpg+file_len && *(int32_t*)p<1000 && *(int32_t*)p>0 ) {
+        lst[*(int32_t*)p]=(memptrsize)p;
         p+=*(memptrsize*)(p+4);//sizeof(int*));
       }
 
       strcpy(cwork,"");
 
-printf("lst[3] %x\n",lst[3]);
+//printf("lst[3] %x\n",lst[3]);
 
       if (!lst[1]) sprintf(cwork,(char *)texto[540],1);
-      if ((ptr=(int*)lst[2])) {
+      if ((ptr=(int32_t*)lst[2])) {
         if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,(char *)texto[541],2);
       }
-      if (!(ptr=(int*)lst[3])) sprintf(cwork,(char *)texto[540],3);
+      if (!(ptr=(int32_t*)lst[3])) sprintf(cwork,(char *)texto[540],3);
       if (ptr[13]!=640 || ptr[14]!=480) sprintf(cwork,(char *)texto[541],3);
       if (!is_point(ptr,1)) sprintf(cwork,(char *)texto[542],1,3);
       if (!lst[4] && !lst[5]) sprintf(cwork,(char *)texto[540],4);
@@ -461,7 +464,7 @@ printf("lst[3] %x\n",lst[3]);
         }
         return;
       }
-printf("next bit commented\n");
+//printf("next bit commented\n");
 /*
       if (ptr=(int*)lst[3]) {
         if (ptr[13]==640 && ptr[14]==480) {
@@ -691,7 +694,7 @@ void crear_instalacion(void) {
 //    cWork[x+2]=0;
 strcpy(cWork,full);
 
-printf("cwork %s\n",cWork);
+//printf("cwork %s\n",cWork);
 
 #ifdef NOTYET
     mkdir(cWork);
@@ -829,7 +832,7 @@ printf("cwork %s\n",cWork);
       fclose(fin);
     }
 
-    // 2ง Abre el fichero ("INSTALL\\PACKFILE.DAT","wb")
+    // 2ง Abre el fichero ("INSTALL/PACKFILE.DAT","wb")
 
     if ((fout=fopen("install/PACKFILE.DAT","wb"))==NULL) {
       v_texto=(char *)texto[358]; dialogo(err0);
@@ -974,8 +977,7 @@ printf("cwork %s\n",cWork);
   // *** Crea install.div (fichero empaquetado original)
 
   if ((fout=fopen("install/INSTALL.DIV","wb"))==NULL) {
-	printf("970\n");
-    v_texto=(char *)texto[358]; dialogo(err0);
+	v_texto=(char *)texto[358]; dialogo(err0);
     free(_ins); return;
   }
 
@@ -1000,8 +1002,8 @@ printf("cwork %s\n",cWork);
 
       fin=fopen("install/div32run.ins","rb");
 
-//    if (pentium) fin=fopen("install\\div32run.ins","rb");
-//    else         fin=fopen("install\\div32run.386","rb");
+//    if (pentium) fin=fopen("install/div32run.ins","rb");
+//    else         fin=fopen("install/div32run.386","rb");
 
       strcpy(MiHeaderSetup[x].name,"DIV32RUN.DLL");
       topack=0;
