@@ -355,6 +355,8 @@ uint8_t sdl2key[2048];
 //#define _s sdl2key
 
 void sdlkeyinit(void) {
+	SDL_EnableUNICODE( SDL_ENABLE );  
+	SDL_EnableKeyRepeat( SDL_DEFAULT_REPEAT_DELAY,  SDL_DEFAULT_REPEAT_INTERVAL);
 
 sdl2key[SDLK_ESCAPE]=1;
 sdl2key[SDLK_F1]=59;
