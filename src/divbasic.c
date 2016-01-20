@@ -964,10 +964,10 @@ int is_near_mab(int x,int y) {
 //      UNDO - Guarda la zona ocupada por una acciขn, antes de realizarla claro
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-int save_undo(int x, int y, int an, int al) {
+byte * save_undo(int x, int y, int an, int al) {
 
   int a,start,end; // Inicio y fin del bloque guardado (en undo[])
-  int ret=0;
+  byte *ret=0;
 
   if (x<0) {an+=x; x=0; } if (y<0) {al+=y; y=0; }
   if (x+an>map_an) an=map_an-x; if (y+al>map_al) al=map_al-y;

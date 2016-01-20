@@ -159,7 +159,7 @@ void modo_inter(void);
 void set_mab(int,int);
 int is_mab(int,int);
 int is_near_mab(int,int);
-int save_undo(int,int,int,int);
+byte * save_undo(int,int,int,int);
 int undo_back(void);
 void undo_next(void);
 
