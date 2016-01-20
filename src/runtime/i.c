@@ -1824,7 +1824,9 @@ f=fopen(HTML_EXE,"rb");
 printf("FILE: %s %x\n",HTML_EXE,f);
 
 #else
-//#ifndef DROID
+
+#ifdef DROID
+
 if(argc>1 && exesize==0) {
   if ((f=fopen(argv[1],"rb"))==NULL) {
     #ifndef DEBUG
@@ -1840,10 +1842,11 @@ if(argc>1 && exesize==0) {
 //#endif
 #endif
 
-#ifdef DROID
 	if(argc==1) {
 		chdir("resources");
 		f = fopen("EXEC.EXE","rb");
+	} else {
+		f=fopen(argv[1],"rb");
 	}
 
 	if(!f) {
