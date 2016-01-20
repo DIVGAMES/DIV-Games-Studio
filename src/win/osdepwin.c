@@ -230,18 +230,29 @@ struct dirent **namelist=NULL;
 //char findname[_MAX_PATH];
 long hFile;
 unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result) {
+int ret=0;
+
 strcpy(findname,name);
-printf("FIND FIRST %s\n",findname);
+printf("FIND FIRST %s %d\n",findname,attr );
+type = attr;
+
 #ifdef __cplusplus
 	hFile =  _findfirst(name,( _finddata32_t*)result);
 #else
 hFile =  _findfirst(name,result);
 #endif
-	return 0;//hFile;
+
+ret =_dos_findnext(result);
+
+printf("matches: %d\n",nummatch);
+
+return (ret);
+
+//	return 0;//hFile;
 	//printf("TODO - findfirst\n");
 
 
- unsigned int ret =0;
+// unsigned int ret =0;
 
 //printf("name is %s\n",name);
 
@@ -266,7 +277,7 @@ type = attr;
 //n--;
 ret =_dos_findnext(result);
 
-//printf("matches: %d\n",nummatch);
+printf("matches: %d\n",nummatch);
 
 return (ret);
 
@@ -284,7 +295,6 @@ return (ret);
 unsigned int _dos_findnext(struct find_t *result) {
 //	printf("TODO - findnext\n");
 struct _finddata32_t result2;
-printf("findnext found: %s %s\n",result->name, result2.name);
 //return n;
 int n=0;
 
@@ -294,9 +304,18 @@ strcpy(result->name,result2.name);
 
 	result->attrib=result2.attrib;
 	result->size = result2.size;
+printf("findnext found: %s %s %d %d\n",result->name, result2.name,result2.attrib,type);
+
+if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
+	type == _A_SUBDIR && result2.attrib&_A_SUBDIR) {
+	printf("match\n");
+	
 	return 0;
+}
 
 }
+printf("no more matches\n");
+
 #ifdef NOTYET
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
@@ -318,6 +337,7 @@ strcpy(result->name,result2.name);
 			return 0;
 		} 
 	}
+	
 }
 //printf("free'ing np [%d] *not matched* %s\n",np, namelist[np]->d_name);
 if(np<nummatch)
