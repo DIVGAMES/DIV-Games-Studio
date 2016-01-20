@@ -830,11 +830,11 @@ void editor() {
 
   }
   
-  if(mouse_b &4) {
+  if(mouse_b&4 && wmouse_x!=-1) {
 	  f_scroll(3);
   }
 	 
-  if(mouse_b &8) {
+  if(mouse_b&8 && wmouse_x!=-1) {
 	  f_mscroll(3);
   }
 
