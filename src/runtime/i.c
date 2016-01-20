@@ -85,6 +85,238 @@ int process_level=0; // Para contabilizar los cal/ret (para el step del debug)
 int nullstring[4];
 int nstring=0;
 
+#ifdef LLPROC
+
+
+int checklist=0;
+int dtemp=0;
+
+struct llist{
+	int pid;
+	struct llist *lnext;
+	int next;
+	struct llist *lprev;
+	int prev;
+	int z;
+	int p;
+};
+
+
+struct llist *plist = NULL;
+
+void first_process(void) {
+	plist = (struct llist *)malloc(sizeof(struct llist));
+	
+	plist->next=0;
+	plist->lnext = NULL;
+	plist->prev=0;
+	plist->lprev = NULL;
+	plist->z=0;
+	plist->p=0;
+	plist->pid=0;
+	
+}
+
+void proc_list(void) {
+
+return ;	
+	struct llist *f=plist;
+
+	printf("Proc tree: \n");
+	
+	do{
+		f=f->lnext;
+		printf("ID: %x %d %d \n",f,f->pid,f->z);
+	} while (f->lnext!=NULL);
+	
+}
+
+struct llist * find_proc(int id) {
+	struct llist *ls = plist;
+
+//	printf("first id: %x %d\n",ls, ls->pid);
+
+//	if(ls->lnext==NULL)
+//		return NULL;
+	
+	do {
+//		printf("%d %d\n",ls->pid,id);
+		
+		if(ls->pid==id) {
+			printf("found id: %d %x\n",id,ls);
+			return ls;
+		}
+		ls=ls->lnext;		
+	} while(ls!=NULL);
+	
+	return NULL;
+}
+void dirty(int did) {
+	
+	struct llist *fs = find_proc(did);
+	struct llist *ff = plist;
+	struct llist *pf = NULL;
+
+printf("fs: %x\nBefore id %d removed:\n",fs, did);
+
+proc_list();
+
+
+	if(fs->lprev!=NULL) {
+		fs->lprev->lnext = fs->lnext;
+		fs->lprev->next = fs->next;
+	}
+	if(fs->lnext!=NULL) {
+		fs->lnext->lprev = fs->lprev;
+		fs->lnext->prev = fs->prev;
+	}
+
+printf("After id %d removed:\n",did);
+	
+	
+	proc_list();
+	
+	if(checklist==_Z)
+		fs->z=mem[did+checklist];
+	else
+		fs->p=mem[did+checklist];
+	
+	printf("%c changed, Old: %d New: %d\n",((checklist==_Z)?'Z':'P'),dtemp,mem[did+checklist]);
+
+// look for slot
+
+	do {
+//		printf("Looking for next %x %x\n",ff,ff->lnext);
+		if(checklist==_Z) {
+			if(ff->z > mem[did+checklist]) {
+	//			printf("Z %d is MORE than %d\n",ff->z,mem[did+checklist]);
+				pf = ff;
+//				break;
+			}
+		}
+		if(checklist==_P) {
+			if(ff->p > mem[did+checklist]) {
+				printf("MATCHED P\n");
+				pf = ff;
+	//			break;
+			}
+		}
+		ff=ff->lnext;
+		
+	} while(ff != NULL);
+	
+	
+	if(pf==NULL) {
+		pf=plist; // first
+	}
+
+	printf("pf: %x ff: %x\n",pf,ff);
+	
+	
+	if(pf!=NULL) {
+	
+//		printf("Re-indexing for (oldid) %d id %d %d %d\n",oldid, did,checklist,did+checklist);
+
+		ff=pf;
+		//->lprev;
+
+	
+		fs->lnext = ff->lnext;
+		fs->next = ff->next;
+		
+		if(ff->lnext!=NULL) {
+			ff->lnext->lprev = fs;
+			ff->lnext->prev = did;
+		}
+		
+		
+		ff->lnext=fs;
+		ff->next=fs->pid;
+
+//		fs->next = pf->pid;
+//		fs->lnext = pf;
+	
+	}
+	checklist=0;
+	dtemp=0;
+	
+	printf("DIRTY DONE\n");
+	proc_list();
+	
+}
+
+
+
+void remove_process(int remove_id) {
+
+	printf("[Removing process] %d\n",remove_id);
+	
+	struct llist *f = find_proc(remove_id);
+	
+	if(f==NULL)
+		return;
+
+	printf("lprev %x\n",f->lprev);
+
+
+	f->lprev->lnext = f->lnext;
+	f->lprev->next = f->next;
+	 
+
+	if(f->lnext!=NULL) {
+		f->lnext->lprev = f->lprev;
+		f->lnext->prev = f->prev;
+	}
+	
+	free(f);
+	
+	proc_list();
+
+}
+
+
+void insert_process(int insert_id) {
+	// create new struct to insert into list
+	
+	struct llist *pnew = (struct llist *)malloc(sizeof(struct llist));
+
+
+	struct llist *ln = plist->lnext;
+
+	pnew->z=0;
+	pnew->p=0;
+	
+	plist->lnext = pnew;
+
+
+// this id
+	pnew->pid=insert_id;
+
+// first is now this
+	plist->next = insert_id;
+	plist->lnext = pnew;
+	
+	pnew->lnext = ln;
+	pnew->lprev = plist;
+	
+	pnew->prev = plist->pid;
+	
+	pnew->next=0;
+	
+	if(ln!=NULL) {
+		pnew->next = ln->pid;
+		ln->lprev = pnew;
+		ln->prev = insert_id;
+	}
+
+	printf("New process id: %d %x %x\n",insert_id,pnew,pnew->lprev);
+	
+//	free(n);
+	  
+	proc_list();  
+}
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // Critical error handler
 ///////////////////////////////////////////////////////////////////////////////
@@ -225,6 +457,13 @@ void inicializacion (void) {
 
   procesos=1; id_init=imem; imem+=iloc_len; id_start=id_end=imem;
 
+// setup linked list
+#ifdef LLPROC
+first_process();
+
+insert_process(id_start);
+#endif
+
   mem[iloc+_x1]=-1;
 
   memcpy(&mem[id_init],&mem[iloc],iloc_pub_len<<2); // *** Init
@@ -315,7 +554,7 @@ init_rnd(dtime);
   game_fps=dfps=24;
   max_saltos=0;
 #ifdef __EMSCRIPTEN__
-  max_saltos=2;
+  max_saltos=0;
 #endif
 
 
@@ -572,6 +811,9 @@ void es_fps(byte f) {
 //�����������������������������������������������������������������������������
 
 int oreloj;
+#ifndef DEBUG
+inline 
+#endif
 
 void exec_process(void) {
   #ifdef DEBUG
@@ -588,13 +830,29 @@ void exec_process(void) {
   }
   #endif
 
-  id=id_old; do {
+/*  id=id_old; do {	  
     if (mem[id+_Status]==2 && !mem[id+_Executed] &&
         mem[id+_Priority]>max) { ide=id; max=mem[id+_Priority]; }
     if (id==id_end) id=id_start; else id+=iloc_len;
   } while (id!=id_old);
+*/
 
-
+ id=id_old; 
+ do {	  
+    if (mem[id+_Status]==2 && !mem[id+_Executed]) {
+    ide=id;
+    id_old=ide;
+    break;
+    } //        mem[id+_Priority]>max) { ide=id; max=mem[id+_Priority]; }
+    else {
+		if (id>=id_end) 
+			id=id_old;
+		else 
+			id+=iloc_len;
+		//id=id_start; else id+=iloc_len;
+	}
+  } while (id!=id_old);
+  
   if (ide) if (mem[ide+_Frame]>=100) {
     mem[ide+_Frame]-=100;
     mem[ide+_Executed]=1;
@@ -659,10 +917,18 @@ void trace_process(void) {
   }
 
   id=id_old; do {
-    if (mem[id+_Status]==2 && !mem[id+_Executed] &&
-        mem[id+_Priority]>max) { ide=id; max=mem[id+_Priority]; }
-    if (id==id_end) id=id_start; else id+=iloc_len;
-  } while (id!=id_old);
+
+    if (mem[id+_Status]==2 && !mem[id+_Executed] ) {
+		ide=id;
+		break;
+	}
+	if (id==id_end) id=id_start; else id+=iloc_len;
+    //&&
+     //   mem[id+_Priority]>max) { ide=id; max=mem[id+_Priority]; }
+//    if (id==id_end) id=id_start; else id+=iloc_len;
+  } while (ide==0 && id!=id_old);
+
+id_old=ide;
 
   if (ide) if (mem[ide+_Frame]>=100) {
     mem[ide+_Frame]-=100;
@@ -1036,32 +1302,50 @@ emscripten_run_script (buf);
     function_exec(255,get_ticks()-oreloj);
     #endif
 
+#ifndef NOTYET
+//printf("new loop: max %llx\n",max);
     do {
       #ifdef DEBUG
       oreloj=get_ticks();
       #endif
 
+// 0x80000000 = min_int
+
       ide=0; m7ide=0; scrollide=0; otheride=0; max=0x80000000;
+
+//printf("new loop: max %llx %d\n",max,max);
 
       for (id=id_start; id<=id_end; id+=iloc_len)
       	if ((mem[id+_Status]==2 || mem[id+_Status]==4) && mem[id+_Ctype]==0 &&
-      	    !mem[id+_Executed] && mem[id+_Z]>max) { ide=id; max=mem[id+_Z]; }
+      	    !mem[id+_Executed] && mem[id+_Z]>max) { ide=id; max=mem[id+_Z]; 
+//printf("id max: %llx %d\n",max,max);
+				
+				}
 
       for (n=0;n<10;n++)
       	if (im7[n].on && (m7+n)->z>=max && !im7[n].painted) {
       	  m7ide=n+1; max=(m7+n)->z;
+//printf("m7 max: %llx %d\n",max,max);
+
       	}
 
       for (n=0;n<10;n++)
       	if (iscroll[n].on && (scroll+n)->z>=max && !iscroll[n].painted) {
       	  scrollide=n+1; max=(scroll+n)->z;
+//printf("scroll max: %llx %d\n",max,max);
+
       	}
 
-      if (text_z>=max && !textos_pintados) { max=text_z; otheride=1; }
+      if (text_z>=max && !textos_pintados) { max=text_z; otheride=1; 
+	//	  printf("text_z max: %llx %d\n",max,max);
+}
 
-      if (mouse->z>=max && !mouse_pintado) { max=mouse->z; otheride=2; }
+      if (mouse->z>=max && !mouse_pintado) { max=mouse->z; otheride=2; 
+		//  printf("mouse_z max: %llx %d\n",max,max);
+}
 
       if (draw_z>=max && !drawings_pintados) { max=draw_z; otheride=3; }
+//printf("draw_z max: %llx %d\n",max,max);
 
       if (otheride) {
       	if (otheride==1) {
@@ -1108,8 +1392,55 @@ emscripten_run_script (buf);
         }	mem[ide+_Executed]=1;
 
       }
-
+      /*
+		if(ide || m7ide || scrollide || otheride) 
+			printf("ide: %d, m7ide: %d, scrollide: %d, otheride: %s\n",
+			ide,m7ide,scrollide,	
+			(otheride==3?"Draw":(otheride==2?"Mouse":(otheride==1?"Text":"Graph")))
+			);
+*/
     } while (ide || m7ide || scrollide || otheride);
+
+#else
+
+      for (id=id_start; id<=id_end; id+=iloc_len)
+      	if ((mem[id+_Status]==2 || mem[id+_Status]==4) && mem[id+_Ctype]==0 &&
+      	    !mem[id+_Executed]) {
+      	    // && mem[id+_Z]>max) { ide=id; max=mem[id+_Z]; }
+				ide=id; 
+
+
+				if (mem[ide+_Graph]>0 || mem[ide+_XGraph]>0) {
+				pinta_sprite();
+			}
+		}
+
+
+	for (n=0;n<10;n++)
+      	if (iscroll[n].on && !iscroll[n].painted) {
+      	  scrollide=n+1; 
+      	  iscroll[snum=scrollide-1].painted=1;
+      	
+			if (iscroll[snum].on==1) 
+				scroll_simple();
+			else if (iscroll[snum].on==2) 
+				scroll_parallax();
+		}
+
+
+	for (n=0;n<max_textos;n++) if (texto[n].font) break;
+          if (n<max_textos) {
+            memb[nullstring[0]*4]=0; // El texto "en el aire" no se muestra nunca
+            memb[nullstring[1]*4]=0;
+            memb[nullstring[2]*4]=0;
+            memb[nullstring[3]*4]=0;
+        	  pinta_textos(0);
+            #ifdef DEBUG
+            function_exec(250,get_ticks()-oreloj);
+            #endif
+          } textos_pintados=1;
+
+#endif
 
     if (demo) pinta_textos(max_textos);
 
@@ -1206,6 +1537,14 @@ emscripten_run_script (buf);
 void elimina_proceso(int id) {
   int id2;
 
+#ifdef LLPROC
+remove_process(id);
+#endif
+
+//  printf("Removing process %d\n",id);
+
+  
+
   mem[id+_Status]=0; procesos--;
   if (id2=mem[id+_Father]) {
     if (mem[id2+_Son]==id) mem[id2+_Son]=mem[id+_BigBro];
@@ -1232,6 +1571,11 @@ void elimina_proceso(int id) {
 #ifdef MODE8
   _object_destroy(mem[id+_M8_Object]);
 #endif
+
+	while(mem[id_end+_Status]==0 && id_end>id_start) {
+		id_end-=iloc_len;
+	}
+	
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1326,9 +1670,9 @@ void e(int texto) {
   } if (ignore_errors || n<nomitidos) return;
 
   if (v_function>=0) {
-    printf("Error %d (%s) %s",texto,fname[v_function],text[texto]);
+    printf("Error %d (%s) %s\nn",texto,fname[v_function],text[texto]);
   } else {
-    printf("Error %d %s",texto,text[texto]);
+    printf("Error %d %s\n\n",texto,text[texto]);
   }
 #ifdef NET
   if (inicializacion_red) net_end();
@@ -1349,6 +1693,11 @@ void e(int texto) {
 //////////////////////////////////////////////////////////////////////////////
 //  Main Program
 //////////////////////////////////////////////////////////////////////////////
+#ifdef ZLIB
+extern int datastartpos;
+extern char exebin[255];
+#endif
+
 
 
 
@@ -1359,14 +1708,24 @@ int main(int argc,char * argv[]) {
   byte *dp;
   char DIV_VER=' ';
   char *jschar;
+
+  char buf[255];
   
   unsigned long len,len_descomp;
   int mimem[10],n,i;
   uint32_t stubsize = 602;
   uint32_t winstubsize = 11984;
   uint32_t div1stubsize = 8819;
+  uint32_t exesize = 0;
+  uint32_t datsize = 0;
+  uint32_t exestart = 0;
+  uint32_t datstart = 0;
   
+#ifndef GP2X 
+#ifndef PS2  
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+#endif
+#endif
   atexit(SDL_Quit);
   SDL_Init( SDL_INIT_EVERYTHING);
   if(SDL_NumJoysticks() > 0) { 
@@ -1392,10 +1751,44 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
   numfiles=flushall();
 #endif
 
+if(argc==1) {
+//	printf("\n");
+// search for magic..
+
+	f=fopen(argv[0],"rb");
+
+	memset(buf,255,0);
+	
+	if(f) {
+		fseek(f,-2,SEEK_END);
+		fread(buf,1,2,f);
+
+		if(!strcmp(buf,"DX")) {
+			printf("Found exe\n");
+			printf("data and exe packed\n");
+			
+			fseek(f,-10,SEEK_END);
+			fread(&exesize,4,1,f);
+			fread(&datsize,4,1,f);
+
+			printf("exesize: %d\n",exesize);
+			printf("datsize: %d\n",datsize);
+			
+
+//		printf("[%c][%c]\n",buf[0],buf[1]);
+//		fclose(f);
+		}
+		if(exesize==0)
+			fclose(f);
+	}
+}
+
+
+
 #ifndef DEBUG
 #ifndef __EMSCRIPTEN__
 #ifndef DROID
-  if (argc<2) {
+  if (argc<2 && exesize==0) {
     printf("DIV2015 Run time library - version 2.02a - http://div-arena.co.uk\n");
     printf("Error: Needs a DIV executable to load.\n");
 
@@ -1424,13 +1817,15 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
 //jschar=emscripten_run_script_string("$('#exename').text()");
 
 //emscripten_wget (jschar, "exe");//, loadmarvin, errormarvin);
+    max_saltos = 0;
 
 
 f=fopen(HTML_EXE,"rb");
 printf("FILE: %s %x\n",HTML_EXE,f);
 
 #else
-#ifndef DROID
+//#ifndef DROID
+if(argc>1 && exesize==0) {
   if ((f=fopen(argv[1],"rb"))==NULL) {
     #ifndef DEBUG
     printf("Error: Needs a DIV executable to load.\n");
@@ -1441,12 +1836,24 @@ printf("FILE: %s %x\n",HTML_EXE,f);
 
     exit(26);
   }
-#endif
+}
+//#endif
 #endif
 
 #ifdef DROID
-chdir("resources");
-f = fopen("EXEC.EXE","rb");
+	if(argc==1) {
+		chdir("resources");
+		f = fopen("EXEC.EXE","rb");
+	}
+
+	if(!f) {
+
+#ifndef DEBUG
+		printf("Error: Needs a DIV executable to load.\n");
+#endif
+		chdir(divpath);
+		exit(26);
+	}
 #endif
 
 #ifdef DEBUG
@@ -1456,13 +1863,28 @@ f = fopen("EXEC.EXE","rb");
 #endif
 
 // check if div1 or div2 exe
-fseek(f,0x2,SEEK_SET);
-fread(&DIV_VER,1,1,f);
-//printf("%s\n",DIV_VER=='D'?"DIV 1":"DIV 2");
   fseek(f,0,SEEK_END);
   len=ftell(f);
+  
+  if(exesize>0)
+	exestart=len-exesize-datsize-10;
 
-//printf("div ver: [%d] [%c]\n",DIV_VER,DIV_VER);
+#ifdef ZLIB
+if(datsize>0) {	
+	datastartpos=exestart+exesize;
+	strcpy(exebin,argv[0]);
+}
+#endif
+  
+fseek(f,0x2+exestart,SEEK_SET);
+fread(&DIV_VER,1,1,f);
+//printf("%s\n",DIV_VER=='D'?"DIV 1":"DIV 2");
+//  if(exesize==0) {
+//} else {
+//	len=exesize;
+//}
+
+printf("div ver: [%d] [%c]\n",DIV_VER,DIV_VER);
 
 switch(DIV_VER) {
 	case 'j':
@@ -1486,7 +1908,7 @@ switch(DIV_VER) {
   if(DIV_VER!='D')
 	len-=stubsize-4*10;
   
-  fseek(f,0,SEEK_SET);
+  fseek(f,0+exestart,SEEK_SET);
 
 if(DIV_VER=='D') {
 printf("Cannot load DIV1 exe (yet!)\n");
@@ -1545,7 +1967,7 @@ printf("first op: %d\n",mem[mem[1]]);
         interprete();        
 } else {
 
-  fseek(f,stubsize,SEEK_SET);
+  fseek(f,stubsize+exestart,SEEK_SET);
   fread(mimem,4,10,f);
 
 for(a=0;a<10;a++){ 
@@ -1558,12 +1980,18 @@ for(a=0;a<10;a++){
 
   if (iloc_len&1) iloc_len++;
 
+#ifdef __EMSCRIPTEN__
+#define MEM_MULTI 1
+#else
+#define MEM_MULTI 2
+#endif
+
   if (mimem[3]>0) {
     imem_max=mimem[8]+mimem[3]*(iloc_len)+iloc_len+2;
   } else {
     imem_max=mimem[8]+128*(iloc_len)+iloc_len+2;
-    if (imem_max<256*1024) imem_max=256*1024;
-    if (imem_max>1024*1024) imem_max=1024*1024;
+    if (imem_max<MEM_MULTI*256*1024) imem_max=MEM_MULTI*256*1024;
+    if (imem_max>MEM_MULTI*1024*1024) imem_max=MEM_MULTI*1024*1024;
   }
 
 
