@@ -1241,7 +1241,7 @@ void FPG_actualiza_listboxbr(struct t_listboxbr * l) {
 //---
 //printf("zona: %d\n",l->zona);
 
-  if (mouse_b&8 || (l->zona==2 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
+  if ((mouse_b&8 && wmouse_x!=-1) || (l->zona==2 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
     if (mouse_b&8 || !v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
         if ((old_mouse_b&1)&&!v_pausa) { retrazo(); retrazo(); }
 //---
@@ -1260,7 +1260,7 @@ void FPG_actualiza_listboxbr(struct t_listboxbr * l) {
 //if (l->zona==3 && (mouse_b&1)) {
 //  if (old_mouse_b&1) { retrazo(); retrazo(); retrazo(); retrazo(); }
 //---
-  if (mouse_b&4 || (l->zona==3 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
+  if ((mouse_b&4 && wmouse_x!=-1)|| (l->zona==3 && ((mouse_b&1)||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))))) {
     if (mouse_b&4 || !v_pausa||(v_pausa&&!(mouse_b&1)&&(old_mouse_b&1))) {
       if ((old_mouse_b&1)&&!v_pausa) { retrazo(); retrazo(); }
 //---
