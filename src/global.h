@@ -699,7 +699,7 @@ struct tmapa {
   int codigo;                           // C¢digo de este mapa (para el undo)
   int Codigo;                           // C¢digo de este mapa (para el FPG)
   char path[_MAX_PATH+1];               // Path del fichero asociado
-  char filename[12+1];                  // Nombre del fichero asociado
+  char filename[255];                  // Nombre del fichero asociado
   byte * map;                           // Mapa
   int map_an,map_al;                    // Dimensiones del mapa (pixels)
   int zoom,zoom_x,zoom_y,zoom_cx,zoom_cy; // Porci¢n editada del mapa
@@ -713,7 +713,7 @@ struct tprg {
   int old_x,old_y;              // Coordenadas antes de maximizarse
   int old_an,old_al;            // Ancho y alto antes de maximizarse
   char path[_MAX_PATH+1];       // Path del fichero asociado
-  char filename[12+1];          // Nombre del fichero asociado
+  char filename[255];          // Nombre del fichero asociado
   byte * buffer;                // Buffer con el fichero cargado
   int buffer_lon;               // Longitud del buffer
   int file_lon;                 // Longitud del fichero ( < buffer_lon)
