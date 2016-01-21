@@ -394,6 +394,12 @@ int main(int argc, char * argv[]) {
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 #endif
 #endif
+
+#ifdef __WIN32
+freopen( "CON", "w", stdout );
+freopen( "CON", "w", stderr );
+#endif
+
   atexit(SDL_Quit);
   atexit(free_resources);
   
@@ -507,6 +513,7 @@ if(compilemode==1) {
 				mensaje_compilacion(texto[202]);
 			}
 			free(prgbuf);
+			prgbuf=NULL;
 		} else {
 			printf("Out of memory\n");
 			exit(-1);
@@ -531,11 +538,11 @@ if(compilemode==1) {
   int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
   
   int initted=Mix_Init(flags);
-	print_init_flags(initted);
-	
+//
   if((initted&flags) != flags) {
-	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
-	  printf("Mix_Init: %s\n", Mix_GetError());
+	printf("Mix_Init: %s\n", Mix_GetError());
+	print_init_flags(initted);
+	//  printf("Mix_Init: Failed to init required ogg and mod support!\n");	
    }
 #endif 
 #endif
@@ -735,7 +742,7 @@ void inicializa_entorno() {
   _chdir("system"); DaniDel("exec.*"); _chdir("..");
 
   if (primera_vez) {
-    //v_tipo=13; strcpy(input,"system\\div.txt");
+    //v_tipo=13; strcpy(input,"system/div.txt");
     //mouse_graf=3; volcado_copia(); mouse_graf=1;
     //v_terminado=-1; // No emite error si el fichero no existe
     //abrir_programa(); if (v_terminado) maximizar();
@@ -1477,7 +1484,7 @@ void entorno(void) {
 	  mainloop();
 	    } while (!salir_del_entorno);
   do { read_mouse(); } while(mouse_b&1);
-
+printf("env end\n");
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1870,8 +1877,11 @@ void cierra_ventana(void) {
     volcado_copia();
   }
 
-  if (v.click_handler!=err2) free(v.ptr);
-
+  if (v.click_handler!=err2) { 
+	  free(v.ptr);
+	  v.ptr=NULL;
+  }
+  
   if (v.click_handler==help2 && old_prg!=NULL) {
     for (m=1;m<max_windows;m++) {
       if (ventana[m].click_handler==programa2 || ventana[m].click_handler==calc2) {
@@ -2368,6 +2378,9 @@ void vuelca_ventana(int m) {
   if (ventana[n].primer_plano<2) {
 
     _ptr=ventana[n].ptr;
+if(_ptr==NULL)
+		return;
+		
     salta_x=0; salta_y=0;
     _x=ventana[n].x; _y=ventana[n].y;
     _an=ventana[n].an; _al=ventana[n].al;
@@ -2377,10 +2390,14 @@ void vuelca_ventana(int m) {
     if (x>_x) { salta_x+=x-_x; _ptr+=salta_x; _x=x; _an-=salta_x; }
     if (x+an<_x+_an) { salta_x+=_x+_an-x-an; _an-=_x+_an-x-an;  }
 
-    if (_an>0 && _al>0) if (ventana[n].primer_plano==1)
+    if (_an>0 && _al>0) {
+		if (ventana[n].primer_plano==1) {
    		 	wvolcado(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-    else wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
-
+		}
+     else {
+		wvolcado_oscuro(copia,vga_an,vga_al,_ptr,_x,_y,_an,_al,salta_x);
+	}
+	}
   } else {
 
     wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x+9*big2-x,ventana[n].y-y,10,ventana[n].nombre,c0);
@@ -3306,9 +3323,20 @@ fclose(f);
 
 void finalizacion(void) {
 
-  free(undo);
-  free(graf_ptr);
-  free(text_font);
+  if(undo!=NULL) {
+	free(undo);
+	undo = NULL;
+  }
+  if(graf_ptr!=NULL) {
+	free(graf_ptr);
+	graf_ptr=NULL;
+  }
+  
+  if(text_font!=NULL) {
+    free(text_font);
+    graf_ptr=NULL;
+  }
+  
   free(tapiz);
   free(fill_dac);
   free(barra);
@@ -4253,7 +4281,7 @@ void check_mouse(void) {
   int386 (0x33, &inregs, &outregs);
 
   if (outregs.w.ax!=0xffff) {
-    system("system\\mouse.com >nul");
+    system("system/mouse.com >nul");
     segread(&sregs);
     inregs.w.ax = 0;
     int386 (0x33, &inregs, &outregs);
@@ -4319,6 +4347,9 @@ int ivaux=0;
 
 void copy(int a,int b) {
 
+  if(a==b)
+	return;
+	
   if (a==-1) {
     memcpy(&vaux[ivaux].tipo,&ventana[b].tipo,sizeof(struct tventana));
   } else if (b==-1) {
@@ -4326,6 +4357,7 @@ void copy(int a,int b) {
   } else {
     memcpy(&ventana[a].tipo,&ventana[b].tipo,sizeof(struct tventana));
   }
+  
 }
 
 void xchg(int a,int b) { copy(-1,a); copy(a,b); copy(b,-1); }
@@ -4420,9 +4452,9 @@ void GetFree4kBlocks(void)
   FILE *f;
   unsigned u, DOScount, DPMIcount;
 
-  remove("C:\\DIV\\FREEDIV.TXT");
+  remove("C:/DIV/FREEDIV.TXT");
 
-  if( (f=fopen("C:\\DIV\\FREEDIV.TXT","a")) != NULL ) {
+  if( (f=fopen("C:/DIV/FREEDIV.TXT","a")) != NULL ) {
     for (DOScount = 0; u = DOSalloc4k (); DOScount ++);
     for (DPMIcount = 0; u = DPMIalloc4k (); DPMIcount ++);
 
@@ -4459,11 +4491,11 @@ void check_oldpif(void) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
-  if ((f=fopen("SYSTEM\\PATHINFO.INI","rb"))==NULL) return;
+  if ((f=fopen("SYSTEM/PATHINFO.INI","rb"))==NULL) return;
   fread(winpath,1,128,f);
   fclose(f);
 
-  sprintf(cwork,"%s\\DIVGAM~1.PIF",winpath);
+  sprintf(cwork,"%s/DIVGAM~1.PIF",winpath);
 
   if ((f=fopen(cwork,"rb"))!=NULL) {
 
