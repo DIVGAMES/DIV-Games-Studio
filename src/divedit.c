@@ -336,8 +336,14 @@ void programa2(void) {
 extern byte m_b;
 
 void programa3(void) {
-  if (kbloque && kprg==v.prg) kbloque=0;
-  free(v.prg->buffer); free(v.prg);
+  if (kbloque && kprg==v.prg) 
+	kbloque=0;
+  
+  free(v.prg->buffer); 
+  v.prg->buffer=NULL;
+  free(v.prg);
+  v.prg=NULL;
+  
 }
 
 void programa0(void){
@@ -1013,7 +1019,9 @@ void f_cortar(int borrar) { // 0-Copiar, 1-Cortar, 2-Borrar
   } k1=kini+kcol1-1;
 
   if (borrar!=2) {
-    if (papelera!=NULL) free(papelera);
+    if (papelera!=NULL)  
+		free(papelera);
+		
     if ((papelera=(char *)malloc(lon_papelera=k2-k1+1))==NULL) {
 
       // *** OJO *** Error "no hay memoria"
@@ -2512,7 +2520,10 @@ void programa0_nuevo(void) {
 
   if (v_terminado) { n=buffer_grow;
     if ((buffer=(byte *)malloc(n))!=NULL) {
+		memset(buffer,0,n);
+		
       if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
+		  memset(v_prg,0,sizeof(struct tprg));
           v_prg->buffer_lon=n;
           strcpy(v_prg->filename,input);
           strcpy(v_prg->path,tipo[v_tipo].path);
