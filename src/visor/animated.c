@@ -3,7 +3,7 @@
 void animated_create(animated *animated_struct,fileanim *f_anm,hlrender *hlrnd,char *name,Resource *res)
 {
   complex_create(&animated_struct->complex_struct,hlrnd,name,res);
-  if (animated_struct->complex_struct.nObjects!=f_anm->header.nObjects) {ERROR=ERR16;exit(1);};
+  if (animated_struct->complex_struct.nObjects!=f_anm->header.nObjects) {ERROR=(char *)ERR16;exit(1);};
   animated_struct->fanm=f_anm;
   if(animated_struct->complex_struct.nFrames>0)
   {

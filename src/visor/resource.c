@@ -8,10 +8,10 @@ void resource_create(Resource *resource_struct,char *name)
   char Clave[5];
 
   resource_struct->Packed=fopen(name,"rb");
-  if(resource_struct->Packed==NULL) {ERROR=ERR4;printf("Nombre del recurso: %s\n",name);exit(1);};
+  if(resource_struct->Packed==NULL) {ERROR=(char *)ERR4;printf("Nombre del recurso: %s\n",name);exit(1);};
   fread(Clave,4,1,resource_struct->Packed);
   Clave[4]=0;
-  if(strcmp(Clave,"PACK")) {ERROR=ERR5;exit(1);};
+  if(strcmp(Clave,"PACK")) {ERROR=(char *)ERR5;exit(1);};
   fread(&resource_struct->Num_Pack,4,1,resource_struct->Packed);
   if ((resource_struct->MyPack=(Pack *)lf_malloc(sizeof(Pack)*resource_struct->Num_Pack))==NULL)
     return;
@@ -26,7 +26,7 @@ void resource_destroy(Resource *resource_struct)
 
 unsigned int resource_Exist(Resource *resource_struct,char *Name)
 {
-int x;
+unsigned int x;
   for(x=0;x<resource_struct->Num_Pack;x++)
     if(!strcmp(Name,resource_struct->MyPack[x].Name))
       return(1);
@@ -34,7 +34,7 @@ return(0);
 }
 unsigned int resource_GetPackedLen(Resource *resource_struct,char *Name)
 {
-int x;
+unsigned int x;
   strupr(Name);
   for(x=0;x<resource_struct->Num_Pack;x++)
     if(!strcmp(Name,resource_struct->MyPack[x].Name))
@@ -55,7 +55,7 @@ void resource_fSeekPacked(Resource *resource_struct,long pos)
 
 FILE *resource_GetFilePtrPacked(Resource *resource_struct,char *Name)
 {
-int x;
+unsigned int x;
   strupr(Name);
   for(x=0;x<resource_struct->Num_Pack;x++)
     if(!strcmp(Name,resource_struct->MyPack[x].Name))
@@ -70,7 +70,7 @@ return(NULL);
 char *resource_GetPacked(Resource *resource_struct,char *Name)
 {
 unsigned char *Buffer,*Buffer2;
-int x;
+unsigned int x;
 unsigned int leng;
   strupr(Name);
   for(x=0;x<resource_struct->Num_Pack;x++)

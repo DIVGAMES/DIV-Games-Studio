@@ -447,6 +447,7 @@ void GenSpr2(void)
         fin_dialogo=1;
         return;
       }
+      
       visor_loop((lptvisor)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
         strcpy(TamText, "100");
@@ -954,6 +955,8 @@ void CargarTextura(char *NombreTextura)
     v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     return;
   }
+  memset(mapa,0,x);
+  
   if(fread(mapa, 1, x, f) != x)
   {
     free(mapa);
@@ -970,9 +973,12 @@ void CargarTextura(char *NombreTextura)
   else if (es_JPG(mapa,x)) tipomapa=4;
   else tipomapa=0;
   swap(man,map_an); swap(mal,map_al);
+printf("file: %s\n",full);
 
   if (tipomapa) {
     if ((temp=(byte*)malloc(man*mal+man))!=NULL) {
+		memset(temp,0,man*mal+man);
+		
       swap(man,map_an); swap(mal,map_al);
       n=1;
       switch (tipomapa) {
@@ -1092,6 +1098,7 @@ void CargarSprite(void)
     v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     return;
   }
+memset(mapa,0,man*mal);
 
   for (y=0;y<mal;y++) {
     for (x=0;x<man;x++) {

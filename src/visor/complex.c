@@ -36,12 +36,12 @@ wmaterial   wmat;
 
 
   file=fopen(name,"rb");
-  if(file==NULL)        {ERROR=ERR8;printf("Failed to open file: %s\n",name);exit(1);};
+  if(file==NULL)        {ERROR=(char *)ERR8;printf("Failed to open file: %s\n",name);exit(1);};
   fread(cControl,1,4,file);
-  if(strcmp(cControl,"O3D")) {ERROR=ERR9;exit(1);};
+  if(strcmp(cControl,"O3D")) {ERROR=(char *)ERR9;exit(1);};
   fread(&sWork,1,2,file);   // Versi¢n
   fread(&complex_struct->nObjects,1,2,file);// Numero de Objetos
-  if(complex_struct->nObjects>MAXOBJECTS)       {ERROR=ERR10;exit(1);};
+  if(complex_struct->nObjects>MAXOBJECTS)       {ERROR=(char *)ERR10;exit(1);};
   for(i=0;i<complex_struct->nObjects;i++)
     if ((complex_struct->Objects[i]=(lptobject)lf_malloc(sizeof(tobject)))==NULL)
       return;

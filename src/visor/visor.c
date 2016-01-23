@@ -130,7 +130,8 @@ void visor_loop(lptvisor datos_render)
   if (!lib_3d)
     return;
 
-  lfset(my_buffer->buffer,0xf81f,my_buffer->ancho*my_buffer->alto);
+  //lfset(my_buffer->buffer,0xf81f,my_buffer->ancho*my_buffer->alto);
+  memset(my_buffer->buffer,0,my_buffer->ancho*my_buffer->alto*2);
 
   //---------------------------------------------------------------------------
   //  Convierto de grados en radianes

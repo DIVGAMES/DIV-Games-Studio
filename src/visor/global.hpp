@@ -18,7 +18,9 @@ void GetAngs(lptmatrix mat,float *ax,float *ay,float *az,float *x,float *y,float
 /////////////////////////////// Cambio de modo de video (temporal)
 
 void SetVideoMode(int);
+#ifdef DOS
 #pragma aux SetVideoMode parm[eax]="int 10h";
+#endif
 
 long schop(float);
 /*

@@ -4,6 +4,7 @@
 #include "llrender.hpp"
 #include "global.hpp"
 #include "t.h"
+#include "stdint.h"
 
 long complex_x_ini,complex_x_fin;
 long complex_y_ini,complex_y_fin;
@@ -57,23 +58,38 @@ long ajuste_entero(long x) //inline
 void (*nucleo_texturas)(int v, int u, int du, int dv, int ancho, short *destino);
 
 int clocks();
+#ifdef DOS
 #pragma aux clocks =  \
         "push edx"    \
         "db 0fh,31h"  \
         "pop edx"     \
         value [eax]   \
 
+#endif
+
 void inicio_division(float *);
+#ifdef DOS
+
 #pragma aux inicio_division = \
         "fld1"                \
         "fdiv dword ptr[EAX]" \
         parm caller [EAX]     \
 
+#endif
+
 void fin_division();
+
+#ifdef DOS
+
 #pragma aux fin_division =    \
         "fstp dword ptr[inversa]" \
 
+#endif
+
 void asignacion_u_v();
+
+#ifdef DOS
+
 #pragma aux asignacion_u_v =      \
         "fld dword ptr[inversa]"  \
         "fld st(0)"               \
@@ -82,13 +98,17 @@ void asignacion_u_v();
         "fmul dword ptr[fv]"      \
         "fistp dword ptr[v_0]"    \
 
+#endif
 void lf_set(void *, long, long);
+
+#ifdef DOS
+
 #pragma aux lf_set = \
 	"rep stosw" \
         parm caller [edi] [eax] [ecx]\
 	modify exact [edi eax ecx] \
 
-
+#endif
 //=============================================================================
 
 short *destino;
@@ -96,6 +116,9 @@ short color_b;
 int mr,mg,mb,intensidad,alfa;
 
 void nucleo1();
+
+#ifdef DOS
+
 #pragma aux nucleo1 = \
         "pushad" \
         "mov edi,destino" \
@@ -114,7 +137,11 @@ void nucleo1();
         "shr ebx,3" \
         "and ebx,7e0h" \
 
+#endif
+
 void nucleo2();
+
+#ifdef DOS
 #pragma aux nucleo2 = \
         "mov ax,color_b" \
         "and eax,07c0h" \
@@ -134,6 +161,8 @@ void nucleo2();
         "add dx,[esi+eax*2]" \
         "mov [edi],dx" \
         "popad" \
+
+#endif
 
 //=============================================================================
 
@@ -1129,6 +1158,56 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
 //  Maps a texture on a triangle with gouraud
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
+int dp=0;
+float fids[255];
+
+
+
+void inicio_division(float *fp) {
+	
+	fids[dp]=*(float*)&fp;
+	dp++;
+	
+}
+
+void fin_division()
+{
+    inversa = (float)fids[dp];
+    dp--;
+}
+void asignacion_u_v(void) {
+	 u_0 = (uint32_t) (inversa * fu);
+    v_0 = (uint32_t) (inversa * fv);
+}
+
+#ifndef UINT16_C
+#define UINT16_C(value) (uint16_t)(value)
+//__CONCAT(value,U)
+#endif
+static inline void nucleo_combinado(void)
+{
+    uint16_t output_pixel = 0;
+    uint16_t mask = (mr >> 3) & UINT16_C(0x7E0);
+    uint16_t index = (color_b & UINT16_C(0xF800)) + mask + alfa;
+    output_pixel = tabla_rgba[index];
+    output_pixel <<= 5;
+    mask = (mg >> 3) & UINT16_C(0x7E0);
+    index = ((color_b & UINT16_C(0x7C0)) << 5) + mask + alfa;
+    output_pixel += tabla_rgba[index];
+    output_pixel <<= 6;
+    mask = (mb >> 3) & UINT16_C(0x7E0);
+    index = ((color_b & UINT16_C(0x1F)) << 11) + mask + alfa;
+    output_pixel += tabla_rgba[index];
+    *destino = output_pixel;
+}
+
+void nucleo1(void) {
+	nucleo_combinado();
+}
+
+void nucleo2(void) {
+}
+
 void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmlevel, int tipo)
 {
   int altura;
@@ -1167,35 +1246,41 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
     col_b=schop(face->material->db*32.0)&0x1f;
     color=col_r+col_g+col_b;
   }
+//rotacion_mascara=10;
 
-/* 
+ 
   switch (ancho) {
-    case 8:   if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_8;
+    case 8:   /*if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_8;
               else nucleo_texturas=nucleo8_8;
+              * */
               rotacion_mascara=13;
               break;
-    case 16:  if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_16;
+    case 16:  /*if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_16;
               else nucleo_texturas=nucleo8_16;
+              */
               rotacion_mascara=12;
               break;
-    case 32:  if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_32;
+    case 32:  /*if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_32;
               else nucleo_texturas=nucleo8_32;
+              */
               rotacion_mascara=11;
               break;
-    case 64:  if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_64;
+    case 64:  /*if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_64;
               else nucleo_texturas=nucleo8_64;
+              */
               rotacion_mascara=10;
               break;
-    case 128: if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_128;
+    case 128: /*if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_128;
               else nucleo_texturas=nucleo8_128;
-              rotacion_mascara=9;
+              */rotacion_mascara=9;
               break;
-    case 256: if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_256;
+    case 256: /*if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_256;
               else nucleo_texturas=nucleo8_256;
+              */
               rotacion_mascara=8;
               break;
   }
-*/
+
   //Ordenamos los vertices, v1 el de m쟳 arriba y v3 el de m쟳 abajo
 
   if (v1->fpy > v2->fpy) { vertice=v1; v1=v2; v2=vertice; }
@@ -1213,7 +1298,7 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
     }
   }
  
-#ifdef NOTYET
+#ifndef NOTYET
 
   if (tipo & T_GOURAUD) {
     v1_alpha=v1->intensidad*31;

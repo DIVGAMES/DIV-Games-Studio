@@ -248,7 +248,7 @@ int hlrender_addobject(hlrender *hlrender_struct,lptobject object)
 {
   object->activo=1;
   hlrender_struct->objects[hlrender_struct->nobjects]=object;
-  if(hlrender_struct->nobjects>N_OBJECTS-1) {ERROR=ERR12;exit(1);};
+  if(hlrender_struct->nobjects>N_OBJECTS-1) {ERROR=(char *)ERR12;exit(1);};
 return(hlrender_struct->nobjects++);
 }
 
@@ -376,7 +376,8 @@ void hlrender_setmovelight(hlrender *hlrender_struct,float x, float y, float z)
 }
 
 long schop(float rum) {
-	return(long) rum;
+	long n;
+	n= (long)rum;
+//	printf("schop: %ld %f\n",n,rum);	
+	return n;
 }
-
-

@@ -8,9 +8,9 @@ FILE *file;
 int x;
 int nmatrix=0;
   file=fopen(name,"rb");
-  if(file==NULL) {ERROR=ERR14;exit(1);};
+  if(file==NULL) {ERROR=(char *)ERR14;exit(1);};
   fread(&fileanim_struct->header,sizeof(a3d_header),1,file);
-  if(strcmp(fileanim_struct->header.Chunk,"A3D")) {ERROR=ERR15;exit(1);};
+  if(strcmp(fileanim_struct->header.Chunk,"A3D")) {ERROR=(char *)ERR15;exit(1);};
   if ((fileanim_struct->anims=(a3d_anim *)lf_malloc(sizeof(a3d_anim)*fileanim_struct->header.nAnims))==NULL)
     return;
   fread(fileanim_struct->anims,sizeof(a3d_anim),fileanim_struct->header.nAnims,file);
