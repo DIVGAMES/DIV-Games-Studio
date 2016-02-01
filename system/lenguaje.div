@@ -1,5 +1,5 @@
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-        DIV 2.02 ENGLISH VERSION
+        DIV DX 3.01 ENGLISH VERSION
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 # ASCII File with the text strings of the DIV environment that
@@ -10,7 +10,7 @@
 
 # Copyright
 
-001     " DIV Operating System - version 2.02 - (c) 1998 - 2001 Hammer Tech.\n"
+001     " DIV DX Operating System - version 3.01 - (c) 2016 DX GAMES.\n"
 
 # Information
 
@@ -54,10 +54,10 @@
 
 # Copyright to be printed in the bottom corner
 
-033     "DIV 2.02 (SAFE MODE)"
-034     "DIV 2.02"
+033     "DIVDX 3.01 (SAFE MODE)"
+034     "DIVDX 3.01"
 
-# 034     "DIV 2.02"
+# 034     "DIVDX 2.02"
 
 # Copyright intro window
 
@@ -455,7 +455,7 @@
 396 "Execution number"
 
 398 "4ureyesonly"
-399 "Version 2.02 for evaluation of ..."
+399 "Version 3.01 for evaluation of ..."
 
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
         DIV PROFESIONAL - NUEVOS TEXTOS
@@ -561,8 +561,8 @@
 479 "Javier Carrion, David Picon, Pedro P. Aull¢, JB,"
 480 "Zeen, Jens Grobecker, J.C. Ar‚valo, Carlos Doral,"
 481 "Rafa S. Gago, Antonio Ruiz y Gonzalo Martin"
-482 "DX Games studio (c) 2015 MikeDX"
-483 "DIV Games Studio (c) 1998-2001 Hammer Technologies."
+482 "DIV Games Studio (c) 1998-2001 Hammer Technologies."
+483 "DX Games studio (c) 2015 MikeDX"
 
 484 "(c) 2016 DX GAMES."
 485 "DX Games Studio - v3.01"

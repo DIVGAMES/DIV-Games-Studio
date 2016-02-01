@@ -3664,7 +3664,7 @@ void about1(void) {
   x=an/2;
 
   wwrite(v.ptr,an,al,x,11+8*0,1,texto[464],c3);
-  wwrite(v.ptr,an,al,x,11+8*1,1,texto[465],c0);
+  wwrite(v.ptr,an,al,x,11+8*1,1,texto[465],c3);
   wwrite(v.ptr,an,al,x,11+8*2,1,texto[466],c0);
   wwrite(v.ptr,an,al,x,11+8*3,1,texto[467],c0);
   wwrite(v.ptr,an,al,x,11+8*4,1,texto[468],c0);
