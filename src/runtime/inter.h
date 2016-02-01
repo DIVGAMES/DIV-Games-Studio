@@ -407,7 +407,10 @@ GLOBAL struct _video_modes * video_modes;
 #define end_struct long_header+14+10*10+10*7+8+11+9+10*4+1026+146+32*3
 
 #define timer(x) mem[end_struct+x]
+
+// text_z = -256
 #define text_z mem[end_struct+10]
+
 #define fading mem[end_struct+11]
 #define shift_status mem[end_struct+12]
 #define ascii mem[end_struct+13]
@@ -422,6 +425,8 @@ GLOBAL struct _video_modes * video_modes;
 #define _argv(x) mem[end_struct+22+x]
 #define channel(x) mem[end_struct+32+x]
 #define vsync mem[end_struct+64]
+
+// draw_z = -255
 #define draw_z mem[end_struct+65]
 #define num_video_modes mem[end_struct+66]
 #define unit_size mem[end_struct+67]
@@ -514,6 +519,8 @@ GLOBAL int id_init;     // Inicio del proceso init (padre de todos)
 GLOBAL int id_start;    // Inicio del primer proceso (sus locales y privadas)
 
 GLOBAL int id_end;      // Inicio del £ltimo proceso hasta el momento
+
+GLOBAL int id_max;
 
 GLOBAL int id_old;      // Para saber por donde se est  procesando
 

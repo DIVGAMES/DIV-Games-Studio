@@ -587,6 +587,8 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
 		strcpy(filename,l->lista+(l->lista_an*num));
 		strupr(filename);
 		printf("%s %s\n",filename,l->lista+(l->lista_an*num));
+		fflush(stdout);
+//return;		
       if(!strcmp(strchr(filename,'.'),".FNT"));
       else
       {

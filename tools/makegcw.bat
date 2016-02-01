@@ -53,6 +53,7 @@ echo "Making $4 GCW BINARY"
 cmake . -DTARGETOS=GCW > /dev/null
 
 make -j5 div1run-GCW divrun-GCW > /dev/null
+/opt/gcw0-toolchain/usr/bin/mipsel-linux-strip system/*-GCW
 
 echo "Copying $3 to buildgcw/$3"
 

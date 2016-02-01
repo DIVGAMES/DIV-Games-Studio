@@ -138,6 +138,7 @@
 &7D/*                   ;&7D Inicio de un comentario de varias l¡neas
 &7E*/                   ;&7D Fin de un comentario de varias l¡neas
 &7F//                   ;&7F Inicio de un comentario de una l¡nea          (")
+&7F#			;
                         ;&80..&FC (reservados)                             (")
                         ;&FD identificador
                         ;&FE constante entera

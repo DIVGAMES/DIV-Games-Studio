@@ -107,6 +107,11 @@ cat << EOF > html/$3.html
 				Javascript using Emscripten</p>
 				<p>By $5</p>
 				<p>$controls<br />
+								Download:
+				<a href='$3.apk'>Android</a> |
+				<a href='$3.pnd'>Pandora</a> | 
+				<a href='$3.opk'>GCW-Zero</a>  
+
 					<span id='controls'>
                <span style="display:none;">
 					<input type="hidden" id="resize">Resize canvas
@@ -115,6 +120,7 @@ cat << EOF > html/$3.html
 					<input type="checkbox" id="pointerLock">
 					Lock/hide mouse pointer &nbsp;&nbsp;&nbsp;
 				</span>
+
 			</span>
 </p>
 			<div class="spinner" id='spinner'></div>
@@ -132,6 +138,8 @@ cat << EOF > html/$3.html
 			<textarea class='hidden-phone hidden-tablet hidden-desktop' id="output" rows="8">
 			</textarea>
 		</div>
+	
+		
 		
 		<script async="" src="$3.js?i99" type="text/javascript"></script>
 		<script async="" src="site/analytics.js" type="text/javascript"></script>

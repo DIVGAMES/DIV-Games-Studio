@@ -1,11 +1,16 @@
 # CMAKE lists file for DIV GAMES STUDIO
-# (c) 2015 Mike Green
-
+# (c) 2015 Mike Green  
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(div2015)
 
-SET(BUILD_LEVEL "-O2")
-#ggdb3 -O0 ")
+SET(BUILD_LEVEL " -O2 ")
+#-ggdb3 -O0 ")
+
+#-ggdb3 -O0 ")
+#-ggdb3 -O0")
+#-O2")
+#-ggdb3 -O0")
+#-ggdb3 -O3 ")
 #ggdb3 -O0 ") 
 #"-O3 ")
 
@@ -151,8 +156,12 @@ ADD_DEFINITIONS(  ${BUILD_LEVEL} -fno-omit-frame-pointer -fpermissive -funsigned
 #ADD_DEFINITIONS(-DDIVDLL)
 
 
+#ADD_DEFINITIONS( -DSPRITEGEN )
+
 IF(NOT TARGETOS STREQUAL "WINDOWS")
 ADD_DEFINITIONS( -D_GNU_SOURCE=1 -DZLIB -DDIVDLL -DMIXER )
+#-DJPGLIB )
+#-DSPRITEGEN )
 #-DJPGLIB )
 # -DDIVDLL)
 ENDIF()

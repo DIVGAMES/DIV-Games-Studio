@@ -584,7 +584,7 @@ will advance in the opposite direction to the angle specified.
 {#9999,Example program:}
 PROGRAM example_advance;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     graph=101;
     x=160;
@@ -674,10 +674,10 @@ PRIVATE
     chan;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
 
-    sound_id = load_pcm("help\help.pcm", 1);
+    sound_id = load_pcm("help/help.pcm", 1);
     chan = sound(sound_id, vol, freq);
 
     write(0, 0, 0, 0, "Press right or left to change the frequency.");
@@ -719,7 +719,7 @@ Delete from the screen all graphics placed on it with the
 {#9999,Example program:}
 PROGRAM example_clear_screen;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write(0, 0, 0, 0, "Press [SPACE] to clear the screen.");
     write(0, 0, 10, 0, "Press [ENTER] to view it again.");
@@ -796,7 +796,7 @@ PRIVATE
     id2;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     graph=100;
     x=160;
@@ -929,7 +929,7 @@ PRIVATE
     counter;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
 
     FROM counter=1 TO 255;
@@ -997,7 +997,7 @@ PRIVATE
     counter;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
 
     define_region(1, 0, 0, 160, 200);   // We define the region 1
@@ -1097,7 +1097,7 @@ Only one animation can be loaded at a time.
 PROGRAM example_end_fli;
 BEGIN
     LOOP
-        start_fli("help\help.fli", 0, 0); // load and play the animation
+        start_fli("help/help.fli", 0, 0); // load and play the animation
         WHILE (frame_fli()<>0)
             FRAME;
         END
@@ -1204,7 +1204,7 @@ variable will be set to {false} (0).
 {#9999,Example program:}
 PROGRAM example_fade;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write (0, 0, 0, 0, "Press [SPACE] to see the fade() effects.");
     LOOP
@@ -1241,7 +1241,7 @@ To turn on the screen again (undo the fade to black), use the {#112,fade_on()} f
 {#9999,Example program:}
 PROGRAM example_fade_off;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write (0, 0, 0, 0, "Press [SPACE] to fade off and fade on the screen.");
     LOOP
@@ -1282,7 +1282,7 @@ To turn off the screen (to do a fade to black) use the {#111,fade_off()} functio
 {#9999,Example program:}
 PROGRAM example_fade_off;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write (0, 0, 0, 0, "Press [SPACE] to fade off and fade on the screen.");
     LOOP
@@ -1341,7 +1341,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     write(0, 0, 0, 0, "Coordinates point 1");
     write(0, 0, 10, 0, "X:");
     write_int(0, 20, 10, 0, offset coord_x0);
@@ -1417,7 +1417,7 @@ PRIVATE
 
 BEGIN
 
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     write(0, 0, 0, 0, "Point 1 Co-ordinates");
     write(0, 0, 10, 0, "X:");
     write_int(0, 20, 10, 0, offset coord_x0);
@@ -1500,7 +1500,7 @@ will not be seen.
 {#9999,Example program:}
 PROGRAM example_frame_fli;
 BEGIN
-    start_fli("help\help.fli", 0, 0);
+    start_fli("help/help.fli", 0, 0);
     LOOP
 
         frame_fli(); // Show the next frame of animation
@@ -1544,7 +1544,7 @@ PRIVATE
     process_id;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     graph=100;
     x=160;
@@ -1632,7 +1632,7 @@ PRIVATE
     process_id;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     graph=100;
     x=160;
@@ -1731,7 +1731,7 @@ GLOBAL
     vertical_distance;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 3);
     write(0, 160, 200, 7, "Use the cursors to move the triangle.");
     write(0, 0, 0, 0, "Horizontal distance:");
@@ -1813,7 +1813,7 @@ GLOBAL
     vertical_distance;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 3);
     write(0, 160, 200, 7, "Use the cursors to move the triangle.");
     write(0, 0, 0, 0, "Vertical distance:");
@@ -1905,7 +1905,7 @@ PRIVATE
     counter;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     FROM counter=1 TO 20;
         my_process(rand(0, 319), rand(0, 199), 101);
@@ -2107,7 +2107,7 @@ PRIVATE
     pixel_colour;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 2);
     mouse.graph=200;
     write (0, 0, 190, 0, "Colour of the background pixel:");
@@ -2170,7 +2170,7 @@ GLOBAL
     y_point;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     put_screen(0, 4);
     graph=101;
     LOOP
@@ -2255,7 +2255,7 @@ PRIVATE
     y_point;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     graph=4;
     x=160;
     y=100;
@@ -2347,7 +2347,7 @@ PRIVATE
     y_centre;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     put_screen(file1, 1);
     graph=100;
     x=160;
@@ -2515,7 +2515,7 @@ or their {#1039,identifier codes}.
 {#9999,Example program:}
 PROGRAM example_let_me_alone;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     ball (160, 100, 100);
     write (0, 160, 0, 1, "Press [SPACE] to eliminate the process");
     WHILE (NOT key (_space))
@@ -2651,7 +2651,7 @@ PRIVATE
 
 BEGIN
 
-    font1=load_fnt("help\help.fnt"); // The font for the text is loaded
+    font1=load_fnt("help/help.fnt"); // The font for the text is loaded
 
     write(0, 160, 0, 1, "Text written with the system font.");
     write(font1, 160, 10, 1, "FONT LOADED FROM DISK");
@@ -2716,7 +2716,7 @@ PRIVATE
 
 BEGIN
 
-    file1 = load_fpg("help\help.fpg"); // The graphics' file is loaded
+    file1 = load_fpg("help/help.fpg"); // The graphics' file is loaded
 
     put_screen(file1, 1); // We use graphic 1 of the file
     write(0, 160, 0, 1, "Graphics' file successfully loaded");
@@ -2771,19 +2771,19 @@ used when the program uses several different palettes to change from one to anot
 {#9999,Example program:}
 PROGRAM example_load_pal;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write(0, 160, 0, 1, "Press [SPACE] to load a different palette.");
     write(0, 160, 10, 1, "Press [ENTER] to load the original palette.");
     LOOP
         IF (key(_space))
 
-            load_pal("help\help.pal"); // The palette of a .pal file is loaded
+            load_pal("help/help.pal"); // The palette of a .pal file is loaded
 
         END
         IF (key(_enter))
 
-            load_pal("help\help.fpg");  // The palette of a .fpg file is loaded
+            load_pal("help/help.fpg");  // The palette of a .fpg file is loaded
 
         END
         FRAME;
@@ -2838,7 +2838,7 @@ PRIVATE
 
 BEGIN
 
-    id_sound = load_pcm("help\help.pcm", 0); // Loads a sound of the hard disk
+    id_sound = load_pcm("help/help.pcm", 0); // Loads a sound of the hard disk
 
     write(0, 160, 0, 1, "Press [SPACE] to play the sound.");
     LOOP
@@ -2913,7 +2913,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     graph=1;
     x=160;
     y=100;
@@ -2974,7 +2974,7 @@ PRIVATE
     figure;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     put_screen(0, 7);
     mouse.graph=200;
     write(0, 0, 0, 0, "FIGURE:");
@@ -3052,7 +3052,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     graph=1;
     x=160;
     y=100;
@@ -3124,7 +3124,7 @@ PRIVATE
     colour;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     graph=5;
     x=160;
     y=100;
@@ -3238,7 +3238,7 @@ PRIVATE
     flags1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     graph=1;
     x=160;
     y=100;
@@ -3339,7 +3339,7 @@ PRIVATE
 
 BEGIN
     set_fps(100, 0);
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     start_scroll(0, file1, 103, 102, 0, 15);
     scroll.camera=id;
     priority=100;
@@ -3477,7 +3477,7 @@ PRIVATE
     angle2;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     mouse.graph=200;
     graph=101;
@@ -3541,7 +3541,7 @@ since it is not possible to calculate the dimensions of a graphic if the process
 {#9999,Example program:}
 PROGRAM example_out_region;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     y=100;
     x=160;
@@ -3701,7 +3701,7 @@ PRIVATE
     coord_y;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     LOOP
         coord_x=rand(0, 319);
         coord_y=rand(0, 199);
@@ -3812,7 +3812,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
 
     put_screen(file1, 1); // Graphic 1 is established as background.
 
@@ -3968,7 +3968,7 @@ Once the graphic has been modified, it will remain like this during the rest of 
 PROGRAM example_refresh_scroll;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     start_scroll(0, 0, 103, 102, 0, 15);
     scroll.camera=id;
     write(0, 160, 192, 7, "Press [ENTER] to put a graphic in the scroll.");
@@ -4041,7 +4041,7 @@ any parameter for this function.
 {#9999,Example program:}
 PROGRAM example_reset_fli;
 BEGIN
-    start_fli("help\help.fli", 0, 0);
+    start_fli("help/help.fli", 0, 0);
     write(0, 160, 0, 1, "Press [SPACE] to restart the animation.");
     LOOP
         frame_fli();
@@ -4088,7 +4088,7 @@ To perform a cycle of colours from {0} to {15}, it would be necessary to specify
 {#9999,Example program:}
 PROGRAM example_roll_palette;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 2);
     write(0, 160, 0, 1, "Press [SPACE] to rotate the entire palette.");
     LOOP
@@ -4153,7 +4153,7 @@ BEGIN
         write_int(0, 0, 40+(counter*10), 0, offset table[counter]);
     END
 
-    save("help\help.dat", offset table, sizeof(table)); // The file is saved.
+    save("help/help.dat", offset table, sizeof(table)); // The file is saved.
 
     LOOP
         IF (key(_enter))
@@ -4162,7 +4162,7 @@ BEGIN
             END
         END
         IF (key(_space))
-            load("help\help.dat", offset table);
+            load("help/help.dat", offset table);
         END
         FRAME;
     END
@@ -4179,14 +4179,14 @@ When the spacebar is pressed, the table's values stored in the disk are loaded w
 
 To save the {table[9]} and the {counter} variable in the same file, the {save()} function should have been called in the following way:
 
-  {save("help\help.dat", offset table, sizeof(table)+sizeof(counter));}
+  {save("help/help.dat", offset table, sizeof(table)+sizeof(counter));}
 
 Do not vary the load statement ({load("help.dat", offset table);}), as it does not require the number of data.
 
 The value returned by {#1094,sizeof()} for any variable (like {counter})
 will always be 1. For a table, this function returns the number of positions that it has. Then, considering that 11 data (10 of the table and 1 of the variable) are going to be saved, the statement to save them could be as follows:
 
-{save("help\help.dat", offset table, 11);
+{save("help/help.dat", offset table, 11);
 
 {/}See: {#130,load()} - {#1085,OFFSET} - {#1094,sizeof()}
 
@@ -4233,7 +4233,7 @@ PRIVATE
     omissions=4;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     graph=1;
     x=160;
     y=100;
@@ -4306,7 +4306,7 @@ PRIVATE
     videomode=0;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     write (0, 0, 0, 0, "Press [SPACE] to change the videomode");
     LOOP
         IF (scan_code==_space)
@@ -4403,7 +4403,7 @@ PROGRAM example_signal;
 PRIVATE
     id_text;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write(0, 0, 0, 0, "1 - create the process");
     write(0, 0, 10, 0, "2 - kill the process");
@@ -4517,7 +4517,7 @@ PRIVATE
     id_sound, channels;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write(0, 0, 0, 0, "Volume: Up(+) / Down(-)");
     write_int(0, 0, 10, 0, offset volume);
@@ -4526,7 +4526,7 @@ BEGIN
     write(0, 160, 180, 1, "Press [SPACE] to play the sound.");
     write(0, 160, 190, 1, "Use the cursors to change the values.");
 
-    id_sound = load_pcm("help\help.pcm", 0);
+    id_sound = load_pcm("help/help.pcm", 0);
 
     LOOP
         IF (scan_code==_space)
@@ -4640,7 +4640,7 @@ Once the animation has started, its frames will gradually be shown with respecti
 PROGRAM example_start_fli;
 BEGIN
 
-    start_fli("help\help.fli", 0, 0); // An animation begins.
+    start_fli("help/help.fli", 0, 0); // An animation begins.
 
     LOOP
         frame_fli();
@@ -4649,7 +4649,7 @@ BEGIN
 END
 {-}
 
-In the example an animation which is inside of the file {help\help.fli} begins with
+In the example an animation which is inside of the file {help/help.fli} begins with
 the function {start_fli()} in the coordinates (0, 0) and the animation
 is played indefinitely.
 
@@ -4664,7 +4664,7 @@ PRIVATE
     fli_frames;
 
 BEGIN
-    start_fli("help\help.fli", 0, 0);
+    start_fli("help/help.fli", 0, 0);
     REPEAT
         fli_frames=frame_fli();
         FRAME;
@@ -4736,7 +4736,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
 
     start_mode7(0, file1, 4, 0, 0, 64);
 
@@ -4912,7 +4912,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
 
     start_scroll(0, file1, 103, 102, 0, 15);
 
@@ -4959,7 +4959,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
 
     start_scroll(0, file1, 103, 102, 0, 15);
 
@@ -5119,7 +5119,7 @@ case, necessary to use this function ({stop_mode7()}).
 {#9999,Example program:}
 PROGRAM example_stop_mode7;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     write(0, 160, 0, 1, "Press [ENTER] to start the mode 7 display.");
     write(0, 160, 10, 1, "Press [SPACE] to stop the mode 7 display.");
     write(0, 160, 190, 1, "Use the mouse to move the mode 7 display.");
@@ -5186,7 +5186,7 @@ case, necessary to use this function ({stop_scroll()}).
 {#9999,Example program:}
 PROGRAM example_stop_scroll;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     write(0, 160, 0, 1, "Press [ENTER] to activate the scroll window.");
     write(0, 160, 10, 1, "Press [SPACE] to end the scroll.");
     LOOP
@@ -5250,11 +5250,11 @@ PRIVATE
     playing=FALSE;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     write(0, 160, 0, 1, "Press [SPACE] to start the reproduction.");
     write(0, 160, 10, 1, "Press [ENTER] to stop the sound channel.");
-    id_sound = load_pcm("help\help.pcm", 1);
+    id_sound = load_pcm("help/help.pcm", 1);
     LOOP
         IF (scan_code==_space AND NOT playing)
             channels = sound(id_sound, 128, 256);
@@ -5354,7 +5354,7 @@ PRIVATE
     file1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     put_screen(file1, 1);
     write(0, 160, 0, 1, "Press [ENTER] to unload the file and finish");
     REPEAT
@@ -5406,7 +5406,7 @@ PRIVATE
     sound1;
 
 BEGIN
-    sound1=load_pcm("help\help.pcm",0);
+    sound1=load_pcm("help/help.pcm",0);
     write(0, 160, 0, 1, "Press [ENTER] to unload the sound and finish");
     REPEAT
         FRAME;
@@ -5474,7 +5474,7 @@ PRIVATE
     font1;
 
 BEGIN
-    font1 = load_fnt("help\help.fnt");
+    font1 = load_fnt("help/help.fnt");
 
     write(0, 160, 100, 4, "Sample text with the system font.");
     write(font1, 0, 0, 0, "LEFT UP");
@@ -5660,7 +5660,7 @@ PRIVATE
     flags1;
 
 BEGIN
-    file1=load_fpg("help\help.fpg");
+    file1=load_fpg("help/help.fpg");
     LOOP
         coord_x=rand(0, 319);
         coord_y=rand(0, 199);
@@ -5733,7 +5733,7 @@ PRIVATE
 
 BEGIN
 
-    map1 = load_map("help\help.map"); // A graphic map's file is loaded.
+    map1 = load_map("help/help.map"); // A graphic map's file is loaded.
 
     put_screen(0, map1);
     LOOP
@@ -5827,7 +5827,7 @@ PRIVATE
     map1;
 
 BEGIN
-    map1=load_map("help\help.map");
+    map1=load_map("help/help.map");
     put_screen(0, map1);
     write(0, 160, 0, 1, "Press [ENTER] to unload the graphic and finish");
     REPEAT
@@ -5881,7 +5881,7 @@ PRIVATE
     font1;
 
 BEGIN
-    font1=load_fnt("help\help.fnt");
+    font1=load_fnt("help/help.fnt");
     write(font1, 160, 0, 1, "FONT LOADED FROM DISK");
     write(0, 160, 190, 1, "Press [ENTER] to unload the font and finish");
     REPEAT
@@ -5965,7 +5965,7 @@ Now a program is shown which modifies randomly the colours of the palette.
 PROGRAM example_set_colour;
 GLOBAL colour,r,g,b;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 2);
     LOOP
         colour=rand(1,255);
@@ -6193,8 +6193,8 @@ by the function {#190,start_mode8()} and others are contained in the
 PROGRAM example_stop_mode8;
 
 BEGIN
-  load_fpg("HELP\WLD_VIEW.FPG");
-  load_wld("HELP\WLD_VIEW.WLD",0);
+  load_fpg("help/WLD_VIEW.FPG");
+  load_wld("help/WLD_VIEW.WLD",0);
   start_mode8(id,0,0);
   ctype=c_m8;
   go_to_flag(0);
@@ -6241,7 +6241,7 @@ PRIVATE
   angle2;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     graph=101;
     x=160;
@@ -6367,7 +6367,7 @@ GLOBAL
     index;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 7);
     graph=200;
     mouse.graph=200;
@@ -6469,7 +6469,7 @@ executes the function {path_find()}).
 PROGRAM example_path_line;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 7);
     graph=200;
     mouse.graph=200;
@@ -6550,7 +6550,7 @@ Now the coordinates {<x>} and {<y>} to be referenced must be indicated .
 PROGRAM example_path_free;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 7);
     mouse.graph=200;
     mouse.size=400;
@@ -6686,9 +6686,9 @@ GLOBAL
 BEGIN
   set_mode(m640x480);
   set_fps(70,0);
-  fpgfile = load_fpg("HELP\WLD_VIEW.FPG");
+  fpgfile = load_fpg("help/WLD_VIEW.FPG");
 
-  load_wld("HELP\WLD_VIEW.WLD",file); // Loads a file WLD
+  load_wld("help/WLD_VIEW.WLD",file); // Loads a file WLD
 
   start_mode8(id,0,0);
   ctype=c_m8;
@@ -6779,8 +6779,8 @@ GLOBAL
 BEGIN
   set_mode(m640x480);
   set_fps(70,0);
-  fpgfile = load_fpg("HELP\WLD_VIEW.FPG");
-  load_wld("HELP\WLD_VIEW.WLD",file);
+  fpgfile = load_fpg("help/WLD_VIEW.FPG");
+  load_wld("help/WLD_VIEW.WLD",file);
 
   start_mode8(id,0,0); // Starts a mode 8 region
 
@@ -6859,8 +6859,8 @@ a flag ({x},{y},{z}).
 PROGRAM example_go_to_flag;
 
 BEGIN
-  load_fpg("HELP\WLD_VIEW.FPG");
-  load_wld("HELP\WLD_VIEW.WLD",0);
+  load_fpg("help/WLD_VIEW.FPG");
+  load_wld("help/WLD_VIEW.WLD",0);
   start_mode8(id,0,0);
   ctype=c_m8;
 
@@ -6924,8 +6924,8 @@ GLOBAL
     angle1;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     start_mode8(id,0,0);
     ctype=c_m8;
     go_to_flag(1);
@@ -6986,8 +6986,8 @@ GLOBAL
     floor_height;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     // ...
 
     // Obtain the heights of a sector
@@ -7051,8 +7051,8 @@ GLOBAL
     angle2;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     start_mode8(id,0,0);
     ctype=c_m8;
     go_to_flag(1);
@@ -7117,8 +7117,8 @@ GLOBAL
     position_y;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     // ...
 
     // Obtains a vertex's coordinates
@@ -7169,8 +7169,8 @@ GLOBAL
     angle1;
 
 BEGIN
-  load_fpg("HELP\WLD_VIEW.FPG");
-  load_wld("HELP\WLD_VIEW.WLD",0);
+  load_fpg("help/WLD_VIEW.FPG");
+  load_wld("help/WLD_VIEW.WLD",0);
   start_mode8(id,0,0);
   ctype=c_m8;
   go_to_flag(0);
@@ -7248,8 +7248,8 @@ GLOBAL
     texture=94;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     start_mode8(id,0,0);
     ctype=c_m8;
     go_to_flag(1);
@@ -7311,8 +7311,8 @@ GLOBAL
     luminosity;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     // ...
 
     // Obtains the luminosity and textures of a sector
@@ -7377,8 +7377,8 @@ GLOBAL
     texture=104;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     start_mode8(id,0,0);
     ctype=c_m8;
     go_to_flag(1);
@@ -7438,8 +7438,8 @@ GLOBAL
     luminosity;
 
 BEGIN
-    load_fpg("HELP\WLD_VIEW.FPG");
-    load_wld("HELP\WLD_VIEW.WLD",0);
+    load_fpg("help/WLD_VIEW.FPG");
+    load_wld("help/WLD_VIEW.WLD",0);
     // ...
 
     // Obtains the luminosity and texture of a wall
@@ -7489,8 +7489,8 @@ GLOBAL
     angle1;
 
 BEGIN
-  load_fpg("HELP\WLD_VIEW.FPG");
-  load_wld("HELP\WLD_VIEW.WLD",0);
+  load_fpg("help/WLD_VIEW.FPG");
+  load_wld("help/WLD_VIEW.WLD",0);
   start_mode8(id,0,0);
   ctype=c_m8;
   go_to_flag(0);
@@ -8154,7 +8154,7 @@ GLOBAL
     angle2;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     graph=2;
     x=160;
     y=100;
@@ -8287,7 +8287,7 @@ GLOBAL
 
 BEGIN
 
-    load_song("help\help.xm",1); // Loads an XM module, with replay
+    load_song("help/help.xm",1); // Loads an XM module, with replay
 
     song(id_song);
     write(0,0,0,0,"Press ESC to finish");
@@ -8347,7 +8347,7 @@ GLOBAL
     id_song;
 
 BEGIN
-    load_song("help\help.xm",1);
+    load_song("help/help.xm",1);
     song(id_song);
     write(0,0,0,0,"Press ESC to finish");
     REPEAT
@@ -8404,7 +8404,7 @@ GLOBAL
     id_song;
 
 BEGIN
-    load_song("help\help.xm",1);
+    load_song("help/help.xm",1);
 
     song(id_song); // Starts the reproduction of the music module
 
@@ -8464,7 +8464,7 @@ GLOBAL
     id_song;
 
 BEGIN
-    load_song("help\help.xm",1);
+    load_song("help/help.xm",1);
     song(id_song);
     write(0,0,0,0,"Press SPACE to stop the song ...");
     LOOP
@@ -8536,7 +8536,7 @@ GLOBAL
     position_module;
 
 BEGIN
-    load_song("help\help.xm",1);
+    load_song("help/help.xm",1);
     song(id_song);
     write(0,0,0,0,"Press SPACE to change the position of the module ...");
     write(0,0,20,0,"position:");
@@ -8600,7 +8600,7 @@ GLOBAL
     position_module;
 
 BEGIN
-    load_song("help\help.xm",1);
+    load_song("help/help.xm",1);
     song(id_song);
     write(0,0,0,0,"Position of the module:");
     write_int(0,0,10,0,OFFSET position_module);
@@ -8655,7 +8655,7 @@ GLOBAL
     line_module;
 
 BEGIN
-    load_song("help\help.xm",1);
+    load_song("help/help.xm",1);
     song(id_song);
     write(0,0,0,0,"Line of module:");
     write_int(0,0,10,0,OFFSET line_module);
@@ -8709,7 +8709,7 @@ GLOBAL
 
 BEGIN
     write(0,0,0,0,"Press ESC to finish.");
-    sound_id = load_pcm("help\help.pcm",0);
+    sound_id = load_pcm("help/help.pcm",0);
     channel_id  = sound(sound_id, 256, rand(100,400));
     REPEAT
 
@@ -8775,7 +8775,7 @@ GLOBAL
     sounding;
 
 BEGIN
-    load_song("help\help.xm",1);
+    load_song("help/help.xm",1);
     song(id_song);
     write(0,0,0,0,"ENTER initiate the module / SPACE to stop it");
     write_int(0,0,10,0,OFFSET sounding);
@@ -8852,12 +8852,12 @@ GLOBAL
 
 BEGIN
 
-    myhandle=fopen("help\help.dat","w"); // Open file to write
+    myhandle=fopen("help/help.dat","w"); // Open file to write
 
     fwrite(OFFSET list1,4,myhandle);
     fclose(myhandle);
 
-    myhandle=fopen("help\help.dat","r"); // Open file to read
+    myhandle=fopen("help/help.dat","r"); // Open file to read
 
     fread(OFFSET list2,4,myhandle);
     fclose(myhandle);
@@ -8936,12 +8936,12 @@ GLOBAL
     myhandle;
 
 BEGIN
-    myhandle=fopen("help\help.dat","w");
+    myhandle=fopen("help/help.dat","w");
     fwrite(OFFSET list1,4,myhandle);
 
     fclose(myhandle); // The file closes to be opened in other mode
 
-    myhandle=fopen("help\help.dat","r");
+    myhandle=fopen("help/help.dat","r");
     fread(OFFSET list2,4,myhandle);
 
     fclose(myhandle); // The file closes definitively
@@ -9011,10 +9011,10 @@ GLOBAL
     myhandle;
 
 BEGIN
-    myhandle=fopen("help\help.dat","w");
+    myhandle=fopen("help/help.dat","w");
     fwrite(OFFSET list1,4,myhandle);
     fclose(myhandle);
-    myhandle=fopen("help\help.dat","r");
+    myhandle=fopen("help/help.dat","r");
 
     fread(OFFSET list2,4,myhandle); // Read the file about <list2>
 
@@ -9098,7 +9098,7 @@ GLOBAL
     myhandle;
 
 BEGIN
-    myhandle=fopen("help\help.dat","w");
+    myhandle=fopen("help/help.dat","w");
 
     fwrite(OFFSET mytable,4,myhandle); // Writes <mytable> in the file
 
@@ -9169,10 +9169,10 @@ GLOBAL
     myhandle;
 
 BEGIN
-    myhandle=fopen("help\help.dat","w");
+    myhandle=fopen("help/help.dat","w");
     fwrite(OFFSET mytable,4,myhandle);
     fclose(myhandle);
-    myhandle=fopen("help\help.dat","r");
+    myhandle=fopen("help/help.dat","r");
 
     // Places the cursor to read the fourth data of the file (44)
 
@@ -9239,7 +9239,7 @@ GLOBAL
     myhandle;
 
 BEGIN
-    myhandle=fopen("help\help.dat","w");
+    myhandle=fopen("help/help.dat","w");
 
     midata1=ftell(myhandle); // Position of the cursor before writing
 
@@ -9308,10 +9308,10 @@ GLOBAL
     myhandle;
 
 BEGIN
-    myhandle=fopen("help\help.dat","w");
+    myhandle=fopen("help/help.dat","w");
     fwrite(OFFSET mytable,4,myhandle);
     fclose(myhandle);
-    myhandle=fopen("help\help.dat","r");
+    myhandle=fopen("help/help.dat","r");
 
     longitude=filelength(myhandle); // Obtains the length of the file (4)
 
@@ -9380,7 +9380,7 @@ GLOBAL
     myhandle;
 
 BEGIN
-    myhandle=fopen("help\help.dat","w");
+    myhandle=fopen("help/help.dat","w");
 
     midata1=flush(); // Obtains the number of opened files (1)
 
@@ -9561,7 +9561,7 @@ PROGRAM example_get_fileinfo;
 BEGIN
     // ...
 
-    get_fileinfo("HELP\HELP.FPG");
+    get_fileinfo("help/HELP.FPG");
 
     // ...
 END
@@ -10147,9 +10147,9 @@ DIV Games Studio or in the programs, using the functions
 {#9999,Example program:}
 PROGRAM example_save_map;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
 
-    save_pcx(0,1,"help\help.pcx"); // Creates a PCX file 
+    save_pcx(0,1,"help/help.pcx"); // Creates a PCX file 
 
 END
 {-}
@@ -10859,7 +10859,7 @@ GLOBAL
     mi_font;
 
 BEGIN
-    mi_font=load_fnt("help\help.fnt");
+    mi_font=load_fnt("help/help.fnt");
 
     // A new map is created with the text "MOUSE"
     // with the checkpoint in the centre, and is
@@ -11025,7 +11025,7 @@ GLOBAL
     STRING message;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     mouse.graph=200;
     write(0,0,0,0,message);
     REPEAT
@@ -11101,10 +11101,10 @@ PRIVATE
     channel_id;
 
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
 
-    id_sound = load_pcm("help\help.pcm", 1);
+    id_sound = load_pcm("help/help.pcm", 1);
     channel_id = sound(id_sound, 256, 256);
 
     write(0, 160, 0, 1, "Press right or left to change the balance.");
@@ -11365,9 +11365,9 @@ GLOBAL
     mytable[]=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 BEGIN
-    save("help\help.enc",OFFSET mytable,sizeof(mytable));
+    save("help/help.enc",OFFSET mytable,sizeof(mytable));
 
-    encode_file("help\help.enc",password); // encrypts the file
+    encode_file("help/help.enc",password); // encrypts the file
 END
 {-}
 
@@ -11376,7 +11376,7 @@ called {help.enc} with the data contained in {mytable}, and then the program
 encrypts it with the function {encode_file()}.
 
 You can see how the contents of the created file (inside of the directory
-{help\}) doesn't bear any relation to the original data (independent
+{help/}) doesn't bear any relation to the original data (independent
 of what the encryption clue is).
 
 {/}
@@ -11428,11 +11428,11 @@ GLOBAL
     mytable[]=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14;
 
 BEGIN
-    save("help\help.enc",OFFSET mytable,sizeof(mytable));
-    encode_file("help\help.enc",pass);
+    save("help/help.enc",OFFSET mytable,sizeof(mytable));
+    encode_file("help/help.enc",pass);
     // ...
 
-    decode_file("help\help.enc",pass); // decodes the file
+    decode_file("help/help.enc",pass); // decodes the file
 
 END
 {-}
@@ -11493,9 +11493,9 @@ BEGIN
         mytable[counter]=counter;
     END
 
-    save("help\help.cmp",OFFSET mytable,sizeof(mytable));
+    save("help/help.cmp",OFFSET mytable,sizeof(mytable));
 
-    compress_file("help\help.cmp"); // Compress the file.
+    compress_file("help/help.cmp"); // Compress the file.
 END
 {-}
 
@@ -11554,15 +11554,15 @@ BEGIN
         mytable[counter]=counter;
     END
 
-    save("help\help.cmp",OFFSET mytable,sizeof(mytable));
+    save("help/help.cmp",OFFSET mytable,sizeof(mytable));
 
-    compress_file("help\help.cmp"); // Compress an file
+    compress_file("help/help.cmp"); // Compress an file
 
     // ...
 
-    uncompress_file("help\help.cmp"); // Uncompress the file
+    uncompress_file("help/help.cmp"); // Uncompress the file
 
-    load("help\help.cmp",OFFSET mytable);
+    load("help/help.cmp",OFFSET mytable);
 END
 {-}
 
@@ -11694,7 +11694,7 @@ function {#174,load_map()} or {#174,load_pcx()}).
 {#9999,Example program:}
 PROGRAM example_load_screen;
 BEGIN
-    load_screen("help\help.map");
+    load_screen("help/help.map");
     LOOP
         FRAME;
     END
@@ -11751,7 +11751,7 @@ name of a file.
 PROGRAM example_force_pal;
 BEGIN
 
-    force_pal("help\help.pal");
+    force_pal("help/help.pal");
 
     // Now all the files, maps and fonts can be loaded 
     // which are wanted, irrespective of their own palette, to be adapted
@@ -15347,7 +15347,7 @@ PROGRAM my_game;
 PRIVATE
     id2;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     id2=my_process(160, 100);
     write_int(0,150,10,4,offset id2);
     write(0,100,10,4,"Process ID=");
@@ -19437,7 +19437,7 @@ BEGIN
     write_int(0, 70, 0, 0, offset joy_filter);
     write(0, 160, 180, 1, "The graphic is shown at the joystick's coordinates");
     write(0, 160, 190, 1, "Use the up/down keys to vary the filter");
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
     put_screen(0, 1);
     graph=100;
     LOOP
@@ -20064,7 +20064,7 @@ GLOBAL
     graphic1;
 
 BEGIN
-    graphic1=load_map("help\help.map");
+    graphic1=load_map("help/help.map");
 
     graph=graphic1; // The graphic of the process is defined.
 
@@ -20078,7 +20078,7 @@ END
 
 Even if in the previous example, the {graphic1} global variable could have been omitted, having directly assigned the code returned by the {#174,load_map()} function to the {graph} variable with the following statement:
 
-  {graph=load_map("help\help.map");}
+  {graph=load_map("help/help.map");}
 
 the {graphic code} returned by this function are simply integers from {1000}.
 
@@ -20095,7 +20095,7 @@ indicating the {graphic 100 code}.
 {#9999,Example program:}
 PROGRAM example_graph;
 BEGIN
-    load_fpg("help\help.fpg");
+    load_fpg("help/help.fpg");
 
     graph=100; // The graphic of the process is defined.
 
@@ -21996,7 +21996,7 @@ Once the display filter of a variable has been established, it will remain durin
 
 # -----------------------------------------------------------------------------
 
-{.1300,Common help\ questions about DIV}
+{.1300,Common help/ questions about DIV}
  
 {Where can I find information about DIV?}
 
@@ -22081,7 +22081,7 @@ Also you can learn a lot from the Examples of the language functions
 (See the list of functions in the language help)
 and the tutorials, which are simple mini-games 
 designed to simplify the learning of the language (you can find these tutorials
-in the directory PRG\TUTOR of DIV Games Studio 2).
+in the directory PRG/TUTOR of DIV Games Studio 2).
 
 {How are the graphics loaded into the games?}
 
@@ -22118,25 +22118,25 @@ to see the other structures which control other important aspects of the games.
 
 When the function load_fpg( ... ) is called in a program 
 the internal manager of DIV attempts to locate this file following this
-method (supposing that it intends to load the file "DIR\file.EXT"):
+method (supposing that it intends to load the file "DIR/file.EXT"):
 
 - First it checks where the executable (EXE) of the game is,
 or in the main directory of DIV (where D.EXE is) in case the game
 will be executed from this environment.
 
 - Then the program attempts to open the file from the directory 
-specified in the function ("DIR\file.EXT").
+specified in the function ("DIR/file.EXT").
 
 - If the program has still failed to open the file, it will attempt to load the
 file inside a directory which has the same extension as the one specified, 
-such as "EXT\DIR\file.EXT".
+such as "EXT/DIR/file.EXT".
 
 - If this is still not found, the program will try to load the file
 without a specific path, meaning "file.EXT".
 
 - Finally, if the file was not found in any of those directories, the program will
 attempt to find the file in the directory whose name coincides with the extension 
-of the file, ignoring the path passed to the function, such as "EXT\file.EXT".
+of the file, ignoring the path passed to the function, such as "EXT/file.EXT".
 
 # -----------------------------------------------------------------------------
 

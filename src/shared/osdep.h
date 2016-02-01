@@ -11,18 +11,48 @@
 #include "unzip.h"
 #endif
 
+#ifndef PS2
+#include <stdint.h>
+#else
+#include <time.h>
+typedef unsigned char uint8_t;
+typedef unsigned int uint32_t;
+typedef unsigned long uint64_t;
+typedef long int64_t;
+typedef unsigned short uint16_t;
+typedef int int32_t;
+
+#endif
+
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #define cprintf printf
 
+#ifndef PATH_MAX
 #define PATH_MAX 143
+#endif
+
+#ifndef _MAX_PATH
 #define _MAX_PATH 144
+#endif
+
+#ifndef _MAX_DRIVE
 #define _MAX_DRIVE 26
+#endif
+
+#ifndef _MAX_DIR
 #define _MAX_DIR 66
+#endif
+
+#ifndef _MAX_FNAME
 #define _MAX_FNAME 256+100
+#endif
+
+#ifndef _MAX_EXT
 #define _MAX_EXT 64
+#endif
 
 
 
@@ -46,7 +76,10 @@
 #define __loadds /* __loadds */
 #define _HARDERR_FAIL 0
 #define _HARDERR_IGNORE 1
+
+#ifndef __stdcall 
 #define __stdcall /* __stdcall */
+#endif
 
 ///////////////////////////////////////////////////
 // DEFINED IN osdep.cpp
@@ -56,8 +89,11 @@
 #ifdef __EMSCRIPTEN__
 #include <string.h>
 #else
+#ifndef PS2
 extern char * strupr(char *string);
 extern char * strlwr(char *string);
+#endif
+
 #endif
 
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
@@ -95,27 +131,38 @@ struct find_t {
   unsigned long size;
   char name[256];
 };
-
+#ifndef _A_NORMAL
 #define _A_NORMAL (0x00)
 //Normal file (no read/write restrictions)
+#endif
 
+#ifndef _A_RDONLY
 #define _A_RDONLY (0x01)
 //Read only file
+#endif
 
+#ifndef _A_HIDDEN
 #define _A_HIDDEN (0x02)
 //Hidden file
+#endif
 
+#ifndef _A_SYSTEM
 #define _A_SYSTEM (0x04)
 //System file
+#endif
 
 #define _A_VOLID (0x08)
 //Volume ID file
 
+#ifndef _A_SUBDIR
 #define _A_SUBDIR (0x10)
 //Subdirectory
+#endif
 
+#ifndef _A_ARCH
 #define _A_ARCH (0x20)
 //Archive file
+#endif
 
 unsigned int _dos_findfirst(char *name, unsigned int attr, 
                             struct find_t *result);

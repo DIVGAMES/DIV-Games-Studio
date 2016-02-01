@@ -7,6 +7,7 @@
 
 set(CMAKE_SYSTEM_NAME Windows)
 SET(WIN32=1)
+SET(WINDOWS=1)
 SET(PLATFORM "WINDOWS")
 
 set(TOOLCHAIN_PREFIX i686-w64-mingw32)
@@ -30,7 +31,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 #TARGET_LINK_LIBRARIES ("mingw32 SDLmain  SDL SDL_Mixer")
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
-set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
+set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -static-libgcc -static-libstdc++ -mwindows " )
 
 ADD_DEFINITIONS( -mwindows -Dmain=SDL_main -DZLIB -DWIN32 -DMIXER)
 # -DDIVDLL) 

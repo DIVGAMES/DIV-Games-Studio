@@ -77,7 +77,10 @@ typedef struct _SoundInfo{
 /*
  * Channel structure
  */
+#ifdef DOS
 #pragma pack (push, 1);
+#endif
+
 typedef struct
 {
         char *volatile pos;             /* Position which is currently played */
@@ -99,7 +102,9 @@ typedef struct
         volatile int smoothvoll;        /* Final volume. Smoothly slided towards given volume */
         volatile int smoothvolr;
 } CHANNEL;
+#ifdef DOS
 #pragma pack (pop);
+#endif
 
 /*
  * General functions

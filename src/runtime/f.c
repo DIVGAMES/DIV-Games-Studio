@@ -49,6 +49,7 @@ void get_sector_texture(void);
 void set_wall_texture(void);
 void get_wall_texture(void);
 void _object_avance(int ide,int angulo,int velocidad);
+int joy_position(int eje);
 
 #ifndef MODE8
 void _object_avance(int ide,int angulo,int velocidad) {
@@ -82,8 +83,8 @@ static int n_reloj=0, o_reloj=0;
 
 int get_reloj(void) {
 	
-	reloj = SDL_GetTicks()/10;
-		return reloj;
+//	reloj = SDL_GetTicks()/10;
+//		return reloj;
 		
 	n_reloj=SDL_GetTicks()/10;
 	reloj+=(n_reloj-o_reloj);
@@ -158,7 +159,7 @@ static FILE * div_open_file(byte * file) {
 
 char remote[255];
 #ifndef DOS
-//  printf("opening file: [%s]\n",file);
+  printf("opening file: [%s]\n",file);
   if(strlen((const char *)file)<1)
 	return NULL;
 
@@ -175,7 +176,7 @@ while (*ff!=0) {
 
 #ifndef _WIN32
 if(f=memz_open_file(file)) {
-printf("memz is %d\n",f);
+//printf("memz is %d\n",f);
 return f;
 }
 #endif
@@ -527,7 +528,10 @@ void nueva_paleta(void) {
 
 void unload_map(void) {
   if (pila[sp]<1000 || pila[sp]>1999) return;
-  if (g[0].grf[pila[sp]]!=0) { free((byte*)(g[0].grf[pila[sp]])-1330); g[0].grf[pila[sp]]=0; }
+  if (g[0].grf[pila[sp]]!=0) { 
+	  printf("Freeing %lx\n ",(g[0].grf[pila[sp]]));//-1330);	  
+	  free((byte*)(g[0].grf[pila[sp]])-1330); g[0].grf[pila[sp]]=0; 
+  }
 }
 
 //����������������������������������������������������������������������������
@@ -799,15 +803,15 @@ void load_fpg(void) {
 #ifdef __EMSCRIPTEN__ 
 file_len=1352;
 #endif
-      if ((ptr=(byte *)malloc(file_len))!=NULL) {
+      if ((ptr=(byte *)malloc(file_len+8))!=NULL) {
         g[num].fpg=(int**)ptr;
         fseek(es,0,SEEK_SET);
+#ifdef STDOUTLOG
         printf("ptr is %x\n",ptr);
-//#ifdef STDOUTLOG
         printf("read %d bytes of %d\n",fread(ptr,1,file_len,es),file_len); 
-//#else
-//	fread(ptr,1,file_len,es);
-//#endif
+#else
+	fread(ptr,1,file_len,es);
+#endif
 
 #ifndef __EMSCRIPTEN__ 
 fclose(es);
@@ -1032,11 +1036,24 @@ void elimina_proceso(int);
 
 void kill_invisible(void) {
   int i,n;
-  for (i=id_start; i<=id_end; i+=iloc_len) if (mem[i+_Status]) { n=0;
-    if (mem[i+_Ctype]==1) for(n=0;n<10;n++)
-      if (iscroll[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) break;
-    if (mem[i+_Ctype]==2) for(n=0;n<10;n++)
-      if (im7[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) break;
+  for (i=id_start; i<=id_end; i+=iloc_len) {
+	  if (mem[i+_Status]) { 
+		n=0;
+		if (mem[i+_Ctype]==1) {
+			for(n=0;n<10;n++) {
+				if (iscroll[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) {
+					break;
+				}
+			}
+		}
+		if (mem[i+_Ctype]==2) {
+			for(n=0;n<10;n++) {
+				if (im7[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) {
+					break;
+				}
+			}
+		}
+	}
     if (n==10) elimina_proceso(i);
   }
 }
@@ -1287,16 +1304,18 @@ void adaptar(byte * ptr, int len, byte * pal, byte * xlat) {
 
 void __write(void) {
   int f=pila[sp-4];
+  
   if (f<0 || f>=max_fonts) { e(116); f=0; }
   if (fonts[f]==0) { e(116); f=0; }
   x=1;
-  while (texto[x].font) {
+  while (texto[x].font!=NULL) {
     x++;
     if (x==max_textos) break;
     if ( pila[sp-1]==texto[x].centro &&
          pila[sp-2]==texto[x].y      &&
          pila[sp-3]==texto[x].x      ) break;
   }
+
   if (x<max_textos) {
     texto[x].tipo=0;
     texto[x].ptr=pila[sp--];
@@ -1894,7 +1913,15 @@ void load(void) {
 
   offset=pila[sp--];
   if (!capar(offset)) { pila[sp]=0; e(125); return; }
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) { pila[sp]=0; e(126); return; }
+  printf("loading data from: %s\n",(byte*)&mem[pila[sp]]);
+  
+  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) { 
+	  printf("not found\n");
+	  pila[sp]=0; e(126); return; 
+  }
+
+  printf("file len: %d\n",ftell(es));
+  
   fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
   lon=(lon*4)/unit_size;
@@ -2055,12 +2082,12 @@ void stop_sound(void) {
     return;
   }
   */
-  if(pila[sp]==-1) {
-    for(x=0; x<CHANNELS; x++) StopSound(x);
-  } else {
+//  if(pila[sp]==-1) {
+//    for(x=0; x<CHANNELS; x++) StopSound(x);
+//  } else {
 
     StopSound(pila[sp]);
-  }
+//  }
 #endif
   pila[sp]=0;
 }
@@ -2199,6 +2226,7 @@ void is_playing_song(void) {
 void set_fps(void) {
   max_saltos=pila[sp--];
 #ifdef __EMSCRIPTEN__
+if(max_saltos<2)
 	max_saltos=2;
 #endif
   if (max_saltos<0) max_saltos=0;
@@ -2257,7 +2285,7 @@ void end_fli(void) {
 //����������������������������������������������������������������������������
 
 void reset_fli(void) {
-#ifdef USE_FLU
+#ifdef USE_FLI
   ResetFli();
 #endif
   pila[++sp]=0;
@@ -2498,11 +2526,13 @@ void fade_on(void) {
 
 void fade_off(void) {
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=8;
-  while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
-    set_paleta(); set_dac(); //LoopSound();
-  } fading=0;
+  if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) 
+  //{
+  //  set_paleta(); set_dac(); //LoopSound();
+  //} 
+  fading=1;
   pila[++sp]=0;
-  max_reloj+=get_reloj()-old_reloj;
+  //max_reloj+=get_reloj()-old_reloj;
 }
 
 //����������������������������������������������������������������������������
@@ -2584,7 +2614,7 @@ void _exit_dos(void) {
     fclose(f);
   }
   #else
-  printf("%s",&mem[pila[sp-1]]);
+  printf("%s\n",&mem[pila[sp-1]]);
   #endif
 
   _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
@@ -2676,7 +2706,15 @@ void get_real_point(void) {
 #define  TIME_OUT 2000
 
 void get_joy_button(void) {
-#ifdef DOS
+#ifndef DOS
+// SDL joypad
+if(divjoy && joy_status) {
+pila[sp]=SDL_JoystickGetButton(divjoy,pila[sp]);
+} else {
+pila[sp]=0;
+}
+
+#else
    if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(134); return; }
    if(inp(GAME_PORT)&(1<<(4+pila[sp]))) pila[sp]=0; else pila[sp]=1;
 #endif
@@ -2689,14 +2727,20 @@ void get_joy_button(void) {
 int ej[4]={-1,-1,-1,-1};
 
 void get_joy_position(void) {
-#ifdef DOS
    if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(134); return; }
-   else pila[sp]=joy_position(pila[sp]);
-#endif
+   
+   pila[sp]=joy_position(pila[sp]);
 }
+
 int joy_position(int eje)
 {
-#ifdef DOS
+
+#ifndef DOS
+
+return SDL_JoystickGetAxis(divjoy,pila[sp])/100;
+
+
+#else
 
    unsigned start,finish,result;
    int i,mask=1<<eje;
@@ -2722,8 +2766,6 @@ int joy_position(int eje)
         ej[eje]=(result*(100-joy_filter)+ej[eje]*joy_filter)/100;
       } result=ej[eje];
    } return(result/100);
-#else
-return 0;
 #endif
 
 }
@@ -2735,8 +2777,13 @@ return 0;
 int joy_cx=0,joy_cy=0,joy_x0,joy_x1,joy_y0,joy_y1,init_joy=0;
 
 void read_joy(void) {
-#ifdef DOS
+#ifndef DOS
+// do SDL joystick stuff
 
+//if(joy_status)
+//joy->button1=1;
+
+#else
   int n,x,y;
   n=inp(GAME_PORT);
   if(n&16) joy->button1=0; else joy->button1=1;
@@ -3546,6 +3593,7 @@ int Mem_GetHeapFree()
 //if(status!=_HEAPEND) return -1;
   return total;
 #endif
+return 65535;
 }
 
 void GetFreeMem(meminfo *Meminfo)

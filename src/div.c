@@ -395,6 +395,9 @@ int main(int argc, char * argv[]) {
 #endif
 #endif
 
+printf("argv[0]=%s\n",argv[0]);
+
+// on windows, get printf working.
 #ifdef __WIN32
 freopen( "CON", "w", stdout );
 freopen( "CON", "w", stderr );
@@ -501,7 +504,7 @@ if(compilemode==1) {
 		fseek(f,0,SEEK_END);
 		source_len = ftell(f);
 		fseek(f,0,SEEK_SET);
-		prgbuf = (byte *)malloc(source_len);
+		prgbuf = (byte *)malloc(source_len+10);
 		if(prgbuf) {
 			printf("Loaded %d bytes\n",fread(prgbuf,1,source_len,f));
 			source_ptr=prgbuf;
@@ -2285,11 +2288,10 @@ void actualiza_background(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Restaura el tapiz en una zona determinada
+//      Resets the bacground (wallpaper) in a given area
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void restaura_tapiz(int x,int y,int an,int al) {
-
   byte *p;
   byte *t;
   int n,_an;
@@ -3128,7 +3130,9 @@ void inicializacion(void) {
   dac=(byte*)malloc(768);
   dac4=(byte*)malloc(768);
   cuad=(byte*)malloc(16384);
-  ghost=(byte*)malloc(65536);
+  
+  ghost=(byte*)malloc(65536); // 256*256 combinations
+  
   barra=(byte*)malloc(vga_an*19*big2); //OJO
   fill_dac=(byte*)malloc(256);
   error_window=(byte*)malloc(640*38*2);

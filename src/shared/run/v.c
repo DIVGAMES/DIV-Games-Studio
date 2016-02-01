@@ -301,8 +301,11 @@ divTexture = SDL_CreateTexture(divRender,
 	}
 	else  // hardware scale
 #endif
+#ifdef PANDORA
+		vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+#else
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0); 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
-	
+#endif
 		printf("Set mode: %d,%d\n",vga->w,vga->h);
 		
 
@@ -523,7 +526,9 @@ SDL_RenderPresent(divRender);
 //	printf("draw screen\n");
 	if(SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
-	
+	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
+
+
 	SDL_Flip(vga);
 }
 

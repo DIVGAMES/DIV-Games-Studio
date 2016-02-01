@@ -4377,7 +4377,7 @@ void reset_tick(void);
 unsigned int get_ticks(void) {
 //	printf("ticks\n");
 
-	return SDL_GetTicks()/100;
+	return SDL_GetTicks();///10;
 #ifdef DOS
   unsigned int x,xnull;
 

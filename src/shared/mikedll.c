@@ -54,6 +54,13 @@ PE *DIV_LoadDll(char *name)
 {
 	PE *pefile;
 	char dllname[255];
+char *ff = (char *)name;
+
+while (*ff!=0) {
+	if(*ff =='\\') *ff='/';
+	ff++;
+}
+
 #ifdef DIVDLL
 	void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
 	void (*entryp2)( void (*HYB_export)() );
@@ -65,11 +72,15 @@ PE *DIV_LoadDll(char *name)
 // make the dll "here"
 	strcpy(dllname,"./");
 	strcat(dllname,name);
-	printf("Loading dll %s\n",dllname);
+
+	printf("Loading dll [%s]\n",dllname);
 	// try to read the file (portable executable format)
 	pefile=dlopen(dllname,RTLD_LAZY);
 
-	if(!pefile) return NULL;
+	if(!pefile) {
+		printf("Not found\n");
+		return NULL;
+	}
 	// find the entrypoint
 
 	entryp=(void (*)(void *(*)(), void (*)())) dlsym(pefile,"divmain");
@@ -237,14 +248,22 @@ void *DIV_import(char *name)
 
 void LookForAutoLoadDlls(void)
 {
+//#ifdef __WIN32
+//	return;
+//#endif
+		
+	
 #ifdef DIVDLL
 struct find_t dllfiles;
 int ct;
+#ifndef __WIN32
   ct=_dos_findfirst("*.so",_A_NORMAL,&dllfiles);
+#else
+  ct=_dos_findfirst("*.dll",_A_NORMAL,&dllfiles);
+#endif
   nDLL=0;
   while(ct==0)
   {
-	  
     pe[nDLL]=DIV_LoadDll(dllfiles.name);
     if(pe[nDLL]!=NULL)
     {

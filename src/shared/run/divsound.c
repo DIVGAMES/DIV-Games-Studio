@@ -20,19 +20,34 @@ int SongInst[128];
 int Freq_original[CHANNELS];
 
 int SoundActive=1;
+#ifndef GP2X
+#ifndef PS2
 #ifdef MIXER
 void print_init_flags(int flags)
 {
+//	int i=0;
+	
+//	int n = Mix_GetNumMusicDecoders();
+//	printf("Music/Sound System Initialised. %d channels, %d decoders:\n", Mix_AllocateChannels(-1), n);
+//	for (i = 0; i < n; ++i)
+//	  printf("  %2d -> %s\n", i, Mix_GetMusicDecoder(i));
+
 #define PFLAG(a) if(flags&MIX_INIT_##a) printf(#a " ")
         PFLAG(FLAC);
         PFLAG(MOD);
         PFLAG(MP3);
         PFLAG(OGG);
+        PFLAG(FLUIDSYNTH);
+        
         if(!flags)
                 printf("None");
+        
         printf("\n");
 }
 #endif
+#endif
+#endif
+
 static int initted=0;
 void InitSound(void)
 {
@@ -44,25 +59,31 @@ int audio_rate = 44100;
 Uint16 audio_format = AUDIO_S16SYS;
 int audio_channels = 2;
 int audio_buffers = 1024;
-  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
+#ifndef GP2X
+#ifndef PS2
+  int flags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_FLUIDSYNTH;
   
   initted=Mix_Init(flags);
 
-SDL_Init( SDL_INIT_AUDIO );
 
-print_init_flags(initted);
 	
   if((initted&flags) != flags) {
-	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
-	  printf("Mix_Init: %d %s\n", initted, Mix_GetError());
+//	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
+	  printf("Mix_Init error: %s\n",Mix_GetError());
    }
- 
+#endif
+#endif
+
+SDL_Init( SDL_INIT_AUDIO );
 
 
 if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
 	fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
 //	exit(1);
 }
+
+
+  print_init_flags(initted);
 
 initted = 1;
 #endif
@@ -407,6 +428,10 @@ int UnloadSound(int NumSonido)
 
 }
 #ifdef MIXER
+
+void doneEffect(int chan, void *data) {
+	return;
+}
  	
 // make a passthru processor function that alters the stream size
 void freqEffect(int chan, void *stream, int len, void *udata)

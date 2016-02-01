@@ -407,7 +407,7 @@ void GenSpr1(void)
       for(x=0; x<AnThumbSprite; x++)
       {
         color = ThumbSprite[y*AnThumbSprite+x];
-        if(color != 0) v.ptr[(py+y)*v.an+(px+x)]=color;
+        if(color != 0 && color!=240) v.ptr[(py+y)*v.an+(px+x)]=color;
       }
     }
   }
@@ -1127,6 +1127,8 @@ memset(mapa,0,man*mal);
           col1=*(ghost+col1*256+col2);
           break;
       }
+//printf("col x[%d], y[%d], col[%d] n:[%d]\n",x,y,col1,n);
+//if(col1==240) col1=0;
 
       mapa[x+y*man]=col1;
     }

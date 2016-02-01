@@ -112,6 +112,8 @@ buffer_sprite3d *visor_init(lptvisor datos_render)
 
 //  resource_create(&resource_camara,datos_render->textura);
   animated_create(&animado,&fichero_animaciones,&world_camara,datos_render->nombre,&resource_camara);
+  	printf("115: name: %s\n",animado.complex_struct.Objects[0]->name);
+
   if (num_mallocs==0) return(NULL);
 
   lib_3d=1;
@@ -157,10 +159,12 @@ void visor_loop(lptvisor datos_render)
 
   datos_render->num_frames=animado.complex_struct.nFrames-1;
 
-  sbuffer->punto_x=0;
-  sbuffer->punto_y=0;
+  sbuffer->punto_x=10;
+  sbuffer->punto_y=10;
+
   for (i=0;i<animado.complex_struct.nObjects;i++) {
-    if (!stricmp(animado.complex_struct.Objects[i]->name,"control")) {
+	  printf("name: %s\n",animado.complex_struct.Objects[i]->name);
+    if (!stricmp(animado.complex_struct.Objects[i]->name,"control") || i==animado.complex_struct.nObjects-1) {
       sbuffer->punto_x=(int)animado.complex_struct.Objects[i]->Centro.fpx-animado.complex_struct.bbox_x_ini;
       sbuffer->punto_y=(int)animado.complex_struct.Objects[i]->Centro.fpy-animado.complex_struct.bbox_y_ini;
       break;

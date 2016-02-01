@@ -337,7 +337,7 @@ void wvolcado(byte*copia,int an_copia,int al_copia,
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Volcado de una ventana
+//      draw hidden (greyed) Window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
@@ -361,11 +361,22 @@ void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
   p+=an*salta_y+salta_x; q+=an_copia*salta_y+salta_x;
   resto_x+=salta_x; an=long_x;
 
+/*do {
+	  memcpy(q,p,an);
+	  q+=an;
+	  p+=an;
+  q+=an_copia-(an=long_x);
+  p+=resto_x;
+} while (--long_y);
+
+  */
+
   do {
     do {
       *q=*(_ghost+*p);
       p++; q++;
     } while (--an);
+    
     q+=an_copia-(an=long_x); p+=resto_x;
   } while (--long_y);
 

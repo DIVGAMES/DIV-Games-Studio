@@ -97,6 +97,9 @@ wmaterial   wmat;
 
     fread(&matindex,1,2,file);  // Material usado.
     fread(complex_struct->Objects[i]->name,1,20,file);  // Nombre del objeto
+	
+	printf("name: %s\n",complex_struct->Objects[i]->name);
+
     fread(&complex_struct->Objects[i]->Bbox,sizeof(complex_struct->Objects[i]->Bbox),1,file);
 
     complex_struct->Objects[i]->Centro.rx=(complex_struct->Objects[i]->Bbox.x1+complex_struct->Objects[i]->Bbox.x2)/2;
@@ -126,8 +129,14 @@ wmaterial   wmat;
       complex_struct->Objects[i]->Faces[j].v3=&complex_struct->Objects[i]->Vertices[wfac.c];
       complex_struct->Objects[i]->Faces[j].material=&complex_struct->Materials[wfac.matidx];
     }
+    
+	printf("name: %s\n",complex_struct->Objects[i]->name);
+
     if ((complex_struct->Objects[i]->matrix=(lptmatrix)lf_malloc(sizeof(tmatrix)))==NULL)
       return;
+      
+	printf("name: %s\n",complex_struct->Objects[i]->name);
+
     hlrender_addobject(complex_struct->hl_render,complex_struct->Objects[i]);
   }
 

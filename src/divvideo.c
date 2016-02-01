@@ -29,6 +29,10 @@ void volcadopx(byte * p);
 //byte * vga = (byte *) 0xA0000; // Pantalla fisica
 
 SDL_Surface *vga;
+#ifdef SDL2
+SDL_Window *divWindow;
+SDL_Renderer *divRender;
+#endif
 
 #define MAX_YRES 2048
 
@@ -105,7 +109,19 @@ void svmode(void) {
 	w_ratio = vga_an / (float)(GCW_W*1.0);
 	h_ratio = vga_al / (float)(GCW_H*1.0);
 #else
-	vga=SDL_SetVideoMode(vga_an, vga_al, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
+
+#ifdef SDL2
+divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
+                             SDL_WINDOWPOS_UNDEFINED,
+                             SDL_WINDOWPOS_UNDEFINED,
+                             vga_an,vga_al,
+                             SDL_WINDOW_SHOWN);
+divRender = SDL_CreateRenderer(divWindow, -1, 0);
+#else
+
+	vga=SDL_SetVideoMode(vga_an, vga_al, 8,  0);
+	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
+#endif
 #endif
 	modovesa=1;
 
@@ -261,10 +277,13 @@ if(SDL_MUSTLOCK(vga))
 	if(SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
 	
+	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
+
 	SDL_Flip(vga);
 }
 
 void volcado(byte *p) {
+//printf("frame\n");
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 

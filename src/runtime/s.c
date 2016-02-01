@@ -1186,7 +1186,7 @@ void sp_rotado(byte * si, int x, int y, int an, int al, int xg, int yg,
   int n,l0,l1;   // Lado 0 y lado 1 (indices p[])
 
   int hmax0,hmax1;
-  union { int l; short w[2]; } x0,x1,g0x,g1x,g0y,g1y;
+  union { int32_t l; int16_t w[2]; } x0,x1,g0x,g1x,g0y,g1y;
   int ix0,ix1,ig0x,ig1x,ig0y,ig1y,kk;
   byte * ptrcopia;
 
@@ -1334,7 +1334,7 @@ void sp_rotado(byte * si, int x, int y, int an, int al, int xg, int yg,
 
 void sp_scanc(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1) {
 
-  union { int l; short w[2]; } x,y;
+  union { int32_t l; int16_t w[2]; } x,y;
   byte c;
 
   x.l=x0; y.l=y0; x0=(x1-x0)/n; y0=(y1-y0)/n;
@@ -1349,7 +1349,7 @@ void sp_scanc(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,in
 
 void sp_scancg(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1) {
 
-  union { int l; short w[2]; } x,y;
+  union { int32_t l; int16_t w[2]; } x,y;
   byte c;
 
   x.l=x0; y.l=y0; x0=(x1-x0)/n; y0=(y1-y0)/n;
@@ -1369,7 +1369,7 @@ void sp_scancg(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,i
 
 void sp_scan(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1) {
 
-  union { int l; short w[2]; } x,y;
+  union { int32_t l; int16_t w[2]; } x,y;
   byte c;
 
   x.l=x0; y.l=y0; x0=(x1-x0)/n; y0=(y1-y0)/n;
@@ -1382,7 +1382,7 @@ void sp_scan(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1) {
 
 void sp_scang(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1) {
 
-  union { int l; short w[2]; } x,y;
+  union { int32_t l; int16_t w[2]; } x,y;
   byte c;
 
   x.l=x0; y.l=y0; x0=(x1-x0)/n; y0=(y1-y0)/n;

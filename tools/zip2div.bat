@@ -46,7 +46,7 @@ echo "Creating html"
 
 echo "Creating gcw opk"
 ./tools/makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
-scp $2.opk root@192.168.0.12:/media/data/apps
+#scp $2.opk root@192.168.0.12:/media/data/apps
 
 echo "Creating Android apk"
 ./tools/makedroid.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
@@ -54,6 +54,8 @@ echo "Creating Android apk"
 echo "Creating Pandora PND"
 ./tools/makepnd.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
 
+scp $2.* android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
+
 rm -rf zipdiv
 
-emrun html/$2.html
+#emrun html/$2.html

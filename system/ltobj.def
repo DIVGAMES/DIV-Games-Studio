@@ -72,6 +72,7 @@ const _simple_conditions=2
 const _case_sensitive=3
 const _ignore_errors=4
 const _free_sintax=5
+const _free_syntax=5
 const _no_check=6
 const _no_strfix=7
 const _no_optimization=8

@@ -339,6 +339,9 @@ strlwr(full);
 			strlwr(full);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 			
+			if(f=memz_open_file(file))
+				return f;
+			
           printf("failed %s\n",file);
           strcpy(full,"");
 
@@ -365,14 +368,14 @@ FILE * _open_file(char * file) {
     if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='\\') strcat(full,"\\");
+    if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,file);
     if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
       strcpy(full,fname);
       strcat(full,ext);
       if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"\\");
+        if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
@@ -1314,7 +1317,7 @@ FILE * open_save_file(char * file) {
     if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='\\') strcat(full,"\\");
+    if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,file);
     if ((f=fopen(full,"wb"))==NULL) {                   // "est\paz\fixero.est"
       strcpy(full,fname);
@@ -1327,7 +1330,7 @@ FILE * open_save_file(char * file) {
         } else return(f);
       } else {
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"\\");
+        if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
         if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
@@ -1920,7 +1923,7 @@ void _exit_dos(void) {
   kbdReset();
 
   #ifdef DEBUG
-  if ((f=fopen("system\\exec.err","wb"))!=NULL) {
+  if ((f=fopen("system/exec.err","wb"))!=NULL) {
     fwrite("\x0\x0\x0\x0",4,1,f);
     fwrite(&pila[sp],4,1,f);
     fwrite(&mem[itxt+pila[sp-1]],1,strlen((char*)(&mem[itxt+pila[sp-1]]))+1,f);

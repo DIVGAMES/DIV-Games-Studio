@@ -9,10 +9,10 @@
 
 typedef struct {
         float x,y,z;
-        int             activo;
-        int             Clon;
-        int             Shadow;
-        int             AIncrustada;
+        int32_t             activo;
+        int32_t             Clon;
+        int32_t             Shadow;
+        int32_t             AIncrustada;
         float           angx,angy,angz;
         hlrender        *hl_render;
         short           nObjects;
@@ -27,11 +27,11 @@ typedef struct {
         short           nFrames;
         lptmatrix       Anims;
         tmatrix         CompMat;
-        int            curframe;
-        int            bbox_x_ini; //Coordenadas de pantalla de la bounding box
-        int            bbox_x_fin;
-        int            bbox_y_ini;
-        int            bbox_y_fin;
+        int32_t            curframe;
+        int32_t            bbox_x_ini; //Coordenadas de pantalla de la bounding box
+        int32_t            bbox_x_fin;
+        int32_t            bbox_y_ini;
+        int32_t            bbox_y_fin;
 } complex;
 
 void complex_create(complex *complex_struct,hlrender *hlrnd,char *name,Resource *res);

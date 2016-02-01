@@ -809,8 +809,10 @@ void es_fps(byte f) {
 //�����������������������������������������������������������������������������
 // Procesa el siguiente proceso
 //�����������������������������������������������������������������������������
-
+#ifdef DEBUG
 int oreloj;
+#endif
+
 #ifndef DEBUG
 inline 
 #endif
@@ -1727,21 +1729,8 @@ int main(int argc,char * argv[]) {
 #endif
 #endif
   atexit(SDL_Quit);
+  
   SDL_Init( SDL_INIT_EVERYTHING);
-  if(SDL_NumJoysticks() > 0) { 
-		divjoy = (SDL_Joystick*)SDL_JoystickOpen(0);
-		
-
-printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
-
-	if (SDL_JoystickNumHats(divjoy)==0)  {
-		SDL_JoystickClose(divjoy);
-		divjoy=NULL;
-	}
-		
-	}
-
-
 
   remove("DEBUGSRC.TXT");
   
@@ -2066,6 +2055,24 @@ if(m) {
         }
 
         kbdInit();
+
+  printf("Looking for joysticks\n");
+
+  if(SDL_NumJoysticks() > 0) { 
+		divjoy = (SDL_Joystick*)SDL_JoystickOpen(0);
+		joy_status=1;
+		printf("Joyname:    %s\n", SDL_JoystickName(0));
+		printf("NumAxes: %d: Numhats: %d : NumButtons: %d\n",SDL_JoystickNumAxes(divjoy), SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
+		
+	if (SDL_JoystickNumHats(divjoy)==0)  {
+		SDL_JoystickClose(divjoy);
+		divjoy=NULL;
+	}
+		
+	} else {
+		joy_status = 0;
+	}
+
 
         interprete();        
 #ifndef __EMSCRIPTEN__

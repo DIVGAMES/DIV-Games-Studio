@@ -544,8 +544,8 @@
 463 "Program registered for"
 
 464 "Original idea and program by: Daniel Navarro"
-465 "Auxiliary programming: Juanjo Garrido"
-466 "MODE 8 and NET: Luis Fernando Fernandez"
+465 "DX Rebirth & modern ports: Mike Green"
+466 "Auxiliary programming: Juanjo Garrido"
 467 "Program support: Fernando Pirez"
 468 "Examples and tests: Antonio Marchal, Luis Sureda,"
 469 "Manuel Cabanas, Daniel Munoz"
@@ -561,12 +561,12 @@
 479 "Javier Carrion, David Picon, Pedro P. Aull¢, JB,"
 480 "Zeen, Jens Grobecker, J.C. Ar‚valo, Carlos Doral,"
 481 "Rafa S. Gago, Antonio Ruiz y Gonzalo Martin"
-482 "DOS/4GW (c) Rational Systems, Inc. 1990,94"
+482 "DX Games studio (c) 2015 MikeDX"
 483 "DIV Games Studio (c) 1998-2001 Hammer Technologies."
 
-484 "(c) 1998-2001 Hammer Tech."
-485 "DIV Games Studio - v2.02"
-486 "Daniel Navarro Medrano."
+484 "(c) 2016 DX GAMES."
+485 "DX Games Studio - v3.01"
+486 "Daniel Navarro & MikeDX"
 
 487 "MAP/Div.map"
 
@@ -817,13 +817,13 @@
         "Delete line [CTRL-Y]"
         "-Mark block [ALT-A]"
         "Unmark [ALT-U]"
-        "Copy [ALT-C]"
-        "Move [ALT-M]"
-        "Delete [ALT-D]"
+        "Cut [CTRL+X]"
+        "Copy [CTRL+C]"
+        "Paste [CTRL+V]"
         "-Go to... [F5]"
-        "Search... [ALT-F]"
-        "Repeat [ALT-N]"
-        "Re-place... [ALT-R]"
+        "Search... [CTRL+F]"
+        "Repeat [CTRL+G]"
+        "Replace... [CTRL+R]"
 
 1000    # Menu de mapas 3D
 

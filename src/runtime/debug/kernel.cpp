@@ -83,8 +83,23 @@ case lcal:
   #endif
   mem[id+_IP]=ip+1; id2=id; if (sp>long_pila) exer(3);
   procesos++; ip=mem[ip]; id=id_start;
-  while (mem[id+_Status] && id<=id_end) id+=iloc_len;
-  if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
+
+//printf("Processes: %d  id:%d p*len:%d id_end: %d\n",procesos,id_end-id,(id_start)+((procesos-2)*iloc_len),id_end);
+
+
+if((id_start+((procesos-2)*iloc_len)) == id_end)
+	id=id_end+iloc_len;
+
+
+//if((processos-1)*iloc_len>id_end)
+
+
+  while (mem[id+_Status] && id<=id_end) 
+	id+=iloc_len;
+#ifdef LLPROC
+  insert_process(id);
+#endif
+  if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; if(id_end>id_max) id_max = id_end;}
   memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
   mem[id+_Id]=id;
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
@@ -263,7 +278,7 @@ if(ExternDirs[mem[ip]])
   break;
 case lchk:
   #ifdef DEBUG
-    if (pila[sp]<id_init || pila[sp]>id_end || pila[sp]!=mem[pila[sp]]) {
+    if (pila[sp]<id_init || pila[sp]>id_max || pila[sp]!=mem[pila[sp]]) {
       v_function=-2; e(141);
       if (call_to_debug) { process_stoped=id; return; }
     }
@@ -294,7 +309,16 @@ case lcar4: pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; pi
 case lasiasp:
   mem[pila[sp-1]]=pila[sp]; sp-=2;
   break;
-case lcaraid: pila[++sp]=mem[ip++]+id; break;
+case lcaraid: 
+#ifdef LLPROC
+	// check if setting priority or z
+	if (mem[ip]==_Priority || mem[ip]==_Z && checklist==0) {
+		checklist=mem[ip]; // save z or p
+	}
+#endif
+
+	pila[++sp]=mem[ip++]+id; 
+	break;
 case lcarptr: pila[++sp]=mem[mem[ip++]]; break;
 case laidptr: pila[sp]=mem[pila[sp]+id]; break;
 case lcaraidptr: pila[++sp]=mem[mem[ip++]+id]; break;
@@ -312,7 +336,15 @@ case lcaraddptr: pila[sp]=mem[pila[sp]+mem[ip++]]; break;
 case lcarmul: pila[sp]*=mem[ip++]; break;
 case lcarmuladd: pila[sp-1]+=pila[sp]*mem[ip++]; sp--; break;
 case lcarasiasp:
-  mem[pila[sp]]=mem[ip++]; sp--;
+#ifdef LLPROC
+	if(checklist>0 && mem[pila[sp]]!=mem[ip] && id>0) {
+		dtemp=mem[pila[sp]];
+		printf("id: %d old val: %d\n",id, dtemp);
+		mem[pila[sp]]=mem[ip++]; sp--;
+		dirty(id);
+	} else
+#endif
+	  mem[pila[sp]]=mem[ip++]; sp--;
   break;
 case lcarsub: pila[sp]-=mem[ip++]; break;
 case lcardiv: pila[sp]/=mem[ip++]; break; // No hay nunca "cardiv 0"

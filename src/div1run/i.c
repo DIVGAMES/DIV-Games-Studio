@@ -113,7 +113,9 @@ char *jschar;
 int main(int argc,char * argv[]) {
 
   FILE * f;
+#ifndef GP2X
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+#endif
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -1374,7 +1376,7 @@ void exer(int e) {
   FILE *f;
 
   if (e) {
-    if ((f=fopen("system\\exec.err","wb"))!=NULL) {
+    if ((f=fopen("system/exec.err","wb"))!=NULL) {
       fwrite(&e,4,1,f);
       fclose(f);
     }

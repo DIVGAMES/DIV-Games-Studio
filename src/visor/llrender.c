@@ -1165,7 +1165,7 @@ float fids[255];
 
 void inicio_division(float *fp) {
 	
-	fids[dp]=*(float*)&fp;
+	fids[dp]=*fp;
 	dp++;
 	
 }
@@ -1199,6 +1199,8 @@ static inline void nucleo_combinado(void)
     index = ((color_b & UINT16_C(0x1F)) << 11) + mask + alfa;
     output_pixel += tabla_rgba[index];
     *destino = output_pixel;
+//    printf("output pixel: %d\n",output_pixel);
+    
 }
 
 void nucleo1(void) {
@@ -1248,7 +1250,8 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
   }
 //rotacion_mascara=10;
 
- 
+//printf("ancho: %d\n",ancho);
+
   switch (ancho) {
     case 8:   /*if (tipo & T_MASCARA) nucleo_texturas=mask_nucleo8_8;
               else nucleo_texturas=nucleo8_8;

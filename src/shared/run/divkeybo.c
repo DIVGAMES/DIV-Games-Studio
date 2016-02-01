@@ -29,20 +29,19 @@
 #define GCW_LOCK SDLK_PAUSE
 */
 
-#define GCW_L SDLK_F1
+#define GCW_L SDLK_TAB
 #define GCW_R SDLK_BACKSPACE
 #define GCW_UP SDLK_UP
 #define GCW_DOWN SDLK_DOWN
 #define GCW_LEFT SDLK_LEFT
 #define GCW_RIGHT SDLK_RIGHT
 #define GCW_A SDLK_LCTRL
-#define GCW_B SDLK_LALT
+#define GCW_B SDLK_RSHIFT
 #define GCW_X SDLK_LSHIFT
 #define GCW_Y SDLK_SPACE
 #define GCW_START SDLK_RETURN
 #define GCW_SELECT SDLK_ESCAPE
 #define GCW_LOCK SDLK_PAUSE
-
 
 #endif
 
@@ -350,7 +349,6 @@ oldhatval = hatval;
 			}
 		}
 			
-#endif
 		// Analog joystick mapped to mouse movement
 		if(event.type == SDL_JOYAXISMOTION) {			
 				
@@ -387,6 +385,8 @@ oldhatval = hatval;
 				break;
 			}
 		}
+#endif
+
             /* If a quit event has been sent */
 		if (event.type == SDL_QUIT)
 			alt_x=1;
