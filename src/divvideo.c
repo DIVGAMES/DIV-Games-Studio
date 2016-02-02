@@ -48,22 +48,20 @@ int SDL_ToggleFS(SDL_Surface *surface)
     {
         // Switch to WINDOWED mode
         flags &= ~SDL_FULLSCREEN;
-        printf("surface->w %d, surface->h %d\n",surface->w, surface->h);
-        
         if ((vga = SDL_SetVideoMode(vga_an,vga_al,8, 0)) == NULL) 
 			return 0;
-
+		
+		vga = SDL_SetVideoMode(vga_an,vga_al,8, 0);
+		fsmode=0;
     } else {
 		
 		vga = SDL_SetVideoMode(vga_an,vga_al, 8,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 		if (vga == NULL) {
-	//		printf("failed\n");	
-//			flags &= ~SDL_FULLSCREEN;
 			vga = SDL_SetVideoMode(vga_an,vga_al, 8, 0);
 		}
+		fsmode=1;
 	}
-//	printf("success\n");
 	set_dac(dac);
     
     return 1;
@@ -140,6 +138,8 @@ float h_ratio=1.0;
 
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
+
+  printf("full screen: %d\n",fsmode);
 #ifdef GCW_SOFTSTRETCH
 	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
@@ -154,8 +154,12 @@ divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
                              SDL_WINDOW_SHOWN);
 divRender = SDL_CreateRenderer(divWindow, -1, 0);
 #else
+	if(fsmode==0)
+		vga=SDL_SetVideoMode(vga_an, vga_al, 8,  0);
 
-	vga=SDL_SetVideoMode(vga_an, vga_al, 8,  0);
+	else
+		vga=SDL_SetVideoMode(vga_an, vga_al, 8,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
 #endif
@@ -178,7 +182,7 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
       if (modos[n].modo) { mode=modos[n].modo; break; }
     }
   }
-
+  
   if (n<num_modos) {
     modovesa=1;
     if(VersionVesa<0x102) {

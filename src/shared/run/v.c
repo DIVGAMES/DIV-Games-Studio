@@ -72,6 +72,9 @@ int SDL_ToggleFS(SDL_Surface *surface)
         flags &= ~SDL_FULLSCREEN;
         if ((vga = SDL_SetVideoMode(vga_an,vga_al,8, 0)) == NULL) 
 			return 0;
+
+		vga = SDL_SetVideoMode(vga_an,vga_al,8, 0);
+
     } else {
     
 		vga = SDL_SetVideoMode(surface->w, surface->h, 8,SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);

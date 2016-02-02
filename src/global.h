@@ -312,8 +312,11 @@ typedef struct _SetupFile{
         byte mut_fx, mut_cd, mut_ma;
 
         int mouse_ratio;
-
+		int fullscreen;
+		
 }SetupFile;
+
+GLOBAL_DATA byte fsmode;
 
 GLOBAL_DATA int MustCreate;
 GLOBAL_DATA SetupFile Setupfile;

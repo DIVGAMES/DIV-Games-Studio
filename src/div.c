@@ -623,6 +623,8 @@ printf("\n");
     if (modo_de_retorno!=3) DownLoad_Desktop(); // Si no fallo el test
   //New_DownLoad_Desktop();
 
+  Save_Cfgbin();
+  
   finalizacion();
 
   finaliza_textos();
@@ -631,7 +633,7 @@ printf("\n");
     EndGrabador();
   #endif
 
-  Save_Cfgbin();
+  
 
   if (modo_de_retorno==1) {
     _dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
@@ -3310,7 +3312,7 @@ fclose(f);
   actualiza_caja(0,0,vga_an,vga_al);
 
   crea_barratitulo();
-
+  
   svmode(); set_dac(dac); read_mouse();
   volcado_completo=1;
   volcado(copia);
@@ -4012,7 +4014,8 @@ FILE *file;
         Setupfile.Vid_modeAncho =VS_ANCHO;
         Setupfile.Vid_modeAlto  =VS_ALTO;
         Setupfile.Vid_modeBig   =VS_BIG;
-
+        Setupfile.fullscreen = fsmode;
+		
         if (modo_de_retorno==3) {
           Setupfile.Vid_modeBig=(modo_anterior&0x8000000)>>31;
           modo_anterior-=(modo_anterior&0x80000000);
@@ -4146,6 +4149,8 @@ void Load_Cfgbin() {
       Setupfile.Vid_modeAncho=640; // Video Mode
       Setupfile.Vid_modeAlto=480;
       Setupfile.Vid_modeBig=1;
+      Setupfile.fullscreen=0;
+      
       Setupfile.Max_undo=1024; // Undo System
       Setupfile.Undo_memory=1024*1024+65536;
       Setupfile.tab_size=4;
@@ -4176,6 +4181,8 @@ void Load_Cfgbin() {
       Setupfile.Vid_modeAncho=320; // Video Mode
       Setupfile.Vid_modeAlto=200;
       Setupfile.Vid_modeBig=0;
+      Setupfile.fullscreen=0;
+      
       Setupfile.Max_undo=1024; // Undo System
       Setupfile.Undo_memory=1024*1024+65536;
       Setupfile.tab_size=4;
@@ -4213,7 +4220,8 @@ void Load_Cfgbin() {
   VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho; // Video mode
   VS_ALTO =vga_al  =Setupfile.Vid_modeAlto;
   VS_BIG  =big     =Setupfile.Vid_modeBig;
-
+  fsmode           =Setupfile.fullscreen;
+   
   if (test_video && vga_an<640 && editor_font>1) editor_font=0;
 
   big2=big+1;
