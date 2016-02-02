@@ -1704,7 +1704,7 @@ extern char exebin[255];
 
 
 int main(int argc,char * argv[]) {
-  FILE * f;
+  FILE * f, *fsf;
   int a=0;
   byte * ptr;
   byte *dp;
@@ -1857,6 +1857,14 @@ if(argc>1 && exesize==0) {
 #endif
 
 #ifdef DEBUG
+// check for full screen
+  fsf=fopen("system/exec.fs","rb");
+  
+  if(fsf) {
+	fread(&fsmode,1,1,fsf);
+	fclose(fsf);
+  }
+  
   inicializa_textos((byte *)"system/lenguaje.int");
 #else
   inicializa_textos((byte *)argv[0]);

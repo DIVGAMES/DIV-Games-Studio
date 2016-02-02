@@ -1040,9 +1040,15 @@ free_resources();
   inicio_objetos=ivnom.b;
 
   // *** OJO *** Estos dos errores no son "memoria insuficiente"
-
+	linf=fopen("system/exec.fs","wb");
+	if(linf) {
+		fwrite(&fsmode,1,1,linf);
+		fclose(linf);
+	}
   if ((linf=fopen("system/exec.lin","wb"))==NULL) c_error(0,0);
   if ((lprg=fopen("system/exec.pgm","wb"))==NULL) c_error(0,0);
+
+  
 
   imem_max=default_buffer; imem=0;
   if ((mem_ory=mem=(int*)malloc(imem_max*sizeof(memptrsize)))==NULL) c_error(0,0);

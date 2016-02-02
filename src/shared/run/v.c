@@ -74,17 +74,18 @@ int SDL_ToggleFS(SDL_Surface *surface)
 			return 0;
 
 		vga = SDL_SetVideoMode(vga_an,vga_al,8, 0);
-
+		fsmode=0;
     } else {
     
 		vga = SDL_SetVideoMode(surface->w, surface->h, 8,SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
 		if (vga == NULL) {
-//			flags &= ~SDL_FULLSCREEN;
 			vga = SDL_SetVideoMode(vga_an,vga_al, 8, 0);
 			set_dac();
+			fsmode=0;
 			return 0;
 		}
+		fsmode=1;
 	}
 	set_dac();
     
@@ -339,7 +340,10 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef PANDORA
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 #else
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		if(fsmode==0)
+			vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		else
+			vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 #endif
 		printf("Set mode: %d,%d\n",vga->w,vga->h);
 		
