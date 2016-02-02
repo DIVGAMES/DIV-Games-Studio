@@ -54,7 +54,39 @@ int graba_PCX(byte *mapa,int an,int al,FILE *f);
 void crear_ghost_vc(int m);
 void crear_ghost_slow(void);
 
+// Check if SDL is already loaded
 
+int IsFullScreen(SDL_Surface *surface)
+{
+    if (surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
+    return 0; // Return false if surface is windowed
+}
+
+int SDL_ToggleFS(SDL_Surface *surface)
+{
+    Uint32 flags = surface->flags; // Get the video surface flags
+
+    if (IsFullScreen(surface))
+    {
+        // Switch to WINDOWED mode
+        flags &= ~SDL_FULLSCREEN;
+        if ((vga = SDL_SetVideoMode(vga_an,vga_al,8, 0)) == NULL) 
+			return 0;
+    } else {
+    
+		vga = SDL_SetVideoMode(surface->w, surface->h, 8,SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+
+		if (vga == NULL) {
+//			flags &= ~SDL_FULLSCREEN;
+			vga = SDL_SetVideoMode(vga_an,vga_al, 8, 0);
+			set_dac();
+			return 0;
+		}
+	}
+	set_dac();
+    
+    return 1;
+}
 
 
 
@@ -304,7 +336,7 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef PANDORA
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 #else
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0); 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 #endif
 		printf("Set mode: %d,%d\n",vga->w,vga->h);
 		
@@ -426,6 +458,10 @@ void svmodex(int m) {
 //�����������������������������������������������������������������������������
 
 void rvmode(void) {
+
+	if(IsFullScreen(vga))
+		SDL_ToggleFS(vga);
+	
 #ifdef DOS
   SV_restoreMode();
   _setvideomode(3);
@@ -491,6 +527,7 @@ void volcadogcw(byte *p) {
 #endif
 
 void volcadosdl(byte *p) {
+	
 #ifndef SDL2
 	if(!vga) {
 		printf("setting up screen for first time %d %d\n",vga_an,vga_al);
@@ -538,7 +575,7 @@ long nexttick = 0;
 extern int game_fps;
 int framecount=0;
 int recording = 0;
-
+int tfs =0 ;
 extern int alt_x;
 
 #define maxframes 30000
@@ -571,10 +608,21 @@ if ((shift_status&4) && (shift_status&8) && key(_9)) {
 	//	}
 	}
 	// CTRL + ALT + P
+
+	
+	
   if ((shift_status&4) && (shift_status&8) && key(_P)) {
     snapshot(p);
     do {tecla();} while(key(_P));
   }
+  
+  if (shift_status&8 && key(_ENTER)) {
+	SDL_ToggleFS(vga);
+	do{tecla();} while (key(_ENTER));
+ } 
+  
+  
+  
 #endif
   if (fli_palette_update) retrazo();
 

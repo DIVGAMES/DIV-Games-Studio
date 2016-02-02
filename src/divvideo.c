@@ -34,6 +34,42 @@ SDL_Window *divWindow;
 SDL_Renderer *divRender;
 #endif
 
+int IsFullScreen(SDL_Surface *surface)
+{
+    if (surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
+    return 0; // Return false if surface is windowed
+}
+
+int SDL_ToggleFS(SDL_Surface *surface)
+{
+    Uint32 flags = surface->flags; // Get the video surface flags
+
+    if (IsFullScreen(surface))
+    {
+        // Switch to WINDOWED mode
+        flags &= ~SDL_FULLSCREEN;
+        printf("surface->w %d, surface->h %d\n",surface->w, surface->h);
+        
+        if ((vga = SDL_SetVideoMode(vga_an,vga_al,8, 0)) == NULL) 
+			return 0;
+
+    } else {
+		
+		vga = SDL_SetVideoMode(vga_an,vga_al, 8,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
+	
+		if (vga == NULL) {
+	//		printf("failed\n");	
+//			flags &= ~SDL_FULLSCREEN;
+			vga = SDL_SetVideoMode(vga_an,vga_al, 8, 0);
+		}
+	}
+//	printf("success\n");
+	set_dac(dac);
+    
+    return 1;
+}
+
+
 #define MAX_YRES 2048
 
 static short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
@@ -216,7 +252,9 @@ void svmodex(int m) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void rvmode(void) {
-	printf("TODO - rvmode - Reset Video Mode\n");
+	if(IsFullScreen(vga))
+		SDL_ToggleFS(vga);
+//	printf("TODO - rvmode - Reset Video Mode\n");
 #ifdef NOTYET
   SV_restoreMode();
   _setvideomode(3);
@@ -286,6 +324,11 @@ void volcado(byte *p) {
 //printf("frame\n");
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
+
+  if (shift_status&8 && key(_ENTER)) {
+	SDL_ToggleFS(vga);
+	//do{tecla();} while (key(_ENTER));
+ } 
 
   if (volcado_completo) {
     if (modovesa) volcadosdl(p);

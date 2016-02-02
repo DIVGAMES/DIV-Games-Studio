@@ -204,7 +204,7 @@
 
 138 "Edit palette..."
 139 "Overwrite the palette?"
-140 "Arrange palette..."
+140 "Sort palette..."
 141 "Dec"
 142 "Hex"
 143 "Red "
@@ -363,7 +363,7 @@
 319 "Edit each 8 col."
 
 320 "There is insufficient memory to complete the operation."
-321 "Wish to adapt loading map?"
+321 "Wish to convert loaded maps?"
 
 322 "Windows colours:"
 323 "Background"
@@ -676,7 +676,7 @@
 567 "Test"
 
 568 "It has read a new palette ..."
-569 "Adapt to the actual palette"
+569 "Convert to the actual palette"
 570 "Merge with the actual palette"
 571 "Load the new palette"
 

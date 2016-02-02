@@ -1741,7 +1741,7 @@ int main(int argc,char * argv[]) {
 #endif
 
 if(argc==1) {
-//	printf("\n");
+	printf("searching for magic\n");
 // search for magic..
 
 	f=fopen(argv[0],"rb");
@@ -1751,7 +1751,8 @@ if(argc==1) {
 	if(f) {
 		fseek(f,-2,SEEK_END);
 		fread(buf,1,2,f);
-
+		buf[2]=0;
+		
 		if(!strcmp(buf,"DX")) {
 			printf("Found exe\n");
 			printf("data and exe packed\n");
@@ -1766,6 +1767,8 @@ if(argc==1) {
 
 //		printf("[%c][%c]\n",buf[0],buf[1]);
 //		fclose(f);
+		} else {
+			printf("failed: %s\n",buf);
 		}
 		if(exesize==0)
 			fclose(f);
@@ -1837,11 +1840,16 @@ if(argc>1 && exesize==0) {
 	} else {
 		f=fopen(argv[1],"rb");
 	}
-
+	
+	if(!f && exesize>0)
+		f=fopen(argv[0],"rb");
+	
+	printf("%x %s\n",f,argv[1]);
+	
 	if(!f) {
 
 #ifndef DEBUG
-		printf("Error: Needs a DIV executable to load.\n");
+		printf("Error: Needs a DIV executable to load!\n");
 #endif
 		chdir(divpath);
 		exit(26);
