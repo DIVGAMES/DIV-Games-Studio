@@ -443,7 +443,7 @@
 388 "This DEMO cannot import PCX, JPG or BMP files."
 389 "This DEMO cannot import WAV files."
 
-390 "Could not find COMMAND.COM"
+390 "Shell not available in this version"
 
 391 "This option requires a Pentium(tm) or higher PC."
 
@@ -523,8 +523,8 @@
 448 "In printer"
 449 "In files:"
 
-450 "Wish to substitute the files?"
-451 "LISTAFPG.TXT"
+450 "Wish to replace the files?"
+451 "FPGLIST.TXT"
 
 452 "There is no selected block."
 453 "Print list"
