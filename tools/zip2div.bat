@@ -5,7 +5,8 @@ mkdir zipdiv
 cd zipdiv
 echo "unzipping file"
 
-unzip -j $1 2>/dev/null
+unzip -j $1 
+#2>/dev/null
 
 echo "converting files to lowercase"
 
@@ -48,10 +49,12 @@ fi
 
 echo "Creating html"
 ./tools/makehtml.bat ./zipdiv $EXE "$2" "$THREE" "$FOUR"
+rm -rf buildhtml buildhtml2
 
 echo "Creating gcw opk"
 ./tools/makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
 #scp $2.opk root@192.168.0.12:/media/data/apps
+rm -rf buildgcw
 
 echo "Creating Android apk"
 ./tools/makedroid.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
@@ -73,6 +76,7 @@ rm data.div 2> /dev/null
 zip -r -j data.div zipdiv 2> /dev/null
 zip -d data.div "*.pak"
 zip -d data.div "*.exe"
+zip -d data.div "*.fl*"
 
 
 VER=`dd if=EXEC.EXE bs=1 count=1 skip=2 2>/dev/null`
