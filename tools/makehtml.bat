@@ -111,7 +111,7 @@ cat << EOF > html/$3.html
 				<a href='$3-win64.zip'>Windows</a> |
 				<a href='$3-LINUX.tar.gz'>LINUX X64</a> | 
 				<a href='$3.apk'>Android</a> |
-				<a href='$3-PI.tar.gz'>Raspberry pi</a> |
+				<a href='$3-PI.tar.gz'>Raspberry Pi2</a> |
 				<a href='$3.pnd'>Pandora</a> | 
 				<a href='$3.opk'>GCW-Zero</a>  
 

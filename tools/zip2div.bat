@@ -5,7 +5,7 @@ mkdir zipdiv
 cd zipdiv
 echo "unzipping file"
 
-unzip -j $1 > /dev/null
+unzip -j $1 2>/dev/null
 
 echo "converting files to lowercase"
 
@@ -22,13 +22,18 @@ echo "Compiling PRG $PRG"
 cd -
 ./system/div-LINUX -c zipdiv/$PRG 
 cp -r system/EXEC.EXE zipdiv/EXEC.EXE
-cd - > /dev/null
+cd - 2> /dev/null
 EXE=EXEC.EXE
 fi
 
+
 echo "Found EXE: [$EXE]" 
+pwd
+cp $EXE /tmp/EXEC.EXE
 cd - >/dev/null
-#pwd
+mv /tmp/EXEC.EXE .
+pwd
+#exit
 
 THREE="$3"
 FOUR="$4"
@@ -59,51 +64,77 @@ echo "Creating Pandora PND"
 
 gcc ./src/other/pack.c -o pack
 
-mv zipdiv/EXEC.EXE .
-rm zipdiv/*.prg
-rm zipdiv/*.PRG
+#mv zipdiv/EXEC.EXE EXEC.EXE
+rm zipdiv/*.prg 2> /dev/null
+rm zipdiv/*.PRG 2> /dev/null
 
-rm data.div
+rm data.div 2> /dev/null
 
-zip -r -j data.div zipdiv
+zip -r -j data.div zipdiv 2> /dev/null
+zip -d data.div "*.pak"
+zip -d data.div "*.exe"
+
+
+VER=`dd if=EXEC.EXE bs=1 count=1 skip=2 2>/dev/null`
+
+if [ $VER = "s" ]
+then
+RUNTIME=div1run
+else
+RUNTIME=divrun
+fi
 
 #### linux build
-./pack ./system/divrun-LINUX EXEC.EXE data.div $2-BIN
+cmake . -DTARGETOS=LINUX
+make -j5 $RUNTIME-LINUX
+upx -9 ./system/$RUNTIME-LINUX
+./pack ./system/$RUNTIME-LINUX EXEC.EXE data.div $2-BIN
 chmod +x $2-BIN
 mkdir $2-LINUX
 mv $2-BIN $2-LINUX/$2-LINUX
-cp $2/README.md $2-LINUX
-cp $2/LICENSE $2-LINUX
+cp zipdiv/README.md $2-LINUX
+cp zipdiv/LICENSE $2-LINUX
+cp zipdiv/*.pak $2-LINUX
+
 rm $2-LINUX.tar.gz
 tar zcf $2-LINUX.tar.gz $2-LINUX
 rm -rf $2-LINUX
 
 #### pi build
+PATH=$PATH:/home/mike/raspidev/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin/
+cmake . -DTARGETOS=PI
+make -j5 $RUNTIME-PI
+strip ./system/$RUNTIME-PI
+upx -9 ./system/$RUNTIME-PI
 
-./pack ./system/divrun-PI EXEC.EXE data.div $2-BIN
+./pack ./system/$RUNTIME-PI EXEC.EXE data.div $2-BIN
 chmod +x $2-BIN
 mkdir $2-PI
 mv $2-BIN $2-PI/$2-PI
-cp $2/README.md $2-PI
-cp $2/LICENSE $2-PI
+cp zipdiv/README.md $2-PI
+cp zipdiv/LICENSE $2-PI
+cp zipdiv/*.pak $2-PI
 rm $2-PI.tar.gz
 tar zcf $2-PI.tar.gz $2-PI
 rm -rf $2-PI
 
 
 #### winrum build
+cmake . -DTARGETOS=WINDOWS
+make -j5 $RUNTIME-WINDOWS
+upx -9 ./system/$RUNTIME-WINDOWS.exe
 
-./pack ./system/divrun-WINDOWS.exe EXEC.EXE data.div $2.exe
+./pack ./system/$RUNTIME-WINDOWS.exe EXEC.EXE data.div $2.exe
 
-rm $2-win64.zip
-zip -j $2-win64.zip $2.exe system/lib*.dll system/SDL*.dll $2/README.md $2/LICENSE > /dev/null
-rm $2.exe
+rm $2-win64.zip 2> /dev/null
+zip -j $2-win64.zip $2.exe system/lib*.dll system/SDL*.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
+rm $2.exe 2> /dev/null
 
 # upload files
 
 scp $2-win64.zip $2-*.tar.gz $2.* android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
 
-rm -rf zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win64.zip $2.opk $2.pnd android/$2.apk
+rm -rf buildhtml pack buildgcw zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win64.zip $2.opk $2.pnd android/$2.apk
 
 
 #emrun html/$2.html

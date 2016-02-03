@@ -86,6 +86,9 @@ void CNT_export(char *name,void *dir,int nparms)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 int splashtime=0;
 int oldticks = 0;
+  int exesize;
+int datsize;
+
 void madewith(void);
 void mainloop(void) {
 	
@@ -110,9 +113,21 @@ void mainloop(void) {
 }
 char *jschar;
 
+#ifdef ZLIB
+extern int datastartpos;
+extern char exebin[255];
+#endif
+
 int main(int argc,char * argv[]) {
 
   FILE * f;
+  char buf[255];
+  uint32_t exesize = 0;
+  uint32_t datsize = 0;
+  uint32_t exestart = 0;
+  uint32_t datstart = 0;
+	int len=0;
+	
 #ifndef GP2X
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 #endif
@@ -139,8 +154,43 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
 	}
 
   #ifndef DEBUG
+  if(true) {
+	printf("searching for magic\n");
+// search for magic..
+
+	f=fopen(argv[0],"rb");
+
+	memset(buf,255,0);
+	
+	if(f) {
+		fseek(f,-2,SEEK_END);
+		fread(buf,1,2,f);
+		buf[2]=0;
+		
+		if(!strcmp(buf,"DX")) {
+			printf("Found exe\n");
+			printf("data and exe packed\n");
+			
+			fseek(f,-10,SEEK_END);
+			fread(&exesize,4,1,f);
+			fread(&datsize,4,1,f);
+
+			printf("exesize: %d\n",exesize);
+			printf("datsize: %d\n",datsize);
+			
+
+		printf("[%c][%c]\n",buf[0],buf[1]);
+		fclose(f);
+		} else {
+			printf("failed: %s\n",buf);
+		}
+		if(exesize==0)
+			fclose(f);
+	}
+}
+
   #ifndef __EMSCRIPTEN__
-  if (argc<2) {
+  if (argc<2 && exesize==0) {
     printf("DIV32RUN Run time library - version 1.03b - Freeware by Hammer Technologies\n");
     printf("Error: Needs a DIV32RUN executable to load.\n");
     exit(0);
@@ -178,21 +228,43 @@ printf("FILE: %s %x exename: %s\n",HTML_EXE,f,jschar);
 //}
 #else
 
-    if ((f=fopen(argv[1],"rb"))==NULL) {
-      #ifndef DEBUG
-      printf("Error: FILE NOT FOUND.");
-      #endif
-      exit(0); 
-    }
+	if(exesize==0) {
+		if ((f=fopen(argv[1],"rb"))==NULL) {
+		  #ifndef DEBUG
+		  printf("Error: FILE NOT FOUND.");
+		  #endif
+		  exit(0); 
+		} 
+    } else {
+		
+		f=fopen(argv[0],"rb");
+//		fseek(f,exestart,SEEK_SET);
+	}
+
+ fseek(f,0,SEEK_END);
+  len=ftell(f);
+  fseek(f,0,SEEK_SET);
+
+ if(exesize>0) {
+	exestart=len-exesize-datsize-10;
+	fseek(f,exestart,SEEK_SET);
+}
+#ifdef ZLIB
+if(datsize>0) {	
+	datastartpos=exestart+exesize;
+	strcpy(exebin,argv[0]);
+}
 #endif
-	
-    fseek(f,8819,SEEK_SET);
+
+#endif
+printf("exesize: %d datasize: %d exestart: %d datstart: %d filepos:%d\n ",exesize,datsize,exestart,datastartpos,ftell(f));	
+    fseek(f,8819,SEEK_CUR);
     fread(mem,4,imem_max,f); fclose(f);
 
     if ((mem[0]&128)==128) { trace_program=1; mem[0]-=128; }
 
     if (mem[0]!=0 && mem[0]!=1) {
-      #ifndef DEBUG
+      #ifndef DEBUG	
       printf("Error: %d %d Needs a DIV32RUN executable to load.",mem[0],mem[1]);
       #endif
       exit(0);
