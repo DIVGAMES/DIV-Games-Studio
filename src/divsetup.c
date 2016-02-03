@@ -395,7 +395,7 @@ void MemInfo1(void) {
       meminmaps+=ventana[x].mapa->map_an*ventana[x].mapa->map_al;
     }
   }
-  if((mem=Mem_GetHeapFree())==-1) sprintf(cWork,(char *)texto[193]);
+  if((mem=Mem_GetHeapFree())==-1) strcpy(cWork,(char *)texto[193]);
   else {
     mem=(Mi_meminfo.Bloque_mas_grande_disponible+mem)/1024;
     if(mem/1000) sprintf(cWork,(char *)texto[194],mem/1000,mem%1000);

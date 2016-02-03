@@ -971,7 +971,7 @@ byte * save_undo(int x, int y, int an, int al) {
 
   if (x<0) {an+=x; x=0; } if (y<0) {al+=y; y=0; }
   if (x+an>map_an) an=map_an-x; if (y+al>map_al) al=map_al-y;
-  if (an<=0 || al<=0) return(-1);
+  if (an<=0 || al<=0) return((byte *)-1);
 
   // Determina la zona de zoom a refrescar
 
@@ -1025,7 +1025,7 @@ byte * save_undo(int x, int y, int an, int al) {
 
     iundo=(iundo+1)%max_undos; tundo[iundo].modo=-1; // Se prohibe undo_next()
 
-    ret=(memptrsize)(undo+start);
+    ret=(byte *)(undo+start);
 
   } else {
     fondo_edicion(0,0,vga_an,vga_al);

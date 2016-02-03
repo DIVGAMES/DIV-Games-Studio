@@ -24,7 +24,7 @@ typedef struct playinfo {
   unsigned char amin;
   unsigned char asec;
   unsigned char aframe;
-};
+} _playinfo;
 
 
 typedef struct volumeinfo {
@@ -37,7 +37,7 @@ typedef struct volumeinfo {
     unsigned char volume2;
     unsigned char input3;
     unsigned char volume3;
-};
+} _volumeinfo;
 
 
 struct {

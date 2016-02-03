@@ -13,10 +13,21 @@
 #define DEEP    4
 #pragma on (check_stack);
 
+#ifndef uchar
 #define uchar unsigned char
+#endif
+
+#ifndef byte
 #define byte unsigned char
+#endif
+
+#ifndef ushort
 #define ushort unsigned short
+#endif
+
+#ifndef word
 #define word unsigned short
+#endif
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Declaracion de procedimientos internos

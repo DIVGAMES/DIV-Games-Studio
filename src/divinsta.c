@@ -429,9 +429,14 @@ void crear_imagen_install(char * file, int errores) {
       memcpy(pal,fpg+8,768);
 
       p+=1352; // FPG Header len
-      while(fl++<1000) {
+	  
+	  memset(lst,0,1000*sizeof(int));
+	  
+/*      while(fl++<1000) {
 		  lst[fl]=0;
 	  }
+*/
+
 //      memset(lst,0,1000*sizeof(memptrsize));
 
       while (p<fpg+file_len && *(int32_t*)p<1000 && *(int32_t*)p>0 ) {
@@ -1266,7 +1271,7 @@ unsigned int GetFreeUnid(char unidad) {
   if(regs.w.ax==0xFFFF) return 0;
   return(regs.w.ax*regs.w.bx*regs.w.cx);
 #endif
-	return 65535*65535;
+	return 65535*64;
 }
 
 int FileCopyICE(char *org,char *dest,int vols,int _texto) { // Returns 0 -Error , 1- Success

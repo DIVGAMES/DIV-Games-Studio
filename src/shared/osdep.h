@@ -188,7 +188,7 @@ extern int _chdir(const char* Directory);
 
 //#define SoundInfo SDL_AudioSpec
 
-#define RESET		0
+#define TXTRESET		0
 #define BRIGHT 		1
 #define DIM		2
 #define UNDERLINE 	3

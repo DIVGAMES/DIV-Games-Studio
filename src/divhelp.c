@@ -719,7 +719,7 @@ extern int linea_error;
 void get_error(int32_t n) {
   FILE * f;
   byte * p;
-  sprintf(cerror,(char *)texto[381]); p=(byte *)cerror+strlen((char *)cerror);
+  sprintf(cerror,"%s",(char *)texto[381]); p=(byte *)cerror+strlen((char *)cerror);
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
     if((f=fopen("help/help.div","rb"))!=NULL) {

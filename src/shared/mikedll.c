@@ -192,7 +192,7 @@ PE *DIV_ImportDll(char *name) {
 		entryp=(void (*)(void (*)())) dlsym(pefile,"W?divlibrary");
 	//	entryp=(void *)dlsym(pefile,"W?divlibrary");
 	
-	printf("Entry point is %x\n",entryp);
+	//printf("Entry point is %x\n",entryp);
 	
 	if(entryp!=NULL)
 	{

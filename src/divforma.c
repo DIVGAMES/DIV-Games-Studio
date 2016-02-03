@@ -5,6 +5,7 @@
 
 #include "global.h"
 
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -12,6 +13,7 @@ extern "C" {
 #ifdef JPGLIB
 #include <jpeglib.h>
 #endif
+
 
 static jmp_buf jmp_error_ptr;
 
@@ -1011,12 +1013,13 @@ int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
 #ifdef JPGLIB
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
+  
   JSAMPARRAY buffer_scanline;
   int row_stride;
   int x, y;
 
   vent=vent;
-  memset(&cinfo,0,sizeof(jpeg_decompress_struct));
+  memset(&cinfo,0,sizeof(struct jpeg_decompress_struct));
   
   cinfo.err = jpeg_std_error(&my_err_mgr);
 

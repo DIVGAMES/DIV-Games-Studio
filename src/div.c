@@ -506,7 +506,7 @@ if(compilemode==1) {
 		fseek(f,0,SEEK_SET);
 		prgbuf = (byte *)malloc(source_len+10);
 		if(prgbuf) {
-			printf("Loaded %d bytes\n",fread(prgbuf,1,source_len,f));
+			printf("Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
 			source_ptr=prgbuf;
 			comp();
 			if (numero_error>=0) {
@@ -584,7 +584,7 @@ SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
 #endif
 textcolor(BRIGHT, WHITE, RED);	
     printf("%s",texto[1]);
-    textcolor(RESET, WHITE, BLACK);	
+    textcolor(TXTRESET, WHITE, BLACK);	
 printf("\n");
   }
 
@@ -3117,7 +3117,7 @@ void inicializacion(void) {
   load_index();   // *** Carga el glosario del hipertexto ***
 
   if(!Interpretando)
-        printf((char *)texto[6]); // *** Init buffers gr ficos ***
+        printf("%s",(char *)texto[6]); // *** Init buffers gr ficos ***
 
   undo=(byte*)malloc(undo_memory);
   tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
@@ -3267,18 +3267,18 @@ fclose(f);
 
   }
 
-  if (!Interpretando) printf((char *)texto[10]); // *** Carga los objetos editados ***
+  if (!Interpretando) printf("%s",(char *)texto[10]); // *** Carga los objetos editados ***
 
   if (auto_save_session || Interpretando) CopiaDesktop=Can_UpLoad_Desktop();
 
   if(!CopiaDesktop) { //Carga paleta comun
-    if (!Interpretando) cprintf((char *)texto[11]); // *** C lculos sobre la paleta ***
+    if (!Interpretando) cprintf("%s",(char *)texto[11]); // *** C lculos sobre la paleta ***
     memcpy(dac,system_dac,768);
     init_ghost();
     crear_ghost(1);
   }
 
-  if (!Interpretando) printf((char *)texto[12]); // *** Miscel nea ***
+  if (!Interpretando) printf("%s",(char *)texto[12]); // *** Miscel nea ***
   find_colors(); memset(copia,c0,vga_an*vga_al);
   zoom=0; zoom_x=0; zoom_y=0; zoom_cx=vga_an/2; zoom_cy=vga_al/2; zoom_move=c3;
   barra_x=8*big2; barra_y=vga_al-27*big2; regla=0; actual_mouse=21; sel_status=0;
@@ -3297,7 +3297,7 @@ fclose(f);
   inicializa_compilador(); // *** Compilador *** espacios de lower a 00
   init_lexcolor();
 
-  if (!Interpretando) printf((char *)texto[13]);
+  if (!Interpretando) printf("%s",(char *)texto[13]);
 
   crea_gama(Setupfile.t_gama,tapiz_gama);
 

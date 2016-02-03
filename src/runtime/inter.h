@@ -536,7 +536,7 @@ GLOBAL int id2;         // Identificador extra para las llamadas a procesos (cal
 
 GLOBAL int numfiles;     // Numero de ficheros abiertos al comenzar el interprete
 
-GLOBAL int tabfiles[32]; // Tabla con los handles abiertos (a 0 los libres)
+GLOBAL FILE * tabfiles[32]; // Tabla con los handles abiertos (a 0 los libres)
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Variables globales para la interpretaciขn - VARIABLES GRAFICAS

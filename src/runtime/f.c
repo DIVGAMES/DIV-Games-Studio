@@ -529,7 +529,7 @@ void nueva_paleta(void) {
 void unload_map(void) {
   if (pila[sp]<1000 || pila[sp]>1999) return;
   if (g[0].grf[pila[sp]]!=0) { 
-	  printf("Freeing %lx\n ",(g[0].grf[pila[sp]]));//-1330);	  
+//	  printf("Freeing %lx\n ",(g[0].grf[pila[sp]]));//-1330);	  
 	  free((byte*)(g[0].grf[pila[sp]])-1330); g[0].grf[pila[sp]]=0; 
   }
 }
@@ -1920,7 +1920,7 @@ void load(void) {
 	  pila[sp]=0; e(126); return; 
   }
 
-  printf("file len: %d\n",ftell(es));
+//  printf("file len: %d\n",ftell(es));
   
   fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
@@ -2614,7 +2614,7 @@ void _exit_dos(void) {
     fclose(f);
   }
   #else
-  printf("%s\n",&mem[pila[sp-1]]);
+  printf("%s\n",(char *)&mem[pila[sp-1]]);
   #endif
 
   _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
@@ -2956,7 +2956,7 @@ void _strcat(void) {
     sp--; e(140); return;
   }
   if ((unsigned)pila[sp]>255) strcat((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]]);
-  else sprintf((char*)&mem[pila[sp-1]],"%s%c\0",(char*)&mem[pila[sp-1]],pila[sp]);
+  else sprintf((char*)&mem[pila[sp-1]],"%s%c%c",(char*)&mem[pila[sp-1]],pila[sp],'\0');
   sp--;
 }
 
@@ -3227,14 +3227,14 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
     }
   }
 
-  if (pila[sp]=(memptrsize)f) {
+  if (f) {
     for (x=0;x<32;x++) if (tabfiles[x]==0) break;
     if (x==32) {
       fclose(f);
       pila[sp]=0;
       e(169);
     } else {
-      tabfiles[x]=pila[sp];
+      tabfiles[x]=f;
       pila[sp]=x*2+1;
     }
   } else if (errno==EMFILE) { pila[sp]=0; e(169); }

@@ -1880,7 +1880,7 @@ void PollRecord(void)
 #endif
     return;
   }
-  printf("1836 length %d fseek %x\n",length,f);
+//  printf("1836 length %d fseek %x\n",length,f);
   
   fseek(f, 40, SEEK_SET);
   fwrite(&length,1,4,f);

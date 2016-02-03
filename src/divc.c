@@ -1872,10 +1872,10 @@ void lexico(void) {
         } else if (!strcmp((char *)ext,".PCM")) {
           empaquetable=1;
         } else if (!strcmp((char *)ext,".PCX")) {
-          if (fread(cwork,1,66,f)!=NULL) {
+          if (fread(cwork,1,66,f)>0) {
             if(cwork[2]==1 && cwork[3]==8 && cwork[65]==1) empaquetable=1;
           }
-        } else if (fread(cwork,1,8,f)!=NULL) {
+        } else if (fread(cwork,1,8,f)>0) {
           if (!strcmp((char *)cwork,"pal\x1a\x0d\x0a")) empaquetable=1;
           if (!strcmp((char *)cwork,"map\x1a\x0d\x0a")) empaquetable=1;
           if (!strcmp((char *)cwork,"fpg\x1a\x0d\x0a")) empaquetable=1;
@@ -3374,8 +3374,10 @@ void sintactico (void) {
     old_source=source;
     nombre_dll=(byte*)&mem[pieza_num];
 
-    if (idlls<64) dlls[idlls].filename=pieza_num;
-printf("DLL: %s %d %s\n",&mem[pieza_num],pieza_num,nombre_dll);
+    if (idlls<64) 
+		dlls[idlls].filename=pieza_num;
+
+//printf("DLL: %lx %d %s\n",&mem[pieza_num],pieza_num,nombre_dll);
 
     if (nombre_dll==NULL) c_error(0,63);
     if ((num_extern=ImportDll((char *)nombre_dll))==0) c_error(0,63);
