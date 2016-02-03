@@ -296,11 +296,7 @@ while (*ff!=0) {
 
 #endif
 
-#ifndef _WIN32
-if(f=memz_open_file(file))
-return f;
 
-#endif
 
 
 //printf("%s\n",full);
@@ -342,7 +338,11 @@ strlwr(full);
 			if(f=memz_open_file(file))
 				return f;
 			
-          printf("failed %s\n",file);
+				if(f=memz_open_file(file))
+					return f;
+
+				printf("failed %s\n",file);
+          
           strcpy(full,"");
 
           return(NULL);

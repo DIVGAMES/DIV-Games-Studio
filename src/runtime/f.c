@@ -177,13 +177,6 @@ while (*ff!=0) {
 
 #endif
 
-//#ifndef _WIN32
-	if(f=memz_open_file(file)) {
-		printf("memz is %d\n",f);
-	return f;
-	}
-//#endif
-
 
 //printf("%s\n",full);
   strcpy(full,(char*)file);
@@ -244,7 +237,12 @@ while (*ff!=0) {
 		strlwr(full);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
-          printf("failed to load %s\n",full);
+			if(f=memz_open_file(file)) {
+			//	printf("memz is %d\n",f);
+				return f;
+			}
+          
+			printf("failed to load %s\n",full);
 			
 
           strcpy(full,"");
