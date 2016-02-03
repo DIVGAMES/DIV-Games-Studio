@@ -82,7 +82,11 @@ char exebin[255];
 #define SEEK_SET    0
 #endif
 
+#ifdef WIN32
 
+FILE *fmemopen (void *buf, size_t size, const char *opentype);
+
+#endif
 
 unsigned char *zipptr=NULL;
 
@@ -99,9 +103,6 @@ FILE * memz_open_file(unsigned char *file) {
 
 FILE *out;
 
-#ifdef __WIN32
-return NULL;
-#else
 
 // trim file to last bit (fixero.ext)
 
@@ -123,19 +124,22 @@ int len = divz_open_file(full);
 
 if(len) {
 out = fmemopen(zipptr,len,"rb");
+printf("zipptr %x, len: %d\n",zipptr, len);
+
 return out;
 }
 	if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
    if (strlen(full)) strcat(full,"/");
    strcat(full,fname);
    strcat(full,ext);
-len = divz_open_file(full);
+   len = divz_open_file(full);
 
 if(len) {
 out = fmemopen(zipptr,len,"rb");
+printf("zipptr %x, len: %d\n",zipptr, len);
+
 return out;
 }
-#endif
 
 return NULL;
 
@@ -147,6 +151,8 @@ return NULL;
 int divz_open_file(char *full) {
   unz_file_info fileInfo;
 
+printf("divz open file: %s\n",full);
+
   int readBytes=0;
 
 if(zip!=NULL)			
@@ -157,18 +163,20 @@ if(datastartpos==0)
 else
 	zip = (unzFile*)unzOpen(exebin);
 
-//printf("loaded zip: %x %s %d\n",zip,exebin,datastartpos);
+printf("loaded zip: %x %s %d\n",zip,exebin,datastartpos);
 
-//printf("Looking for %s\n",full);
+
+printf("Looking for %s\n",full);
+
 if(zip==NULL)
-return 0;
+	return 0;
 
-unzGoToFirstFile(zip);
+	unzGoToFirstFile(zip);
 				if(unzLocateFile (zip,full,2)==UNZ_OK)
 				{	
 					if(unzOpenCurrentFile(zip)==UNZ_OK)
 					{
-	//					printf("FOUND IT!\n");
+						printf("FOUND IT!\n");
 						if (unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0) == UNZ_OK) {
 //          char *filename = (char *)malloc(fileInfo.size_filename + 1);
 //          unzGetCurrentFileInfo(zip, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
@@ -184,7 +192,7 @@ unzGoToFirstFile(zip);
 				 readBytes = unzReadCurrentFile(zip, zipptr, fileInfo.uncompressed_size);
 				unzClose(zip);
 				zip=NULL;
-//				printf("Read %d of %d byte\n", readBytes, fileInfo.uncompressed_size);
+				printf("Read %d of %d byte\n", readBytes, fileInfo.uncompressed_size);
 				return readBytes;
 					}
 

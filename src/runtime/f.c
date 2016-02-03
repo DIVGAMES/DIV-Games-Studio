@@ -159,7 +159,10 @@ static FILE * div_open_file(byte * file) {
 
 char remote[255];
 #ifndef DOS
+#ifdef DEBUG
   printf("opening file: [%s]\n",file);
+#endif
+
   if(strlen((const char *)file)<1)
 	return NULL;
 
@@ -174,12 +177,12 @@ while (*ff!=0) {
 
 #endif
 
-#ifndef _WIN32
-if(f=memz_open_file(file)) {
-//printf("memz is %d\n",f);
-return f;
-}
-#endif
+//#ifndef _WIN32
+	if(f=memz_open_file(file)) {
+		printf("memz is %d\n",f);
+	return f;
+	}
+//#endif
 
 
 //printf("%s\n",full);
@@ -757,6 +760,7 @@ void new_map(void) {
 //����������������������������������������������������������������������������
 //      Load_fpg(fichero) - Devuelve el c�digo del fichero 0..max_fpgs
 //����������������������������������������������������������������������������
+#define STDOUTLOG
 
 void load_fpg(void) {
 
@@ -800,6 +804,8 @@ void load_fpg(void) {
       pila[sp]=0; e(105); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
+      //printf("file_len is %d\n",file_len);
+      
 #ifdef __EMSCRIPTEN__ 
 file_len=1352;
 #endif

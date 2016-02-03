@@ -6,6 +6,40 @@
 //#include <fnmatch.h>
 #include "global.h"
 
+char *tmpnames[255];
+
+int tmpcount=0;
+
+FILE *fmemopen (void *buf, size_t size, const char *opentype)
+{
+  FILE *f;
+//  assert(strcmp(opentype, "r") == 0);
+#ifdef WIN32
+  char* tmp_fname = _tempnam("%TMP%", "fmemopen");
+  tmpnames[tmpcount]=tmp_fname;
+  tmpcount++;
+  
+  printf("TEMP FILE CREATED: %s\n",tmp_fname);
+  
+  f = fopen(tmp_fname, "wb");
+  fwrite(buf, 1, size, f);
+  fclose(f);
+  f = fopen(tmp_fname, "rb");
+#else
+  f = tmpfile();
+  fwrite(buf, 1, size, f);
+  rewind(f);
+#endif
+  return f;
+}
+
+void closefiles(void) {
+	
+	while(tmpcount!=0) {
+		tmpcount--;
+		remove(tmpnames[tmpcount]);
+	}
+}
 
 #ifdef __llvm___
 #include <string.h>
@@ -304,17 +338,17 @@ strcpy(result->name,result2.name);
 
 	result->attrib=result2.attrib;
 	result->size = result2.size;
-printf("findnext found: %s %s %d %d\n",result->name, result2.name,result2.attrib,type);
+//printf("findnext found: %s %s %d %d\n",result->name, result2.name,result2.attrib,type);
 
 if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 	type == _A_SUBDIR && result2.attrib&_A_SUBDIR) {
-	printf("match\n");
+	//printf("match\n");
 	
 	return 0;
 }
 
 }
-printf("no more matches\n");
+//printf("no more matches\n");
 
 #ifdef NOTYET
 	strcpy(result->name,namelist[np]->d_name);

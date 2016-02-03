@@ -1583,7 +1583,9 @@ remove_process(id);
 ///////////////////////////////////////////////////////////////////////////////
 // Finalise
 ///////////////////////////////////////////////////////////////////////////////
-
+#ifdef WIN32
+void closefiles(void);
+#endif
 void finalizacion (void) {
 #ifdef DIVDLL
   while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
@@ -1598,6 +1600,12 @@ void finalizacion (void) {
   rvmode();
 //EndSound();
   kbdReset();
+
+#ifdef WIN32
+
+closefiles();
+
+#endif
 
 //  printf("Ejecuci�n correcta:\n\n\tn� actual de procesos = %u\n\tn� m�ximo de procesos = %u",
 //    procesos,(id_end-id_start)/iloc_len+1);
@@ -1722,7 +1730,13 @@ int main(int argc,char * argv[]) {
   uint32_t datsize = 0;
   uint32_t exestart = 0;
   uint32_t datstart = 0;
-  
+
+// fix stderr / stdout
+#ifdef __WIN32
+	freopen( "CON", "w", stdout );
+	freopen( "CON", "w", stderr );
+#endif
+
 #ifndef GP2X 
 #ifndef PS2  
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
@@ -1740,8 +1754,8 @@ int main(int argc,char * argv[]) {
   numfiles=flushall();
 #endif
 
-if(argc==1) {
-	printf("searching for magic\n");
+if(true) {
+//	printf("searching for magic\n");
 // search for magic..
 
 	f=fopen(argv[0],"rb");
@@ -1754,21 +1768,21 @@ if(argc==1) {
 		buf[2]=0;
 		
 		if(!strcmp(buf,"DX")) {
-			printf("Found exe\n");
-			printf("data and exe packed\n");
+		//	printf("Found exe\n");
+		//	printf("data and exe packed\n");
 			
 			fseek(f,-10,SEEK_END);
 			fread(&exesize,4,1,f);
 			fread(&datsize,4,1,f);
 
-			printf("exesize: %d\n",exesize);
-			printf("datsize: %d\n",datsize);
+		//	printf("exesize: %d\n",exesize);
+		//	printf("datsize: %d\n",datsize);
 			
 
 //		printf("[%c][%c]\n",buf[0],buf[1]);
 //		fclose(f);
 		} else {
-			printf("failed: %s\n",buf);
+		//	printf("failed: %s\n",buf);
 		}
 		if(exesize==0)
 			fclose(f);
@@ -1841,10 +1855,13 @@ if(argc>1 && exesize==0) {
 		f=fopen(argv[1],"rb");
 	}
 	
-	if(!f && exesize>0)
+	if(exesize>0) {
+		if(f)
+			fclose(f);
 		f=fopen(argv[0],"rb");
+	}
 	
-	printf("%x %s\n",f,argv[1]);
+	//printf("%x %s\n",f,argv[1]);
 	
 	if(!f) {
 
@@ -1873,6 +1890,7 @@ if(argc>1 && exesize==0) {
 // check if div1 or div2 exe
   fseek(f,0,SEEK_END);
   len=ftell(f);
+//  printf("pack len: %d\n",len);
   
   if(exesize>0)
 	exestart=len-exesize-datsize-10;
@@ -1892,7 +1910,7 @@ fread(&DIV_VER,1,1,f);
 //	len=exesize;
 //}
 
-printf("div ver: [%d] [%c]\n",DIV_VER,DIV_VER);
+//printf("div ver: [%d] [%c]\n",DIV_VER,DIV_VER);
 
 switch(DIV_VER) {
 	case 'j':
@@ -1904,14 +1922,15 @@ switch(DIV_VER) {
 	break;
 	case 144:
 //	case -112:
-		printf("Found Div Windows exe\n");
+		//printf("Found Div Windows exe\n");
 		stubsize = winstubsize;
 		
 	break;
 	default:
 		printf("Unknown div code, aborting\n");
 		fclose(f);
-    exit(26);
+		exit(26);
+	break;
 }
   if(DIV_VER!='D')
 	len-=stubsize-4*10;
@@ -1952,9 +1971,9 @@ mem=(int*)((((memptrsize)mem+3)/4)*4);
         memw=(word*)mem;
 fseek(f,div1stubsize,SEEK_SET);
 //rewind(f);
-printf("FILE AT: %d\n",ftell(f));
+//printf("FILE AT: %d\n",ftell(f));
 fread(mem,1,len-div1stubsize,f);
-printf("FILE AT: %d %d\n",ftell(f),len);
+//printf("FILE AT: %d %d\n",ftell(f),len);
 
 #ifdef DUMP_PRG
 dump(len-div1stubsize);
@@ -1967,11 +1986,11 @@ dump(len-div1stubsize);
 //memcpy(mem,mimem,40);
 //memcpy(mem,ptr,len-div1stubsize);//4*imem_max+1032*5+16*1025+3);
 
-printf("ptrsize %d\nmem: %x iloc: %d iloc_len: %d iloc_max %d\nvars: %d\n",sizeof(ptr),mem,mem[6],iloc_len,imem_max,mem[2]);
+//printf("ptrsize %d\nmem: %x iloc: %d iloc_len: %d iloc_max %d\nvars: %d\n",sizeof(ptr),mem,mem[6],iloc_len,imem_max,mem[2]);
   kbdInit();
 
 
-printf("first op: %d\n",mem[mem[1]]);
+//printf("first op: %d\n",mem[mem[1]]);
         interprete();        
 } else {
 
@@ -2071,15 +2090,17 @@ if(m) {
         }
 
         kbdInit();
-
+#ifdef DEBUG
   printf("Looking for joysticks\n");
-
+#endif
   if(SDL_NumJoysticks() > 0) { 
 		divjoy = (SDL_Joystick*)SDL_JoystickOpen(0);
 		joy_status=1;
+
+#ifdef DEBUG
 		printf("Joyname:    %s\n", SDL_JoystickName(0));
 		printf("NumAxes: %d: Numhats: %d : NumButtons: %d\n",SDL_JoystickNumAxes(divjoy), SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
-		
+#endif		
 	if (SDL_JoystickNumHats(divjoy)==0)  {
 		SDL_JoystickClose(divjoy);
 		divjoy=NULL;
