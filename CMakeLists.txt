@@ -3,7 +3,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(div2015)
 
-SET(BUILD_LEVEL " -O2 ")
+SET(BUILD_LEVEL " -ggdb3 -O2 ")
 #-ggdb3 -O0 ")
 
 #-ggdb3 -O0 ")

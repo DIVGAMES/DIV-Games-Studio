@@ -549,7 +549,7 @@ FILE *f;
                                 v.mapa->codigo=maux.codigo;
                                 v.mapa->Codigo=maux.Codigo;
                                 memcpy((char *)v.mapa->path,(char *)maux.path,_MAX_PATH+1);
-                                memcpy((char *)v.mapa->filename,(char *)maux.filename,12+1);
+                                memcpy((char *)v.mapa->filename,(char *)maux.filename,255);
                                 v.mapa->zoom=maux.zoom;
                                 v.mapa->zoom_x=maux.zoom_x;
                                 v.mapa->zoom_y=maux.zoom_y;
@@ -927,7 +927,7 @@ int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla)
     v_mapa->map=mapilla;
 
     //4§ Fija el resto de variables
-    memcpy((char *)v_mapa->filename,(char *)nombre,12+1);
+    memcpy((char *)v_mapa->filename,(char *)nombre,255);
     *v_mapa->path='\0';
     v_mapa->map_an=map_an;
     v_mapa->map_al=map_al;
