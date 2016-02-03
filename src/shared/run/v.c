@@ -340,10 +340,12 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef PANDORA
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 #else
-		if(fsmode==0)
-			vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
-		else
+		if(fsmode==1)
 			vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+
+		if(!vga || fsmode==0)
+			vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+
 #endif
 		printf("Set mode: %d,%d\n",vga->w,vga->h);
 		
