@@ -1928,8 +1928,8 @@ void maximizar(void) {
 
   _an=(vga_an-12*big2)/font_an; // Calcula tama¤o (en chr) maximizada
   _al=(vga_al-28*big2)/font_al;
-  if (_an>80) _an=80;
-  if (_al>50) _al=50;
+  if (_an>100) _an=100;
+  if (_al>100) _al=100;
 
   if (v.prg->an!=_an || v.prg->al!=_al) { // *** Maximiza ***
 
