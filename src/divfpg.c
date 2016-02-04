@@ -312,6 +312,8 @@ extern byte color_tag;
 void FPG0N(void)
 {
 FPG *MiFPG;
+char oc=0;
+
 int n;
 
         v.tipo=101; // SOLIZABLE
@@ -332,7 +334,10 @@ int n;
         MiFPG->lInfoFPG.creada=0;
         MiFPG->thumb_on=0;
         Crear_FPG(MiFPG,full);
+		// false terminate fpg name to fit in fpg header
+		input[12]=0;
         strcpy((char *)MiFPG->NombreFpg,input);
+		input[12]=oc;
         v.titulo=MiFPG->NombreFpg;
         v.nombre=MiFPG->NombreFpg;
         MiFPG->FPGInfo=0;
@@ -345,7 +350,7 @@ void FPG0A(void)
 {
 FPG *MiFPG;
 int n;
-
+char oc=0;
         v.tipo=101; // SOLIZABLE
         v.an=159;
         v.al=72+5;
@@ -364,7 +369,9 @@ int n;
 
         MiFPG->LastUsed=1;
         Abrir_FPG(MiFPG,full);
+        input[12]=0;
         strcpy((char *)MiFPG->NombreFpg,input);
+		input[12]=oc;
         v.titulo=MiFPG->NombreFpg;
         v.nombre=MiFPG->NombreFpg;
 
