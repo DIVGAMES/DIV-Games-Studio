@@ -73,11 +73,11 @@ rm zipdiv/*.PRG 2> /dev/null
 
 rm data.div 2> /dev/null
 
-zip -r -j data.div zipdiv 2> /dev/null
-zip -d data.div "*.pak"
-zip -d data.div "*.exe"
-zip -d data.div "*.fl*"
-
+zip -9jr data.div.zip zipdiv 2> /dev/null
+zip -d data.div.zip "*.pak"
+zip -d data.div.zip "*.exe"
+zip -d data.div.zip "*.fl*"
+mv data.div.zip data.div
 
 VER=`dd if=EXEC.EXE bs=1 count=1 skip=2 2>/dev/null`
 
@@ -87,22 +87,6 @@ RUNTIME=div1run
 else
 RUNTIME=divrun
 fi
-
-#### linux build
-cmake . -DTARGETOS=LINUX
-make -j5 $RUNTIME-LINUX
-upx -9 ./system/$RUNTIME-LINUX
-./pack ./system/$RUNTIME-LINUX EXEC.EXE data.div $2-BIN
-chmod +x $2-BIN
-mkdir $2-LINUX
-mv $2-BIN $2-LINUX/$2-LINUX
-cp zipdiv/README.md $2-LINUX
-cp zipdiv/LICENSE $2-LINUX
-cp zipdiv/*.pak $2-LINUX
-
-rm $2-LINUX.tar.gz
-tar zcf $2-LINUX.tar.gz $2-LINUX
-rm -rf $2-LINUX
 
 #### pi build
 PATH=$PATH:/home/mike/raspidev/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin/
@@ -122,7 +106,6 @@ rm $2-PI.tar.gz
 tar zcf $2-PI.tar.gz $2-PI
 rm -rf $2-PI
 
-
 #### winrum build
 cmake . -DTARGETOS=WINDOWS
 make -j5 $RUNTIME-WINDOWS
@@ -131,8 +114,28 @@ upx -9 ./system/$RUNTIME-WINDOWS.exe
 ./pack ./system/$RUNTIME-WINDOWS.exe EXEC.EXE data.div $2.exe
 
 rm $2-win64.zip 2> /dev/null
-zip -j $2-win64.zip $2.exe system/lib*.dll system/SDL*.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
+zip -j9 $2-win64.zip $2.exe system/lib*.dll system/SDL*.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
 rm $2.exe 2> /dev/null
+
+
+#### linux build
+cmake . -DTARGETOS=LINUX
+make -j5 $RUNTIME-LINUX
+upx -9 ./system/$RUNTIME-LINUX
+./pack ./system/$RUNTIME-LINUX EXEC.EXE data.div $2-BIN
+chmod +x $2-BIN
+mkdir $2-LINUX
+mv $2-BIN $2-LINUX/$2-LINUX
+cp zipdiv/README.md $2-LINUX
+cp zipdiv/LICENSE $2-LINUX
+cp zipdiv/*.pak $2-LINUX
+
+rm $2-LINUX.tar.gz
+tar zcf $2-LINUX.tar.gz $2-LINUX
+rm -rf $2-LINUX
+
+
+
 
 # upload files
 
