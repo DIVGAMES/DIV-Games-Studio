@@ -1921,7 +1921,11 @@ void load(void) {
   
   if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) { 
 	  printf("not found\n");
-	  pila[sp]=0; e(126); return; 
+	  pila[sp]=0; 
+#ifdef DEBUG
+		e(126); 
+#endif
+	   return; 
   }
 
 //  printf("file len: %d\n",ftell(es));
@@ -3256,7 +3260,14 @@ void _fclose(void) {
     if (pila[sp]==EOF) pila[sp]=0;
     memset(tabfiles, 0, 32*4);
   } else {
-    if (!(pila[sp]&1) || pila[sp]<1 || pila[sp]>63) { e(170); return; }
+    if (!(pila[sp]&1) || pila[sp]<1 || pila[sp]>63) { 
+#ifdef DEBUG
+		e(170); 
+#else
+		pila[sp]=0;
+#endif	
+		return; 
+	}
     n=pila[sp]/2;
     if (tabfiles[n]==0) { e(170); return; }
     pila[sp]=fclose((FILE*)(tabfiles[n]));
