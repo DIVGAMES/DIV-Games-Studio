@@ -154,7 +154,7 @@ printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNum
 	}
 
   #ifndef DEBUG
-  if(true) {
+  if(1) {
 	printf("searching for magic\n");
 // search for magic..
 
