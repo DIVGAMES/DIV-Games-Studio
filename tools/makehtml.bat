@@ -108,7 +108,7 @@ cat << EOF > html/$3.html
 				<p>By $5</p>
 				<p>$controls<br />
 								Download:
-				<a href='$3-win64.zip'>Windows</a> |
+				<a href='$3-win32.zip'>Windows</a> |
 				<a href='$3-LINUX.tar.gz'>LINUX X64</a> | 
 				<a href='$3.apk'>Android</a> |
 				<a href='$3-PI.tar.gz'>Raspberry Pi2</a> |
