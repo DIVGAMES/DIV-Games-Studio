@@ -113,8 +113,8 @@ upx -9 ./system/$RUNTIME-WINDOWS.exe
 
 ./pack ./system/$RUNTIME-WINDOWS.exe EXEC.EXE data.div $2.exe
 
-rm $2-win64.zip 2> /dev/null
-zip -j9 $2-win64.zip $2.exe system/lib*.dll system/SDL*.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
+rm $2-win32.zip 2> /dev/null
+zip -j9 $2-win32.zip $2.exe system/lib*.dll system/SDL*.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
 rm $2.exe 2> /dev/null
 
 
@@ -139,9 +139,9 @@ rm -rf $2-LINUX
 
 # upload files
 
-scp $2-win64.zip $2-*.tar.gz $2.* android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
+scp $2-win32.zip $2-*.tar.gz $2.* android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
 
-rm -rf buildhtml pack buildgcw zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win64.zip $2.opk $2.pnd android/$2.apk
+rm -rf buildhtml pack buildgcw zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win32.zip $2.opk $2.pnd android/$2.apk
 
 
 #emrun html/$2.html
