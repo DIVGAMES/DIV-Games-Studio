@@ -49,7 +49,7 @@ fi
 
 echo "Creating html"
 ./tools/makehtml.bat ./zipdiv $EXE "$2" "$THREE" "$FOUR"
-rm -rf buildhtml buildhtml2
+#rm -rf buildhtml buildhtml2
 
 echo "Creating gcw opk"
 ./tools/makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
@@ -115,7 +115,36 @@ upx -9 ./system/$RUNTIME-WINDOWS.exe
 
 rm $2-win32.zip 2> /dev/null
 zip -j9 $2-win32.zip $2.exe system/lib*.dll system/SDL*.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
+zip -d $2-win32.zip libstdc*.dll
+
 rm $2.exe 2> /dev/null
+
+## psp build
+EBOOTDIR=$2-PSP
+rm -rf $EBOOTDIR
+mkdir $EBOOTDIR
+PSPDEV=/home/mike/pspdev
+PATH=$PATH:$PSPDEV/bin:$PSPDEV/psp/bin
+cmake . -DTARGETOS=PSP
+make $RUNTIME-PSP
+psp-fixup-imports system/$RUNTIME-PSP 
+#-o $EBOOTDIV/divrun-PSP.elf
+#cp system/$RUNTIME-PSP $EBOOTDIR/divrun-PSP.elf
+psp-strip system/$RUNTIME-PSP -o $EBOOTDIR/$RUNTIME-PSP.elf
+mksfo '$3' $EBOOTDIR/PARAM.SFO
+
+#psp-prxgen $EBOOTDIR/divrun-PSP.elf $EBOOTDIR/divrun-PSP.prx
+#pack-pbp $EBOOTDIR/EBOOT.PBP_ $EBOOTDIR/PARAM.SFO NULL NULL NULL NULL NULL $EBOOTDIR/divrun-PSP.prx NULL 
+pack-pbp $EBOOTDIR/EBOOT.PBP_ $EBOOTDIR/PARAM.SFO NULL NULL NULL NULL NULL $EBOOTDIR/$RUNTIME-PSP.elf NULL 
+
+./pack ./$EBOOTDIR/EBOOT.PBP_ EXEC.EXE data.div $EBOOTDIR/EBOOT.PBP 
+
+#ebootsign ./$EBOOTDIR/EBOOT.PBP ./$EBOOTDIR/EBOOT_SIGNED.PBP
+
+
+rm ./$EBOOTDIR/EBOOT.PBP_ ./$EBOOTDIR/$RUNTIME-PSP.*
+cp zipdiv/README.md zipdiv/LICENSE/ $EBOOTDIR
+zip -9r $2-PSP.zip $EBOOTDIR
 
 
 #### linux build
@@ -137,11 +166,14 @@ rm -rf $2-LINUX
 
 
 
+
 # upload files
 
-scp $2-win32.zip $2-*.tar.gz $2.* android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
+scp $2-win32.zip $2-*.tar.gz $2.* $2-PSP.zip android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
 
-rm -rf buildhtml pack buildgcw zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win32.zip $2.opk $2.pnd android/$2.apk
+#delete temp files
+
+rm -rf $2-PSP.zip $EBOOTDIR buildhtml pack buildgcw zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win32.zip $2.opk $2.pnd android/$2.apk
 
 
 #emrun html/$2.html
