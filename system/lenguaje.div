@@ -464,7 +464,7 @@
 
 400 "Search map"
 401 "Size of cells"
-402 "Colour of the hardnesses"
+402 "Hardness colour"
 403 "Eliminate minimum"
 404 "Creating map..."
 
@@ -475,7 +475,7 @@
 409 "Numbers"
 410 "Literals"
 411 "Tabstops"
-412 "Colour the lists (*.PRG)"
+412 "Syntax highlight (*.PRG)"
 
 413 "Calculator"
 414 ""
