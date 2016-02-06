@@ -113,8 +113,7 @@ cat << EOF > html/$3.html
 				<a href='$3.apk'>Android</a> |
 				<a href='$3-PI.tar.gz'>Raspberry Pi2</a> |
 				<a href='$3.pnd'>Pandora</a> | 
-				<a href='$3.opk'>GCW-Zero</a>  |
-				<a href='$3-PSP.zip'>PSP EBOOT (BETA)</a> 
+				<a href='$3.opk'>GCW-Zero</a>  
 
 					<span id='controls'>
                <span style="display:none;">
