@@ -863,38 +863,9 @@ extern int reloj; // clock
 
 void mainloop(void) {
 
-  int n,m,oldn=max_windows;
-  int llamar;
-  char cwork[256],*p;
-  
-#ifdef NOTYET
-  printf("%d %d %d\n",reloj, old_reloj,loop_count);
-	
-    if (reloj==old_reloj) loop_count++; else loop_count=0;
-    if (loop_count>=500) {
-      EndSound();
-      loop_count=0;
-      InitSound();
-    } old_reloj=reloj;
-
-    if (GetIRQVector(0) != Irq0Handler) { // in dialogue environment and paint
-
-      svmode(); set_dac(dac);
-      set_mouse(mouse_x,mouse_y);
-      read_mouse();
-      volcado_completo=1; volcado_copia();
-      v_texto="Interrupt vector lost!";
-      dialogo(err0);
-    }
-
-    IntIncr = 1193180 / 100;
-
-    outp(0x43, 54);
-    outp(0x40, (byte) IntIncr);
-    outp(0x40, (byte)(IntIncr>>8));    // Set the timer to 100 Hz.
-
-    SetIRQVector(0, Irq0Handler);
-#endif
+	int n,m,oldn=max_windows;
+	int llamar;
+	char cwork[256],*p;
 
 	if (arrastrar==3) { // drag == 3?
 		goto fin_bucle_entorno; // end loop environment
@@ -973,10 +944,10 @@ void mainloop(void) {
 		} free_drag=1;
 	}
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Si antes est bamos en una ventana en la que hemos dejado de estar
-    // debemos repintar esta £ltima (para borrar posibles "hi-lite")
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Si antes est bamos en una ventana en la que hemos dejado de estar
+	// debemos repintar esta £ltima (para borrar posibles "hi-lite")
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 	if (arrastrar!=4) {
 
@@ -1006,505 +977,732 @@ void mainloop(void) {
 			n++;
 
 	}
-
     
-    ///////////////////////////////////////////////////////////////////////////
-    // Determine the shape of the cursor (mouse pointer)
-    ///////////////////////////////////////////////////////////////////////////
-    if (n==max_windows) mouse_graf=1;
-    else switch(ventana[n].primer_plano) {
-      case 0:
-        mouse_graf=7; break;
-      case 1:
-        if (mouse_in(ventana[n].x+2*big2,ventana[n].y+2*big2,ventana[n].x+ventana[n].an-2*big2,ventana[n].y+9*big2))
-          if (mouse_x<=ventana[n].x+ventana[n].an-18*big2) mouse_graf=2;
-          else if (mouse_x<=ventana[n].x+ventana[n].an-10*big2) mouse_graf=4;
-               else mouse_graf=5;
-        else mouse_graf=1; break;
-      case 2:
-        if (mouse_x>=ventana[n].x+7*big2) mouse_graf=2; else mouse_graf=6; break;
-    }
+	///////////////////////////////////////////////////////////////////////////
+	// Determine the shape of the cursor (mouse pointer)
+	///////////////////////////////////////////////////////////////////////////
+
+	if (n==max_windows) {
+		mouse_graf=1;
+	} else { 
+		switch(ventana[n].primer_plano) {
+			case 0:
+				mouse_graf=7; 
+				break;
+			case 1:
+				if (mouse_in(ventana[n].x+2*big2,ventana[n].y+2*big2,ventana[n].x+ventana[n].an-2*big2,ventana[n].y+9*big2))
+					if (mouse_x<=ventana[n].x+ventana[n].an-18*big2) 
+						mouse_graf=2;
+					else if (mouse_x<=ventana[n].x+ventana[n].an-10*big2) 
+						mouse_graf=4;
+					else 
+						mouse_graf=5;
+				else 
+					mouse_graf=1; 
+				break;
+			case 2:
+				if (mouse_x>=ventana[n].x+7*big2) 
+					mouse_graf=2; 
+				else 
+					mouse_graf=6; 
+				break;
+		}
+	}
+	
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// If we are on a window that is not the first ...
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (n!=0 && n<max_windows) {
+
+		// Pasa la ventana a la ventana 0 si esta en primer plano o se pulsa
+
+		if (ventana[n].primer_plano==1 || (mouse_b&1)) {
+			move(0,n); n=0;
+		}
+
+		if (n==0 && v.primer_plano!=1) { // Se puls¢ icono o 2§ plano
+			for (m=1;m<max_windows;m++) {
+				if (ventana[m].tipo && ventana[m].primer_plano==1) {
+					if (colisionan(0,m)) {
+						ventana[m].primer_plano=0; 
+						vuelca_ventana(m);
+					}
+				}
+			}
+			if (v.primer_plano==0) { // Si estaba en segundo plano
+				if (v.tipo>=100 && !v.estado) 
+					activar(); // Activa un mapa
+				
+				v.primer_plano=1; 
+				vuelca_ventana(0);
+				do { 
+					read_mouse(); 
+				} while(mouse_b&1); 
+				
+				old_mouse_b=0;
+			}
+		}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Activa una ventana excluible (tipo>=100) cuando se haga algo sobre ella
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	} else if (n==0 && (mouse_b&1) && v.tipo>=100 && v.primer_plano<2 && !v.estado && mouse_graf!=4 && mouse_graf!=5) { 
+		activar(); 
+		vuelca_ventana(0); 
+	}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//  Suelta algo sobre una ventana que esta en segundo plano
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (n<max_windows && ventana[n].primer_plano==0 && arrastrar==4 && v.tipo>=100 && ventana[n].tipo!=2) {
+		move(0,n); n=0;
+
+		if (v.tipo==100) 
+			mouse_b|=1; 
+		
+		activar();
+		wmouse_x=mouse_x-v.x; 
+		wmouse_y=mouse_y-v.y;
+
+		if (big) { 
+			wmouse_x/=2; 
+			wmouse_y/=2; 
+		}
+		
+		call((voidReturnType )v.click_handler);
+
+		for (m=1;m<max_windows;m++) 
+			if (ventana[m].tipo && ventana[m].primer_plano==1)
+				if (colisionan(0,m)) {
+					ventana[m].primer_plano=0; 
+					vuelca_ventana(m);
+				}
+
+		v.primer_plano=1; 
+		vuelca_ventana(0); 
+		v.volcar=0;
+		do { 
+			read_mouse(); 
+		} while(mouse_b&1);
+
+		goto fin_bucle_entorno; // end loop environment
+	}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// If we are within the contents of a window ...
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (n==0 && v.primer_plano==1) 
+		if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
+
+			llamar=1; // Llamamos a su click_handler
+
+			if (v.tipo==100 && arrastrar!=4) {
+
+				if (arrastrar==1) {
+					arrastrar_graf=8;
+					arrastrar=2;
+					map_an=v.mapa->map_an;
+					map_al=v.mapa->map_al;
+				}
+
+				llamar=0;
+
+				if ((mouse_b&1) && !(old_mouse_b&1)) {
+					if (*system_clock<doble_click+10 && *system_clock>doble_click && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
+						llamar=1;
+					} else {
+					doble_click=*system_clock;
+					doble_click_x=mouse_x; doble_click_y=mouse_y;
+					}
+				}
+			}
+
+			if (v.tipo==106) {
+				llamar=0;
+
+				if ((mouse_b&1) && !(old_mouse_b&1)) {
+					if (*system_clock<doble_click+10 && *system_clock>doble_click && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
+						llamar=1;
+					} else {
+						doble_click=*system_clock;
+						doble_click_x=mouse_x; doble_click_y=mouse_y;
+					}
+				}
+			}
+
+			if (v.tipo>=100 && arrastrar==4) {
+				if (v.tipo==100) mouse_b|=1; 
+					activar();
+			}
+
+			if (llamar) {
+				wmouse_x=mouse_x-v.x; 
+				wmouse_y=mouse_y-v.y;
+				
+				if (big) { 
+					wmouse_x/=2; 
+					wmouse_y/=2; 
+				}
+				
+				call((voidReturnType )v.click_handler);
+				volcados_parciales=1;
+				if (v.volcar) { 
+					vuelca_ventana(0); 
+					v.volcar=0; 
+				}
+				volcados_parciales=0;
+			}
+
+			oldn=0;
 
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // If we are on a window that is not the first ...
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    if (n!=0 && n<max_windows) {
-
-      // Pasa la ventana a la ventana 0 si esta en primer plano o se pulsa
-
-      if (ventana[n].primer_plano==1 || (mouse_b&1)) {
-        move(0,n); n=0;
-      }
-
-      if (n==0 && v.primer_plano!=1) { // Se puls¢ icono o 2§ plano
-        for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
-          if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
-        if (v.primer_plano==0) { // Si estaba en segundo plano
-          if (v.tipo>=100 && !v.estado) activar(); // Activa un mapa
-          v.primer_plano=1; vuelca_ventana(0);
-          do { read_mouse(); } while(mouse_b&1); old_mouse_b=0;
-        }
-      }
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Activa una ventana excluible (tipo>=100) cuando se haga algo sobre ella
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    } else if (n==0 && (mouse_b&1) && v.tipo>=100 && v.primer_plano<2 && !v.estado
-      && mouse_graf!=4 && mouse_graf!=5) { activar(); vuelca_ventana(0); }
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    //  Suelta algo sobre una ventana que esta en segundo plano
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    if (n<max_windows && ventana[n].primer_plano==0 && arrastrar==4 && v.tipo>=100 && ventana[n].tipo!=2) {
-      move(0,n); n=0;
-
-      if (v.tipo==100) mouse_b|=1; activar();
-      wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
-      if (big) { wmouse_x/=2; wmouse_y/=2; }
-      call((voidReturnType )v.click_handler);
-
-      for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
-        if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
-
-      v.primer_plano=1; vuelca_ventana(0); v.volcar=0;
-      do { read_mouse(); } while(mouse_b&1);
-
-      goto fin_bucle_entorno; // end loop environment
-    }
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // If we are within the contents of a window ...
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    if (n==0 && v.primer_plano==1) if (mouse_in(v.x+2*big2,
-      v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
-
-      llamar=1; // Llamamos a su click_handler
-
-      if (v.tipo==100 && arrastrar!=4) {
-
-        if (arrastrar==1) {
-          arrastrar_graf=8;
-          arrastrar=2;
-          map_an=v.mapa->map_an;
-          map_al=v.mapa->map_al;
-        }
-
-        llamar=0;
-        if ((mouse_b&1) && !(old_mouse_b&1)) {
-          if (*system_clock<doble_click+10 && *system_clock>doble_click
-              && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
-            llamar=1;
-          } else {
-            doble_click=*system_clock;
-            doble_click_x=mouse_x; doble_click_y=mouse_y;
-          }
-        }
-      }
-
-      if (v.tipo==106) {
-        llamar=0;
-        if ((mouse_b&1) && !(old_mouse_b&1)) {
-          if (*system_clock<doble_click+10 && *system_clock>doble_click
-              && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
-            llamar=1;
-          } else {
-            doble_click=*system_clock;
-            doble_click_x=mouse_x; doble_click_y=mouse_y;
-          }
-        }
-      }
-
-      if (v.tipo>=100 && arrastrar==4) {
-        if (v.tipo==100) mouse_b|=1; activar();
-      }
-
-      if (llamar) {
-        wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
-        if (big) { wmouse_x/=2; wmouse_y/=2; }
-        call((voidReturnType )v.click_handler);
-        volcados_parciales=1;
-        if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-        volcados_parciales=0;
-      }
-
-      oldn=0;
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    } else { // If we are in the control bar of the window ...
+		} else { // If we are in the control bar of the window ...
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Move a window
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-      if (mouse_graf==2 && (mouse_b&1) && !(old_mouse_b&1)) {
-        mueve_ventana();
-      }
+			if (mouse_graf==2 && (mouse_b&1) && !(old_mouse_b&1)) {
+				mueve_ventana();
+			}
 
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Close the window
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-      if (mouse_graf==5) {
-        if (mouse_b&1) {
-          if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-          else wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-          vuelca_ventana(0);
-        }
-        if (!(mouse_b&1) && (old_mouse_b&1)) {
-          if (v.click_handler==menu_principal2) {
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-            
-            vuelca_ventana(0); volcado_copia();
-            
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+			if (mouse_graf==5) {
+				if (mouse_b&1) {
+					if (big) 
+						wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+					else 
+						wput(v.ptr,v.an,v.al,v.an-9,2,-45);
 
-            do 
-				read_mouse(); 
-			while (mouse_b&1);
-            
-            v_titulo=(char *)texto[40]; 
-            v_texto=NULL; 
-            dialogo(aceptar0);
-            if (v_aceptar) 
-				salir_del_entorno=1;
-          } else if (v.tipo>=100) {
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-            
-            vuelca_ventana(0); 
-            volcado_copia();
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-35);
-            do 
-				read_mouse(); 
-			while (mouse_b&1);
- 
-            switch(v.tipo) {
-              case 100: 
-					v_titulo=(char *)texto[50]; 
-					v_texto=(char *)v.titulo; 
-					break;
-					
-              case 102: 
-					v_titulo=(char *)texto[188]; 
-					v_texto=(char *)v.titulo; 
-					break;
-            }
-            if (v.tipo==100 || (v.tipo==102 && v.prg!=NULL))
-              dialogo(aceptar0); else v_aceptar=1;
-            if (v_aceptar) cierra_ventana();
-          } else cierra_ventana();
-        } else if (mouse_b&1) restore_button=3;
-      }
+					vuelca_ventana(0);
+				}
+				
+				if (!(mouse_b&1) && (old_mouse_b&1)) {
+					if (v.click_handler==menu_principal2) {
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-45);
+
+						vuelca_ventana(0); volcado_copia();
+
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+
+						do {
+							read_mouse(); 
+						} while (mouse_b&1);
+
+						v_titulo=(char *)texto[40]; 
+						v_texto=NULL; 
+						dialogo(aceptar0);
+
+						if (v_aceptar) 
+							salir_del_entorno=1;
+					} else if (v.tipo>=100) {
+						
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-45);
+
+						vuelca_ventana(0); 
+						volcado_copia();
+						
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+						
+						do {
+							read_mouse(); 
+						} while (mouse_b&1);
+
+						switch(v.tipo) {
+							case 100: 
+								v_titulo=(char *)texto[50]; 
+								v_texto=(char *)v.titulo; 
+							break;
+
+							case 102: 
+								v_titulo=(char *)texto[188]; 
+								v_texto=(char *)v.titulo; 
+							break;
+						}
+
+						if (v.tipo==100 || (v.tipo==102 && v.prg!=NULL))
+							dialogo(aceptar0); 
+						else 
+							v_aceptar=1;
+
+						if (v_aceptar) 
+							cierra_ventana();
+					} else 
+						cierra_ventana();
+				} else if (mouse_b&1) restore_button=3;
+			}
 
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Minimiza una ventana
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-      if (mouse_graf==4) {
-        if (mouse_b&1) {
-          wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-47);
-          vuelca_ventana(0);
-        }
-        if (!(mouse_b&1) && (old_mouse_b&1)) {
-          minimiza_ventana();
-        } else if (mouse_b&1) restore_button=1;
-      }
+			if (mouse_graf==4) {
+				if (mouse_b&1) {
+					wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-47);
+					vuelca_ventana(0);
+				}
 
-      oldn=-1;
+				if (!(mouse_b&1) && (old_mouse_b&1)) {
+					minimiza_ventana();
+				} else if (mouse_b&1) 
+					restore_button=1;
+			}
 
-    }
+			oldn=-1;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Estamos sobre un icono
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		}
 
-    if (n==0 && v.primer_plano==2) {
-      if (mouse_graf==2) {
-        if ((mouse_b&1) && !(old_mouse_b&1)) mueve_ventana();
-      } else {
-        if (mouse_b&1) {
-          if (big) {
-            wput(copia,-vga_an,vga_al,v.x,v.y,-48);
-            volcado_parcial(v.x,v.y,14,14);
-          } else {
-            wput(copia,vga_an,vga_al,v.x,v.y,-48);
-            volcado_parcial(v.x,v.y,7,7);
-          }
-        }
-        if (!(mouse_b&1) && (old_mouse_b&1)) {
-          maximiza_ventana();
-        } else if (mouse_b&1) restore_button=2;
-      }
-    }
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Estamos sobre un icono
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Type windows control timer
-    ///////////////////////////////////////////////////////////////////////////
-    
-    fin_bucle_entorno:
+	if (n==0 && v.primer_plano==2) {
+		if (mouse_graf==2) {
+			if ((mouse_b&1) && !(old_mouse_b&1)) 
+				mueve_ventana();
+		} else {
+			if (mouse_b&1) {
+				if (big) {
+					wput(copia,-vga_an,vga_al,v.x,v.y,-48);
+					volcado_parcial(v.x,v.y,14,14);
+				} else {
+					wput(copia,vga_an,vga_al,v.x,v.y,-48);
+					volcado_parcial(v.x,v.y,7,7);
+				}
+			}
+			
+			if (!(mouse_b&1) && (old_mouse_b&1)) {
+				maximiza_ventana();
+			} else if (mouse_b&1) 
+				restore_button=2;
+		}
+	}
 
-    for (m=0;m<max_windows;m++) {
-      if ( m==0 &&
-           mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2) &&
-           ventana[m].tipo!=107 ) continue;
-      if (ventana[m].tipo==4 ||
-         (ventana[m].tipo==101 && ventana[m].primer_plano!=2) ||
-         (ventana[m].tipo==107 && ventana[m].primer_plano!=2) ||
-         (ventana[m].tipo==102 && ventana[m].estado && ventana[m].primer_plano!=2)) {
+	///////////////////////////////////////////////////////////////////////////
+	// Type windows control timer
+	///////////////////////////////////////////////////////////////////////////
 
-        if (m) {
-          wup(m);
-        }
+	fin_bucle_entorno:
 
-        fin_ventana=1; wmouse_x=-1; wmouse_y=-1;
+	for (m=0;m<max_windows;m++) {
+		if ( m==0 &&
+			mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2) &&
+			ventana[m].tipo!=107 ) 
+			continue;
+			
+		if (ventana[m].tipo==4 ||
+			(ventana[m].tipo==101 && ventana[m].primer_plano!=2) ||
+			(ventana[m].tipo==107 && ventana[m].primer_plano!=2) ||
+			(ventana[m].tipo==102 && ventana[m].estado && ventana[m].primer_plano!=2)) {
 
-        switch(v.tipo)
-        {
-          case 101:
-            cargar_thumbs();
-            break;
-          case 107:
-            mostrar_mod_meters();
-            break;
-          default:
-            call((voidReturnType )v.click_handler);
-            break;
-        }
+			if (m) {
+				wup(m);
+			}
 
-        if (m) {
-          wdown(m);
-        }
+			fin_ventana=1; 
+			wmouse_x=-1; 
+			wmouse_y=-1;
 
-        if (fin_ventana==2) { // Close the window(m)
-          move(0,m);
-          cierra_ventana();
-        } else if (ventana[m].volcar) {
-          volcados_parciales=1;
-          vuelca_ventana(m); ventana[m].volcar=0;
-          volcados_parciales=0;
-        } fin_ventana=0;
-      }
-    }
+			switch(v.tipo) {
 
-    ///////////////////////////////////////////////////////////////////////////
-    //  Hotkey del menu programas
-    ///////////////////////////////////////////////////////////////////////////
-    
-    for (m=0;m<max_windows;m++)
-      if (ventana[m].tipo==102 && ventana[m].estado && ventana[m].prg!=NULL) break;
+				case 101:
+					cargar_thumbs();
+				break;
+			
+				case 107:
+					mostrar_mod_meters();
+				break;
 
-    if (m<max_windows && beta_status==4) { // If a PRG ...
-      n=0;
-      if (shift_status&8) switch(scan_code) {
-        case 33: n=1; break; // alt+f
-        case 49: n=2; break; // alt+n
-        case 19: n=3; break; // alt+r
-      } else if (shift_status&4) switch(scan_code) {
-        case 33: n=1; break; // ctrl+f
-        case 38: n=2; break; // ctrl+l
-        case 19: n=3; break; // ctrl+r
-        case 44: n=9; break; // ctrl+z
-      } else switch(scan_code) {
-        case 60: n=4; break; // f2
-        case 61: n=2; break; // f3
-        case 63: n=8; break; // f5
-        case 68: n=6; break; // f10
-      }
-      if (kbdFLAGS[87]) n=5; // f11
-      if (kbdFLAGS[88]) n=7; // f12
+				default:
+					call((voidReturnType )v.click_handler);
+				break;
+			}
 
-      if (n) { // Si se pulso alg£n hotkey ...
-        if (m) {
-          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call((voidReturnType )v.click_handler);
-          if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-          move(0,m);
-          if (v.primer_plano==0) {
-            for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
-              if (colisionan(0,m)) { ventana[m].primer_plano=0; vuelca_ventana(m); }
-            v.primer_plano=1;
-          } vuelca_ventana(0);
-        }
-        switch(n) {
-          case 1:
-            dialogo(buscar_texto0);
-            if (v_aceptar) buscar_texto();
-            break;
-          case 2:
-            buscar_texto();
-            break;
-          case 3:
-            dialogo(sustituir_texto0);
-            if (v_aceptar) sustituir_texto();
-            break;
-          case 4:
-            mouse_graf=3; volcado_copia();
-            v_tipo=8; save_prg_buffer(0);
-            strcpy(tipo[8].path,v.prg->path);
-            strcpy(input,v.prg->filename);
-            guardar_prg();
-            break;
-          case 5:
-            v_tipo=8; save_prg_buffer(0);
-            source_ptr=v.prg->buffer;
-            source_len=v.prg->file_lon;
-            v_ventana=0;
-            ejecutar_programa=0;
-            compilar_programa();
-            if(numero_error!=-1) {
-              goto_error();
-              if (v_ayuda) help(500+numero_error);
-            } else if (v_ayuda) help(599);
-            break;
-          case 6:
-          case 7:
-            v_tipo=8; save_prg_buffer(0);
-            strcpy(tipo[8].path,v.prg->path);
-            strcpy(input,v.prg->filename);
-            guardar_prg();
-            source_ptr=v.prg->buffer;
-            source_len=v.prg->file_lon;
-            v_ventana=0;
-            if (n==6) ejecutar_programa=1; else ejecutar_programa=3;
-            compilar_programa();
-            if(numero_error!=-1) {
-              goto_error();
-              if (v_ayuda) help(500+numero_error);
-              break;
-            } modo_de_retorno=1; salir_del_entorno=1;
-            break;
-          case 8:
-            v_tipo=8; save_prg_buffer(0);
-            dialogo(lista_procesos0);
-            scan_code=0; ascii=0;
-            if (v_aceptar) {
-              f_bop(); f_inicio();
-              while (v.prg->linea>lp1[lp_select]) {
-                write_line(); retrocede_lptr();
-                read_line(); retrocede_vptr();
-              }
-              while (v.prg->linea<lp1[lp_select]) {
-                write_line(); avanza_lptr();
-                read_line(); avanza_vptr();
-              } v.volcar=2;
-            } break;
-          case 9:
-            maximizar();
-            break;
-        }
-      }
-    }
+			if (m) {
+				wdown(m);
+			}
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Comprobaci¢n de beta
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+			if (fin_ventana==2) { // Close the window(m)
+				move(0,m);
+				cierra_ventana();
+			} else if (ventana[m].volcar) {
+				volcados_parciales=1;
+				vuelca_ventana(m); 
+				ventana[m].volcar=0;
+				volcados_parciales=0;
+			} 
+			
+			fin_ventana=0;
+		}
+	}
 
-    if (rndb()>200) switch(beta_status) {
-      case 1: call((voidReturnType )betatest4); break;
-      case 2: call((voidReturnType )betatest5); break;
-      case 3: call((voidReturnType )betatest6); break;
-      case 5: salir_del_entorno=1; break;
-    }
+	///////////////////////////////////////////////////////////////////////////
+	//  Hotkey del menu programas
+	///////////////////////////////////////////////////////////////////////////
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Otros hotkey
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	for (m=0;m<max_windows;m++)
+		if (ventana[m].tipo==102 && ventana[m].estado && ventana[m].prg!=NULL) 
+			break;
 
-    if (scan_code==62) { // F4 Open PRG
-      v_tipo=8; 
-      v_modo=0; 
-      v_texto=(char *)texto[346];
-      dialogo(browser0);
-      if (v_terminado) {
-        if (!v_existe) {
-          v_texto=(char *)texto[43]; 
-          dialogo(err0);
-        } else {
-          mouse_graf=3; volcado_copia(); mouse_graf=1;
-          abrir_programa();
-        }
-      }
-    }
+	if (m<max_windows && beta_status==4) { // If a PRG ...
+		n=0;
+		if (shift_status&8) 
+			switch(scan_code) {
+				case 33: 
+					n=1; 
+				break; // alt+f
+				
+				case 49: 
+					n=2; 
+				break; // alt+n
+				
+				case 19: 
+					n=3; 
+				break; // alt+r
+			} 
+		else if (shift_status&4) 
 
-    if (scan_code==59) { // F1 Help
-      determina_prg2();
-      if (v_ventana!=-1) {
-        if(numero_error!=-1 && ventana[v_ventana].prg==eprg) {
-          help(500+numero_error);
-        } else {
-          n=ventana[v_ventana].prg->columna-1;
-          p=ventana[v_ventana].prg->l;
-          if (n<=strlen(p)) {
-            if (!lower[p[n]] && n) n--;
-            if (lower[p[n]]) {
-              while (p) if (lower[p[n-1]]) n--; else break;
-              cwork[0]=0;
-              while (lower[p[n]]) {
-                cwork[strlen(cwork)+1]=0;
-                cwork[strlen(cwork)]=lower[p[n++]];
-              }
-              p=(char *)div_index;
-              while (p<(char *)index_end) {
-                if (!strcmp(cwork,p)) {
-                  help(*(word*)(p+strlen(p)+1)); break;
-                } else p+=strlen(p)+3;
-              } if (p>=(char *)index_end) help(3);
-            } else help(3);
-          } else help(3);
-        }
-      } else {
-        determina_calc();
-        if (v_ventana!=-1) {
-          help(1301);
-        } else help(3);
-      }
-    }
+			switch(scan_code) {
+				case 33: 
+					n=1; 
+				break; // ctrl+f
+				
+				case 38: 
+					n=2; 
+				break; // ctrl+l
+				
+				case 19: 
+					n=3; 
+				break; // ctrl+r
+				
+				case 44: 
+					n=9; 
+				break; // ctrl+z
+			} 
+		else 
+			switch(scan_code) {
+				case 60: 
+					n=4; 
+				break; // f2
+				
+				case 61: 
+					n=2; 
+				break; // f3
+				
+				case 63: 
+					n=8; 
+				break; // f5
+				
+				case 68: 
+					n=6; 
+				break; // f10
+			}
 
-    if ((shift_status&8) && scan_code==45) { // Alt-X Exit
-      v_titulo=(char *)texto[40]; v_texto=NULL; dialogo(aceptar0);
-      if (v_aceptar) salir_del_entorno=1;
-    }
+		if (kbdFLAGS[87]) 
+			n=5; // f11
+		
+		if (kbdFLAGS[88]) 
+			n=7; // f12
 
-    if ((shift_status&8) && scan_code==31) shell();
+		if (n) { // Si se pulso alg£n hotkey ...
+			if (m) {
+				wmouse_x=-1; 
+				wmouse_y=-1; 
+				mouse_b=0; 
+				call((voidReturnType )v.click_handler);
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Finaliza el bucle central
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+				if (v.volcar) { 
+					vuelca_ventana(0); 
+					v.volcar=0; 
+				}
 
-    volcado_copia();
+				move(0,m);
 
-    if (restore_button==1) {
-      wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-37);
-      vuelca_ventana(0);
-    } else if (restore_button==2) {
-     if (big) {
-       wput(copia,-vga_an,vga_al,v.x,v.y,-38);
-       volcado_parcial(v.x,v.y,14,14);
-     } else {
-       wput(copia,vga_an,vga_al,v.x,v.y,-38);
-       volcado_parcial(v.x,v.y,7,7);
-     }
-    } else if (restore_button==3) {
-      if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-      else wput(v.ptr,v.an,v.al,v.an-9,2,-35);
-      vuelca_ventana(0);
-    } restore_button=0;
+				if (v.primer_plano==0) {
+					for (m=1;m<max_windows;m++) 
+						if (ventana[m].tipo && ventana[m].primer_plano==1)
+							if (colisionan(0,m)) { 
+								ventana[m].primer_plano=0; 
+								vuelca_ventana(m); 
+							}
 
-    if (key(_ESC) && key(_L_CTRL)) salir_del_entorno=1;
+					v.primer_plano=1;
+				} 
+				
+				vuelca_ventana(0);
+			}
+			
+			switch(n) {
+
+				case 1:
+					dialogo(buscar_texto0);
+					if (v_aceptar) 
+						buscar_texto();
+				break;
+
+				case 2:
+					buscar_texto();
+				break;
+
+				case 3:
+					dialogo(sustituir_texto0);
+					if (v_aceptar) 
+						sustituir_texto();
+				break;
+
+				case 4:
+					mouse_graf=3; 
+					volcado_copia();
+					v_tipo=8; 
+					save_prg_buffer(0);
+					strcpy(tipo[8].path,v.prg->path);
+					strcpy(input,v.prg->filename);
+					guardar_prg();
+				break;
+
+				case 5:
+					v_tipo=8; save_prg_buffer(0);
+					source_ptr=v.prg->buffer;
+					source_len=v.prg->file_lon;
+					v_ventana=0;
+					ejecutar_programa=0;
+					compilar_programa();
+					
+					if(numero_error!=-1) {
+						goto_error();
+					if (v_ayuda) 
+						help(500+numero_error);
+					} else if (v_ayuda) 
+						help(599);
+				break;
+
+				case 6:
+				case 7:
+					v_tipo=8; 
+					save_prg_buffer(0);
+					strcpy(tipo[8].path,v.prg->path);
+					strcpy(input,v.prg->filename);
+					guardar_prg();
+					source_ptr=v.prg->buffer;
+					source_len=v.prg->file_lon;
+					v_ventana=0;
+					
+					if (n==6) 
+						ejecutar_programa=1; 
+					else ejecutar_programa=3;
+					
+					compilar_programa();
+					
+					if(numero_error!=-1) {
+						goto_error();
+
+						if (v_ayuda) 
+							help(500+numero_error);
+
+						break;
+					} 
+					modo_de_retorno=1; 
+					salir_del_entorno=1;
+				break;
+
+				case 8:
+					v_tipo=8; 
+					save_prg_buffer(0);
+				
+					dialogo(lista_procesos0);
+					scan_code=0; 
+					ascii=0;
+					
+					if (v_aceptar) {
+						f_bop(); 
+						f_inicio();
+
+						while (v.prg->linea>lp1[lp_select]) {
+							write_line(); retrocede_lptr();
+							read_line(); retrocede_vptr();
+						}
+						
+						while (v.prg->linea<lp1[lp_select]) {
+							write_line(); avanza_lptr();
+							read_line(); avanza_vptr();
+						} 
+						
+						v.volcar=2;
+					} 
+				break;
+
+				case 9:
+					maximizar();
+				break;
+			}
+		}
+	}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Comprobaci¢n de beta
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (rndb()>200) {
+		switch(beta_status) {
+			case 1: 
+				call((voidReturnType )betatest4); 
+			break;
+			
+			case 2: 
+				call((voidReturnType )betatest5); 
+			break;
+			
+			case 3: 
+				call((voidReturnType )betatest6); 
+			break;
+			
+			case 5: 
+				salir_del_entorno=1; 
+			break;
+		}
+	}
+	
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Otros hotkey
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (scan_code==62) { // F4 Open PRG
+		v_tipo=8; 
+		v_modo=0; 
+		v_texto=(char *)texto[346];
+		dialogo(browser0);
+
+		if (v_terminado) {
+			if (!v_existe) {
+				v_texto=(char *)texto[43]; 
+				dialogo(err0);
+			} else {
+				mouse_graf=3; volcado_copia(); mouse_graf=1;
+				abrir_programa();
+			}
+		}
+	}
+
+	if (scan_code==59) { // F1 Help
+		determina_prg2();
+
+		if (v_ventana!=-1) {
+			if(numero_error!=-1 && ventana[v_ventana].prg==eprg) {
+				help(500+numero_error);
+			} else {
+				n=ventana[v_ventana].prg->columna-1;
+				p=ventana[v_ventana].prg->l;
+				
+				if (n<=strlen(p)) {
+					if (!lower[p[n]] && n) 
+						n--;
+						
+					if (lower[p[n]]) {
+						while (p) 
+							if (lower[p[n-1]]) 
+								n--; 
+							else 
+								break;
+
+						cwork[0]=0;
+
+						while (lower[p[n]]) {
+							cwork[strlen(cwork)+1]=0;
+							cwork[strlen(cwork)]=lower[p[n++]];
+						}
+
+						p=(char *)div_index;
+
+						while (p<(char *)index_end) {
+
+							if (!strcmp(cwork,p)) {
+								help(*(word*)(p+strlen(p)+1)); break;
+							} else 
+								p+=strlen(p)+3;
+						} 
+						
+						if (p>=(char *)index_end) 
+							help(3);
+					
+					} else 
+						help(3);
+				
+				} else 
+					help(3);
+					
+			}
+		
+		} else {
+			determina_calc();
+		
+			if (v_ventana!=-1) {
+				help(1301);
+			} else 
+				help(3);
+		}
+	}
+
+	if ((shift_status&8) && scan_code==45) { // Alt-X Exit
+		v_titulo=(char *)texto[40]; 
+		v_texto=NULL; 
+		dialogo(aceptar0);
+		
+		if (v_aceptar) 
+			salir_del_entorno=1;
+	}
+
+	if ((shift_status&8) && scan_code==31) 
+		shell();
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Finaliza el bucle central
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	volcado_copia();
+
+	if (restore_button==1) {
+		wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-37);
+		vuelca_ventana(0);
+	} else if (restore_button==2) {
+		if (big) {
+			wput(copia,-vga_an,vga_al,v.x,v.y,-38);
+			volcado_parcial(v.x,v.y,14,14);
+		} else {
+			wput(copia,vga_an,vga_al,v.x,v.y,-38);
+			volcado_parcial(v.x,v.y,7,7);
+		}
+	} else if (restore_button==3) {
+		if (big) 
+			wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+		else 
+			wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+		
+		vuelca_ventana(0);
+	} 
+	
+	restore_button=0;
+
+	if (key(_ESC) && key(_L_CTRL)) 
+		salir_del_entorno=1;
 
 
 }
