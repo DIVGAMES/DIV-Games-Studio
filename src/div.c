@@ -3365,32 +3365,32 @@ void init_lexcolor(void);
 
 void inicializacion(void) {
 
-  FILE *f;
-  int n;
-  byte *ptr,*ptr2;
+	FILE *f;
+	int n;
+	byte *ptr,*ptr2;
 
 #ifdef __EMSCRIPTEN__
 	int len_=1;
 	int num_=1;
 #endif
 
-  detectar_vesa();
+	detectar_vesa();
 
 	printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
 
-  for (n=0;n<num_modos;n++) {
-    if (modos[n].ancho==vga_an && modos[n].alto==vga_al) {
-      break;
-    }
-  }
+	for (n=0;n<num_modos;n++) {
+		if (modos[n].ancho==vga_an && modos[n].alto==vga_al) {
+			break;
+		}
+	}
 
-  if (n==num_modos) {
-    VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=320; // Video mode
-    VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=200;
-    VS_BIG  =big     =Setupfile.Vid_modeBig=0;
-    editor_font      =Setupfile.editor_font=0;
-    big2=big+1;
-  }
+	if (n==num_modos) {
+		VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=320; // Video mode
+		VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=200;
+		VS_BIG  =big     =Setupfile.Vid_modeBig=0;
+		editor_font      =Setupfile.editor_font=0;
+		big2=big+1;
+	}
 
   kbdInit();
 
