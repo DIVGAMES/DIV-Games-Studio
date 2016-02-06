@@ -237,10 +237,12 @@ while (*ff!=0) {
 		strlwr(full);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 
+#ifdef ZLIB
 			if(f=memz_open_file(file)) {
 			//	printf("memz is %d\n",f);
 				return f;
 			}
+#endif
           
 			printf("failed to load %s\n",full);
 			

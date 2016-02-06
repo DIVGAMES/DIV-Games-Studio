@@ -88,6 +88,12 @@ FILE *fmemopen (void *buf, size_t size, const char *opentype);
 
 #endif
 
+#ifdef PSP
+
+FILE *fmemopen (void *buf, size_t size, const char *opentype);
+
+#endif
+
 unsigned char *zipptr=NULL;
 
 FILE * memz_open_file(unsigned char *file) {

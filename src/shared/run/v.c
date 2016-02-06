@@ -286,7 +286,10 @@ printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 
 //hide the mouse
 SDL_ShowCursor(SDL_DISABLE);
-
+	if(vga)
+		SDL_FreeSurface(vga);
+	
+	vga=NULL;
 #ifdef __EMSCRIPTEN__
 #ifdef SDL2
 
@@ -303,10 +306,7 @@ divTexture = SDL_CreateTexture(divRender,
                                vga_an,vga_al);
 #else
 
-	if(vga)
-		SDL_FreeSurface(vga);
 	
-	vga=NULL;
 	if(!vga)	
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
 #endif
@@ -340,8 +340,17 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef PANDORA
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 #else
+
+#ifdef PSP
+	fsmode=1;
+//		if(!vga)
+			vga=SDL_SetVideoMode(480, 272, 8, 0);
+			//SDL_SWSURFACE | SDL_FULLSCREEN);
+#else
+
 		if(fsmode==1)
-			vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+			vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+#endif
 
 		if(!vga || fsmode==0)
 			vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);

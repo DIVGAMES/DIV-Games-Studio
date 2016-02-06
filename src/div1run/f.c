@@ -334,16 +334,13 @@ strlwr(full);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
 			strlwr(full);
         if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
-			
+//#ifndef PSP
 			if(f=memz_open_file(file))
 				return f;
-			
-				if(f=memz_open_file(file))
-					return f;
-
+//#endif			
 				printf("failed %s\n",file);
           
-          strcpy(full,"");
+			strcpy(full,"");
 
           return(NULL);
         } else return(f);

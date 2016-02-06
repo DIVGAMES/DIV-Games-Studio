@@ -22,6 +22,7 @@ int Freq_original[CHANNELS];
 int SoundActive=1;
 #ifndef GP2X
 #ifndef PS2
+#ifndef PSP
 #ifdef MIXER
 void print_init_flags(int flags)
 {
@@ -47,6 +48,7 @@ void print_init_flags(int flags)
 #endif
 #endif
 #endif
+#endif
 
 static int initted=0;
 void InitSound(void)
@@ -61,6 +63,7 @@ int audio_channels = 2;
 int audio_buffers = 1024;
 #ifndef GP2X
 #ifndef PS2
+#ifndef PSP
   int flags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_FLUIDSYNTH;
   
   initted=Mix_Init(flags);
@@ -71,6 +74,7 @@ int audio_buffers = 1024;
 //	  printf("Mix_Init: Failed to init required ogg and mod support!\n");
 	  printf("Mix_Init error: %s\n",Mix_GetError());
    }
+#endif
 #endif
 #endif
 

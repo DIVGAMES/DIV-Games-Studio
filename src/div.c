@@ -391,7 +391,9 @@ int main(int argc, char * argv[]) {
   SDL_Init( SDL_INIT_EVERYTHING);
 #ifndef GP2X
 #ifndef PS2
+#ifndef PSP
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+#endif
 #endif
 #endif
 
@@ -1530,7 +1532,9 @@ void shell(void) {
 //    _setvideomode(_TEXTC80);
 #ifndef GP2X
 #ifndef PS2
+#ifndef PSP
     SDL_putenv("PROMPT=[DIV] $P$G");
+#endif
 #endif
 #endif
     chdir(tipo[0].path);

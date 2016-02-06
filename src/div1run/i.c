@@ -129,7 +129,9 @@ int main(int argc,char * argv[]) {
 	int len=0;
 	
 #ifndef GP2X
+#ifndef PSP
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+#endif
 #endif
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);

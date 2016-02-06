@@ -1601,7 +1601,7 @@ void finalizacion (void) {
 //EndSound();
   kbdReset();
 
-#ifdef WIN32
+#if defined (WIN32) || defined (PSP)
 
 closefiles();
 
@@ -1738,8 +1738,10 @@ int main(int argc,char * argv[]) {
 #endif
 
 #ifndef GP2X 
-#ifndef PS2  
+#ifndef PS2 
+#ifndef PSP
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+#endif
 #endif
 #endif
   atexit(SDL_Quit);
