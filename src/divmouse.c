@@ -290,8 +290,8 @@ void read_mouse2(void) {
 	scan_code  =0;
 	ascii=0;
 	
-//printf("divmouse.c- read_mouse2 REPLACE WITH SDL VERSION\n");
-SDL_Event event;
+	SDL_Event event;
+
 #ifdef GCW_
 while(SDL_PollEvent(&event))
 {

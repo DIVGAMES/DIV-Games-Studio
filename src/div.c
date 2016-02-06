@@ -3392,111 +3392,170 @@ void inicializacion(void) {
 		big2=big+1;
 	}
 
-  kbdInit();
+	kbdInit();
 
 
+	if(!Interpretando) {
+		printf("%s (%d,%d)\n\n",marcavga,vga_an,vga_al); // *** Solo info usuario ***
+		check_oldpif();
+	}
 
-  if(!Interpretando) {
-        printf("%s (%d,%d)\n\n",marcavga,vga_an,vga_al); // *** Solo info usuario ***
-        check_oldpif();
-  }
+	make_helpidx(); // *** Crea el ¡ndice del hipertexto ***
+	load_index();   // *** Carga el glosario del hipertexto ***
 
-  make_helpidx(); // *** Crea el ¡ndice del hipertexto ***
-  load_index();   // *** Carga el glosario del hipertexto ***
+	if(!Interpretando)
+		printf("%s",(char *)texto[6]); // *** Init buffers gr ficos ***
 
-  if(!Interpretando)
-        printf("%s",(char *)texto[6]); // *** Init buffers gr ficos ***
+	undo=(byte*)malloc(undo_memory);
+	tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
 
-  undo=(byte*)malloc(undo_memory);
-  tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
+	for(n=0;n<max_windows;n++) {
+		ventana[n].tipo=0;
+		ventana[n].lado=0;
+	}
 
-  for(n=0;n<max_windows;n++) {
-        ventana[n].tipo=0;
-        ventana[n].lado=0;
-  }
-
-  fondo_raton=(byte*)malloc(1024*big2);
-  copia=(byte*)malloc(vga_an*vga_al+6)+6;
-  dac=(byte*)malloc(768);
-  dac4=(byte*)malloc(768);
-  cuad=(byte*)malloc(16384);
+	fondo_raton=(byte*)malloc(1024*big2);
+	copia=(byte*)malloc(vga_an*vga_al+6)+6;
+	dac=(byte*)malloc(768);
+	dac4=(byte*)malloc(768);
+	cuad=(byte*)malloc(16384);
   
-  ghost=(byte*)malloc(65536); // 256*256 combinations
-  
-  barra=(byte*)malloc(vga_an*19*big2); //OJO
-  fill_dac=(byte*)malloc(256);
-  error_window=(byte*)malloc(640*38*2);
+	ghost=(byte*)malloc(65536); // 256*256 combinations
 
-  if (fondo_raton==NULL || copia==NULL || dac==NULL || dac4==NULL ||
-      cuad==NULL || ghost==NULL || barra==NULL || undo==NULL || tundo==NULL ||
-      fill_dac==NULL || error_window==NULL) error(0);
+	barra=(byte*)malloc(vga_an*19*big2); //OJO
+	fill_dac=(byte*)malloc(256);
+	error_window=(byte*)malloc(640*38*2);
 
-  if (big) f=fopen("system/grande.fon","rb"); else f=fopen("system/pequeno.fon","rb");
-  if (f==NULL) error(0);
-  fseek(f,0,SEEK_END); n=ftell(f);
-  if ((text_font=(byte *)malloc(n))!=NULL) {
-    fseek(f,0,SEEK_SET); fread(text_font,1,n,f); fclose(f);
-  } else { fclose(f); error(0); }
+	if (fondo_raton==NULL || copia==NULL || dac==NULL || dac4==NULL ||
+			cuad==NULL || ghost==NULL || barra==NULL || undo==NULL || tundo==NULL ||
+			fill_dac==NULL || error_window==NULL)
+		error(0);
 
-  switch(editor_font) {
-    case 0: f=fopen("system/SYS06X08.BIN","rb"); font_an=6; font_al=8; break;
-    case 1: f=fopen("system/SYS08X08.BIN","rb"); font_an=8; font_al=8; break;
-    case 2: f=fopen("system/SYS08X11.BIN","rb"); font_an=8; font_al=11; break;
-    case 3: f=fopen("system/SYS09X16.BIN","rb"); font_an=9; font_al=16; break;
-  } char_size=font_an*font_al;
+	if (big)
+		f=fopen("system/grande.fon","rb");
+	else
+		f=fopen("system/pequeno.fon","rb");
+
+	if (f==NULL)
+		error(0);
+	
+	fseek(f,0,SEEK_END);
+	n=ftell(f);
+	
+	if ((text_font=(byte *)malloc(n))!=NULL) {
+		fseek(f,0,SEEK_SET);
+		fread(text_font,1,n,f); 
+		fclose(f);
+	} else { 
+		fclose(f); 
+		error(0); 
+	}
+
+	switch(editor_font) {
+		case 0: 
+			f=fopen("system/SYS06X08.BIN","rb"); 
+			font_an=6; 
+			font_al=8; 
+		break;
+		
+		case 1: 
+			f=fopen("system/SYS08X08.BIN","rb"); 
+			font_an=8; 
+			font_al=8; 
+		break;
+		
+		case 2: 
+			f=fopen("system/SYS08X11.BIN","rb"); 
+			font_an=8; 
+			font_al=11; 
+		break;
+		
+		case 3: 
+			f=fopen("system/SYS09X16.BIN","rb");
+			font_an=9; 
+			font_al=16; 
+		break;
+	} char_size=font_an*font_al;
 
 
-  if (f==NULL) error(0);
+	if (f==NULL) 
+		error(0);
 
-  fseek(f,0,SEEK_END); n=ftell(f);
-  if ((font=(byte *)malloc(n))!=NULL) {
-    fseek(f,0,SEEK_SET); fread(font,1,n,f); fclose(f);
-  } else { fclose(f); error(0); }
+	fseek(f,0,SEEK_END); 
+	n=ftell(f);
+	
+	if ((font=(byte *)malloc(n))!=NULL) {
+		fseek(f,0,SEEK_SET); 
+		fread(font,1,n,f); 
+		fclose(f);
+	} else { 
+		fclose(f); 
+		error(0); 
+	}
 
-  f=fopen("system/tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
+	f=fopen("system/tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
 
-  if (big) f=fopen("system/GRAF_G.DIV","rb"); else f=fopen("system/GRAF_P.DIV","rb");
-  if (f==NULL) error(0);
-  else {
-    fseek(f,0,SEEK_END); n=ftell(f)-1352;
-    if (n>0 && (graf_ptr=(byte *)malloc(n))!=NULL) {
-      memset(graf,0,sizeof(graf));
-      ptr=graf_ptr; fseek(f,1352,SEEK_SET);
-      fread(graf_ptr,1,n,f); fclose(f);
-      while (graf_ptr<ptr+n && *((int*)graf_ptr)<256) {
-        if (*(int*)(graf_ptr+60)) {
-          graf[*((int*)graf_ptr)]=graf_ptr+60;
-          *(word*)(graf_ptr+60)=*(int*)(graf_ptr+52);
-          *(word*)(graf_ptr+62)=*(int*)(graf_ptr+56);
-          graf_ptr+=*(word*)(graf_ptr+60)**(word*)(graf_ptr+62)+68;
-        } else {
-          graf[*((int*)graf_ptr)]=graf_ptr+56;
-          *(word*)(graf_ptr+58)=*(int*)(graf_ptr+56);
-          *(word*)(graf_ptr+56)=*(int*)(graf_ptr+52);
-          *(int*)(graf_ptr+60)=0;
-          graf_ptr+=*(word*)(graf_ptr+56)**(word*)(graf_ptr+58)+64;
-        }
-      } graf_ptr=ptr;
-    } else { fclose(f); error(0); }
-  }
+	if (big) 
+		f=fopen("system/GRAF_G.DIV","rb"); 
+	else 
+		f=fopen("system/GRAF_P.DIV","rb");
+
+	if (f==NULL) 
+		error(0);
+
+	else {
+		fseek(f,0,SEEK_END); 
+		
+		n=ftell(f)-1352;
+
+		if (n>0 && (graf_ptr=(byte *)malloc(n))!=NULL) {
+			memset(graf,0,sizeof(graf));
+			ptr=graf_ptr; 
+			fseek(f,1352,SEEK_SET);
+			fread(graf_ptr,1,n,f); 
+			fclose(f);
+
+			while (graf_ptr<ptr+n && *((int*)graf_ptr)<256) {
+				if (*(int*)(graf_ptr+60)) {
+					graf[*((int*)graf_ptr)]=graf_ptr+60;
+					*(word*)(graf_ptr+60)=*(int*)(graf_ptr+52);
+					*(word*)(graf_ptr+62)=*(int*)(graf_ptr+56);
+					graf_ptr+=*(word*)(graf_ptr+60)**(word*)(graf_ptr+62)+68;
+				} else {
+					graf[*((int*)graf_ptr)]=graf_ptr+56;
+					*(word*)(graf_ptr+58)=*(int*)(graf_ptr+56);
+					*(word*)(graf_ptr+56)=*(int*)(graf_ptr+52);
+					*(int*)(graf_ptr+60)=0;
+					graf_ptr+=*(word*)(graf_ptr+56)**(word*)(graf_ptr+58)+64;
+				}
+			} 
+			graf_ptr=ptr;
+		} else { 
+			fclose(f); 
+			error(0); 
+		}
+	}
 
   // HYPERLINK
 
   // *** Inicializa graf_help[384].offset/an/al/ptr=0
 
-  if ((f=fopen("help/help.fig","rb"))==NULL) error(0); else {
-    fseek(f,0,SEEK_END); n=ftell(f);
+	if ((f=fopen("help/help.fig","rb"))==NULL) 
+		error(0); 
+	else {
+		fseek(f,0,SEEK_END); 
+		n=ftell(f);
 #ifndef __EMSCRIPTEN__
 //n=1352;
 #endif
-    if ((ptr2=(byte *)malloc(n))!=NULL) {
-      memset(graf_help,0,sizeof(graf_help));
-      ptr=ptr2; fseek(f,0,SEEK_SET);
-      fread(ptr2,1,n,f); 
+		if ((ptr2=(byte *)malloc(n))!=NULL) {
+			memset(graf_help,0,sizeof(graf_help));
+			ptr=ptr2; fseek(f,0,SEEK_SET);
+			fread(ptr2,1,n,f); 
 #ifndef __EMSCRIPTEN__
-	fclose(f);
+			fclose(f);
 #endif
-      ptr2+=1352;
+			ptr2+=1352;
 
 #ifdef __EMSRIPTEN__
 
