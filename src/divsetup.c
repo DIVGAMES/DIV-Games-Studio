@@ -140,7 +140,7 @@ void Vid_Setup0(void) {
 
   for (n=0;n<num_modos;n++) {
     memset(&vgasizes[n*16],0,16);
-    sprintf(&vgasizes[n*16],"%s%d x %d",(modos[n].modo)?"VESA ":"VGA ",modos[n].ancho,modos[n].alto);
+    sprintf(&vgasizes[n*16],"%s%d x %d",(modos[n].modo)?"SDL ":"VGA ",modos[n].ancho,modos[n].alto);
   }
 
   lvgasizes.creada=0;

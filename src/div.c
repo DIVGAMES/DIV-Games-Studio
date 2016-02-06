@@ -3375,7 +3375,9 @@ void inicializacion(void) {
 #endif
 
   detectar_vesa();
-//printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
+
+	printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
+
   for (n=0;n<num_modos;n++) {
     if (modos[n].ancho==vga_an && modos[n].alto==vga_al) {
       break;
