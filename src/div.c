@@ -385,265 +385,267 @@ void mensaje_compilacion(byte * p);
 extern int compilado;
 
 int main(int argc, char * argv[]) {
-  FILE *f;
-  byte *prgbuf;
-  unsigned n;
-  SDL_Init( SDL_INIT_EVERYTHING);
-#ifndef GP2X
-#ifndef PS2
-  SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
-#endif
-#endif
+	FILE *f;
+	byte *prgbuf;
+	unsigned n;
+	
+	SDL_Init( SDL_INIT_EVERYTHING);
 
-printf("argv[0]=%s\n",argv[0]);
+#if !defined( GP2X ) && !defined( PS2 ) && !defined( PSP )
+	SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+#endif
 
 // on windows, get printf working.
 #ifdef __WIN32
-freopen( "CON", "w", stdout );
-freopen( "CON", "w", stderr );
+	freopen( "CON", "w", stdout );
+	freopen( "CON", "w", stderr );
 #endif
 
-  atexit(SDL_Quit);
-  atexit(free_resources);
+	atexit(SDL_Quit);
+	atexit(free_resources);
   
-//  SDL_WM_GrabInput( SDL_GRAB_ON );
-  system_clock = &mclock;
+	system_clock = &mclock;
 
-//  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
-
-// Treat all modern targets as '586' type
 	cpu_type = 5;
 
-//GetFree4kBlocks();
-
-//  _harderr(critical_error);
-
-//  remove("DEBUGDIV.TXT");
-
-  modo_de_retorno=0;
-  salir_del_entorno=0;
-  MustCreate=1;
-  siguiente_orden=0;
-  Interpretando=1;
-  safe=34; // Text in lower right corner
-  compilemode = 0;
+	modo_de_retorno=0;
+	salir_del_entorno=0;
+	MustCreate=1;
+	siguiente_orden=0;
+	Interpretando=1;
+	safe=34; // Text in lower right corner
+	compilemode = 0;
   
-  if(argc>1 && !strcmp(argv[1],"INIT")) Interpretando=0;
-  else beta_status=4;
-  if(argc>1 && !strcmp(argv[1],"TEST")) test_video=1;
-
-  if(argc>1 && !strcmp(argv[1],"-c")) {
-	  compilemode=1;
-  }
-
-  getcwd(tipo[0].path,PATH_MAX+1);
-
-  if (argc<1) exit(0);
-
-  _fullpath(full,argv[0],_MAX_PATH+1);
-#ifdef SHARE
-  strcpy(exe_name,full);
-#endif
-  strupr(full);
-  n=strlen(full);
-  while (n && full[n]!='/') n--;
-  full[n]=0;
-  if (full[n-1]==':') strcat(full,"/");
-  _dos_setdrive((memptrsize)toupper(full[0])-'A'+1,&n);
-//  _chdir(full);
-
-  if (cpu_type==3) chdir("..");
-
-  getcwd(tipo[1].path,PATH_MAX+1);
+	if(argc>1 && !strcmp(argv[1],"INIT")) 
+		Interpretando=0;
+	else 
+		beta_status=4;
 	
-  if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
-    safe=33;
-    DaniDel("sound.cfg");
-    DaniDel("system/setup.bin");
-    DaniDel("system/session.dtf");
-  } else {
-    if ((f=fopen("system/setup.bin","rb"))!=NULL) {
-      fclose(f);
-      primera_vez=0;
-    } else {
-      primera_vez=1;
-      mostrar_demo=0;
-    }
-  }
+	if(argc>1 && !strcmp(argv[1],"TEST")) 
+		test_video=1;
 
-  tipo[2].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
-  tipo[3].ext="*.* *.PAL *.FPG *.FNT *.MAP *.BMP *.PCX *.JPG *.JPE";
-  tipo[4].ext="*.FPG *.*";
-  tipo[5].ext="*.FNT *.*";
-  tipo[6].ext="*.IFS *.*";
-  tipo[7].ext="*.* *.WAV *.PCM";
-  tipo[8].ext="*.PRG *.*";
-  tipo[9].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
-  tipo[10].ext="*.PAL";
-  tipo[11].ext="*.WAV *.PCM";
-  tipo[12].ext="*.PRJ";
-  tipo[13].ext="*.*";
-  tipo[14].ext="*.MAP *.PCX *.BMP";
-  tipo[15].ext="*.WLD *.*";
-  tipo[16].ext="*.* *.MOD *.S3M *.XM";
+	if(argc>1 && !strcmp(argv[1],"-c")) 
+		compilemode=1;
 
-  for (n=0;n<24;n++) { tipo[n].defecto=0; tipo[n].inicial=0; }
+	getcwd(tipo[0].path,PATH_MAX+1);
 
-  inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+	if (argc<1) 
+	exit(0);
 
-if(compilemode==1) {	
-	inicializa_compilador();
-	compilado=1; mouse_graf=3; numero_error=-1;
-	if(argc<3) {
-		printf("DIV Games Studio Compiler V2.02 - http://www.div-arena.co.uk\n");
-		printf("Usage: -c [program name] [output.exe]\n");
-		exit(-1);
+	_fullpath(full,argv[0],_MAX_PATH+1);
+
+	#ifdef SHARE
+	strcpy(exe_name,full);
+	#endif
+
+	strupr(full);
+	n=strlen(full);
+
+	while (n && full[n]!='/') n--;
+
+	full[n]=0;
+
+	if (full[n-1]==':')
+	strcat(full,"/");
+
+	_dos_setdrive((memptrsize)toupper(full[0])-'A'+1,&n);
+
+	if (cpu_type==3) chdir("..");
+
+	getcwd(tipo[1].path,PATH_MAX+1);
+
+	if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
+		safe=33;
+		DaniDel("sound.cfg");
+		DaniDel("system/setup.bin");
+		DaniDel("system/session.dtf");
+	} else {
+
+		if ((f=fopen("system/setup.bin","rb"))!=NULL) {
+			fclose(f);
+			primera_vez=0;
+	} else {
+			primera_vez=1;
+			mostrar_demo=0;
+		}
 	}
-	f=fopen(argv[2],"rb");
-	if(f) {
-		fseek(f,0,SEEK_END);
-		source_len = ftell(f);
-		fseek(f,0,SEEK_SET);
-		prgbuf = (byte *)malloc(source_len+10);
-		if(prgbuf) {
-			printf("Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
-			source_ptr=prgbuf;
-			comp();
-			if (numero_error>=0) {
-				get_error(500+numero_error);
-				mensaje_compilacion(cerror);
-			} else {
-				mensaje_compilacion(texto[202]);
-			}
-			free(prgbuf);
-			prgbuf=NULL;
-		} else {
-			printf("Out of memory\n");
+
+	tipo[2].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
+	tipo[3].ext="*.* *.PAL *.FPG *.FNT *.MAP *.BMP *.PCX *.JPG *.JPE";
+	tipo[4].ext="*.FPG *.*";
+	tipo[5].ext="*.FNT *.*";
+	tipo[6].ext="*.IFS *.*";
+	tipo[7].ext="*.* *.WAV *.PCM";
+	tipo[8].ext="*.PRG *.*";
+	tipo[9].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
+	tipo[10].ext="*.PAL";
+	tipo[11].ext="*.WAV *.PCM";
+	tipo[12].ext="*.PRJ";
+	tipo[13].ext="*.*";
+	tipo[14].ext="*.MAP *.PCX *.BMP";
+	tipo[15].ext="*.WLD *.*";
+	tipo[16].ext="*.* *.MOD *.S3M *.XM";
+
+	for (n=0;n<24;n++) 
+		tipo[n].defecto=0; tipo[n].inicial=0; 
+
+	inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+
+	if(compilemode==1) {	
+		inicializa_compilador();
+		compilado=1; mouse_graf=3; numero_error=-1;
+
+		if(argc<3) {
+			printf("DIV Games Studio Compiler V2.02 - http://www.div-arena.co.uk\n");
+			printf("Usage: -c [program name] [output.exe]\n");
 			exit(-1);
 		}
-		fclose(f);	
-  } else {
-	  printf("Failed to open %s\n",argv[2]);
-	  exit(-1);
-  }
-  exit(0);
 
-}
+		f=fopen(argv[2],"rb");
 
+		if(f) {
+			fseek(f,0,SEEK_END);
+			source_len = ftell(f);
+			fseek(f,0,SEEK_SET);
+			prgbuf = (byte *)malloc(source_len+10);
+			if(prgbuf) {
+				printf("Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
+				source_ptr=prgbuf;
+				comp();
+				if (numero_error>=0) {
+					get_error(500+numero_error);
+					mensaje_compilacion(cerror);
+				} else {
+					mensaje_compilacion(texto[202]);
+				}
+				free(prgbuf);
+				prgbuf=NULL;
+			} else {
+				printf("Out of memory\n");
+				exit(-1);
+			}
+			fclose(f);	
+		} else {
+		  printf("Failed to open %s\n",argv[2]);
+		  exit(-1);
+		}
+		exit(0);
 
- 
-  if(SDL_NumJoysticks() > 0)
-	SDL_JoystickOpen(0);
+	}
 
-#ifndef GP2X
-#ifndef PS2
+	if(SDL_NumJoysticks() > 0)
+		SDL_JoystickOpen(0);
+
+#if !defined( GP2X ) && !defined (PS2) && !defined ( PSP )
 #ifdef MIXER
-  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
-  
-  int initted=Mix_Init(flags);
-//
-  if((initted&flags) != flags) {
-	printf("Mix_Init: %s\n", Mix_GetError());
-	print_init_flags(initted);
-	//  printf("Mix_Init: Failed to init required ogg and mod support!\n");	
-   }
-#endif 
+	int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
+
+	int initted=Mix_Init(flags);
+
+	if((initted&flags) != flags) {
+		printf("Mix_Init: %s\n", Mix_GetError());
+		print_init_flags(initted);
+	}
 #endif
 #endif
 
 #ifndef __EMSCRIPTEN__
-  SDL_WM_SetCaption((char *)texto[34], "" );
-  SDL_ShowCursor( SDL_FALSE );
+	SDL_WM_SetCaption((char *)texto[34], "" );
+	SDL_ShowCursor( SDL_FALSE );
 #else
-SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
-  
+	SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
 #endif
 
+	check_mouse();
 
- check_mouse();
+	Load_Cfgbin();
 
-  Load_Cfgbin();
+	strcpy(full,"Be");
+	strcat(full,"ta");
 
-  strcpy(full,"Be");
-  strcat(full,"ta");
+	if (strstr((char *)texto[34],(char *)full)==NULL && strstr((char *)texto[35],(char *)full)==NULL) {
+		strupr(full);
+		if (strstr((char *)texto[34],(char *)full)==NULL && strstr((char *)texto[35],(char *)full)==NULL) {
+		  beta_status=4;
+		}
+	}
 
-  if (strstr((char *)texto[34],(char *)full)==NULL && 
-	strstr((char *)texto[35],(char *)full)==NULL) {
-    strupr(full);
-    if (strstr((char *)texto[34],(char *)full)==NULL && 
-		strstr((char *)texto[35],(char *)full)==NULL) {
-      beta_status=4;
-    }
-  }
-
-  if(!Interpretando) {
-#ifdef NOTYET
-    _setvideomode(_TEXTC80);
-    _setbkcolor(1); _settextcolor(15);
-    _outtext(texto[1]);
+	if(!Interpretando) {
+#ifdef DOS
+		_setvideomode(_TEXTC80);
+		_setbkcolor(1); _settextcolor(15);
+		_outtext(texto[1]);
 #endif
-textcolor(BRIGHT, WHITE, RED);	
-    printf("%s",texto[1]);
-    textcolor(TXTRESET, WHITE, BLACK);	
-printf("\n");
-  }
+		textcolor(BRIGHT, WHITE, RED);	
+		printf("%s",texto[1]);
+		textcolor(TXTRESET, WHITE, BLACK);	
+		printf("\n");
+	}
 
-  inicializacion();
+	inicializacion();
 
-  inicializa_entorno();
+	inicializa_entorno();
   
   /////////////////////////////////////////////////////////////////////////////
   
-  if(beta_status==0) dialogo(betatest0);
+	if(beta_status==0) 
+		dialogo(betatest0);
+		
 #ifdef SHARE
-  else {
-    if (!Interpretando) {
-      chk_demo();
-      if (mostrar_demo) {
-        dialogo(demo0);
-        if (v_aceptar) help(2007);
-      }
-    }
-  }
+	else {
+		if (!Interpretando) {
+			chk_demo();
+
+			if (mostrar_demo) {
+				dialogo(demo0);
+
+				if (v_aceptar) 
+					help(2007);
+			}
+		}
+	}
 #endif
+
 #ifdef __EMSCRIPTEN__
   // void emscripten_set_main_loop(em_callback_func func, int fps, int simulate_infinite_loop);
-  emscripten_cancel_main_loop();
-  emscripten_set_main_loop(mainloop, 0, 0);
+	emscripten_cancel_main_loop();
+	emscripten_set_main_loop(mainloop, 0, 0);
 	return 0;
-#else
+#endif
 
-  entorno(); // Environment
+	entorno(); // Environment
+
+
  
   /////////////////////////////////////////////////////////////////////////////
 
-  mouse_graf=3; volcado_copia();
+	mouse_graf=3; volcado_copia();
 
-  if (auto_save_session || modo_de_retorno!=0)
-    if (modo_de_retorno!=3) DownLoad_Desktop(); // Si no fallo el test
-  //New_DownLoad_Desktop();
+	if (auto_save_session || modo_de_retorno!=0)
+		if (modo_de_retorno!=3) 
+			DownLoad_Desktop(); // Si no fallo el test
+	//New_DownLoad_Desktop();
 
-  Save_Cfgbin();
-  
-  finalizacion();
+	Save_Cfgbin();
 
-  finaliza_textos();
+	finalizacion();
 
-  #ifdef GRABADORA
-    EndGrabador();
-  #endif
+	finaliza_textos();
 
-  
-
-  if (modo_de_retorno==1) {
-    _dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
-    _chdir(tipo[1].path);
-  } else {
-    _dos_setdrive((memptrsize)toupper(*tipo[0].path)-'A'+1,&n);
-    _chdir(tipo[0].path);
-  }
-  return(modo_de_retorno);
+#ifdef GRABADORA
+	EndGrabador();
 #endif
+
+  
+
+	if (modo_de_retorno==1) {
+		_dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
+		_chdir(tipo[1].path);
+	} else {
+		_dos_setdrive((memptrsize)toupper(*tipo[0].path)-'A'+1,&n);
+		_chdir(tipo[0].path);
+	}
+	return(modo_de_retorno);
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -864,6 +866,7 @@ void mainloop(void) {
   int n,m,oldn=max_windows;
   int llamar;
   char cwork[256],*p;
+  
 #ifdef NOTYET
   printf("%d %d %d\n",reloj, old_reloj,loop_count);
 	
@@ -893,89 +896,116 @@ void mainloop(void) {
     SetIRQVector(0, Irq0Handler);
 #endif
 
-    if (arrastrar==3) { // drag == 3?
-      goto fin_bucle_entorno; // end loop environment
-    }
+	if (arrastrar==3) { // drag == 3?
+		goto fin_bucle_entorno; // end loop environment
+	}
 
-    tecla();
+	tecla();
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Busca la ventana sobre la que estamos (n) n=max_windows si no hay
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Busca la ventana sobre la que estamos (n) n=max_windows si no hay
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    n=0; while(n<max_windows && !(ventana[n].tipo>0 && mouse_in(ventana[n].x,ventana[n].y,
-      ventana[n].x+ventana[n].an-1,ventana[n].y+ventana[n].al-1))) n++;
+	n=0; 
+	
+	while(n<max_windows && !(ventana[n].tipo>0 && mouse_in(ventana[n].x,ventana[n].y,
+	  ventana[n].x+ventana[n].an-1,ventana[n].y+ventana[n].al-1))) 
+		n++;
 
-    if (n<max_windows && arrastrar==4 && ventana[n].orden==quien_arrastra) arrastrar=5;
+	if (n<max_windows && arrastrar==4 && ventana[n].orden==quien_arrastra)
+		arrastrar=5;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    //  Arrastrar hacia el tapiz
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//  Arrastrar hacia el tapiz
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if (arrastrar==4 && (n==max_windows || ventana[n].tipo==2)) {
-      arrastrar=5; free_drag=0;
-      v_titulo=(char *)texto[57]; v_texto=NULL;
-      dialogo(aceptar0);
-      if (v_aceptar) {
+	if (arrastrar==4 && (n==max_windows || ventana[n].tipo==2)) {
+		arrastrar=5; 
+		free_drag=0;
+		v_titulo=(char *)texto[57]; 
+		v_texto=NULL;
+		dialogo(aceptar0);
 
-        if(v.tipo==101) MustCreate=0;
+		if (v_aceptar) {
 
-        if (!nuevo_mapa(NULL)) {
+			if(v.tipo==101) 
+				MustCreate=0;
 
-          if(MustCreate==0) {
-                  memcpy(v_mapa->filename,v.mapa->filename,13);
-                  nueva_ventana(mapa0);
-                  MustCreate=1;
-          }
+			if (!nuevo_mapa(NULL)) {
 
-          v_mapa=ventana[1].mapa;
-          memcpy(v.mapa->map,v_mapa->map,map_an*map_al);
-          v.mapa->zoom=v_mapa->zoom;
-          v.mapa->zoom_x=v_mapa->zoom_x;
-          v.mapa->zoom_y=v_mapa->zoom_y;
-          v.mapa->zoom_cx=v_mapa->zoom_cx;
-          v.mapa->zoom_cy=v_mapa->zoom_cy;
+				if(MustCreate==0) {
+					  memcpy(v_mapa->filename,v.mapa->filename,13);
+					  nueva_ventana(mapa0);
+					  MustCreate=1;
+				}
 
-          for (n=0;n<512;n++) v.mapa->puntos[n]=v_mapa->puntos[n];
-          if(v_mapa->TengoNombre==1) {
-            v_mapa->TengoNombre=0;
-            memcpy(v.mapa->filename,v_mapa->filename,13);
-            memcpy(v.nombre,v_mapa->filename,13);
-            memcpy(v.titulo,v_mapa->filename,13);
-            v.mapa->Codigo=0;
-            memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
-          } else if(v_mapa->TengoNombre==2) {
-            v.mapa->TengoNombre=0;
-            v.mapa->Codigo=v_mapa->Codigo;
-            memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
-            memcpy(v.mapa->filename,v_mapa->filename,13);
-          } else v.mapa->Codigo=0;
+				v_mapa=ventana[1].mapa;
+				memcpy(v.mapa->map,v_mapa->map,map_an*map_al);
+				v.mapa->zoom=v_mapa->zoom;
+				v.mapa->zoom_x=v_mapa->zoom_x;
+				v.mapa->zoom_y=v_mapa->zoom_y;
+				v.mapa->zoom_cx=v_mapa->zoom_cx;
+				v.mapa->zoom_cy=v_mapa->zoom_cy;
 
-          call((voidReturnType )v.paint_handler);
-          wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
+			for (n=0;n<512;n++) 
+				v.mapa->puntos[n]=v_mapa->puntos[n];
 
-        } else MustCreate=1;
+			if(v_mapa->TengoNombre==1) {
+				v_mapa->TengoNombre=0;
+				memcpy(v.mapa->filename,v_mapa->filename,13);
+				memcpy(v.nombre,v_mapa->filename,13);
+				memcpy(v.titulo,v_mapa->filename,13);
+				v.mapa->Codigo=0;
+				memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
+			} else if(v_mapa->TengoNombre==2) {
+				v.mapa->TengoNombre=0;
+				v.mapa->Codigo=v_mapa->Codigo;
+				memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
+				memcpy(v.mapa->filename,v_mapa->filename,13);
+			} else 
+				v.mapa->Codigo=0;
 
-      } free_drag=1;
-    }
+			call((voidReturnType )v.paint_handler);
+			wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
+
+			} else MustCreate=1;
+
+		} free_drag=1;
+	}
 
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
     // Si antes est bamos en una ventana en la que hemos dejado de estar
     // debemos repintar esta £ltima (para borrar posibles "hi-lite")
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if (arrastrar!=4) {
+	if (arrastrar!=4) {
 
-      if (n==0) if (v.primer_plano==1)
-        if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) n--;
+		if (n==0) 
+			if (v.primer_plano==1) 
+				if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) 
+					n--;
 
-      if (n!=oldn && oldn==0) if (v.primer_plano==1) {
-        wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-        call((voidReturnType )v.click_handler); mouse_b=m;
-        if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-      } oldn=max_windows; if (n<0) n++;
+		if (n!=oldn && oldn==0) {
+			if (v.primer_plano==1) {
+				wmouse_x=-1; 
+				wmouse_y=-1; 
+				m=mouse_b; 
+				mouse_b=0;
+				call((voidReturnType )v.click_handler); 
+				mouse_b=m;
+				
+				if (v.volcar) { 
+					vuelca_ventana(0); 
+					v.volcar=0;
+				}
+			} 
+		}
+		oldn=max_windows; 
+			
+		if (n<0)
+			n++;
 
-    }
+	}
 
     
     ///////////////////////////////////////////////////////////////////////////
@@ -1481,15 +1511,21 @@ void mainloop(void) {
 
 void entorno(void) {
 
-  int n,m,oldn=max_windows;
-  int llamar;
-  char cwork[256],*p;
-//  check_free();
-  do {
-	  mainloop();
-	    } while (!salir_del_entorno);
-  do { read_mouse(); } while(mouse_b&1);
-printf("env end\n");
+	int n,m,oldn=max_windows;
+	int llamar;
+
+	char cwork[256],*p;
+	//  check_free();
+	do {
+		mainloop();
+	} while (!salir_del_entorno);
+	
+	do { 
+		read_mouse();
+	} while(mouse_b&1);
+
+	printf("env end\n");
+
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -1530,7 +1566,9 @@ void shell(void) {
 //    _setvideomode(_TEXTC80);
 #ifndef GP2X
 #ifndef PS2
+#ifndef PSP
     SDL_putenv("PROMPT=[DIV] $P$G");
+#endif
 #endif
 #endif
     chdir(tipo[0].path);
