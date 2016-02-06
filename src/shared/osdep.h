@@ -57,10 +57,18 @@ typedef int int32_t;
 
 
 #include <SDL/SDL.h>
+
+#ifdef TTF
+#include "SDL/SDL_ttf.h"
+#endif
+
 #ifdef MIXER
 #include <SDL/SDL_mixer.h>
 #endif
 
+#ifdef IMAGE
+#include <SDL/SDL_image.h>
+#endif
 
 #if __WORDSIZE == 32
 #define memptrsize int

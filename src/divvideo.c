@@ -40,25 +40,33 @@ int IsFullScreen(SDL_Surface *surface)
     return 0; // Return false if surface is windowed
 }
 
-int SDL_ToggleFS(SDL_Surface *surface)
+inline void SDL_ToggleFS(SDL_Surface *surface)
 {
-    Uint32 flags = surface->flags; // Get the video surface flags
-
     if (IsFullScreen(surface))
-    {
+		fsmode=0;
+	else 
+		fsmode=1;
+	
+	svmode();
+}
+
+int nothing(SDL_Surface *surface) {
         // Switch to WINDOWED mode
+     Uint32 flags = surface->flags; // Get the video surface flags
+
+   if (IsFullScreen(surface)) {
         flags &= ~SDL_FULLSCREEN;
-        if ((vga = SDL_SetVideoMode(vga_an,vga_al,8, 0)) == NULL) 
+        if ((vga = SDL_SetVideoMode(vga_an,vga_al,32, 0)) == NULL) 
 			return 0;
 		
-		vga = SDL_SetVideoMode(vga_an,vga_al,8, 0);
+		vga = SDL_SetVideoMode(vga_an,vga_al,32, 0);
 		fsmode=0;
     } else {
 		
-		vga = SDL_SetVideoMode(vga_an,vga_al, 8,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga = SDL_SetVideoMode(vga_an,vga_al, 32,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 		if (vga == NULL) {
-			vga = SDL_SetVideoMode(vga_an,vga_al, 8, 0);
+			vga = SDL_SetVideoMode(vga_an,vga_al, 32, 0);
 		}
 		fsmode=1;
 	}
@@ -108,8 +116,9 @@ void retrazo(void) {
 //      Activate a palette
 ///////////////////////////////////////////////////////////////////////////////
 
+SDL_Color colors[256];
+
 void set_dac(byte *_dac) {
-	SDL_Color colors[256];
 	int i;
 	int b=0;
 	for(i=0;i<256;i++){
@@ -154,16 +163,19 @@ divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
                              SDL_WINDOW_SHOWN);
 divRender = SDL_CreateRenderer(divWindow, -1, 0);
 #else
+
 	if(fsmode==0)
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8,  0);
+		vga=SDL_SetVideoMode(vga_an, vga_al, 32, SDL_SWSURFACE);
 
 	else
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga=SDL_SetVideoMode(vga_an, vga_al, 32,  SDL_FULLSCREEN | SDL_SWSURFACE | SDL_DOUBLEBUF);
 	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
 #endif
 	modovesa=1;
+	
+	set_dac(dac);
 
 //printf("%d %d \n",vga->pitch,vga->format->BytesPerPixel);
 #ifdef NOTYET
@@ -296,9 +308,11 @@ void volcadogcw(byte *p) {
 }
 #endif
 
+void vgacpy(byte * q, byte * p, int n) ;
 
 void volcadosdl(byte *p) {
 	int vy;
+	int vx;
 #ifdef GCW_SOFTSTRETCH
 	if(vga_an>=GCW_W && vga_al>=GCW_H) {
 		volcadogcw(p);
@@ -306,16 +320,93 @@ void volcadosdl(byte *p) {
 		return;
 	}
 #endif
-if(SDL_MUSTLOCK(vga))
-	SDL_LockSurface(vga);
+
+	int64_t n,m=(vga_an*vga_al)/4,plano=0x100,y;
+	byte * v2, * p2;
+
+	if(SDL_MUSTLOCK(vga))
+		SDL_LockSurface(vga);
 
 	byte *q = (byte *)vga->pixels;
-	for (vy=0; vy<vga_al;vy++) {
-		memcpy(q,p,vga_an);
-		p+=vga_an;
-		q+=vga->pitch;
-		//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+	uint32_t *q32 = (uint32_t *)vga->pixels;
+	
+	if(0) {//volcado_parcial) {
+//printf("m: %d\n",m);
+
+		do { 
+			v2=q+m; 
+			y=0; 
+			p2=p++; 
+			//outpw(SC_INDEX,2+plano); 
+			plano<<=1;
+			while (y<vga_al) {
+//				printf("y: %d\n",y);
+				n=y*4;
+				
+				if (scan[n+1]) 
+					vgacpy(v2+scan[n],p2+scan[n]*4,scan[n+1]);
+				
+				if (scan[n+3]) 
+					vgacpy(v2+scan[n+2],p2+scan[n+2]*4,scan[n+3]);
+				
+				v2+=vga_an/4; 
+					p2+=vga_an; y++; 
+			}
+		} while (plano<=0x800);
+
+//			outpw(SC_INDEX,0xF02); outp(0x3CE,5); outp(0x3CF,(inp(0x3CF)&252)+1);
+		y=0; 
+		v2=(byte *)vga->pixels; 
+
+		while (y<vga_al) {
+			n=y*4;
+			if (scan[n+1]) 
+				memcpyb(v2+scan[n],v2+scan[n]+m,scan[n+1]);
+			if (scan[n+3]) 
+				memcpyb(v2+scan[n+2],v2+scan[n+2]+m,scan[n+3]);
+			v2+=vga_an/4; y++;
+		} 
+		//outp(0x3CE,5); outp(0x3CF,inp(0x3CF)&252);
+
+	} else {
+		for (vy=0; vy<vga_al;vy++) {
+			switch(vga->format->BitsPerPixel) {
+				case 32:
+					q32= (uint32_t*)q;
+					for(vx=0;vx<vga_an;vx++) {
+						q32[vx]=(uint32_t)((colors[*p].b)+(colors[*p].g<<8)+(colors[*p].r<<16));
+						*p++;
+					} 
+					break;
+
+				case 24:
+					for(vx=0;vx<vga_an;vx++) {
+						q[vx*3]=colors[*p].b;
+						q[vx*3+1]=colors[*p].g;
+						q[vx*3+2]=colors[*p].r;
+						*p++;
+					}
+					break;
+
+					
+				case 16:
+					for(vx=0;vx<vga_an;vx++) {
+						q[vx*2]=colors[*p].b+colors[*p].g<<8;
+						q[vx*2+1]=colors[*p].g;
+						*p++;
+					}
+					break;
+				
+				case 8: 
+					memcpy(q,p,vga_an);
+					p+=vga_an;
+			}
+		
+			q+=vga->pitch;
+			//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+		}
 	}
+	
 	if(SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
 	
@@ -329,10 +420,6 @@ void volcado(byte *p) {
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 
-  if (shift_status&8 && key(_ENTER)) {
-	SDL_ToggleFS(vga);
-	//do{tecla();} while (key(_ENTER));
- } 
 
   if (volcado_completo) {
     if (modovesa) volcadosdl(p);
@@ -356,7 +443,15 @@ void volcado(byte *p) {
       case 376282: volcadopx(p); break;
     }
   } 
+
+  if (shift_status&8 && key(_ENTER)) {
+	SDL_ToggleFS(vga);
+ } 
+
+
   init_volcado();
+
+
 }
 
 void snapshot(byte *p) {
@@ -532,6 +627,8 @@ void volcadocx(byte * p) {
 
 void vgacpy(byte * q, byte * p, int n) {
   int m;
+
+return;
 
   m=n>>2; while (m--) {
     *(int*)q=*p+256*(*(p+4)+256*(*(p+8)+256*(*(p+12)))); q+=4; p+=16;

@@ -19,14 +19,12 @@
 #include "divmixer.hpp"
 #include "divsb.h"
 #include "sysdac.h"
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
 void mainloop(void);
-
-//#include "inc\svga.h"
-
 void heap_dump(void );
 void DebugFile(char *Cadena,char *Nombre);
 void save_prg_buffer(memptrsize);
@@ -120,11 +118,13 @@ extern byte * index_end;
 ///////////////////////////////////////////////////////////////////////////////
 
 int primera_vez=0;  // Marks first time DIV runs
+
 #ifdef SHARE
 int mostrar_demo=1;  // La primera vez no saldr  el mensaje de la demo
 #else
 int mostrar_demo=0;
 #endif
+
 int volcados_parciales=0;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -201,39 +201,42 @@ void demo0(void) {
 }
 
 void chk_demo(void) {
-  FILE *f;
+	FILE *f;
 
-  _dos_setfileattr(exe_name, _A_NORMAL);
+	_dos_setfileattr(exe_name, _A_NORMAL);
 
-  f=fopen(exe_name, "rb");
-  printf("DEMO VERSION: %s %x\n",exe_name,f);
-  
-  if(f) {
+	f=fopen(exe_name, "rb");
+	printf("DEMO VERSION: %s %x\n",exe_name,f);
 
-  fseek(f, 0, SEEK_END);
-	fseek(f,-8,SEEK_CUR);
-	
-  fread(&exe_cola[0], 1, 8, f);
-printf("0x%x\n",exe_cola[0]);
+	if(f) {
 
-  if(exe_cola[0]==0xDABACA2A) {
-    if (exe_cola[1]-0xF31725AB>1024) beta_status=1; else exe_cola[1]++;
-    fseek(f, -4, SEEK_END);
-//    fwrite(&exe_cola[1], 1, 4, f);
-  } else {
-    fclose(f);
-    f=fopen(exe_name, "ab");
-    if(f) {
 		fseek(f, 0, SEEK_END);
-		exe_cola[0]=0xDABACA2A;
-		exe_cola[1]=1+0xF31725AB;
-		fwrite(&exe_cola[0], 1, 8, f);
-	}
-  }
-  if(f)
-	fclose(f);
+		fseek(f,-8,SEEK_CUR);
 
-}
+		fread(&exe_cola[0], 1, 8, f);
+
+		printf("0x%x\n",exe_cola[0]);
+
+		if(exe_cola[0]==0xDABACA2A) {
+			if (exe_cola[1]-0xF31725AB>1024) beta_status=1; else exe_cola[1]++;
+			fseek(f, -4, SEEK_END);
+			//    fwrite(&exe_cola[1], 1, 4, f);
+		} else {
+			fclose(f);
+			f=fopen(exe_name, "ab");
+
+			if(f) {
+				fseek(f, 0, SEEK_END);
+				exe_cola[0]=0xDABACA2A;
+				exe_cola[1]=1+0xF31725AB;
+				fwrite(&exe_cola[0], 1, 8, f);
+			}
+		}
+		
+		if(f)
+			fclose(f);
+
+	}
 }
 
 #endif
@@ -361,8 +364,8 @@ int DPMIalloc4k(void);
 
 
 #endif
-#ifndef GP2X
-#ifndef PS2
+
+#if !defined ( GP2X ) && !defined (PS2)
 #ifdef MIXER
 void print_init_flags(int flags)
 {
@@ -375,7 +378,6 @@ void print_init_flags(int flags)
                 printf("None");
         printf("\n");
 }
-#endif
 #endif
 #endif
 
