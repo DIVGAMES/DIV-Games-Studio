@@ -104,8 +104,10 @@ typedef int int32_t;
 #include <string.h>
 #else
 #ifndef PS2
+#ifndef PSP
 extern char * strupr(char *string);
 extern char * strlwr(char *string);
+#endif
 #endif
 
 #endif

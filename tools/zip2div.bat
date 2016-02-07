@@ -131,7 +131,7 @@ psp-fixup-imports system/$RUNTIME-PSP
 #-o $EBOOTDIV/divrun-PSP.elf
 #cp system/$RUNTIME-PSP $EBOOTDIR/divrun-PSP.elf
 psp-strip system/$RUNTIME-PSP -o $EBOOTDIR/$RUNTIME-PSP.elf
-mksfo '$3' $EBOOTDIR/PARAM.SFO
+mksfo "$THREE" $EBOOTDIR/PARAM.SFO
 
 #psp-prxgen $EBOOTDIR/divrun-PSP.elf $EBOOTDIR/divrun-PSP.prx
 #pack-pbp $EBOOTDIR/EBOOT.PBP_ $EBOOTDIR/PARAM.SFO NULL NULL NULL NULL NULL $EBOOTDIR/divrun-PSP.prx NULL 

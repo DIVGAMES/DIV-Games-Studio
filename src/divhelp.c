@@ -716,7 +716,7 @@ char cerror[128];
 
 extern int linea_error;
 
-void get_error(int32_t n) {
+void get_error(int n) {
   FILE * f;
   byte * p;
   sprintf(cerror,"%s",(char *)texto[381]); p=(byte *)cerror+strlen((char *)cerror);

@@ -37,6 +37,13 @@
 typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 
+#ifdef PSP
+#include <pspkernel.h>
+#include <pspdebug.h>
+#include <pspaudiolib.h>
+#define printf	pspDebugScreenPrintf
+#endif
+
 
 //#include <bios.h>
 //#include <dos.h>

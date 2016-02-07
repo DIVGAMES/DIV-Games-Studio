@@ -1601,7 +1601,7 @@ void finalizacion (void) {
 //EndSound();
   kbdReset();
 
-#ifdef WIN32
+#if defined (WIN32) || defined (PSP)
 
 closefiles();
 

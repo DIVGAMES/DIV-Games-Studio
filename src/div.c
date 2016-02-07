@@ -1769,6 +1769,7 @@ void shell(void) {
 		SDL_putenv("PROMPT=[DIV] $P$G");
 #endif
 
+
 		chdir(tipo[0].path);
 
 		system(s);
