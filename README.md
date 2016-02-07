@@ -17,10 +17,10 @@ cross platform IDE, compiler and runtime for
 * GCW-Zero
 * Pandora Console
 * GP2X Console
+* PSP
 
 Future Possible Platforms:
 
-* PSP
 * Nintendo DS
 * Nintendo Wii
 * XBOX (XNA)
@@ -29,7 +29,6 @@ Future Possible Platforms:
 * PS2
 * Dreamcast
 * Pyra Handheld
-
 
 
 100% compatible with existing DIV1 and DIV2 code including plugin dlls (except mode8!)
