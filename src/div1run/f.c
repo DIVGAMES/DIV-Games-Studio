@@ -25,7 +25,7 @@ void get_angle(void);
 void load_fnt(void); 
 void load_fpg(void); 
 void fade(void); 
-void _write(void); 
+void __write(void); 
 void write_int(void); 
 void delete_text(void); 
 void unload_fpg(void);
@@ -132,7 +132,7 @@ void function(void) {
     case 13: get_dist(); break;
     case 14: fade(); break;
     case 15: load_fnt(); break;
-    case 16: _write(); break;
+    case 16: __write(); break;
     case 17: write_int(); break;
     case 18: delete_text(); break;
     case 19: move_text(); break;
@@ -904,7 +904,7 @@ void load_fnt(void) {
 //      Write(font,x,y,centro,ptr)
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
-void _write(void) {
+void __write(void) {
   int f=pila[sp-4];
   if (f<0 || f>=max_fonts) { e(e116); f=0; }
   if (fonts[f]==0) { e(e116); f=0; }

@@ -40,7 +40,7 @@ int IsFullScreen(SDL_Surface *surface)
     return 0; // Return false if surface is windowed
 }
 
-inline void SDL_ToggleFS(SDL_Surface *surface)
+void SDL_ToggleFS(SDL_Surface *surface)
 {
     if (IsFullScreen(surface))
 		fsmode=0;
@@ -116,7 +116,6 @@ void retrazo(void) {
 //      Activate a palette
 ///////////////////////////////////////////////////////////////////////////////
 
-SDL_Color colors[256];
 
 void set_dac(byte *_dac) {
 	int i;
@@ -145,9 +144,29 @@ float w_ratio=1.0;
 float h_ratio=1.0;
 #endif
 
+SDL_Surface* copy_surface(SDL_Surface* source)
+{
+    SDL_Surface *target;
+
+    target = SDL_CreateRGBSurface(0, source->w, source->h,
+                                  source->format->BitsPerPixel,
+                                  source->format->Rmask, source->format->Gmask,
+                                  source->format->Bmask, source->format->Amask);
+
+    /*
+     * I really don't understand why this is necessary. This is supposed to
+     * clear the SDL_SRCALPHA flag presumably set by IMG_Load. But why wouldn't
+     * blitting work otherwise?
+     */
+    SDL_SetAlpha(source, 0, 0);
+    
+    SDL_BlitSurface(source, 0, target, 0);
+    return target;
+}
+
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
-
+ Uint32 colorkey=0;
   printf("full screen: %d\n",fsmode);
 #ifdef GCW_SOFTSTRETCH
 	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
@@ -173,11 +192,23 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
 #endif
+
+	if(copia_surface)
+		SDL_FreeSurface(copia_surface);
+
+	copia_surface = SDL_DisplayFormat( vga );
+
+	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
+
+	SDL_FillRect(copia_surface, NULL, colorkey);
+
+	if(SDL_SetColorKey(copia_surface , SDL_SRCCOLORKEY , colorkey)==-1)
+		fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+	
 	modovesa=1;
 	
 	set_dac(dac);
 
-//printf("%d %d \n",vga->pitch,vga->format->BytesPerPixel);
 #ifdef NOTYET
   VBESCREEN Screen;
 
@@ -270,11 +301,6 @@ void svmodex(int m) {
 void rvmode(void) {
 	if(IsFullScreen(vga))
 		SDL_ToggleFS(vga);
-//	printf("TODO - rvmode - Reset Video Mode\n");
-#ifdef NOTYET
-  SV_restoreMode();
-  _setvideomode(3);
-#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -313,6 +339,13 @@ void vgacpy(byte * q, byte * p, int n) ;
 void volcadosdl(byte *p) {
 	int vy;
 	int vx;
+
+	byte *oldp=*p;
+	
+	uint32_t colorkey = 0;
+	SDL_Rect trc;
+	int vn=0;
+		
 #ifdef GCW_SOFTSTRETCH
 	if(vga_an>=GCW_W && vga_al>=GCW_H) {
 		volcadogcw(p);
@@ -407,12 +440,39 @@ void volcadosdl(byte *p) {
 		}
 	}
 	
+//memset(copia,0,vga_an*vga_al);
+	
 	if(SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
 	
+	SDL_BlitSurface(copia_surface, NULL, vga, NULL);
+
+
+	for(vn=max_windows-1;vn>=0; vn--) {
+		if(ventana[vn].surfaceptr!=NULL) {
+			trc.x=ventana[vn].x;
+			trc.y=ventana[vn].y;
+			trc.w=ventana[vn].an;
+			trc.h=ventana[vn].al;
+			
+//			SDL_SetColorKey(ventana[vn].surfaceptr, SDL_SRCCOLORKEY,0);
+			if(ventana[vn].exploding==0)
+				SDL_BlitSurface(ventana[vn].surfaceptr,NULL,vga,&trc);
+			
+		}
+		
+	}
+
+//printf("window zero is %d\n",v.tipo);
+		
 	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 
 	SDL_Flip(vga);
+
+	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
+	SDL_FillRect(copia_surface, NULL, colorkey);
+	memset(oldp,vga_an*vga_al,0);
+
 }
 
 void volcado(byte *p) {

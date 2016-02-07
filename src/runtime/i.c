@@ -1654,8 +1654,10 @@ void exer(int e) {
   rvmode();
 //EndSound();
   kbdReset();
-
+#if defined( DOS ) || defined (WIN32)
   _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
+#endif
+
   chdir(divpath);
 #ifdef STDOUTLOG
 printf("exited %d\n",e);
@@ -1732,16 +1734,15 @@ int main(int argc,char * argv[]) {
   uint32_t datstart = 0;
 
 // fix stderr / stdout
-#ifdef __WIN32
+#ifdef WIN32
 	freopen( "CON", "w", stdout );
 	freopen( "CON", "w", stderr );
 #endif
 
-#ifndef GP2X 
-#ifndef PS2  
+#if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 #endif
-#endif
+
   atexit(SDL_Quit);
   
   SDL_Init( SDL_INIT_EVERYTHING);
@@ -1768,19 +1769,11 @@ if(true) {
 		buf[2]=0;
 		
 		if(!strcmp(buf,"DX")) {
-		//	printf("Found exe\n");
-		//	printf("data and exe packed\n");
 			
 			fseek(f,-10,SEEK_END);
 			fread(&exesize,4,1,f);
 			fread(&datsize,4,1,f);
 
-		//	printf("exesize: %d\n",exesize);
-		//	printf("datsize: %d\n",datsize);
-			
-
-//		printf("[%c][%c]\n",buf[0],buf[1]);
-//		fclose(f);
 		} else {
 		//	printf("failed: %s\n",buf);
 		}
@@ -1813,21 +1806,20 @@ if(true) {
 #endif
 
 
-
-  vga_an=320; vga_al=200;
-    ireloj=100.0/24.0;
-    max_saltos = 0;
+	vga_an=320; vga_al=200; 
+	ireloj=100.0/24.0; // 24 fps
+	max_saltos = 0; // 0 skips
 
 #ifdef __EMSCRIPTEN__
 
 //jschar=emscripten_run_script_string("$('#exename').text()");
 
 //emscripten_wget (jschar, "exe");//, loadmarvin, errormarvin);
-    max_saltos = 0;
+	max_saltos = 0;
 
 
-f=fopen(HTML_EXE,"rb");
-printf("FILE: %s %x\n",HTML_EXE,f);
+	f=fopen(HTML_EXE,"rb");
+	printf("FILE: %s %x\n",HTML_EXE,f);
 
 #else
 

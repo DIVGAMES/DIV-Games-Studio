@@ -530,6 +530,12 @@ GLOBAL_DATA byte * cuad; // Diferencias elevadas al cuadrado para la paleta
 GLOBAL_DATA int * system_clock, cclock, mclock;
 
 GLOBAL_DATA byte * copia; // Copia virtual de pantalla (del entorno)
+
+GLOBAL_DATA SDL_Surface *copia_surface;
+GLOBAL_DATA	SDL_Surface *tempsurface;
+GLOBAL_DATA uint32_t colorkey;
+GLOBAL_DATA uint32_t rmask, gmask, bmask, amask;
+
 GLOBAL_DATA byte * undo; // Copias del mapa editado (para deshacer, NULL si falta memoria)
 GLOBAL_DATA byte * barra; // Barra de edici¢n
 
@@ -597,6 +603,12 @@ GLOBAL_DATA struct tgraf_help graf_help[384];  // Gr ficos del hipertexto (inici
 GLOBAL_DATA char help_xlat[256];               // Para convertir los gr ficos de la ayuda
 
 GLOBAL_DATA byte * text_font; // Font est ndar, 7 puntos de alto, ancho proporcional
+
+#ifdef TTF
+GLOBAL_DATA TTF_Font* sysfont;
+#endif
+
+GLOBAL_DATA SDL_Color colors[256];
 
 GLOBAL_DATA byte * font; // Font para el editor de programas / hipertexto
 GLOBAL_DATA int font_an,font_al; // Ancho y alto de los car cteres
@@ -680,6 +692,7 @@ struct tventana {
   int x,y,an,al;                        // Posici¢n y dimensiones de la ventana
   int _x,_y,_an,_al;                    // Posici¢n salvada al minimizarse
   byte * ptr;                           // Buffer de la ventana
+  SDL_Surface *surfaceptr;  
   struct tmapa * mapa;                  // Puntero a otro struct tipo mapa
   struct tprg * prg;                    // Puntero a otro struct tipo prg
   int volcar;                           // Indica si se debe volcar la ventana
@@ -691,6 +704,8 @@ struct tventana {
   int active_item;                      // Cuando alg£n item produce un efecto
   int selected_item;                    // El item seleccionado (para teclado)
   int lado;                             // 0 Derecha, 1 Izquierda (autoemplazar con doble click)
+  int exploding;
+	
 };
 
 GLOBAL_DATA struct tventana ventana[max_windows];

@@ -640,6 +640,10 @@ FILE *f;
                                 // Descargarse
                                 fread(Load_FontName,1,14,desktop);
                                 fread(Load_FontPathName,1,_MAX_PATH-14,desktop);
+
+                                printf("fontname [%s], fontpathname [%s]\n",Load_FontName,Load_FontPathName);
+								fflush(stdout);
+								
                                 if ((f=fopen(Load_FontPathName,"rb"))!=NULL) {
                                   fclose(f);
                                   nueva_ventana_carga(ShowFont0,ventana_aux.x,ventana_aux.y);
@@ -694,9 +698,11 @@ return(1);
 int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 {
 
-  byte * ptr;
-  int n,m,x,y,an,al;
-  int vtipo;
+	  byte * ptr;
+	  int n,m,x,y,an,al;
+	  int vtipo;
+
+	uint32_t colorkey=0;
 
   if (!ventana[max_windows-1].tipo) {
 /*
@@ -792,7 +798,22 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
     if (!n)
 */
     if ((ptr=(byte *)malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
+		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
+                                   rmask, gmask, bmask, amask);
 
+		v.surfaceptr=SDL_DisplayFormat(tempsurface);
+
+		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
+
+		SDL_FillRect(v.surfaceptr, NULL, colorkey);
+
+		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
+			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+
+
+		printf("load window surface ptr: %x\n",v.surfaceptr);
+		SDL_FreeSurface(tempsurface);
+		
       //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
       // Pasa a segundo plano las ventanas que corresponda
       //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -841,7 +862,10 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+		SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF ));
+      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
+
       wput(ptr,an,al,an-9,2,35);
       wput(ptr,an,al,an-17,2,37);
       wgra(ptr,an,al,c_b_low,2,2,an-20,7);

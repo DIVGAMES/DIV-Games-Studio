@@ -1573,6 +1573,8 @@ void _completo(void) {
 
   if (v.al<v._al) { _an=v.an; _al=v.al; v.an=v._an; v.al=v._al; }
   an=v.an/big2; al=v.al/big2;
+	
+	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 255,0,255));
 
   if (kbloque && kprg==v.prg) {
     if (kcol1>linelen(kini)) kcol1=linelen(kini)+1;
@@ -1832,6 +1834,26 @@ void barra_info(void) {
 //      Entra en el bucle de escalado de una ventana
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+void resize_surface(void) {
+
+	SDL_FreeSurface(v.surfaceptr);
+	v.surfaceptr=NULL;
+
+	tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, v.an, v.al, 32,
+		rmask, gmask, bmask, amask);
+
+	v.surfaceptr=SDL_DisplayFormat(tempsurface);
+
+	colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
+
+	SDL_FillRect(v.surfaceptr, NULL, colorkey);
+
+	if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
+	fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+
+	
+}
+
 void resize(void) {
   int _mx=mouse_x,_my=mouse_y; // Coordenadas del ratขn iniciales
   int mx,my; // Coordenadas tabuladas del ratขn en cada momento
@@ -1873,7 +1895,9 @@ void resize(void) {
 
     if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
       v.ptr=new_block;
-      test_cursor();
+	resize_surface();
+	
+     test_cursor();
       repinta_ventana();
       wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-9,v.al/big2-9,-44);
       se_ha_movido_desde(v.x,v.y,an,al);
@@ -1952,6 +1976,7 @@ void maximizar(void) {
     if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
       _an=_an2; _al=_al2;
       v.ptr=new_block;
+      resize_surface();
       test_cursor();
       repinta_ventana();
       v.x=vga_an/2-v.an/2; v.y=vga_al/2-v.al/2;
@@ -1986,7 +2011,9 @@ void maximizar(void) {
 
     if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
       v.ptr=new_block;
-      test_cursor();
+      resize_surface();
+
+      test_cursor();      
       repinta_ventana();
       v.x=v.prg->old_x;
       v.y=v.prg->old_y;
@@ -2183,6 +2210,7 @@ void put_char(byte * ptr, int an, byte c,int block) {
   byte *si,color;
 
   si=font+c*char_size;
+printf("%c",c);
 
   if (block) {
 
@@ -2254,6 +2282,7 @@ void put_char2(byte * ptr, int an, byte c,byte color) {
   int n,m;
   byte *si;
 
+printf("%c",c);
   si=font+c*char_size;
 
   n=font_al; do {
@@ -2268,8 +2297,62 @@ void put_char2(byte * ptr, int an, byte c,byte color) {
 void put_char3(byte * ptr, int an, byte c,int block, byte color) {
   int n,m;
   byte *si;
-
+	int oi;
+	char s[2];
+//	printf("%c",c);
+	
   si=font+c*char_size;
+int x=0,y=0;
+
+
+#ifdef TTF
+	s[0]=(char *)c;
+	s[1]=0;
+
+oi = ptr-v.ptr;
+
+
+//printf("char=%c ptr = %x vptr = %x oi=%x length = %x\n", c, si, v.ptr, oi, (v.an*18+2)*big2);
+
+
+//oi-=(v.an*18+2)*big2;
+
+//x=oi/v.an;//((v.an*18+2)*big2);
+x=(oi%an);//*18+2)*big2);
+//printf("x= %d y=%d\n",x,y);
+y=oi/an;//=50;//oi-(y*v.an);
+
+
+// get window
+	
+/*	tsurface = copia_surface;
+	for (vn=0;vn<max_windows;vn++) {
+		if(ventana[vn].ptr==copia) {
+			tsurface = ventana[vn].surfaceptr;
+			break;
+		}
+	}
+*/
+	// render ttf to copia_suface;	
+	// ofset by the window x/y
+	SDL_Rect rc;
+
+	rc.x=x;
+	rc.y=y;		
+	
+	SDL_Surface *tsurface=v.surfaceptr;
+	
+	if(tsurface!=NULL) {
+		SDL_Surface* surface = drawtext(sysfont, colors[color].g,colors[color].r,colors[color].b,0, 0,0,0, 0, (char *)s, solid);
+		rc.h=font_al;
+		rc.w=font_an;
+
+		SDL_BlitSurface(surface, NULL, tsurface,&rc);
+		SDL_FreeSurface(surface);
+	}
+
+#else
+
 
   if (block) {
 
@@ -2324,6 +2407,9 @@ void put_char3(byte * ptr, int an, byte c,int block, byte color) {
         break;
     }
   }
+
+#endif
+
 }
 
 

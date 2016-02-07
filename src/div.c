@@ -2172,6 +2172,8 @@ void cierra_ventana(void) {
 
   if (v.click_handler!=err2) { 
 	  free(v.ptr);
+	  SDL_FreeSurface(v.surfaceptr);
+	  v.surfaceptr=NULL;
 	  v.ptr=NULL;
   }
   
@@ -2638,6 +2640,8 @@ void vuelca_ventana(int m) {
   int _x,_y,_an,_al;
   int salta_x,salta_y;
 
+SDL_Rect trc;
+
   if (no_volcar_ventanas) return;
 
   if (volcados_parciales) {
@@ -2701,6 +2705,15 @@ if(_ptr==NULL)
       } else wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
 
   }
+
+	trc.x=ventana[n].x;
+	trc.y=ventana[n].y;
+	trc.w=ventana[n].an;
+	trc.h=ventana[n].al;
+
+if(ventana[n].surfaceptr!=NULL)
+//&& vn<max_windows)
+	SDL_BlitSurface(ventana[n].surfaceptr,NULL,copia_surface,&trc);
 
   volcado_parcial(x,y,an,al);
 
@@ -2881,9 +2894,24 @@ void volcado_copia(void) {
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void nueva_ventana(voidReturnType init_handler) {
-  byte * ptr;
-  int n,m,om,x,y,an,al;
-  int vtipo;
+	byte * ptr;
+	int n,m,om,x,y,an,al;
+	int vtipo;
+	uint32_t colorkey=0;
+	
+	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
+	on the endianness (byte order) of the machine */
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000;
+		gmask = 0x00ff0000;
+		bmask = 0x0000ff00;
+		amask = 0x000000ff;
+	#else
+		rmask = 0x000000ff;
+		gmask = 0x0000ff00;
+		bmask = 0x00ff0000;
+		amask = 0xff000000;
+	#endif
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -2922,7 +2950,9 @@ void nueva_ventana(voidReturnType init_handler) {
     v.selected_item=-1;
     v.prg=NULL;
     v.aux=NULL;
-
+	v.ptr=NULL;
+	v.surfaceptr=NULL;
+	
     call(init_handler);
 
     if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
@@ -2982,6 +3012,21 @@ void nueva_ventana(voidReturnType init_handler) {
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 
+		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
+                                   rmask, gmask, bmask, amask);
+	
+		v.surfaceptr=SDL_DisplayFormat(tempsurface);
+
+		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
+
+		SDL_FillRect(v.surfaceptr, NULL, colorkey);
+
+		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
+			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+
+		printf("new window surface ptr: %x\n",v.surfaceptr);
+		SDL_FreeSurface(tempsurface);
+		
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Pasa a segundo plano las ventanas que corresponda
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -3020,8 +3065,12 @@ void nueva_ventana(voidReturnType init_handler) {
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 255,0,255));
+      //colors[c0].b,colors[c0].g,colors[c0].r));
+      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
+      
       if (v.tipo==1) { // Los di logos no se minimizan
         wgra(ptr,an,al,c_b_low,2,2,an-12,7);
         if (text_len(v.titulo)+3>an-12) {
@@ -3058,8 +3107,12 @@ void nueva_ventana(voidReturnType init_handler) {
 
       if (primera_vez!=1) {
         do { read_mouse(); } while((mouse_b&1) || key(_ESC));
-        if (exploding_windows) explode(x,y,an,al);
-
+        if (exploding_windows) {
+			v.exploding=1;
+			explode(x,y,an,al);
+		}
+		v.exploding=0;
+		
         wvolcado(copia,vga_an,vga_al,ptr,x,y,an,al,0);
         volcado_parcial(x,y,an,al);
       }
@@ -3218,6 +3271,7 @@ void dialogo(voidReturnType init_handler) {
   int vtipo,_get_pos;
   byte * ptr;
   int n,m,x,y,an,al;
+uint32_t colorkey=0;
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -3269,6 +3323,20 @@ void dialogo(voidReturnType init_handler) {
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 		memset(ptr,0,an*al);
+		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
+                                   rmask, gmask, bmask, amask);
+
+		v.surfaceptr=SDL_DisplayFormat(tempsurface);
+		printf("dialogo surface ptr: %x\n",v.surfaceptr);
+		
+		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
+
+		SDL_FillRect(v.surfaceptr, NULL, colorkey);
+
+		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
+			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+
+		SDL_FreeSurface(tempsurface);
 		
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Pasa a segundo plano las ventanas que corresponda
@@ -3297,7 +3365,10 @@ void dialogo(voidReturnType init_handler) {
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF ));
+      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
+
       wput(ptr,an,al,an-9,2,35);
       if (!strcmp((char *)v.titulo,(char *)texto[41]) || !strcmp((char *)v.titulo,(char *)texto[367]))
         wgra(ptr,an,al,c_r_low,2,2,an-12,7);
@@ -3337,9 +3408,11 @@ void dialogo(voidReturnType init_handler) {
 
 void refrescadialogo(void)
 {
-byte * ptr=v.ptr;
-int an=v.an,al=v.al;
-      memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+	byte * ptr=v.ptr;
+	int an=v.an,al=v.al;
+	memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF ));
+      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
       if (!strcmp((char *)v.titulo,(char *)texto[41])) wgra(ptr,an,al,c_r_low,2,2,an-12,7);
@@ -3494,6 +3567,24 @@ void inicializacion(void) {
 		fclose(f); 
 		error(0); 
 	}
+
+
+#ifdef TTF
+TTF_Init();
+//sysfont = loadfont("system/KenVectorFutureThin.ttf",(big==1)?12:6);
+sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
+//sysfont = loadfont("/usr/share/fuze/assets/fuzebasic/zx.ttf",(big==1)?30:15);
+//sysfont = loadfont("/usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
+//sysfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf",20);
+//usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
+
+//printf("Loaded TTF: %x\n",sysfont);
+//font_an = (big==1)?24:12;
+//font_al = TTF_FontHeight(sysfont);
+
+#endif
+
+
 
 	f=fopen("system/tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
 

@@ -5,6 +5,7 @@
 
 #include "global.h"
 
+extern SDL_Surface *vga;
 
 void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n);
 void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
@@ -346,11 +347,27 @@ void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,i
 void wvolcado(byte*copia,int an_copia,int al_copia,
               byte *p,int x,int y,int an,int al,int salta) {
 
-  byte *q;
-  int salta_x, long_x, resto_x;
-  int salta_y, long_y, resto_y;
+	byte *q;
+	int salta_x, long_x, resto_x;
+	int salta_y, long_y, resto_y;
+	int vn=0;
 
-  q=copia+y*an_copia+x;
+	SDL_Rect trc;
+	
+//	printf("copia: %x %x\n",copia,p);
+
+	for (vn=0;vn<max_windows;vn++) {
+		if(ventana[vn].ptr!=NULL)
+	//		printf("copia: %x\n",ventana[vn].ptr);
+
+		if(ventana[vn].ptr==p) {
+//			printf("vn is: %d\n",vn);
+			
+			break;
+		}
+	}
+
+	q=copia+y*an_copia+x;
 
   if (x<0) salta_x=-x; else salta_x=0;
   if (x+an>an_copia) resto_x=x+an-an_copia+salta; else resto_x=salta;
@@ -366,6 +383,15 @@ void wvolcado(byte*copia,int an_copia,int al_copia,
     memcpy(q,p,an); q+=an_copia; p+=resto_x;
   } while (--long_y >0 && q<(copia+(an_copia*al_copia)));
 
+
+	trc.x=x;
+	trc.y=y;
+	trc.w=an_copia;
+	trc.h=al_copia;
+
+if(ventana[vn].surfaceptr!=NULL && vn<max_windows)
+	SDL_BlitSurface(ventana[vn].surfaceptr,NULL,copia_surface,&trc);
+
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -378,7 +404,22 @@ void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
   byte *q,*_ghost;
   int salta_x, long_x, resto_x;
   int salta_y, long_y, resto_y;
+	int vn=0;
 
+	SDL_Rect trc;
+	
+//	printf("copia: %x %x\n",copia,p);
+
+	for (vn=0;vn<max_windows;vn++) {
+		if(ventana[vn].ptr>0)
+	//		printf("copia: %x\n",ventana[vn].ptr);
+
+		if(ventana[vn].ptr==p) {
+//			printf("vn is: %d\n",vn);
+			
+			break;
+		}
+	}
   q=copia+y*an_copia+x;
   _ghost=ghost+256*(int)c0;
 
@@ -412,6 +453,17 @@ void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
     q+=an_copia-(an=long_x); p+=resto_x;
   } while (--long_y);
 
+
+	trc.x=x;
+	trc.y=y;
+	trc.w=an_copia;
+	trc.h=al_copia;
+
+//if(ventana[vn].surfaceptr!=NULL && vn<max_windows)
+//	SDL_BlitSurface(ventana[vn].surfaceptr,NULL,copia_surface,&trc);
+
+
+
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -435,9 +487,12 @@ int text_len(byte * ptr) {
 	word dir;
 	} * car;
 	*/
+	int h=0;
 
+#ifdef TTF
+	TTF_SizeText(sysfont, (char *)ptr, &an, &h);
+#else
 	sscar *car;
-//	printf("len %s: ",ptr);
 
 	car=(sscar*)(text_font+1); an=0;
 	while (*ptr) {
@@ -445,16 +500,22 @@ int text_len(byte * ptr) {
 		ptr++; 
 	}
 
+
+#endif
 	if (big) 
 		an/=2;
 
 	if (an) 
 		an--; 
+
+
 //	printf("%d\n",an);
 	
 	return(an);
 
 }
+
+
 
 int text_len2(byte * ptr) {
   int an;
@@ -474,7 +535,7 @@ int text_len2(byte * ptr) {
 		ptr++; 
 	}
 
-	printf("len %s: %d\n",ptr,an);
+	printf("text_len2 %s: %d\n",ptr,an);
 
 	if (big) 
 		an/=2; 
@@ -488,9 +549,17 @@ void wwrite(byte*copia,int an_copia,int al_copia,
 	wwrite_in_box(copia,an_copia,an_copia,al_copia,x,y,centro,ptr,c);
 }
 
+extern SDL_Surface *vga;
+
+
 void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
             int x,int y,int centro,byte * ptr,byte c) {
 
+//	printf("Writing in box: %s\n",ptr);
+	
+	int vn=0;
+	SDL_Surface *tsurface;
+	
 	int an,al,boton,multi;
 	/*
 	struct {
@@ -517,10 +586,17 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 	car=(sscar*)(text_font+1);
 
 	if (big&&!multi) {
-	an=text_len(ptr); al=7;
+		an=text_len(ptr); al=7;
 	} else {
-	font=ptr; an=0; while (*font) { an+=car[*font].an; font++; }
-	al=*text_font; if (an) an--;
+		font=ptr; 
+		an=0; 
+		
+		while (*font) { 
+			an+=car[*font].an; 
+			font++; 
+		}
+		
+		al=*text_font; if (an) an--;
 	}
 
 	font=text_font+1025;
@@ -608,6 +684,38 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 		x*=2; y*=2; an*=2; al*=2;
 	}
 
+
+#ifdef TTF
+// get window
+	
+	tsurface = copia_surface;
+	for (vn=0;vn<max_windows;vn++) {
+		if(ventana[vn].ptr==copia) {
+			tsurface = ventana[vn].surfaceptr;
+			break;
+		}
+	}
+
+	// render ttf to copia_suface;	
+	// ofset by the window x/y
+	SDL_Rect rc;
+
+	rc.x=x;
+	rc.y=y;		
+
+	if(tsurface!=NULL) {
+		SDL_Surface* surface = drawtext(sysfont, colors[c].g,colors[c].r,colors[c].b,0, 255, 255,255, 0, (char *)ptr, solid);
+		rc.h=tsurface->w;
+		rc.w=tsurface->h;
+
+		SDL_BlitSurface(surface, NULL, tsurface,&rc);
+		SDL_FreeSurface(surface);
+	}
+
+#else
+
+
+
 	if (y<al_copia && y+al>0) {
 		if (y>=0 && y+al<=al_copia) { // El texto coge entero (coord. y)
 			while (*ptr && x+car[*ptr].an<=0) { 
@@ -640,6 +748,10 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 			}
 		}
 	}
+#endif
+
+
+
 }
 
 void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c) {

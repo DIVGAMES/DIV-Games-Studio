@@ -771,6 +771,7 @@ void Cfg_Setup_end(void) {
         case 3: f=fopen("system/sys09x16.bin","rb"); break;
       }
       if (f!=NULL) {
+		printf("loading new font %d %d\n",editor_font,old_editor_font);  
         fseek(f,0,SEEK_END); n=ftell(f);
         if ((ptr=(byte *)malloc(n))!=NULL) {
           fseek(f,0,SEEK_SET);
@@ -941,6 +942,7 @@ void tapiz_thumb(void)
   if ((ptr=(byte *)malloc(an*al))==NULL) return;
 
   memset(ptr,0,an*al);
+  
   a=(float)0.0;
   for(y=0;y<al;y++)
   {

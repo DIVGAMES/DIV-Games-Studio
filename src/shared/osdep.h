@@ -1,5 +1,6 @@
 #ifndef __OSDEP_H
 #define __OSDEP_H
+
 // OSDEP includes
 // should be good for most SDL ports
 
@@ -10,6 +11,11 @@
 #ifdef ZLIB
 #include "unzip.h"
 #endif
+
+#ifdef TTF
+#include "ttf.h"
+#endif
+
 
 #ifndef PS2
 #include <stdint.h>
