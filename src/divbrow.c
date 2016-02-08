@@ -22,7 +22,7 @@ void muestra_thumb(struct t_listboxbr * l, int num);
 
 
 
-#define incremento_maximo 65536
+#define incremento_maximo 6553600
 int incremento=incremento_maximo;
 
 int opc_img[8]={0,0,1,1,0,1,1,1}; // imagenes on/off en ventanas (v_tipo)
@@ -33,6 +33,9 @@ byte color_tag;
 int num_taggeds;
 int ini_tagged;
 int song_playing=0;
+
+
+#define FILE_CHUNK incremento_maximo
 
 //SAMPLE * smp=NULL;
 
@@ -244,7 +247,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
         fseek(f,0,SEEK_END);
         thumb[num].filesize=ftell(f);
         fseek(f,0,SEEK_SET);
-        if (thumb[num].filesize<=2048) incremento=2048;
+        if (thumb[num].filesize<=FILE_CHUNK) incremento=FILE_CHUNK;
         if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))!=NULL) {
           if (thumb[num].filesize>incremento) {
             if (fread(thumb[num].ptr,1,incremento,f)==incremento) {
@@ -428,7 +431,7 @@ void crear_un_thumb_PAL(struct t_listboxbr * l)
     incremento=0;
   } else if (incremento<incremento_maximo) incremento+=128;
 
-  if (l->maximo && incremento>=16384)
+  if (l->maximo && incremento>=FILE_CHUNK)
   {
     num=l->inicial;
     do
@@ -605,7 +608,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       fseek(f,0,SEEK_END);
       thumb[num].filesize=ftell(f);
       fseek(f,0,SEEK_SET);
-      if (thumb[num].filesize<=2048) incremento=2048;
+      if (thumb[num].filesize<=FILE_CHUNK) incremento=FILE_CHUNK;
       if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))==NULL)
       {
         fclose(f);
@@ -1035,7 +1038,7 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
         thumb[num].status=-1;
         return;
       }
-      if (thumb[num].filesize<=2048) incremento=2048;
+      if (thumb[num].filesize<=FILE_CHUNK) incremento=FILE_CHUNK;
       if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))==NULL)
       {
         fclose(f);

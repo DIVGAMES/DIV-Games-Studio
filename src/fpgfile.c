@@ -57,97 +57,111 @@ void ReadHeadImageAndPoints(HeadFPG *MiHeadFPG,FILE *fpg)
 
 void Crear_FPG(FPG *Fpg,char *Name)
 {
-int x;
-FILE *fpg;
-        if( (fpg=fopen(Name,"wb") )==NULL)
-                return;
-        for(x=0;x<1000;x++)
-        {
-                Fpg->OffsGrf[x]=0;
-                Fpg->DesIndex[x]=0;
-        }
-        Fpg->nIndex=0;
-        Fpg->LastUsed=0;
-        strcpy((char *)Fpg->ActualFile,Name);
-        fwrite("fpg\x1a\x0d\x0a\x00\x00",8,1,fpg);
-        fwrite(dac,768,1,fpg);
+	int x;
+	FILE *fpg;
+	if( (fpg=fopen(Name,"wb") )==NULL)
+	return;
+	for(x=0;x<1000;x++)	{
+		Fpg->OffsGrf[x]=0;
+		Fpg->DesIndex[x]=0;
+	}
 
-        fwrite(reglas,sizeof(reglas),1,fpg);
-        fclose(fpg);
+	Fpg->nIndex=0;
+	Fpg->LastUsed=0;
 
-        if(Fpg->thumb_on) {
-          Fpg->lInfoFPG.columnas=3;
-          Fpg->lInfoFPG.lineas=2;
-          Fpg->lInfoFPG.an=47;
-          Fpg->lInfoFPG.al=26;
-        } else {
-          Fpg->lInfoFPG.columnas=1;
-          Fpg->lInfoFPG.lineas=6;
-          Fpg->lInfoFPG.an=143;
-          Fpg->lInfoFPG.al=8;
-        }
-        Fpg->lInfoFPG.x=3;
-        Fpg->lInfoFPG.y=11;
-        Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
-        Fpg->lInfoFPG.maximo=Fpg->nIndex;
-        Fpg->lInfoFPG.lista_an=38+2;
+	Fpg->version=32; // 32 bit fpg files
+
+	strcpy((char *)Fpg->ActualFile,Name);
+	fwrite("fpg\x1a\x0d\x0a\x00",7,1,fpg);
+
+	fwrite(&Fpg->version,1,1,fpg);
+
+	fwrite(dac,768,1,fpg);
+
+	fwrite(reglas,sizeof(reglas),1,fpg);
+	fclose(fpg);
+
+	if(Fpg->thumb_on) {
+		Fpg->lInfoFPG.columnas=3;
+		Fpg->lInfoFPG.lineas=2;
+		Fpg->lInfoFPG.an=47;
+		Fpg->lInfoFPG.al=26;
+	} else {
+		Fpg->lInfoFPG.columnas=1;
+		Fpg->lInfoFPG.lineas=6;
+		Fpg->lInfoFPG.an=143;
+		Fpg->lInfoFPG.al=8;
+	}
+
+	Fpg->lInfoFPG.x=3;
+	Fpg->lInfoFPG.y=11;
+	Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
+	Fpg->lInfoFPG.maximo=Fpg->nIndex;
+	Fpg->lInfoFPG.lista_an=38+2;
 }
 
-int Abrir_FPG(FPG *Fpg,char *Name)
-{
-int x;
-FILE *fpg;
-HeadFPG kkhead;
-char buffer[768];
+int Abrir_FPG(FPG *Fpg,char *Name) {
+	int x;
+	FILE *fpg;
+	HeadFPG kkhead;
+	char buffer[768];
 
-        if((fpg=fopen(Name,"rb"))==NULL) {
-                return 0;
-        }
-        fread(buffer,8,1,fpg);
-        if (strcmp(buffer,"fpg\x1a\x0d\x0a"))
-        {
-                fclose(fpg);
-                return 0;
-        }
-        for(x=0;x<1000;x++)
-        {
-                Fpg->OffsGrf[x]=0;
-                Fpg->DesIndex[x]=0;
-        }
-        Fpg->nIndex=0;
-        strcpy((char *)Fpg->ActualFile,Name);
-        fread(newdac,768,1,fpg);
-        memcpy(dac4,newdac,768);
-        NewDacLoaded=1;
-        fread((byte *)reglas,1,sizeof(reglas),fpg);
-        while(ReadHead(&kkhead,fpg))
-        {
-                Fpg->OffsGrf[kkhead.COD]=ftell(fpg)-FPG_HEAD;
-                Fpg->DesIndex[Fpg->nIndex]=kkhead.COD;
-                sprintf((char *)Fpg->CodDes[Fpg->nIndex++],"%c %03d %s",255,kkhead.COD,kkhead.Descrip);
-                fseek(fpg,Fpg->OffsGrf[kkhead.COD]+kkhead.LONG,SEEK_SET);
-        }
-        Sort(Fpg);
-        fclose(fpg);
+	if((fpg=fopen(Name,"rb"))==NULL) {
+		return 0;
+	}
 
-        if(Fpg->thumb_on) {
-          Fpg->lInfoFPG.columnas=3;
-          Fpg->lInfoFPG.lineas=2;
-          Fpg->lInfoFPG.an=47;
-          Fpg->lInfoFPG.al=26;
-        } else {
-          Fpg->lInfoFPG.columnas=1;
-          Fpg->lInfoFPG.lineas=6;
-          Fpg->lInfoFPG.an=143;
-          Fpg->lInfoFPG.al=8;
-        }
-        Fpg->lInfoFPG.x=3;
-        Fpg->lInfoFPG.y=11;
-        Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
-        Fpg->lInfoFPG.maximo=Fpg->nIndex;
-        Fpg->lInfoFPG.lista_an=38+2;
+	fread(buffer,7,1,fpg);
 
-return 1;
+	if (strcmp(buffer,"fpg\x1a\x0d\x0a")) {
+		fclose(fpg);
+		return 0;
+	}
+
+	fread(&Fpg->version,1,1,fpg);
+
+	printf("FPG version: %d\n",Fpg->version);
+
+	for(x=0;x<1000;x++) {
+		Fpg->OffsGrf[x]=0;
+		Fpg->DesIndex[x]=0;
+	}
+
+	Fpg->nIndex=0;
+	strcpy((char *)Fpg->ActualFile,Name);
+	fread(newdac,768,1,fpg);
+	memcpy(dac4,newdac,768);
+	NewDacLoaded=1;
+	fread((byte *)reglas,1,sizeof(reglas),fpg);
+
+	while(ReadHead(&kkhead,fpg)) {
+		Fpg->OffsGrf[kkhead.COD]=ftell(fpg)-FPG_HEAD;
+		Fpg->DesIndex[Fpg->nIndex]=kkhead.COD;
+		sprintf((char *)Fpg->CodDes[Fpg->nIndex++],"%c %03d %s",255,kkhead.COD,kkhead.Descrip);
+		fseek(fpg,Fpg->OffsGrf[kkhead.COD]+kkhead.LONG,SEEK_SET);
+	}
+
+	Sort(Fpg);
+	fclose(fpg);
+
+	if(Fpg->thumb_on) {
+		Fpg->lInfoFPG.columnas=3;
+		Fpg->lInfoFPG.lineas=2;
+		Fpg->lInfoFPG.an=47;
+		Fpg->lInfoFPG.al=26;
+	} else {
+		Fpg->lInfoFPG.columnas=1;
+		Fpg->lInfoFPG.lineas=6;
+		Fpg->lInfoFPG.an=143;
+		Fpg->lInfoFPG.al=8;
+	}
+
+	Fpg->lInfoFPG.x=3;
+	Fpg->lInfoFPG.y=11;
+	Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
+	Fpg->lInfoFPG.maximo=Fpg->nIndex;
+	Fpg->lInfoFPG.lista_an=38+2;
+
+	return 1;
 }
 
 void Sort(FPG *Fpg)

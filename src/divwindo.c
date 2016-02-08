@@ -15,14 +15,16 @@ void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c
 
            
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Dibuja un boton en una ventana
+//      Draw a button on a window
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+// button
 
 void boton(int n,int x,int y,int centro,int color) {
 	wwrite(v.ptr,v.an/big2,v.al/big2,x,y,centro,texto[100+n],color);
 }
 
-
+// Mouse button
 int ratonboton(int n,int x,int y,int centro) {
 	int an,al;
 	int mx=wmouse_x,my=wmouse_y;
@@ -83,12 +85,29 @@ void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al)
 }
 
 void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
-  byte *p;
 
-  if (big) {
-    an_real_copia*=2; an_copia*=2; al_copia*=2;
-    x*=2; y*=2; an*=2; al*=2;
-  }
+	byte *p;
+	SDL_Surface *tsurface = NULL;//v.surfaceptr;
+	SDL_Rect rc;
+	int vn=0;
+	
+	for (vn=0;vn<max_windows;vn++) {
+		if(ventana[vn].ptr==copia) {
+			tsurface = ventana[vn].surfaceptr;
+			break;
+		}
+	}
+
+	// render ttf to copia_suface;	
+	// ofset by the window x/y
+
+	if (big) {
+		an_real_copia*=2; an_copia*=2; al_copia*=2;
+		x*=2; y*=2; an*=2; al*=2;
+	}
+
+	
+
 
   if (y<0) {al+=y; y=0;}
   if (x<0) {an+=x; x=0;}
@@ -96,11 +115,24 @@ void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,i
   if (x+an>an_copia) an=an_copia-x;
 
   if (an>0 && al>0) {
+
+    rc.x=x;
+	rc.y=y;		
+	rc.w=an;
+	rc.h=al;
+
     p=copia+y*an_real_copia+x;
     do {
       memset(p,c,an);
       p+=an_real_copia;
     } while (--al);
+    
+
+if(tsurface!=NULL)
+	SDL_FillRect(tsurface,&rc,SDL_MapRGB(tsurface->format,colors[c].r,colors[c].g,colors[c].b));
+
+
+    
   }
 }
 
@@ -222,6 +254,26 @@ void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,in
   byte *p,*q;
   int salta_x, long_x, resto_x;
   int salta_y, long_y, resto_y;
+
+#ifdef TTF
+	SDL_Surface *img;
+	SDL_Rect rc;
+	rc.x=x+10;
+	rc.y=y+50;
+	if(n==-50) {
+		//printf("loading dxlogo\n");
+
+		img = IMG_Load("system/dxlogo.png");
+		if(img) {
+			rc.w=img->w;
+			rc.h=img->h;
+			SDL_BlitSurface(img,NULL,v.surfaceptr,&rc);
+			SDL_FreeSurface(img);
+			return;
+
+		}
+		}
+#endif
 
   if (big) { 
 	if ((n>=32 || n<0) && n!=233) { 
@@ -388,10 +440,10 @@ void wvolcado(byte*copia,int an_copia,int al_copia,
 	trc.y=y;
 	trc.w=an_copia;
 	trc.h=al_copia;
-
-if(ventana[vn].surfaceptr!=NULL && vn<max_windows)
-	SDL_BlitSurface(ventana[vn].surfaceptr,NULL,copia_surface,&trc);
-
+#ifdef TTF
+//	if(ventana[vn].surfaceptr!=NULL && copia_surface!=NULL)
+//		SDL_BlitSurface(ventana[vn].surfaceptr,NULL,copia_surface,&trc);
+#endif
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -551,6 +603,7 @@ void wwrite(byte*copia,int an_copia,int al_copia,
 
 extern SDL_Surface *vga;
 
+extern struct t_listboxbr larchivosbr;
 
 void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
             int x,int y,int centro,byte * ptr,byte c) {
@@ -688,28 +741,53 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 #ifdef TTF
 // get window
 	
-	tsurface = copia_surface;
+	tsurface = v.surfaceptr;
+	//copia_surface;
+	
 	for (vn=0;vn<max_windows;vn++) {
 		if(ventana[vn].ptr==copia) {
 			tsurface = ventana[vn].surfaceptr;
 			break;
 		}
 	}
+	
+	if(tsurface == v.surfaceptr) {	
 
+	// calculate if we are rendering the archive listbox
+//		larchivosbr
+		if(false)
+			x+=10;
+
+	}
 	// render ttf to copia_suface;	
 	// ofset by the window x/y
 	SDL_Rect rc;
 
+	
 	rc.x=x;
 	rc.y=y;		
+	
 
 	if(tsurface!=NULL) {
 		SDL_Surface* surface = drawtext(sysfont, colors[c].g,colors[c].r,colors[c].b,0, 255, 255,255, 0, (char *)ptr, solid);
-		rc.h=tsurface->w;
-		rc.w=tsurface->h;
+//		printf("string: %s x: %d y: %d surface w: %d surface h: %d real an %d an %d al %d %d\n",(char *)ptr, x,y,tsurface->w, tsurface->h, an_real_copia, an_copia, al_copia,__LINE__);
+		
+		rc.w=an_copia;
+		rc.h=al_copia;
+		SDL_SetClipRect(tsurface, &rc);
+
+	if(surface!=NULL) {
+		rc.w=surface->w;
+		rc.h=surface->h;
 
 		SDL_BlitSurface(surface, NULL, tsurface,&rc);
+
+
 		SDL_FreeSurface(surface);
+	}
+	
+	SDL_SetClipRect(tsurface, NULL);
+
 	}
 
 #else

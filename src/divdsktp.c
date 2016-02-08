@@ -805,9 +805,9 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 
 		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
 
-		SDL_FillRect(v.surfaceptr, NULL, colorkey);
+		SDL_FillRect(v.surfaceptr, NULL, 0);
 
-		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
+		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY | SDL_RLEACCEL, colorkey)==-1)
 			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
 
 
@@ -862,7 +862,7 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-		SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF ));
+		SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
       
       wrectangulo(ptr,an,al,c2,0,0,an,al);
 
@@ -908,8 +908,15 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
       if (big) { an*=2; al*=2; }
 
       if(!Interpretando && exploding_windows) {
-        if (v.primer_plano==2) explode(v.x,v.y,v.an,v.al);
-        else explode(x,y,an,al);
+        if (v.primer_plano==2) {
+			v.exploding=1;
+			explode(v.x,v.y,v.an,v.al);
+			v.exploding=0;
+		} else {
+			v.exploding=1;
+			explode(x,y,an,al);
+			v.exploding=0;
+		}
       }
 
       if (v.primer_plano!=2) {

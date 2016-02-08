@@ -1574,7 +1574,7 @@ void _completo(void) {
   if (v.al<v._al) { _an=v.an; _al=v.al; v.an=v._an; v.al=v._al; }
   an=v.an/big2; al=v.al/big2;
 	
-	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 255,0,255));
+	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
 
   if (kbloque && kprg==v.prg) {
     if (kcol1>linelen(kini)) kcol1=linelen(kini)+1;
@@ -1846,9 +1846,9 @@ void resize_surface(void) {
 
 	colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
 
-	SDL_FillRect(v.surfaceptr, NULL, colorkey);
+	SDL_FillRect(v.surfaceptr, NULL, 0);
 
-	if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
+	if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY | SDL_RLEACCEL , colorkey)==-1)
 	fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
 
 	

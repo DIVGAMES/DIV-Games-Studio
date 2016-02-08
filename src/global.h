@@ -249,9 +249,9 @@ void EditPal();
 void LoadPal();
 void SaveAsPal();
 void RefPalAndDlg(int,int);
-void ordena_paleta();  // palette order (arrange?)
+void ordena_paleta();  // sort palette
 void fusiona_paleta(); // merge palette
-void preparar_tapiz(); // skin preperation (???)
+void preparar_tapiz(); // background wallpaper setup (???)
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions exported by DIVSETUP (divsetup.c)
@@ -533,8 +533,11 @@ GLOBAL_DATA byte * copia; // Copia virtual de pantalla (del entorno)
 
 GLOBAL_DATA SDL_Surface *copia_surface;
 GLOBAL_DATA	SDL_Surface *tempsurface;
+GLOBAL_DATA SDL_Surface *mouse_surface;
+GLOBAL_DATA SDL_Surface *tapiz_surface; // background
 GLOBAL_DATA uint32_t colorkey;
 GLOBAL_DATA uint32_t rmask, gmask, bmask, amask;
+GLOBAL_DATA byte explode_num;
 
 GLOBAL_DATA byte * undo; // Copias del mapa editado (para deshacer, NULL si falta memoria)
 GLOBAL_DATA byte * barra; // Barra de edici¢n
@@ -1050,6 +1053,7 @@ typedef struct {
 typedef struct {
   int an,al;            // Ancho y Alto de la reducci¢n
   char * ptr;           // ==NULL si el thumbnail no se ha comenzado a cargar
+  SDL_Surface *surfaceptr;
   int status;           // -1-No es una imagen, 0-Cargado, +N-N§ de bytes leidos
   int filesize;         // Longitud en bytes del fichero
   int tagged;           // Si esta se¤alizado o no (1/0)

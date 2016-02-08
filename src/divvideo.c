@@ -126,9 +126,10 @@ void set_dac(byte *_dac) {
           colors[i].b=_dac[b+2]*4;
           b+=3;
     }
-	if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
-		printf("Failed to set palette :(\n"); 
-	
+	if(vga->format->BitsPerPixel==8) {
+		if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+			printf("Failed to set palette :(\n"); 
+	}	
 	retrazo();
 }
 
@@ -167,6 +168,8 @@ SDL_Surface* copy_surface(SDL_Surface* source)
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
  Uint32 colorkey=0;
+ int vn=0;
+ 
   printf("full screen: %d\n",fsmode);
 #ifdef GCW_SOFTSTRETCH
 	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
@@ -184,15 +187,15 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 #else
 
 	if(fsmode==0)
-		vga=SDL_SetVideoMode(vga_an, vga_al, 32, SDL_SWSURFACE);
+		vga=SDL_SetVideoMode(vga_an, vga_al, 32, SDL_HWSURFACE);
 
 	else
-		vga=SDL_SetVideoMode(vga_an, vga_al, 32,  SDL_FULLSCREEN | SDL_SWSURFACE | SDL_DOUBLEBUF);
+		vga=SDL_SetVideoMode(vga_an, vga_al, 32,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
 #endif
-
+/*
 	if(copia_surface)
 		SDL_FreeSurface(copia_surface);
 
@@ -204,6 +207,42 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 
 	if(SDL_SetColorKey(copia_surface , SDL_SRCCOLORKEY , colorkey)==-1)
 		fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+	*/
+
+
+	if(vga!=NULL) {
+		if(tapiz_surface!=NULL) {
+			tempsurface = SDL_DisplayFormat(tapiz_surface);
+			if(tempsurface!=NULL) {
+				SDL_FreeSurface(tapiz_surface);
+				tapiz_surface=tempsurface;
+				printf("updated tapiz surface to %x\n",tapiz_surface);
+				tempsurface=NULL;
+			}
+		}
+		
+		if(mouse_surface!=NULL) {
+			tempsurface = SDL_DisplayFormatAlpha(mouse_surface);
+			if(tempsurface!=NULL) {
+				SDL_FreeSurface(mouse_surface);
+				mouse_surface=tempsurface;
+				printf("updated mouse surface to %x\n",mouse_surface);
+				tempsurface=NULL;
+			}
+		}	
+		for(vn=max_windows-1;vn>=0; vn--) {
+			if(ventana[vn].surfaceptr!=NULL) {
+				tempsurface=SDL_DisplayFormatAlpha(ventana[vn].surfaceptr);
+				if(tempsurface!=NULL) {
+					SDL_FreeSurface(ventana[vn].surfaceptr);
+					ventana[vn].surfaceptr=tempsurface;
+					tempsurface=NULL;
+				}
+
+			}
+			
+		}	
+	}
 	
 	modovesa=1;
 	
@@ -362,7 +401,8 @@ void volcadosdl(byte *p) {
 
 	byte *q = (byte *)vga->pixels;
 	uint32_t *q32 = (uint32_t *)vga->pixels;
-	
+
+#ifndef TTF	
 	if(0) {//volcado_parcial) {
 //printf("m: %d\n",m);
 
@@ -441,11 +481,14 @@ void volcadosdl(byte *p) {
 	}
 	
 //memset(copia,0,vga_an*vga_al);
+#else
 	
-	if(SDL_MUSTLOCK(vga))
-		SDL_UnlockSurface(vga);
 	
-	SDL_BlitSurface(copia_surface, NULL, vga, NULL);
+	if(tapiz_surface!=NULL);
+		SDL_BlitSurface(tapiz_surface, NULL, vga, NULL);
+
+//	if(copia_surface!=NULL);
+//		SDL_BlitSurface(copia_surface, NULL, vga, NULL);
 
 
 	for(vn=max_windows-1;vn>=0; vn--) {
@@ -456,21 +499,38 @@ void volcadosdl(byte *p) {
 			trc.h=ventana[vn].al;
 			
 //			SDL_SetColorKey(ventana[vn].surfaceptr, SDL_SRCCOLORKEY,0);
-			if(ventana[vn].exploding==0)
-				SDL_BlitSurface(ventana[vn].surfaceptr,NULL,vga,&trc);
+			if(ventana[vn].exploding==1)
+				SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA,explode_num*25);
+
+			SDL_BlitSurface(ventana[vn].surfaceptr,NULL,vga,&trc);
 			
+			SDL_SetAlpha(ventana[vn].surfaceptr,0,0);
+
 		}
 		
 	}
 
+	trc.x=mouse_x;
+	trc.y=mouse_y;
+	trc.w=mouse_surface->w;
+	trc.h=mouse_surface->h;
+	
+	SDL_BlitSurface(mouse_surface,NULL,vga,&trc);
+
 //printf("window zero is %d\n",v.tipo);
+#endif
 		
 	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 
+	if(SDL_MUSTLOCK(vga))
+		SDL_UnlockSurface(vga);
+
 	SDL_Flip(vga);
 
-	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
-	SDL_FillRect(copia_surface, NULL, colorkey);
+//	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
+//	SDL_FillRect(copia_surface, NULL, colorkey);
+	SDL_FillRect(vga, NULL, 0);
+
 	memset(oldp,vga_an*vga_al,0);
 
 }

@@ -803,7 +803,7 @@ void RefPalAndDlg(int no_tocar_mapas,int guardar_original)
     ptr=v.ptr;
     if (ventana[n].primer_plano==2) { swap(v.an,v._an); swap(v.al,v._al); }
     an=v.an; al=v.al; memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-    SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 255,0,255));
+    SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
       
     wrectangulo(ptr,an,al,c2,0,0,an,al);
     wput(ptr,an,al,an-9,2,35);
@@ -1319,6 +1319,7 @@ extern byte tapiz_gama[128];
 
 byte ctapiz[256];
 //byte col_tapiz[65];
+extern SDL_Surface *vga;
 
 void preparar_tapiz(void) {
   FILE * f;
@@ -1330,6 +1331,32 @@ void preparar_tapiz(void) {
   byte old_dac4[768];
   int n;
 
+
+#ifdef TTF
+
+if(tapiz_surface!=NULL)
+	SDL_FreeSurface(tapiz_surface);
+
+tapiz_surface = NULL;
+
+tempsurface = IMG_Load(Setupfile.Desktop_Image);
+if(tempsurface!=NULL) {
+	if(vga!=NULL) {
+		tapiz_surface = SDL_DisplayFormat(tempsurface);
+		SDL_FreeSurface(tempsurface);
+	}
+	else {
+		tapiz_surface = tempsurface;
+	}
+	printf("loaded tapiz surface [%s]: %x %x\n",Setupfile.Desktop_Image, tempsurface, tapiz_surface);
+
+	tempsurface=NULL;
+	
+}
+
+return;
+
+#endif
   if ((f=fopen(Setupfile.Desktop_Image,"rb"))==NULL) return;
   fseek(f,0,SEEK_END); lon=ftell(f); fseek(f,0,SEEK_SET);
   if (tapiz!=NULL) { free(tapiz); tapiz=NULL; }
@@ -1360,7 +1387,7 @@ void preparar_tapiz(void) {
     case 1: descomprime_MAP(temp2,temp,0); break;
     case 2: descomprime_PCX(temp2,temp,0); break;
     case 3: descomprime_BMP(temp2,temp,0); break;
-    case 4: descomprime_JPG(temp2,temp,0,lon); break;
+//    case 4: descomprime_JPG(temp2,temp,0,lon); break;
   } swap(map_an,tap_an); swap(map_al,tap_al);
   cargar_paleta=n;
 

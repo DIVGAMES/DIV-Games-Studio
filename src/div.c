@@ -472,21 +472,21 @@ int main(int argc, char * argv[]) {
 		}
 	}
 
-	tipo[2].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
-	tipo[3].ext="*.* *.PAL *.FPG *.FNT *.MAP *.BMP *.PCX *.JPG *.JPE";
-	tipo[4].ext="*.FPG *.*";
-	tipo[5].ext="*.FNT *.*";
-	tipo[6].ext="*.IFS *.*";
-	tipo[7].ext="*.* *.WAV *.PCM";
-	tipo[8].ext="*.PRG *.*";
-	tipo[9].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
-	tipo[10].ext="*.PAL";
-	tipo[11].ext="*.WAV *.PCM";
-	tipo[12].ext="*.PRJ";
-	tipo[13].ext="*.*";
-	tipo[14].ext="*.MAP *.PCX *.BMP";
-	tipo[15].ext="*.WLD *.*";
-	tipo[16].ext="*.* *.MOD *.S3M *.XM";
+	tipo[2].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE *.PNG *.GIF *.TGA *.TIF"; // Maps browser
+	tipo[3].ext="*.* *.PAL *.FPG *.FNT *.MAP *.BMP *.PCX *.JPG *.PNG *.GIF *.TGA *.TIF"; // Palette Browser
+	tipo[4].ext="*.FPG *.*"; // FPG FILES
+	tipo[5].ext="*.FNT *.*"; // FNT FILES
+	tipo[6].ext="*.IFS *.*"; // IFS Font templates
+	tipo[7].ext="*.* *.7 *.WAV *.PCM *.MP3 *.OGG *.FLAC"; // Audio files
+	tipo[8].ext="*.PRG *.*"; // Program files
+	tipo[9].ext="*.* *.9 *.MAP *.PCX *.BMP *.JPG *.JPE *.PNG *.GIF *.TGA *.TIF";
+	tipo[10].ext="*.PAL"; // Save Palettes
+	tipo[11].ext="*.WAV *.PCM"; // Save Audio
+	tipo[12].ext="*.PRJ"; // Save Project
+	tipo[13].ext="*.* *.13"; 
+	tipo[14].ext="*.MAP *.PCX *.BMP"; // Save image
+	tipo[15].ext="*.WLD *.*"; // 3D Map files
+	tipo[16].ext="*.* *.16 *.MOD *.S3M *.XM *.MID"; // Tracker modules
 
 	for (n=0;n<24;n++) 
 		tipo[n].defecto=0; tipo[n].inicial=0; 
@@ -2392,7 +2392,7 @@ void mueve_ventana_completa(void) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Actualiza una caja de la pantalla
+//      updates a screen box (region)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void actualiza_caja(int x, int y, int an, int al) {
@@ -2712,11 +2712,16 @@ if(_ptr==NULL)
 	trc.w=ventana[n].an;
 	trc.h=ventana[n].al;
 
-if(ventana[n].surfaceptr!=NULL)
-//&& vn<max_windows)
-	SDL_BlitSurface(ventana[n].surfaceptr,NULL,copia_surface,&trc);
+#ifdef TTF
+if(0) {
+	if(ventana[n].surfaceptr!=NULL)
+		SDL_BlitSurface(ventana[n].surfaceptr,NULL,copia_surface,&trc);
 
-  volcado_parcial(x,y,an,al);
+}
+#endif
+
+	volcado_parcial(x,y,an,al);
+
 
 }
 
@@ -2899,6 +2904,7 @@ void nueva_ventana(voidReturnType init_handler) {
 	int n,m,om,x,y,an,al;
 	int vtipo;
 	uint32_t colorkey=0;
+	v.exploding=0;
 	
 	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
 	on the endianness (byte order) of the machine */
@@ -3020,7 +3026,7 @@ void nueva_ventana(voidReturnType init_handler) {
 
 		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
 
-		SDL_FillRect(v.surfaceptr, NULL, colorkey);
+		SDL_FillRect(v.surfaceptr, NULL, 0);
 
 		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
 			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
@@ -3066,7 +3072,7 @@ void nueva_ventana(voidReturnType init_handler) {
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 255,0,255));
+      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
       //colors[c0].b,colors[c0].g,colors[c0].r));
       
       wrectangulo(ptr,an,al,c2,0,0,an,al);
@@ -3111,9 +3117,8 @@ void nueva_ventana(voidReturnType init_handler) {
         if (exploding_windows) {
 			v.exploding=1;
 			explode(x,y,an,al);
-		}
-		v.exploding=0;
-		
+			v.exploding=0;
+		}		
         wvolcado(copia,vga_an,vga_al,ptr,x,y,an,al,0);
         volcado_parcial(x,y,an,al);
       }
@@ -3176,6 +3181,7 @@ void explode(int x,int y,int an,int al) {
     volcado_parcial(xx,yy,1,aal);
     volcado_parcial(xx,yy+aal-1,aan,1);
     volcado_parcial(xx+aan-1,yy,1,aal);
+    explode_num=n;
     retrazo();
     volcado_copia();
     if (modo<100) {
@@ -3332,7 +3338,7 @@ uint32_t colorkey=0;
 		
 		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
 
-		SDL_FillRect(v.surfaceptr, NULL, colorkey);
+		SDL_FillRect(v.surfaceptr, NULL, 0);
 
 		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
 			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
@@ -3366,7 +3372,7 @@ uint32_t colorkey=0;
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF ));
+      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
       
       wrectangulo(ptr,an,al,c2,0,0,an,al);
 
@@ -3388,8 +3394,11 @@ uint32_t colorkey=0;
 
       do { read_mouse(); } while((mouse_b&1) || key(_ESC));
 
-      if (exploding_windows) explode(x,y,an,al);
-
+      if (exploding_windows) {
+		  v.exploding=1;
+		  explode(x,y,an,al);
+			v.exploding=0;
+		}
       wvolcado(copia,vga_an,vga_al,ptr,x,y,an,al,0);
       volcado_parcial(x,y,an,al);
       do { read_mouse(); } while(mouse_b&1);
@@ -3412,7 +3421,7 @@ void refrescadialogo(void)
 	byte * ptr=v.ptr;
 	int an=v.an,al=v.al;
 	memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF ));
+	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
       
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
@@ -3572,6 +3581,8 @@ void inicializacion(void) {
 
 #ifdef TTF
 TTF_Init();
+IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF);
+
 //sysfont = loadfont("system/KenVectorFutureThin.ttf",(big==1)?12:6);
 sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
 //sysfont = loadfont("/usr/share/fuze/assets/fuzebasic/zx.ttf",(big==1)?30:15);
@@ -3581,9 +3592,16 @@ sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
 
 //printf("Loaded TTF: %x\n",sysfont);
 //font_an = (big==1)?24:12;
-//font_al = TTF_FontHeight(sysfont);
+font_al = TTF_FontHeight(sysfont);
+
+tapiz_surface=NULL;
+mouse_surface=NULL;
+tempsurface=NULL;
+
 
 #endif
+
+mouse_surface = IMG_Load("system/cursor.png");
 
 
 
@@ -3858,6 +3876,7 @@ void _fwrite(char * s, byte * buf, int n) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void error(int n) {
+	printf("WHOOPS!\n");
     finalizacion();
     printf((char *)texto[14],n);
     printf("\n");

@@ -981,6 +981,8 @@ return(1);
 
 int es_JPG(byte *buffer, int img_filesize)
 {
+	return 0;
+	
 #ifdef JPGLIB
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;
@@ -1010,6 +1012,7 @@ return (0);
 
 int descomprime_JPG(byte *buffer, byte *mapa, int vent, int img_filesize)
 {
+	
 #ifdef JPGLIB
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr         my_err_mgr;

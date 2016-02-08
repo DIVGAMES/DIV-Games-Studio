@@ -158,7 +158,7 @@ void Vid_Setup0(void) {
 //  Seleccion del tapiz de fondo
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-char Tap_name[14];
+char Tap_name[_MAX_PATH];
 char Tap_pathname[_MAX_PATH];
 int Tap_mosaico;
 int Tap_gama;
@@ -173,10 +173,17 @@ void Get_Tapiz() {
   v_modo=1; v_tipo=9;
   v_texto=(char *)texto[182];
   dialogo((voidReturnType)browser0);
-
+  
   strcpy(full,tipo[v_tipo].path);
   if (full[strlen(full)-1]!='/') strcat(full,"/");
   strcat(full,input);
+
+
+#ifdef TTF
+	strcpy(Tap_name,input);
+	strcpy(Tap_pathname,full);
+return;
+#endif
 
   if (v_terminado) if (v_existe) {
     if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
