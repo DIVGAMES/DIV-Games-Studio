@@ -693,6 +693,9 @@ void Cfg_Setup3(void) {
     auto_save_session=setup_switches[2];
     coloreador=setup_switches[3];
     paint_cursor=old_paint_cursor;
+  } else {
+	  c1=color_cfg[0];
+	  preparar_tapiz();
   }
 }
 
@@ -932,11 +935,43 @@ byte *x_mapa_tapiz, *x_tapiz=NULL;
 
 void tapiz_thumb(void)
 {
-  int x, y, an, al, thumb_pos;
-  float coefredx, coefredy, a, b;
-  byte *ptr;
+	int x, y, an, al, thumb_pos;
 
-  preparar_tapiz_temp();
+	float coefredx, coefredy, a, b;
+	byte *ptr;
+
+
+	SDL_Rect rc;
+	an=128*big2; al=88*big2;
+
+	preparar_tapiz_temp();
+
+
+
+#ifdef TTF
+
+
+	tempsurface = zoomSurface(tapiz_temp_surface, (float)an/vga_an, (float)al/vga_al,0);
+
+	printf("creat wallpaper thumb %f %f \n",an/vga_an, al/vga_al);
+
+	thumb_pos=5*big2+(42*big2)*v.an;
+
+	rc.x=5*big2;
+	rc.y=(42*big2);
+	rc.w=an;
+	rc.h=al;
+
+	SDL_BlitSurface(tempsurface,NULL, v.surfaceptr, &rc);
+	SDL_FreeSurface(tempsurface);
+	tempsurface=NULL;
+
+
+
+
+#else
+
+
   if(x_tapiz==NULL) return;
 
   // Crea la reducci¢n del tapiz
@@ -944,7 +979,8 @@ void tapiz_thumb(void)
   coefredx=x_tapiz_an/((float)128*(float)big2);
   coefredy=x_tapiz_al/((float) 88*(float)big2);
 
-  an=128*big2; al=88*big2;
+
+	
 
   if ((ptr=(byte *)malloc(an*al))==NULL) return;
 
@@ -977,9 +1013,15 @@ void tapiz_thumb(void)
     }
   }
   free(ptr);
+  
+#endif
+  
 }
 
 byte x_ctapiz[256];
+
+extern SDL_Surface *vga;
+
 
 void preparar_tapiz_temp(void) {
   FILE * f;
@@ -989,6 +1031,57 @@ void preparar_tapiz_temp(void) {
   byte pal[768];
   byte old_dac[768];
   byte old_dac4[768];
+
+#ifdef TTF
+	SDL_Rect rc;
+	
+	if(tapiz_temp_surface!=NULL)
+		SDL_FreeSurface(tapiz_temp_surface);
+		
+	tapiz_temp_surface = IMG_Load(Tap_pathname);
+
+	if(tapiz_temp_surface!=NULL) {
+
+		if(Tap_mosaico) {
+			tempsurface = SDL_DisplayFormat(vga);
+			SDL_FillRect(tempsurface,NULL,0);
+			x=0;
+			y=0;
+			while(x<vga_an) {
+				y=0;
+				
+				while(y<vga_al) {
+					rc.x=x;
+					rc.y=y;
+					rc.w=tapiz_temp_surface->w;
+					rc.h=tapiz_temp_surface->w;
+					SDL_BlitSurface(tapiz_temp_surface,NULL,tempsurface,&rc);
+					y+=rc.h;
+				}
+				x+=rc.w;
+			}
+
+		
+
+		} else {
+			
+			tempsurface = zoomSurface(tapiz_temp_surface,(float)vga_an/tapiz_temp_surface->w,(float)vga_al/tapiz_temp_surface->h,1);
+			
+		}
+		SDL_FreeSurface(tapiz_temp_surface);
+		
+		tapiz_temp_surface = SDL_DisplayFormat(tempsurface);
+		
+		SDL_FreeSurface(tempsurface);
+		
+	} else {
+		v_texto=(char *)texto[46]; dialogo((voidReturnType)err0);
+		return;
+	}
+
+#else
+
+
 
   // *** OJO ***
   // Mosaico/rescalado
@@ -1061,10 +1154,10 @@ void preparar_tapiz_temp(void) {
     do *p=x_ctapiz[*p]; while (++p<q);
   }
 
-  if (Tap_mosaico) {
-    if ((p=(byte *)malloc(vga_an*vga_al))==NULL) { free(temp); x_tapiz=NULL; return; }
-    x_tapiz_an=vga_an; x_tapiz_al=vga_al; x_mapa_tapiz=x_tapiz=p;
+  if ((p=(byte *)malloc(vga_an*vga_al))==NULL) { free(temp); x_tapiz=NULL; return; }
 
+  if (Tap_mosaico) {
+    x_tapiz_an=vga_an; x_tapiz_al=vga_al; x_mapa_tapiz=x_tapiz=p;
     // Hace el mosaico
 
     for(y=0; y<vga_al; y++)
@@ -1079,8 +1172,7 @@ void preparar_tapiz_temp(void) {
     }
 
     free(temp);
-  } else {
-    if ((p=(byte *)malloc(vga_an*vga_al))==NULL) { free(temp); x_tapiz=NULL; return; }
+  } else {    
     rescalar(temp,an,al,p,vga_an,vga_al);
     free(temp);
     x_tapiz_an=vga_an; x_tapiz_al=vga_al; x_mapa_tapiz=x_tapiz=p;
@@ -1088,6 +1180,8 @@ void preparar_tapiz_temp(void) {
 
   memcpy(dac,old_dac,768);
   memcpy(dac4,old_dac4,768);
+
+#endif
 
 }
 

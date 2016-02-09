@@ -119,7 +119,7 @@ extern int columna_error;   // Error column num
 //      Variables de ediciขn
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-// La ventana es de (an*font_an+12*big2) x (al*font_al+20*big2)
+// La ventana es de (an*editor_font_an+12*big2) x (al*editor_font_al+20*big2)
 
 char lin[long_line+4];  // Copia de la lกnea en ediciขn, para f_enter()
 
@@ -208,8 +208,8 @@ void programa2(void) {
 
   if (wmouse_x!=-1 && v.estado) {
     if ((mouse_b&1) && mouse_y>=v.y+18*big2 && mouse_x>=v.x+2*big2) {
-      n=v.prg->primera_linea+(mouse_y-(v.y+18*big2))/font_al;
-      m=v.prg->primera_columna+(mouse_x-(v.x+2*big2))/font_an;
+      n=v.prg->primera_linea+(mouse_y-(v.y+18*big2))/editor_font_al;
+      m=v.prg->primera_columna+(mouse_x-(v.x+2*big2))/editor_font_an;
       if (n>=v.prg->primera_linea && n<v.prg->primera_linea+v.prg->al &&
           m>=v.prg->primera_columna && m<v.prg->primera_columna+v.prg->an) {
         if (!(old_mouse_b&1)) {
@@ -350,8 +350,8 @@ void programa0(void){
 
   v.tipo=102;
 
-  v_prg->an=(vga_an/2-1-12*big2)/font_an;
-  v_prg->al=(vga_al/2-32*big2-1)/font_al;
+  v_prg->an=(vga_an/2-1-12*big2)/editor_font_an;
+  v_prg->al=(vga_al/2-32*big2-1)/editor_font_al;
 
   v_prg->linea=1;
   v_prg->columna=1;
@@ -362,8 +362,8 @@ void programa0(void){
   v_prg->lptr=v_prg->buffer;
   v_prg->vptr=v_prg->buffer;
 
-  v.an=(4+8)*big2+font_an*v_prg->an;
-  v.al=(12+16)*big2+font_al*v_prg->al;
+  v.an=(4+8)*big2+editor_font_an*v_prg->an;
+  v.al=(12+16)*big2+editor_font_al*v_prg->al;
 
   if (big) {
     if (v.an&1) v.an++;
@@ -1560,6 +1560,14 @@ void _completo(void) {
   int x,col0,col1;
   int an,al,_an=0,_al=0;
   int i;
+  
+  SDL_Rect rc;
+  
+  rc.x=4;
+  rc.y=35;
+  rc.w=v.an-30;
+  rc.h=v.al-50;
+  
 
   if (_csource!=(char *)v.prg->vptr) {
     csource=v.prg->buffer; iscoment=0;
@@ -1574,7 +1582,7 @@ void _completo(void) {
   if (v.al<v._al) { _an=v.an; _al=v.al; v.an=v._an; v.al=v._al; }
   an=v.an/big2; al=v.al/big2;
 	
-	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
+	SDL_FillRect(v.surfaceptr,&rc,SDL_MapRGB( v.surfaceptr->format, colors[ce01].r, colors[ce01].g, colors[ce01].b));
 
   if (kbloque && kprg==v.prg) {
     if (kcol1>linelen(kini)) kcol1=linelen(kini)+1;
@@ -1596,7 +1604,7 @@ void _completo(void) {
   *(v.prg->buffer+v.prg->file_lon)=cr;
 
   do {
-    old_di=di; n=font_al;
+    old_di=di; n=editor_font_al;
     if (kbloque==0 || kprg!=v.prg || si<kini || si>kfin) { // Fuera del bloque
       if (si>v.prg->buffer+v.prg->file_lon)
         while (n--) { memset(di,ce01,v.an-12*big2); di+=v.an; }
@@ -1611,18 +1619,18 @@ void _completo(void) {
       x=v.prg->primera_columna;
       ancho=v.prg->an;
       while (ancho--) {
-        n=font_al;
+        n=editor_font_al;
         if (x>=col0 && x<=col1) {
-          while (n--) { memset(di,ce4,font_an); di+=v.an; }
+          while (n--) { memset(di,ce4,editor_font_an); di+=v.an; }
         } else {
-          while (n--) { memset(di,ce1,font_an); di+=v.an; }
-        } di-=v.an*font_al-font_an; x++;
+          while (n--) { memset(di,ce1,editor_font_an); di+=v.an; }
+        } di-=v.an*editor_font_al-editor_font_an; x++;
       }
     } di=old_di;
 
-    if (alto==1 && big && (font_al*v_prg->al&1)) { // Fix ventana impar
-      if (*di==ce01) memset(di+v.an*font_al,ce01,v.an-24);
-      else memset(di+v.an*font_al,ce1,v.an-24);
+    if (alto==1 && big && (editor_font_al*v_prg->al&1)) { // Fix ventana impar
+      if (*di==ce01) memset(di+v.an*editor_font_al,ce01,v.an-24);
+      else memset(di+v.an*editor_font_al,ce1,v.an-24);
     }
 
     ancho=v.prg->primera_columna;
@@ -1639,7 +1647,7 @@ void _completo(void) {
       ancho=v.prg->an;
       while (*si!=cr && si<v.prg->buffer+v.prg->file_lon && ancho--) {
         put_char3(di,v.an,*si,*di==ce4,colin[i++]);
-        di+=font_an; si++;
+        di+=editor_font_an; si++;
       }
 
     } else {
@@ -1656,14 +1664,14 @@ void _completo(void) {
       ancho=v.prg->an;
       while (*si && ancho--) {
         put_char3(di,v.an,*si,*di==ce4,colin[i++]);
-        di+=font_an; si++;
+        di+=editor_font_an; si++;
       } ancho=-1; si=s;
     }
 
     while (*si!=cr && si<v.prg->buffer+v.prg->file_lon) si++;
     if (si<v.prg->buffer+v.prg->file_lon) si+=2; else si++;
 
-    di=old_di+v.an*font_al;
+    di=old_di+v.an*editor_font_al;
 
   } while (--alto);
 
@@ -1721,10 +1729,10 @@ void _parcial(void) {
 
   barra_info();
 
-  old_di=di=v.ptr+(v.an*18+2)*big2+linea*v.an*font_al;
+  old_di=di=v.ptr+(v.an*18+2)*big2+linea*v.an*editor_font_al;
   si=v.prg->lptr;
 
-  n=font_al;
+  n=editor_font_al;
   if (kbloque==0 || kprg!=v.prg || si<kini || si>kfin) { // Fuera del bloque
     while (n--) { memset(di,ce1,v.an-12*big2); di+=v.an; }
   } else if (si>kini && si<kfin) { // Dentro del bloque
@@ -1737,12 +1745,12 @@ void _parcial(void) {
     x=v.prg->primera_columna;
     ancho=v.prg->an;
     while (ancho--) {
-      n=font_al;
+      n=editor_font_al;
       if (x>=col0 && x<=col1) {
-        while (n--) { memset(di,ce4,font_an); di+=v.an; }
+        while (n--) { memset(di,ce4,editor_font_an); di+=v.an; }
       } else {
-        while (n--) { memset(di,ce1,font_an); di+=v.an; }
-      } di-=v.an*font_al-font_an; x++;
+        while (n--) { memset(di,ce1,editor_font_an); di+=v.an; }
+      } di-=v.an*editor_font_al-editor_font_an; x++;
     }
   }
 
@@ -1758,7 +1766,7 @@ void _parcial(void) {
   while (*si && ancho--) {
     put_char3(di,v.an,*si,*di==ce4,colin[i++]);
 
-    di+=font_an; si++;
+    di+=editor_font_an; si++;
   }
 
   if ((kbloque&1) && kprg==v.prg) { kini=_kini; kcol1=_kcol1; }
@@ -1838,19 +1846,8 @@ void resize_surface(void) {
 
 	SDL_FreeSurface(v.surfaceptr);
 	v.surfaceptr=NULL;
-
-	tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, v.an, v.al, 32,
-		rmask, gmask, bmask, amask);
-
-	v.surfaceptr=SDL_DisplayFormat(tempsurface);
-
-	colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
-
-	SDL_FillRect(v.surfaceptr, NULL, 0);
-
-	if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY | SDL_RLEACCEL , colorkey)==-1)
-	fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
-
+	
+	window_surface(v.an,v.al,0);
 	
 }
 
@@ -1871,22 +1868,22 @@ void resize(void) {
   do {
 
     read_mouse();
-    mx=_mx+((mouse_x-_mx)/font_an)*font_an;
-    my=_my+((mouse_y-_my)/font_al)*font_al;
+    mx=_mx+((mouse_x-_mx)/editor_font_an)*editor_font_an;
+    my=_my+((mouse_y-_my)/editor_font_al)*editor_font_al;
 
     old_an=v.prg->an;
     old_al=v.prg->al;
-    v.prg->an=_an+(mouse_x-_mx)/font_an;
-    v.prg->al=_al+(mouse_y-_my)/font_al;
-    if (v.prg->an<4*big2) { v.prg->an=4*big2; mx=_mx+(v.prg->an-_an)*font_an; }
-    if (v.prg->al<2*big2) { v.prg->al=2*big2; my=_my+(v.prg->al-_al)*font_al; }
-    if (v.prg->an>80*2) { v.prg->an=80*2; mx=_mx+(v.prg->an-_an)*font_an; }
-    if (v.prg->al>50*2) { v.prg->al=50*2; my=_my+(v.prg->al-_al)*font_al; }
+    v.prg->an=_an+(mouse_x-_mx)/editor_font_an;
+    v.prg->al=_al+(mouse_y-_my)/editor_font_al;
+    if (v.prg->an<4*big2) { v.prg->an=4*big2; mx=_mx+(v.prg->an-_an)*editor_font_an; }
+    if (v.prg->al<2*big2) { v.prg->al=2*big2; my=_my+(v.prg->al-_al)*editor_font_al; }
+    if (v.prg->an>80*2) { v.prg->an=80*2; mx=_mx+(v.prg->an-_an)*editor_font_an; }
+    if (v.prg->al>50*2) { v.prg->al=50*2; my=_my+(v.prg->al-_al)*editor_font_al; }
 
     an=v.an; al=v.al;
 
-    v.an=(4+8)*big2+font_an*v.prg->an;
-    v.al=(12+16)*big2+font_al*v.prg->al;
+    v.an=(4+8)*big2+editor_font_an*v.prg->an;
+    v.al=(12+16)*big2+editor_font_al*v.prg->al;
 
     if (big) {
       if (v.an&1) v.an++;
@@ -1950,8 +1947,8 @@ void maximizar(void) {
   int _x,_y,_an,_al,_an2,_al2;
   if (big) { an/=2; al/=2; }
 
-  _an=(vga_an-12*big2)/font_an; // Calcula tamaคo (en chr) maximizada
-  _al=(vga_al-28*big2)/font_al;
+  _an=(vga_an-12*big2)/editor_font_an; // Calcula tamaคo (en chr) maximizada
+  _al=(vga_al-28*big2)/editor_font_al;
   if (_an>100) _an=100;
   if (_al>100) _al=100;
 
@@ -1965,8 +1962,8 @@ void maximizar(void) {
     v.prg->an=_an; v.prg->al=_al;
 
     _an2=v.an; _al2=v.al;
-    v.an=(4+8)*big2+font_an*v.prg->an;
-    v.al=(12+16)*big2+font_al*v.prg->al;
+    v.an=(4+8)*big2+editor_font_an*v.prg->an;
+    v.al=(12+16)*big2+editor_font_al*v.prg->al;
 
     if (big) {
       if (v.an&1) v.an++;
@@ -2001,8 +1998,8 @@ void maximizar(void) {
     v.prg->an=v.prg->old_an;
     v.prg->al=v.prg->old_al;
 
-    v.an=(4+8)*big2+font_an*v.prg->an;
-    v.al=(12+16)*big2+font_al*v.prg->al;
+    v.an=(4+8)*big2+editor_font_an*v.prg->an;
+    v.al=(12+16)*big2+editor_font_al*v.prg->al;
 
     if (big) {
       if (v.an&1) v.an++;
@@ -2099,25 +2096,25 @@ void text_cursor(void) {
   int x,y,alto,block;
   byte *old_di,*di,*si,ch;
 
-  x=(v.prg->columna-v.prg->primera_columna)*font_an;
-  y=(v.prg->linea-v.prg->primera_linea)*font_al;
+  x=(v.prg->columna-v.prg->primera_columna)*editor_font_an;
+  y=(v.prg->linea-v.prg->primera_linea)*editor_font_al;
   old_di=v.ptr+(v.an*18+2)*big2;
   old_di+=x+y*v.an;
 
   if (modo_cursor) {
-    alto=font_al; di=old_di;
+    alto=editor_font_al; di=old_di;
   } else {
-    alto=font_al/2; di=old_di+v.an*(font_al-alto);
+    alto=editor_font_al/2; di=old_di+v.an*(editor_font_al-alto);
   }
 
   block=in_block();
 
   if (*system_clock&4) {
-    if (block) do { memset(di,ce1,font_an); di+=v.an; } while (--alto);
-    else do { memset(di,c_y,font_an); di+=v.an; } while (--alto);
+    if (block) do { memset(di,ce1,editor_font_an); di+=v.an; } while (--alto);
+    else do { memset(di,c_y,editor_font_an); di+=v.an; } while (--alto);
   } else {
-    if (block) do { memset(di,ce4,font_an); di+=v.an; } while (--alto);
-    else do { memset(di,ce1,font_an); di+=v.an; } while (--alto);
+    if (block) do { memset(di,ce4,editor_font_an); di+=v.an; } while (--alto);
+    else do { memset(di,ce1,editor_font_an); di+=v.an; } while (--alto);
     si=(byte *)v.prg->l;
     y=v.prg->columna;
     x=0; while (--y && si[x]) {
@@ -2132,13 +2129,13 @@ void error_cursor2(void) {
   int x,y,alto;
   byte *old_di,*di,*si,ch;
 
-  x=(v.prg->columna-v.prg->primera_columna)*font_an;
-  y=(v.prg->linea-v.prg->primera_linea)*font_al;
+  x=(v.prg->columna-v.prg->primera_columna)*editor_font_an;
+  y=(v.prg->linea-v.prg->primera_linea)*editor_font_al;
   old_di=v.ptr+(v.an*18+2)*big2;
   old_di+=x+y*v.an;
 
-  alto=font_al; di=old_di;
-  do { memset(di,c_r_low,font_an); di+=v.an; } while (--alto);
+  alto=editor_font_al; di=old_di;
+  do { memset(di,c_r_low,editor_font_an); di+=v.an; } while (--alto);
 
   si=(byte *)v.prg->l;
   y=v.prg->columna;
@@ -2147,13 +2144,13 @@ void error_cursor2(void) {
   put_char2(old_di,v.an,ch,c4);
 
   if (modo_cursor) {
-    alto=font_al; di=old_di;
+    alto=editor_font_al; di=old_di;
   } else {
-    alto=font_al/2; di=old_di+v.an*(font_al-alto);
+    alto=editor_font_al/2; di=old_di+v.an*(editor_font_al-alto);
   }
 
   if (*system_clock&4) {
-    do { memset(di,c_y,font_an); di+=v.an; } while (--alto);
+    do { memset(di,c_y,editor_font_an); di+=v.an; } while (--alto);
   }
 }
 
@@ -2161,13 +2158,13 @@ void error_cursor(void) {
   int x,y,alto;
   byte *old_di,*di,*si,ch;
 
-  x=(v.prg->columna-v.prg->primera_columna)*font_an;
-  y=(v.prg->linea-v.prg->primera_linea)*font_al;
+  x=(v.prg->columna-v.prg->primera_columna)*editor_font_an;
+  y=(v.prg->linea-v.prg->primera_linea)*editor_font_al;
   old_di=v.ptr+(v.an*18+2)*big2;
   old_di+=x+y*v.an;
 
-  alto=font_al; di=old_di;
-  do { memset(di,c_r_low,font_an); di+=v.an; } while (--alto);
+  alto=editor_font_al; di=old_di;
+  do { memset(di,c_r_low,editor_font_an); di+=v.an; } while (--alto);
 
   si=(byte *)v.prg->l;
   y=v.prg->columna;
@@ -2180,17 +2177,17 @@ void delete_text_cursor(void) {
   int x,y,alto,block;
   byte *old_di,*di,*si,ch;
 
-  x=(v.prg->columna-v.prg->primera_columna)*font_an;
-  y=(v.prg->linea-v.prg->primera_linea)*font_al;
+  x=(v.prg->columna-v.prg->primera_columna)*editor_font_an;
+  y=(v.prg->linea-v.prg->primera_linea)*editor_font_al;
   di=v.ptr+(v.an*18+2)*big2;
   di+=x+y*v.an;
   old_di=di;
-  alto=font_al;
+  alto=editor_font_al;
 
   block=in_block();
 
-  if (block) do { memset(di,ce4,font_an); di+=v.an; } while (--alto);
-  else do { memset(di,ce1,font_an); di+=v.an; } while (--alto);
+  if (block) do { memset(di,ce4,editor_font_an); di+=v.an; } while (--alto);
+  else do { memset(di,ce1,editor_font_an); di+=v.an; } while (--alto);
 
   si=(byte *)v.prg->l;
   y=v.prg->columna;
@@ -2210,23 +2207,23 @@ void put_char(byte * ptr, int an, byte c,int block) {
   byte *si,color;
 
   si=font+c*char_size;
-printf("%c",c);
+//printf("%c",c);
 
   if (block) {
 
-    color=ce1; n=font_al; do {
-      m=font_an; do {
+    color=ce1; n=editor_font_al; do {
+      m=editor_font_an; do {
         if (*si) *ptr=color;
         si++; ptr++;
       } while (--m);
-      ptr+=an-font_an;
+      ptr+=an-editor_font_an;
     } while (--n);
 
   } else {
 //    if (iscoment>0) color=ce2; else color=ce4;
     color=ce4;
-    n=font_al;
-    switch(font_an) {
+    n=editor_font_al;
+    switch(editor_font_an) {
       case 6:
         do {
           if (*(si+0)) *(ptr+0)=color;
@@ -2268,30 +2265,36 @@ printf("%c",c);
     }
 /*
     do {
-      m=font_an; do {
+      m=editor_font_an; do {
         if (*si) *ptr=color;
         si++; ptr++;
       } while (--m);
-      ptr+=an-font_an;
+      ptr+=an-editor_font_an;
     } while (--n);
 */
   }
 }
 
 void put_char2(byte * ptr, int an, byte c,byte color) {
-  int n,m;
-  byte *si;
+	int n,m;
+	byte *si;
 
-printf("%c",c);
-  si=font+c*char_size;
+	si=font+c*char_size;
 
-  n=font_al; do {
-    m=font_an; do {
-      if (*si) *ptr=color;
-      si++; ptr++;
-    } while (--m);
-    ptr+=an-font_an;
-  } while (--n);
+	n=editor_font_al; do {
+		m=editor_font_an; 
+		do {
+			if (*si) 
+				*ptr=color;
+			
+			si++; 
+			ptr++;
+		
+		} while (--m);
+		
+		ptr+=an-editor_font_an;
+		
+	} while (--n);
 }
 
 void put_char3(byte * ptr, int an, byte c,int block, byte color) {
@@ -2343,9 +2346,9 @@ y=oi/an;//=50;//oi-(y*v.an);
 	SDL_Surface *tsurface=v.surfaceptr;
 	
 	if(tsurface!=NULL) {
-		SDL_Surface* surface = drawtext(sysfont, colors[color].g,colors[color].r,colors[color].b,0, 0,0,0, 0, (char *)s, solid);
-		rc.h=font_al;
-		rc.w=font_an;
+		SDL_Surface* surface = drawtext(editorfont, colors[color].r,colors[color].g,colors[color].b,0, 0,0,0, 0, (char *)s, solid);
+		rc.h=editor_font_al;
+		rc.w=editor_font_an;
 
 		SDL_BlitSurface(surface, NULL, tsurface,&rc);
 		SDL_FreeSurface(surface);
@@ -2356,17 +2359,17 @@ y=oi/an;//=50;//oi-(y*v.an);
 
   if (block) {
 
-    color=ce1; n=font_al; do {
-      m=font_an; do {
+    color=ce1; n=editor_font_al; do {
+      m=editor_font_an; do {
         if (*si) *ptr=color;
         si++; ptr++;
       } while (--m);
-      ptr+=an-font_an;
+      ptr+=an-editor_font_an;
     } while (--n);
 
   } else {
-    n=font_al;
-    switch(font_an) {
+    n=editor_font_al;
+    switch(editor_font_an) {
       case 6:
         do {
           if (*(si+0)) *(ptr+0)=color;

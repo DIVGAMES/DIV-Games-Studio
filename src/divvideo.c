@@ -159,7 +159,7 @@ SDL_Surface* copy_surface(SDL_Surface* source)
      * clear the SDL_SRCALPHA flag presumably set by IMG_Load. But why wouldn't
      * blitting work otherwise?
      */
-    SDL_SetAlpha(source, 0, 0);
+//    SDL_SetAlpha(source, 0, 0);
     
     SDL_BlitSurface(source, 0, target, 0);
     return target;
@@ -195,44 +195,55 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
 #endif
-/*
-	if(copia_surface)
-		SDL_FreeSurface(copia_surface);
+
+//	if(copia_surface)
+//		SDL_FreeSurface(copia_surface);
+//			SDL_SetAlpha(copia_surface,SDL_SRCALPHA | SDL_RLEACCEL,128);
 
 	copia_surface = SDL_DisplayFormat( vga );
 
-	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
+//	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
 
-	SDL_FillRect(copia_surface, NULL, colorkey);
+//	SDL_FillRect(copia_surface, NULL, 0);
 
-	if(SDL_SetColorKey(copia_surface , SDL_SRCCOLORKEY , colorkey)==-1)
-		fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
-	*/
+//	if(SDL_SetColorKey(copia_surface , SDL_SRCCOLORKEY , colorkey)==-1)
+//		fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+	
 
 
 	if(vga!=NULL) {
+		
 		if(tapiz_surface!=NULL) {
+//			SDL_SetAlpha(tapiz_surface,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
+
 			tempsurface = SDL_DisplayFormat(tapiz_surface);
+
 			if(tempsurface!=NULL) {
 				SDL_FreeSurface(tapiz_surface);
 				tapiz_surface=tempsurface;
-				printf("updated tapiz surface to %x\n",tapiz_surface);
+//				SDL_SetAlpha(tapiz_surface,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
+//				printf("updated tapiz surface to %x\n",tapiz_surface);
 				tempsurface=NULL;
 			}
 		}
 		
 		if(mouse_surface!=NULL) {
+
+//			SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,128);
 			tempsurface = SDL_DisplayFormatAlpha(mouse_surface);
 			if(tempsurface!=NULL) {
 				SDL_FreeSurface(mouse_surface);
 				mouse_surface=tempsurface;
-				printf("updated mouse surface to %x\n",mouse_surface);
+//				SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,128);
+//				printf("updated mouse surface to %x\n",mouse_surface);
 				tempsurface=NULL;
 			}
-		}	
+		}
+		
 		for(vn=max_windows-1;vn>=0; vn--) {
 			if(ventana[vn].surfaceptr!=NULL) {
-				tempsurface=SDL_DisplayFormatAlpha(ventana[vn].surfaceptr);
+//				SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
+				tempsurface=SDL_DisplayFormat(ventana[vn].surfaceptr);
 				if(tempsurface!=NULL) {
 					SDL_FreeSurface(ventana[vn].surfaceptr);
 					ventana[vn].surfaceptr=tempsurface;
@@ -240,8 +251,9 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 				}
 
 			}
-			
+		
 		}	
+
 	}
 	
 	modovesa=1;
@@ -403,17 +415,13 @@ void volcadosdl(byte *p) {
 	uint32_t *q32 = (uint32_t *)vga->pixels;
 
 #ifndef TTF	
-	if(0) {//volcado_parcial) {
-//printf("m: %d\n",m);
-
+	if(0) {
 		do { 
 			v2=q+m; 
 			y=0; 
 			p2=p++; 
-			//outpw(SC_INDEX,2+plano); 
 			plano<<=1;
 			while (y<vga_al) {
-//				printf("y: %d\n",y);
 				n=y*4;
 				
 				if (scan[n+1]) 
@@ -427,7 +435,6 @@ void volcadosdl(byte *p) {
 			}
 		} while (plano<=0x800);
 
-//			outpw(SC_INDEX,0xF02); outp(0x3CE,5); outp(0x3CF,(inp(0x3CF)&252)+1);
 		y=0; 
 		v2=(byte *)vga->pixels; 
 
@@ -439,7 +446,6 @@ void volcadosdl(byte *p) {
 				memcpyb(v2+scan[n+2],v2+scan[n+2]+m,scan[n+3]);
 			v2+=vga_an/4; y++;
 		} 
-		//outp(0x3CE,5); outp(0x3CF,inp(0x3CF)&252);
 
 	} else {
 		for (vy=0; vy<vga_al;vy++) {
@@ -476,20 +482,15 @@ void volcadosdl(byte *p) {
 			}
 		
 			q+=vga->pitch;
-			//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+
 		}
 	}
 	
-//memset(copia,0,vga_an*vga_al);
 #else
 	
 	
 	if(tapiz_surface!=NULL);
 		SDL_BlitSurface(tapiz_surface, NULL, vga, NULL);
-
-//	if(copia_surface!=NULL);
-//		SDL_BlitSurface(copia_surface, NULL, vga, NULL);
-
 
 	for(vn=max_windows-1;vn>=0; vn--) {
 		if(ventana[vn].surfaceptr!=NULL) {
@@ -498,13 +499,13 @@ void volcadosdl(byte *p) {
 			trc.w=ventana[vn].an;
 			trc.h=ventana[vn].al;
 			
-//			SDL_SetColorKey(ventana[vn].surfaceptr, SDL_SRCCOLORKEY,0);
-			if(ventana[vn].exploding==1)
-				SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA,explode_num*25);
-
+			SDL_SetColorKey(ventana[vn].surfaceptr, 0,0);
+			if(ventana[vn].exploding==1) {
+				SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*20);
+			}
 			SDL_BlitSurface(ventana[vn].surfaceptr,NULL,vga,&trc);
 			
-			SDL_SetAlpha(ventana[vn].surfaceptr,0,0);
+			SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL, 220);
 
 		}
 		
@@ -514,6 +515,8 @@ void volcadosdl(byte *p) {
 	trc.y=mouse_y;
 	trc.w=mouse_surface->w;
 	trc.h=mouse_surface->h;
+
+	SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,32);
 	
 	SDL_BlitSurface(mouse_surface,NULL,vga,&trc);
 
@@ -529,6 +532,7 @@ void volcadosdl(byte *p) {
 
 //	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
 //	SDL_FillRect(copia_surface, NULL, colorkey);
+
 	SDL_FillRect(vga, NULL, 0);
 
 	memset(oldp,vga_an*vga_al,0);
@@ -536,7 +540,6 @@ void volcadosdl(byte *p) {
 }
 
 void volcado(byte *p) {
-//printf("frame\n");
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 

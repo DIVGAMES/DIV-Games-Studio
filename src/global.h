@@ -140,6 +140,8 @@ void explode(int x,int y,int an,int al);
 void activar(void);
 void DaniDel(char *name);
 
+void window_surface(int an, int al, byte type);
+ 
 ///////////////////////////////////////////////////////////////////////////////
 //     Functions exported by DIVBASIC (divbasic.c)
 ///////////////////////////////////////////////////////////////////////////////
@@ -535,6 +537,8 @@ GLOBAL_DATA SDL_Surface *copia_surface;
 GLOBAL_DATA	SDL_Surface *tempsurface;
 GLOBAL_DATA SDL_Surface *mouse_surface;
 GLOBAL_DATA SDL_Surface *tapiz_surface; // background
+GLOBAL_DATA SDL_Surface *tapiz_temp_surface; // surface for preview
+
 GLOBAL_DATA uint32_t colorkey;
 GLOBAL_DATA uint32_t rmask, gmask, bmask, amask;
 GLOBAL_DATA byte explode_num;
@@ -609,12 +613,15 @@ GLOBAL_DATA byte * text_font; // Font est ndar, 7 puntos de alto, ancho proporci
 
 #ifdef TTF
 GLOBAL_DATA TTF_Font* sysfont;
+GLOBAL_DATA TTF_Font* editorfont;
+
 #endif
 
 GLOBAL_DATA SDL_Color colors[256];
 
 GLOBAL_DATA byte * font; // Font para el editor de programas / hipertexto
 GLOBAL_DATA int font_an,font_al; // Ancho y alto de los car cteres
+GLOBAL_DATA int editor_font_an,editor_font_al; // Ancho y alto de los car cteres
 GLOBAL_DATA int char_size; // font_an*font_al
 
 GLOBAL_DATA int actual_mouse; // Dibujo del rat¢n

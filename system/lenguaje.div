@@ -240,11 +240,10 @@
 177 "Mode:"
 
 178 "Appearance:"
-179 "Mosaic"
-
-181 "Spectrum"
+179 "Tiled"
+181 "Gradient"
 182 "Select background"
-183 "Edit spectrum"
+183 "Edit gradient"
 
 186 "New program..."
 187 "Substitute the program?"

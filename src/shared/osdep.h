@@ -74,7 +74,11 @@ typedef int int32_t;
 
 #ifdef IMAGE
 #include <SDL/SDL_image.h>
+#include "lib/sdlgfx/SDL_rotozoom.h"
+
 #endif
+
+
 
 #if __WORDSIZE == 32
 #define memptrsize int

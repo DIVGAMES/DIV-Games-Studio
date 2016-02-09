@@ -479,14 +479,18 @@ int main(int argc, char * argv[]) {
 	tipo[6].ext="*.IFS *.*"; // IFS Font templates
 	tipo[7].ext="*.* *.7 *.WAV *.PCM *.MP3 *.OGG *.FLAC"; // Audio files
 	tipo[8].ext="*.PRG *.*"; // Program files
-	tipo[9].ext="*.* *.9 *.MAP *.PCX *.BMP *.JPG *.JPE *.PNG *.GIF *.TGA *.TIF";
+	
+	tipo[9].ext="*.* *.JPG *.PNG *.BMP *.TIF"; // wallpaper files
+	
 	tipo[10].ext="*.PAL"; // Save Palettes
 	tipo[11].ext="*.WAV *.PCM"; // Save Audio
 	tipo[12].ext="*.PRJ"; // Save Project
-	tipo[13].ext="*.* *.13"; 
+
+	tipo[13].ext="*.* *.13"; // unknown 
+
 	tipo[14].ext="*.MAP *.PCX *.BMP"; // Save image
 	tipo[15].ext="*.WLD *.*"; // 3D Map files
-	tipo[16].ext="*.* *.16 *.MOD *.S3M *.XM *.MID"; // Tracker modules
+	tipo[16].ext="*.* *.MOD *.S3M *.XM *.MID"; // Tracker modules
 
 	for (n=0;n<24;n++) 
 		tipo[n].defecto=0; tipo[n].inicial=0; 
@@ -2105,7 +2109,7 @@ void maximiza_ventana(void) {
 
   do { read_mouse(); } while(mouse_b&1);
 
-  if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+//  if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
 
   se_ha_movido_desde(x,y,an,al);
 
@@ -2148,7 +2152,9 @@ void minimiza_ventana(void) {
   v.primer_plano=2;
 
   do { read_mouse(); } while(mouse_b&1);
-  if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+  
+  //if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+  
   se_ha_movido_desde(x,y,an,al);
 
 }
@@ -2161,7 +2167,13 @@ void cierra_ventana(void) {
   int x,y,an,al,n,m;
 
   if (v.tipo==102 && fin_ventana==1) { fin_ventana=2; return; }
-
+  
+  if (exploding_windows) {
+	  v.exploding=1;
+	  implode(x,y,an,al);
+	  v.exploding=0;
+  }
+  
   call((voidReturnType )v.close_handler);
   if (!cierra_rapido) {
     if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
@@ -2246,7 +2258,7 @@ void cierra_ventana(void) {
 
   scan_code=0; ascii=0; mouse_b=0;
 
-  if (exploding_windows) implode(x,y,an,al);
+
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -2895,6 +2907,41 @@ void volcado_copia(void) {
   }
 }
 
+void window_surface(int an, int al, byte type) {
+
+//	if(v.surfaceptr!=NULL)
+//		SDL_FreeSurface(v.surfaceptr
+	tempsurface=NULL;
+
+	if(type==1) 
+		v.surfaceptr = IMG_Load("/home/mike/div2015/system/red_panel.png");
+	else
+		v.surfaceptr = IMG_Load("/home/mike/div2015/system/blue_panel.png");
+
+//		SDL_SetAlpha(v.surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL ,128);
+
+	if(v.surfaceptr!=NULL) {
+		tempsurface=zoomSurface(v.surfaceptr, (float)((an*1.0f)/(v.surfaceptr->w*1.0f)), (float)((al*1.0f)/(v.surfaceptr->h*1.0f)),0);
+		SDL_FreeSurface(v.surfaceptr);
+	}
+
+	// if couldnt be found
+//	if(tempsurface==NULL) 
+//		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
+//											rmask, gmask, bmask, amask);
+
+
+//	SDL_SetAlpha(tempsurface,SDL_SRCALPHA | SDL_RLEACCEL ,128);
+
+	if(tempsurface!=NULL) {
+		v.surfaceptr=SDL_DisplayFormat(tempsurface);
+		SDL_SetAlpha(v.surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL ,255);
+	}
+	if(tempsurface!=NULL)
+		SDL_FreeSurface(tempsurface);
+                                   	
+}
+
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Create a new window
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -3018,21 +3065,7 @@ void nueva_ventana(voidReturnType init_handler) {
     if (!n) ptr=(byte *)malloc(an*al); else ptr=NULL;
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
-
-		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
-                                   rmask, gmask, bmask, amask);
-	
-		v.surfaceptr=SDL_DisplayFormat(tempsurface);
-
-		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
-
-		SDL_FillRect(v.surfaceptr, NULL, 0);
-
-		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
-			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
-
-		printf("new window surface ptr: %x\n",v.surfaceptr);
-		SDL_FreeSurface(tempsurface);
+		window_surface(an,al,0);
 		
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Pasa a segundo plano las ventanas que corresponda
@@ -3072,7 +3105,7 @@ void nueva_ventana(voidReturnType init_handler) {
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
+ //     SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
       //colors[c0].b,colors[c0].g,colors[c0].r));
       
       wrectangulo(ptr,an,al,c2,0,0,an,al);
@@ -3203,6 +3236,7 @@ void implode(int x,int y,int an,int al) {
   int n=9,b=big;
   int xx,yy,aan,aal;
   big=0; do {
+
     aan=(an*n)/10; if (!aan) aan=1;
     aal=(al*n)/10; if (!aal) aal=1;
     xx=x+an/2-aan/2; yy=y+al/2-aal/2;
@@ -3211,6 +3245,7 @@ void implode(int x,int y,int an,int al) {
     volcado_parcial(xx,yy,1,aal);
     volcado_parcial(xx,yy+aal-1,aan,1);
     volcado_parcial(xx+aan-1,yy,1,aal);
+    explode_num=n;
     volcado_copia();
     if (modo<100) {
       if (b) big=1;
@@ -3273,6 +3308,7 @@ void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
 //      Create ( it must return to the caller as is) a dialog
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
+
 void dialogo(voidReturnType init_handler) {
 
   int vtipo,_get_pos;
@@ -3330,21 +3366,9 @@ uint32_t colorkey=0;
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 		memset(ptr,0,an*al);
-		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
-                                   rmask, gmask, bmask, amask);
 
-		v.surfaceptr=SDL_DisplayFormat(tempsurface);
-		printf("dialogo surface ptr: %x\n",v.surfaceptr);
-		
-		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
+		window_surface(an,al,1);
 
-		SDL_FillRect(v.surfaceptr, NULL, 0);
-
-		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY , colorkey)==-1)
-			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
-
-		SDL_FreeSurface(tempsurface);
-		
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Pasa a segundo plano las ventanas que corresponda
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -3372,7 +3396,7 @@ uint32_t colorkey=0;
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
+//      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
       
       wrectangulo(ptr,an,al,c2,0,0,an,al);
 
@@ -3583,16 +3607,22 @@ void inicializacion(void) {
 TTF_Init();
 IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF);
 
-//sysfont = loadfont("system/KenVectorFutureThin.ttf",(big==1)?12:6);
-sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
+sysfont = loadfont("system/KenVectorFutureThin.ttf",(big==1)?12:6);
+editorfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf", (big==1)?24:12);
+
+//sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
 //sysfont = loadfont("/usr/share/fuze/assets/fuzebasic/zx.ttf",(big==1)?30:15);
 //sysfont = loadfont("/usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
 //sysfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf",20);
 //usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
 
 //printf("Loaded TTF: %x\n",sysfont);
-//font_an = (big==1)?24:12;
-font_al = TTF_FontHeight(sysfont);
+font_an=(big==1)?16:8;
+font_al=TTF_FontHeight(sysfont);
+font_an=font_al;
+
+editor_font_al=TTF_FontHeight(editorfont)+2;
+editor_font_an=font_al;
 
 tapiz_surface=NULL;
 mouse_surface=NULL;
@@ -3601,7 +3631,9 @@ tempsurface=NULL;
 
 #endif
 
+#ifdef IMAGE
 mouse_surface = IMG_Load("system/cursor.png");
+#endif
 
 
 
@@ -3760,7 +3792,7 @@ fclose(f);
 
   crea_gama(Setupfile.t_gama,tapiz_gama);
 
-  tapiz=NULL; preparar_tapiz();
+  tapiz=NULL; 
 
   mouse_x=vga_an/2; mouse_y=vga_al/2;
   _mouse_x=mouse_x; _mouse_y=mouse_y; mouse_graf=1;
@@ -3773,6 +3805,7 @@ fclose(f);
   crea_barratitulo();
   
   svmode(); set_dac(dac); read_mouse();
+  preparar_tapiz();
   volcado_completo=1;
   volcado(copia);
 

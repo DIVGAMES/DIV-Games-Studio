@@ -90,25 +90,57 @@ void menu_principal0(void) {
   v.close_handler=menu_principal3;
 }
 
-void menu_principal1(void) { pinta_menu(750); }
-
-void menu_principal2(void) {
-  actualiza_menu(750,1,0); if ((old_mouse_b&1) && !(mouse_b&1)) {
-    switch (v.estado) {
-      case 1: nueva_ventana(menu_programas0); break;
-      case 2: nueva_ventana(menu_paletas0); break;
-      case 3: nueva_ventana(menu_mapas0); break;
-      case 4: nueva_ventana(menu_mapas3D0); break;
-      case 5: nueva_ventana(menu_graficos0); break;
-      case 6: nueva_ventana(menu_fuentes0); break;
-      case 7: nueva_ventana(menu_sonidos0); break;
-      case 8: nueva_ventana(menu_sistema0); break;
-      case 9: help(3); break;
-    } // do { read_mouse(); } while (mouse_b&1);
-  }
+void menu_principal1(void) { 
+	pinta_menu(750); 
 }
 
-void menu_principal3(void) { salir_del_entorno=1; }
+void menu_principal2(void) {
+	actualiza_menu(750,1,0); 
+	if ((old_mouse_b&1) && !(mouse_b&1)) {
+		switch (v.estado) {
+			case 1: 
+				nueva_ventana(menu_programas0); 
+			break;
+			
+			case 2: 
+				nueva_ventana(menu_paletas0); 
+			break;
+		
+			case 3: 
+				nueva_ventana(menu_mapas0); 
+			break;
+		
+			case 4: 
+				nueva_ventana(menu_mapas3D0); 
+			break;
+		
+			case 5: 
+				nueva_ventana(menu_graficos0); 
+			break;
+		
+			case 6: 
+				nueva_ventana(menu_fuentes0); 
+			break;
+		
+			case 7: 
+				nueva_ventana(menu_sonidos0); 
+			break;
+			
+			case 8: 
+				nueva_ventana(menu_sistema0); 
+			break;
+			
+			case 9: 
+				help(3); 
+			break;
+		} 
+		// do { read_mouse(); } while (mouse_b&1);
+	}
+}
+
+void menu_principal3(void) {
+	salir_del_entorno=1; 
+}
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Programs Menu
@@ -1389,23 +1421,29 @@ void crear_menu(int menu) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void pinta_menu(int menu) {
-  byte * ptr=v.ptr,*p,*q;
-  int an=v.an/big2,al=v.al/big2,n=0;
+	byte * ptr=v.ptr,*p,*q;
 
-  menu++;
+	int an=v.an/big2,al=v.al/big2,n=0;
 
-  wbox(ptr,an,al,c2,2,10,an-4,al-12);
+	menu++;
 
-  while (texto[++menu]) {
-    if (*(p=texto[menu])=='-') { p++; wbox(ptr,an,al,c0,2,9+n*9,an-4,1); }
-    if ((q=(byte *)strchr((const char *)p,'['))!=NULL) {
-      *q=0; wwrite(ptr,an,al,3,11+n*9,0,p,c3);
-      *q='[';
-      wwrite(ptr,an,al,an-4,11+n*9,2,q,c1);
-      wwrite(ptr,an,al,an-5,11+n*9,2,q,c3);
-      n++;
-    } else wwrite(ptr,an,al,3,11+n++*9,0,p,c3);
-  }
+	wbox(ptr,an,al,c2,2,10,an-4,al-12);
+
+	while (texto[++menu]) {
+		if (*(p=texto[menu])=='-') { 
+			p++; 
+			wbox(ptr,an,al,c0,2,9+n*9,an-4,1); 
+		}
+
+		if ((q=(byte *)strchr((const char *)p,'['))!=NULL) {
+			*q=0; 
+			wwrite(ptr,an,al,3,11+n*9,0,p,c3);
+			*q='[';
+			wwrite(ptr,an,al,an-4,11+n*9,2,q,c1);
+			wwrite(ptr,an,al,an-5,11+n*9,2,q,c3);
+			n++;
+		} else wwrite(ptr,an,al,3,11+n++*9,0,p,c3);
+	}
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -1413,80 +1451,105 @@ void pinta_menu(int menu) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void actualiza_menu(int menu,int min,int max) { // (Min,Max) Opciones prohibidas
-  byte * ptr=v.ptr,*p,*q;
-  int an=v.an/big2,al=v.al/big2,n;
+	byte * ptr=v.ptr,*p,*q;
+	int an=v.an/big2,al=v.al/big2,n;
 
-  if (arrastrar==4) return;
+	if (arrastrar==4) return;
 
-  menu++;
+	menu++;
 
-  if (wmouse_y>=0) n=(wmouse_y-10)/9+1; else n=0;
-  if (n>=min && n<=max) { n=0; mouse_graf=16; }
-  if (mouse_b&1) n=-n;
+	if (wmouse_y>=0) 
+		n=(wmouse_y-10)/9+1; 
+	else 
+		n=0;
+	
+	if (n>=min && n<=max) { 
+		n=0; 
+		mouse_graf=16; 
+	}
+	
+	if (mouse_b&1) 
+		n=-n;
 
-  if (n!=v.estado) {
+//	printf("state: %d\n",v.estado);
 
-    if (v.estado) {
-      wbox(ptr,an,al,c2,2,1+abs(v.estado)*9,an-4,8);
-      p=texto[menu+abs(v.estado)]; if (*p=='-') p++;
-//      wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
-      if ((q=(byte *)strchr((const char *)p,'['))!=NULL) {
-        *q=0; wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
-        *q='[';
-        wwrite(ptr,an,al,an-4,2+abs(v.estado)*9,2,q,c1);
-        wwrite(ptr,an,al,an-5,2+abs(v.estado)*9,2,q,c3);
-      } else wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
-    }
+	if (n!=v.estado) {
 
-    if (n) {
-      if (n<0) {
-        wbox(ptr,an,al,c12,3,2-n*9,an-6,6);
+		if (v.estado) {
+			wbox(ptr,an,al,c2,2,1+abs(v.estado)*9,an-4,8);
+			p=texto[menu+abs(v.estado)]; 
+	//		printf("menu text: %s\n",p);
+			
+			if (*p=='-') 
+				p++;
 
-        wbox(ptr,an,al,c1,2,1-n*9,1,7);
-        wbox(ptr,an,al,c1,2,1-n*9,an-5,1);
-        wbox(ptr,an,al,c3,an-3,2-n*9,1,7);
-        wbox(ptr,an,al,c3,3,8-n*9,an-5,1);
+			//      wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
 
-        if (big) {
-          *(ptr+(2*(8-n*9))*v.an+2*(an-3))=c34;
-          *(ptr+(2*(8-n*9)+1)*v.an+2*(an-3)+1)=c34;
-          *(ptr+(2*(1-n*9))*v.an+2*(2))=c01;
-          *(ptr+(2*(1-n*9)+1)*v.an+2*(2)+1)=c01;
-          *(ptr+(2*(1-n*9))*v.an+2*(an-3))=c1;
-          *(ptr+(2*(1-n*9)+1)*v.an+2*(an-3)+1)=c3;
-          *(ptr+(2*(8-n*9))*v.an+2*(2))=c1;
-          *(ptr+(2*(8-n*9)+1)*v.an+2*(2)+1)=c3;
-        }
+			if ((q=(byte *)strchr((const char *)p,'['))!=NULL) {
+				*q=0; wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
+				*q='[';
+				wwrite(ptr,an,al,an-4,2+abs(v.estado)*9,2,q,c1);
+				wwrite(ptr,an,al,an-5,2+abs(v.estado)*9,2,q,c3);
+			} else wwrite(ptr,an,al,3,2+abs(v.estado)*9,0,p,c3);
+		}
 
-        p=texto[menu-n]; if (*p=='-') p++;
-        if ((q=(byte *)strchr((const char *)p,'['))!=NULL) { *q=0;
-          wwrite(ptr,an,al,4,2-n*9,0,p,c1);
-          wwrite(ptr,an,al,3,2-n*9,0,p,c4);
-          *q='[';
-          wwrite(ptr,an,al,an-4,2-n*9,2,q,c1);
-          wwrite(ptr,an,al,an-5,2-n*9,2,q,c3);
-        } else {
-          wwrite(ptr,an,al,4,2-n*9,0,p,c1);
-          wwrite(ptr,an,al,3,2-n*9,0,p,c4);
-        }
-      } else {
-        wbox(ptr,an,al,c2,2,1+n*9,an-4,8);
-        p=texto[menu+n]; if (*p=='-') p++;
-        if ((q=(byte *)strchr((const char *)p,'['))!=NULL) { *q=0;
-          wwrite(ptr,an,al,4,2+n*9,0,p,c1);
-          wwrite(ptr,an,al,3,2+n*9,0,p,c4);
-          *q='[';
-          wwrite(ptr,an,al,an-4,2+n*9,2,q,c1);
-          wwrite(ptr,an,al,an-5,2+n*9,2,q,c3);
-        } else {
-          wwrite(ptr,an,al,4,2+n*9,0,p,c1);
-          wwrite(ptr,an,al,3,2+n*9,0,p,c4);
-        }
-      }
-    }
+		if (n) {
+			if (n<0) {
+				wbox(ptr,an,al,c12,3,2-n*9,an-6,6);
 
-    v.estado=n; v.volcar=1;
-  }
+				wbox(ptr,an,al,c1,2,1-n*9,1,7);
+				wbox(ptr,an,al,c1,2,1-n*9,an-5,1);
+				wbox(ptr,an,al,c3,an-3,2-n*9,1,7);
+				wbox(ptr,an,al,c3,3,8-n*9,an-5,1);
+
+				if (big) {
+					*(ptr+(2*(8-n*9))*v.an+2*(an-3))=c34;
+					*(ptr+(2*(8-n*9)+1)*v.an+2*(an-3)+1)=c34;
+					*(ptr+(2*(1-n*9))*v.an+2*(2))=c01;
+					*(ptr+(2*(1-n*9)+1)*v.an+2*(2)+1)=c01;
+					*(ptr+(2*(1-n*9))*v.an+2*(an-3))=c1;
+					*(ptr+(2*(1-n*9)+1)*v.an+2*(an-3)+1)=c3;
+					*(ptr+(2*(8-n*9))*v.an+2*(2))=c1;
+					*(ptr+(2*(8-n*9)+1)*v.an+2*(2)+1)=c3;
+				}
+
+				p=texto[menu-n]; 
+				if (*p=='-') 
+					p++;
+
+				if ((q=(byte *)strchr((const char *)p,'['))!=NULL) { 
+					*q=0;
+					wwrite(ptr,an,al,4,2-n*9,0,p,c1);
+					wwrite(ptr,an,al,3,2-n*9,0,p,c4);
+					*q='[';
+					wwrite(ptr,an,al,an-4,2-n*9,2,q,c1);
+					wwrite(ptr,an,al,an-5,2-n*9,2,q,c3);
+				} else {
+					wwrite(ptr,an,al,4,2-n*9,0,p,c1);
+					wwrite(ptr,an,al,3,2-n*9,0,p,c4);
+				}
+			} else {
+				wbox(ptr,an,al,c2,2,1+n*9,an-4,8);
+				p=texto[menu+n]; if (*p=='-') p++;
+				
+		//		printf("menu text: %s\n",p);
+
+				if ((q=(byte *)strchr((const char *)p,'['))!=NULL) { 
+					*q=0;
+					wwrite(ptr,an,al,4,2+n*9,0,p,c1);
+					wwrite(ptr,an,al,3,2+n*9,0,p,c4);
+					*q='[';
+					wwrite(ptr,an,al,an-4,2+n*9,2,q,c1);
+					wwrite(ptr,an,al,an-5,2+n*9,2,q,c3);
+				} else {
+					wwrite(ptr,an,al,4,2+n*9,0,p,c1);
+					wwrite(ptr,an,al,3,2+n*9,0,p,c4);
+				}
+			}
+		}
+
+		v.estado=n; v.volcar=1;
+	}
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

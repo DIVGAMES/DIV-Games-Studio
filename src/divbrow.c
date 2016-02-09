@@ -35,7 +35,7 @@ int ini_tagged;
 int song_playing=0;
 
 
-#define FILE_CHUNK incremento_maximo
+#define FILE_CHUNK 2048
 
 //SAMPLE * smp=NULL;
 

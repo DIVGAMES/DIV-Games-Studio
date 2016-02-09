@@ -798,22 +798,7 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
     if (!n)
 */
     if ((ptr=(byte *)malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
-		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
-                                   rmask, gmask, bmask, amask);
 
-		v.surfaceptr=SDL_DisplayFormat(tempsurface);
-
-		colorkey = SDL_MapRGB( v.surfaceptr->format, 0xFF, 0, 0xFF );
-
-		SDL_FillRect(v.surfaceptr, NULL, 0);
-
-		if(SDL_SetColorKey(v.surfaceptr , SDL_SRCCOLORKEY | SDL_RLEACCEL, colorkey)==-1)
-			fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
-
-
-		printf("load window surface ptr: %x\n",v.surfaceptr);
-		SDL_FreeSurface(tempsurface);
-		
       //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
       // Pasa a segundo plano las ventanas que corresponda
       //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -861,9 +846,12 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 
       v.ptr=ptr;
 
+		window_surface(an,al,0);
+		
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
-		SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
-      
+//		SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
+
+		      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
 
       wput(ptr,an,al,an-9,2,35);
@@ -1026,18 +1014,18 @@ void carga_programa0(void)
   if (v.prg->an<4*big2) v.prg->an=4*big2;
   if (v.prg->al<2*big2) v.prg->al=2*big2;
 
-  v.an=(4+8)*big2+font_an*v_prg->an;
-  v.al=(12+16)*big2+font_al*v_prg->al;
+  v.an=(4+8)*big2+editor_font_an*v_prg->an;
+  v.al=(12+16)*big2+editor_font_al*v_prg->al;
 
   if (v.an>vga_an) {
-    v.prg->an=(vga_an-12*big2)/font_an; // Calcula tama쨚 (en chr) maximizada
-    v.an=(4+8)*big2+font_an*v.prg->an;
+    v.prg->an=(vga_an-12*big2)/editor_font_an; // Calcula tama쨚 (en chr) maximizada
+    v.an=(4+8)*big2+editor_font_an*v.prg->an;
     ventana_aux.an=v.an;
   }
 
   if (v.al>vga_al) {
-    v.prg->al=(vga_al-28*big2)/font_al;
-    v.al=(12+16)*big2+font_al*v.prg->al;
+    v.prg->al=(vga_al-28*big2)/editor_font_al;
+    v.al=(12+16)*big2+editor_font_al*v.prg->al;
     ventana_aux.al=v.al;
   }
 

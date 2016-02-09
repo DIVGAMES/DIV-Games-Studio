@@ -87,17 +87,18 @@ void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al)
 void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
 
 	byte *p;
-	SDL_Surface *tsurface = NULL;//v.surfaceptr;
+	SDL_Surface *tsurface = v.surfaceptr;
 	SDL_Rect rc;
 	int vn=0;
 	
-	for (vn=0;vn<max_windows;vn++) {
+	
+/*	for (vn=0;vn<max_windows;vn++) {
 		if(ventana[vn].ptr==copia) {
 			tsurface = ventana[vn].surfaceptr;
 			break;
 		}
 	}
-
+*/
 	// render ttf to copia_suface;	
 	// ofset by the window x/y
 
@@ -121,6 +122,11 @@ void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,i
 	rc.w=an;
 	rc.h=al;
 
+#ifdef TTF
+if(tsurface!=NULL)
+	SDL_FillRect(tsurface,&rc,SDL_MapRGB(tsurface->format,colors[c].r,colors[c].g,colors[c].b));
+#else
+
     p=copia+y*an_real_copia+x;
     do {
       memset(p,c,an);
@@ -128,8 +134,7 @@ void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,i
     } while (--al);
     
 
-if(tsurface!=NULL)
-	SDL_FillRect(tsurface,&rc,SDL_MapRGB(tsurface->format,colors[c].r,colors[c].g,colors[c].b));
+#endif
 
 
     
@@ -232,6 +237,7 @@ void wresalta_box(byte*copia,int an_copia,int al_copia,int x,int y,int an,int al
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
+return;
   wbox(copia,an_copia,al_copia,c,x,y,an,1);
   wbox(copia,an_copia,al_copia,c,x,y+al-1,an,1);
   wbox(copia,an_copia,al_copia,c,x,y+1,1,al-2);
@@ -243,7 +249,6 @@ void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void wput(byte*copia,int an_copia,int al_copia,int x,int y,int n) {
-//	printf("put graph %d at %d,%d\n",n,x,y);
   wput_in_box(copia,an_copia,an_copia,al_copia,x,y,n);
 }
 
@@ -256,23 +261,60 @@ void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,in
   int salta_y, long_y, resto_y;
 
 #ifdef TTF
-	SDL_Surface *img;
+	SDL_Surface *img=NULL;
 	SDL_Rect rc;
-	rc.x=x+10;
-	rc.y=y+50;
-	if(n==-50) {
-		//printf("loading dxlogo\n");
+	rc.x=x;
+	rc.y=y;
+if(big)
+rc.x*=2;
+rc.y*=2;
 
-		img = IMG_Load("system/dxlogo.png");
-		if(img) {
-			rc.w=img->w;
-			rc.h=img->h;
-			SDL_BlitSurface(img,NULL,v.surfaceptr,&rc);
-			SDL_FreeSurface(img);
-			return;
 
+
+	switch(abs(n)) {
+		
+		case 50:
+		
+			//printf("loading dxlogo\n");
+
+			img = IMG_Load("system/dxlogo.png");
+			rc.x+=10;
+			rc.y+=50;
+		break;
+		
+		case 59:
+			tempsurface = IMG_Load("system/blue_boxCross.png");
+			img = zoomSurface(tempsurface, 0.4f,0.4f,0);
+			SDL_FreeSurface(tempsurface);
+			 
+		break;
+		
+		case 58:
+			tempsurface = IMG_Load("system/grey_box.png");
+			img = zoomSurface(tempsurface, 0.4f,0.4f,0);
+			SDL_FreeSurface(tempsurface);
+			
+		break;
+		
+	}
+
+	if(img!=NULL) {
+		rc.w=img->w;
+		rc.h=img->h;
+
+		if(big==0) {
+			rc.w/=2;
+			rc.h/=2;
 		}
-		}
+
+		SDL_BlitSurface(img,NULL,v.surfaceptr,&rc);
+		SDL_FreeSurface(img);
+		return;
+	}
+	
+//	if(abs(n)>=32)
+		//printf("put graph %d at %d,%d\n",n,x,y);
+
 #endif
 
   if (big) { 
@@ -305,6 +347,8 @@ void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,in
 
   p+=an*salta_y+salta_x; q+=an_real_copia*salta_y+salta_x;
   resto_x+=salta_x; an=long_x;
+  
+  
   if (block) do {
     do {
       switch(*p) {
@@ -598,6 +642,8 @@ int text_len2(byte * ptr) {
 void wwrite(byte*copia,int an_copia,int al_copia,
             int x,int y,int centro,byte * ptr,byte c) {
 				
+//	printf("wwrite: %x %d %d %d %d %d %s %d\n",copia,an_copia, al_copia, x,y,centro, ptr, x);
+	
 	wwrite_in_box(copia,an_copia,an_copia,al_copia,x,y,centro,ptr,c);
 }
 
@@ -614,6 +660,9 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 	SDL_Surface *tsurface;
 	
 	int an,al,boton,multi;
+
+	SDL_Rect rc;
+
 	/*
 	struct {
 	byte an;
@@ -696,6 +745,22 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 	}
 
 	if (boton) { 
+#ifdef TTF
+		tempsurface = IMG_Load("/home/mike/div2015/system/red_button00.png");
+		tsurface = zoomSurface(tempsurface, (float)(an*2+6)/tempsurface->w, (float) (al*2+6)/tempsurface->h, 1 );
+		rc.x=2*x-3;
+		rc.y=2*y-3;
+
+		rc.w=tsurface->w;
+		rc.h=tsurface->h;
+		
+		SDL_BlitSurface(tsurface, NULL, v.surfaceptr, &rc);
+		
+		SDL_FreeSurface(tempsurface);		
+		SDL_FreeSurface(tsurface);
+		
+#else
+
 		if (c!=c0) {
 			wbox(copia,an_real_copia,al_copia,c2,x-2,y-2,an+4,al+4);
 			wrectangulo(copia,an_real_copia,al_copia,c0,x-3,y-3,an+6,al+6);
@@ -730,6 +795,7 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 				*(copia+(2*(y+al)+3)*an_real_copia*2+2*x-3)=c2;
 			}
 		}
+#endif
 	}
 
 	if (big&&!multi) {
@@ -743,7 +809,7 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 	
 	tsurface = v.surfaceptr;
 	//copia_surface;
-	
+/*	
 	for (vn=0;vn<max_windows;vn++) {
 		if(ventana[vn].ptr==copia) {
 			tsurface = ventana[vn].surfaceptr;
@@ -759,9 +825,9 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 			x+=10;
 
 	}
+	* */
 	// render ttf to copia_suface;	
 	// ofset by the window x/y
-	SDL_Rect rc;
 
 	
 	rc.x=x;
@@ -769,7 +835,7 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 	
 
 	if(tsurface!=NULL) {
-		SDL_Surface* surface = drawtext(sysfont, colors[c].g,colors[c].r,colors[c].b,0, 255, 255,255, 0, (char *)ptr, solid);
+		SDL_Surface* surface = drawtext(sysfont, colors[c].r,colors[c].g,colors[c].b,0, 255, 255,255, 0, (char *)ptr, solid);
 //		printf("string: %s x: %d y: %d surface w: %d surface h: %d real an %d an %d al %d %d\n",(char *)ptr, x,y,tsurface->w, tsurface->h, an_real_copia, an_copia, al_copia,__LINE__);
 		
 		rc.w=an_copia;
@@ -777,6 +843,11 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 		SDL_SetClipRect(tsurface, &rc);
 
 	if(surface!=NULL) {
+		tempsurface = SDL_DisplayFormat(surface);
+		SDL_FreeSurface(surface);
+		surface=tempsurface;
+		tempsurface=NULL;
+		
 		rc.w=surface->w;
 		rc.h=surface->h;
 
