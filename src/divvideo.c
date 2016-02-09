@@ -6,7 +6,7 @@
 #include "global.h"
 //#include "inc\svga.h"
 //#include "inc\vesa.h"
-
+#include "lib/sdlgfx/SDL_framerate.h"
 
 void snapshot(byte *p);
 void volcadocsvga(byte *p);
@@ -104,12 +104,18 @@ struct {
 //      Awaits the arrival of the vertical retrace (vsync)
 ///////////////////////////////////////////////////////////////////////////////
 
+FPSmanager fpsman;
+
 void retrazo(void) {
+
 //printf("retrazo (vsync)\n");
+SDL_framerateDelay(&fpsman);
+
 #ifdef NOTYET
   while (inp(0x3da)&8);
   while ((inp(0x3da)&8)==0);
 #endif
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -165,10 +171,15 @@ SDL_Surface* copy_surface(SDL_Surface* source)
     return target;
 }
 
+
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
  Uint32 colorkey=0;
  int vn=0;
+
+SDL_initFramerate(&fpsman);
+SDL_setFramerate(&fpsman, 60);
+
  
   printf("full screen: %d\n",fsmode);
 #ifdef GCW_SOFTSTRETCH
@@ -194,6 +205,7 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
+
 #endif
 
 //	if(copia_surface)
@@ -214,46 +226,33 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 	if(vga!=NULL) {
 		
 		if(tapiz_surface!=NULL) {
-//			SDL_SetAlpha(tapiz_surface,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
-
 			tempsurface = SDL_DisplayFormat(tapiz_surface);
-
 			if(tempsurface!=NULL) {
 				SDL_FreeSurface(tapiz_surface);
 				tapiz_surface=tempsurface;
-//				SDL_SetAlpha(tapiz_surface,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
-//				printf("updated tapiz surface to %x\n",tapiz_surface);
 				tempsurface=NULL;
 			}
 		}
 		
 		if(mouse_surface!=NULL) {
-
-//			SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,128);
 			tempsurface = SDL_DisplayFormatAlpha(mouse_surface);
 			if(tempsurface!=NULL) {
 				SDL_FreeSurface(mouse_surface);
 				mouse_surface=tempsurface;
-//				SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,128);
-//				printf("updated mouse surface to %x\n",mouse_surface);
 				tempsurface=NULL;
 			}
 		}
 		
 		for(vn=max_windows-1;vn>=0; vn--) {
 			if(ventana[vn].surfaceptr!=NULL) {
-//				SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
 				tempsurface=SDL_DisplayFormat(ventana[vn].surfaceptr);
 				if(tempsurface!=NULL) {
 					SDL_FreeSurface(ventana[vn].surfaceptr);
 					ventana[vn].surfaceptr=tempsurface;
 					tempsurface=NULL;
 				}
-
 			}
-		
 		}	
-
 	}
 	
 	modovesa=1;
@@ -261,6 +260,7 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 	set_dac(dac);
 
 #ifdef NOTYET
+
   VBESCREEN Screen;
 
   int mode=0;
@@ -358,6 +358,7 @@ void rvmode(void) {
 //      Dump buffer to vga (screen)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 #ifdef GCW_SOFTSTRETCH
+
 void volcadogcw(byte *p) {
 	// blit screen to smaller 320x240 screen
 	byte *q = (byte *)vga->pixels;
@@ -413,6 +414,9 @@ void volcadosdl(byte *p) {
 
 	byte *q = (byte *)vga->pixels;
 	uint32_t *q32 = (uint32_t *)vga->pixels;
+
+	SDL_FillRect(vga, NULL, 0);
+
 
 #ifndef TTF	
 	if(0) {
@@ -498,15 +502,15 @@ void volcadosdl(byte *p) {
 			trc.y=ventana[vn].y;
 			trc.w=ventana[vn].an;
 			trc.h=ventana[vn].al;
+
 			
-			SDL_SetColorKey(ventana[vn].surfaceptr, 0,0);
+			//SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL, 230);
+			
 			if(ventana[vn].exploding==1) {
-				SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*20);
+				SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
 			}
 			SDL_BlitSurface(ventana[vn].surfaceptr,NULL,vga,&trc);
 			
-			SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL, 220);
-
 		}
 		
 	}
@@ -533,7 +537,6 @@ void volcadosdl(byte *p) {
 //	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
 //	SDL_FillRect(copia_surface, NULL, colorkey);
 
-	SDL_FillRect(vga, NULL, 0);
 
 	memset(oldp,vga_an*vga_al,0);
 
@@ -766,7 +769,9 @@ return;
 //      Select a window for subsequent dump
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void init_volcado(void) { memset(&scan[0],0,MAX_YRES*8); volcado_completo=0; }
+void init_volcado(void) { 
+	memset(&scan[0],0,MAX_YRES*8); volcado_completo=0; 
+}
 
 void volcado_parcial(int x,int y,int an,int al) {
   int ymax,xmax,n,d1,d2,x2;
