@@ -3604,29 +3604,36 @@ void inicializacion(void) {
 
 
 #ifdef TTF
-TTF_Init();
-IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF);
 
-sysfont = loadfont("system/KenVectorFutureThin.ttf",(big==1)?12:6);
-editorfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf", (big==1)?24:12);
+	TTF_Init();
 
-//sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
-//sysfont = loadfont("/usr/share/fuze/assets/fuzebasic/zx.ttf",(big==1)?30:15);
-//sysfont = loadfont("/usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
-//sysfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf",20);
-//usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
+	IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF);
 
-//printf("Loaded TTF: %x\n",sysfont);
-font_an=(big==1)?16:8;
-font_al=TTF_FontHeight(sysfont);
-font_an=font_al;
+	sysfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf",(big==1)?18:9);
+	editorfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf", (big==1)?18:9);
 
-editor_font_al=TTF_FontHeight(editorfont)+2;
-editor_font_an=font_al;
+	//sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
+	//sysfont = loadfont("/usr/share/fuze/assets/fuzebasic/zx.ttf",(big==1)?30:15);
+	//sysfont = loadfont("/usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
+	//sysfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf",20);
+	//usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
 
-tapiz_surface=NULL;
-mouse_surface=NULL;
-tempsurface=NULL;
+	//printf("Loaded TTF: %x\n",sysfont);
+
+//	font_an=(big==1)?16:8;
+	tempsurface = drawtext(sysfont, colors[c].r,colors[c].g,colors[c].b,0, 255, 255,255, 0, "W", solid);
+	font_an=tempsurface->w;
+	SDL_FreeSurface(tempsurface);	
+	font_al=TTF_FontHeight(sysfont)+2;
+
+	tempsurface = drawtext(sysfont, colors[c].r,colors[c].g,colors[c].b,0, 255, 255,255, 0, "W", solid);
+	editor_font_an=tempsurface->w;
+	SDL_FreeSurface(tempsurface);
+	editor_font_al=TTF_FontHeight(editorfont)+2;
+	
+	tapiz_surface=NULL;
+	mouse_surface=NULL;
+	tempsurface=NULL;
 
 
 #endif
