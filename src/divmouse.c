@@ -454,8 +454,13 @@ while(SDL_PollEvent(&event) )
             }
               if (event.type == SDL_MOUSEMOTION)
             {
-				m_x = event.motion.x;
-            	m_y = event.motion.y;
+				if(fsmode==1) {
+					m_x += event.motion.xrel*(1+(Setupfile.mouse_ratio/2));
+					m_y += event.motion.yrel*(1+(Setupfile.mouse_ratio/2));
+				} else {
+					m_x = event.motion.x;
+					m_y = event.motion.y;
+				}
 #ifdef GCW
 				m_x = event.motion.x*w_ratio;
             	m_y = event.motion.y*w_ratio;
