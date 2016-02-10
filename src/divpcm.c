@@ -341,7 +341,7 @@ printf("TODO - Get Song Line\n");
 
 void mostrar_mod_meters(void)
 {
-	printf("TODO - MOD METERS\n");	
+//	printf("TODO - MOD METERS\n");	
 	/*
   modinfo *mymodinfo=(modinfo *)v.aux;
   int     an=v.an/big2, al=v.al/big2;
