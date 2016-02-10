@@ -3634,6 +3634,10 @@ void inicializacion(void) {
 	tapiz_surface=NULL;
 	mouse_surface=NULL;
 	tempsurface=NULL;
+#else
+
+editor_font_al = font_al;
+editor_font_an = font_an;
 
 
 #endif
