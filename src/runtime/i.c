@@ -818,64 +818,66 @@ inline
 #endif
 
 void exec_process(void) {
-  #ifdef DEBUG
-  oreloj=get_ticks();
-  #endif
 
-  ide=0; max=0x80000000;
+	ide=0; max=0x80000000;
 
-  #ifdef DEBUG
-  if (process_stoped) {
-    id=ide=process_stoped;
-    process_stoped=0;
-    goto continue_process;
-  }
-  #endif
+#ifdef DEBUG
 
-/*  id=id_old; do {	  
-    if (mem[id+_Status]==2 && !mem[id+_Executed] &&
-        mem[id+_Priority]>max) { ide=id; max=mem[id+_Priority]; }
-    if (id==id_end) id=id_start; else id+=iloc_len;
-  } while (id!=id_old);
-*/
+	oreloj=get_ticks();
 
- id=id_old; 
- do {	  
-    if (mem[id+_Status]==2 && !mem[id+_Executed]) {
-    ide=id;
-    id_old=ide;
-    break;
-    } //        mem[id+_Priority]>max) { ide=id; max=mem[id+_Priority]; }
-    else {
-		if (id>=id_end) 
-			id=id_old;
+	if (process_stoped) {
+		id=ide=process_stoped;
+		process_stoped=0;
+		goto continue_process;
+	}
+
+#endif
+
+	id=id_old;
+	
+	do {	  
+		if (mem[id+_Status]==2 && !mem[id+_Executed] &&
+			mem[id+_Priority]>max) { 
+		
+			ide=id; max=mem[id+_Priority]; 
+		}
+
+		if (id==id_end) 
+			id=id_start; 
 		else 
 			id+=iloc_len;
-		//id=id_start; else id+=iloc_len;
-	}
-  } while (id!=id_old);
-  
-  if (ide) if (mem[ide+_Frame]>=100) {
-    mem[ide+_Frame]-=100;
-    mem[ide+_Executed]=1;
-  }
-  else {
-	  
+
+	} while (id!=id_old);
+
+
+	if (ide) {
+		if (mem[ide+_Frame]>=100) {
+			mem[ide+_Frame]-=100;
+			mem[ide+_Executed]=1;
+		} else {	  
 #ifdef NET
-    _net_loop(); // Recibe los paquetes justo antes de ejecutar el proceso~
+			_net_loop(); // Process netplay routine before calling process
 #endif
-    id=ide; ip=mem[id+_IP]; carga_pila(id);
-//printf("sp: %d ide: %d ip %d\n",sp,id, ip);
-    #ifdef DEBUG
-    continue_process:
-    #endif
+			id=ide; 
+			ip=mem[id+_IP];
+			carga_pila(id);
 
-    max_reloj=get_reloj()+max_process_time;
+#ifdef DEBUG
+			continue_process:
+#endif
 
-    nucleo_exec();
+			max_reloj=get_reloj()+max_process_time;
 
-    id=ide; if (post_process!=NULL) post_process();
-  }
+			nucleo_exec();
+
+			id=ide; 
+			
+			// DLL callbacks
+			if (post_process!=NULL) 
+				post_process();
+
+		}
+	}
 }
 
 //�����������������������������������������������������������������������������
@@ -887,16 +889,14 @@ int oo; // Para usos internos en el kernel
 void nucleo_exec() {
 
 	do {
-//		printf("Kernel: %d\n",mem[ip]);
-	  switch ((byte)mem[ip++]){
-		  
-      #include "debug/kernel.cpp"
-    }
- 	} while (1);
+		switch ((byte)mem[ip++]){
+#include "debug/kernel.cpp"
+		}
+	} while (1);
 
-  next_process1: mem[ide+_Executed]=1;
-  next_process2: ;
-
+	next_process1: 
+	mem[ide+_Executed]=1;
+	next_process2: ;
 }
 
 //�����������������������������������������������������������������������������
@@ -906,50 +906,54 @@ void nucleo_exec() {
 #ifdef DEBUG
 
 void trace_process(void) {
-#ifdef DEBUG
-  oreloj=get_ticks();
-#endif
 
-  ide=0; max=0x80000000;
+	oreloj=get_ticks();
 
-  if (process_stoped) {
-    id=ide=process_stoped;
-    process_stoped=0;
-    goto continue_process;
-  }
+	ide=0; max=0x80000000;
 
-  id=id_old; do {
-
-    if (mem[id+_Status]==2 && !mem[id+_Executed] ) {
-		ide=id;
-		break;
+	if (process_stoped) {
+		id=ide=process_stoped;
+		process_stoped=0;
+		goto continue_process;
 	}
-	if (id==id_end) id=id_start; else id+=iloc_len;
-    //&&
-     //   mem[id+_Priority]>max) { ide=id; max=mem[id+_Priority]; }
-//    if (id==id_end) id=id_start; else id+=iloc_len;
-  } while (ide==0 && id!=id_old);
 
-id_old=ide;
 
-  if (ide) if (mem[ide+_Frame]>=100) {
-    mem[ide+_Frame]-=100;
-    mem[ide+_Executed]=1;
-  }
-  else {
+	id=id_old; do {
+		if (mem[id+_Status]==2 && !mem[id+_Executed] &&
+			mem[id+_Priority]>max) { 
+			ide=id; max=mem[id+_Priority]; 
+		}
+		
+		if (id==id_end) 
+			id=id_start; 
+		else 
+			id+=iloc_len;
+	
+	} while (id!=id_old);
+
+	id_old=ide;
+
+	if (ide) if (mem[ide+_Frame]>=100) {
+		mem[ide+_Frame]-=100;
+		mem[ide+_Executed]=1;
+	} else {
+
 #ifdef NET
-    _net_loop(); // Receive packets before executing process
+		_net_loop(); // Receive packets before executing process
 #endif
-    id=ide; ip=mem[id+_IP]; carga_pila(id);
 
-    continue_process:
+		id=ide;
+		ip=mem[id+_IP];
+		carga_pila(id);
 
-    max_reloj=get_reloj()+max_process_time;
+		continue_process:
 
-    nucleo_trace();
-  }
+		max_reloj=get_reloj()+max_process_time;
 
-  id=ide;
+		nucleo_trace();
+	}
+
+	id=ide;
 }
 
 //�����������������������������������������������������������������������������
@@ -959,20 +963,22 @@ id_old=ide;
 void nucleo_trace(void) {
 
 	switch ((byte)mem[ip++]) {
-    #define TRACE
-    #include "debug/kernel.cpp"
-  }
+#define TRACE
+		#include "debug/kernel.cpp"
+	}
 
-  process_stoped=id; return;
+	process_stoped=id; return;
 
-  next_process1: mem[ide+_Executed]=1;
-  next_process2:
+	next_process1:
+	mem[ide+_Executed]=1;
+	next_process2:
 
-  if (post_process!=NULL) post_process();
+	if (post_process!=NULL)
+		post_process();
 
 }
 
-#endif
+#endif // DEBUG
 
 ///////////////////////////////////////////////////////////////////////////////
 // Start a frame prepares timer variables turns and looks
@@ -981,173 +987,194 @@ void nucleo_trace(void) {
 float ffps=24.0f;
 
 #ifdef DEBUG
+
 float ffps2=0.0f;
 int overall_reloj=0;
 double game_ticks=0.0f;
 double game_frames=0.0f;
+
 #endif
 
 
 void frame_start(void) {
-  int n,old_reloj;
-  #ifdef DEBUG
-  int oreloj;
-  #endif
-  ascii=0;
-  scan_code=0;
-tecla();
-//printf("ascii: %d, scan_code: %d\n",ascii,scan_code);
+	int n,old_reloj;
+
+#ifdef DEBUG
+	int oreloj;
+#endif
+
+	ascii=0;
+	scan_code=0;
+	tecla();
+
   // Control screensaver
 
-//printf("%d %d %d %x\n",ss_time_counter,reloj,ss_status,ss_frame);
+	if (ss_status && ss_frame!=NULL) {
 
-  if (ss_status && ss_frame!=NULL) {
+		if (get_reloj()>ss_time_counter) {
 
-    if (get_reloj()>ss_time_counter) {
+			if (ss_init!=NULL) 
+				ss_init();
 
-      if (ss_init!=NULL) ss_init();
-      ss_exit=0; do {
-        key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
-        if (key_check!=last_key_check) ss_exit=1;
-        readmouse();
-        mou_check=mouse->x+mouse->y+mouse->left+mouse->right+mouse->middle;
-        if (mou_check!=last_mou_check) ss_exit=1;
-        if (joy_status) {
-          read_joy();
-          joy_check=joy->button1+joy->button2+joy->left+joy->right+joy->up+joy->down;
-          if (joy_check!=last_joy_check) ss_exit=3;
-        }
-        ss_frame();
-        volcado_completo=1; 
-        if (buffer_to_video!=NULL) 
-			buffer_to_video(); 
-        else
-			volcado((byte*)copia);
+			ss_exit=0; 
+			
+			do {
+				key_check=0; 
+				
+				for (n=0;n<128;n++) 
+					if (key(n)) 
+						key_check++;
+
+				if (key_check!=last_key_check) 
+					ss_exit=1;
+
+				readmouse();
+
+				mou_check=mouse->x+mouse->y+mouse->left+mouse->right+mouse->middle;
+
+				if (mou_check!=last_mou_check) 
+					ss_exit=1;
+
+				if (joy_status) {
+					read_joy();
+					joy_check=joy->button1+joy->button2+joy->left+joy->right+joy->up+joy->down;
+					
+					if (joy_check!=last_joy_check)
+						ss_exit=3;
+				}
+				
+				ss_frame();
+				volcado_completo=1; 
+				if (buffer_to_video!=NULL) 
+					buffer_to_video(); 
+				else
+					volcado((byte*)copia);
+			} while (!ss_exit);
+			
+			if (ss_end!=NULL) 
+				ss_end();
+
+			memcpy(copia,copia2,vga_an*vga_al);
+			volcado_parcial(0,0,vga_an,vga_al);
+			ss_time_counter=get_reloj()+ss_time;
+		}
+	}
+
+#ifdef DEBUG
+	oreloj=get_ticks();
+#endif
+
+  // Eliminate dead processes
+
+	for (ide=id_start; ide<=id_end; ide+=iloc_len)
+		if (mem[ide+_Status]==1) 
+			elimina_proceso(ide);
+
+#ifdef DEBUG
+	function_exec(255,get_ticks()-oreloj);
+#endif
+
+#ifdef DEBUG
+	oreloj=get_ticks();
+#endif
+
+	for (max=0;max<10;max++) 
+		timer(max)+=(get_reloj()-ultimo_reloj);
+
+	if (get_reloj()>ultimo_reloj) {
+		ffps=(ffps*9.0f+100.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
+		fps=(int)ffps;
+	}
+
+	ultimo_reloj=get_reloj();
+
+#ifdef DEBUG
+	if (overall_reloj) {
+		game_ticks+=(double)(get_ticks()-overall_reloj);
+		game_frames+=1;
 		
-      } while (!ss_exit);
-      if (ss_end!=NULL) ss_end();
-      memcpy(copia,copia2,vga_an*vga_al);
-      volcado_parcial(0,0,vga_an,vga_al);
-      ss_time_counter=get_reloj()+ss_time;
-    }
-  }
+		if (ffps2>0)
+			ffps2=(ffps2*3.0f+(double)4600.0/(game_ticks/game_frames))/4.0f;
+		else 
+			ffps2=(double)4600.0/(game_ticks/game_frames);
+	} function_exec(255,get_ticks()-oreloj);
+#endif
 
-  #ifdef DEBUG
-  oreloj=get_ticks();
-  #endif
+	if (get_reloj()>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
+		if (volcados_saltados<max_saltos) {
+			volcados_saltados++;
+			saltar_volcado=1;
+			freloj+=ireloj;
+		} else {
+			freloj=(float)get_reloj()+ireloj;
+			volcados_saltados=0;
+			saltar_volcado=0;
+		}
+	} else {
+		n=0; 
+		old_reloj=get_reloj();
 
-  // Elimina los procesos muertos
+		do { 
+		
+		} while (get_reloj()<(int)freloj); // TO keep FPS
 
-  for (ide=id_start; ide<=id_end; ide+=iloc_len)
-    if (mem[ide+_Status]==1) elimina_proceso(ide);
+		volcados_saltados=0;
+		saltar_volcado=0;
+		freloj+=ireloj;
+	}
 
-  #ifdef DEBUG
-  function_exec(255,get_ticks()-oreloj);
-  #endif
+#ifdef DEBUG
+	overall_reloj=oreloj=get_ticks();
+#endif
 
-  #ifdef DEBUG
-  oreloj=get_ticks();
-  #endif
+// Mark all proceeses as "not executed"
 
-  for (max=0;max<10;max++) timer(max)+=(get_reloj()-ultimo_reloj);
+	for (ide=id_start; ide<=id_end; ide+=iloc_len)
+		mem[ide+_Executed]=0;
 
-  if (get_reloj()>ultimo_reloj) {
-    ffps=(ffps*9.0f+100.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
-    fps=(int)ffps;
-  }
+// Fija la prioridad m�xima, para ejecutar procesos seg�n _Priority
 
-  ultimo_reloj=get_reloj();
+	id_old=id_start; // El siguiente a procesar
 
-  //LoopSound();
+// Posiciona las variables del rat�n
 
-  #ifdef DEBUG
-  if (overall_reloj) {
-    game_ticks+=(double)(get_ticks()-overall_reloj);
-    game_frames+=1;
-    if (ffps2>0) ffps2=(ffps2*3.0f+(double)4600.0/(game_ticks/game_frames))/4.0f;
-    else ffps2=(double)4600.0/(game_ticks/game_frames);
-  } function_exec(255,get_ticks()-oreloj);
-  #endif
+	readmouse();
 
-  if (get_reloj()>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
-    if (volcados_saltados<max_saltos) {
-      volcados_saltados++;
-      saltar_volcado=1;
-      freloj+=ireloj;
-    } else {
-      freloj=(float)get_reloj()+ireloj;
-      volcados_saltados=0;
-      saltar_volcado=0;
-    }
-  } else {
-    n=0; old_reloj=get_reloj();
-    do { }
-    /*
-      n++;
-      if (n>60000 && get_reloj()==old_reloj) {
-        retrazo();
-        n=-2;
-      } else if (n<0 && get_reloj()==old_reloj) {
-        EndSound();
-        InitSound();
-        break;
-      }
-    } */		
-while (get_reloj()<(int)freloj); // Espera para no dar m�s de "n" fps
-    volcados_saltados=0;
-    saltar_volcado=0;
-    freloj+=ireloj;
-  }
+// Read joystick(s)
 
-  #ifdef DEBUG
-  overall_reloj=oreloj=get_ticks();
-  #endif
+	if (joy_status==1 && joy_timeout>=6) {
+		joy->button1=0; joy->button2=0;
+		joy->button3=0; joy->button4=0;
+		joy->left=0; joy->right=0;
+		joy->up=0; joy->down=0;
+		joy_status=0;
+	} else if (joy_status) {
+		read_joy();
+		joy_check=joy->button1+joy->button2+joy->left+joy->right+joy->up+joy->down;
+		
+		if (joy_check!=last_joy_check) {
+			last_joy_check=joy_check;
+			ss_time_counter=get_reloj()+ss_time;
+		}
+	}
 
-  // Marca todos los procesos como no ejecutados
+	key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
 
-  for (ide=id_start; ide<=id_end; ide+=iloc_len) mem[ide+_Executed]=0;
+	if (key_check!=last_key_check) {
+		last_key_check=key_check;
+		ss_time_counter=get_reloj()+ss_time;
+	}
 
-  // Fija la prioridad m�xima, para ejecutar procesos seg�n _Priority
+	mou_check=mouse->x+mouse->y+mouse->left+mouse->right+mouse->middle;
 
-  id_old=id_start; // El siguiente a procesar
+	if (mou_check!=last_mou_check) {
+		last_mou_check=mou_check;
+		ss_time_counter=get_reloj()+ss_time;
+	}
 
-  // Posiciona las variables del rat�n
-
-  readmouse();
-
-  // Read joystick(s)
-
-  if (joy_status==1 && joy_timeout>=6) {
-    joy->button1=0; joy->button2=0;
-    joy->button3=0; joy->button4=0;
-    joy->left=0; joy->right=0;
-    joy->up=0; joy->down=0;
-    joy_status=0;
-  } else if (joy_status) {
-    read_joy();
-    joy_check=joy->button1+joy->button2+joy->left+joy->right+joy->up+joy->down;
-    if (joy_check!=last_joy_check) {
-      last_joy_check=joy_check;
-      ss_time_counter=get_reloj()+ss_time;
-    }
-
-  }
-
-  key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
-  if (key_check!=last_key_check) {
-    last_key_check=key_check;
-    ss_time_counter=get_reloj()+ss_time;
-  }
-
-  mou_check=mouse->x+mouse->y+mouse->left+mouse->right+mouse->middle;
-  if (mou_check!=last_mou_check) {
-    last_mou_check=mou_check;
-    ss_time_counter=get_reloj()+ss_time;
-  }
-
-  #ifdef DEBUG
-  function_exec(255,get_ticks()-oreloj);
-  #endif
+#ifdef DEBUG
+	function_exec(255,get_ticks()-oreloj);
+#endif
 
 }
 
@@ -1156,244 +1183,271 @@ while (get_reloj()<(int)freloj); // Espera para no dar m�s de "n" fps
 //�����������������������������������������������������������������������������
 
 void frame_end(void) {
-  int mouse_pintado=0,textos_pintados=0,drawings_pintados=0;
-  int mouse_x0,mouse_x1,mouse_y0,mouse_y1;
-  int n,m7ide,scrollide,otheride,retra=0;
+	int mouse_pintado=0,textos_pintados=0,drawings_pintados=0;
+	int mouse_x0,mouse_x1,mouse_y0,mouse_y1;
+	int n,m7ide,scrollide,otheride,retra=0;
 	char buf[255];
 
-  #ifdef DEBUG
-  int oreloj;
-  #endif
+#ifdef DEBUG
+	int oreloj;
+#endif
+
 #ifdef __EMSCRIPTEN__
-sprintf (buf, "$('#fps').text(\"FPS: %d/%d (max frameskip: %d)\");", fps,dfps,max_saltos);
-emscripten_run_script (buf);
+	sprintf (buf, "$('#fps').text(\"FPS: %d/%d (max frameskip: %d)\");", fps,dfps,max_saltos);
+	emscripten_run_script (buf);
 #endif
 
 #ifdef DIVDLL
-  // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
-  if (!dll_loaded) {
-    dll_loaded=1;
+	// DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
+	if (!dll_loaded) {
+		dll_loaded=1;
 
-    // Los importa
+		// Imports
 
-    set_video_mode        =(void (*)())DIV_import("set_video_mode"); //ok
-    process_palette       =(void (*)())DIV_import("process_palette"); //ok
-    process_active_palette=(void (*)())DIV_import("process_active_palette"); //ok
+		set_video_mode        =(void (*)())DIV_import("set_video_mode"); //ok
+		process_palette       =(void (*)())DIV_import("process_palette"); //ok
+		process_active_palette=(void (*)())DIV_import("process_active_palette"); //ok
 
-    process_sound         =(void (*)(char *,int))DIV_import("process_sound"); //ok
+		process_sound         =(void (*)(char *,int))DIV_import("process_sound"); //ok
 
-    process_fpg           =(void (*)(char *,int))DIV_import("process_fpg"); //ok
-    process_map           =(void (*)(char *,int))DIV_import("process_map"); //ok
-    process_fnt           =(void (*)(char *,int))DIV_import("process_fnt"); //ok
+		process_fpg           =(void (*)(char *,int))DIV_import("process_fpg"); //ok
+		process_map           =(void (*)(char *,int))DIV_import("process_map"); //ok
+		process_fnt           =(void (*)(char *,int))DIV_import("process_fnt"); //ok
 
-    background_to_buffer  =(void (*)())DIV_import("background_to_buffer"); //ok
-    buffer_to_video       =(void (*)())DIV_import("buffer_to_video"); //ok
+		background_to_buffer  =(void (*)())DIV_import("background_to_buffer"); //ok
+		buffer_to_video       =(void (*)())DIV_import("buffer_to_video"); //ok
 
-    post_process_scroll   =(void (*)())DIV_import("post_process_scroll"); //ok
-    post_process_m7       =(void (*)())DIV_import("post_process_m7"); //ok
-    post_process_buffer   =(void (*)())DIV_import("post_process_buffer"); //ok
-    pre_process_buffer    =(void (*)())DIV_import("pre_process_buffer"); //ok
-    post_process          =(void (*)())DIV_import("post_process"); //ok
+		post_process_scroll   =(void (*)())DIV_import("post_process_scroll"); //ok
+		post_process_m7       =(void (*)())DIV_import("post_process_m7"); //ok
+		post_process_buffer   =(void (*)())DIV_import("post_process_buffer"); //ok
+		pre_process_buffer    =(void (*)())DIV_import("pre_process_buffer"); //ok
+		post_process          =(void (*)())DIV_import("post_process"); //ok
 
-    putsprite             =(void (*)(byte *,int,int,int,int,int,int,int,int,int))DIV_import("put_sprite"); //ok
+		putsprite             =(void (*)(byte *,int,int,int,int,int,int,int,int,int))DIV_import("put_sprite"); //ok
 
-    ss_init               =(void (*)())DIV_import("ss_init"); //ok
-    ss_frame              =(void (*)())DIV_import("ss_frame"); //ok
-    ss_end                =(void (*)())DIV_import("ss_end"); //ok
+		ss_init               =(void (*)())DIV_import("ss_init"); //ok
+		ss_frame              =(void (*)())DIV_import("ss_frame"); //ok
+		ss_end                =(void (*)())DIV_import("ss_end"); //ok
 
-    ss_time_counter=get_reloj()+ss_time;
+		ss_time_counter=get_reloj()+ss_time;
 
-    // DLL_1 Aqu� se llama a uno.
+		// DLL_1 Aqu� se llama a uno.
 
-    #ifdef DEBUG
-    if (process_palette!=NULL)
-    {
-      process_palette();
-    }
-    #endif
-  }
+#ifdef DEBUG
+		if (process_palette!=NULL) 
+			process_palette();
+	
+#endif // DEBUG
+	}
 
+#endif // DLL
+
+	// Si el usuario modific� mouse.x o mouse.y, posiciona el rat�n debidamente
+	if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) 
+		set_mouse(mouse->x,mouse->y);
+
+	if (!saltar_volcado) {
+
+	// *** OJO *** Restaura las zonas de copia fuera del scroll y del modo 7
+
+#ifdef DEBUG
+	oreloj=get_ticks();
 #endif
 
-  // Si el usuario modific� mouse.x o mouse.y, posiciona el rat�n debidamente
-  if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) set_mouse(mouse->x,mouse->y);
+	if (restore_type==0 || restore_type==1) {
+		if (!iscroll[0].on || iscroll[0].x || iscroll[0].y || iscroll[0].an!=vga_an || iscroll[0].al!=vga_al) {
+			
+			if (background_to_buffer!=NULL) 
+				background_to_buffer();
+			else {
+				if (old_restore_type==0)
+					restore((byte*)copia,(byte*)copia2);
+				else
+					memcpy(copia,copia2,vga_an*vga_al);
+			}
+		}
+	}
 
-  if (!saltar_volcado) {
+	if (pre_process_buffer!=NULL)
+		pre_process_buffer();
 
-    // *** OJO *** Restaura las zonas de copia fuera del scroll y del modo 7
-
-
-    #ifdef DEBUG
-    oreloj=get_ticks();
-    #endif
-
-    if (restore_type==0 || restore_type==1) {
-      if (!iscroll[0].on || iscroll[0].x || iscroll[0].y || iscroll[0].an!=vga_an || iscroll[0].al!=vga_al) {
-        if (background_to_buffer!=NULL) background_to_buffer(); else {
-          if (old_restore_type==0) restore((byte*)copia,(byte*)copia2);
-          else memcpy(copia,copia2,vga_an*vga_al);
-        }
-      }
-    }
-
-    if (pre_process_buffer!=NULL)
-    {
-      pre_process_buffer();
-    }
-
-    #ifdef DEBUG
-    if (debugger_step) {
-      function_exec(253,tiempo_restore);
-      game_ticks-=get_ticks()-oreloj;
-      game_ticks+=tiempo_restore;
-    } else {
-      n=get_ticks()-oreloj;
-      function_exec(253,n);
-      if (!tiempo_restore) tiempo_restore=n;
-      else tiempo_restore=(tiempo_restore*3+n)/4;
-    }
-    oreloj=get_ticks();
-    #endif
+#ifdef DEBUG
+	if (debugger_step) {
+		function_exec(253,tiempo_restore);
+		game_ticks-=get_ticks()-oreloj;
+		game_ticks+=tiempo_restore;
+	} else {
+		n=get_ticks()-oreloj;
+		function_exec(253,n);
+		
+		if (!tiempo_restore)
+			tiempo_restore=n;
+		else
+			tiempo_restore=(tiempo_restore*3+n)/4;
+	}
+	oreloj=get_ticks();
+#endif
 
 #ifdef MODE8
-    for (n=0,ide=id_start; ide<=id_end; ide+=iloc_len) {
-      if (mem[ide+_Ctype]==3 && mem[ide+_Old_Ctype]!=3) {
-        n=1; mem[ide+_M8_Object]=create_object(ide);
+	for (n=0,ide=id_start; ide<=id_end; ide+=iloc_len) {
+		if (mem[ide+_Ctype]==3 && mem[ide+_Old_Ctype]!=3) {
+			n=1; 
+			mem[ide+_M8_Object]=create_object(ide);
 
-// ******* OJO *************** PROBAR !!!!!
+			// ******* OJO *************** PROBAR !!!!!
 
-        if (mem[ide+_M8_Object]==-1) elimina_proceso(ide);
+			if (mem[ide+_M8_Object]==-1) elimina_proceso(ide);
 
-      }
-      else if (mem[ide+_Ctype]!=3 && mem[ide+_Old_Ctype]==3) {
-        n=1; _object_destroy(mem[ide+_M8_Object]);
-        mem[ide+_M8_Object]=-1;
-      }
-      mem[ide+_Old_Ctype]=mem[ide+_Ctype];
-      if (mem[ide+_Ctype]==3) {
-        _object_data_input(ide);
-        n=1;
-      }
-    }
+		} else if (mem[ide+_Ctype]!=3 && mem[ide+_Old_Ctype]==3) {
+			n=1; _object_destroy(mem[ide+_M8_Object]);
+			mem[ide+_M8_Object]=-1;
+		}
+
+		mem[ide+_Old_Ctype]=mem[ide+_Ctype];
+		if (mem[ide+_Ctype]==3) {
+			_object_data_input(ide);
+			n=1;
+		}
+	}
 
     loop_mode8();
 
-    for (ide=id_start; ide<=id_end; ide+=iloc_len) {
-      if (mem[ide+_Ctype]==3)
-        _object_data_output(ide);
-    }
-#endif
+	for (ide=id_start; ide<=id_end; ide+=iloc_len) {
+		if (mem[ide+_Ctype]==3)
+			_object_data_output(ide);
+	}
+#endif // MODE8
 
-    #ifdef DEBUG
-    if (n) {
-      function_exec(251,get_ticks()-oreloj);
-      oreloj=get_ticks();
-    }
-    #endif
+#ifdef DEBUG
+	if (n) {
+		function_exec(251,get_ticks()-oreloj);
+		oreloj=get_ticks();
+	}
+#endif
 
     // Pinta los sprites, por orden de _Z (a mayor z se pinta antes)
 
-    for (ide=id_start; ide<=id_end; ide+=iloc_len) {
-      mem[ide+_Executed]=0; // Sin ejecutar
-      mem[ide+_x1]=-1; // Sin regi�n de volcado
-    }
+	for (ide=id_start; ide<=id_end; ide+=iloc_len) {
+		mem[ide+_Executed]=0; // Sin ejecutar
+		mem[ide+_x1]=-1; // Sin regi�n de volcado
+	}
 
-    for (n=0;n<10;n++) { im7[n].painted=0; iscroll[n].painted=0; }
+	for (n=0;n<10;n++) {
+		im7[n].painted=0;
+		iscroll[n].painted=0; 
+	}
 
-    #ifdef DEBUG
-    function_exec(255,get_ticks()-oreloj);
-    #endif
+#ifdef DEBUG
+	function_exec(255,get_ticks()-oreloj);
+#endif
 
 #ifndef NOTYET
-//printf("new loop: max %llx\n",max);
-    do {
-      #ifdef DEBUG
-      oreloj=get_ticks();
-      #endif
 
-// 0x80000000 = min_int
+    do {
+
+#ifdef DEBUG
+		oreloj=get_ticks();
+#endif
 
       ide=0; m7ide=0; scrollide=0; otheride=0; max=0x80000000;
 
-//printf("new loop: max %llx %d\n",max,max);
-
-      for (id=id_start; id<=id_end; id+=iloc_len)
-      	if ((mem[id+_Status]==2 || mem[id+_Status]==4) && mem[id+_Ctype]==0 &&
-      	    !mem[id+_Executed] && mem[id+_Z]>max) { ide=id; max=mem[id+_Z]; 
-//printf("id max: %llx %d\n",max,max);
+		for (id=id_start; id<=id_end; id+=iloc_len)
+			if ((mem[id+_Status]==2 || mem[id+_Status]==4) && mem[id+_Ctype]==0 &&
+				!mem[id+_Executed] && mem[id+_Z]>max) {
 				
+				ide=id; 
+				max=mem[id+_Z]; 
+
+			}
+
+			for (n=0;n<10;n++)
+				if (im7[n].on && (m7+n)->z>=max && !im7[n].painted) {
+					m7ide=n+1; 
+					max=(m7+n)->z;
 				}
 
-      for (n=0;n<10;n++)
-      	if (im7[n].on && (m7+n)->z>=max && !im7[n].painted) {
-      	  m7ide=n+1; max=(m7+n)->z;
-//printf("m7 max: %llx %d\n",max,max);
+				for (n=0;n<10;n++)
+					if (iscroll[n].on && (scroll+n)->z>=max && !iscroll[n].painted) {
+						scrollide=n+1; max=(scroll+n)->z;
+					}
 
-      	}
+				if (text_z>=max && !textos_pintados) {
+					max=text_z;
+					otheride=1;
+				}
 
-      for (n=0;n<10;n++)
-      	if (iscroll[n].on && (scroll+n)->z>=max && !iscroll[n].painted) {
-      	  scrollide=n+1; max=(scroll+n)->z;
-//printf("scroll max: %llx %d\n",max,max);
+				if (mouse->z>=max && !mouse_pintado) {
+					max=mouse->z;
+					otheride=2; 
+				}
 
-      	}
+				if (draw_z>=max && !drawings_pintados) {
+					max=draw_z;
+					otheride=3;
+				}
 
-      if (text_z>=max && !textos_pintados) { max=text_z; otheride=1; 
-	//	  printf("text_z max: %llx %d\n",max,max);
-}
+				if (otheride) {
+					if (otheride==1) {
 
-      if (mouse->z>=max && !mouse_pintado) { max=mouse->z; otheride=2; 
-		//  printf("mouse_z max: %llx %d\n",max,max);
-}
+						for (n=0;n<max_textos;n++)
+							if (texto[n].font) 
+								break;
 
-      if (draw_z>=max && !drawings_pintados) { max=draw_z; otheride=3; }
-//printf("draw_z max: %llx %d\n",max,max);
-
-      if (otheride) {
-      	if (otheride==1) {
-          for (n=0;n<max_textos;n++) if (texto[n].font) break;
-          if (n<max_textos) {
-            memb[nullstring[0]*4]=0; // El texto "en el aire" no se muestra nunca
-            memb[nullstring[1]*4]=0;
-            memb[nullstring[2]*4]=0;
-            memb[nullstring[3]*4]=0;
-        	  pinta_textos(0);
-            #ifdef DEBUG
-            function_exec(250,get_ticks()-oreloj);
-            #endif
-          } textos_pintados=1;
-      	} else if (otheride==2) {
-          readmouse();
-          x1s=-1; v_function=-1; // No errors (don't show?)
-          put_sprite(mouse->file,mouse->graph,mouse->x,mouse->y,mouse->angle,mouse->size,mouse->flags,mouse->region,copia,vga_an,vga_al);
-          mouse_x0=x0s;mouse_x1=x1s;mouse_y0=y0s;mouse_y1=y1s; mouse_pintado=1;
+						if (n<max_textos) {
+							memb[nullstring[0]*4]=0; // El texto "en el aire" no se muestra nunca
+							memb[nullstring[1]*4]=0;
+							memb[nullstring[2]*4]=0;
+							memb[nullstring[3]*4]=0;
+							pinta_textos(0);
 #ifdef DEBUG
-          function_exec(255,get_ticks()-oreloj);
+							function_exec(250,get_ticks()-oreloj);
 #endif
-      	} else if (otheride==3) {
-          for (n=0;n<max_drawings;n++) if (drawing[n].tipo) break;
-          if (n<max_drawings) {
-            pinta_drawings();
-            #ifdef DEBUG
-            function_exec(250,get_ticks()-oreloj);
-            #endif
-          } drawings_pintados=1;
-        }
-      } else if (scrollide) {
-      	iscroll[snum=scrollide-1].painted=1;
-      	if (iscroll[snum].on==1) scroll_simple();
-      	else if (iscroll[snum].on==2) scroll_parallax();
-      } else if (m7ide) {
-      	pinta_m7(m7ide-1); im7[m7ide-1].painted=1;
-      } else if (ide) {
-      	if (mem[ide+_Graph]>0 || mem[ide+_XGraph]>0) {
-      	  pinta_sprite();
-          #ifdef DEBUG
-          process_paint(ide,get_ticks()-oreloj);
-          #endif
-        }	mem[ide+_Executed]=1;
+						} textos_pintados=1;
+					} else if (otheride==2) {
+						readmouse();
+						x1s=-1;
+						v_function=-1; // No errors (don't show?)
+						put_sprite(mouse->file,mouse->graph,mouse->x,mouse->y,mouse->angle,mouse->size,mouse->flags,mouse->region,copia,vga_an,vga_al);
+						mouse_x0=x0s;
+						mouse_x1=x1s;
+						mouse_y0=y0s;
+						mouse_y1=y1s;
+						mouse_pintado=1;
+#ifdef DEBUG
+						function_exec(255,get_ticks()-oreloj);
+#endif
+					} else if (otheride==3) {
+						for (n=0;n<max_drawings;n++)
+							if (drawing[n].tipo)
+								break;
 
-      }
+						if (n<max_drawings) {
+							pinta_drawings();
+#ifdef DEBUG
+							function_exec(250,get_ticks()-oreloj);
+#endif
+						}
+						drawings_pintados=1;
+					}
+				} else if (scrollide) {
+					iscroll[snum=scrollide-1].painted=1;
+					
+					if (iscroll[snum].on==1)
+						scroll_simple();
+					else if (iscroll[snum].on==2) 
+						scroll_parallax();
+				} else if (m7ide) {
+					pinta_m7(m7ide-1);
+					im7[m7ide-1].painted=1;
+				} else if (ide) {
+					if (mem[ide+_Graph]>0 || mem[ide+_XGraph]>0) {
+						pinta_sprite();
+#ifdef DEBUG
+						process_paint(ide,get_ticks()-oreloj);
+#endif
+					}	mem[ide+_Executed]=1;
+
+				}
       /*
 		if(ide || m7ide || scrollide || otheride) 
 			printf("ide: %d, m7ide: %d, scrollide: %d, otheride: %s\n",
@@ -1401,134 +1455,151 @@ emscripten_run_script (buf);
 			(otheride==3?"Draw":(otheride==2?"Mouse":(otheride==1?"Text":"Graph")))
 			);
 */
-    } while (ide || m7ide || scrollide || otheride);
+		} while (ide || m7ide || scrollide || otheride);
 
-#else
+#else // IFDEFNOTYET
 
-      for (id=id_start; id<=id_end; id+=iloc_len)
-      	if ((mem[id+_Status]==2 || mem[id+_Status]==4) && mem[id+_Ctype]==0 &&
-      	    !mem[id+_Executed]) {
-      	    // && mem[id+_Z]>max) { ide=id; max=mem[id+_Z]; }
+		for (id=id_start; id<=id_end; id+=iloc_len)
+			if ((mem[id+_Status]==2 || mem[id+_Status]==4) && mem[id+_Ctype]==0 &&
+				!mem[id+_Executed]) {
+				// && mem[id+_Z]>max) { ide=id; max=mem[id+_Z]; }
 				ide=id; 
 
-
 				if (mem[ide+_Graph]>0 || mem[ide+_XGraph]>0) {
-				pinta_sprite();
+					pinta_sprite();
+				}
 			}
-		}
 
 
-	for (n=0;n<10;n++)
-      	if (iscroll[n].on && !iscroll[n].painted) {
-      	  scrollide=n+1; 
-      	  iscroll[snum=scrollide-1].painted=1;
-      	
-			if (iscroll[snum].on==1) 
-				scroll_simple();
-			else if (iscroll[snum].on==2) 
-				scroll_parallax();
-		}
+			for (n=0;n<10;n++)
+				if (iscroll[n].on && !iscroll[n].painted) {
+					scrollide=n+1; 
+					iscroll[snum=scrollide-1].painted=1;
+
+					if (iscroll[snum].on==1) 
+					scroll_simple();
+					else if (iscroll[snum].on==2) 
+					scroll_parallax();
+				}
 
 
-	for (n=0;n<max_textos;n++) if (texto[n].font) break;
-          if (n<max_textos) {
-            memb[nullstring[0]*4]=0; // El texto "en el aire" no se muestra nunca
-            memb[nullstring[1]*4]=0;
-            memb[nullstring[2]*4]=0;
-            memb[nullstring[3]*4]=0;
-        	  pinta_textos(0);
-            #ifdef DEBUG
-            function_exec(250,get_ticks()-oreloj);
-            #endif
-          } textos_pintados=1;
+				for (n=0;n<max_textos;n++)
+					if (texto[n].font)
+						break;
 
+				if (n<max_textos) {
+					memb[nullstring[0]*4]=0; // El texto "en el aire" no se muestra nunca
+					memb[nullstring[1]*4]=0;
+					memb[nullstring[2]*4]=0;
+					memb[nullstring[3]*4]=0;
+					pinta_textos(0);
+#ifdef DEBUG
+					function_exec(250,get_ticks()-oreloj);
 #endif
+				} 
+				textos_pintados=1;
+#endif // NDEFNOTYET
 
-    if (demo) pinta_textos(max_textos);
+				if (demo)
+					pinta_textos(max_textos);
 
-    if (post_process_buffer!=NULL)
-    {
-      post_process_buffer();
-    }
+				if (post_process_buffer!=NULL)
+					post_process_buffer();
 
     // Si se est� haciendo un fade lo contin�a
 
-    if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
-      set_paleta();
-      set_dac();
-      fading=1;
-      retra=1;
-    } else {
-      if (activar_paleta) {
-        set_paleta();
-        set_dac();
-        retra=1;
-        activar_paleta--;
-      } fading=0;
-    }
+				if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
+					set_paleta();
+					set_dac();
+					fading=1;
+					retra=1;
+				} else {
+					if (activar_paleta) {
+						set_paleta();
+						set_dac();
+						retra=1;
+						activar_paleta--;
+					}
+					fading=0;
+				}
 
-    #ifdef DEBUG
-    oreloj=get_ticks();
-    if (debugger_step) {
-      function_exec(254,tiempo_volcado);
-      game_ticks+=tiempo_volcado;
-    } else {
-    #endif
+#ifdef DEBUG
+				oreloj=get_ticks();
 
-    if (!retra && vsync) retrazo();
+				if (debugger_step) {
+					function_exec(254,tiempo_volcado);
+					game_ticks+=tiempo_volcado;
+				} else {
+#endif
 
-    if (buffer_to_video!=NULL) buffer_to_video(); else {
+					if (!retra && vsync)
+						retrazo();
 
-      if (old_dump_type) {
+					if (buffer_to_video!=NULL) {
+						buffer_to_video();
+					} else {
 
-        volcado_completo=1; volcado((byte*)copia);
+					  if (old_dump_type) {
+						volcado_completo=1; volcado((byte*)copia);
+					  } else {
 
-      } else {
+							volcado_completo=0;
 
-        volcado_completo=0;
+							// A�ade los volcados de este frame a los restore del anterior
 
-        // A�ade los volcados de este frame a los restore del anterior
+							for (n=id_start; n<=id_end; n+=iloc_len)
+								if (mem[n+_x1]!=-1) volcado_parcial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
+									for (n=0;n<10;n++) {
+										if (im7[n].on)
+											volcado_parcial(im7[n].x,im7[n].y,im7[n].an,im7[n].al);
+										
+										if (iscroll[n].on) volcado_parcial(iscroll[n].x,iscroll[n].y,iscroll[n].an,iscroll[n].al);
+									}
 
-        for (n=id_start; n<=id_end; n+=iloc_len)
-          if (mem[n+_x1]!=-1) volcado_parcial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
-        for (n=0;n<10;n++) {
-          if (im7[n].on) volcado_parcial(im7[n].x,im7[n].y,im7[n].an,im7[n].al);
-          if (iscroll[n].on) volcado_parcial(iscroll[n].x,iscroll[n].y,iscroll[n].an,iscroll[n].al);
-        }
-        if (mouse_x1!=-1) volcado_parcial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
-        for (n=0;n<max_textos;n++) if (texto[n].font && texto[n].an)
-            volcado_parcial(texto[n].x0,texto[n].y0,texto[n].an,texto[n].al);
+							if (mouse_x1!=-1)
+								volcado_parcial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
 
-        // Realiza un volcado parcial
+							for (n=0;n<max_textos;n++)
+								if (texto[n].font && texto[n].an)
+									volcado_parcial(texto[n].x0,texto[n].y0,texto[n].an,texto[n].al);
 
-        volcado((byte*)copia);
+							// Realiza un volcado parcial
 
-      }
+							volcado((byte*)copia);
 
-      if (dump_type==0 || restore_type==0) { // Fija los restore para el siguiente frame
+						}
 
-        for (n=id_start; n<=id_end; n+=iloc_len)
-          if (mem[n+_x1]!=-1) volcado_parcial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
-        for (n=0;n<10;n++) {
-          if (im7[n].on) volcado_parcial(im7[n].x,im7[n].y,im7[n].an,im7[n].al);
-          if (iscroll[n].on) volcado_parcial(iscroll[n].x,iscroll[n].y,iscroll[n].an,iscroll[n].al);
-        }
-        if (mouse_x1!=-1) volcado_parcial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
-        for (n=0;n<max_textos+1;n++) if (texto[n].font && texto[n].an)
-            volcado_parcial(texto[n].x0,texto[n].y0,texto[n].an,texto[n].al);
-      }
+						if (dump_type==0 || restore_type==0) { // Fija los restore para el siguiente frame
 
-    }
+							for (n=id_start; n<=id_end; n+=iloc_len)
+								if (mem[n+_x1]!=-1) volcado_parcial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
+									for (n=0;n<10;n++) {
+										if (im7[n].on)
+											volcado_parcial(im7[n].x,im7[n].y,im7[n].an,im7[n].al);
+										
+										if (iscroll[n].on)
+											volcado_parcial(iscroll[n].x,iscroll[n].y,iscroll[n].an,iscroll[n].al);
+									}
+							if (mouse_x1!=-1) volcado_parcial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
+							for (n=0;n<max_textos+1;n++)
+								if (texto[n].font && texto[n].an)
+									volcado_parcial(texto[n].x0,texto[n].y0,texto[n].an,texto[n].al);
+						}
 
-    #ifdef DEBUG
-    n=get_ticks()-oreloj;
-    function_exec(254,n);
-    if (!tiempo_volcado) tiempo_volcado=n;
-    else tiempo_volcado=(tiempo_volcado*3+n)/4;
-    }
-    #endif
+					}
 
-  }
+#ifdef DEBUG
+					n=get_ticks()-oreloj;
+					function_exec(254,n);
+					
+					if (!tiempo_volcado)
+						tiempo_volcado=n;
+					else 
+						tiempo_volcado=(tiempo_volcado*3+n)/4;
+				}
+#endif
+
+	} // saltar volcado
 
 }
 
@@ -1537,79 +1608,87 @@ emscripten_run_script (buf);
 ///////////////////////////////////////////////////////////////////////////////
 
 void elimina_proceso(int id) {
-  int id2;
+	int id2;
 
 #ifdef LLPROC
-remove_process(id);
+	remove_process(id);
 #endif
 
-//  printf("Removing process %d\n",id);
+	mem[id+_Status]=0; procesos--;
 
-  
+	if (id2=mem[id+_Father]) {
+		if (mem[id2+_Son]==id) mem[id2+_Son]=mem[id+_BigBro];
+			if (mem[id+_FCount]>0 && mem[id2+_Status]==3) {
+				mem[id2+_Executed]=0;
+				mem[id2+_Status]=2;
+			}
+	}
 
-  mem[id+_Status]=0; procesos--;
-  if (id2=mem[id+_Father]) {
-    if (mem[id2+_Son]==id) mem[id2+_Son]=mem[id+_BigBro];
-    if (mem[id+_FCount]>0 && mem[id2+_Status]==3) {
-      mem[id2+_Executed]=0;
-      mem[id2+_Status]=2;
-    }
-  }
-  if (id2=mem[id+_BigBro]) mem[id2+_SmallBro]=mem[id+_SmallBro];
-  if (id2=mem[id+_SmallBro]) mem[id2+_BigBro]=mem[id+_BigBro];
-  if (id2=mem[id+_Son]) {
-    do {
-      mem[id2+_Father]=id_init;
-      mem[id2+_Caller]=0;
-      if (mem[id2+_BigBro]==0) {
-        if (mem[id_init+_Son]!=0) {
-          mem[id2+_BigBro]=mem[id_init+_Son];
-          mem[mem[id_init+_Son]+_SmallBro]=id2; 
-        } id2=0;
-      } else id2=mem[id2+_BigBro];
-    } while (id2);
-    mem[id_init+_Son]=mem[id+_Son];
-  }
+	if (id2=mem[id+_BigBro]) mem[id2+_SmallBro]=mem[id+_SmallBro];
+		if (id2=mem[id+_SmallBro]) mem[id2+_BigBro]=mem[id+_BigBro];
+			if (id2=mem[id+_Son]) {
+				do {
+					mem[id2+_Father]=id_init;
+					mem[id2+_Caller]=0;
+					
+					if (mem[id2+_BigBro]==0) {
+						if (mem[id_init+_Son]!=0) {
+							mem[id2+_BigBro]=mem[id_init+_Son];
+							mem[mem[id_init+_Son]+_SmallBro]=id2; 
+						} 
+						id2=0;
+					} else id2=mem[id2+_BigBro];
+				} while (id2);
+						
+				mem[id_init+_Son]=mem[id+_Son];
+			}
 #ifdef MODE8
-  _object_destroy(mem[id+_M8_Object]);
+	_object_destroy(mem[id+_M8_Object]);
 #endif
 
 	while(mem[id_end+_Status]==0 && id_end>id_start) {
 		id_end-=iloc_len;
-	}
-	
+	}	
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Finalise
 ///////////////////////////////////////////////////////////////////////////////
+
 #if defined ( WIN32 ) || defined ( PSP )
-void closefiles(void);
+void closefiles(void); // close fake fmemopen'd files
 #endif
 
 void finalizacion (void) {
 #ifdef DIVDLL
-  while (nDLL--) DIV_UnLoadDll(pe[nDLL]);
+// unload dlls
+	while (nDLL--)
+		DIV_UnLoadDll(pe[nDLL]);
 #endif
-  dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=4;
-  while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
-    set_paleta(); set_dac();
-  }
+
+	dacout_r=64;
+	dacout_g=64;
+	dacout_b=64;
+	dacout_speed=4;
+
+	while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
+		set_paleta();
+		set_dac();
+	}
+
 #ifdef NET
-  if (inicializacion_red) net_end();
+	if (inicializacion_red)
+		net_end();
 #endif
-  rvmode();
-//EndSound();
-  kbdReset();
+	rvmode();
+
+	kbdReset();
 
 #if defined (WIN32) || defined (PSP)
 
-closefiles();
+	closefiles();
 
 #endif
-
-//  printf("Ejecuci�n correcta:\n\n\tn� actual de procesos = %u\n\tn� m�ximo de procesos = %u",
-//    procesos,(id_end-id_start)/iloc_len+1);
 
 }
 
@@ -1619,51 +1698,56 @@ closefiles();
 
 void exer(int e) {
 
-  #ifdef DEBUG
+#ifdef DEBUG
 
-  FILE *f;
+	FILE *f;
 
-  if (e) {
-    if ((f=fopen("system/exec.err","wb"))!=NULL) {
-      fwrite(&e,4,1,f);
-      fclose(f);
-    }
-  }
+	if (e) {
+		if ((f=fopen("system/exec.err","wb"))!=NULL) {
+			fwrite(&e,4,1,f);
+			fclose(f);
+		}
+	}
 
-  #else
+#else
 
-  if (e) {
-    printf("Error: ");
-    switch(e) {
-      case 1: printf("Out of memory!"); break;
-      case 2: printf("Too many process!"); break;
-      case 3: printf("Stack overflow!"); break;
-      case 4: printf("DLL not found!"); break;
-      case 5: printf("System font file missed!"); break;
-      case 6: printf("System graphic file missed!"); break;
-      default: printf("Internal error!"); break;
-    }
-  }
+	if (e) {
+		printf("Error: ");
+		
+		switch(e) {
+			case 1: printf("Out of memory!"); break;
+			case 2: printf("Too many process!"); break;
+			case 3: printf("Stack overflow!"); break;
+			case 4: printf("DLL not found!"); break;
+			case 5: printf("System font file missed!"); break;
+			case 6: printf("System graphic file missed!"); break;
+			default: printf("Internal error!"); break;
+		}
+	}
 
-  #endif
+#endif
 
   //printf("*** Error de ejecuci�n:\n\n\tn� actual de procesos = %u\n\tn� m�ximo de procesos = %u",
   //procesos,(id_end-id_start)/iloc_len+1);
 #ifdef NET
-  if (inicializacion_red) net_end();
-#endif
-  rvmode();
-//EndSound();
-  kbdReset();
-#if defined( DOS ) || defined (WIN32)
-  _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
+	if (inicializacion_red)
+		net_end();
 #endif
 
-  chdir(divpath);
-#ifdef STDOUTLOG
-printf("exited %d\n",e);
+	rvmode();
+
+	kbdReset();
+
+#if defined( DOS ) || defined (WIN32)
+	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
 #endif
-  exit(26);
+
+	chdir(divpath);
+
+#ifdef STDOUTLOG
+	printf("exited %d\n",e);
+#endif
+	exit(26);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1673,32 +1757,40 @@ printf("exited %d\n",e);
 #ifndef DEBUG
 
 void e(int texto) {
-  int n=0;
+	int n=0;
 
-  if (v_function==-1) return;
+	if (v_function==-1)
+		return;
 
-  while (n<nomitidos) {
-    if (omitidos[n]==texto) break;
-    n++;
-  } if (ignore_errors || n<nomitidos) return;
+	while (n<nomitidos) {
+		if (omitidos[n]==texto)
+			break;
+		n++;
+	} 
+	
+	if (ignore_errors || n<nomitidos)
+		return;
 
-  if (v_function>=0) {
-    printf("Error %d (%s) %s\nn",texto,fname[v_function],text[texto]);
-  } else {
-    printf("Error %d %s\n\n",texto,text[texto]);
-  }
+	if (v_function>=0) {
+		printf("Error %d (%s) %s\nn",texto,fname[v_function],text[texto]);
+	} else {
+		printf("Error %d %s\n\n",texto,text[texto]);
+	}
 #ifdef NET
-  if (inicializacion_red) net_end();
+	if (inicializacion_red)
+		net_end();
 #endif
-  rvmode();
-//EndSound();
+	rvmode();
+
 //  if (end_extern!=NULL) end_extern();
-  kbdReset();
+	kbdReset();
 
-  _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-  chdir(divpath);
+#if defined (DOS) || defined (WIN32)
+	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
+#endif
+	chdir(divpath);
 
-  exit(26);
+	exit(26);
 }
 
 #endif
@@ -1706,6 +1798,7 @@ void e(int texto) {
 //////////////////////////////////////////////////////////////////////////////
 //  Main Program
 //////////////////////////////////////////////////////////////////////////////
+
 #ifdef ZLIB
 extern int datastartpos;
 extern char exebin[255];
