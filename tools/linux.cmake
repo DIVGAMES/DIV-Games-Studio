@@ -1,0 +1,16 @@
+# LINUX CMAKE SETTINGS
+
+set(CMAKE_SYSTEM_NAME Linux)
+
+SET(PLATFORM "LINUX")
+
+# set per-build values
+SET(HAS_SDLTTF 1)
+SET(HAS_SDLIMAGE 1)
+SET(HAS_ZLIB 1)
+SET(HAS_SDLMIXER 1)
+SET(HAS_DLL 1)
+SET(HAS_JPEG 1)
+
+#include maths and dl libs
+SET(OS_LIBS m dl jpeg)
