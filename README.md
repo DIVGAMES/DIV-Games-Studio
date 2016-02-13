@@ -5,7 +5,7 @@ DIV Games Studio 2, ported, translated and upgraded.
 cross platform IDE, compiler and runtime for
 
 * DOS
-* Windows
+* Windows (32 and 64bit cpu)
 * OSX
 * Android 
 * Amazon Fire TV Stick (WIP)
