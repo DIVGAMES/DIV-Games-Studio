@@ -4,6 +4,7 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
+#include "newfuncs.h"
 
 
 void cfg_show_font(void);
@@ -165,69 +166,97 @@ int Tap_gama;
 struct _gcolor gama_vieja[9];
 
 void Get_Tapiz() {
-  int len,n;
-  char cwork[1024];
-  byte *ptr=NULL;
-  FILE *f;
+	int len,n;
+	char cwork[1024];
+	byte *ptr=NULL;
+	FILE *f;
 
-  v_modo=1; v_tipo=9;
-  v_texto=(char *)texto[182];
-  dialogo((voidReturnType)browser0);
-  
-  strcpy(full,tipo[v_tipo].path);
-  if (full[strlen(full)-1]!='/') strcat(full,"/");
-  strcat(full,input);
+	v_modo=1; v_tipo=9;
+	v_texto=(char *)texto[182];
+	dialogo((voidReturnType)browser0);
 
+	strcpy(full,tipo[v_tipo].path);
 
+	if (full[strlen(full)-1]!='/') strcat(full,"/");
+		strcat(full,input);
+
+	if (v_terminado) {
+
+		if(v_existe) {
+
+			if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
 #ifdef TTF
-	strcpy(Tap_name,input);
-	strcpy(Tap_pathname,full);
-return;
+			strcpy(Tap_name,input);
+			strcpy(Tap_pathname,full);
+			fclose(f);
+			return;
 #endif
 
-  if (v_terminado) if (v_existe) {
-    if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
-      fseek(f,0,SEEK_END);
-      len=ftell(f);
-      fseek(f,0,SEEK_SET);
+			fseek(f,0,SEEK_END);
+			len=ftell(f);
+			fseek(f,0,SEEK_SET);
 
-      if (len>1024) n=1024; else n=len;
+			if (len>1024) 
+				n=1024; 
+			else 
+				n=len;
 
-      if (fread(cwork,1,n,f)==n) {
+			if (fread(cwork,1,n,f)==n) {
 
-        if ( es_MAP((byte *)cwork) || es_PCX((byte *)cwork) || es_BMP((byte *)cwork) ) {
+				if ( es_MAP((byte *)cwork) || es_PCX((byte *)cwork) || es_BMP((byte *)cwork) ) {
 
-          strcpy(Tap_name,input);
-          strcpy(Tap_pathname,full);
+					strcpy(Tap_name,input);
+					strcpy(Tap_pathname,full);
 
-        } else {
+				} else {
 
-          if ((ptr=(byte *) malloc(len))!=NULL) {
+					if ((ptr=(byte *) malloc(len))!=NULL) {
 
-            fseek(f,0,SEEK_SET);
-            if (fread(ptr,1,len,f)==len) {
+						fseek(f,0,SEEK_SET);
 
-              if (es_JPG(ptr,len)) {
+						if (fread(ptr,1,len,f)==len) {
 
-                strcpy(Tap_name,input);
-                strcpy(Tap_pathname,full);
+							if (es_JPG(ptr,len)) {
 
-              } else { v_texto=(char *)texto[46]; dialogo((voidReturnType)err0); }
+								strcpy(Tap_name,input);
+								strcpy(Tap_pathname,full);
 
-            } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
+							} else { 
+								v_texto=(char *)texto[46]; 
+								dialogo((voidReturnType)err0); 
+							}
 
-            free(ptr);
+						} else { 
+							v_texto=(char *)texto[44]; 
+							dialogo((voidReturnType)err0); 
+						}
 
-          } else { v_texto=(char *)texto[45]; dialogo((voidReturnType)err0); }
+						free(ptr);
 
-        }
+					} else { 
+						v_texto=(char *)texto[45]; 
+						dialogo((voidReturnType)err0); 
+					}
 
-      } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
+				}
 
-      fclose(f);
+			} else { 
+				v_texto=(char *)texto[44]; 
+				dialogo((voidReturnType)err0); 
+			}
 
-    } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
-  } else { v_texto=(char *)texto[43]; dialogo((voidReturnType)err0); }
+			fclose(f);
+
+			} else { 
+				v_texto=(char *)texto[44]; 
+				dialogo((voidReturnType)err0); 
+			}
+
+		} else { 
+			v_texto=(char *)texto[43]; 
+			dialogo((voidReturnType)err0); 
+		}
+	}
 }
 
 void Tap_Setup1(void) {
@@ -1038,7 +1067,7 @@ void preparar_tapiz_temp(void) {
 	if(tapiz_temp_surface!=NULL)
 		SDL_FreeSurface(tapiz_temp_surface);
 		
-	tapiz_temp_surface = IMG_Load(Tap_pathname);
+	tapiz_temp_surface = DIV_IMG_Load(Tap_pathname);
 
 	if(tapiz_temp_surface!=NULL) {
 
