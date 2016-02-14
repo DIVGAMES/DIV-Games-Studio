@@ -68,7 +68,7 @@ echo "DIV1 runtime"
 make div1run-PANDORA > /dev/null
 /home/mike/pandora-dev/arm-2011.09/bin/pandora-strip system/*-PANDORA
 
-cp div1run-PANDORA $TARGET/$3
+cp system/div1run-PANDORA $TARGET/$3
 #cp android/div1.so android/div2-droid/lib/armeabi/libapplication.so
 #cp "$1/$2" "android/resources/run"
 
@@ -94,7 +94,7 @@ cd "$TARGET"
 
 if [ $VER = "s" ]
 then
-/home/mike/div2015/div1run-LINUX $3.dat
+/home/mike/div2015/system/div1run-LINUX $3.dat
 
 else 
 

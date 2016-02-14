@@ -67,8 +67,9 @@ cp "$1/$2" "android/resources/EXEC.EXE"
 
 fi
 
+THREE=`echo $3 | sed 's/[^a-zA-Z]//g'`
 
-echo "Creating yml config"
+echo "Creating yml config for $THREE ($3.apk)"
 cat << EOF > android/div2-droid/apktool.yml
 version: 2.0.2
 apkFileName: $3.apk
@@ -80,7 +81,7 @@ sdkInfo:
   minSdkVersion: '7'
   targetSdkVersion: '17'
 packageInfo:
-  rename-manifest-package: com.div.$3
+  rename-manifest-package: com.div.$THREE
   forced-package-id: '127'
 versionInfo:
   versionCode: '1'
@@ -260,7 +261,7 @@ cd -
 #cmake . -DGCW=1 -DWINDOWS=0 -DAMIGA=0 -DRPI=0 > /dev/null
 #make -j5 div1run-GCW divrun-GCW > /dev/null
 
-#echo "Copying $3 to buildgcw/$3"
+#echo "Copying $THREE to buildgcw/$THREE"
 
 #VER=`dd if=buildgcw/$3.dat bs=1 count=1 skip=2 2>/dev/null`
 #echo $VER
