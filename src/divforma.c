@@ -47,112 +47,122 @@ typedef struct tagRGBQUAD
 } RGBQUAD;
 
 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
-//      Para la adiciขn de formatos gr ficos seguir los siguientes pasos
+// For adding graphics formats follow these steps
 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
-// - Aคadir la extensiขn en div.cpp en la cadena "*.MAP ... *.*"
+// - Add the extension in div.cpp chain ".MAP ... * * *."
 
-// - Crear las siguientes funciones en divforma.cpp (si el tipo es XYZ)
+// - Create the following functions in divforma.cpp (if the type is XYZ)
 
-//PROT: int es_XYZ (byte * buffer);
-//DESC: Devuelve TRUE si el fichero cargado en el buffer es de tipo XYZ, y
-//      adem s devuelve el ancho/alto del bitmap en las variables map_an/al
+// PROT: int is_XYZ (byte * buffer);
+// DESC: Returns TRUE if the file is loaded into the buffer type XYZ, and Adem s 
+// returns the width / height of the bitmap in the variables map_an / p
 
-//PROT: void descomprime_XYZ (byte * buffer, byte * mapa, int vent);
-//DESC: La funciขn recibe el fichero cargado en buffer y otro buffer de
-//      map_an*map_al+map_an bytes (mapa), tiene que descomprimirlo a este
-//      ฃltimo.
-//      "Vent" indica si se debe cargar la informacion adicional de las ventanas
-//      (como los puntos de control, ver los formatos ya definidos)
-//      Si el fichero tiene paleta, esta debe almacenarse en el buffer
-//      de 768 bytes denominado dac4[]
+// PROT: void decompresses_XYZ (byte * buffer, byte * map vent int);
+// DESC: The function ข n receives the loaded file in buffer and another buffer
+// Map_an * map_al + map_an bytes (map), you have to unpack this
+// latest.
+// "Vent" indicates whether to charge the additional information window
+// (Such as checkpoints, see already defined formats)
+// If the file has palette, it must be stored in the buffer
+// 768 bytes called dac4 []
 
-//PROT: int graba_XYZ (byte * mapa, FILE * f);
-//DESC: Debe grabar el bitmap en el fichero indicado. Adem s del propio buffer
-//      que contiene el mapa, se tiene acceso a la siguiente informaciขn:
-//      - map_an, map_al (ancho y alto del mapa en pixels)
-//      - dac[768] (paleta del fichero, 256 valores RGB entre 0 y 63)
-//      Cuando el fichero a grabar es MAP (formato propio) se tiene adem s
-//      - map_codigo (nฃmero asociado al mapa, entero largo, 4 bytes)
-//      - map_centro_x/y (centro del mapa)
-//      - map_descripcion[32] (comentario descriptivo del mapa)
-//      La funcion devuelve TRUE si ha podido grabar el fichero sin problemas,
-//      o FALSE si no habกa espacio suficiente en el disco.
-//      Al pricipio se debe suponer "f" un fichero listo para escritura binaria
-//      se tiene que escribir en el con fwrite, y al final no se debe cerrar
+// PROT: int record_XYZ (byte * Map, FILE * f);
+// DESC: You must save the bitmap in the filename. S own buffer addition
+// Containing the map, you have access to the following information:
+// - Map_an, map_al (map width and height in pixels)
+// - Dac [768] (palette file, 256 RGB values between 0 and 63)
+// When the file is recording MAP (own format) you have in addition s
+// - Map_codigo (number associated with the map, long integer, 4 bytes)
+// - Map_centro_x / y (center of the map)
+// - Map_descripcion [32] (descriptive comment map)
+// The function returns TRUE if the file has been recorded without any problems,
+// Or FALSE if there was not enough disk space.
+// Al pricipio should assume "f" a clever binary file for writing
+// Must be written on with fwrite, and in the end should not close
 
-//NOTA: Cualquier funciขn que requiera memoria adicional para realizar su
-//      trabajo, puede pedirla con malloc, y si no puede conseguir la memoria
-//      solicitada, entonces debe crear una ventana informativa del error de
-//      la siguiente forma: v_texto=texto[45]; dialogo((voidReturnType)err0);
+// NOTE: Any function that requires additional memory for your
+// Job, you can ask to malloc, and if you can not get the memory
+// Required, then you must create an informative error window
+// As follows: I = text v_texto [45]; dialogue ((voidReturnType) Err0);
 
-//NOTA2:El ฃnico formato que devuelve valor al descomprimir es el JPG. OJO !!!
+// NOTE 2: The only format that returns value to decompress is the JPG. EYE !!!
 
-// - Por ฃltimo se debe llamar a las tres funciones creadas en divhandl.cpp
-//   y en divbrow.cpp (buscar, por ejemplo, "MAP" en esos dos fuentes) y poner
-//   los nuevos prototipos en global.cpp (donde estn los anteriores)
-//   Tambin se tienen que poner en divsetup.cpp y en divpalet.cpp (preparar_tapiz)
+// - Finally you must call the three functions created in divhandl.cpp
+// And divbrow.cpp (look, for example, "MAP" on these two sources) and put
+// New prototypes Global.cpp (where n is the above) 
+// Tambi n have to be put in divsetup.cpp and divpalet.cpp (preparing Skin)
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Formato MAP
+//      MAP Format
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int es_MAP (byte * buffer) {
-  if (!strcmp((char *)buffer,"map\x1a\x0d\x0a")) {
-    map_an=*(word*)(buffer+8);
-    map_al=*(word*)(buffer+10);
-    return(1);
-  } else return(0);
+	if (!strcmp((char *)buffer,"map\x1a\x0d\x0a")) {
+		map_an=*(word*)(buffer+8);
+		map_al=*(word*)(buffer+10);
+		return(1);
+	} else 
+		return(0);
 }
 
 void descomprime_MAP (byte * buffer, byte * mapa, int vent) {
-short npuntos;
-  if (vent) {
-    memcpy(&Codigo,buffer+12,4);
-    memcpy(Descripcion,buffer+16,32);
-  }
-  memcpy(dac4,buffer+48,768);
-  memcpy(&npuntos,buffer+1392,2);
-  if (vent) {
-    memcpy(reglas,buffer+816,sizeof(reglas));
-    if(npuntos!=0)
-      memcpy(v_mapa->puntos,buffer+1394,npuntos*4);
-  }
-  memcpy(mapa,buffer+1394+(npuntos*4),map_an*map_al);
+	
+	short npuntos;
+	if (vent) {
+		memcpy(&Codigo,buffer+12,4);
+		memcpy(Descripcion,buffer+16,32);
+	}
+
+	memcpy(dac4,buffer+48,768);
+	memcpy(&npuntos,buffer+1392,2);
+	
+	if (vent) {
+		memcpy(reglas,buffer+816,sizeof(reglas));
+		if(npuntos!=0)
+			memcpy(v_mapa->puntos,buffer+1394,npuntos*4);
+	}
+	
+	memcpy(mapa,buffer+1394+(npuntos*4),map_an*map_al);
 }
 
 int graba_MAP (byte * mapa, FILE * f) {
 
-  word x,npuntos=0;
-  int y;
-  int i;
+	word x,npuntos=0;
+	int y;
+	int i;
 
-  fwrite("map\x1a\x0d\x0a\x00\x00",8,1,f);      // +000 Cabecera y version
-  x=map_an; fwrite(&x,2,1,f);                   // +008 Ancho
-  x=map_al; fwrite(&x,2,1,f);                   // +010 Alto
-  y=ventana[v_ventana].mapa->Codigo; fwrite(&y,4,1,f);// +012 Cขdigo
+	fwrite("map\x1a\x0d\x0a\x00\x00",8,1,f);      // +000 Cabecera y version
+	x=map_an; fwrite(&x,2,1,f);                   // +008 Ancho
+	x=map_al; fwrite(&x,2,1,f);                   // +010 Alto
+	y=ventana[v_ventana].mapa->Codigo; fwrite(&y,4,1,f);// +012 Cขdigo
 
-  fwrite(ventana[v_ventana].mapa->descripcion,32,1,f);// +016 Descripcion
-  fwrite(dac,768,1,f);                          // +048 Paleta
-  fwrite(reglas,1,sizeof(reglas),f);            // +816 Reglas de color
+	fwrite(ventana[v_ventana].mapa->descripcion,32,1,f);// +016 Descripcion
+	fwrite(dac,768,1,f);                          // +048 Paleta
+	fwrite(reglas,1,sizeof(reglas),f);            // +816 Reglas de color
 
-  npuntos=0;
-  for(i=511;i>=0;i-=2)
-        if(ventana[v_ventana].mapa->puntos[i]!=-1)
-        {
-                npuntos=(i+1)/2;
-                i=-1;
-        }
+	npuntos=0;
 
-  fwrite(&npuntos,2,1,f);                     // +1392 Numero de puntos
-  fwrite(&ventana[v_ventana].mapa->puntos,npuntos,4,f);
+	for(i=511;i>=0;i-=2)
+		if(ventana[v_ventana].mapa->puntos[i]!=-1) {
+				npuntos=(i+1)/2;
+				i=-1;
+		}
 
-  y=map_an*map_al; do if (y>=768) {
-    fwrite(mapa,768,1,f); y-=768; mapa+=768;
-  } else {
-    fwrite(mapa,y,1,f); y=0;
-  } while (y);
-  return(0);
+	fwrite(&npuntos,2,1,f);                     // +1392 Numero de puntos
+	fwrite(&ventana[v_ventana].mapa->puntos,npuntos,4,f);
+
+	y=map_an*map_al;
+
+	do { 
+		if (y>=768) {
+			fwrite(mapa,768,1,f); y-=768; mapa+=768;
+		} else {
+			fwrite(mapa,y,1,f); y=0;
+		} 
+	} while (y);
+
+	return 0;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -164,48 +174,51 @@ int graba_MAP (byte * mapa, FILE * f) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 typedef struct _pcx_header {
-  char manufacturer;
-  char version;
-  char encoding;
-  char bits_per_pixel;
-  short  xmin,ymin;
-  short  xmax,ymax;
-  short  hres;
-  short  vres;
-  char   palette16[48];
-  char   reserved;
-  char   color_planes;
-  short  bytes_per_line;
-  short  palette_type;
-  short  Hresol;
-  short  Vresol;
-  char  filler[54];
+	char manufacturer;
+	char version;
+	char encoding;
+	char bits_per_pixel;
+	short  xmin,ymin;
+	short  xmax,ymax;
+	short  hres;
+	short  vres;
+	char   palette16[48];
+	char   reserved;
+	char   color_planes;
+	short  bytes_per_line;
+	short  palette_type;
+	short  Hresol;
+	short  Vresol;
+	char  filler[54];
 }pcx_header;
 
 struct pcx_struct {
-  pcx_header header;
-  unsigned char far *cimage;
-  unsigned char palette[3*256];
-  unsigned char far *image;
-  int clength;
+	pcx_header header;
+	unsigned char far *cimage;
+	unsigned char palette[3*256];
+	unsigned char far *image;
+	int clength;
 };
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funciones
+//      Functions
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int es_PCX(byte *buffer)
 {
-  int loes=0;
+	int loes=0;
 
-  if(buffer[2]==1)
-  {
-    if(buffer[3]==8 && (buffer[65]==1 || buffer[65]==3)) loes=1;
-    if(buffer[3]==1 && (buffer[65]==4))                  loes=1;
-  }
-  map_an=*(word*)(buffer+8)-*(word*)(buffer+4)+1;
-  map_al=*(word*)(buffer+10)-*(word*)(buffer+6)+1;
+	if(buffer[2]==1) {
 
-  return(loes);
+		if(buffer[3]==8 && (buffer[65]==1 || buffer[65]==3)) 
+			loes=1;
+		if(buffer[3]==1 && (buffer[65]==4)) 
+			loes=1;
+	}
+
+	map_an=*(word*)(buffer+8)-*(word*)(buffer+4)+1;
+	map_al=*(word*)(buffer+10)-*(word*)(buffer+6)+1;
+
+	return(loes);
 }
 
 extern byte * muestra;
@@ -1543,10 +1556,10 @@ int cargadac_JPG(char *name)
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
   free(buffer);
-  return(1);
+  return 1;
 
 #else
-return(0);
+return 0;
 #endif
 }
 
