@@ -62,7 +62,7 @@ void path_line(void);
 void path_free(void);
 
 void signal_tree(int p, int s);
-static FILE * div_open_file(byte * file);
+FILE * div_open_file(byte * file);
 void fade_on(void);
 void fade_off(void);
 void stop_scroll(void);
@@ -149,7 +149,7 @@ char full[_MAX_PATH+1];
 
 #ifndef NOTYET
 
-static FILE * div_open_file(byte * file) {
+FILE * div_open_file(byte * file) {
   FILE * f,*fe;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
@@ -166,7 +166,8 @@ char remote[255];
   if(strlen((const char *)file)<1)
 	return NULL;
 
-//printf("trying to load [%s]\n",file);
+printf("trying to load [%s]\n",file);
+
 if(strlen((char *)file)==0) return NULL;
 char *ff = (char *)file;
 
