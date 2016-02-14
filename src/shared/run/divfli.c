@@ -76,12 +76,21 @@ void FlcReadFile(Uint32 size)
   }
 } /* FlcReadFile */
 
+#ifdef DIV1
+extern FILE * open_file(byte * file);
+#else
+extern FILE * div_open_file(byte * file);
+#endif
 
+int FlcCheckHeader(char *filename) {
+#ifdef DIV1
+ if((flc.file=open_file((byte *)filename))==NULL) 
+#else
+ if((flc.file=div_open_file((byte *)filename))==NULL) 
+#endif
 
-int FlcCheckHeader(char *filename)
-{ if((flc.file=fopen(filename, "rb"))==NULL) {
     return(1);
-  }
+  
 
   FlcReadFile(128);
 
