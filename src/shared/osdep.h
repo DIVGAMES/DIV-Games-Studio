@@ -8,6 +8,20 @@
 #include <emscripten.h>
 #endif
 
+#ifdef SDL
+#include <SDL/SDL.h>
+#endif
+
+#ifdef MIXER
+#include <SDL/SDL_mixer.h>
+#endif
+
+#ifdef IMAGE
+#include <SDL/SDL_image.h>
+#endif
+
+#include "lib/sdlgfx/SDL_rotozoom.h"
+
 #ifdef ZLIB
 #include "unzip.h"
 #endif
@@ -62,21 +76,6 @@ typedef int int32_t;
 
 
 
-#include <SDL/SDL.h>
-
-#ifdef TTF
-#include "SDL/SDL_ttf.h"
-#endif
-
-#ifdef MIXER
-#include <SDL/SDL_mixer.h>
-#endif
-
-#ifdef IMAGE
-#include <SDL/SDL_image.h>
-#include "lib/sdlgfx/SDL_rotozoom.h"
-
-#endif
 
 
 
