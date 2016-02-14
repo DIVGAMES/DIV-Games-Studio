@@ -1855,7 +1855,7 @@ if(true) {
 
 	f=fopen(argv[0],"rb");
 
-	memset(buf,255,0);
+	memset(buf,0,55);
 	
 	if(f) {
 		fseek(f,-2,SEEK_END);
