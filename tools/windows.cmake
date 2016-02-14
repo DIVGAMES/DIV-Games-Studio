@@ -14,16 +14,23 @@ SET(PLATFORM "WINDOWS")
 # SDL 0, 1 or 2
 
 SET(HAS_SDL 1)
-SET(HAS_SDLTTF 1)
-SET(HAS_SDLIMAGE 1)
+SET(HAS_SDLTTF 0)
+SET(HAS_SDLIMAGE 0)
 SET(HAS_ZLIB 1)
 SET(HAS_SDLMIXER 1)
 SET(HAS_DLL 1)
 
-IF(NOT CPUARCH STREQUAL "64")
-set(TOOLCHAIN_PREFIX i686-w64-mingw32)
-ELSE()
-set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
+
+IF(CPUARCH STREQUAL "64")
+	MESSAGE(STATUS "Buiding Windows 64bit")
+	SET(OS_DEFINITIONS " -mwindows -Dmain=SDL_main ")
+	SET(OS_LIBS mingw32 SDLmain)
+	set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
+ELSE() # Default 32 bits
+	MESSAGE(STATUS "Buiding Windows 32bit")
+	SET(OS_DEFINITIONS " -mwindows -Dmain=SDL_main ")
+	SET(OS_LIBS mingw32 SDLmain)
+	set(TOOLCHAIN_PREFIX i686-w64-mingw32)
 ENDIF()
 
 # cross compilers to use for C and C++
@@ -48,9 +55,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-SET(OS_LIBS mingw32 SDLmain)
-SET(OS_LINK_FLAGS " -static-libgcc -static-libstdc++ -mwindows ")
-SET(OS_DEFINITIONS " -mwindows -Dmain=SDL_main ")
+#SET(OS_LINK_FLAGS " -static-libgcc -static-libstdc++ -mwindows ")
+
 
 SET(EXT ".exe")
 

@@ -8,6 +8,14 @@
 set(CMAKE_SYSTEM_NAME Linux)
 SET(PANDORA=1)
 SET(PLATFORM "PANDORA")
+
+SET(HAS_SDL 1)
+SET(HAS_SDLTTF 0)
+SET(HAS_SDLIMAGE 1)
+SET(HAS_ZLIB 1)
+SET(HAS_SDLMIXER 1)
+SET(HAS_DLL 1)
+
 set(TOOLCHAIN_PREFIX pandora)
 #set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
@@ -30,8 +38,12 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 #TARGET_LINK_LIBRARIES ("mingw32 SDLmain  SDL SDL_Mixer")
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
-set ( CMAKE_EXE_LINKER_FLAGS "-L${CMAKE_FIND_ROOT_PATH}usr/lib/ -Wl,-rpath,${CMAKE_FIND_ROOT_PATH}usr/lib" )
-ADD_DEFINITIONS(  -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -I${CMAKE_FIND_ROOT_PATH}/usr/include -DPANDORA )
+set ( OS_LINK_FLAGS "-L${CMAKE_FIND_ROOT_PATH}usr/lib/ -Wl,-rpath,${CMAKE_FIND_ROOT_PATH}usr/lib" )
+
+SET (OS_DEFINITIONS "-mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -I${CMAKE_FIND_ROOT_PATH}/usr/include" )
+
+SET(OS_LIBS dl )
+
 #-DMIXER) 
 
 #SET(OSDEP "src/osdep/osdep.c" )
