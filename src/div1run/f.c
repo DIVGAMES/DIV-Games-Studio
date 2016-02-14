@@ -278,7 +278,7 @@ void _key(void) {
 
 char full[_MAX_PATH+1];
 
-static FILE * open_file(byte * file) {
+FILE * open_file(byte * file) {
   FILE * f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
@@ -1581,8 +1581,10 @@ void set_fps(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void start_fli(void) {
-  int x,y;
-  y=pila[sp--]; x=pila[sp--];
+
+	int x,y;
+	y=pila[sp--]; x=pila[sp--];
+#ifdef USE_FLI
 
   if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e147);
@@ -1593,6 +1595,7 @@ void start_fli(void) {
   }
 //  pila[sp]=StartFLI((byte*)&mem[itxt+pila[sp]],copia2,vga_an,vga_al,x,y);
 //  if (pila[sp]==0) e(e130);
+#endif
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
