@@ -10,6 +10,6 @@
 
 void memcpyb(byte * d, byte * s, int n) {
   memcpy(d,s,n);
-  compilar();
+//  compilar();
 }
 
