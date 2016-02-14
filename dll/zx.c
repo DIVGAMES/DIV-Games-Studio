@@ -12,6 +12,8 @@
 
 int w=256;
 int h=192;
+int bw=64;
+int bh=40;
 
 uint32_t rmask, gmask, bmask, amask;
 
@@ -23,8 +25,8 @@ uint32_t rmask, gmask, bmask, amask;
 
 void set_video_mode(){
 	
-	rc.x=25;
-	rc.y=15;
+	rc.x=bw;
+	rc.y=bh;
 	rc.w=w*2;
 	rc.h=h*2;
 	
@@ -41,7 +43,7 @@ void set_video_mode(){
 #endif
   // Leaves unchanged the 320x200 mode, which is the default mode.
 	
-	screen = SDL_SetVideoMode(w*2+50,h*2+30,8,0);
+	screen = SDL_SetVideoMode(w*2+bw*2,h*2+bh*2,8,0);
 
 	if(image!=NULL)
 		SDL_FreeSurface(image);
@@ -61,9 +63,12 @@ inline void put_pixel32( SDL_Surface *surface, int x, int y, Uint32 pixel )
     //Set the pixel
     pixels[ ( y * surface->w ) + x ] = pixel;
 }
+
+unsigned char render=0;//; // render|flags: 1=timex, 2=ulaplus, 4=bw
+
 void buffer_to_video() {
-	int omode=0; // output mode: 0=scr, 1=bmp, 2=zxp
-	unsigned char render=0;//; // render|flags: 1=timex, 2=ulaplus, 4=bw
+
+//	int omode=0; // output mode: 0=scr, 1=bmp, 2=zxp
 	int depress=0; // controls palette variation
 
 	yuv_t palyuv[256]; 
@@ -94,11 +99,11 @@ void buffer_to_video() {
 	bool npx[w][h]; bool c_npx=false;
 	memset(npx, 0, sizeof(npx));
 
-	bool unsaved=false;
+//	bool unsaved=false;
 
-	bool dithflow=false;
+	bool dithflow=false;//true;
 
-	sizer crop=SIZER_SCALE;
+	sizer crop=SIZER_CROP;//SIZER_SCALE;
 	
 	unsigned char tweaks[3][2]; // h/s/v, shift/scale
 
