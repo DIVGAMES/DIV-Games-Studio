@@ -2913,10 +2913,12 @@ void window_surface(int an, int al, byte type) {
 //		SDL_FreeSurface(v.surfaceptr
 	tempsurface=NULL;
 
+#ifdef IMAGE
 	if(type==1) 
 		v.surfaceptr = IMG_Load("/home/mike/div2015/system/red_panel.png");
 	else
 		v.surfaceptr = IMG_Load("/home/mike/div2015/system/blue_panel.png");
+#endif
 
 //		SDL_SetAlpha(v.surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL ,128);
 
@@ -4910,8 +4912,10 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
+
 #ifdef WIN32
 	printf("DaniDel %s\n",name);
+	remove(name);
 	return;
 #endif
 	
