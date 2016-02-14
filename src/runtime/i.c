@@ -436,7 +436,7 @@ void inicializacion (void) {
   if((copia=(byte*)malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia,0,vga_an*vga_al);
 
-  if((copia2=(byte*)malloc(vga_an*vga_al))==NULL) exer(1);
+  if((copia2=(byte*)malloc(vga_an*(vga_al+1)))==NULL) exer(1);
   memset(copia2,0,vga_an*vga_al);
 
   memset(divmalloc, 0, sizeof(divmalloc));
@@ -1684,6 +1684,18 @@ void finalizacion (void) {
 
 	kbdReset();
 
+#ifdef DEBUG
+	if(text_font!=NULL) {
+		printf("text_font = %x\n",text_font);
+		free(text_font);
+	}
+	if(graf_ptr!=NULL) {
+		printf("graf_ptr = %x\n",text_font);
+		free(graf_ptr);
+	}
+#endif
+
+
 #if defined (WIN32) || defined (PSP)
 
 	closefiles();
@@ -1836,7 +1848,13 @@ int main(int argc,char * argv[]) {
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 #endif
+	copia=NULL;
+	copia2=NULL;
 
+#ifdef DEBUG
+	copia_debug=NULL;
+#endif
+	
   atexit(SDL_Quit);
   
   SDL_Init( SDL_INIT_EVERYTHING);

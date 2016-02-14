@@ -179,7 +179,7 @@ while (*ff!=0) {
 #endif
 
 
-//printf("%s\n",full);
+//printf("%x %x\n",full,file);
   strcpy(full,(char*)file);
   //  printf("trying to load %s\n",full);
   if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
@@ -1969,11 +1969,22 @@ void set_mode(void) {
     set_paleta(); set_dac(); //LoopSound();
   }
 
-  free(copia); free(copia2);
+  if(copia!=NULL) {
+	free(copia); 
+	copia=NULL;
+  }
 
-  #ifdef DEBUG
-  free(copia_debug);
-  #endif
+  if(copia2!=NULL) {
+	free(copia2);
+	copia2=NULL;
+  }
+
+#ifdef DEBUG
+  if(copia_debug!=NULL) {
+	free(copia_debug);
+	copia_debug=NULL;
+  }
+#endif
 
   if((copia=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia,0,vga_an*vga_al);
