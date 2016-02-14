@@ -967,12 +967,21 @@ void CargarTextura(char *NombreTextura)
   fclose(f);
 
   man=map_an; mal=map_al;
-  if (es_MAP(mapa))        tipomapa=1;
-  else if (es_PCX(mapa))   tipomapa=2;
-  else if (es_BMP(mapa))   tipomapa=3;
-  else if (es_JPG(mapa,x)) tipomapa=4;
-  else tipomapa=0;
-  swap(man,map_an); swap(mal,map_al);
+
+	if (es_MAP(mapa))
+		tipomapa=1;
+	else if (es_PCX(mapa))
+		tipomapa=2;
+	else if (es_BMP(mapa))
+		tipomapa=3;
+	else if (es_JPG(mapa,x))
+		tipomapa=4;
+	else
+		tipomapa=0;
+	
+	swap(man,map_an); 
+	swap(mal,map_al);
+
 printf("file: %s\n",full);
 
   if (tipomapa) {
@@ -1182,15 +1191,13 @@ memset(mapa,0,man*mal);
   AlThumbSprite = al_final;
 }
 
-void IniCfg(void)
-{
-  InfoCfg.porcentaje    = atoi(TamText)*2;
-  InfoCfg.alfa          = atoi(AngText);
-  InfoCfg.beta          = atoi(PerText);
-  InfoCfg.animacion     = FicheroAni;
-  InfoCfg.num_animacion = anim_actual;
-  InfoCfg.nombre        = FicheroMod;
-  InfoCfg.dac           = (char *)dac;
-  InfoCfg.textura       = (char *)TexturaSprite;
+void IniCfg(void) {
+	InfoCfg.porcentaje    = atoi(TamText)*2;
+	InfoCfg.alfa          = atoi(AngText);
+	InfoCfg.beta          = atoi(PerText);
+	InfoCfg.animacion     = FicheroAni;
+	InfoCfg.num_animacion = anim_actual;
+	InfoCfg.nombre        = FicheroMod;
+	InfoCfg.dac           = (char *)dac;
+	InfoCfg.textura       = (char *)TexturaSprite;
 }
-
