@@ -421,7 +421,7 @@ char *Buffer;
                 return;
         }
         strcpy(full,tipo[4].path);
-        if (full[strlen(full)-1]!='/') strcat(full,"/");
+        if (full[strlen(full)-1]!='\\') strcat(full,"\\");
         strcat(full,input);
 
         FileOrg=fopen((char *)Fpg->ActualFile,"rb");
@@ -488,6 +488,8 @@ int x,len,n;
 FILE *fpg;
 FILE *Oldfpg;
 
+printf("Deleting map %d\n",COD);
+
         //Nombre del fichero temporal
         strcpy(ActualPath,(char *)Fpg->ActualFile);
         for(x=strlen(ActualPath);x>=0;x--)
@@ -511,6 +513,7 @@ FILE *Oldfpg;
           if(Fpg->DesIndex[n]==COD || Fpg->DesIndex[n]==0) break;
           n++;
         }
+printf("found COD at index: %d\n",n);
 
         if(Fpg->thumb[n].ptr!=NULL) free(Fpg->thumb[n].ptr);
         memmove(&(Fpg->thumb[n]),&(Fpg->thumb[n+1]),sizeof(t_thumb)*(999-n));
@@ -579,10 +582,15 @@ FILE *Oldfpg;
         Progress((char *)texto[436],len,len);
 
         DaniDel((char *)Fpg->ActualFile);
+        
+        printf("MOVE %s to %s\n",ActualPath, (char *)Fpg->ActualFile);
+        
+        
         rename(ActualPath,(char *)Fpg->ActualFile);
+        
         if(!Abrir_FPG(Fpg,(char *)Fpg->ActualFile))
                 return 0;
-return 1;
+		return 1;
 }
 
 int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
