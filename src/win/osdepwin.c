@@ -271,7 +271,12 @@ printf("FIND FIRST %s %d\n",findname,attr );
 type = attr;
 
 #ifdef __cplusplus
+#if defined(__MINGW64__) 
+	hFile =  _findfirst(name,( _finddata64i32_t*)result);
+#else
 	hFile =  _findfirst(name,( _finddata32_t*)result);
+#endif
+
 #else
 hFile =  _findfirst(name,result);
 #endif
@@ -328,7 +333,13 @@ return (ret);
 							}
 unsigned int _dos_findnext(struct find_t *result) {
 //	printf("TODO - findnext\n");
+
+#if defined(__MINGW64__) 
+struct _finddata64i32_t result2;
+#else
 struct _finddata32_t result2;
+#endif
+
 //return n;
 int n=0;
 
