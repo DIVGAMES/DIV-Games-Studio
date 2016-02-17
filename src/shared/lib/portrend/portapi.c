@@ -5,6 +5,8 @@
 
 #define text_offset mem[7] // Start of text segment (mem[] index)
 
+M3D_info m8map;
+
 tmap *my_map;
 
 static unsigned NumSectors = 0;
@@ -51,18 +53,17 @@ void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto)
 void load_wld(void) {
 	int num_fpg=pila[sp--];
 	int nombre=pila[sp];
-	M3D_info mymap;
 	int i=0;
 	
 	char *name = (char *)&mem[text_offset+nombre];
 	
 	printf("Loading WLD: %s\n",name);
 
-	map_read(&mymap, name);
+	map_read(&m8map, name);
 	
 	// convert mymap to portrender map
 	
-	map2port(&mymap);
+	map2port(&m8map);
 	
 	
 	// return 0;
@@ -234,9 +235,28 @@ void start_mode8(void) {
 }
 
 void go_to_flag(void) {
-	  int flag=pila[sp];
-	  printf("moved to flags %d\n",flag);
-}
+	int flag=pila[sp];
+
+	pila[sp]=0;
+
+	if (!vpe_inicializada)
+		return;
+
+	if (id<id_start || id>id_end)
+		return;
+	
+	// check if flag is valid
+	
+	if(flag>m8map.map.num_points-1 || flag<0)
+		return;
+
+	printf("moved to flags %d\n",flag);
+	// moveid to flag at x/y
+
+	mem[id+_X]=m8map.map.flags[flag]->x;
+	mem[id+_Y]=m8map.map.flags[flag]->y;
+
+}	
 
 void set_sector_height(void) {}
 
@@ -259,8 +279,7 @@ void get_wall_texture(void) {}
 void set_env_color(void) {}
 
 
-
-	void loop_mode8(void) {
+void loop_mode8(void) {
 	int i,j;
 	int ancho,alto;
 	t_region *my_region;
