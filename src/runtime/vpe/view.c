@@ -45,7 +45,7 @@ void DrawView(struct View *pv)
   DrawMasked();
 // Transfer buffer to screen
 
-#ifdef NOTYET
+#ifndef NOTYET
   if (CurView->ScrX>=0&&CurView->ScrY>=0)
     DrawBuffer(CurView);
 #endif

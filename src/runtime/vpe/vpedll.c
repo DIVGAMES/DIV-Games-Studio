@@ -84,9 +84,9 @@ void load_wld(void)
 
   if (npackfiles) {
     m=read_packfile((byte*)&mem[text_offset+nombre]);
-    if (m==-1) goto wldfuera;
-    if (m==-2) { pila[sp]=0; e(100); return; }
-    if (m<=0) { pila[sp]=0; e(200); return; }
+    if (m==-1) goto wldfuera; // not found
+    if (m==-2) { pila[sp]=0; e(100); return; } // not enough memory
+    if (m<=0) { pila[sp]=0; e(200); return; } // bad size
     buffer=packptr; size=m;
   } else {
     wldfuera:
