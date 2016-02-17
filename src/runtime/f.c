@@ -51,10 +51,13 @@ void get_wall_texture(void);
 void _object_avance(int ide,int angulo,int velocidad);
 int joy_position(int eje);
 
+// dummy function for missing mode8
 #ifndef MODE8
 void _object_avance(int ide,int angulo,int velocidad) {
+	
 }
 #endif
+
 void set_env_color(void);
 
 void path_find(void);
@@ -877,7 +880,7 @@ while(ftell(es)<file_len && len_>0 && num_>0) {
 	byte *mptr=&ptr[pos];
 	fread(&num_,4,1,es);
 	fread(&len_,4,1,es);
-//	printf("%d %d %d\n",len_,num_,ftell(es));
+//	printf("len: %d num: %d len: %d\n",len_,num_,ftell(es));
  	fseek(es,-8,SEEK_CUR);
  	mptr = (byte *)malloc(len_);
  	fread(mptr,1,len_,es);
@@ -4700,7 +4703,7 @@ void function(void) {
     case 86: path_free(); break;
     case 87: new_map(); break;
     
-#ifdef MODE8
+#if (defined  MODE8) || (defined NEWMODE8)
     case 88: load_wld(); break;
     case 89: start_mode8(); break;
     case 90: go_to_flag(); break;

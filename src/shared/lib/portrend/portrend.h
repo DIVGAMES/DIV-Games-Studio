@@ -5,6 +5,10 @@
 #define W 608
 #define H 480
 
+typedef short int     SHORT;
+typedef unsigned long DWORD;
+typedef long int      LONG;
+
 typedef struct _vertxy {
 	float x;
 	float y;
@@ -129,6 +133,8 @@ typedef struct {
 void map_read(M3D_info *m3d_aux, char *full);
 
 void map2port(M3D_info *mymap);
+
+void DrawScreen();
 
 
 #endif

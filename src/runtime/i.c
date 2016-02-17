@@ -1288,7 +1288,7 @@ void frame_end(void) {
 	oreloj=get_ticks();
 #endif
 
-#ifdef MODE8
+#if (defined MODE8) || (defined NEWMODE8)
 	for (n=0,ide=id_start; ide<=id_end; ide+=iloc_len) {
 		if (mem[ide+_Ctype]==3 && mem[ide+_Old_Ctype]!=3) {
 			n=1; 

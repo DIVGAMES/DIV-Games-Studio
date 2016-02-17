@@ -22,12 +22,12 @@ float eyeheight;
 /* Sectors: Floor and ceiling height; list of edge vertices and neighbors */
 sector *sectors = NULL;
 
-unsigned NumSectors = 0;
+uint32_t NumSectors = 0;
 
 /* Player: location */
 m8camera player;
 
-int *wallcount;
+int wallcount[MAX_REGIONS];
 
 
 void map2port(M3D_info *my_map) {
@@ -35,69 +35,97 @@ void map2port(M3D_info *my_map) {
     vertxy* vert = NULL, v;
     int n, m, NumVertices = 0;
     int i=0;
+    sectors = (sector *)malloc(sizeof(sector)*my_map->map.num_regions+1);
     
     // loop through walls, creating sectors
 
-	wallcount = (int *)malloc(sizeof(int)*my_map->map.num_regions);
+//	wallcount = (int *)malloc(sizeof(int)*my_map->map.num_regions+1);
+	
 	memset(wallcount,0,sizeof(int)*my_map->map.num_regions);
+	
  //   for (i=0;i<my_map->map.num_regions;i++) {
 // 		my_map->map.regions[i]->num_walls=0;
 //		printf("Setting region [%d] num walls to ZERO\n",i);
 		
-//	}   
+//	}
+
+
     for (i=0;i<my_map->map.num_walls;i++) {
   
        if(my_map->map.walls[i]->front_region>=0)
-		my_map->map.regions[my_map->map.walls[i]->front_region]->num_walls++;
+		wallcount[my_map->map.walls[i]->front_region]++;
+		//my_map->map.regions[my_map->map.walls[i]->front_region]->num_walls++;
 		
      if(my_map->map.walls[i]->back_region>=0)
-		my_map->map.regions[my_map->map.walls[i]->back_region]->num_walls++;
+		wallcount[my_map->map.walls[i]->back_region]++;
+		//my_map->map.regions[my_map->map.walls[i]->back_region]->num_walls++;
 
+// set verteces
+
+		
   
 	} 
     for (i=0;i<my_map->map.num_regions;i++) {
     
-		sectors = realloc(sectors, ++NumSectors * sizeof(*sectors));
-		sector* sect = &sectors[NumSectors-1];
+//		sectors = realloc(sectors, ++NumSectors * sizeof(sector));
+		NumSectors++;
+		sector* sect = &sectors[i];
 		int* num = NULL;
-//		printf("converting region to sector (%d)\n",i);
-//		printf("Walls: %d\n",my_map->map.regions[i]->num_walls);
+		printf("converting region to sector (%d)\n",i);
+		printf("Walls: %d\n",wallcount[i]);
 		
-	}
+	
+	sect->floor=my_map->map.regions[i]->floor_height;
+	sect->ceil=my_map->map.regions[i]->ceil_height;
+	sect->npoints=wallcount[i];
+	sect->vertex = malloc((wallcount[i] ) * sizeof(*sect->vertex));
+
+//	get_verteces (i, &sect->vertex);
+	
+	sect->neighbors = malloc((wallcount[i]+1 ) * sizeof(*sect->neighbors));
+
+//	get_neighbors (i, &sect->vertex);	
+	
+	//	printf("wallcount: %d %d\n",wallcount[i],wallcount[i]/=2);
+//	printf("wallcount N: %d\n",wallcount[i]);
+	
+	
+	
 	/*
 		sscanf(ptr += n, "%f%f%n", &sect->floor,&sect->ceil, &n);
 		for(m=0; sscanf(ptr += n, "%32s%n", _word, &n) == 1 && _word[0] != '#'; )
 			{ num = realloc(num, ++m * sizeof(*num)); num[m-1] = _word[0]=='x' ? -1 : atoi(_word); }
 
-		sect->npoints   = my_map->map.;
+		sect->npoints   = m /= 2;
 		sect->neighbors = malloc( (m  ) * sizeof(*sect->neighbors) );
 		sect->vertex    = malloc( (m+1) * sizeof(*sect->vertex)    );
 		for(n=0; n<m; ++n) sect->neighbors[n] = num[m + n];
 		for(n=0; n<m; ++n) sect->vertex[n+1]  = vert[num[n]]; // TODO: Range checking
 		sect->vertex[0] = sect->vertex[m]; // Ensure the vertexes form a loop
 		free(num);
-		
+	*/	
 	}
-	* */
+	
 }
 
 
 // Utility functions. Because C doesn't have templates,
 // we use the slightly less safe preprocessor macros to
 // implement these functions that work with multiple types.
+/*
 static void LoadData()
 {
     FILE* fp = fopen("map-clear.txt", "rt");
     if(!fp) { perror("map-clear.txt"); exit(1); }
     char Buf[256], _word[256], *ptr;
-    vertxy* vert = NULL, v;
+    vertxy* vert = NULL, ver;
     int n, m, NumVertices = 0;
     while(fgets(Buf, sizeof Buf, fp))
         switch(sscanf(ptr = Buf, "%32s%n", _word, &n) == 1 ? _word[0] : '\0')
         {
             case 'v': // vertex
                 for(sscanf(ptr += n, "%f%n", &v.y, &n); sscanf(ptr += n, "%f%n", &v.x, &n) == 1; )
-                    { vert = realloc(vert, ++NumVertices * sizeof(*vert)); vert[NumVertices-1] = v; }
+                    { vert = realloc(vert, ++NumVertices * sizeof(*vert)); vert[NumVertices-1] = ver; }
                 break;
             case 's': // sector
                 sectors = realloc(sectors, ++NumSectors * sizeof(*sectors));
@@ -116,8 +144,8 @@ static void LoadData()
                 break;
             case 'p':; // player
                 float angle;
-                sscanf(ptr += n, "%f %f %f %d", &v.x, &v.y, &angle,&n);
-                player = m8camera { {v.x, v.y, 0}, {0,0,0}, angle,0,0,0, n }; // TODO: Range checking
+                sscanf(ptr += n, "%f %f %f %d", &ver.x, &ver.y, &angle,&n);
+                player = (m8camera *) {(float)ver.x, ver.y, 0}, {0,0,0}, angle,0,0,0, n }; // TODO: Range checking
                 player.where.z = sectors[player.sector].floor + EyeHeight;
         }
     fclose(fp);
@@ -131,7 +159,7 @@ static void UnloadData()
     sectors    = NULL;
     NumSectors = 0;
 }
-
+*/
 
 /* vline: Draw a vertical line on screen, with a different color pixel in top & bottom */
 static void vline(int x, int y1,int y2, int top,int middle,int bottom)
@@ -180,7 +208,7 @@ static void MovePlayer(float dx, float dy)
     player.anglecos = cosf(player.angle);
 }
 
-static void DrawScreen()
+void DrawScreen()
 {
     enum { MaxQueue = 128 };  // maximum number of pending portal renders
     struct item { int sectorno,sx1,sx2; } queue[MaxQueue], *head=queue, *tail=queue;
@@ -417,6 +445,7 @@ void _rend_mainloop(void) {
         SDL_Delay(10);
 #endif
 }
+/*
 int _rendmain()
 {
     LoadData();
@@ -446,3 +475,4 @@ done:
 #endif
     return 0;
 }
+*/

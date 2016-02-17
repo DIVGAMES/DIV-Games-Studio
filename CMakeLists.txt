@@ -3,7 +3,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(div2015)
 
-SET(CLANG "CXX")
+SET(CLANG "C")
 
 # Check which target we want
 IF(NOT TARGETOS) 
@@ -144,6 +144,25 @@ IF(HAS_FLI)
 	ADD_DEFINITIONS( -DUSE_FLI) 
 ENDIF()
 
+IF ( HAS_NEWMODE8 ) 
+	MESSAGE(STATUS "Adding NEW MODE8 (portrender)")
+	FILE(GLOB VPE_SOURCES "src/shared/lib/portrend/*.c")
+	ADD_DEFINITIONS(-DNEWMODE8)
+ENDIF()
+
+
+IF ( HAS_MODE8 ) 
+	MESSAGE(STATUS "Adding MODE8 (VPE)")
+	FILE(GLOB VPE_SOURCES "src/runtime/vpe/*.c")
+	ADD_DEFINITIONS(-DMODE8)
+ENDIF()
+
+
+IF(HAS_DLL)
+	MESSAGE(STATUS "Adding DLL PLUGIN Support")
+	ADD_DEFINITIONS(-DDIVDLL)
+ENDIF()
+
 
 ADD_DEFINITIONS (${OS_DEFINITIONS})
 
@@ -185,9 +204,6 @@ FILE(GLOB DIV1RUN_SOURCES "src/div1run/*.c")
 #FILE(GLOB JUDAS_SOURCES "src/judas/*.c")
 #SET(JUDAS_SOURCES "src/judas/judaswav.c" "src/judas/judas.c" ) 
 
-IF ( HAS_MODE8 ) 
-FILE(GLOB VPE_SOURCES "src/runtime/vpe/*.c")
-ENDIF()
 
 #INCLUDE (tools/plugins.cmake)
 
@@ -208,11 +224,6 @@ ADD_DEFINITIONS( ${BUILD_LEVEL} -fpermissive -fno-omit-frame-pointer -funsigned-
 #	ADD_DEFINITIONS( -G0 ${BUILD_LEVEL} -D_PSP_FW_VERSION=150 -fno-exceptions -fno-rtti -fpermissive -funsigned-char -w -Wno-unused -DTARGET="${TARGET}" -DRDEBUG="${DEBUG}" -DRUNTIME="${RUNTIME}")
 #ENDIF()
 # -DJPGLIB)
-
-
-IF(HAS_DLL)
-ADD_DEFINITIONS(-DDIVDLL)
-ENDIF()
 
 #ADD_DEFINITIONS( -D_GNU_SOURCE=1 -DZLIB -DSDLGFX ${OS_DEFINITIONS})
 
@@ -284,7 +295,6 @@ ADD_EXECUTABLE(
 	${D1RUNTIME} 
 	src/div1run/inter.h
 	${DIV1RUN_SOURCES} 
-	${VPE_SOURCES} 
 	${JUDAS_SOURCES}
 	${OSDEP}
 	${DLLSRC}

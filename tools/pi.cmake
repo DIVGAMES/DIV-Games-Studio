@@ -5,9 +5,26 @@
 #    *) cd build
 #    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-Ubuntu-mingw64.cmake ..
 
-set(CMAKE_SYSTEM_NAME GCW)
+set(CMAKE_SYSTEM_NAME PI)
 SET(GCW=1)
 SET(PLATFORM "PI")
+
+
+# set per-build values
+SET(HAS_SDL 1)
+SET(HAS_SDLTTF 1)
+SET(HAS_SDLIMAGE 0)
+SET(HAS_ZLIB 1)
+SET(HAS_SDLMIXER 1)
+SET(HAS_DLL 1)
+SET(HAS_JPEG 1)
+SET(HAS_DLL 1)
+SEt(HAS_FLI 1)
+
+SET(OS_DEFINITIONS " -D_GNU_SOURCE=1 -D_REENTRANT ")
+set ( CMAKE_EXE_LINKER_FLAGS "-L/home/mike/raspidev/SDL_cross/lib -Wl,-rpath,/home/mike/raspidev/SDL_cross/lib -lSDL -lpthread")
+
+
 set(TOOLCHAIN_PREFIX arm-bcm2708hardfp-linux-gnueabi)
 #set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
@@ -34,7 +51,7 @@ include_directories("/home/mike/raspidev/SDL_cross/include/")
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
 
-ADD_DEFINITIONS( -DRPI -D_GNU_SOURCE=1 -D_REENTRANT )
+#ADD_DEFINITIONS( -DRPI  )
 set ( CMAKE_EXE_LINKER_FLAGS "-L/home/mike/raspidev/SDL_cross/lib -Wl,-rpath,/home/mike/raspidev/SDL_cross/lib -lSDL -lpthread")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmad" )
 

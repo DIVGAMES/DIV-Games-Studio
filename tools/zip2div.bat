@@ -107,14 +107,15 @@ tar zcf $2-PI.tar.gz $2-PI
 rm -rf $2-PI
 
 #### winrum build
-cmake . -DTARGETOS=WINDOWS
+rm -rf CMakeFiles CMakeCache.txt
+cmake . -DTARGETOS=WINDOWS -DCPUARCH=32
 make -j5 $RUNTIME-WINDOWS
 upx -9 ./system/$RUNTIME-WINDOWS.exe
 
 ./pack ./system/$RUNTIME-WINDOWS.exe EXEC.EXE data.div $2.exe
 
 rm $2-win32.zip 2> /dev/null
-zip -j9 $2-win32.zip $2.exe system/lib*.dll system/SDL*.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
+zip -j9 $2-win32.zip $2.exe system/lib*.dll system/SDL*.dll system/smpeg.dll zipdiv/README.md zipdiv/LICENSE zipdiv/*.pak > /dev/null 
 zip -d $2-win32.zip libstdc*.dll
 
 rm $2.exe 2> /dev/null
