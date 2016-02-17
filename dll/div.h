@@ -1,6 +1,6 @@
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
-// DIV Games Studio - Dinamic Link Library - Header File (c) 1998 HAMMER Tech.
+// DIV Games Studio - Dinamic Link Library - Header File (c) 2016 DX Games.
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
 #ifndef __DIV_H_
@@ -9,17 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#ifndef __WIN32
-//#include "SDL/SDL.h"
-//#endif
 
 typedef unsigned char byte;
 
 #ifdef GLOBALS
   #define EXTERN
-//  #ifndef __WIN32
-//  void main(){};
-//  #endif
 #else
   #define EXTERN extern
 #endif
