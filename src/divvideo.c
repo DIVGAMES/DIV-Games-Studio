@@ -181,7 +181,7 @@ SDL_initFramerate(&fpsman);
 SDL_setFramerate(&fpsman, 60);
 
  
-  printf("full screen: %d\n",fsmode);
+  debugprintf("full screen: %d\n",fsmode);
 #ifdef GCW_SOFTSTRETCH
 	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
@@ -198,7 +198,7 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 #else
 
 	if(fsmode==0)
-		vga=SDL_SetVideoMode(vga_an, vga_al, 32, SDL_HWSURFACE);
+		vga=SDL_SetVideoMode(vga_an, vga_al, 32, SDL_HWSURFACE | SDL_RESIZABLE);
 
 	else
 		vga=SDL_SetVideoMode(vga_an, vga_al, 32,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
@@ -706,7 +706,7 @@ void volcadocsvga(byte *p) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcadopx(byte * p) {
-printf("divvideo.cpp volcadopx\n");
+debugprintf("divvideo.cpp volcadopx\n");
 #ifdef NOTYET
   int n,m=(vga_an*vga_al)/4,plano=0x100,y;
   byte * v2, * p2;

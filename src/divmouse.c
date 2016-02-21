@@ -289,7 +289,7 @@ void checkmod(SDLMod mod) {
 void read_mouse2(void) {
 	scan_code  =0;
 	ascii=0;
-	
+	int soundstopped=0;
 	SDL_Event event;
 
 #ifdef GCW_
@@ -411,6 +411,34 @@ while(SDL_PollEvent(&event))
 
 while(SDL_PollEvent(&event) )
         {
+			
+			if (event.type == SDL_VIDEORESIZE) {
+//				printf("RESIZING\n");
+				vga_an = event.resize.w;
+				vga_al = event.resize.h;
+				EndSound();
+				soundstopped=1;
+				SDL_putenv("SDL_VIDEO_WINDOW_POS=default"); 
+				
+				//SDL_SetVideoMode(event.resize.w, event.resize.h, 8,  SDL_HWSURFACE | SDL_RESIZABLE);
+//				bW = buffer->w; bH = buffer->h;
+
+				if(copia) {
+					free(copia-6);
+					copia=NULL;
+				}
+				copia=(byte*)malloc(vga_an*vga_al+6)+6;
+				
+				svmode();
+				preparar_tapiz();
+				actualiza_caja(0,0,vga_an,vga_al);
+				volcado_completo=1;
+				
+				volcado(copia);
+//				volcado_parcial(0,0,vga_an-1,vga_al-1);
+//				SDL_PauseAudio(0);
+				
+            }
 			if(event.type == SDL_JOYAXISMOTION) {			// Analog joystick movement
 				
 			switch(event.jaxis.axis)
@@ -566,5 +594,8 @@ while(SDL_PollEvent(&event) )
             
         }
 #endif
-
+if(soundstopped==1) {
+	InitSound();
+	soundstopped=0;
+}
 }
