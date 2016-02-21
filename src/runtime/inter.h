@@ -550,6 +550,8 @@ GLOBAL FILE * tabfiles[32]; // Tabla con los handles abiertos (a 0 los libres)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla fกsica
+GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla fกsica
+
 GLOBAL byte fsmode;
 
 GLOBAL byte *copia;     // Copia virtual de pantalla

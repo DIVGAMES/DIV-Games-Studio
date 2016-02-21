@@ -222,7 +222,7 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 //		fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
 	
 
-
+#ifdef TTF
 	if(vga!=NULL) {
 		
 		if(tapiz_surface!=NULL) {
@@ -254,7 +254,8 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 			}
 		}	
 	}
-	
+#endif
+
 	modovesa=1;
 	
 	set_dac(dac);

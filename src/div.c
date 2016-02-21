@@ -2914,6 +2914,7 @@ void volcado_copia(void) {
 }
 
 void window_surface(int an, int al, byte type) {
+#ifdef TTF
 
 //	if(v.surfaceptr!=NULL)
 //		SDL_FreeSurface(v.surfaceptr
@@ -2947,8 +2948,11 @@ void window_surface(int an, int al, byte type) {
 	}
 	if(tempsurface!=NULL)
 		SDL_FreeSurface(tempsurface);
+
+#endif
                                    	
 }
+
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Create a new window

@@ -52,7 +52,7 @@ void _object_avance(int ide,int angulo,int velocidad);
 int joy_position(int eje);
 
 // dummy function for missing mode8
-#if (defined PORTRENDER) || (defined NEWMODE8) 
+#if (!defined NEWMODE8 && !defined MODE8) 
 void _object_avance	(int ide,int angulo,int velocidad) {
 	mem[id+_X]+=get_distx(mem[id+_Angle],pila[sp]);
     mem[id+_Y]+=get_disty(mem[id+_Angle],pila[sp]);
@@ -1960,9 +1960,9 @@ void set_mode(void) {
   #endif
 
   vga_an=pila[sp]/1000; vga_al=pila[sp]%1000;
-
 //	printf("Tring to set mode %dx%d\n",vga_an,vga_al);
 
+// nonsense ?
   for (n=0;n<num_video_modes;n++) {
     if (pila[sp]==video_modes[n].modo) {
       vga_an=video_modes[n].ancho;
@@ -1970,6 +1970,11 @@ void set_mode(void) {
       break;
     }
   }
+
+
+vvga_an = vga_an;
+vvga_al = vga_al;
+
 
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=8;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
@@ -2502,14 +2507,14 @@ void stop_mode7(void) {
 //����������������������������������������������������������������������������
 
 void advance(void) {
-/*
+
   if (mem[id+_Ctype]==3) {
     _object_avance(id,mem[id+_Angle],pila[sp]);
   }  else {
-  * */
+  
     mem[id+_X]+=get_distx(mem[id+_Angle],pila[sp]);
     mem[id+_Y]+=get_disty(mem[id+_Angle],pila[sp]);
- // }
+  }
   pila[sp]=0;
 }
 

@@ -349,6 +349,7 @@ GLOBAL int id2;         // Identificador extra para las llamadas a procesos (cal
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla fกsica
+GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla fกsica
 GLOBAL byte fsmode;
 
 GLOBAL byte *copia;     // Copia virtual de pantalla

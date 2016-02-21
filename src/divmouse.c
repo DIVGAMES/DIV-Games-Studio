@@ -583,12 +583,35 @@ while(SDL_PollEvent(&event) )
 
 		//SDL_SetVideoMode(event.resize.w, event.resize.h, 8,  SDL_HWSURFACE | SDL_RESIZABLE);
 		//				bW = buffer->w; bH = buffer->h;
+		
+		if(vga_an<640)
+			vga_an=640;
+
+		
+		if(vga_al<480)
+			vga_al=480;
+		
+		
+		if(vga_an&1)
+			vga_an++;
+
+		if(vga_al&1)
+			vga_al++;
+
+
 
 		if(copia) {
 			free(copia-6);
 			copia=NULL;
 		}
-
+		if(barra) {
+			free(barra);
+			barra=NULL;
+		}
+			
+		barra=(byte*)malloc(vga_an*19*big2); //OJO
+		barra_x=8*big2; barra_y=vga_al-27*big2; regla=0; actual_mouse=21; sel_status=0;
+		
 		copia=(byte*)malloc(vga_an*vga_al+6)+6;
 		svmode();
 		preparar_tapiz();

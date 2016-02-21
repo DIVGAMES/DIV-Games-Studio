@@ -512,6 +512,10 @@ init_rnd(dtime);
     }
   }
 
+	vvga_an = vga_an;
+	vvga_al = vga_al;
+
+
   svmode();
   _mouse_x=mouse->x; _mouse_y=mouse->y;
 
