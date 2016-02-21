@@ -3,14 +3,13 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <mem.h>
 #include "internal.h"
 
 #define GLOBALS
 #define FIN_GRID (32768-2560)
 
-FILE * div_open_file(unsigned char * file);
-#include "../inter.h"
+FILE * open_file(char * file);
+#include "inter.h"
 #include "vpe.h"
 
 void DoObjectUpdate(struct Object *po);
@@ -25,7 +24,6 @@ extern int error_vpe;
 
 void set_fog_table(int intensidad,int r,int g, int b);
 void elimina_proceso(int);
-void _object_destroy(int num_object);
 
 typedef struct { int z;         // Profundidad
                } mode8_struct;
@@ -84,13 +82,13 @@ void load_wld(void)
 
   if (npackfiles) {
     m=read_packfile((byte*)&mem[text_offset+nombre]);
-    if (m==-1) goto wldfuera; // not found
-    if (m==-2) { pila[sp]=0; e(100); return; } // not enough memory
-    if (m<=0) { pila[sp]=0; e(200); return; } // bad size
+    if (m==-1) goto wldfuera;
+    if (m==-2) { pila[sp]=0; e(100); return; }
+    if (m<=0) { pila[sp]=0; e(200); return; }
     buffer=packptr; size=m;
   } else {
     wldfuera:
-    if ((fichero=div_open_file((byte*)&mem[text_offset+nombre]))==NULL) {
+    if ((fichero=open_file((byte*)&mem[text_offset+nombre]))==NULL) {
       e(159); vpe_inicializada=0; return;
     } else {
       fseek(fichero,0,SEEK_END); size=ftell(fichero);

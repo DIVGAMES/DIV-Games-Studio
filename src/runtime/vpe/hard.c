@@ -1,10 +1,8 @@
 #include "internal.h"
 #include "gfx.h"
-//#include <i86.h>
-//#include <dos.h>
 #include <malloc.h>
 
-#include "../inter.h"
+#include "inter.h"
 
 // For debug purposes
 int num_blocks;
@@ -88,15 +86,18 @@ void FatalError(int type, char *msg)
 
 
 FIXED FixMul(FIXED a, FIXED b) {
-	FIXED c = a*b;
-	return c>>16;
+	FIXED c = a*b;// (uint64_t)(a) <<16 * (uint64_t)(b) <<16;
+	return (c>>16);
 }
 
 FIXED FixDiv(FIXED a, FIXED b) {
-	FIXED c=0;
+	uint64_t c=0;
+	
 	if(b>0) 
-		c = a/b;
+		c = (uint64_t)(a) <<16 / (b);
 
-	return c>>16;
+	return (FIXED) c>>16;
+	
+	//return (FIXED) (c>>16);
 }
 

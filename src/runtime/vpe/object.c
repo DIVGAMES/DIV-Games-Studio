@@ -1,10 +1,8 @@
-//#include <dos.h>
-//#include <i86.h>
 #include "internal.h"
 
 #define GLOBALS
 
-#include "../inter.h"
+#include "inter.h"
 #include "vpe.h"
 
 #define MAX_COLREGS 4   // Max number of regions to process

@@ -26,7 +26,8 @@ FIXED FixITan(FIXED x, FIXED y)
 			a+=F_HITAN;
 			a=(a+32768)>>16;
 			a=min(a,1023);
-			a=ITanTable[a];
+			a=tan(a);
+			//ITanTable[a];
 			if (a<0) a+=F_DEG360;
 		}
 		else {
@@ -35,7 +36,8 @@ FIXED FixITan(FIXED x, FIXED y)
 			a+=F_HITAN;
 			a=(a+32768)>>16;
 			a=min(a,1023);
-			a=F_DEG180-ITanTable[a];
+			a=F_DEG180-tan(a);
+			//ITanTable[a];
 		}
 	}
 	else {
@@ -45,7 +47,8 @@ FIXED FixITan(FIXED x, FIXED y)
 			a+=F_HITAN;
 			a=(a+32768)>>16;
 			a=min(a,1023);
-			a=F_DEG90-ITanTable[a];
+			a=F_DEG90-tan(a);
+			//ITanTable[a];
 		}
 		else {
 			a=-FixDiv(x,y);
@@ -53,7 +56,8 @@ FIXED FixITan(FIXED x, FIXED y)
 			a+=F_HITAN;
 			a=(a+32768)>>16;
 			a=min(a,1023);
-			a=F_DEG180+F_DEG90+ITanTable[a];
+			a=F_DEG180+F_DEG90+tan(a);
+			//ITanTable[a];
 		}
 	}
 	return(a);

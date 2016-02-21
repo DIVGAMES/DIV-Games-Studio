@@ -6,7 +6,6 @@
 #define _VPE_H_
 
 #include <stdio.h>
-//#include <conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "hard.h"
@@ -279,6 +278,8 @@ void DrawOverlay(struct TexCon *,int,int,int); // Draw overlay on screen
 void SetPickWatch(int,int);          // Set pick watch for scr coords
 WORD GetPickWatch(void *,FIXED *);   // Get result of pick watching
 
+#define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
+
 //==================
 //  Funciones de movimiento
 //==================
@@ -287,10 +288,5 @@ void _object_avance(int num_object,int angulo,int velocidad);
 void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto);
 void _vpe_fin();
 void InitGraph(char *buffer,int ancho,int alto);
-
-#define  max( a, b ) ( ( a > b) ? a : b ) 
-
-#define  min( a, b ) ( ( a < b) ? a : b ) 
-
 
 #endif

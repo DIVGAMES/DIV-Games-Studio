@@ -34,10 +34,10 @@ void InitMemory(void)
   // Set number of allocated blocks
   NumBlocks=0;
   // Allocate memory for math tables
-  SinTable=MemAlloc(DEG360*4);
+  SinTable=(FIXED*)MemAlloc((DEG360+16)*sizeof(FIXED));
   if (SinTable==NULL)
     FatalError(ER_MEMORY,NULL);
-  CosTable=MemAlloc(DEG360*4);
+  CosTable=(FIXED*)MemAlloc((DEG360+16)*sizeof(FIXED));
   if (CosTable==NULL)
     FatalError(ER_MEMORY,NULL);
   // Allocate memory for misc renderer data

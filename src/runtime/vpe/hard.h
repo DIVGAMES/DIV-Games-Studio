@@ -2,6 +2,8 @@
   SOME MACHINE DEPENDENT STUFF 
 ********************************/
 
+#include <stdint.h>
+
 #define FALSE           0
 #define TRUE            1
 
@@ -15,7 +17,7 @@ typedef unsigned short  WORD;
 typedef unsigned long   DWORD;
 typedef long int        LONG;
 typedef short int       SHORT;
-typedef long int        FIXED;
+typedef long int       FIXED;
 
 
 //==================

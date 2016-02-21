@@ -52,8 +52,12 @@ void _object_avance(int ide,int angulo,int velocidad);
 int joy_position(int eje);
 
 // dummy function for missing mode8
-#ifndef MODE8
-void _object_avance(int ide,int angulo,int velocidad) {
+#if (defined PORTRENDER) || (defined NEWMODE8) 
+void _object_avance	(int ide,int angulo,int velocidad) {
+	mem[id+_X]+=get_distx(mem[id+_Angle],pila[sp]);
+    mem[id+_Y]+=get_disty(mem[id+_Angle],pila[sp]);
+
+//	printf("DUMMY - object advance\n");
 	
 }
 #endif
@@ -2498,14 +2502,14 @@ void stop_mode7(void) {
 //����������������������������������������������������������������������������
 
 void advance(void) {
-
+/*
   if (mem[id+_Ctype]==3) {
     _object_avance(id,mem[id+_Angle],pila[sp]);
-  }
-  else {
+  }  else {
+  * */
     mem[id+_X]+=get_distx(mem[id+_Angle],pila[sp]);
     mem[id+_Y]+=get_disty(mem[id+_Angle],pila[sp]);
-  }
+ // }
   pila[sp]=0;
 }
 

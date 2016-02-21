@@ -12,10 +12,10 @@ SET(PLATFORM "PI")
 
 # set per-build values
 SET(HAS_SDL 1)
-SET(HAS_SDLTTF 1)
+SET(HAS_SDLTTF 0)
 SET(HAS_SDLIMAGE 0)
-SET(HAS_ZLIB 1)
-SET(HAS_SDLMIXER 1)
+SET(HAS_ZLIB 0)
+SET(HAS_SDLMIXER 0)
 SET(HAS_DLL 1)
 SET(HAS_JPEG 1)
 SET(HAS_DLL 1)
@@ -35,7 +35,9 @@ set(CMAKE_RC_COMPILER ${TOOLCHAIN_PREFIX}-windres)
 
 # target environment on the build host system
 #   set 1st to dir with the cross compiler's C/C++ headers/libs
-set(CMAKE_FIND_ROOT_PATH ~/raspidev/SDL_cross )
+set(CMAKE_FIND_ROOT_PATH ~/raspidev/ )
+set(CMAKE_SYSTEM_LIBRARY_PATH "~/raspidev/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/arm-bcm2708-linux-gnueabi/sysroot/usr/" )
+
 #/${TOOLCHAIN_PREFIX})
 
 # modify default behavior of FIND_XXX() commands to
@@ -44,7 +46,6 @@ set(CMAKE_FIND_ROOT_PATH ~/raspidev/SDL_cross )
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-
 include_directories("/home/mike/raspidev/SDL_cross/include/")
 
 #TARGET_LINK_LIBRARIES ("mingw32 SDLmain  SDL SDL_Mixer")

@@ -7,7 +7,9 @@
 #include <SDL.h>
 #include "inter.h"
 #include "portrend.h"
+#include "internal.h"
 
+int ancho,alto;
 
 
 static SDL_Surface* surface = NULL;
@@ -30,18 +32,30 @@ m8camera player;
 int wallcount[MAX_REGIONS];
 
 
-void map2port(M3D_info *my_map) {
+void map2port(struct ZF_Header     *Header) {
+	
+	printf("map 2 port\n");
+	//return;
+	
 	char Buf[256], _word[256], *ptr;
     vertxy* vert = NULL, v;
     int n, m, NumVertices = 0;
-    int i=0;
-    sectors = (sector *)malloc(sizeof(sector)*my_map->map.num_regions+1);
+    int i=0,j=0;
+    struct Region  *pRegion;
+
+    struct Wall *pWall ,*mywall;
+    
+//	tmap *my_map=&(m3d_aux->map);
+
+//#define m8map my_map->map
+    
+    sectors = (sector *)malloc(sizeof(sector)*Header->NumRegions+1);
     
     // loop through walls, creating sectors
 
 //	wallcount = (int *)malloc(sizeof(int)*my_map->map.num_regions+1);
 	
-	memset(wallcount,0,sizeof(int)*my_map->map.num_regions);
+	memset(wallcount,0,sizeof(int)*Header->NumRegions);
 	
  //   for (i=0;i<my_map->map.num_regions;i++) {
 // 		my_map->map.regions[i]->num_walls=0;
@@ -49,40 +63,134 @@ void map2port(M3D_info *my_map) {
 		
 //	}
 
-
-    for (i=0;i<my_map->map.num_walls;i++) {
-  
-       if(my_map->map.walls[i]->front_region>=0)
-		wallcount[my_map->map.walls[i]->front_region]++;
-		//my_map->map.regions[my_map->map.walls[i]->front_region]->num_walls++;
+    for (i=0;i<Header->NumWalls;i++) {
+		mywall = (struct Wall *)Walls.ptr[i];
 		
-     if(my_map->map.walls[i]->back_region>=0)
-		wallcount[my_map->map.walls[i]->back_region]++;
+   //    if(my_map->walls[i]->front_region>=0)
+//      if(mywall->Front->Idx>=0)
+//	printf("wall %d front: %d back: %d\n",i,mywall->Front->Idx, mywall->Back->Idx);
+
+//		wallcount[mywall->Front]++;
+//		my_map->map.regions[my_map->map.walls[i]->front_region]->num_walls++;
+	
+//	  if(mywall->Back>=0)
+//     if(my_map->walls[i]->back_region>=0)
+	//	wallcount[mywall->Back]++;
 		//my_map->map.regions[my_map->map.walls[i]->back_region]->num_walls++;
-
-// set verteces
-
-		
-  
+		// set verteces
 	} 
-    for (i=0;i<my_map->map.num_regions;i++) {
+
+
+    for (i=0;i<Header->NumRegions;i++) {
+		pRegion = Regions.ptr[i];
+		
+		ptr=pRegion->WallPtrs;
     
 //		sectors = realloc(sectors, ++NumSectors * sizeof(sector));
 		NumSectors++;
 		sector* sect = &sectors[i];
 		int* num = NULL;
+		
+		wallcount[i]=pRegion->NumWallPtrs;
+	
 		printf("converting region to sector (%d)\n",i);
 		printf("Walls: %d\n",wallcount[i]);
 		
 	
-	sect->floor=my_map->map.regions[i]->floor_height;
-	sect->ceil=my_map->map.regions[i]->ceil_height;
+	sect->floor=0;//(float)FIX_INT(pRegion->FloorH);//Header->NumRegions;//my_map->regions[i]->floor_height;
+	sect->ceil=2048;//(float)FIX_INT(pRegion->CeilH);//20;//my_map->regions[i]->ceil_height;
 	sect->npoints=wallcount[i];
-	sect->vertex = malloc((wallcount[i] ) * sizeof(*sect->vertex));
+	sect->vertex = malloc((wallcount[i]+1 ) * sizeof(*sect->vertex));
+
+	sect->neighbors = malloc((wallcount[i]+1 ) * sizeof(*sect->neighbors));
+	
+	printf("Ceil: %f Floor: %f\n",sect->ceil, sect->floor);
+
+	// populate  vertex array
+	n=0;
+
+	for( n=0; n<pRegion->NumWallPtrs; n++, ptr++ ) {
+    pWall=pRegion->WallPtrs[n];
+    if(ptr==NULL)
+		break;
+		
+  // Check if wall has been already rendered
+			sect->vertex[n].x=(float)FIX_INT(pWall->p1->x);
+			sect->vertex[n].y=(float)FIX_INT(pWall->p1->y);
+//			if(n<pRegion->NumWallPtrs-1) {
+//				sect->vertex[n+1].x=(float)FIX_INT(pWall->p2->x);
+//				sect->vertex[n+1].y=(float)FIX_INT(pWall->p2->y);
+//			}
+
+/*
+			if(pWall->Back!=NULL)
+				sect->vertex[n].back_region = pWall->Back->Idx;
+			else
+				sect->vertex[n].back_region = -1;
+			
+			if(pWall->Back!=NULL)
+				sect->vertex[n].front_region = pWall->Front->Idx;
+			else
+				sect->vertex[n].front_region = -1;
+*/
+			printf("sect->vertex[%d] x=%f y=%f\n",n,sect->vertex[n].x,sect->vertex[n].y);
+
+			if(pWall->Backr>=0)
+				sect->neighbors[n]=pWall->Backr;
+			else
+				sect->neighbors[n]=-1;
+			
+				printf("sector [%d][%d] neighbor: =%d\n", i,n,sect->neighbors[n]);
+			
+			
+/*	
+			for(j=0;j<my_map->num_walls;j++) {
+				if( ( (my_map->walls[j]->p1==my_map->walls[m]->p2 && my_map->walls[j]->p2==my_map->walls[m]->p1) ||
+				 (my_map->walls[j]->p1==my_map->walls[m]->p1 && my_map->walls[j]->p2==my_map->walls[m]->p2) )   				 
+				 && my_map->walls[j]->front_region>=0 && my_map->walls[j]->front_region!=i)  {
+						sect->neighbors[n]=my_map->walls[j]->front_region;
+						break;
+//						sect->vertex[n].back_region=my_map->walls[j]->front_region;
+						
+						printf("sector [%d][%d] neighbor: =%d\n", i,n,sect->neighbors[n]);
+				}
+			}
+	*/		
+//			n++;
+
+		}
+		
+//	}
+//n--;
+
+	sect->vertex[n].x=sect->vertex[0].x;///10.0f;//(float)(my_map->points[my_map->walls[m]->p1]->x*1.0f);
+	sect->vertex[n].y=sect->vertex[0].y;//10.0f;//(float)(my_map->points[my_map->walls[m]->p1]->y*1.0f);
+
+printf("wallcount[i] %d n: %d\n\n",wallcount[i],n);
+
+for(n=0;n<pRegion->NumWallPtrs;n++) {	
+	printf("sect->vertex[%d] x=%f y=%f\n",n,sect->vertex[n].x,sect->vertex[n].y);
+}
+printf("\n\n");
+
+//	n--;
+
+	//sect->vertex[0].x=(float)FIX_INT(pWall->p2->x);
+	//sect->vertex[n].x;///10.0f;//(float)(my_map->points[my_map->walls[m]->p1]->x*1.0f);
+
+//	sect->vertex[0].y=(float)FIX_INT(pWall->p2->y);
+	//sect->vertex[n].y;///10.0f;//(float)(my_map->points[my_map->walls[m]->p1]->y*1.0f);
+//	n=0;
+//	printf("sect->vertex[%d] x=%f y=%f\n",n,sect->vertex[n].x,sect->vertex[n].y);
+		
+	printf("done wals\n");
+//	printf("walls[%d]= %d <-> %d - fregion =%d bregion = %d\n",i, my_map->walls[i]->p1,my_map->walls[i]->p2,my_map->walls[i]->front_region,my_map->walls[i]->back_region);
+
 
 //	get_verteces (i, &sect->vertex);
 	
-	sect->neighbors = malloc((wallcount[i]+1 ) * sizeof(*sect->neighbors));
+
+	
 
 //	get_neighbors (i, &sect->vertex);	
 	
@@ -105,7 +213,9 @@ void map2port(M3D_info *my_map) {
 		free(num);
 	*/	
 	}
-	
+
+		printf("DONE\n");
+		
 }
 
 
@@ -164,26 +274,31 @@ static void UnloadData()
 /* vline: Draw a vertical line on screen, with a different color pixel in top & bottom */
 static void vline(int x, int y1,int y2, int top,int middle,int bottom)
 {
-    int *pix = (int*) surface->pixels;
-    y1 = clamp(y1, 0, H-1);
-    y2 = clamp(y2, 0, H-1);
-//    if(y2 == y1)
- //       pix[y1*W+x] = middle;
- //   else if(y2 > y1)
- //   {
-  //      pix[y1*W+x] = top;
-     //   for(int y=y1+1; y<y2; ++y) pix[y*W+x] = middle;
-        for(int y=y1; y<=y2; ++y) pix[y*W+x] = middle;
-    //    pix[y2*W+x] = bottom;
-   // }
+	int y=0;
+		
+    byte *pix = (byte *)copia;//int *pix = (int*) surface->pixels;
+    y1 = clamp(y1, 0, alto-1);
+    y2 = clamp(y2, 0, alto-1);
+//    printf("vline: %d %d\n",x,y1);
+    
+    if(y2 == y1)
+        pix[y1*W+x] = middle;
+    else if(y2 > y1)
+    {
+        pix[y1*W+x] = top;
+        for(y=y1+1; y<y2; ++y) pix[y*W+x] = middle;
+     //   for(int y=y1; y<=y2; ++y) pix[y*ancho+x] = middle;
+        pix[y2*W+x] = bottom;
+    }
 }
 
 /* MovePlayer(dx,dy): Moves the player by (dx,dy) in the map, and
  * also updates their anglesin/anglecos/sector properties properly.
  */
-static void MovePlayer(float dx, float dy)
+void MovePlayer(float dx, float dy)
 {
     float px = player.where.x, py = player.where.y;
+	unsigned s=0;
     /* Check if this movement crosses one of this sector's edges
      * that have a neighboring sector on the other side.
      * Because the edge vertices of each sector are defined in
@@ -193,12 +308,15 @@ static void MovePlayer(float dx, float dy)
     sector *sect = &sectors[player.sector];
 
     vertxy* const vert = sect->vertex;
-    for(unsigned s = 0; s < sect->npoints; ++s)
+
+
+    for(s = 0; s < sect->npoints; ++s)
         if(sect->neighbors[s] >= 0
         && IntersectBox(px,py, px+dx,py+dy, vert[s+0].x, vert[s+0].y, vert[s+1].x, vert[s+1].y)
         && PointSide(px+dx, py+dy, vert[s+0].x, vert[s+0].y, vert[s+1].x, vert[s+1].y) < 0)
         {
             player.sector = sect->neighbors[s];
+//            printf("player sector: %d\n",player.sector);
             break;
         }
 
@@ -207,18 +325,51 @@ static void MovePlayer(float dx, float dy)
     player.anglesin = sinf(player.angle);
     player.anglecos = cosf(player.angle);
 }
+void PortRender(int i) {
+	player.where.x=mem[m8[i].camera+_X];
+	player.where.y=mem[m8[i].camera+_Y];
+	player.where.z=1024;//mem[m8[i].camera+_Z];
+	player.angle=mem[m8[i].camera+_Angle]/200.0f;
+ancho = 640;
+alto = 480;
 
-void DrawScreen()
+//printf
+//	printf("Player: %f %f %f %d\n",player.where.x,player.where.y,player.where.z,player.angle);
+	
+	
+	MovePlayer(0,0);
+	
+}
+void DrawScreen(void)
 {
+//	surface = target;
+	int x;
+	unsigned int n;
+	unsigned int s;
+	
     enum { MaxQueue = 128 };  // maximum number of pending portal renders
     struct item { int sectorno,sx1,sx2; } queue[MaxQueue], *head=queue, *tail=queue;
-    int ytop[W]={0}, ybottom[W], renderedsectors[NumSectors];
-    for(unsigned x=0; x<W; ++x) ybottom[x] = H-1;
-    for(unsigned n=0; n<NumSectors; ++n) renderedsectors[n] = 0;
+    int ytop[W], ybottom[W], renderedsectors[NumSectors];
+    for(x=0; x<W; ++x) 
+		ybottom[x] = H-1;
+    
+    for(n=0; n<NumSectors; ++n) 
+		renderedsectors[n] = 0;
+
+//printf("screen width: %d height: %d\n",ancho, alto);
+
+//printf("NumSectors: %d player sector: %d\n ",NumSectors,player.sector);
 
     /* Begin whole-screen rendering from where the player is. */
-    *head = (struct item) { player.sector, 0, W-1 };
-    if(++head == queue+MaxQueue) head = queue;
+    *head = (struct item) { 
+		player.sector, 0, W-1 
+	};
+	
+	if(++head == queue+MaxQueue) 
+		head = queue;
+
+
+
 
     do {
     /* Pick a sector & slice from the queue to draw */
@@ -229,8 +380,14 @@ void DrawScreen()
     ++renderedsectors[now.sectorno];
     sector* sect = &sectors[now.sectorno];
     /* Render each wall of this sector that is facing towards player. */
-    for(unsigned s = 0; s < sect->npoints; ++s)
+//    printf("player: %f %f %f %f\n",player.where.x, player.where.y,player.angle, player.sector);
+     
+//     printf("sect points: %d\n",sect->npoints);
+     
+    for(s = 0; s < sect->npoints; ++s)
     {
+//		printf("sector point:%d\n",s);
+			
         /* Acquire the x,y coordinates of the two endpoints (vertices) of this edge of the sector */
         float vx1 = sect->vertex[s+0].x - player.where.x, vy1 = sect->vertex[s+0].y - player.where.y;
         float vx2 = sect->vertex[s+1].x - player.where.x, vy2 = sect->vertex[s+1].y - player.where.y;
@@ -275,7 +432,7 @@ void DrawScreen()
 
         /* Render the wall. */
         int beginx = max(x1, now.sx1), endx = min(x2, now.sx2);
-        for(int x = beginx; x <= endx; ++x)
+        for(x = beginx; x <= endx; ++x)
         {
             /* Calculate the Z coordinate for this point. (Only used for lighting.) */
             int z = ((x - x1) * (tz2-tz1) / (x2-x1) + tz1) * 8;
@@ -284,9 +441,9 @@ void DrawScreen()
             int yb = (x - x1) * (y2b-y1b) / (x2-x1) + y1b, cyb = clamp(yb, ytop[x],ybottom[x]); // bottom
 
             /* Render ceiling: everything above this sector's ceiling height. */
-            vline(x, ytop[x], cya-1, 0x111111 ,0x222222,0x111111);
+            vline(x, ytop[x], cya-1, 0x11 ,0x22,0x11);
             /* Render floor: everything below this sector's floor height. */
-            vline(x, cyb+1, ybottom[x], 0x0000FF,0x0000AA,0x0000FF);
+            vline(x, cyb+1, ybottom[x], 0xFF,0xAA,0xFF);
 
             /* Is there another sector behind this edge? */
             if(neighbor >= 0)
@@ -295,7 +452,7 @@ void DrawScreen()
                 int nya = (x - x1) * (ny2a-ny1a) / (x2-x1) + ny1a, cnya = clamp(nya, ytop[x],ybottom[x]);
                 int nyb = (x - x1) * (ny2b-ny1b) / (x2-x1) + ny1b, cnyb = clamp(nyb, ytop[x],ybottom[x]);
                 /* If our ceiling is higher than their ceiling, render upper wall */
-                unsigned r1 = 0x010101 * (255-z), r2 = 0x040007 * (31-z/8);
+                unsigned r1 = 0x01 * (255-z), r2 = 0x07 * (31-z/8);
                 vline(x, cya, cnya-1, 0, r1,0);//x==x1||x==x2 ? 0 : r1, 0); // Between our and their ceiling
                 ytop[x] = clamp(max(cya, cnya), ytop[x], H-1);   // Shrink the remaining window below these ceilings
                 /* If our floor is lower than their floor, render bottom wall */
@@ -320,8 +477,9 @@ void DrawScreen()
     } while(head != tail); // render any other queued sectors
 }
 
-
+#ifdef NOTYET
 void _rend_mainloop(void) {
+	
 
         SDL_LockSurface(surface);
         DrawScreen();
@@ -445,6 +603,8 @@ void _rend_mainloop(void) {
         SDL_Delay(10);
 #endif
 }
+#endif
+
 /*
 int _rendmain()
 {

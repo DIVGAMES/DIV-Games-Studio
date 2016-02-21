@@ -10,5 +10,5 @@ int  GetGraphHeight(void);	// Returns height of output device
 
 // The following functions have to be provided
 void SetPalette(BYTE *);	// Set palette (all 256 entries)
-void DrawBuffer(View *);	// Blitting function
+void DrawBuffer(struct View *);	// Blitting function
 void DrawScreen(void);		// Filling function

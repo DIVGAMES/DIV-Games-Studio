@@ -44,11 +44,8 @@ void DrawView(struct View *pv)
 // Draw masked stuff
   DrawMasked();
 // Transfer buffer to screen
-
-#ifndef NOTYET
   if (CurView->ScrX>=0&&CurView->ScrY>=0)
     DrawBuffer(CurView);
-#endif
 }
 
 void InitLevel(void)
@@ -392,7 +389,7 @@ void SetActiveView(int altura,int objeto,int w,int h,BYTE *buf_ptr,int buf_width
 
   // Do the rest
   if (pv->BufScan) free(pv->BufScan);
-  pv->BufScan=(BYTE **)malloc(pv->Height*4);
+  pv->BufScan=(BYTE **)malloc(pv->Height*sizeof(int64_t));
 
   pv->ConstHDist=FixMul(INT_FIX(pv->Width>>1),F_VIEW_CONST);
   pv->ConstVDist=FixMul(pv->ConstHDist,Engine.ScrConst);

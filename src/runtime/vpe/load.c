@@ -1,6 +1,6 @@
 #include "internal.h"
 #include "atan.h"
-#include "../inter.h"
+#include "inter.h"
 
 void set_fog_table(int intensidad,int r,int g, int b);
 
@@ -10,7 +10,7 @@ extern int num_fpg_aux;
 struct ZF_Flag *flags[1000];
 int num_flags;
 extern int error_vpe;
-static char combo_error[128]; // para componer mensajes de error compuestos.
+char combo_error[128]; // para componer mensajes de error compuestos.
 
 int *tex_pointer;
 int tex_size;
@@ -210,7 +210,7 @@ void LoadZone(char *Buffer)
     view=(struct View *)Views.ptr[i];
   }
   // Prepare WallPtrs
-  WallPtrs=(struct Wall **)CacheAlloc(Walls.Number*2*4);
+  WallPtrs=(struct Wall **)CacheAlloc(Walls.Number*2*sizeof(int64_t));
   for(n=0;n<Regions.Number;n++) {
     new_region=(struct Region *)Regions.ptr[n];
     new_region->WallPtrs=&WallPtrs[NumWallPtrs];
@@ -730,9 +730,14 @@ void LoadMath(void)
   // Creo las tablas de senos y cosenos
   //---------------------------------------------------------------------------
   for (i=0;i<DEG360;i++) {
-    SinTable[i]=(int)(65536.0*sin((2.0*PI*(float)i)/(float)DEG360));
-    CosTable[i]=(int)(65536.0*cos((2.0*PI*(float)i)/(float)DEG360));
+    SinTable[i]=(FIXED)(65536.0*sin((2.0*PI*(float)i)/(float)DEG360));
+    CosTable[i]=(FIXED)(65536.0*cos((2.0*PI*(float)i)/(float)DEG360));
+    printf("sini %05lu.%05lu cosi: %lu\n",((SinTable[i]<<16) & 0xFFFF0000), SinTable[i]&0xFFFF,CosTable[i]);
   }
+//  printf("tantable: %d\n",sizeof(itangente));
+  
   ITanTable=(FIXED *)itangente;
+//  printf("tantable: %d\n",sizeof(ITanTable));
+  
 }
 

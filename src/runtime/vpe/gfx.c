@@ -1,8 +1,6 @@
 #include "vpe.h"
 #include "gfx.h"
-//#include <i86.h>
-//#include <dos.h>
-#include "../inter.h"
+#include <SDL.h>
 
 DWORD ScrBase;
 int ScrWidth, ScrHeight;
@@ -53,23 +51,25 @@ Func:	void SetPalette(BYTE *pal_ptr)
 Params:	pal_ptr - pointer to the pal data
 Info:	Sets current palette to pal_ptr. It's called from inside of VPE.
 *****************************************************************************/
+
 extern SDL_Surface *vga;
+
 void SetPalette(BYTE *pal_ptr)
 {
 #ifndef DOS
-	SDL_Color colors[256];
-	int i;
-	int b=0;
-	for(i=0;i<256;i++){
+       SDL_Color colors[256];
+       int i;
+       int b=0;
+       for(i=0;i<256;i++){
           colors[i].r=pal_ptr[b]*4;
           colors[i].g=pal_ptr[b+1]*4;
           colors[i].b=pal_ptr[b+2]*4;
           b+=3;
     }
-	if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
-		printf("Failed to set palette :(\n"); 
-	
-	retrazo();
+       if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+               printf("Failed to set palette :(\n"); 
+       
+       retrazo();
 #else
 
 	SHORT i;
@@ -80,7 +80,9 @@ void SetPalette(BYTE *pal_ptr)
 		outp(0x3c9,*pal_ptr++);
 		outp(0x3c9,*pal_ptr++);
 	}
+
 #endif
+
 }
 
 /****************************************************************************
@@ -89,9 +91,17 @@ Params:	V - pointer to view to blit
 Info:	Blits view buffer to the output device. Called from inside VPE
 *****************************************************************************/
 void draw_buffer(DWORD src, DWORD dest, DWORD w, DWORD h, DWORD delta);
-void draw_buffer(DWORD src, DWORD dest, DWORD w, DWORD h, DWORD delta) {}
 
-void DrawBuffer(View *v)
+void draw_buffer(DWORD src, DWORD dest, DWORD w, DWORD h, DWORD delta) {
+
+//printf("draw_buffer\n");
+
+memcpy(dest,src,w*h);
+
+}
+
+
+void DrawBuffer(struct View *v)
 {
 	DWORD Dest;
 

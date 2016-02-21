@@ -145,17 +145,28 @@ IF(HAS_FLI)
 ENDIF()
 
 IF ( HAS_NEWMODE8 ) 
-	MESSAGE(STATUS "Adding NEW MODE8 (portrender)")
-	FILE(GLOB VPE_SOURCES "src/shared/lib/portrend/*.c")
-	ADD_DEFINITIONS(-DNEWMODE8)
+##	MESSAGE(STATUS "Adding NEW MODE8 (portrender)")
+##	FILE(GLOB VPE_SOURCES "src/shared/lib/portrend/*.c")
+##	ADD_DEFINITIONS(-DNEWMODE8)
 ENDIF()
 
 
 IF ( HAS_MODE8 ) 
 	MESSAGE(STATUS "Adding MODE8 (VPE)")
 	FILE(GLOB VPE_SOURCES "src/runtime/vpe/*.c")
+	INCLUDE_DIRECTORIES( "src/runtime/vpe" )
 	ADD_DEFINITIONS(-DMODE8)
+	IF ( HAS_PORTREND ) 
+		MESSAGE(STATUS "Adding NEW MODE8 (portrender)")
+		SET(VPE_SOURCES ${VPE_SOURCES} "src/shared/lib/portrend/portrend.c")
+		INCLUDE_DIRECTORIES( "src/shared/lib/portrend" )
+
+#		FILE(GLOB VPE_SOURCES "src/shared/lib/portrend/*.c")
+		ADD_DEFINITIONS(-DPORTRENDER)
+	ENDIF()
+
 ENDIF()
+
 
 
 IF(HAS_DLL)
