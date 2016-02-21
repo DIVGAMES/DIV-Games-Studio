@@ -1581,9 +1581,9 @@ void _completo(void) {
 
   if (v.al<v._al) { _an=v.an; _al=v.al; v.an=v._an; v.al=v._al; }
   an=v.an/big2; al=v.al/big2;
-	
+#ifdef TTF
 	SDL_FillRect(v.surfaceptr,&rc,SDL_MapRGB( v.surfaceptr->format, colors[ce01].r, colors[ce01].g, colors[ce01].b));
-
+#endif
   if (kbloque && kprg==v.prg) {
     if (kcol1>linelen(kini)) kcol1=linelen(kini)+1;
     if (kbloque&1) {

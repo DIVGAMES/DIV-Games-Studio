@@ -488,7 +488,7 @@ int x,len,n;
 FILE *fpg;
 FILE *Oldfpg;
 
-printf("Deleting map %d\n",COD);
+debugprintf("Deleting map %d\n",COD);
 
         //Nombre del fichero temporal
         strcpy(ActualPath,(char *)Fpg->ActualFile);
@@ -513,7 +513,7 @@ printf("Deleting map %d\n",COD);
           if(Fpg->DesIndex[n]==COD || Fpg->DesIndex[n]==0) break;
           n++;
         }
-printf("found COD at index: %d\n",n);
+debugprintf("found COD at index: %d\n",n);
 
         if(Fpg->thumb[n].ptr!=NULL) free(Fpg->thumb[n].ptr);
         memmove(&(Fpg->thumb[n]),&(Fpg->thumb[n+1]),sizeof(t_thumb)*(999-n));
@@ -583,7 +583,7 @@ printf("found COD at index: %d\n",n);
 
         DaniDel((char *)Fpg->ActualFile);
         
-        printf("MOVE %s to %s\n",ActualPath, (char *)Fpg->ActualFile);
+        debugprintf("MOVE %s to %s\n",ActualPath, (char *)Fpg->ActualFile);
         
         
         rename(ActualPath,(char *)Fpg->ActualFile);

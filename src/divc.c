@@ -3188,7 +3188,7 @@ void CMP_export(char *name,void *dir,int nparms)
 
 int ImportDll(char *name)
 {
-printf("Looking for funcs in %s\n",name);
+debugprintf("Looking for funcs in %s\n",name);
   nFuns=0;
 #ifdef DIVDLL
   COM_export=CNT_export;

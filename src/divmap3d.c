@@ -1114,6 +1114,8 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
   }
 
   if(m3d_edit.fpg_path[0]==0) return;
+  debugprintf("Trying to load %s\n",(char *)m3d_edit.fpg_path);
+  
   if((FPG_F=fopen((char *)m3d_edit.fpg_path,"rb"))==NULL)
   {
     v_texto=(char *)texto[43];
@@ -3199,6 +3201,7 @@ void map_save()
     zw[i].p2=my_map->walls[i]->p2;                    // Point indeces
     zw[i].Front=my_map->walls[i]->front_region;       // Front Region
     zw[i].Back=my_map->walls[i]->back_region;         // Back Region
+    debugprintf("front: %d ,back: %d\n",my_map->walls[i]->front_region,my_map->walls[i]->back_region);
     zw[i].TopTex=my_map->walls[i]->texture_top;       // Top texture name
     zw[i].MidTex=my_map->walls[i]->texture;           // Mid texture name
     zw[i].BotTex=my_map->walls[i]->texture_bot;       // Bot texture name
@@ -3331,6 +3334,7 @@ void map_read_old( M3D_info *m3d_aux )
   my_map->num_walls=0;
   my_map->num_regions=0;
   my_map->num_flags=0;
+debugprintf("map_read_old\n");
 
   if((fichero=fopen(full,"rb"))==NULL)
   {
@@ -3495,24 +3499,43 @@ void map_read(M3D_info *m3d_aux)
   }
 
   fread(&my_map->num_points,4,1,fichero);
+  
+	printf("Num points: %d\n point size: %d\n",my_map->num_points,sizeof(tpoint));
+
+
   for (i=0;i<my_map->num_points;i++) {
     my_map->points[i]=(lptpoint)malloc(sizeof(tpoint));
     fread(my_map->points[i],sizeof(tpoint),1,fichero);
+ //   printf("point[%d]: %d x %d\n",i,my_map->points[i]->x,my_map->points[i]->y);
   }
+
   fread(&my_map->num_walls,4,1,fichero);
+
+//	printf("walls: %d wall size: %d\n",my_map->num_walls,sizeof(twall));
+
   for (i=0;i<my_map->num_walls;i++) {
     my_map->walls[i]=(lptwall)malloc(sizeof(twall));
     fread(my_map->walls[i],sizeof(twall),1,fichero);
+     debugprintf("walls[%d]= %d <-> %d - fregion =%d bregion = %d\n",i, my_map->walls[i]->p1,my_map->walls[i]->p2,my_map->walls[i]->front_region,my_map->walls[i]->back_region);
   }
+
   fread(&my_map->num_regions,4,1,fichero);
+//	printf("regions: %d region size: %d\n",my_map->num_regions,sizeof(tregion));
+
   for (i=0;i<my_map->num_regions;i++) {
     my_map->regions[i]=(lptregion)malloc(sizeof(tregion));
     fread(my_map->regions[i],sizeof(tregion),1,fichero);
+//	printf("regions[%d]= floor: %d - ceil:%d\n",i, my_map->regions[i]->floor_height,my_map->regions[i]->ceil_height);
   }
+  
   fread(&my_map->num_flags,4,1,fichero);
+//  printf("nume flags: %d flag size: %d\n",my_map->num_flags,sizeof(tflag));
+
   for (i=0;i<my_map->num_flags;i++) {
     my_map->flags[i]=(lptflag)malloc(sizeof(tflag));
     fread(my_map->flags[i],sizeof(tflag),1,fichero);
+//   	printf("flags[%d]= x: %d - y:%d\n",i, my_map->flags[i]->x,my_map->flags[i]->y);
+
   }
   fread(&my_map->fondo,4,1,fichero);
 

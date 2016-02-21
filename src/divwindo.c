@@ -237,7 +237,6 @@ void wresalta_box(byte*copia,int an_copia,int al_copia,int x,int y,int an,int al
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
-return;
   wbox(copia,an_copia,al_copia,c,x,y,an,1);
   wbox(copia,an_copia,al_copia,c,x,y+al-1,an,1);
   wbox(copia,an_copia,al_copia,c,x,y+1,1,al-2);
@@ -631,7 +630,7 @@ int text_len2(byte * ptr) {
 		ptr++; 
 	}
 
-	printf("text_len2 %s: %d\n",ptr,an);
+	debugprintf("text_len2 %s: %d\n",ptr,an);
 
 	if (big) 
 		an/=2; 

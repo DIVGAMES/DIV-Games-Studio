@@ -375,8 +375,8 @@ void print_init_flags(int flags)
         PFLAG(MP3);
         PFLAG(OGG);
         if(!flags)
-                printf("None");
-        printf("\n");
+			debugprintf("None");
+        debugprintf("\n");
 }
 #endif
 #endif
@@ -3494,7 +3494,7 @@ void inicializacion(void) {
 			break;
 		}
 	}
-
+/*
 	if (n==num_modos) {
 		VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=320; // Video mode
 		VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=200;
@@ -3502,7 +3502,7 @@ void inicializacion(void) {
 		editor_font      =Setupfile.editor_font=0;
 		big2=big+1;
 	}
-
+*/
 	kbdInit();
 
 
@@ -3922,7 +3922,7 @@ void _fwrite(char * s, byte * buf, int n) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void error(int n) {
-	printf("WHOOPS!\n");
+	debugprintf("WHOOPS!\n");
     finalizacion();
     printf((char *)texto[14],n);
     printf("\n");
@@ -4517,8 +4517,8 @@ void Save_Cfgbin()
 FILE *file;
 
         // Modo de video
-        Setupfile.Vid_modeAncho =VS_ANCHO;
-        Setupfile.Vid_modeAlto  =VS_ALTO;
+        Setupfile.Vid_modeAncho =vga_an;//VS_ANCHO;
+        Setupfile.Vid_modeAlto  =vga_al;//VS_ALTO;
         Setupfile.Vid_modeBig   =VS_BIG;
         Setupfile.fullscreen = fsmode;
 		
@@ -4914,7 +4914,7 @@ void wdown(int a) {
 void DaniDel(char *name) {
 
 #ifdef WIN32
-	printf("DaniDel %s\n",name);
+	debugprintf("DaniDel %s\n",name);
 	remove(name);
 	return;
 #endif

@@ -2606,7 +2606,7 @@ void analizar_input(void) {
           } else // No wildcards ...
           if (_dos_findfirst(input,_A_SUBDIR,&fileinfo) == 0)
             if (fileinfo.attrib&16) {
-              printf("chdir %s\n",input);
+              debugprintf("chdir %s\n",input);
               chdir(input); 
               strcpy(input,mascara);
             } else {

@@ -14,6 +14,7 @@ void InitSound(void)
 {
 //	SDL_Init(SDL_INIT_AUDIO);
 //	printf("Sound system initialised\n");
+SDL_InitSubSystem( SDL_INIT_AUDIO );
 #ifdef MIXER
 
 int audio_rate = 44100;
@@ -21,7 +22,7 @@ Uint16 audio_format = AUDIO_S16SYS;
 int audio_channels = 2;
 int audio_buffers = 4096;
 
-SDL_Init( SDL_INIT_AUDIO );
+
  
 if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
 	fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
@@ -119,6 +120,12 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
 
 void EndSound(void)
 {
+#ifdef MIXER
+Mix_CloseAudio();
+#endif
+
+SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	
 #ifdef NOTYET
   judas_uninit();
   timer_uninit();

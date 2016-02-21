@@ -307,7 +307,7 @@ void FreeMOD(void)
 int GetSongPos(void)
 {
   int pos;
-printf("TODO - JUDAS GET SONG POS\n");
+debugprintf("TODO - JUDAS GET SONG POS\n");
 /*
   switch(SongType)
   {
@@ -325,7 +325,7 @@ printf("TODO - JUDAS GET SONG POS\n");
 int GetSongLine(void)
 {
   int pos;
-printf("TODO - Get Song Line\n");
+debugprintf("TODO - Get Song Line\n");
 /*
   switch(SongType)
   {
@@ -540,8 +540,8 @@ void OpenSoundFile(void) // Open the file SoundPathName
   pcminfo   *mypcminfo;
   SoundInfo *SI=NULL;
 
-printf("SOundName %s\n",input);
-printf("SOundPath %s\n",full);
+debugprintf("SoundName %s\n",input);
+debugprintf("SOundPath %s\n",full);
 
 
   strcpy(SoundName,input);
@@ -850,7 +850,7 @@ void OpenSong(void) {
 }
 
 void OpenDesktopSong(void) {
-printf("TODO - divpcm.cpp OpenDesktopSong\n");
+debugprintf("TODO - divpcm.cpp OpenDesktopSong\n");
 
 #ifdef NOTYET
   modinfo *mymodinfo;
@@ -908,7 +908,7 @@ void PlaySong(char *pathname)
 		return;
 	}
 	if(Mix_PlayMusic(music, -1)==-1) {
-    printf("Mix_PlayMusic: %s\n", Mix_GetError());
+    debugprintf("Mix_PlayMusic: %s\n", Mix_GetError());
     // well, there's no music, but most games don't break without music...
 }
 //printf("%x\n",music);
@@ -1709,7 +1709,7 @@ void RecordSound(void)
   unsigned short ra;
   unsigned char  ca;
   int            length;
-printf("SoundFile to record: %s\n",SoundFile);
+debugprintf("SoundFile to record: %s\n",SoundFile);
 
   if((f=fopen(SoundFile,"wb"))==NULL)
   {

@@ -146,6 +146,9 @@ SDL_Event event;
 #else
 while(SDL_PollEvent(&event))
         {
+			
+
+			
             /* If a quit event has been sent */
             if (event.type == SDL_QUIT)
             {

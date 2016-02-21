@@ -982,7 +982,7 @@ void CargarTextura(char *NombreTextura)
 	swap(man,map_an); 
 	swap(mal,map_al);
 
-printf("file: %s\n",full);
+debugprintf("file: %s\n",full);
 
   if (tipomapa) {
     if ((temp=(byte*)malloc(man*mal+man))!=NULL) {

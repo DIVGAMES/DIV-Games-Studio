@@ -16,6 +16,11 @@
 #define true 1
 #endif
 
+#ifdef DEBUG
+#define debugprintf(...) printf ( __VA_ARGS__)
+#else
+#define debugprintf(...) 
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Global Variables

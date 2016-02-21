@@ -641,7 +641,7 @@ FILE *f;
                                 fread(Load_FontName,1,14,desktop);
                                 fread(Load_FontPathName,1,_MAX_PATH-14,desktop);
 
-                                printf("fontname [%s], fontpathname [%s]\n",Load_FontName,Load_FontPathName);
+                                debugprintf("fontname [%s], fontpathname [%s]\n",Load_FontName,Load_FontPathName);
 								fflush(stdout);
 								
                                 if ((f=fopen(Load_FontPathName,"rb"))!=NULL) {
