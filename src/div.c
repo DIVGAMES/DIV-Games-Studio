@@ -713,6 +713,9 @@ void inicializa_entorno() {
     fclose(f);
   }
 
+	actualiza_caja(0,0,vga_an,vga_al);
+    volcado_completo=1; volcado(copia);
+    
   if(!Interpretando) {
     if (!strlen(user1) || !strlen(user2)) {
       dialogo(usuario0);
@@ -761,8 +764,7 @@ void inicializa_entorno() {
     //abrir_programa(); if (v_terminado) maximizar();
     nueva_ventana(menu_principal0);
     minimiza_ventana();
-//    actualiza_caja(0,0,vga_an,vga_al);
-//    volcado_completo=1; volcado(copia);
+    
     primera_vez=2;
     help(2000);
     primera_vez=0;
@@ -2310,7 +2312,7 @@ void mueve_ventana(void) {
 //      actualiza_dialogos(x,y,an,al);
 //    } else actualiza_caja(oldx,oldy,an,al);
     se_ha_movido_desde(oldx,oldy,an,al);
-//    volcado_completo=1;
+    volcado_completo=1;
     volcado_copia();
   }
 
@@ -2427,7 +2429,10 @@ void actualiza_caja(int x, int y, int an, int al) {
     wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-2-x,vga_al-1-y,18,texto[safe],c2);
   }
 
-  for (n=max_windows-1;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al))
+  for (n=max_windows-1;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al)) {
+	  
+
+	  
   if (ventana[n].primer_plano<2) {
 
     _ptr=ventana[n].ptr;
@@ -2461,8 +2466,9 @@ void actualiza_caja(int x, int y, int an, int al) {
       } else wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
 
       }
-
+	}
   volcado_parcial(x,y,an,al);
+
 }
 
 void actualiza_dialogos(int x, int y, int an, int al) {
@@ -3496,10 +3502,10 @@ void inicializacion(void) {
 	}
 /*
 	if (n==num_modos) {
-		VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=320; // Video mode
-		VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=200;
-		VS_BIG  =big     =Setupfile.Vid_modeBig=0;
-		editor_font      =Setupfile.editor_font=0;
+		VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=640; // Video mode
+		VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=480;
+		VS_BIG  =big     =Setupfile.Vid_modeBig=1;
+		editor_font      =Setupfile.editor_font=3;
 		big2=big+1;
 	}
 */

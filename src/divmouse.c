@@ -291,7 +291,8 @@ void read_mouse2(void) {
 	ascii=0;
 	int soundstopped=0;
 	SDL_Event event;
-
+	int n=0;
+	
 #ifdef GCW_
 while(SDL_PollEvent(&event))
 {
@@ -418,23 +419,6 @@ while(SDL_PollEvent(&event) )
 				vga_al = event.resize.h;
 				EndSound();
 				soundstopped=1;
-				SDL_putenv("SDL_VIDEO_WINDOW_POS=default"); 
-				
-				//SDL_SetVideoMode(event.resize.w, event.resize.h, 8,  SDL_HWSURFACE | SDL_RESIZABLE);
-//				bW = buffer->w; bH = buffer->h;
-
-				if(copia) {
-					free(copia-6);
-					copia=NULL;
-				}
-				copia=(byte*)malloc(vga_an*vga_al+6)+6;
-				
-				svmode();
-				preparar_tapiz();
-				actualiza_caja(0,0,vga_an,vga_al);
-				volcado_completo=1;
-				
-				volcado(copia);
 //				volcado_parcial(0,0,vga_an-1,vga_al-1);
 //				SDL_PauseAudio(0);
 				
@@ -594,8 +578,49 @@ while(SDL_PollEvent(&event) )
             
         }
 #endif
-if(soundstopped==1) {
-	InitSound();
-	soundstopped=0;
-}
+	if(soundstopped==1) {
+		SDL_putenv("SDL_VIDEO_WINDOW_POS=default"); 
+
+		//SDL_SetVideoMode(event.resize.w, event.resize.h, 8,  SDL_HWSURFACE | SDL_RESIZABLE);
+		//				bW = buffer->w; bH = buffer->h;
+
+		if(copia) {
+			free(copia-6);
+			copia=NULL;
+		}
+
+		copia=(byte*)malloc(vga_an*vga_al+6)+6;
+		svmode();
+		preparar_tapiz();
+		for(n=max_windows;n>=0;n--) {
+			if(ventana[n].tipo) {
+
+				if (ventana[n].x+ventana[n].an>vga_an) 
+					ventana[n].x=vga_an-ventana[n].an;
+		
+		
+				if (ventana[n].y+ventana[n].al>vga_al) 
+					ventana[n].y=vga_al-ventana[n].al;
+
+	
+				if(ventana[n].x<=0)
+					ventana[n].y=0;
+	
+				if(ventana[n].y<=0)
+					ventana[n].y=0;
+	
+		//	printf("n=%d\n",n);
+
+			if (colisiona_con(n,ventana[n].x,ventana[n].y,ventana[n].an,ventana[n].al))	
+				emplazar(1,&ventana[n].x,&ventana[n].y,ventana[n].an,ventana[n].al);		
+
+			}
+		}	
+			
+		actualiza_caja(0,0,vga_an,vga_al);
+//		volcado_completo=1;
+		volcado(copia);
+		InitSound();
+		soundstopped=0;
+	}
 }
