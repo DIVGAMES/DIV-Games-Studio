@@ -311,6 +311,8 @@ void add_code(int dir, int param, int op);
 #define p_private       0x08
 #define p_struct        0x09
 #define p_import        0x0A
+#define p_include        0x75 
+
 #define p_setup_program 0x0B
 
 #define p_string        0x0C
@@ -3228,7 +3230,7 @@ void sintactico (void) {
 
   struct objeto * ob, * member2;
   int _imem,_imem_old,num_par,n;
-  byte * old_source,*nombre_dll,*oimemptr;
+  byte * old_source,*nombre_dll,*oimemptr, *nombre_include;
   int _itxt,dup;
   char cWork[256];
 
@@ -3383,7 +3385,6 @@ void sintactico (void) {
     if ((num_extern=ImportDll((char *)nombre_dll))==0) c_error(0,63);
     if (num_extern>0) {
 		printf("num funcs: %d\n",num_extern);
-		
       save_error(0);
       for (n=0;n<num_extern;n++) {
         source=(byte *)ImpDLL[n].Name;
@@ -3411,6 +3412,22 @@ void sintactico (void) {
     }
   }
 
+
+	while(pieza==p_include) {
+		inicio_sentencia();
+		lexico();
+		if (pieza!=p_lit && !(pieza==p_id && (*o).tipo==tcons && (*o).cons.literal)) c_error(1,62);
+		old_source=source;
+		nombre_include=(byte*)&mem[pieza_num];
+
+
+	//
+		
+		source=old_source; lexico();
+		if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
+		while (pieza==p_ptocoma || pieza==p_coma) lexico();
+		final_sentencia();
+	}
   //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
   // Zona de constantes
   //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
