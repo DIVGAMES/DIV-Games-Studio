@@ -1,5 +1,5 @@
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-# Online Help file for DIV Games Studio 2.0 (Castellano)
+# Online Help file for DIV Games Studio 3.0 (Castellano)
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 # Empty lines are meant to be end of paragraphs.
@@ -16261,7 +16261,7 @@ On invoking the debugger in this way, the program will always be interrupted jus
 
 # -----------------------------------------------------------------------------
 
-{.1032,List of functions of the language.}
+{.1032,List of functions of the language.}{+4,1}{-}
 
   Process interaction functionsú
     {#104,collision()}ú
@@ -23516,7 +23516,7 @@ that such an environment exists here.
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-{.2001,New language commands etc.. in DIV version 2.0}{+6,1}{-}
+{.2001,New language commands etc.. in DIV version 3.0}{+6,1}{-}
 
 {More extensive programming language.} The programming language has been enlarged, including
 many new characteristics and internal functions, the more prominent of which are detailed
@@ -23660,7 +23660,7 @@ version of DIV Games Studio, still remain! {:)}
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-{.2002,New additions to the environment in version 2.0}{+6,1}{-}
+{.2002,New additions to the environment in version 3.0}{+6,1}{-}
 
 {More flexibility and simplicity in use.} The development environment of DIV Games
 Studio has evolved into several smaller modules, and together they form
