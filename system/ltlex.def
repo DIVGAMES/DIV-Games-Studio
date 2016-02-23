@@ -19,6 +19,8 @@
 &08private              ;Private
 &09struct               ;Struct
 &0Aimport               ;Import
+&75include				;Include (additional prg)
+
 &0Bsetup_program        ;Setup_program
 
 &0Cstring               ;String
@@ -129,7 +131,6 @@
 &72^=
 &73>>=
 &74<<=
-&75include				;Include (additional prg)
 
 ;컴� C줰igos de token especiales o reservados 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
