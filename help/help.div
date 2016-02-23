@@ -789,7 +789,7 @@ of one particular type without collision, you must call the function {#120,get_i
 If you want to check how near two processes are so that their graphics do not 
 collide, then you must use the {#117,get_dist()} function.
 
-{#9999, Example program:}
+{#9999,Example program:}
 PROGRAM example_collision;
 
 PRIVATE
@@ -14517,12 +14517,12 @@ This program declares the use of the denoted libraries {lib1.dll} and
 {Note 1:} In the original version of DIV, this declaration had to be done 
 between sections {LOCAL} and {PRIVATE} of the program.
 
-{Note 2:} The libraries prepared in the original (DIV1) version of the language 
-{will not function correctly} in DIV2, it is necessary first to re-compile
-these libraries with new files of declarations. It means,
+{Note 2:} The libraries prepared in the original (DIV1 or DIV2) versions of the language 
+{will not function correctly} in DIV3, it is necessary first to re-compile
+these libraries with new files of declarations for modern systems. It means,
 that the font code of the libraries will be valid, but beforehand they must be 
 re-compiled with new headline files (because they contain
-declarations for the new data and structures which exist in the DIV2 language).
+declarations for the new data and structures which exist in the DIV3 language).
 
 {/}See: {#1000,syntax} - {#1014,Declaration of libraries}
 
@@ -23469,7 +23469,7 @@ you should use the key combination {ALT}+{X}.
 
 {/}
 
-  {What's new in DIV2?}
+  {What's new in DIV3?}
 
   - {#2001,New language commands and variables}ú
   - {#2002,New environment aspects}ú
@@ -23522,7 +23522,7 @@ that such an environment exists here.
 many new characteristics and internal functions, the more prominent of which are detailed
 below.
 
-{/}
+{/}		
 
 {+150,0}The {compilation options} are a new characteristic of this version, 
 which allow you to adapt the process of compilation to the individual requirements of
@@ -23952,7 +23952,7 @@ It is not necessary to know how to program to use it, DIV was designed so that t
 could learn to program with it. 
 It has a user-friendly environment to make you lose the fear of the word "programming" ...
 
-{/}See: {#2005,Working with windows} - {#2000,Introduction to 2}
+{/}See: {#2005,Working with the IDE windows} - {#2000,Introduction to DIV 3.0}
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
