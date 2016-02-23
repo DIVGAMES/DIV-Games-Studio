@@ -2187,8 +2187,10 @@ void cierra_ventana(void) {
 
   if (v.click_handler!=err2) { 
 	  free(v.ptr);
+#ifdef TTF
 	  SDL_FreeSurface(v.surfaceptr);
 	  v.surfaceptr=NULL;
+#endif
 	  v.ptr=NULL;
   }
   
@@ -3017,8 +3019,9 @@ void nueva_ventana(voidReturnType init_handler) {
     v.prg=NULL;
     v.aux=NULL;
 	v.ptr=NULL;
+#ifdef TTF
 	v.surfaceptr=NULL;
-	
+#endif	
     call(init_handler);
 
     if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
@@ -3457,8 +3460,9 @@ void refrescadialogo(void)
 	byte * ptr=v.ptr;
 	int an=v.an,al=v.al;
 	memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+#ifdef TTF
 	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
-      
+#endif      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
       if (!strcmp((char *)v.titulo,(char *)texto[41])) wgra(ptr,an,al,c_r_low,2,2,an-12,7);
@@ -4527,8 +4531,8 @@ void Save_Cfgbin()
 FILE *file;
 
         // Modo de video
-        Setupfile.Vid_modeAncho =vga_an;//VS_ANCHO;
-        Setupfile.Vid_modeAlto  =vga_al;//VS_ALTO;
+        Setupfile.Vid_modeAncho =VS_ANCHO;
+        Setupfile.Vid_modeAlto  =VS_ALTO;
         Setupfile.Vid_modeBig   =VS_BIG;
         Setupfile.fullscreen = fsmode;
 		

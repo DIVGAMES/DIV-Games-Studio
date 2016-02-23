@@ -707,7 +707,9 @@ struct tventana {
   int x,y,an,al;                        // Posici¢n y dimensiones de la ventana
   int _x,_y,_an,_al;                    // Posici¢n salvada al minimizarse
   byte * ptr;                           // Buffer de la ventana
+#ifdef TTF
   SDL_Surface *surfaceptr;  
+#endif
   struct tmapa * mapa;                  // Puntero a otro struct tipo mapa
   struct tprg * prg;                    // Puntero a otro struct tipo prg
   int volcar;                           // Indica si se debe volcar la ventana

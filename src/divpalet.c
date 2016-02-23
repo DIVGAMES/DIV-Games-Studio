@@ -803,8 +803,9 @@ void RefPalAndDlg(int no_tocar_mapas,int guardar_original)
     ptr=v.ptr;
     if (ventana[n].primer_plano==2) { swap(v.an,v._an); swap(v.al,v._al); }
     an=v.an; al=v.al; memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+#ifdef TTF
     SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
-      
+#endif      
     wrectangulo(ptr,an,al,c2,0,0,an,al);
     wput(ptr,an,al,an-9,2,35);
     wput(ptr,an,al,an-17,2,37);

@@ -483,7 +483,9 @@ void resize_help(void) {
     }
 
     if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
+#ifdef TTF
 		SDL_FreeSurface(v.surfaceptr);
+#endif
 		window_surface(v.an,v.al,0);
 		
       if (modo<100) {

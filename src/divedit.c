@@ -1844,9 +1844,10 @@ void barra_info(void) {
 
 void resize_surface(void) {
 
+#ifdef TTF
 	SDL_FreeSurface(v.surfaceptr);
 	v.surfaceptr=NULL;
-	
+#endif	
 	window_surface(v.an,v.al,0);
 	
 }

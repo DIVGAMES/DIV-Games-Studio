@@ -285,11 +285,12 @@ void checkmod(SDLMod mod) {
 	if (mod & KMOD_NUM) 
 		shift_status |=32;
 }
-
+	int soundstopped=0;
+	
 void read_mouse2(void) {
 	scan_code  =0;
 	ascii=0;
-	int soundstopped=0;
+
 	SDL_Event event;
 	int n=0;
 	
@@ -598,6 +599,8 @@ while(SDL_PollEvent(&event) )
 		if(vga_al&1)
 			vga_al++;
 
+		VS_ANCHO=vga_an;
+		VS_ALTO=vga_al;
 
 
 		if(copia) {

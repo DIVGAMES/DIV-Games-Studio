@@ -311,7 +311,7 @@ void add_code(int dir, int param, int op);
 #define p_private       0x08
 #define p_struct        0x09
 #define p_import        0x0A
-#define p_include        0x75 
+#define p_include       0x75 
 
 #define p_setup_program 0x0B
 

@@ -87,7 +87,9 @@ void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al)
 void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
 
 	byte *p;
+#ifdef TTF
 	SDL_Surface *tsurface = v.surfaceptr;
+#endif
 	SDL_Rect rc;
 	int vn=0;
 	

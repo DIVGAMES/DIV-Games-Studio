@@ -103,6 +103,7 @@ int need_refresh=0;
   }
 
 }
+extern int soundstopped;
 
 void Vid_Setup3(void) {
   if(v_aceptar)
@@ -111,11 +112,18 @@ void Vid_Setup3(void) {
     VS_BIG  =stbig;
     VS_ANCHO=stvga_an;
     VS_ALTO =stvga_al;
-    v_titulo=(char *)texto[385];
+//    vvga_an = VS_ANCHO;
+//	vvga_al = VS_ALTO;
+//	EndSound();
+//	soundstopped=1;
+
+//	SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+	v_titulo=(char *)texto[385];
     v_texto =(char *)texto[386];
     dialogo((voidReturnType)info0);
     salir_del_entorno=1; //Salida directa sin preguntar
     modo_de_retorno=2;
+    
   }
 }
 

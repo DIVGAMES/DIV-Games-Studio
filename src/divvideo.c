@@ -8,6 +8,13 @@
 //#include "inc\vesa.h"
 #include "lib/sdlgfx/SDL_framerate.h"
 
+
+#ifdef TTF
+#define CDEPTH 32
+#else
+#define CDEPTH 8
+#endif
+
 void snapshot(byte *p);
 void volcadocsvga(byte *p);
 void volcadoc320200(byte *p);
@@ -56,17 +63,17 @@ int nothing(SDL_Surface *surface) {
 
    if (IsFullScreen(surface)) {
         flags &= ~SDL_FULLSCREEN;
-        if ((vga = SDL_SetVideoMode(vga_an,vga_al,32, 0)) == NULL) 
+        if ((vga = SDL_SetVideoMode(vga_an, vga_al, CDEPTH, 0)) == NULL) 
 			return 0;
 		
-		vga = SDL_SetVideoMode(vga_an,vga_al,32, 0);
+		vga = SDL_SetVideoMode(vga_an, vga_al, CDEPTH, 0);
 		fsmode=0;
     } else {
 		
-		vga = SDL_SetVideoMode(vga_an,vga_al, 32,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga = SDL_SetVideoMode(vga_an,vga_al, CDEPTH,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 		if (vga == NULL) {
-			vga = SDL_SetVideoMode(vga_an,vga_al, 32, 0);
+			vga = SDL_SetVideoMode(vga_an,vga_al, CDEPTH, 0);
 		}
 		fsmode=1;
 	}
@@ -182,6 +189,7 @@ SDL_setFramerate(&fpsman, 60);
 
  
   debugprintf("full screen: %d\n",fsmode);
+
 #ifdef GCW_SOFTSTRETCH
 	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
@@ -189,6 +197,7 @@ SDL_setFramerate(&fpsman, 60);
 #else
 
 #ifdef SDL2
+
 divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
@@ -198,10 +207,10 @@ divRender = SDL_CreateRenderer(divWindow, -1, 0);
 #else
 
 	if(fsmode==0)
-		vga=SDL_SetVideoMode(vga_an, vga_al, 32, SDL_HWSURFACE | SDL_RESIZABLE);
+		vga=SDL_SetVideoMode(vga_an, vga_al, CDEPTH, SDL_SWSURFACE | SDL_RESIZABLE);
 
 	else
-		vga=SDL_SetVideoMode(vga_an, vga_al, 32,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga=SDL_SetVideoMode(vga_an, vga_al, CDEPTH,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
@@ -389,6 +398,67 @@ void volcadogcw(byte *p) {
 
 void vgacpy(byte * q, byte * p, int n) ;
 
+
+void volcadosdlp(byte *p) {
+volcadosdl(p);
+return;
+
+	  int y=0,n;
+	  byte *oldp = *p;
+	  uint32_t x1=vga_an,y1=vga_al,w1=1,h1=1;
+	SDL_Rect rc;  
+	byte *q = (byte *)vga->pixels;
+	uint32_t *q32 = (uint32_t *)vga->pixels;
+	SDL_LockSurface(vga);
+	
+  while (y<vga_al) {
+    n=y*4;
+    if (scan[n+1]) {
+//		printf("y:%d n: %d\n",y,n+1); 
+		memcpy(q+scan[n],p+scan[n],scan[n+1]);
+		if(scan[n]<x1)
+			x1=scan[n];
+		if(y<y1)
+			y1=y;
+		if(scan[n]+scan[n+1]+1-x1>w1)
+			w1=scan[n]+scan[n+1]+1-x1;
+			
+		if(y+1-y1>h1)
+			h1=(y+1-y1);
+			
+	}
+    if (scan[n+3]) {
+//		printf("y:%d n: %d\n",y,n+3); 
+		memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
+		if(scan[n+2]<x1)
+			x1=scan[n+2];
+		if(y<y1)
+			y1=y;
+		if(scan[n+2]+scan[n+3]+1-x1>w1)
+			w1=scan[n+2]+scan[n+3]+1-x1;
+			
+		if(y+1-y1>h1)
+			h1=(y+1-y1);
+			
+//		SDL_UpdateRect(vga,scan[n+2],y,scan[n+3],1);
+
+	}
+
+//    q+=vga_an; 
+    q+=vga->pitch; 
+    p+=vga_an; 
+    y++;
+  }
+  SDL_UnlockSurface(vga);
+  printf("changed rect: %d %d %d %d     \r",x1,y1,w1,h1);
+  
+ SDL_UpdateRect(vga,x1,y1,w1,h1);
+	 
+//	SDL_Flip(vga);
+//	volcadosdl(p);
+	return;
+}
+
 void volcadosdl(byte *p) {
 	int vy;
 	int vx;
@@ -416,7 +486,7 @@ void volcadosdl(byte *p) {
 	byte *q = (byte *)vga->pixels;
 	uint32_t *q32 = (uint32_t *)vga->pixels;
 
-	SDL_FillRect(vga, NULL, 0);
+//	SDL_FillRect(vga, NULL, 0);
 
 
 #ifndef TTF	
@@ -559,8 +629,7 @@ void volcado(byte *p) {
       case 376282: volcadocx(p); break;
     }
   } else {
-	  
-    if (modovesa) volcadosdl(p); 
+    if (modovesa) volcadosdlp(p); 
     else switch(vga_an*1000+vga_al) {
       case 320200: volcadop320200(p); break;
       case 320240: volcadopx(p); break;
@@ -604,7 +673,7 @@ void snapshot(byte *p) {
 
 void volcadop320200(byte *p) { // PARTIAL
 //printf("partial dump\n");
-//#ifdef NOTYET
+#ifdef NOTYET
   int y=0,n;
   byte * q=(byte *)vga->pixels;
 
@@ -618,8 +687,8 @@ void volcadop320200(byte *p) { // PARTIAL
     if (scan[n+3]) memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
     q+=vga_an; p+=vga_an; y++;
   }
-//#endif
-SDL_Flip(vga);
+#endif
+//SDL_Flip(vga);
 }
 
 void volcadoc320200(byte *p) { // COMPLETE
