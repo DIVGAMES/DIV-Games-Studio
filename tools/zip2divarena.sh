@@ -26,6 +26,10 @@ mkdir zipdiv
 cd zipdiv
 echo "unzipping file"
 
+if [ ! -f $1 ]; then
+exit
+fi
+
 unzip -j $1
 #/$6/../dos/$7.zip
 #2>/dev/null
