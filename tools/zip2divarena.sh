@@ -26,7 +26,8 @@ mkdir zipdiv
 cd zipdiv
 echo "unzipping file"
 
-unzip -j $1 
+unzip -j $1
+#/$6/../dos/$7.zip
 #2>/dev/null
 
 echo "converting files to lowercase"
