@@ -1866,7 +1866,7 @@ void dir_abrirbr(void) {
   while (m==0 && n<max_directorios) {
     if (strcmp(fileinfo.name,".") && (fileinfo.attrib&16)) {
       strcpy(directorio+n++*an_directorio,fileinfo.name);
-  }
+   }
     m=_dos_findnext(&fileinfo);
   } ldirectoriosbr.maximo=n;
   qsort(directorio,ldirectoriosbr.maximo,an_directorio,(int (*)(const void *, const void *))strcmp);
