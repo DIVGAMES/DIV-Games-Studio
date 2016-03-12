@@ -37,6 +37,11 @@
 #define GCW_H 240
 #endif
 
+#ifdef DIVGIT
+#include "divgit.h"
+#endif
+
+
 typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 
