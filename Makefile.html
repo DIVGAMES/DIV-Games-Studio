@@ -5,7 +5,7 @@
 #
 ##############################
 
-BUILDLVL= -O0
+BUILDLVL= -O3
 
 SDL_CFLAGS = -DZLIB -DMIXER -DSDL
 
@@ -13,6 +13,7 @@ SDL_LIBS = -lSDL
 
 CXX=emcc
 CC=emcc
+
 EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456  
 
 # -s ASYNCIFY=1 -s TOTAL_MEMORY=268435456  
@@ -41,9 +42,9 @@ EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456
 #-s EXPORTED_FUNCTIONS="['_getscore','_main']"
 EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
 SCFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc/shared -Isrc -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2 
-LIBS = $(SDL_LIBS) -lm --emrun
+LIBS = $(SDL_LIBS) -lm
 
-	OSDEP = src/shared/osdep.c src/shared/unzip.c
+OSDEP = src/shared/osdep.c src/shared/unzip.c
 
 CSRC = $(wildcard src/*.c) ${OSDEP}
 SHAREDSRC = $(wildcard src/shared/run/*.c) 
