@@ -73,15 +73,15 @@ char *ucs = (char *) s;
 void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
 {
 
-//	printf("Set drive %i\n",__drivenum);
+	printf("Set drive %i\n",__drivenum);
 		
 	char c[3];
 	c[0]=__drivenum+'A'-1;
 	c[1]=':';
 	c[2]=0;
-//	chdir(c);
+	chdir(c);
 	
-//	printf( "set drive: %c\n %s",__drivenum+'A'-1,c);
+	printf( "set drive: %c\n %s",__drivenum+'A'-1,c);
 
 }
 
@@ -270,15 +270,18 @@ strcpy(findname,name);
 printf("FIND FIRST %s %d\n",findname,attr );
 type = attr;
 
+strcpy(findmask,name);
+strlwr(findmask);
+
 #ifdef __cplusplus
 #if defined(__MINGW64__) 
-	hFile =  _findfirst(name,( _finddata64i32_t*)result);
+	hFile =  _findfirst("*.*",( _finddata64i32_t*)result);
 #else
-	hFile =  _findfirst(name,( _finddata32_t*)result);
+	hFile =  _findfirst("*.*",( _finddata32_t*)result);
 #endif
 
 #else
-hFile =  _findfirst(name,result);
+hFile =  _findfirst("*.*",result);
 #endif
 
 ret =_dos_findnext(result);
@@ -334,6 +337,11 @@ return (ret);
 unsigned int _dos_findnext(struct find_t *result) {
 //	printf("TODO - findnext\n");
 
+char fname[255];
+int i=0;
+int j=0;
+int match=0;
+
 #if defined(__MINGW64__) 
 struct _finddata64i32_t result2;
 #else
@@ -349,15 +357,81 @@ strcpy(result->name,result2.name);
 
 	result->attrib=result2.attrib;
 	result->size = result2.size;
-//printf("findnext found: %s %s %d %d\n",result->name, result2.name,result2.attrib,type);
+
+//	printf("findnext found: %s %s %d %d\n",result->name, result2.name,result2.attrib,type);
 
 if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 	type == _A_SUBDIR && result2.attrib&_A_SUBDIR) {
-	//printf("match\n");
-	
-	return 0;
-}
+		
+		if(type == _A_SUBDIR)
+			return 0;
+			
+//		j = strlen(findname)-strlen(findmask);
 
+	j=0;
+	//printf("match\n");
+	strcpy(findname, result->name);
+	strlwr(findname);
+	
+	printf("L: %s %s [%s]\n",findname, result->name,findmask);
+
+	match = 0;
+	
+	if (!strcmp(findmask,"*"))
+		return 0;
+		
+	if ( !strcmp(findmask,"*.*")) {
+		printf("Matching % to wildcard *.*\n",findname);
+
+		for(i=1;i<strlen(findname);i++) {
+			if(findname[i]=='.') {
+				match=1;
+				printf("found . \n");
+			}
+		}
+				
+		if ( match==1)
+			return 0;
+			
+	}
+
+	printf("looking for %s [%s] [%s]\n",findmask,&findname[strlen(findname)-3], &findmask[2]);
+	
+	if ( !strcmp(&findname[strlen(findname)-3],&findmask[2])) { 
+		printf("found it\n");
+		
+		return 0;
+	}
+		
+	
+//	return 1;
+/*	
+	for (i=0;i<strlen(findname);i++) {
+		printf("match %c %c\n",findname[i],findmask[j]);
+
+		if ( findname[i+1]==findmask[j]) {
+			j++;
+		}
+		 else {
+			if (findmask[j]='*')
+				i++;
+			}
+		}
+		
+	}
+	printf("i=%d j=%d\n",i,j);
+
+//	if (fnmatch(findmask, findname, FNM_PATHNAME)==0){
+		
+		return 0;
+	}
+	*/
+//strcpy(findmask,name);
+//strlwr(findmask);
+
+//	return 0;
+	}
+//return 0;
 }
 //printf("no more matches\n");
 
