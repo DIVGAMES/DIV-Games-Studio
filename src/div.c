@@ -440,6 +440,10 @@ int main(int argc, char * argv[]) {
 	strcpy(exe_name,full);
 	#endif
 
+#ifdef DIVGIT
+	gitinit();
+#endif
+
 	strupr(full);
 	n=strlen(full);
 
