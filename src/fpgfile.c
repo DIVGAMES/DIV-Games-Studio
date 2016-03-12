@@ -69,8 +69,8 @@ void Crear_FPG(FPG *Fpg,char *Name)
 	Fpg->nIndex=0;
 	Fpg->LastUsed=0;
 
-	Fpg->version=32; // 32 bit fpg files
-
+	Fpg->version=0; // 32 bit fpg files
+	
 	strcpy((char *)Fpg->ActualFile,Name);
 	fwrite("fpg\x1a\x0d\x0a\x00",7,1,fpg);
 
