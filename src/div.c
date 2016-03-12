@@ -3906,8 +3906,78 @@ void default_reglas(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Function to determine the present drives (in string unidades[])
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+#ifdef WIN32
+#include <windows.h>
+#include <malloc.h>
+#include <stdio.h>
+#endif
 
 void determina_unidades(void) {
+#ifdef WIN32
+  int n,m,uni=0;
+DWORD cchBuffer;
+    char* driveStrings;
+    int driveType;
+    char driveTypeString[255];
+    uint64_t freeSpace;
+
+    // Find out how big a buffer we need
+    cchBuffer = GetLogicalDriveStrings(0, NULL);
+
+    driveStrings = (char*)malloc((cchBuffer + 1) * sizeof(char));
+    if (driveStrings == NULL)
+    {
+        return -1;
+    }
+
+    // Fetch all drive strings    
+    GetLogicalDriveStrings(cchBuffer, driveStrings);
+
+    // Loop until we find the final '\0'
+    // driveStrings is a double null terminated list of null terminated strings)
+    while (*driveStrings)
+    {
+        // Dump drive information
+        driveType = GetDriveType(driveStrings);
+        GetDiskFreeSpaceEx(driveStrings, &freeSpace, NULL, NULL);
+
+        switch (driveType)
+        {
+        case DRIVE_FIXED:
+            strcpy(driveTypeString,"Hard disk");
+            break;
+
+        case DRIVE_CDROM:
+            strcpy(driveTypeString,"CD/DVD");
+            break;
+
+        case DRIVE_REMOVABLE:
+            strcpy(driveTypeString,"Removable");
+            break;
+
+        case DRIVE_REMOTE:
+            strcpy(driveTypeString,"Network");
+            break;
+
+        default:
+            strcpy(driveTypeString,"Unknown");
+            break;
+        }
+
+        printf("%s - %s - %I64u GB free\n", driveStrings, driveTypeString,
+                  freeSpace / 1024 / 1024 / 1024);
+
+        // Move to next drive string
+        // +1 is to move past the null at the end of the string.
+        unidades[uni++]=driveStrings[0];
+        driveStrings += lstrlen(driveStrings) + 1;
+
+    }
+
+    free(driveStrings);
+
+    return 0;
+#endif
 #ifdef NOTYET
   int n,m,uni=0;
   union REGS r;
