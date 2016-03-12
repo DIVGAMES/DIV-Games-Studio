@@ -73,7 +73,7 @@ char *ucs = (char *) s;
 void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
 {
 
-	printf("Set drive %i\n",__drivenum);
+//	printf("Set drive %i\n",__drivenum);
 		
 	char c[3];
 	c[0]=__drivenum+'A'-1;
@@ -81,7 +81,7 @@ void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
 	c[2]=0;
 	chdir(c);
 	
-	printf( "set drive: %c\n %s",__drivenum+'A'-1,c);
+//	printf( "set drive: %c\n %s",__drivenum+'A'-1,c);
 
 }
 
@@ -267,7 +267,7 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 int ret=0;
 
 strcpy(findname,name);
-printf("FIND FIRST %s %d\n",findname,attr );
+//printf("FIND FIRST %s %d\n",findname,attr );
 type = attr;
 
 strcpy(findmask,name);
@@ -286,7 +286,7 @@ hFile =  _findfirst("*.*",result);
 
 ret =_dos_findnext(result);
 
-printf("matches: %d\n",nummatch);
+//printf("matches: %d\n",nummatch);
 
 return (ret);
 
@@ -319,7 +319,7 @@ type = attr;
 //n--;
 ret =_dos_findnext(result);
 
-printf("matches: %d\n",nummatch);
+//printf("matches: %d\n",nummatch);
 
 return (ret);
 
@@ -373,7 +373,7 @@ if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 	strcpy(findname, result->name);
 	strlwr(findname);
 	
-	printf("L: %s %s [%s]\n",findname, result->name,findmask);
+//	printf("L: %s %s [%s]\n",findname, result->name,findmask);
 
 	match = 0;
 	
@@ -381,12 +381,12 @@ if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 		return 0;
 		
 	if ( !strcmp(findmask,"*.*")) {
-		printf("Matching % to wildcard *.*\n",findname);
+	//	printf("Matching % to wildcard *.*\n",findname);
 
 		for(i=1;i<strlen(findname);i++) {
 			if(findname[i]=='.') {
 				match=1;
-				printf("found . \n");
+		//		printf("found . \n");
 			}
 		}
 				
@@ -395,10 +395,10 @@ if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 			
 	}
 
-	printf("looking for %s [%s] [%s]\n",findmask,&findname[strlen(findname)-3], &findmask[2]);
+//	printf("looking for %s [%s] [%s]\n",findmask,&findname[strlen(findname)-3], &findmask[2]);
 	
 	if ( !strcmp(&findname[strlen(findname)-3],&findmask[2])) { 
-		printf("found it\n");
+	//	printf("found it\n");
 		
 		return 0;
 	}
