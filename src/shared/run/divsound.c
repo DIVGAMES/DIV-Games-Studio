@@ -629,7 +629,6 @@ int IsPlayingSound(int NumChannel)
 #ifdef DIV2
 int LoadSong(char *ptr, int Len, int Loop)
 {
-#ifndef __EMSCRIPTEN__
 #ifdef MIXER
   int con=0;
 
@@ -686,7 +685,6 @@ cancion[con].music = music;
 cancion[con].rw = rw;
 //printf("Loaded song into slot %d\n",con);
   return(con);
-#endif
 #endif
 return -1;
 }
@@ -824,6 +822,11 @@ int IsPlayingSong(void)
 
   return(0);
 #endif
+
+#ifdef MIXER
+	return (Mix_PlayingMusic());
+#endif
+
 }
 
 #endif
