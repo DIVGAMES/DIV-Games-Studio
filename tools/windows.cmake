@@ -21,7 +21,7 @@ SET(HAS_SDLMIXER 1)
 SET(HAS_DLL 1)
 SET(HAS_MODE8 0)
 SET(HAS_NEWMODE8 0)
-
+SET(HAS_GIT 0)
 
 IF(CPUARCH STREQUAL "64")
 	MESSAGE(STATUS "Buiding Windows 64bit")
@@ -30,7 +30,7 @@ IF(CPUARCH STREQUAL "64")
 	set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 ELSE() # Default 32 bits
 	MESSAGE(STATUS "Buiding Windows 32bit")
-	SET(OS_DEFINITIONS " -mwindows -Dmain=SDL_main ")
+	SET(OS_DEFINITIONS " -m32 -mwindows -Dmain=SDL_main ")
 	SET(OS_LIBS mingw32 SDLmain)
 	set(TOOLCHAIN_PREFIX i686-w64-mingw32)
 ENDIF()
