@@ -129,12 +129,12 @@ IF(HAS_JPEG)
 ENDIF()
 
 IF(HAS_ZLIB)
-	find_package( ZLIB REQUIRED )
+#	find_package( ZLIB REQUIRED )
 
     include_directories( ${ZLIB_INCLUDE_DIRS} )
 
 	MESSAGE(STATUS "Adding ZLIB")
-	include_directories(${ZLIB_INCLUDE_DIRS})
+#	include_directories(${ZLIB_INCLUDE_DIRS})
 	set(EXTRA_LIBS ${EXTRA_LIBS} "z" )
 	ADD_DEFINITIONS( -DZLIB )
 
