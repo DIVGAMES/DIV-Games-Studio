@@ -30,7 +30,7 @@ ENDIF()
 IF(DEBUG)
 	SET(BUILD_LEVEL "-ggdb3 -O0" )
 ELSE()
-	SET(BUILD_LEVEL " -O3 ")
+	SET(BUILD_LEVEL " -O1 ")
 ENDIF()
 
 #Check for OS Dependant functions and fall back to linux osdep if not set
