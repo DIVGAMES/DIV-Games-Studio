@@ -3,6 +3,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(div2015)
 
+# setup some defaults
+INCLUDE ( ${CMAKE_CURRENT_LIST_DIR}/tools/defaults.cmake )
+
+
 SET(CLANG "C")
 
 # Check which target we want
