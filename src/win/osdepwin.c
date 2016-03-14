@@ -281,8 +281,11 @@ strlwr(findmask);
 #endif
 
 #else
-hFile =  _findfirst("*.*",result);
+hFile =  _findfirst("*",result);
 #endif
+//nummatch = scandir(".", &namelist, 0, NULL); 
+
+//printf("matches: %d\n",nummatch);
 
 ret =_dos_findnext(result);
 
@@ -363,9 +366,13 @@ strcpy(result->name,result2.name);
 if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 	type == _A_SUBDIR && result2.attrib&_A_SUBDIR) {
 		
-		if(type == _A_SUBDIR)
-			return 0;
-			
+		if(type == _A_SUBDIR) {
+			if ( !strcmp(findmask,"*.*") ) // match everything
+				return 0;
+				
+			if ( !strcmp(findmask, result->name) ) // match specific
+				return 0;
+		}
 //		j = strlen(findname)-strlen(findmask);
 
 	j=0;
@@ -395,13 +402,22 @@ if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 			
 	}
 
-//	printf("looking for %s [%s] [%s]\n",findmask,&findname[strlen(findname)-3], &findmask[2]);
+	//printf("looking for %s [%s] [%s]\n",findmask,&findname[strlen(findname)-3], &findmask[2]);
 	
-	if ( !strcmp(&findname[strlen(findname)-3],&findmask[2])) { 
-	//	printf("found it\n");
+	if ( strchr(findmask,'*')!=NULL) {
+	
+		if ( !strcmp(&findname[strlen(findname)-3],&findmask[2])) { 
+			//printf("found it %s [%s]\n",findname,findmask);
+			
+			return 0;
+		}
 		
-		return 0;
+	} else {
+		if (!strcmp(findname,findmask))
+			return 0;
 	}
+
+
 		
 	
 //	return 1;
@@ -431,9 +447,9 @@ if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
 
 //	return 0;
 	}
-//return 0;
 }
 //printf("no more matches\n");
+return 1;
 
 #ifdef NOTYET
 	strcpy(result->name,namelist[np]->d_name);
