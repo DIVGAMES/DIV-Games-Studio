@@ -68,13 +68,14 @@ void read_mouse(void) {
 		shift=1;
 
 		if (modo<100 && hotkey && !help_paint_active) {
-			if (key(_SPC)) {
+/*			if (key(_SPC)) {
 				if (mouse_b!=0xfffd) {
 					mouse_b=0xfffd;
 				}
 			} else if (mouse_b==0xfffd) {
 				mouse_b=0;
 			}
+			* */
 		}
 
 	} else if (modo<100 && hotkey && !help_paint_active) { // Las teclas est n solo activas en edici¢n
@@ -120,15 +121,21 @@ void read_mouse(void) {
 				mouse_y-=(1<<zoom)*s; 
 				shift=1;
 			}
-
-			if (key(_SPC)) {
+/*	
+			if ( key(_SPC)) {
+				m_b |= 16;
+			} else if ( m_b&1 ){
+				m_b &= ~16;;
+			}
+			* */
+/*			if (key(_SPC)) {
 				if (mouse_b!=0xfffd) {
 					mouse_b=0xfffd;
 				}
 			} else if (mouse_b==0xfffd) {
 				mouse_b=0;
 			}
-
+*/
 			if (shift) {
 				real_mouse_x=mouse_x;
 				real_mouse_y=mouse_y;
