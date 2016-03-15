@@ -3939,7 +3939,7 @@ DWORD cchBuffer;
     {
         // Dump drive information
         driveType = GetDriveType(driveStrings);
-        GetDiskFreeSpaceEx(driveStrings, &freeSpace, NULL, NULL);
+//        GetDiskFreeSpaceEx(driveStrings, &freeSpace, NULL, NULL);
 
         switch (driveType)
         {
@@ -3964,8 +3964,8 @@ DWORD cchBuffer;
             break;
         }
 
-        printf("%s - %s - %I64u GB free\n", driveStrings, driveTypeString,
-                  freeSpace / 1024 / 1024 / 1024);
+//        printf("%s - %s - %I64u GB free\n", driveStrings, driveTypeString,
+//                  freeSpace / 1024 / 1024 / 1024);
 
         // Move to next drive string
         // +1 is to move past the null at the end of the string.
