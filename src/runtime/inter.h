@@ -554,6 +554,8 @@ GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla f¡sica
 
 GLOBAL byte fsmode;
 
+GLOBAL char *prgpath[_MAX_PATH];
+
 GLOBAL byte *copia;     // Copia virtual de pantalla
 
 GLOBAL byte *copia2;    // Segunda copia, fondo de sprites fuera del scroll

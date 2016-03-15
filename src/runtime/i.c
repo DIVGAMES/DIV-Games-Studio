@@ -1990,6 +1990,11 @@ if(argc>1 && exesize==0) {
 	fclose(fsf);
   }
   
+  fsf = fopen("system/exec.path","rb");
+  if(fsf) {
+	fgets(&prgpath, _MAX_PATH,fsf);
+	fclose(fsf);
+}
   inicializa_textos((byte *)"system/lenguaje.int");
 #else
   inicializa_textos((byte *)argv[0]);

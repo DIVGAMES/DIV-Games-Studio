@@ -156,12 +156,31 @@ char full[_MAX_PATH+1];
 
 #ifndef NOTYET
 
+#ifdef DEBUG
+char fprgpath[_MAX_PATH*2];
+FILE * fpopen ( byte * file) {
+	FILE *f;
+	strcpy(fprgpath,prgpath);
+	strcat(fprgpath,"/");
+	strcat(fprgpath,full);
+
+	if ((f=fopen(fprgpath,"rb"))) { // "paz\fixero.est" 
+		printf("Found %s in prg dir [%s]\n",file, prgpath);
+		return f;
+	}
+
+	return NULL;
+}
+#endif
+
+
 FILE * div_open_file(byte * file) {
   FILE * f,*fe;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
+
 
 
 char remote[255];
@@ -185,86 +204,102 @@ while (*ff!=0) {
 
 #endif
 
+	strcpy(full,(char*)file); // full filename
 
-//printf("%x %x\n",full,file);
-  strcpy(full,(char*)file);
-  //  printf("trying to load %s\n",full);
-  if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
-    if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
-    _splitpath(full,drive,dir,fname,ext);
-    if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='/') strcat(full,"/");
+	if ((f=fopen(full,"rb"))) // "paz\fixero.est"
+		return f;
+
+	if ( f = fpopen(full))
+		return f;
+		
+	if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
+
+	_splitpath(full,drive,dir,fname,ext);
+
+	if (strchr(ext,'.')==NULL) 
+		strcpy(full,ext); 
+	else 
+		strcpy(full,strchr(ext,'.')+1);
+    
+    if (strlen(full) && file[0]!='/') 
+		strcat(full,"/");
+
     strcat(full,(char*)file);
-//    printf("Trying: %s\n",full);
-    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+
+	if ((f=fopen(full,"rb"))) // "est\paz\fixero.est"
+		return f;
+
+	if ( f = fpopen(full))
+		return f;
+		
 	strupr(full);
-//	printf("Trying: %s\n",full);
-    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+
+    if ((f=fopen(full,"rb"))) // "est\paz\fixero.est"
+		return f;
+
+	if ( f=fpopen(full) )
+		return f;
+
 		
-      strcpy(full,fname);
-      strcat(full,ext);
-//    printf("Trying: %s\n",full);
-//	strcpy(remote,"pacoman/");
-//	strcat(remote,full);
-/*
-#ifdef __EMSCRIPTEN__
-	if((fe=fopen(full,"rb"))==NULL) {
-		printf("trying to wget %s\n",remote);
-		emscripten_wget (remote,full);//, loadmarvin, errormarvin);
-	} else 
-		return(fe);
-#endif
-*/
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
-		strupr(full);
-//    printf("Trying: %s\n",full);
-//strcpy(remote,"pacoman/");
-//strcat(remote,full);
+	strcpy(full,fname);
+	strcat(full,ext);
 
-//emscripten_wget (remote,full);//, loadmarvin, errormarvin);
-//	    printf("Trying: %s\n",full);
+	if ((f=fopen(full,"rb"))) // "fixero.est"
+		return f;
 
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+	if ( f = fpopen(full))
+		return f;
 
-		strlwr(full);
+	strupr(full);
 
-//    printf("Trying: %s\n",full);
+	if ((f=fopen(full,"rb"))) // "fixero.est"
+		return f;
 
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+	if ( f = fpopen(full))
+		return f;
+
+	strlwr(full);
+
+	if ((f=fopen(full,"rb"))) // "fixero.est"
+		return f;
+
+	if ( f = fpopen(full))
+		return f;
 		
 
-        if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"/");
-        strcat(full,fname);
-        strcat(full,ext);
+	if (strchr(ext,'.')==NULL)
+		strcpy(full,ext); 
+	else 
+		strcpy(full,strchr(ext,'.')+1);
+	
+	if (strlen(full))
+		strcat(full,"/");
 
-//    printf("Trying: %s\n",full);
+	strcat(full,fname);
+	strcat(full,ext);
 
-        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+	if ((f=fopen(full,"rb"))) // "est\fixero.est"
+		return f;
 
-		strlwr(full);
-        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+	if ( f = fpopen(full))
+		return f;
+		
+	strlwr(full);
 
+	if ((f=fopen(full,"rb"))) // "est\fixero.est"
+		return f;
+
+	if ( f = fpopen(full))
+		return f;
+		
 #ifdef ZLIB
-			if(f=memz_open_file(file)) {
-			//	printf("memz is %d\n",f);
+			if(f=memz_open_file(file))
 				return f;
-			}
 #endif
-          
-			printf("failed to load %s\n",full);
-			
-
-          strcpy(full,"");
-          return(NULL);
-	  } else return(f);
-	  } else return(f);
-        } else return(f);
-        } else return(f);
-      } else return(f);
-    } else return(f);
-  } else return(f);
-} else return(f);
+	printf("failed to load %s\n",full);
+	
+	strcpy(full,"");
+    return(NULL);
 }
 
 #else
