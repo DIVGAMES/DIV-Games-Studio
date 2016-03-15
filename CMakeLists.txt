@@ -259,7 +259,7 @@ SET_SOURCE_FILES_PROPERTIES(${SDLGFX_SOURCES} ${SHARED_RUN} $(DLL_SOURCES) ${DLL
 SET_SOURCE_FILES_PROPERTIES(${RUNTIME_SOURCES} ${DIV1RUN_SOURCES} ${DEBUG_SOURCES} ${DIV_SOURCES} ${VISOR_SOURCES} ${JUDAS_SOURCES} ${OSDEP} PROPERTIES LANGUAGE ${CLANG})
 
 #IF(NOT TARGETOS STREQUAL "PSP")
-ADD_DEFINITIONS( ${BUILD_LEVEL} -fpermissive -fno-omit-frame-pointer -funsigned-char -w -Wno-unused-result -Wno-unused -DTARGET="${TARGET}" -DRDEBUG="${DEBUG}" -DRUNTIME="${RUNTIME}")
+ADD_DEFINITIONS( ${BUILD_LEVEL} -fpermissive -fno-omit-frame-pointer -funsigned-char -w -Wno-unused-result -Wno-unused -D${PLATFORM}=1 -DTARGET="${TARGET}" -DRDEBUG="${DEBUG}" -DRUNTIME="${RUNTIME}")
 #ELSE()
 #	ADD_DEFINITIONS( -G0 ${BUILD_LEVEL} -D_PSP_FW_VERSION=150 -fno-exceptions -fno-rtti -fpermissive -funsigned-char -w -Wno-unused -DTARGET="${TARGET}" -DRDEBUG="${DEBUG}" -DRUNTIME="${RUNTIME}")
 #ENDIF()
