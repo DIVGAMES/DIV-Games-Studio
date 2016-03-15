@@ -1047,6 +1047,11 @@ free_resources();
 		fwrite(&fsmode,1,1,linf);
 		fclose(linf);
 	}
+	linf = fopen("system/exec.path","wb");
+	if(linf) {
+		fputs(&tipo[8],linf);
+		fclose(linf);
+	}
   if ((linf=fopen("system/exec.lin","wb"))==NULL) c_error(0,0);
   if ((lprg=fopen("system/exec.pgm","wb"))==NULL) c_error(0,0);
 
