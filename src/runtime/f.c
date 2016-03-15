@@ -171,6 +171,10 @@ FILE * fpopen ( byte * file) {
 
 	return NULL;
 }
+#else
+FILE *fpopen (byte *file) {
+	return NULL;
+}
 #endif
 
 
@@ -228,7 +232,7 @@ while (*ff!=0) {
 
 	if ((f=fopen(full,"rb"))) // "est\paz\fixero.est"
 		return f;
-
+		
 	if ( f = fpopen(full))
 		return f;
 		
