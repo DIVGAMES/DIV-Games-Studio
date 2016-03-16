@@ -16,11 +16,6 @@
 #define true 1
 #endif
 
-#ifdef DEBUG
-#define debugprintf(...) printf ( __VA_ARGS__)
-#else
-#define debugprintf(...) 
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Global Variables
@@ -83,6 +78,13 @@ typedef unsigned short uint16_t;
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 //      Constants defined at the application level
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
+
+#ifdef DEBUG
+#define debugprintf(...) printf ( __VA_ARGS__)
+#else
+#define printf debugprintf
+#define debugprintf(...) 
+#endif
 
 
 #define uchar uint8_t
