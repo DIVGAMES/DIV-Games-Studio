@@ -53,8 +53,10 @@ freopen( "CON", "w", stdout );
 freopen( "CON", "w", stderr );
 #endif
 
+#ifdef DEBUG
 printf("[%s]\n",ide);
 printf("[%s]\n",dbg);
+#endif
 
 int a=0;
 char init[255];
@@ -82,8 +84,9 @@ sleep_ms(1000);
 		system( dbg " system/EXEC.EXE");
 		ret=system(ide);
 	}
-
+#ifdef DEBUG
 printf("%d\n",ret);
+#endif
   
 #ifndef WIN32
 #ifndef PSP
