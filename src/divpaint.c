@@ -4707,6 +4707,8 @@ void select_zoom(void) {
       mouse_x=barra_x+(mouse_shift_x-barra_x)/2;
       mouse_y=barra_y+(mouse_shift_y-barra_y)/2; }
   }
+   
+  zoom=zoom%4;
 
 }
 
