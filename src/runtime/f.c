@@ -156,26 +156,24 @@ char full[_MAX_PATH+1];
 
 #ifndef NOTYET
 
-#ifdef DEBUG
-char fprgpath[_MAX_PATH*2];
 FILE * fpopen ( byte * file) {
+
+#ifdef DEBUG
+	char fprgpath[_MAX_PATH*2];
 	FILE *f;
 	strcpy(fprgpath,prgpath);
 	strcat(fprgpath,"/");
 	strcat(fprgpath,full);
 
-	if ((f=fopen(fprgpath,"rb"))) { // "paz\fixero.est" 
+	if ((f=fopen(fprgpath,"rb"))) { // prgpath/file
 		printf("Found %s in prg dir [%s]\n",file, prgpath);
 		return f;
 	}
 
-	return NULL;
-}
-#else
-FILE *fpopen (byte *file) {
-	return NULL;
-}
 #endif
+
+	return NULL;
+}
 
 
 FILE * div_open_file(byte * file) {
