@@ -378,6 +378,8 @@ fflush(lst);
                                         n=fwrite(mypcminfo, 1, sizeof(pcminfo), desktop);
                                         n=fwrite(mypcminfo->SoundData, 2, mypcminfo->SoundSize, desktop);
 */
+										free(mypcminfo->SoundData);
+										Mix_FreeChunk(mypcminfo->SI);
                                         break;
 #endif
                                  case    106: //map3d
@@ -392,6 +394,8 @@ fflush(lst);
                                         break;
                         }
                 }
+			if(ventana[x].ptr!=NULL)
+				free(ventana[x].ptr);
         }
         fseek(desktop,0,SEEK_SET);
         fseek(desktop,8+4,SEEK_SET);
