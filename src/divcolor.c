@@ -106,6 +106,10 @@ void init_lexcolor() {
 //  col_analiza_ltobj();
 }
 
+void end_lexcolor() {
+	free(cvnom);	
+}
+
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Lexico (lee una nueva cpieza del *csource)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
