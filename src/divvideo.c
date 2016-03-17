@@ -362,6 +362,8 @@ void svmodex(int m) {
 void rvmode(void) {
 	if(IsFullScreen(vga))
 		SDL_ToggleFS(vga);
+	SDL_FreeSurface(copia_surface);
+	
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
