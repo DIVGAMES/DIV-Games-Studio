@@ -79,13 +79,13 @@ typedef unsigned short uint16_t;
 //      Constants defined at the application level
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
+
 #ifdef DEBUG
-#define debugprintf(...) printf ( __VA_ARGS__)
+#define debugprintf(...) printf ( __VA_ARGS__ )
 #else
 #define printf debugprintf
 #define debugprintf(...) 
 #endif
-
 
 #define uchar uint8_t
 //unsigned char
@@ -940,6 +940,9 @@ typedef struct _pcminfo{
         int    SoundBits;
         int    SoundSize;
         short  *SoundData;
+#ifdef MIXER
+		Mix_Chunk *SI;
+#endif
 //        SAMPLE *sample;
 		char *sample;
 } pcminfo;

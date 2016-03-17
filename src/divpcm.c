@@ -161,10 +161,8 @@ void PCM2(void) {
       return;
     } else {
       if(mypcminfo->SoundData) {
-		  // 
-		  printf("TODO - Play sample via SDL\n");
-//        judas_playsample(mypcminfo->sample, 0, mypcminfo->SoundFreq, 64*256, MIDDLE);
-}
+		  Mix_PlayChannel(0, mypcminfo->SI, 0);
+		}
       while (mouse_b&1) read_mouse();
     }
   }
@@ -174,8 +172,10 @@ void PCM3(void) {
   pcminfo *mypcminfo=(pcminfo *)v.aux;
 
   if(mypcminfo->SoundData) {
-	  printf("TODO - SDL Free sample\n");
-	  
+#ifdef MIXER
+	  Mix_FreeChunk(mypcminfo->SI);
+	  mypcminfo->SI=NULL;
+#endif
     //judas_freesample(mypcminfo->sample);
     mypcminfo->SoundData=NULL;
     mypcminfo->SoundSize=0;
@@ -423,12 +423,16 @@ typedef struct _HeadDC {
 } HeadDC;
 
 void OpenSound(void) {
-	printf("TODO - divpcm.cpp OpenSound\n");
   pcminfo   *mypcminfo;
   Uint32 wav_length;
-Uint8 *wav_buffer;
+  Uint8 *wav_buffer;
 
-  SoundInfo *SI=NULL;
+#ifdef MIXER
+
+Mix_Chunk *SI;
+
+#endif
+
 //  SoundInfo *SI;
 
   int       num;
@@ -481,9 +485,12 @@ Uint8 *wav_buffer;
 
       mypcminfo=(pcminfo *)pcminfo_aux;
 
-#ifdef NOTYET
-	if(SDL_LoadWAV(SoundPathName, &SI, &wav_buffer, &wav_length) == NULL) {
-		 free(pcminfo_aux);
+#ifdef MIXER
+
+	SI = Mix_LoadWAV(SoundPathName);
+	
+	if(SI==NULL) {
+//		 free(pcminfo_aux);
         //if(SI) free(SI);
         v_texto=(char *)texto[46];
         dialogo(err0);
@@ -518,13 +525,14 @@ Uint8 *wav_buffer;
 
       free(SI);
 #endif
-
-/*	  mypcminfo->SoundFreq = SI.freq;
-      mypcminfo->SoundBits = SI.format;
-      mypcminfo->SoundSize = wav_length;
-      mypcminfo->SoundData = (short *)wav_buffer;
-      mypcminfo->sample    = (char *)wav_buffer;
-      */
+      memcpy(mypcminfo->name,SoundName,14);
+      memcpy(mypcminfo->pathname,SoundPathName,256);
+	  mypcminfo->SoundFreq = 44100;
+      mypcminfo->SoundBits = 16;
+      mypcminfo->SoundSize = SI->alen/2;
+      mypcminfo->SoundData = (short *)SI->abuf;
+      mypcminfo->SI = SI;
+//      mypcminfo->sample    = (char *)wav_buffer;    
       nueva_ventana(PCM0);
     }
   }
@@ -592,7 +600,6 @@ extern struct tventana ventana_aux;
 
 void OpenDesktopSound(FILE *f)
 {
-#ifdef NOTYET
   pcminfo *mypcminfo;
 
   pcminfo_aux=(char *)malloc(sizeof(pcminfo));
@@ -626,7 +633,7 @@ void OpenDesktopSound(FILE *f)
 */
 
   nueva_ventana_carga((int)PCM0,ventana_aux.x,ventana_aux.y);
-#endif
+
 }
 
 void SaveSound(pcminfo *mypcminfo, char *dst)

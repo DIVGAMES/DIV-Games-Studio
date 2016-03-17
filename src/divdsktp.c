@@ -360,7 +360,7 @@ fflush(lst);
                                         // fprintf(lst,"path %d elementos escritos <<<\n",n);
                                         // fprintf(lst,"  font\n");
                                         break;
-
+#ifdef NOTYET
                                  case    105: //pcm
                                         mypcminfo=(pcminfo *)ventana[x].aux;
                                         SaveDesktopSound(mypcminfo, desktop);
@@ -379,6 +379,7 @@ fflush(lst);
                                         n=fwrite(mypcminfo->SoundData, 2, mypcminfo->SoundSize, desktop);
 */
                                         break;
+#endif
                                  case    106: //map3d
                                         n=fwrite(ventana[x].aux,1,sizeof(M3D_info)-sizeof(tmap),desktop);
                                         m3d=(M3D_info *) ventana[x].aux;
@@ -651,6 +652,7 @@ FILE *f;
                                   if(!Interpretando) actualiza_caja(0,0,vga_an,vga_al);
                                 }
                                 break;
+#ifdef NOTYET                                
                         case    105: //pcm
 /*
                                 fread(SoundName,1,14,desktop);
@@ -669,6 +671,7 @@ FILE *f;
 */
                                 OpenDesktopSound(desktop);
                                 break;
+#endif
                         case    106: //map3d
                                 nuevo_mapa3d_carga();
                                 break;
