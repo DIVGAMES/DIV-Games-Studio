@@ -38,4 +38,4 @@ ELSE() # Default 32 bits
 ENDIF()
 
 #include maths and dl libs
-SET(OS_LIBS m dl jpeg)
+SET(OS_LIBS m dl)
