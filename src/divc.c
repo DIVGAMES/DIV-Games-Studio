@@ -1049,7 +1049,7 @@ free_resources();
 	}
 	linf = fopen("system/exec.path","wb");
 	if(linf) {
-		fputs(&tipo[8],linf);
+		fputs((char *)&tipo[8],linf);
 		fclose(linf);
 	}
   if ((linf=fopen("system/exec.lin","wb"))==NULL) c_error(0,0);

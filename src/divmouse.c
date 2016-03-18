@@ -12,6 +12,9 @@ float m_x=0.0,m_y=0.0;
 int joymx = 0, joymy=0;
 void read_mouse2(void);
 void libera_drag(void);
+int colisiona_con(int a, int x, int y, int an, int al);
+void InitSound(void);
+void EndSound(void);
 
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
