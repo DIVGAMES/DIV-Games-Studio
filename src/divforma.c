@@ -1477,7 +1477,7 @@ int cargadac_JPG(char *name)
   file=fopen(name,"rb");
   if(file==NULL)
   {
-    v_texto=texto[44];
+    v_texto=(char *)texto[44];
     dialogo((voidReturnType)err0);
     return(0);
   }
@@ -1487,7 +1487,7 @@ int cargadac_JPG(char *name)
   fseek(file,0,SEEK_SET);
   if ((buffer=(byte *)malloc(img_filesize))==NULL)
   {
-    v_texto=texto[45]; dialogo((voidReturnType)err0);
+    v_texto=(char *)texto[45]; dialogo((voidReturnType)err0);
     fclose(file);
     return(0);
   }
