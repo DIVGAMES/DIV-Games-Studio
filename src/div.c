@@ -995,7 +995,7 @@ void mainloop(void) {
 	// Determine the shape of the cursor (mouse pointer)
 	///////////////////////////////////////////////////////////////////////////
 
-	if (n==max_windows) {
+	if (n>=max_windows || n<0) {
 		mouse_graf=1;
 	} else { 
 		switch(ventana[n].primer_plano) {
