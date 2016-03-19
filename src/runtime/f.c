@@ -809,12 +809,14 @@ void new_map(void) {
 
 void load_fpg(void) {
 
-  int num=0,n,m;
-  int * * lst;
-  byte * ptr , *ptr2, *ptr3;
+  int num=0,n=0,m=0;
+  int * * lst=NULL;
+  byte * ptr=NULL , *ptr2=NULL, *ptr3=NULL;
   byte xlat[256];
-  int * iptr;
+  int * iptr=NULL;
   int frompak=0;
+
+  memset(xlat,0,256);
   
   while (num<max_fpgs) {
     if (g[num].fpg==0) {
@@ -855,6 +857,7 @@ void load_fpg(void) {
 file_len=1352;
 #endif
       if ((ptr=(byte *)malloc(file_len+8))!=NULL) {
+		memset(ptr,0,file_len+8);
         g[num].fpg=(int**)ptr;
         fseek(es,0,SEEK_SET);
 #ifdef STDOUTLOG

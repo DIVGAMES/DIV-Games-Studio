@@ -2176,12 +2176,13 @@ void bezier(int x0,int y0,int x1,int y1,int _x0,int _y0,int _x1,int _y1,int inc0
 
 void line0(int x0, int y0, int x1, int y1, int inc0) {
 
-  int dx,dy,a,b,d,x,y,unded=1;
+  int dx=0,dy=0,a=0,b=0,d=0,x=0,y=0;
+  int64_t unded=1;
 
   if (x0>x1) {x=x1; dx=x0-x1;} else {x=x0; dx=x1-x0;}
   if (y0>y1) {y=y1; dy=y0-y1;} else {y=y0; dy=y1-y0;}
 
-  if (inc0==-1) inc0=0; else unded=save_undo(x-pincel_an/2,y-pincel_al/2,dx+1+pincel_an,dy+1+pincel_al);
+  if (inc0==-1) inc0=0; else unded=(int64_t)save_undo(x-pincel_an/2,y-pincel_al/2,dx+1+pincel_an,dy+1+pincel_al);
 
   if (unded) {
     if (!dx && !dy) line_pixel(x0,y0); else {
@@ -2214,12 +2215,13 @@ void line0(int x0, int y0, int x1, int y1, int inc0) {
 // Intentando a¤adir que pinten de abajo hacia arriba y de derecha a izquierda
 
 void line(int x0, int y0, int x1, int y1, int inc0) {
-  int dx,dy,a,b,d,x,y,unded=1;
+  int dx=0,dy=0,a=0,b=0,d=0,x=0,y=0;
+  int64_t unded=1;
 
   if (x0>x1) {x=x1; dx=x0-x1;} else {x=x0; dx=x1-x0;}
   if (y0>y1) {y=y1; dy=y0-y1;} else {y=y0; dy=y1-y0;}
 
-  if (inc0==-1) inc0=0; else unded=save_undo(x-pincel_an/2,y-pincel_al/2,dx+1+pincel_an,dy+1+pincel_al);
+  if (inc0==-1) inc0=0; else unded=(int64_t)save_undo(x-pincel_an/2,y-pincel_al/2,dx+1+pincel_an,dy+1+pincel_al);
 
   if (unded) {
     if (!dx && !dy) line_pixel(x0,y0); else {

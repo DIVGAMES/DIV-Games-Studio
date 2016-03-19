@@ -2080,6 +2080,7 @@ for(a=0;a<10;a++){
 dp=(byte*)malloc(len);
 mem=(int*)malloc(4*len);//imem_max+1032*5+16*1025+3);
 mem=(int*)((((memptrsize)mem+3)/4)*4);
+memset(mem,0,((((memptrsize)mem+3)/4)*4));
         memb=(byte*)mem;
         memw=(word*)mem;
 fseek(f,div1stubsize,SEEK_SET);

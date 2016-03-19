@@ -608,7 +608,7 @@ void OpenDesktopSound(FILE *f)
 {
   pcminfo *mypcminfo;
 
-  pcminfo_aux=(char *)malloc(sizeof(pcminfo));
+  pcminfo_aux=(byte *)malloc(sizeof(pcminfo));
   if(pcminfo_aux==NULL) return; // OJO !!!
   mypcminfo=(pcminfo *)pcminfo_aux;
 
