@@ -1453,8 +1453,9 @@ void ModifySound(int option)
           return;
         }
 //		rw = SDL_RWFromMem(pcminfo_bak.SoundBits,pcminfo_bak.SoundSize);
-		rw = SDL_RWFromMem(FileBuffer,FilePos);
-		SI = Mix_LoadWAV_RW(rw,1);
+//		rw = SDL_RWFromMem(FileBuffer,FilePos);
+//		SI = Mix_LoadWAV_RW(rw,1);
+		SI = Mix_QuickLoad_RAW(FileBuffer,FilePos);
 //		Mix_PlayChannel(-1,SI,0);
 		pcminfo_bak.SI=SI;
 //        SI = judas_loadwav_mem(FileBuffer);
@@ -1541,13 +1542,9 @@ void ModifySound(int option)
         return;
       }
       free(pcminfo_bak.SoundData);
-		rw = SDL_RWFromMem(FileBuffer,FilePos);
-
-		SI = Mix_LoadWAV_RW(rw,1);
+		SI = Mix_QuickLoad_RAW(FileBuffer, FilePos);
 		pcminfo_bak.SI=SI;
 		
-//      SI = judas_loadwav_mem(FileBuffer);
-
       if(SI==NULL) // || judas_error!=JUDAS_OK)
       {
 //        if(SI)         free(SI);
@@ -1604,6 +1601,7 @@ void ModifySound(int option)
 
       judas_playsample(&sample, 0, mypcminfo->SoundFreq, 64*256, MIDDLE);
 #endif
+	
 	Mix_PlayChannel(-1,mypcminfo->SI,0);
 	
       return;
