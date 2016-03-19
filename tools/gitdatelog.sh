@@ -8,7 +8,7 @@
 # -u, --until        to select end date
 
 git-log-by-day () {
-  local NEXT=$(date -date '1 month ago')
+  local NEXT=$(date +%Y-%m-%d)
 
 
 #  local RED="\x1B[31m"
@@ -16,7 +16,7 @@ git-log-by-day () {
 #  local BLUE="\x1B[34m"
 #  local RESET="\x1B[0m"
 
-  local SINCE=$(date)
+  local SINCE=$(date +%Y-%m-%d --date='1 month ago')
   local UNTIL=$NEXT
 
   for i in "$@"
@@ -52,8 +52,10 @@ git-log-by-day () {
   fi
 
 #echo  git log --no-merges --since="${SINCE}" --until="${UNTIL}" --format="%cd" --date=short | sort -u 
+#exit;
+
 # git log --no-merges --since="${SINCE}" --until="${UNTIL}" --format="%cd" --date=short | sort -u | while read DATE ; do
- git log --no-merges --format="%cd" --date=short | sort -u -r | while read DATE ; do
+ git log --no-merges --since="${SINCE}" --until="${UNTIL}" --format="%cd" --date=short | sort -u -r | while read DATE ; do
 
     local GIT_PAGER=$(git log --no-merges --format="${LOG_FORMAT}" --since="${DATE} 00:00:00" --until="${DATE} 23:59:59" --author="${AUTHOR}")
 
