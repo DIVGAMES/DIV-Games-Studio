@@ -260,16 +260,12 @@ extern float h_ratio;
 #endif
 
 void checkmod(SDLMod mod) {
-	
 	if( mod == KMOD_NONE ){
 		return;
 	}
-	
-	if( mod & KMOD_LCTRL ) 
-		shift_status |=4; 
 
-	if( mod & KMOD_RCTRL ) 
-		shift_status |=4;
+	if( mod & KMOD_LCTRL || mod & KMOD_CTRL  || mod & KMOD_RCTRL ) 
+		shift_status |=4; 
 
 	if( mod & KMOD_RSHIFT ) 
 		shift_status |=1;
@@ -277,16 +273,7 @@ void checkmod(SDLMod mod) {
 	if( mod & KMOD_LSHIFT ) 
 		shift_status |=2;
 
-	if( mod & KMOD_RALT ) 
-		shift_status |=8;
-
-	if( mod & KMOD_LALT ) 
-		shift_status |=8;
-
-	if( mod & KMOD_CTRL ) 
-		shift_status |=4;
-
-	if( mod & KMOD_ALT ) 
+	if( mod & KMOD_LALT ||  mod & KMOD_ALT  ||  mod & KMOD_RALT ) 
 		shift_status |=8;
 
 	if (mod & KMOD_CAPS) 
@@ -533,10 +520,14 @@ while(SDL_PollEvent(&event) )
             {
 				
 			checkmod((SDLMod)event.key.keysym.mod);
+
+			if( event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL ) 
+				shift_status |=4; 
+			else // don't set scan code when lctrl pressed
 				scan_code = sdl2key[event.key.keysym.sym];
 		//		ascii = scan_code;
 #ifndef DROID
-				if(event.key.keysym.unicode<0x80 && event.key.keysym.unicode>=0)
+				if(event.key.keysym.unicode<0x80 && scan_code !=83 && event.key.keysym.unicode>=0)
 					ascii = event.key.keysym.unicode&0xFF;
 #endif
 				key(scan_code)=1;
