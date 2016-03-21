@@ -256,11 +256,20 @@ void LookForAutoLoadDlls(void)
 #ifdef DIVDLL
 struct find_t dllfiles;
 int ct;
+
+#ifdef EMSCRIPTEN
+  ct=_dos_findfirst("*.dll.js",_A_NORMAL,&dllfiles);
+
+#else
+
 #ifndef __WIN32
   ct=_dos_findfirst("*.so",_A_NORMAL,&dllfiles);
 #else
   ct=_dos_findfirst("*.dll",_A_NORMAL,&dllfiles);
 #endif
+
+#endif
+
   nDLL=0;
   while(ct==0)
   {
