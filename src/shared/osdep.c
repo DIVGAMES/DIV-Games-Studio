@@ -1,10 +1,11 @@
+#include "global.h"
+
 #include "osdep.h"
 #include <ctype.h>
 
 #include <stdio.h>
 
 #include <fnmatch.h>
-#include "global.h"
 
 
 #ifdef __EMSCRIPTEN__
@@ -482,28 +483,19 @@ sdl2key[SDLK_KP_DIVIDE]=53;
 sdl2key[SDLK_KP_MULTIPLY]=53;
 sdl2key[SDLK_KP_MINUS]=74;
 
+sdl2key[SDLK_NUMLOCK]=69;
+sdl2key[SDLK_BACKSLASH]=53;
+sdl2key[SDLK_KP_ENTER]=28;
+sdl2key[SDLK_KP_MULTIPLY]=55;
+sdl2key[SDLK_KP_MINUS]=74;
+sdl2key[SDLK_KP_PLUS]=78;
+sdl2key[SDLK_KP_ENTER]=28;
+
+
 //sdl2key[SDLK_LSHIFT]=43;
 
 #ifdef NOTYET
 //const _wave=41
-const _enter=28
-
-const _num_lock=69
-const _c_backslash=53
-const _c_asterisk=55
-const _c_minus=74
-const _c_home=71
-const _c_up=72
-const _c_pgup=73
-const _c_left=75
 const _c_center=76
-const _c_right=77
-const _c_end=79
-const _c_down=80
-const _c_pgdn=81
-const _c_ins=82
-const _c_del=83
-const _c_plus=78
-const _c_enter=28
 #endif
 }
