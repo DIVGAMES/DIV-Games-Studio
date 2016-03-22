@@ -254,11 +254,11 @@
 192 " change(s)was(ere) made"
 
 193 "Error in the Heap."
-194 "Free memory : %d.%03d Kbyte(s)."
-195 "Free memory : %d Kbyte(s)."
-196 "Maps : %d.%03d Kbyte(s)."
-197 "Maps : %d Kbyte(s)."
-198 "Resources in use : %d %c."
+194 "Free memory : %d,%03d %s."
+195 "Free memory : %.3f %s"
+196 "Maps : %d,%03d %s"
+197 "Maps : %d %s."
+198 "Resources in use : %d%c."
 199 "System information"
 
 200 "Compiling..."

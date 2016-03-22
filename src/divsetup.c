@@ -367,20 +367,74 @@ void Tap_Setup0(void)
 }
 
 typedef struct _meminfo{
-        unsigned Bloque_mas_grande_disponible;
-        unsigned Maximo_de_paginas_desbloqueadas;
-        unsigned Pagina_bloqueable_mas_grande;
-        unsigned Espacio_de_direccionamiento_lineal;
-        unsigned Numero_de_paginas_libres_disponibles;
-        unsigned Numero_de_paginas_fisicas_libres;
-        unsigned Total_de_paginas_fisicas;
-        unsigned Espacio_de_direccionamiento_lineal_libre;
-        unsigned Tamano_del_fichero_de_paginas;
-        unsigned reservado[3];
+        unsigned long Bloque_mas_grande_disponible; // largest block available
+        unsigned Maximo_de_paginas_desbloqueadas; // Maximum pages unblocked
+        unsigned Pagina_bloqueable_mas_grande; // Lockable larger page
+        unsigned Espacio_de_direccionamiento_lineal; // Linear address space
+        unsigned Numero_de_paginas_libres_disponibles; // Number of free pages available
+        unsigned Numero_de_paginas_fisicas_libres; // Number of free physical pages
+        unsigned Total_de_paginas_fisicas; // Total physical pages
+        unsigned Espacio_de_direccionamiento_lineal_libre; // Free linear address space
+        unsigned Tamano_del_fichero_de_paginas; // File size pages
+        unsigned reserved[3];
 }meminfo;
 
 int Mem_GetHeapFree()
 {
+	return 0;
+#ifndef WIN32
+
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size * 1000;
+#else
+    FILE *meminfo = fopen("/proc/meminfo", "r");
+
+    if(meminfo == NULL)
+		return 0;
+//        ... // handle error
+
+    char line[256];
+    while(fgets(line, sizeof(line), meminfo))
+    {
+        int ram;
+        if(sscanf(line, "MemFree: %d kB", &ram) == 1)
+        {
+            fclose(meminfo);
+            return ram;
+        }
+    }
+
+    // If we got here, then we couldn't find the proper line in the meminfo file:
+    // do something appropriate like return an error code, throw an exception, etc.
+    fclose(meminfo);
+    return -1;
+#endif
+
+#ifdef NOTYET
+    FILE *meminfo = fopen("/proc/meminfo", "r");
+
+    if(meminfo == NULL)
+		return 0;
+//        ... // handle error
+
+    char line[256];
+    while(fgets(line, sizeof(line), meminfo))
+    {
+        int ram;
+        if(sscanf(line, "MemTotal: %d kB", &ram) == 1)
+        {
+            fclose(meminfo);
+            return ram;
+        }
+    }
+
+    // If we got here, then we couldn't find the proper line in the meminfo file:
+    // do something appropriate like return an error code, throw an exception, etc.
+    fclose(meminfo);
+    return -1;
+#endif
+
 #ifdef NOTYET
   struct _heapinfo miheap;
   int status=0,total=0;
@@ -397,9 +451,44 @@ int Mem_GetHeapFree()
 #endif
 return 0;
 }
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 void GetFreeMem(meminfo *Meminfo)
 {
+#ifdef WIN32
+   MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+	Meminfo->Bloque_mas_grande_disponible = status.ullAvailPhys;
+	return;
+#else
+    FILE *mem = fopen("/proc/meminfo", "r");
+
+    if(mem == NULL)
+		return 0;
+//        ... // handle error
+
+    char line[256];
+    while(fgets(line, sizeof(line), mem))
+    {
+        int64_t ram;
+        if(sscanf(line, "MemFree: %ds kB", &ram) == 1)
+        {
+            fclose(mem);
+            Meminfo->Bloque_mas_grande_disponible = ram*1024;
+			return;
+        }
+    }
+
+    // If we got here, then we couldn't find the proper line in the meminfo file:
+    // do something appropriate like return an error code, throw an exception, etc.
+    fclose(mem);
+    Meminfo->Bloque_mas_grande_disponible = -1;
+    return;
+#endif
+
 #ifdef NOTYET
   union REGS regs;
   struct SREGS sregs;
@@ -414,7 +503,10 @@ void GetFreeMem(meminfo *Meminfo)
 void MemInfo1(void) {
   char cWork[256];
   meminfo Mi_meminfo;
+  char sizes[][3]={"KB","MB","GB","TB","PB"};
+  byte csize=0;
   int mem,x,nuvent=0,meminmaps=0;
+  float fmem;
   int an=v.an/big2,al=v.al/big2;
 
   _show_items();
@@ -442,15 +534,25 @@ void MemInfo1(void) {
   if((mem=Mem_GetHeapFree())==-1) strcpy(cWork,(char *)texto[193]);
   else {
     mem=(Mi_meminfo.Bloque_mas_grande_disponible+mem)/1024;
-    if(mem/1000) sprintf(cWork,(char *)texto[194],mem/1000,mem%1000);
-    else         sprintf(cWork,(char *)texto[195],mem%1000);
+    fmem = mem;
+    fprintf(stdout,"Memory free: %d\n",mem);
+    while(fmem>1024) {
+		fmem=fmem/1024;
+		csize++;
+	}
+	fprintf(stdout,"Memory free: %d (%f)\n",mem, fmem);
+
+//	fmem=fmem*1000;
+//    if(fmem/1000) sprintf(cWork,(char *)texto[194],fmem,sizes[csize]);
+   // else         
+   sprintf(cWork,(char *)texto[195],fmem,sizes[csize]);
   }
   wwrite(v.ptr,an,al,an/2+1,44,1,(byte *)cWork,c1);
   wwrite(v.ptr,an,al,an/2,44,1,(byte *)cWork,c4);
 
   mem=meminmaps/1024;
-  if(mem/1000) sprintf(cWork,(char *)texto[196],mem/1000,mem%1000);
-  else         sprintf(cWork,(char *)texto[197],mem%1000);
+  if(mem/1000) sprintf(cWork,(char *)texto[196],mem/1000,mem%1000,"KB");
+  else         sprintf(cWork,(char *)texto[197],mem%1000,"KB");
   wwrite(v.ptr,an,al,an/2+1,52,1,(byte *)cWork,c1);
   wwrite(v.ptr,an,al,an/2,52,1,(byte *)cWork,c4);
 
