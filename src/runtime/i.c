@@ -23,8 +23,8 @@
 #include "netlib.h"
 #include <time.h>
 
-#ifndef NET
-int inicializacion_red=0;
+#ifdef NETPLAY
+extern int inicializacion_red;
 #endif
 
 void busca_packfile(void);
@@ -859,7 +859,7 @@ void exec_process(void) {
 			mem[ide+_Frame]-=100;
 			mem[ide+_Executed]=1;
 		} else {	  
-#ifdef NET
+#ifdef NETPLAY
 			_net_loop(); // Process netplay routine before calling process
 #endif
 			id=ide; 
@@ -942,7 +942,7 @@ void trace_process(void) {
 		mem[ide+_Executed]=1;
 	} else {
 
-#ifdef NET
+#ifdef NETPLAY
 		_net_loop(); // Receive packets before executing process
 #endif
 
