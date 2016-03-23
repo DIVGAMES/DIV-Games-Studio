@@ -466,8 +466,10 @@ void GetFreeMem(meminfo *Meminfo)
 #else
     FILE *mem = fopen("/proc/meminfo", "r");
 
-    if(mem == NULL)
-		return 0;
+    if(mem == NULL) {
+		Meminfo->Bloque_mas_grande_disponible = -1;
+		return;
+	}
 //        ... // handle error
 
     char line[256];
