@@ -382,7 +382,7 @@ typedef struct _meminfo{
 int Mem_GetHeapFree()
 {
 	return 0;
-#ifndef WIN32
+#ifdef WIN32
 
     long pages = sysconf(_SC_PHYS_PAGES);
     long page_size = sysconf(_SC_PAGE_SIZE);
