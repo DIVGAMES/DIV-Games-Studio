@@ -379,15 +379,19 @@ typedef struct _meminfo{
         unsigned reserved[3];
 }meminfo;
 
+
+
 int Mem_GetHeapFree()
 {
 	return 0;
-#ifdef WIN32
+#ifdef NOTYET
 
     long pages = sysconf(_SC_PHYS_PAGES);
     long page_size = sysconf(_SC_PAGE_SIZE);
     return pages * page_size * 1000;
-#else
+#endif
+
+#ifndef WIN32
     FILE *meminfo = fopen("/proc/meminfo", "r");
 
     if(meminfo == NULL)
