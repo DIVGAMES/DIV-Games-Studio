@@ -860,11 +860,10 @@ file_len=1352;
 		memset(ptr,0,file_len+8);
         g[num].fpg=(int**)ptr;
         fseek(es,0,SEEK_SET);
+        n=fread(ptr,1,file_len,es);        
 #ifdef STDOUTLOG
         printf("ptr is %x\n",ptr);
-        printf("read %d bytes of %d\n",fread(ptr,1,file_len,es),file_len); 
-#else
-	fread(ptr,1,file_len,es);
+        printf("read %d bytes of %d\n",n,file_len); 
 #endif
 
 #ifndef __EMSCRIPTEN__ 

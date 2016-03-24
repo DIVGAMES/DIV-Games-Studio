@@ -1,7 +1,7 @@
 // Mikedll
-// Functions to read dll's at compile time.
+// Functions to read dlls at compile time.
 // 27Feb 2003
-// Big thanks to Slainte for spending some time explaining FEnix DLL routines.
+// Big thanks to Slainte for spending some time explaining Fenix DLL routines.
 
 #include "global.h"
 #include "divdll.h"
@@ -39,7 +39,6 @@ char *dll_error="No error";
 
 void (*COM_export)(char *name,void *dir,int nparms);
 
-
 PE      *pe[128];
 int     nDLL=0;
 void    *ExternDirs[1024];
@@ -54,22 +53,21 @@ PE *DIV_LoadDll(char *name)
 {
 	PE *pefile;
 	char dllname[255];
-char *ff = (char *)name;
+	char *ff = (char *)name;
 
-while (*ff!=0) {
-	if(*ff =='\\') *ff='/';
-	ff++;
-}
+	while (*ff!=0) {
+		if(*ff =='\\') *ff='/';
+		ff++;
+	}
 
 #ifdef DIVDLL
 	void (*entryp)( void *(*DIV_import)() , void (*DIV_export)() );
 	void (*entryp2)( void (*HYB_export)() );
 
 	// reset error condition
-
 	dll_error=NULL;
 
-// make the dll "here"
+	// make the dll "here"
 	strcpy(dllname,"./");
 	strcat(dllname,name);
 
@@ -256,11 +254,20 @@ void LookForAutoLoadDlls(void)
 #ifdef DIVDLL
 struct find_t dllfiles;
 int ct;
+
+#ifdef EMSCRIPTEN
+  ct=_dos_findfirst("*.dll.js",_A_NORMAL,&dllfiles);
+
+#else
+
 #ifndef __WIN32
   ct=_dos_findfirst("*.so",_A_NORMAL,&dllfiles);
 #else
   ct=_dos_findfirst("*.dll",_A_NORMAL,&dllfiles);
 #endif
+
+#endif
+
   nDLL=0;
   while(ct==0)
   {
