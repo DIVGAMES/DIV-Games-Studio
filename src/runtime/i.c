@@ -645,8 +645,9 @@ init_rnd(dtime);
   LookForAutoLoadDlls();
   COM_export=CMP_export;
 #endif
+#ifdef NETPLAY
 	inicializacion_red=0;
-
+#endif
 /////////////////////////////////////////////////////////////
 
   for(n=0; n<128; n++) {
