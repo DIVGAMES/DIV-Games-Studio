@@ -406,7 +406,7 @@ volcadosdl(p);
 return;
 
 	  int y=0,n;
-	  byte *oldp = *p;
+	  byte *oldp = (byte *)p;
 	  uint32_t x1=vga_an,y1=vga_al,w1=1,h1=1;
 	SDL_Rect rc;  
 	byte *q = (byte *)vga->pixels;
@@ -465,7 +465,7 @@ void volcadosdl(byte *p) {
 	int vy;
 	int vx;
 
-	byte *oldp=*p;
+	byte *oldp=(byte *)p;
 	
 	uint32_t colorkey = 0;
 	SDL_Rect trc;
