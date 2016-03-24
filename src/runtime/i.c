@@ -398,11 +398,15 @@ extern int find_status;
 
 #include "sysdac.h"
 time_t dtime;
+memptrsize stack[65535];
 
 void inicializacion (void) {
 //  FILE * f=NULL;
   int n;
   
+  for (n=0;n<65535;n++)
+  	stack[n]=0;
+  	
   mouse=(struct _mouse*)&mem[long_header];
   scroll=(struct _scroll*)&mem[long_header+14];
   m7=(struct _m7*)&mem[long_header+14+10*10];
@@ -723,30 +727,53 @@ void system_font(void) {
 //      actualiza_pila(id,valor);       // Pone un valor al final de la pila (rtf)
 
 // * (int *) mem[id+_SP] = {SP1,SP2,DATOS...}
+int stacks=0;
 
 void guarda_pila(int id, int sp1, int sp2) {
-  int n, * p;
-  p=(int*)malloc((sp2-sp1+3)*sizeof(int));
+  int n;
+  memptrsize * p;
+  p=(memptrsize*)malloc((sp2-sp1+3)*sizeof(memptrsize));
+  stacks=0;
+  while (stacks<65535) {
+  	if (stack[stacks]>0)
+  		stacks++;
+  	else
+  		break;
+  }
+  printf("using stack: %d\n",stacks);
+  //if(stacks>=65535)
+  	//exit("out of memory");
+  stack[stacks]=p;
+  
   if (p!=NULL) {
-    mem[id+_SP]=(memptrsize)p; p[0]=sp1; p[1]=sp2;
+    mem[id+_SP]=stacks;
+    //(memptrsize)p; 
+    p[0]=sp1; p[1]=sp2;
     for (n=0;n<=sp2-sp1;n++) p[n+2]=pila[sp1+n];
   } else mem[id+_SP]=0;
 }
 
 void carga_pila(int id) {
-  int n, * p;
+  int n;
+  memptrsize * p;
   if (mem[id+_SP]) {
-    p=(int*)mem[id+_SP];
-    for (n=0;n<=p[1]-p[0];n++) pila[p[0]+n]=p[n+2];
-    mem[id+_SP]=0; sp=p[1];
+    p=stack[mem[id+_SP]];
+    
+    for (n=0;n<=p[1]-p[0];n++) 
+    	pila[p[0]+n]=p[n+2];
+
+    //free(stack[id+_SP]);
+  //  stack[id+_SP]=0;
+    mem[id+_SP]=0; 
+    sp=p[1];
     free(p);
   } else sp=0;
 }
 
 void actualiza_pila(int id, int valor) {
-  int * p;
+  memptrsize * p;
   if (mem[id+_SP]) {
-    p=(int*)mem[id+_SP];
+    p=stack[mem[id+_SP]];
     p[p[1]-p[0]+2]=valor;
   }
 }
