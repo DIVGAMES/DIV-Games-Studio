@@ -80,9 +80,9 @@ typedef int int32_t;
 
 
 #if __WORDSIZE == 32
-#define memptrsize int
+#define memptrsize uint32_t
 #else
-#define memptrsize long
+#define memptrsize uint64_t
 #endif
 
 
