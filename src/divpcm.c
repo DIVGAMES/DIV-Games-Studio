@@ -638,7 +638,7 @@ void OpenDesktopSound(FILE *f)
   judas_ipcorrect(smp);
 */
 
-  nueva_ventana_carga((int)PCM0,ventana_aux.x,ventana_aux.y);
+  nueva_ventana_carga((memptrsize)PCM0,ventana_aux.x,ventana_aux.y);
 
 }
 
@@ -1124,7 +1124,7 @@ void EditSound1(void)
   Alto  = alto_ventana;
   ptr+=(4+((12+PosY)*v.an))*big2+(Alto/2)*v.an;
 
-  buffer=mypcminfo->SI->abuf;
+  buffer=(short *)mypcminfo->SI->abuf;
   length=mypcminfo->SI->alen/2;
 
   if (length>1)
@@ -1360,7 +1360,7 @@ void ModifySound(int option)
   float     inicio, final, tam_rel, fade;
   int       pos, value, n;
   int       ini, fin;
-  short     *buffer    = mypcminfo->SI->abuf;
+  short     *buffer    = (short *)mypcminfo->SI->abuf;
   short     *short_ptr = Clipboard.SoundData;
   int       length;
   float     paso, pos_f;
