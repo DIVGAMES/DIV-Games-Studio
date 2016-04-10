@@ -370,7 +370,7 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef STDOUTLOG
 	printf("SET VIDEO MODE %x\n",vga);
 #endif
-	SDL_WM_SetCaption( "DIV2015", "" );
+	SDL_WM_SetCaption( "DIVDX 3.01", "" );
 
 	modovesa=1;
 #ifdef DOS
