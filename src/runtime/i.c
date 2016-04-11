@@ -1146,10 +1146,20 @@ void frame_start(void) {
 		n=0; 
 		old_reloj=get_reloj();
 
-		do { 
-		
-		} while (get_reloj()<(int)freloj); // TO keep FPS
+#ifndef EMSCRIPTEN
+		if(old_reloj<(int)freloj) {
 
+		do {
+			sched_yield();			
+			usleep(((int)freloj-old_reloj)-1); 
+			
+		} while (get_reloj()<(int)freloj); // TO keep FPS
+		}
+#else
+		do {
+			retrazo();
+		} while (get_reloj()<(int)freloj);
+#endif
 		volcados_saltados=0;
 		saltar_volcado=0;
 		freloj+=ireloj;
