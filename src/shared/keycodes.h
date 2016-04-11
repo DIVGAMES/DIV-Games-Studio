@@ -5,7 +5,7 @@ void sdlkeyinit(void) {
 	printf("SDL KEY INIT\n");
 //	exit(0);
 	SDL_EnableUNICODE( SDL_ENABLE );  
-	SDL_EnableKeyRepeat( SDL_DEFAULT_REPEAT_DELAY,  SDL_DEFAULT_REPEAT_INTERVAL);
+	SDL_EnableKeyRepeat( 250,  SDL_DEFAULT_REPEAT_INTERVAL);
 	
 sdl2key[SDLK_ESCAPE]=1;
 sdl2key[SDLK_F1]=59;
