@@ -316,6 +316,9 @@ int LoadSound(char *ptr, long Len, int Loop)
 	
 	if(con==128) return(-1);
 	
+	rw = SDL_RWFromMem(ptr, Len);
+	sound = Mix_LoadWAV_RW(rw, 1);
+	if(!sound) {
 	dst = (byte *)malloc((int)Len+255);
 	if(dst==NULL)
 		return(-1);
@@ -368,11 +371,12 @@ else
 	rw = SDL_RWFromMem(dst, (int)(Len+255));
 	sound = Mix_LoadWAV_RW(rw, 1);
 #endif
+	free(dst);
+	}
 	if(!sound) {
 		printf("Mix_LoadWAV: %s\n", Mix_GetError());
 		return (-1);
 	}
-	free(dst);
 	// all ok. save our data to free() later
 	sonido[con].smp = 1;
 	sonido[con].sound = sound;
