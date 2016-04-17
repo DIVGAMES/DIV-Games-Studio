@@ -213,7 +213,7 @@ fflush(lst);
         fprintf(lst,"ghost %d elementos escritos <<<\n",n);
 #endif
         // Mira y guarda una por una las ventanas utilizadas
-        for(x=max_windows;x>=0;x--)
+        for(x=max_windows-1;x>=0;x--)
         {
                 if(ventana[x].tipo!=0 && ventana[x].titulo)
                 {
