@@ -156,16 +156,16 @@ char full[_MAX_PATH+1];
 
 #ifndef NOTYET
 
-FILE * fpopen ( byte * file) {
-
+FILE *__fpopen (byte *file, char *mode) {
+	
 #ifdef DEBUG
 	char fprgpath[_MAX_PATH*2];
 	FILE *f;
 	strcpy(fprgpath,prgpath);
 	strcat(fprgpath,"/");
 	strcat(fprgpath,full);
-
-	if ((f=fopen(fprgpath,"rb"))) { // prgpath/file
+	
+	if ((f=fopen(fprgpath,mode))) { // prgpath/file
 		printf("Found %s in prg dir [%s]\n",file, prgpath);
 		return f;
 	}
@@ -173,6 +173,12 @@ FILE * fpopen ( byte * file) {
 #endif
 
 	return NULL;
+	
+	
+}
+
+FILE * fpopen ( byte * file) {
+	return __fpopen(file,"rb");
 }
 
 
@@ -3271,7 +3277,7 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
   char ext[_MAX_EXT+1];
   char modo[128];
   int n,x;
-  FILE * f;
+  FILE *f = NULL;
 
   strcpy(modo,(char*)&mem[pila[sp--]]);
   strcpy(full,(char*)&mem[pila[sp]]);
@@ -3281,6 +3287,12 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
 
   packfile_del(full);
 
+#ifdef DEBUG
+// check for file in prg dir
+	f=__fpopen(full,modo);
+#endif
+
+  if(f==NULL) {
   if ((f=fopen(full,modo))==NULL) {                     // "paz\fixero.est"
     if (_fullpath(full,(char*)&mem[pila[sp]],_MAX_PATH)==NULL) { pila[sp]=0; return; }
     _splitpath(full,drive,dir,fname,ext);
@@ -3296,9 +3308,11 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
         strcat(full,fname);
         strcat(full,ext);
         f=fopen(full,modo);                             // "est\fixero.est"
+			
       }
     }
   }
+}
 
   if (f) {
     for (x=0;x<32;x++) if (tabfiles[x]==0) break;
