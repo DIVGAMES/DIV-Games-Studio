@@ -19,7 +19,11 @@ typedef unsigned char byte;
 #endif
 
 
+#ifdef WIN32
+#define __export __declspec(dllexport)
+#else
 #define __export /* __export */
+#endif
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Common definitions for all libraries
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
