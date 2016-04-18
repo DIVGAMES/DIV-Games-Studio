@@ -3324,7 +3324,13 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
       tabfiles[x]=f;
       pila[sp]=x*2+1;
     }
-  } else if (errno==EMFILE) { pila[sp]=0; e(169); }
+  } else {
+    pila[sp] = 0;
+    if(errno==EMFILE) {
+      e(169);
+    }
+  }
+
 }
 
 //����������������������������������������������������������������������������
