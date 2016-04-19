@@ -316,6 +316,9 @@ int LoadSound(char *ptr, long Len, int Loop)
 	
 	if(con==128) return(-1);
 	
+	rw = SDL_RWFromMem(ptr, Len);
+	sound = Mix_LoadWAV_RW(rw, 1);
+	if(!sound) {
 	dst = (byte *)malloc((int)Len+255);
 	if(dst==NULL)
 		return(-1);
@@ -368,11 +371,12 @@ else
 	rw = SDL_RWFromMem(dst, (int)(Len+255));
 	sound = Mix_LoadWAV_RW(rw, 1);
 #endif
+	free(dst);
+	}
 	if(!sound) {
 		printf("Mix_LoadWAV: %s\n", Mix_GetError());
 		return (-1);
 	}
-	free(dst);
 	// all ok. save our data to free() later
 	sonido[con].smp = 1;
 	sonido[con].sound = sound;
@@ -629,6 +633,7 @@ int IsPlayingSound(int NumChannel)
 #ifdef DIV2
 int LoadSong(char *ptr, int Len, int Loop)
 {
+#ifndef __EMSCRIPTEN__
 #ifdef MIXER
   int con=0;
 
@@ -685,6 +690,7 @@ cancion[con].music = music;
 cancion[con].rw = rw;
 //printf("Loaded song into slot %d\n",con);
   return(con);
+#endif
 #endif
 return -1;
 }

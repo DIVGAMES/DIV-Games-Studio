@@ -390,6 +390,7 @@ int main(int argc, char * argv[]) {
 	FILE *f;
 	byte *prgbuf;
 	unsigned n;
+	debugprintf("Welcome to DIV\n");
 	
 	SDL_Init( SDL_INIT_EVERYTHING);
 
@@ -994,7 +995,7 @@ void mainloop(void) {
 	// Determine the shape of the cursor (mouse pointer)
 	///////////////////////////////////////////////////////////////////////////
 
-	if (n==max_windows) {
+	if (n>=max_windows || n<0) {
 		mouse_graf=1;
 	} else { 
 		switch(ventana[n].primer_plano) {
@@ -2170,7 +2171,7 @@ void minimiza_ventana(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void cierra_ventana(void) {
-  int x,y,an,al,n,m;
+  int x=0,y=0,an=0,al=0,n=0,m=0;
 
   if (v.tipo==102 && fin_ventana==1) { fin_ventana=2; return; }
   
@@ -2417,10 +2418,10 @@ void mueve_ventana_completa(void) {
 
 void actualiza_caja(int x, int y, int an, int al) {
 
-  int n;
-  byte * _ptr;
-  int _x,_y,_an,_al;
-  int salta_x,salta_y;
+  int n=0;
+  byte * _ptr=NULL;
+  int _x=0,_y=0,_an=0,_al=0;
+  int salta_x=0,salta_y=0;
 
   if (x<0) { an+=x; x=0; }
   if (y<0) { al+=y; y=0; }
@@ -3253,7 +3254,7 @@ void explode(int x,int y,int an,int al) {
 
 void implode(int x,int y,int an,int al) {
   int n=9,b=big;
-  int xx,yy,aan,aal;
+  int xx=0,yy=0,aan=0,aal=0;
   big=0; do {
 
     aan=(an*n)/10; if (!aan) aan=1;
@@ -3487,6 +3488,7 @@ void refrescadialogo(void)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void init_lexcolor(void);
+void end_lexcolor(void);
 
 //typedef enum    {SV_cpu86,SV_cpu186,SV_cpu286,SV_cpu286p,
 //                 SV_cpu386,SV_cpu386p,SV_cpu486,SV_cpu486p,
@@ -3866,6 +3868,8 @@ void finalizacion(void) {
     graf_ptr=NULL;
   }
   
+  free(font);
+  
   free(tapiz);
   free(fill_dac);
   free(barra);
@@ -3882,6 +3886,7 @@ void finalizacion(void) {
         rvmode();
 
 //  EndSound();
+	end_lexcolor();
 
   kbdReset();
 }
@@ -3939,7 +3944,7 @@ DWORD cchBuffer;
     {
         // Dump drive information
         driveType = GetDriveType(driveStrings);
-        GetDiskFreeSpaceEx(driveStrings, &freeSpace, NULL, NULL);
+//        GetDiskFreeSpaceEx(driveStrings, &freeSpace, NULL, NULL);
 
         switch (driveType)
         {
@@ -3964,8 +3969,8 @@ DWORD cchBuffer;
             break;
         }
 
-        printf("%s - %s - %I64u GB free\n", driveStrings, driveTypeString,
-                  freeSpace / 1024 / 1024 / 1024);
+//        printf("%s - %s - %I64u GB free\n", driveStrings, driveTypeString,
+//                  freeSpace / 1024 / 1024 / 1024);
 
         // Move to next drive string
         // +1 is to move past the null at the end of the string.

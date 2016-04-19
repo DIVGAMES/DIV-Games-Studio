@@ -1,6 +1,6 @@
 #include "global.h"
 
-#include <stdio.h>
+//#include <stdio.h>
 //#include <conio.h>
 //#include <i86.h>
 #include <time.h>

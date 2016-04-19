@@ -11,7 +11,7 @@ SET(HAS_SDLIMAGE 0)
 SET(HAS_ZLIB 1)
 SET(HAS_SDLMIXER 1)
 SET(HAS_DLL 1)
-SET(HAS_JPEG 1)
+SET(HAS_JPEG 0)
 SET(HAS_FLI 1)
 SET(HAS_MODE8 0)
 SET(HAS_GIT 0)
@@ -38,4 +38,4 @@ ELSE() # Default 32 bits
 ENDIF()
 
 #include maths and dl libs
-SET(OS_LIBS m dl jpeg)
+SET(OS_LIBS m dl)

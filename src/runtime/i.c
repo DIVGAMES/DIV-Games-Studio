@@ -23,8 +23,8 @@
 #include "netlib.h"
 #include <time.h>
 
-#ifndef NET
-int inicializacion_red=0;
+#ifdef NETPLAY
+extern int inicializacion_red;
 #endif
 
 void busca_packfile(void);
@@ -398,11 +398,15 @@ extern int find_status;
 
 #include "sysdac.h"
 time_t dtime;
+memptrsize stack[65535];
 
 void inicializacion (void) {
 //  FILE * f=NULL;
   int n;
   
+  for (n=0;n<65535;n++)
+  	stack[n]=0;
+  	
   mouse=(struct _mouse*)&mem[long_header];
   scroll=(struct _scroll*)&mem[long_header+14];
   m7=(struct _m7*)&mem[long_header+14+10*10];
@@ -628,6 +632,7 @@ init_rnd(dtime);
   DIV_export("palette",(void *)paleta);
   DIV_export("active_palette",(void *)dac);
   DIV_export("key",(void *)kbdFLAGS);
+  DIV_export("graphs",(void *)g);
 #endif
 
   ss_time=3000; ss_time_counter=0;
@@ -641,8 +646,9 @@ init_rnd(dtime);
   LookForAutoLoadDlls();
   COM_export=CMP_export;
 #endif
+#ifdef NETPLAY
 	inicializacion_red=0;
-
+#endif
 /////////////////////////////////////////////////////////////
 
   for(n=0; n<128; n++) {
@@ -723,30 +729,53 @@ void system_font(void) {
 //      actualiza_pila(id,valor);       // Pone un valor al final de la pila (rtf)
 
 // * (int *) mem[id+_SP] = {SP1,SP2,DATOS...}
+int stacks=0;
 
 void guarda_pila(int id, int sp1, int sp2) {
-  int n, * p;
-  p=(int*)malloc((sp2-sp1+3)*sizeof(int));
+  int n;
+  memptrsize * p;
+  p=(memptrsize*)malloc((sp2-sp1+3)*sizeof(memptrsize));
+  stacks=0;
+  while (stacks<65535) {
+  	if (stack[stacks]>0)
+  		stacks++;
+  	else
+  		break;
+  }
+  printf("using stack: %d\n",stacks);
+  //if(stacks>=65535)
+  	//exit("out of memory");
+  stack[stacks]=p;
+  
   if (p!=NULL) {
-    mem[id+_SP]=(memptrsize)p; p[0]=sp1; p[1]=sp2;
+    mem[id+_SP]=stacks;
+    //(memptrsize)p; 
+    p[0]=sp1; p[1]=sp2;
     for (n=0;n<=sp2-sp1;n++) p[n+2]=pila[sp1+n];
   } else mem[id+_SP]=0;
 }
 
 void carga_pila(int id) {
-  int n, * p;
+  int n;
+  memptrsize * p;
   if (mem[id+_SP]) {
-    p=(int*)mem[id+_SP];
-    for (n=0;n<=p[1]-p[0];n++) pila[p[0]+n]=p[n+2];
-    mem[id+_SP]=0; sp=p[1];
+    p=stack[mem[id+_SP]];
+    
+    for (n=0;n<=p[1]-p[0];n++) 
+    	pila[p[0]+n]=p[n+2];
+
+    //free(stack[id+_SP]);
+  //  stack[id+_SP]=0;
+    mem[id+_SP]=0; 
+    sp=p[1];
     free(p);
   } else sp=0;
 }
 
 void actualiza_pila(int id, int valor) {
-  int * p;
+  memptrsize * p;
   if (mem[id+_SP]) {
-    p=(int*)mem[id+_SP];
+    p=stack[mem[id+_SP]];
     p[p[1]-p[0]+2]=valor;
   }
 }
@@ -859,7 +888,7 @@ void exec_process(void) {
 			mem[ide+_Frame]-=100;
 			mem[ide+_Executed]=1;
 		} else {	  
-#ifdef NET
+#ifdef NETPLAY
 			_net_loop(); // Process netplay routine before calling process
 #endif
 			id=ide; 
@@ -942,7 +971,7 @@ void trace_process(void) {
 		mem[ide+_Executed]=1;
 	} else {
 
-#ifdef NET
+#ifdef NETPLAY
 		_net_loop(); // Receive packets before executing process
 #endif
 
@@ -1118,10 +1147,23 @@ void frame_start(void) {
 		n=0; 
 		old_reloj=get_reloj();
 
-		do { 
-		
-		} while (get_reloj()<(int)freloj); // TO keep FPS
+#ifndef EMSCRIPTEN
+		if(old_reloj<(int)freloj) {
 
+		do {
+#ifdef WIN32
+			SDL_Delay(((int)freloj-old_reloj)-1);
+#else
+			sched_yield();			
+			usleep(((int)freloj-old_reloj)-1); 
+#endif			
+		} while (get_reloj()<(int)freloj); // TO keep FPS
+		}
+#else
+		do {
+			retrazo();
+		} while (get_reloj()<(int)freloj);
+#endif
 		volcados_saltados=0;
 		saltar_volcado=0;
 		freloj+=ireloj;
@@ -1845,8 +1887,8 @@ int main(int argc,char * argv[]) {
 
 // fix stderr / stdout
 #ifdef WIN32
-	freopen( "CON", "w", stdout );
-	freopen( "CON", "w", stderr );
+//	freopen( "CON", "w", stdout );
+//	freopen( "CON", "w", stderr );
 #endif
 
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
@@ -1990,6 +2032,11 @@ if(argc>1 && exesize==0) {
 	fclose(fsf);
   }
   
+  fsf = fopen("system/exec.path","rb");
+  if(fsf) {
+	fgets(&prgpath, _MAX_PATH,fsf);
+	fclose(fsf);
+}
   inicializa_textos((byte *)"system/lenguaje.int");
 #else
   inicializa_textos((byte *)argv[0]);
@@ -2075,6 +2122,7 @@ for(a=0;a<10;a++){
 dp=(byte*)malloc(len);
 mem=(int*)malloc(4*len);//imem_max+1032*5+16*1025+3);
 mem=(int*)((((memptrsize)mem+3)/4)*4);
+memset(mem,0,((((memptrsize)mem+3)/4)*4));
         memb=(byte*)mem;
         memw=(word*)mem;
 fseek(f,div1stubsize,SEEK_SET);

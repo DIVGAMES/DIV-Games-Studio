@@ -10,6 +10,8 @@
 #define true 1
 #endif
 
+
+
 //#include "include.div"
 
 #define INTERPRETE
@@ -66,6 +68,15 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 ///////////////////////////////////////////////////////////////////////////////
 // defines
 ///////////////////////////////////////////////////////////////////////////////
+
+
+#ifdef DEBUG
+#define debugprintf(...) printf ( __VA_ARGS__)
+#else
+#define printf(...)
+// debugprintf
+#define debugprintf(...) 
+#endif
 
 #pragma check_stack(off)
 
@@ -553,6 +564,8 @@ GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla f¡sica
 GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla f¡sica
 
 GLOBAL byte fsmode;
+
+GLOBAL char *prgpath[_MAX_PATH];
 
 GLOBAL byte *copia;     // Copia virtual de pantalla
 

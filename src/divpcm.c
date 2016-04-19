@@ -12,6 +12,8 @@ unsigned char *aligned[2];
 // END HACK
 
 
+int    FilePos=0;
+  
 void FreeMOD                (void);
 int  GetSongPos             (void);
 int  GetSongLine            (void);
@@ -161,10 +163,8 @@ void PCM2(void) {
       return;
     } else {
       if(mypcminfo->SoundData) {
-		  // 
-		  printf("TODO - Play sample via SDL\n");
-//        judas_playsample(mypcminfo->sample, 0, mypcminfo->SoundFreq, 64*256, MIDDLE);
-}
+		  Mix_PlayChannel(0, mypcminfo->SI, 0);
+		}
       while (mouse_b&1) read_mouse();
     }
   }
@@ -174,8 +174,10 @@ void PCM3(void) {
   pcminfo *mypcminfo=(pcminfo *)v.aux;
 
   if(mypcminfo->SoundData) {
-	  printf("TODO - SDL Free sample\n");
-	  
+#ifdef MIXER
+	  Mix_FreeChunk(mypcminfo->SI);
+	  mypcminfo->SI=NULL;
+#endif
     //judas_freesample(mypcminfo->sample);
     mypcminfo->SoundData=NULL;
     mypcminfo->SoundSize=0;
@@ -423,12 +425,16 @@ typedef struct _HeadDC {
 } HeadDC;
 
 void OpenSound(void) {
-	printf("TODO - divpcm.cpp OpenSound\n");
   pcminfo   *mypcminfo;
   Uint32 wav_length;
-Uint8 *wav_buffer;
+  Uint8 *wav_buffer;
 
-  SoundInfo *SI=NULL;
+#ifdef MIXER
+
+Mix_Chunk *SI;
+
+#endif
+
 //  SoundInfo *SI;
 
   int       num;
@@ -481,9 +487,12 @@ Uint8 *wav_buffer;
 
       mypcminfo=(pcminfo *)pcminfo_aux;
 
-#ifdef NOTYET
-	if(SDL_LoadWAV(SoundPathName, &SI, &wav_buffer, &wav_length) == NULL) {
-		 free(pcminfo_aux);
+#ifdef MIXER
+
+	SI = Mix_LoadWAV(SoundPathName);
+	
+	if(SI==NULL) {
+//		 free(pcminfo_aux);
         //if(SI) free(SI);
         v_texto=(char *)texto[46];
         dialogo(err0);
@@ -518,13 +527,18 @@ Uint8 *wav_buffer;
 
       free(SI);
 #endif
-
-/*	  mypcminfo->SoundFreq = SI.freq;
-      mypcminfo->SoundBits = SI.format;
-      mypcminfo->SoundSize = wav_length;
-      mypcminfo->SoundData = (short *)wav_buffer;
-      mypcminfo->sample    = (char *)wav_buffer;
-      */
+      memcpy(mypcminfo->name,SoundName,14);
+      memcpy(mypcminfo->pathname,SoundPathName,256);
+	  mypcminfo->SoundFreq = 44100;
+      mypcminfo->SoundBits = 16;
+      mypcminfo->SoundSize = SI->alen/2;
+      mypcminfo->SoundData = (short *)malloc(SI->alen);
+      if(mypcminfo->SoundData!=NULL) 
+		memcpy(mypcminfo->SoundData,SI->abuf, SI->alen);
+      
+      mypcminfo->SoundData = (short *)SI->abuf;
+      mypcminfo->SI = SI;
+//      mypcminfo->sample    = (char *)wav_buffer;    
       nueva_ventana(PCM0);
     }
   }
@@ -592,10 +606,9 @@ extern struct tventana ventana_aux;
 
 void OpenDesktopSound(FILE *f)
 {
-#ifdef NOTYET
   pcminfo *mypcminfo;
 
-  pcminfo_aux=(char *)malloc(sizeof(pcminfo));
+  pcminfo_aux=(byte *)malloc(sizeof(pcminfo));
   if(pcminfo_aux==NULL) return; // OJO !!!
   mypcminfo=(pcminfo *)pcminfo_aux;
 
@@ -625,8 +638,8 @@ void OpenDesktopSound(FILE *f)
   judas_ipcorrect(smp);
 */
 
-  nueva_ventana_carga((int)PCM0,ventana_aux.x,ventana_aux.y);
-#endif
+  nueva_ventana_carga((memptrsize)PCM0,ventana_aux.x,ventana_aux.y);
+
 }
 
 void SaveSound(pcminfo *mypcminfo, char *dst)
@@ -977,7 +990,7 @@ typedef struct _SND {
 } SND;
 
 SND     DesktopSND[100];
-int     NumSND;   // Contador de sonidos pegados durante una edicion
+int     NumSND=0;   // Contador de sonidos pegados durante una edicion
 int     ConSND=1; // Contador de sonidos pegados durante toda la sesion
 //SAMPLE  sample;
 CLP     Clipboard = { 0, 0, NULL };
@@ -1111,8 +1124,8 @@ void EditSound1(void)
   Alto  = alto_ventana;
   ptr+=(4+((12+PosY)*v.an))*big2+(Alto/2)*v.an;
 
-  buffer=mypcminfo->SoundData;
-  length=mypcminfo->SoundSize;
+  buffer=(short *)mypcminfo->SI->abuf;
+  length=mypcminfo->SI->alen/2;
 
   if (length>1)
   if (length<3*Ancho)
@@ -1146,7 +1159,8 @@ void EditSound1(void)
       position+=step;
       p1=(memptrsize)position;
 
-      muestra=buffer[p0], y0=y1=(muestra*Alto/65536);
+      muestra=buffer[p0];
+      y0=y1=(muestra*Alto/65536);
 
       do {
         muestra=buffer[p0], y=(muestra*Alto/65536);
@@ -1199,7 +1213,8 @@ void EditSound2(void)
 
 void EditSound3(void)
 {
-	printf("TODO - divpcm.cpp EditSound3\n");
+//	printf("TODO - divpcm.cpp EditSound3\n");
+Mix_HaltChannel(-1);
 #ifdef NOTYET
   if(judas_channel[0].smp) judas_stopsample(0);
 #endif
@@ -1336,15 +1351,16 @@ void RecSound3(void)
 void ModifySound(int option)
 {
 	printf("TODO - divpcm.cpp ModifySound\n");
-#ifdef NOTYET
+#ifdef MIXER
+	SDL_RWops *rw;
   pcminfo   *mypcminfo=(pcminfo *)pcminfo_aux;
   pcminfo   pcminfo_bak;
-  SoundInfo *SI=NULL;
+  Mix_Chunk *SI=NULL;
   byte      *FileBuffer;
   float     inicio, final, tam_rel, fade;
   int       pos, value, n;
   int       ini, fin;
-  short     *buffer    = mypcminfo->SoundData;
+  short     *buffer    = (short *)mypcminfo->SI->abuf;
   short     *short_ptr = Clipboard.SoundData;
   int       length;
   float     paso, pos_f;
@@ -1358,7 +1374,9 @@ void ModifySound(int option)
   fin = (float)final*tam_rel;
   if(final==ancho_ventana) fin=mypcminfo->SoundSize;
 
-  if(judas_channel[0].smp) judas_stopsample(0);
+	Mix_HaltChannel(-1);
+	
+//  if(judas_channel[0].smp) judas_stopsample(0);
 
   switch(option)
   {
@@ -1402,7 +1420,8 @@ void ModifySound(int option)
       if(mypcminfo->SoundSize-Clipboard.SoundSize<=0)
       {
         if(mypcminfo->SoundData) {
-          judas_freesample(mypcminfo->sample);
+		//	Mix_FreeChunk(mypcminfo->SI);
+//          judas_freesample(mypcminfo->sample);
           mypcminfo->SoundData=NULL;
           mypcminfo->SoundSize=0;
         }
@@ -1433,12 +1452,17 @@ void ModifySound(int option)
           dialogo(err0);
           return;
         }
+//		rw = SDL_RWFromMem(pcminfo_bak.SoundBits,pcminfo_bak.SoundSize);
+//		rw = SDL_RWFromMem(FileBuffer,FilePos);
+//		SI = Mix_LoadWAV_RW(rw,1);
+		SI = Mix_QuickLoad_RAW(FileBuffer,FilePos);
+//		Mix_PlayChannel(-1,SI,0);
+		pcminfo_bak.SI=SI;
+//        SI = judas_loadwav_mem(FileBuffer);
 
-        SI = judas_loadwav_mem(FileBuffer);
-
-        if(SI==NULL || judas_error!=JUDAS_OK)
+        if(SI==NULL)// || judas_error!=JUDAS_OK)
         {
-          if(SI)         free(SI);
+//          if(SI)         free(SI);
           if(FileBuffer) free(FileBuffer);
           free(pcminfo_bak.SoundData);
           free(Clipboard.SoundData);
@@ -1449,16 +1473,25 @@ void ModifySound(int option)
         }
 
         if(mypcminfo->SoundData) {
-          judas_freesample(mypcminfo->sample);
+		//	Mix_FreeChunk(SI);
+//          judas_freesample(mypcminfo->sample);
           mypcminfo->SoundData=NULL;
           mypcminfo->SoundSize=0;
         }
 
-        mypcminfo->SoundSize = SI->SoundSize;
-        mypcminfo->SoundData = SI->SoundData;
-        mypcminfo->sample    = SI->sample;
+        mypcminfo->SoundSize = SI->alen/2;
+        
+        mypcminfo->SoundData = (short *)malloc(SI->alen);
 
-        free(SI);
+		if(mypcminfo->SoundData!=NULL) 
+			memcpy(mypcminfo->SoundData,SI->abuf, SI->alen);
+
+//        mypcminfo->SoundData = SI->abuf;
+        mypcminfo->sample    = NULL;////SI->sample;
+        mypcminfo->SI		 = SI;
+        
+
+//        free(SI);
         free(FileBuffer);
         free(pcminfo_bak.SoundData);
       }
@@ -1509,12 +1542,12 @@ void ModifySound(int option)
         return;
       }
       free(pcminfo_bak.SoundData);
-
-      SI = judas_loadwav_mem(FileBuffer);
-
-      if(SI==NULL || judas_error!=JUDAS_OK)
+		SI = Mix_QuickLoad_RAW(FileBuffer, FilePos);
+		pcminfo_bak.SI=SI;
+		
+      if(SI==NULL) // || judas_error!=JUDAS_OK)
       {
-        if(SI)         free(SI);
+//        if(SI)         free(SI);
         if(FileBuffer) free(FileBuffer);
         v_texto=(char *)texto[45];
         dialogo(err0);
@@ -1522,20 +1555,27 @@ void ModifySound(int option)
       }
 
       if(mypcminfo->SoundData) {
-        judas_freesample(mypcminfo->sample);
+		//  Mix_FreeChunk(SI);
+//        judas_freesample(mypcminfo->sample);
         mypcminfo->SoundData=NULL;
         mypcminfo->SoundSize=0;
       }
 
-      mypcminfo->SoundSize = SI->SoundSize;
-      mypcminfo->SoundData = SI->SoundData;
-      mypcminfo->sample    = SI->sample;
+      mypcminfo->SoundSize = SI->alen/2;
 
-      free(SI);
+      mypcminfo->SoundData = (short *)malloc(SI->alen);
+	  if(mypcminfo->SoundData!=NULL) 
+		memcpy(mypcminfo->SoundData,SI->abuf, SI->alen);
+
+//      mypcminfo->SoundData = SI->SoundData;
+      mypcminfo->sample    = NULL;////SI->sample;
+		mypcminfo->SI=SI;
+		
+//      free(SI);
       free(FileBuffer);
       return;
     case 8: // Play
-
+#ifdef NOTYET
       if ( judascfg_device == DEV_NOSOUND) {
         if ( SoundError ) {
           v_texto=(char *)texto[549]; dialogo(err0);
@@ -1543,8 +1583,10 @@ void ModifySound(int option)
           v_texto=(char *)texto[548]; dialogo(err0);
         } return;
       }
-
+#endif
       if(mypcminfo->SoundData==NULL) return;
+#ifdef NOTYET
+
       if(sel_1==sel_2) {
         sample.start  = (mypcminfo->sample)->start;
         sample.repeat = (mypcminfo->sample)->repeat;
@@ -1556,7 +1598,12 @@ void ModifySound(int option)
       }
       sample.vuprofile = (mypcminfo->sample)->vuprofile;
       sample.voicemode = (mypcminfo->sample)->voicemode;
+
       judas_playsample(&sample, 0, mypcminfo->SoundFreq, 64*256, MIDDLE);
+#endif
+	
+	Mix_PlayChannel(-1,mypcminfo->SI,0);
+	
       return;
     case 9: // Pega el sonido en el escritorio
       CopyNewSound(mypcminfo, ini, fin);
@@ -2032,8 +2079,8 @@ byte *SaveSoundMem(pcminfo *mypcminfo)
   byte   *byte_ptr=(byte *)mypcminfo->SoundData;
   byte   *FileBuffer;
   int    length;
-  int    FilePos=0;
 
+  FilePos=0;
   length=mypcminfo->SoundSize*2;
 
   if((FileBuffer=(byte *)malloc(length+44))==NULL)
@@ -2063,7 +2110,7 @@ byte *SaveSoundMem(pcminfo *mypcminfo)
 
   MyHeadDC.dwUnknow         = 16;
   MyHeadDC.wFormatTag       = 1;
-  MyHeadDC.wChannels        = 1;
+  MyHeadDC.wChannels        = 2;
   MyHeadDC.dwSamplePerSec   = mypcminfo->SoundFreq;
   MyHeadDC.dwAvgBytesPerSec = mypcminfo->SoundFreq*(mypcminfo->SoundBits/8);
   MyHeadDC.wBlockAlign      = 1;

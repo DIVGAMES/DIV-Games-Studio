@@ -12,6 +12,9 @@ float m_x=0.0,m_y=0.0;
 int joymx = 0, joymy=0;
 void read_mouse2(void);
 void libera_drag(void);
+int colisiona_con(int a, int x, int y, int an, int al);
+void InitSound(void);
+void EndSound(void);
 
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -68,13 +71,14 @@ void read_mouse(void) {
 		shift=1;
 
 		if (modo<100 && hotkey && !help_paint_active) {
-			if (key(_SPC)) {
+/*			if (key(_SPC)) {
 				if (mouse_b!=0xfffd) {
 					mouse_b=0xfffd;
 				}
 			} else if (mouse_b==0xfffd) {
 				mouse_b=0;
 			}
+			* */
 		}
 
 	} else if (modo<100 && hotkey && !help_paint_active) { // Las teclas est n solo activas en ediciขn
@@ -120,15 +124,21 @@ void read_mouse(void) {
 				mouse_y-=(1<<zoom)*s; 
 				shift=1;
 			}
-
-			if (key(_SPC)) {
+/*	
+			if ( key(_SPC)) {
+				m_b |= 16;
+			} else if ( m_b&1 ){
+				m_b &= ~16;;
+			}
+			* */
+/*			if (key(_SPC)) {
 				if (mouse_b!=0xfffd) {
 					mouse_b=0xfffd;
 				}
 			} else if (mouse_b==0xfffd) {
 				mouse_b=0;
 			}
-
+*/
 			if (shift) {
 				real_mouse_x=mouse_x;
 				real_mouse_y=mouse_y;
@@ -250,16 +260,12 @@ extern float h_ratio;
 #endif
 
 void checkmod(SDLMod mod) {
-	
 	if( mod == KMOD_NONE ){
 		return;
 	}
-	
-	if( mod & KMOD_LCTRL ) 
-		shift_status |=4; 
 
-	if( mod & KMOD_RCTRL ) 
-		shift_status |=4;
+	if( mod & KMOD_LCTRL || mod & KMOD_CTRL  || mod & KMOD_RCTRL ) 
+		shift_status |=4; 
 
 	if( mod & KMOD_RSHIFT ) 
 		shift_status |=1;
@@ -267,16 +273,7 @@ void checkmod(SDLMod mod) {
 	if( mod & KMOD_LSHIFT ) 
 		shift_status |=2;
 
-	if( mod & KMOD_RALT ) 
-		shift_status |=8;
-
-	if( mod & KMOD_LALT ) 
-		shift_status |=8;
-
-	if( mod & KMOD_CTRL ) 
-		shift_status |=4;
-
-	if( mod & KMOD_ALT ) 
+	if( mod & KMOD_LALT ||  mod & KMOD_ALT  ||  mod & KMOD_RALT ) 
 		shift_status |=8;
 
 	if (mod & KMOD_CAPS) 
@@ -523,10 +520,14 @@ while(SDL_PollEvent(&event) )
             {
 				
 			checkmod((SDLMod)event.key.keysym.mod);
+
+			if( event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL ) 
+				shift_status |=4; 
+			else // don't set scan code when lctrl pressed
 				scan_code = sdl2key[event.key.keysym.sym];
 		//		ascii = scan_code;
 #ifndef DROID
-				if(event.key.keysym.unicode<0x80 && event.key.keysym.unicode>=0)
+				if(event.key.keysym.unicode<0x80 && scan_code !=83 && event.key.keysym.unicode>=0)
 					ascii = event.key.keysym.unicode&0xFF;
 #endif
 				key(scan_code)=1;

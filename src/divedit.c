@@ -2094,7 +2094,7 @@ int in_block(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void text_cursor(void) {
-  int x,y,alto,block;
+  int x,y,alto,block,n,keypressed;
   byte *old_di,*di,*si,ch;
 
   x=(v.prg->columna-v.prg->primera_columna)*editor_font_an;
@@ -2110,7 +2110,16 @@ void text_cursor(void) {
 
   block=in_block();
 
-  if (*system_clock&4) {
+	keypressed=0;
+
+	for(n=0;n<128;n++) {
+		if(key(n)) {
+			keypressed=1;
+			n=128;
+		}
+	}
+	
+  if (*system_clock&4 || keypressed) {
     if (block) do { memset(di,ce1,editor_font_an); di+=v.an; } while (--alto);
     else do { memset(di,c_y,editor_font_an); di+=v.an; } while (--alto);
   } else {

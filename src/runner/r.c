@@ -47,7 +47,6 @@ void sleep_ms(int milliseconds) // cross-platform sleep function
 
 #endif
 
-
 #ifdef __APPLE__
 #include <unistd.h>
 #include <string.h>
@@ -64,8 +63,25 @@ freopen( "CON", "w", stdout );
 freopen( "CON", "w", stderr );
 #endif
 
+#ifdef DEBUG
 printf("[%s]\n",ide);
 printf("[%s]\n",dbg);
+#endif
+#ifdef __APPLE__
+ CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef resourcesURL = CFBundleCopyBundleURL(mainBundle);
+	CFStringRef str = CFURLCopyFileSystemPath( resourcesURL, kCFURLPOSIXPathStyle );
+	CFRelease(resourcesURL);
+	char path[PATH_MAX];
+	
+	CFStringGetCString( str, path, FILENAME_MAX, kCFStringEncodingASCII );
+	CFRelease(str);
+	printf("%s\n", path);
+strcat(path,"/Contents/Resources/");
+chdir(path);
+
+#endif
+
 
 #ifdef __APPLE__
  CFBundleRef mainBundle = CFBundleGetMainBundle();
@@ -108,8 +124,9 @@ sleep_ms(1000);
 		system( dbg " system/EXEC.EXE");
 		ret=system(ide);
 	}
-
+#ifdef DEBUG
 printf("%d\n",ret);
+#endif
   
 #ifndef WIN32
 #ifndef PSP

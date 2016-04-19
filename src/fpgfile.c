@@ -118,9 +118,9 @@ int Abrir_FPG(FPG *Fpg,char *Name) {
 	}
 
 	fread(&Fpg->version,1,1,fpg);
-
+#ifdef DEBUG
 	printf("FPG version: %d\n",Fpg->version);
-
+#endif
 	for(x=0;x<1000;x++) {
 		Fpg->OffsGrf[x]=0;
 		Fpg->DesIndex[x]=0;

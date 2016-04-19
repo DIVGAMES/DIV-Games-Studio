@@ -213,7 +213,7 @@ fflush(lst);
         fprintf(lst,"ghost %d elementos escritos <<<\n",n);
 #endif
         // Mira y guarda una por una las ventanas utilizadas
-        for(x=max_windows;x>=0;x--)
+        for(x=max_windows-1;x>=0;x--)
         {
                 if(ventana[x].tipo!=0 && ventana[x].titulo)
                 {
@@ -360,7 +360,7 @@ fflush(lst);
                                         // fprintf(lst,"path %d elementos escritos <<<\n",n);
                                         // fprintf(lst,"  font\n");
                                         break;
-
+#ifdef NOTYET
                                  case    105: //pcm
                                         mypcminfo=(pcminfo *)ventana[x].aux;
                                         SaveDesktopSound(mypcminfo, desktop);
@@ -378,7 +378,10 @@ fflush(lst);
                                         n=fwrite(mypcminfo, 1, sizeof(pcminfo), desktop);
                                         n=fwrite(mypcminfo->SoundData, 2, mypcminfo->SoundSize, desktop);
 */
+										free(mypcminfo->SoundData);
+										Mix_FreeChunk(mypcminfo->SI);
                                         break;
+#endif
                                  case    106: //map3d
                                         n=fwrite(ventana[x].aux,1,sizeof(M3D_info)-sizeof(tmap),desktop);
                                         m3d=(M3D_info *) ventana[x].aux;
@@ -391,6 +394,8 @@ fflush(lst);
                                         break;
                         }
                 }
+			if(ventana[x].ptr!=NULL)
+				free(ventana[x].ptr);
         }
         fseek(desktop,0,SEEK_SET);
         fseek(desktop,8+4,SEEK_SET);
@@ -651,6 +656,7 @@ FILE *f;
                                   if(!Interpretando) actualiza_caja(0,0,vga_an,vga_al);
                                 }
                                 break;
+#ifdef NOTYET                                
                         case    105: //pcm
 /*
                                 fread(SoundName,1,14,desktop);
@@ -669,6 +675,7 @@ FILE *f;
 */
                                 OpenDesktopSound(desktop);
                                 break;
+#endif
                         case    106: //map3d
                                 nuevo_mapa3d_carga();
                                 break;

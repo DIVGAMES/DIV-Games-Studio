@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <chipmunk/chipmunk.h>
+#include <chipmunk/chipmunk_structs.h>
 
 #include <math.h>
 
@@ -20,51 +21,431 @@ static cpSpace *space;
 static cpShape *walls[WALL_MAX];
 int wallnum=0;
 
-static cpFloat radius;
-static cpFloat mass;
-static cpFloat moment;
-	
-static cpBody *ballBody;
+//static cpBody *ballBody;
 //[65535];
 
 int nbody=0;
 
-static cpShape *ballShape;
-
-
+//static cpShape *ballShape;
 static cpFloat timeStep;
-
 static cpVect pos;
-static cpVect vel;
-static cpFloat ang;
 static double ang2;
 
 static int init=0;
 
 #define iloc_len (mem[5]+mem[6])
 #define imem (mem[8])
+#define MAX_JOINTS 10
 
-struct procbody {
+#define TRUE 1
+#define FALSE 0
+
+typedef struct procbody {
 	cpBody *body;
 	cpShape *shape;
 	int procid;
 	struct procbody *next;
 	struct procbody *prev;
+	byte changed;
+	struct cpConstraint * joints[MAX_JOINTS];
+	int idjoin [MAX_JOINTS];
 	
-};
- 
+} procbody;
 
-struct procbody *bodies; 
-
-
-void rum(void) {	
-	int i=getparm();
-	retval(0);
-}
-
+procbody *bodies = NULL;
 #define proc(x) ((process *)&mem[x])
 
-void add_fixed_body(void) {
+#define MAX_POINTS 255
+
+
+typedef struct _polystruct {
+	int num;
+	cpVect *points;
+} polystruct;
+
+typedef struct _gps {
+	int file;
+	int graph;
+	polystruct *ps;
+} gps;
+
+//  MAXSIZEX = 32; // arbitrary
+//  MAXSIZEY = 32; // abritrary
+
+#define MAX_POLYS 200
+
+gps polys[MAX_POLYS];
+
+typedef struct _vector {
+	int charnum;
+	int prev;
+	int sx,sy;
+	int ex,ey;
+	int x,y;
+	int next;
+	int status;
+} vector;
+
+
+int a[255][255];
+//  A: array[1..MAXSIZEX, 1..MAXSIZEY] of integer;
+vector v[655350];
+int Vnum=0;
+
+
+int addsquarevector(j,k) {
+
+	int m;
+
+//  Vnum := Vnum + 1;
+
+	v[Vnum].prev = Vnum+3;
+	v[Vnum].sx = j;
+	v[Vnum].sy = k;
+	v[Vnum].ex = j+1;
+	v[Vnum].ey = k;
+	v[Vnum].next = Vnum +1;
+	v[Vnum].status = 0;
+
+	Vnum++;
+	
+	v[Vnum].prev = Vnum-1;
+	v[Vnum].sx = j+1;
+	v[Vnum].sy = k;
+	v[Vnum].ex = j+1;
+	v[Vnum].ey = k+1;
+	v[Vnum].next = Vnum +1;
+	v[Vnum].status = 0;
+
+	Vnum ++;
+	
+	v[Vnum].prev = Vnum-1;
+	v[Vnum].sx = j+1;
+	v[Vnum].sy = k+1;
+	v[Vnum].ex = j;
+	v[Vnum].ey = k+1;
+	v[Vnum].next = Vnum +1;
+	v[Vnum].status = 0;
+
+	Vnum ++;
+
+	v[Vnum].prev = Vnum-1;
+	v[Vnum].sx = j;
+	v[Vnum].sy = k+1;
+	v[Vnum].ex = j;
+	v[Vnum].ey = k;
+	v[Vnum].next = Vnum -3;
+	v[Vnum].status = 0;
+
+	Vnum++;
+
+}
+
+void procvector(pid) {
+
+	int j,k;
+	int *ptr;
+	byte *a;
+	int w;
+	int h;
+	
+	if((ptr=(int *)graphs[proc(pid)->file].grf[proc(pid)->graph])==NULL) {
+		return;
+	}
+	a=(byte*)ptr+64+ptr[15]*4;
+	w = ptr[13];
+	h = ptr[14];
+	
+	Vnum = 0;
+	
+	for(j=0;j<w;j++) 
+		for(k=0;k<h;k++) 
+			if(a[j+k*w]!=0)
+				addsquarevector(j,k);
+				
+}
+
+void removevector(int mm, int mm2) {
+
+	int p,n;
+	
+	p=v[mm].prev;
+	v[p].next = v[mm2].next;
+	
+	n = v[mm2].next;
+	v[n].prev = p;
+}
+
+void removevectors(int m, int m2) {
+	
+	removevector(m,m2);
+	removevector(m2,m);
+
+	v[m].status = -1;
+	v[m2].status = -1;
+	
+}
+
+byte equalpoints(int p1x, int p1y, int p2x, int p2y) {
+	byte r;
+
+	r = FALSE;
+
+	if(p1x == p2x && p1y == p2y)
+		r = TRUE;
+
+	return r;
+}
+
+byte equalvectors(int m, int m2) {
+
+	int msx, msy, mex, mey;
+	int m2sx, m2sy, m2ex, m2ey;
+	
+	byte r;
+
+	r = FALSE;
+
+	if (v[m].status !=-1) {
+		
+      msx = v[m].sx; msy = v[m].sy;
+      mex = v[m].ex; mey = v[m].ey;
+      m2sx = v[m2].sx; m2sy = v[m2].sy;
+      m2ex = v[m2].ex; m2ey = v[m2].ey;
+
+      if ( equalpoints(msx,msy,m2sx,m2sy) &&
+         equalpoints(mex,mey,m2ex,m2ey) )
+         r = TRUE;
+
+      if ( equalpoints(msx,msy,m2ex,m2ey) &&
+         equalpoints(mex,mey,m2sx,m2sy) )
+         r = TRUE;
+     }
+
+	return r;
+}
+
+void lengthenvector(void) {
+
+	int m,m2;
+
+  // now we have vectors, but some vectors have multiple points.
+  // so let's turn two vectors into one longer vector. Okay? Okay!
+
+	for(m=0;m<Vnum;m++) {
+
+		if (v[m].prev != 0 && v[m].status > -1) {
+			if ((v[v[m].prev].sx == v[m].ex) ||
+			   (v[v[m].prev].sy == v[m].ey) ) {
+				 v[v[m].prev].ex = v[m].ex;
+				 v[v[m].prev].ey = v[m].ey;
+				 v[v[m].prev].next = v[m].next;
+				 v[v[m].next].prev = v[m].prev;
+				 v[m].status = -1;
+		   }
+	   }
+	}
+
+}
+
+
+void simplifyvector(void) {
+
+	int m,m2;
+
+	for(m=0;m<Vnum;m++)
+		for(m2=m+1;m2<Vnum;m2++)
+        if (equalvectors(m,m2)) 
+          removevectors(m,m2);
+      
+}
+
+
+#define mappixel(x,y) si[y*h+x]
+
+#define savepoint ps->points[numpoints]=cpv(x,y); \
+		ps->num=++numpoints; \
+		dir++; if(dir==4) dir=0; printf("point[%d]: %d %d %x\n",numpoints,x,y,si[y*h+x]);
+
+polystruct * pixel_to_poly(pid) {
+	
+	int *ptr;
+	int numpoints=0;
+	int x = 0;
+	int y = 0;
+	int xt = 0;
+	int yt = 0;
+	int w = 0;
+	int h = 0;
+	int dir = -1;
+	int i = 0;
+	int j = 0;
+	
+	byte *si = NULL;
+	polystruct *ps;
+	
+	
+	if ((ptr=(int *)graphs[proc(pid)->file].grf[proc(pid)->graph])==NULL) {
+		printf("NO GRAPH!\n");
+		return NULL;
+	}
+
+	w = ptr[13]/2;
+	h = ptr[14]/2;
+
+	for (i=0;i<MAX_POLYS;i++) {
+		if(polys[i].ps==NULL)
+			break;
+			
+		if(polys[i].file == proc(pid)->file && polys[i].graph == proc(pid)->graph) {
+			return polys[i].ps;
+		}
+		
+	}
+	
+	ps = (polystruct*)div_malloc(sizeof(polystruct));
+
+ procvector(pid);
+
+  simplifyvector();
+
+  lengthenvector();
+  
+  j=0;
+  i=0;
+  do {//v[i].status==0) {
+	  if(v[i].status==0) {
+//		printf("[%d] %d %d %d %d ->[%d]\n",i,v[i].sx, v[i].sy, v[i].ex, v[i].ey, v[i].next);
+		v[i].x=(v[i].sx*(proc(pid)->size/100))-w;
+		v[i].y=(v[i].sy*(proc(pid)->size/100))-h;
+//		printf("i: %d, x: %d y: %d\n",numpoints,x,y);
+		numpoints++;
+		
+	}
+	  i=v[i].next;
+	j++;
+  } while (i!=0);
+
+  ps->num=numpoints;
+	ps->points = (cpVect *)div_malloc(sizeof(cpVect)*numpoints);
+	
+	j = 0;
+	for(i=0;i<numpoints;i++) {
+		ps->points[i]=cpv(v[j].x,v[j].y);
+		j = v[j].next;
+	}
+	
+	for (i=0;i<MAX_POLYS;i++) {
+		if(polys[i].ps==NULL)
+			break;
+			
+		if(polys[i].file == proc(pid)->file && polys[i].graph == proc(pid)->graph) {
+			return polys[i].ps;
+		}
+		
+	}
+	
+	polys[i].file = proc(pid)->file;
+	polys[i].graph = proc(pid)->graph;
+	polys[i].ps = ps;
+	printf("new poly rendered: %d\n",i);
+	
+//  return NULL;
+	return ps;
+}
+
+
+
+struct procbody * findbody(int id) {
+	struct procbody *f = bodies;
+
+    for(;f; f = f->next) {
+        if(f->procid == id) {
+            return f;
+        }
+    }
+
+	return NULL;
+}
+
+
+
+
+procbody* procbody_new(int pid, cpFloat mass, cpFloat moment) {
+	procbody *newb = (procbody*)div_malloc(sizeof(procbody));
+
+    if(!newb) return NULL;
+    
+	memset(newb->joints,0,sizeof(struct cpConstraint*)*MAX_JOINTS);
+	memset(newb->idjoin,0,MAX_JOINTS);
+
+	newb->next = bodies;
+	newb->prev = NULL;
+    newb->body = cpSpaceAddBody(space, cpBodyNew(mass, moment));// : moment);cpBodyNew(mass, moment));
+    newb->procid = pid;
+    newb->changed=0;
+
+	if(pid!=0) {
+	//	cpBodySetAngle(newb->body,-(proc(pid)->angle)/1000);
+	}
+    // link it in
+	if(bodies) {
+		bodies->prev = newb;
+    }
+    bodies = newb;
+    return newb;
+}
+
+void procbody_delete(procbody* body) {
+	procbody *body2;
+	
+	int i = 0;
+	int j = 0;
+	if(body==NULL)
+		return;
+
+	procbody *p = body->prev;
+	procbody *n = body->next;
+
+	if(p!=NULL) {
+		p->next=body->next;
+	} else {
+        bodies = body->next;
+    }
+
+	if(n!=NULL) {
+		n->prev = body->prev;
+	}
+
+	cpSpaceRemoveShape(space, body->shape);
+	cpSpaceRemoveBody(space, body->body);
+	cpShapeFree(body->shape);
+	cpBodyFree(body->body);
+	
+	for (i=0;i<MAX_JOINTS;i++) {
+		
+		if(body->joints[i]!=NULL) {
+			cpSpaceRemoveConstraint(space,body->joints[i]);
+			body2 = findbody(body->idjoin[i]);
+			
+			for(j=0;j<MAX_JOINTS;j++) {
+				if(body2->joints[j]==body->joints[i]) {
+					body2->joints[j]=NULL;
+					j=MAX_JOINTS;
+				}
+			}
+			body->joints[i]=NULL;			
+		}
+	}
+	
+	if(i!=MAX_JOINTS) {
+		
+	}
+	
+	div_free(body);
+}
+
+void phy_wall_create(void) {
 
 	int diam=getparm();
 	int y2=getparm();
@@ -97,7 +478,7 @@ void add_fixed_body(void) {
 	
 }
 
-void remove_fixed_body(void) {
+void phy_wall_destroy(void) {
 	int id=getparm();
 	
 	if(cpSpaceContainsShape(space, walls[id])) {
@@ -112,66 +493,200 @@ void remove_fixed_body(void) {
 	
 }
 
-void add_body(void) {
-	
-	int mid = getparm();
-	
-	struct procbody *newb = (struct procbody*)div_malloc(sizeof(struct procbody));
 
-	struct procbody *n = bodies->next;
-		
-	radius = 20*(proc(mid)->size*100)/10000;
-	
-//	printf("size %d, radius %f %d %d %d\n",proc(mid)->size, radius , proc(mid)->reserved.x0,  proc(mid)->reserved.x1,  proc(mid)->radius);
+void phy_body_create_complex(void) {
 
-	//*
-	//	(((process *)&mem[mid])->size/100);
-	mass = 10;
-	
-	// The moment of inertia is like mass for rotation
-	// Use the cpMomentFor*() functions to help you approximate it.
-	moment = cpMomentForCircle(mass, 0, radius, cpvzero);
-	
-	newb->next = bodies->next;
-	newb->prev = bodies;
-	if(n!=NULL)
-		n->prev = newb;
-	
+	int mass = getparm();
+	int h = getparm();
+	int w = getparm();
+	int pid = getparm();
 
-	bodies->next = newb;
-	
-	newb->body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-	newb->procid = mid;
-	
-	cpBodySetPos(newb->body, cpv( ((process *)&mem[mid])->x,((process *)&mem[mid])->y));
-	
-	newb->shape = cpSpaceAddShape(space, cpCircleShapeNew(newb->body, radius, cpvzero));
+	polystruct *ps = pixel_to_poly(pid);
+	if(ps==NULL) {
+		printf("poly creation failed\n");
+		retval(0);
+	}
 
-	newb->shape->e = 0.75;
+	cpVect points[] = {
+		cpv(-w/2,-h/2),
+		cpv(w/2,-h/2),
+		cpv(w/2,h/2),
+		cpv(-w/2,h/2)
+	};
 
-//	newb->shape->u = 1;
+
+	//printf("points: %d\n",ps->num);
 	
-	cpShapeSetFriction(newb->shape, 0.7);
-		
-//	printf("new body: %d x: %d y:%d\n",mid, ((process *)&mem[mid])->x,((process *)&mem[mid])->y);
-	
+	cpFloat moment = cpMomentForPoly(mass, ps->num, ps->points, cpvzero,0);
+	//cpFloat moment = cpMomentForPoly(mass, 4, points, cpvzero,0);
+
+	// Setup procbody
+    procbody* newb = NULL;
+    cpBody* body = NULL;
+    if(pid>0) {
+        newb = procbody_new(pid, mass, moment);
+        cpBodySetPosition(newb->body, cpv( proc(pid)->x, proc(pid)->y));
+        body = newb->body;
+    } else {
+        body = space->staticBody;
+    }
+//for (i=0;i<ps->num;i++) 
+//printf("x: %d y: %d\n",ps->points[i]
+    cpShape* shape = cpPolyShapeNewRaw(body, ps->num, ps->points,0);
+//    cpShape* shape = cpPolyShapeNewRaw(body, 4, points,0);
+//    cpShape* shape = cpBoxShapeNew(body, (cpFloat)w, (cpFloat)h,0);
+
+//    cpShape* shape = cpBoxShapeNew(body, ps->num, ps->points,0);
+
+	shape = cpSpaceAddShape(space, shape);
+	shape->e = 0.75;
+	cpShapeSetFriction(shape, 0.7);
+    if(pid>0) {
+        newb->shape = shape;
+    }
+
 	retval(0);
 }
 
-int phys_init(void){
+
+void phy_body_create_box(void) {
+
+	int mass = getparm();
+	int h = getparm();
+	int w = getparm();
+	int pid = getparm();
+
+	cpVect points[] = {
+		cpv(-w/2,-h/2),
+		cpv(w/2,-h/2),
+		cpv(w/2,h/2),
+		cpv(-w/2,h/2)
+	};
+
+	cpFloat moment = cpMomentForPoly(mass, 4, points, cpvzero,0);
+
+	// Setup procbody
+    procbody* newb = NULL;
+    cpBody* body = NULL;
+    if(pid>0) {
+        newb = procbody_new(pid, mass, moment);
+        cpBodySetPosition(newb->body, cpv( proc(pid)->x, proc(pid)->y));
+        body = newb->body;
+    } else {
+        body = space->staticBody;
+    }
+    cpShape* shape = cpPolyShapeNewRaw(body, 4, points,0);
+
+//    cpShape* shape = cpBoxShapeNew(body, (cpFloat)w, (cpFloat)h,0);
+	shape = cpSpaceAddShape(space, shape);
+	shape->e = 0.75;
+	cpShapeSetFriction(shape, 0.7);
+    if(pid>0) {
+        newb->shape = shape;
+    }
+
+	retval(0);
+}
+
+void phy_body_create_circle(void) {
+
+	int mass = getparm();
+	int diameter = getparm();
+	int pid = getparm();
+
+	// The moment of inertia is like mass for rotation
+	// Use the cpMomentFor*() functions to help you approximate it.
+	cpFloat radius = ((float)diameter)/2;//20*(proc(pid)->size*100)/10000;
+	cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
+
+	// Setup procbody
+    procbody* newb = NULL;
+    cpBody* body = NULL;
+    if(pid>0) {
+        newb = procbody_new(pid, mass, moment);
+        cpBodySetPosition(newb->body, cpv( proc(pid)->x, proc(pid)->y));
+        body = newb->body;
+    } else {
+        body = space->staticBody;
+    }
+
+    cpShape* shape = cpCircleShapeNew(body, radius, cpvzero);
+	shape = cpSpaceAddShape(space, shape);
+	shape->e = 0.75;
+	cpShapeSetFriction(shape, 0.7);
+	cpBodySetAngle(newb->body,-(proc(pid)->angle)/1000);
+	
+    if(pid>0) {
+        newb->shape = shape;
+    }
+
+	retval(0);
+}
+
+void phy_body_create_box_center(void) {
+	int cy = getparm();
+	int cx = getparm();
+	int friction = getparm();
+	int elasticity = getparm();
+	int momenti = getparm();
+	int mass = getparm();
+	int h = getparm();
+	int w = getparm();
+	int pid = getparm();
+
+	cpVect points[] = {
+		cpv(-cx,-cy),
+		cpv(-cx,h-cy),
+		cpv(w-cx,h-cy),
+		cpv(w-cx,-cy)
+	};
+
+	//cpFloat moment = ;
+    cpFloat moment = (momenti == 0x7fffffff) ? INFINITY
+                   : (momenti == 0)          ? cpMomentForPoly(mass, 4, points, cpvzero,0)
+                   :                           (cpFloat)momenti
+                   ;
+
+	// Setup procbody
+    procbody* newb = NULL;
+    cpBody* body = NULL;
+    if(pid>0) {
+        newb = procbody_new(pid, mass, moment);
+        cpBodySetPosition(newb->body, cpv( proc(pid)->x,proc(pid)->y));
+        body = newb->body;
+        //cpBodySetCenterOfGravity(newb->body, cpv(w/2-cx, h/2-cy));
+    } else {
+        body = space->staticBody;
+    }
+
+    cpShape* shape = cpPolyShapeNew(body, 4, points, cpTransformIdentity, 0);
+	shape = cpSpaceAddShape(space, shape);
+	shape->e = 0.75;
+	cpShapeSetFriction(shape, 0.7);
+
+    if(pid>0) {
+        newb->shape = shape;
+    }
+
+    retval(0);
+}
+
+void phy_init(void){
 	// cpVect is a 2D vector and cpv() is a shortcut for initializing them.
 	
 	int a=0;
+	
 	for(a=0;a<WALL_MAX;a++) {
 		walls[a]=NULL;
 	}
 	
 	gravity = cpv(0, 1000);
-	bodies = (struct procbody *)div_malloc(sizeof(struct procbody));
-	bodies->next = NULL;
-	bodies->procid=0;
-	bodies->shape=NULL;
-	bodies->body=NULL;
+//	bodies = (struct procbody *)div_malloc(sizeof(struct procbody));
+//	bodies->next = NULL;
+//	bodies->prev = NULL;
+//	bodies->procid=0;
+//	bodies->shape=NULL;
+//	bodies->body=NULL;
 	
 	
 	
@@ -244,66 +759,24 @@ int phys_init(void){
 	}
 */
 //printf("BallBody: %x\n",(unsigned int)ballBody);
-init =1;
-retval(0);
-}
-struct procbody * findbody(int id) {
-	struct procbody *f = bodies;
-	if(f->next==NULL)
-	return NULL;
-	do {
-		f=f->next;
-
-		if(f->procid==id)
-			return f;
-				
-	} while(f->next!=NULL) ;
-	
-}
-
-void kill_id(int p_id) {
-//	printf("Killing proc id: %d\n",p_id);
-	struct procbody *f = findbody(p_id);
-	if(f==NULL)
-		return;
-		
-	struct procbody *p = f->prev;
-	struct procbody *n = f->next;
-
-// redo stack
-	if(p!=NULL) {
-		p->next=f->next;
-	}
-	
-	if(n!=NULL) {
-		n->prev = f->prev;
-	}
-
-	cpSpaceRemoveShape(space, f->shape);
-	cpSpaceRemoveBody(space, f->body);
-	cpShapeFree(f->shape);
-	cpBodyFree(f->body);
-
-//	printf("process dead %d\n",id_offset);
-	
-	free(f);
-	
-	return ;
-
+    init = 1;
+    retval(0);
 }
 
 
-void phys_loop(void) {
-	struct procbody *f = bodies;
-	
-	while(f!=NULL) {
-		if(f->procid>0)
-			if(proc(f->procid)->reserved.status==0)
-				kill_id(f->procid);
+void phy_loop(void) {
 
-		f=f->next;
-			
-	} 
+//	struct procbody *f = bodies;
+	
+//	while(f!=NULL) {
+//		if(f->procid>0)
+//			if(proc(f->procid)->reserved.status==0)
+//				procbody_delete(f);
+//
+//		f=f->next;
+//
+//	}
+//    return;
 
 //	if(!ballBody)
 //		phys_init();
@@ -311,7 +784,7 @@ void phys_loop(void) {
 //		for(cpFloat time = 0; time < 2; time += timeStep){
 	timeStep = 1/(float)(fps*1.0f);
 	
-//	printf("fps: %d\n",fps);
+//	printf("fps: %x\n",graphs[0].fpg);
 	
 
 	cpSpaceStep(space, timeStep);
@@ -339,16 +812,128 @@ void phys_loop(void) {
 
 }
 
+void phy_body_move(void) {
+    int y = getparm();
+    int x = getparm();
+    int id = getparm();
+    
+    procbody* body = findbody(id);
+    
+    if(body) {
+        cpVect pos = cpBodyGetPosition(body->body);
+        pos.x += x;
+        pos.y += y;
+        cpBodySetPosition(body->body, pos);
+    }
+    retval(0);
+}
 
+void phy_body_set_position(void) {
+	int y = getparm();
+	int x = getparm();
+	int id = getparm();
+	procbody* body = findbody(id);
+    
+	if(body) {
+		cpBodySetPosition(body->body, cpv(x,y));
+	}
+	retval(0);
+}
 
+int getjnum(procbody *body) {
+	int jnum=0;
+	
+	while(body->joints[jnum]!=NULL && jnum<MAX_JOINTS)
+		jnum++;
+	
+	return jnum;
+	
+}
 
+void phy_add_joint(void) {
+	
+	int angle = getparm();
+	int distance = getparm();
+	
+	int offx1 = 0;
+	int offy1 = 0;
+	
+	int offy2 = 0;
+	int offx2 = 0;
+	
+	
+	int id1 = getparm();
+	int id2 = getparm();
+	int j1 = 0;
+	int j2 = 0;
+	procbody* body1 = findbody(id1);
+	procbody* body2 = findbody(id2);
+	if(body1!=NULL && body2!=NULL) {
+		j1 = getjnum(body1);
+		j2 = getjnum(body2);
+		
+		if(j1<MAX_JOINTS && j2<MAX_JOINTS) {
+			cpConstraint *joint = cpSpaceAddConstraint(space, cpPinJointNew(body1->body, body2->body, cpv(-distance,-(angle/1000)), cpv(distance,-(angle/1000))));
+			body1->joints[j1]=joint;
+			body1->idjoin[j1]=id2;
+			
+			body2->joints[j2]=joint;
+			body2->idjoin[j2]=id1;
+			
+		}
+	}
+	retval(0);
+}
 
-void phys_end(void) {	
+void phy_body_apply_force_xy(void) {
+    int y = getparm();
+    int x = getparm();
+    int id = getparm();
+    procbody* body = findbody(id);
+    if(body) {
+        cpVect force = cpv(x,y);
+        //cpBodyApplyForceAtLocalPoint(body->body, force, cpvzero);
+        cpBodyApplyImpulseAtLocalPoint(body->body, force, cpvzero);
+    }
+    retval(0);
+}
+
+void phy_body_get_speed(void) {
+    int id = getparm();
+    procbody* body = findbody(id);
+    if(body) {
+        cpVect speed = cpBodyGetVelocity(body->body);
+        double val = sqrt(speed.x*speed.x + speed.y*speed.y);
+        retval(val);
+    } else {
+        retval(0);
+    }
+}
+
+void phy_setxy(void) {
+	int y = getparm();
+	int x = getparm();
+	int pid = getparm();
+
+	procbody *pbody=findbody(pid);
+
+	if(pbody!=NULL) {
+		cpBodySetPosition(pbody->body, cpv(x,y));
+		cpBodySetVelocity(pbody->body,cpv(0,0));
+		proc(pid)->x=x;
+		proc(pid)->y=y;
+	}
+
+	pbody->changed=1;
+	retval(0);
+}
+
+void phy_end(void) {
 	// Clean up our objects and exit!
-	cpShapeFree(ballShape);
-	cpBodyFree(ballBody);
-	cpShapeFree(walls[0]);
-	cpSpaceFree(space);
+	//cpShapeFree(ballShape);
+	//cpBodyFree(ballBody);
+	//cpShapeFree(walls[0]);
+	//cpSpaceFree(space);
 	
 //	return 0;
 }
@@ -357,18 +942,18 @@ void post_process(void) {
 
 	if(!id_offset)
 		return;
-		
-	if(proc(id_offset)->reserved.status==0) {
-		kill_id(id_offset);
-		return;
-	}
 
-	struct procbody *f = findbody(id_offset);
+	procbody *f = findbody(id_offset);
 
 	if(f==NULL)
 		return;
 
-	pos = cpBodyGetPos(f->body);
+	if(proc(id_offset)->reserved.status==0) {
+		procbody_delete(f);
+		return;
+	}
+
+	pos = cpBodyGetPosition(f->body);
 
 	ang2 = to_degrees(cpBodyGetAngle(f->body));
 
@@ -376,30 +961,45 @@ void post_process(void) {
 //	ang2=to_degrees((double)ang);
 
 //	cpCircleShapeSetRadius(f->shape, 20*(proc(id_offset)->size*100)/10000); 
-
-	proc(id_offset)->x=pos.x;
-	proc(id_offset)->y=pos.y;
+	if(f->changed==0) {
+		proc(id_offset)->x=pos.x;
+		proc(id_offset)->y=pos.y;
+		proc(id_offset)->angle=-ang2*1000;
+	}
+	
+	f->changed=0;
 	
 //	printf("Proc data: id: %d radius: %d x0:%d y0:%d x1:%d y1:%d\n",id_offset, (proc(id_offset)->radius), (proc(id_offset)->reserved.x0),(proc(id_offset)->reserved.y0),(proc(id_offset)->reserved.x1),(proc(id_offset)->reserved.y1));
 //	printf("Proc data: id: %d graph: %d x0:%d y0:%d x1:%d y1:%d\n",id_offset, (proc(id_offset)->graph), (proc(id_offset)->reserved.x0),(proc(id_offset)->reserved.y0),(proc(id_offset)->reserved.x1),(proc(id_offset)->reserved.y1));
 	
-
-	proc(id_offset)->angle=-ang2*1000;
 
 }
 
 void __export divlibrary(LIBRARY_PARAMS)
 {
 
-	COM_export("rum",rum,1);
-	COM_export("phys_init",phys_init,0);
+	COM_export("phy_init",phy_init,0);
 	
-	COM_export("add_body",add_body,1);
-	
-	COM_export("add_fixed_body",add_fixed_body,5); 
-	COM_export("remove_fixed_body",remove_fixed_body,1);
-	
-//	COM_export("Pixelate_Background",Pixelate_Background,1);
+	COM_export("phy_body_create_circle",phy_body_create_circle,3);
+	COM_export("phy_body_create_complex",phy_body_create_complex,4);
+	COM_export("phy_body_create_box",phy_body_create_box,4);
+	COM_export("phy_body_create_box_center",phy_body_create_box_center,9);
+	COM_export("phy_body_set_position",phy_body_set_position,3);
+	COM_export("phy_body_move",phy_body_move,3);
+	COM_export("phy_body_get_speed",phy_body_get_speed,1);
+	COM_export("phy_setxy",phy_setxy,3);
+	COM_export("phy_body_apply_force_xy",phy_body_apply_force_xy,3);
+
+	COM_export("phy_wall_create",phy_wall_create,5);
+	COM_export("phy_wall_destroy",phy_wall_destroy,1);
+
+	COM_export("phy_add_joint",phy_add_joint,4);
+
+    // old stuff
+	COM_export("phys_init",phy_init,0);
+	COM_export("add_fixed_body",phy_wall_create,5);
+	COM_export("remove_fixed_body",phy_wall_destroy,1);
+
 
 }
 
@@ -411,17 +1011,17 @@ void process_fpg(char *fpg, int32_t len) {
 void process_map(char *map, int32_t len) {
 	printf("Processing map: %d\n",len);
 	return;
-	
 }
 
 void post_process_buffer(void) {
-	if(init)
-		phys_loop();
+	if(!init)
+        phy_init();
+	phy_loop();
 }
 
 void __export divmain(COMMON_PARAMS)
 {
-//  AutoLoad();
+    AutoLoad();
 	GLOBAL_IMPORT();
 	DIV_export("post_process_buffer",post_process_buffer);
 //	DIV_export("background_to_buffer",background_to_buffer);
@@ -434,3 +1034,20 @@ void __export divmain(COMMON_PARAMS)
 }
 
 void __export divend(COMMON_PARAMS) { }
+
+	
+
+
+/*
+
+procedure raster2vector;
+
+begin
+  procvector;
+
+  simplifyvector;
+
+  lengthenvector;
+end;
+
+*/

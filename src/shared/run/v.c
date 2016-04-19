@@ -58,7 +58,7 @@ void crear_ghost_slow(void);
 
 int IsFullScreen(SDL_Surface *surface)
 {
-	if ( surface== NULL )
+	if ( surface == NULL)
 		return 0;
 
     if (surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
@@ -370,7 +370,7 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef STDOUTLOG
 	printf("SET VIDEO MODE %x\n",vga);
 #endif
-	SDL_WM_SetCaption( "DIV2015", "" );
+	SDL_WM_SetCaption( "DIVDX 3.01", "" );
 
 	modovesa=1;
 #ifdef DOS

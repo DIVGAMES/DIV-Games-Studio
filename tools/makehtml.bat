@@ -32,6 +32,7 @@ find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
 
 rm *.exe
 mv *.pak ../buildhtml2
+mv *.dll.js ../buildhtml2
 rm *.prg
 rm *.dll
 
