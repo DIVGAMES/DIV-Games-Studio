@@ -22,6 +22,7 @@ void volcadocx(byte * p);
 void volcadopsvga(byte *p);
 void volcadop320200(byte *p);
 void volcadopx(byte * p);
+void volcadosdl(byte * p);
 
 
 ///////////////////////////////////////////////////////////////////////////////
