@@ -243,6 +243,12 @@ typedef struct _FNTBODY{
     int32_t    file_offset;
 }FNTBODY;
 
+
+typedef struct _t_g { // Estructura para un fpg
+  int * * fpg; // Fichero cargado en memoria
+  int * * grf; // Punteros a los gr쟣icos (g[n].grf[000..999])
+}t_g;
+
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // DIV standard Entry-Points
 // You must define these functions on the DLL if you want DIV32RUN to call them up.
@@ -276,6 +282,7 @@ void ss_end(void);                          // Screen Saver ending function
 #define palette         (_palette)          // Pointer to game palette
 #define active_palette  (_active_palette)   // Pointer to active palette (fadings)
 #define key             (_key)              // Pointer to keycodes table (128 bytes)
+#define graphs			(_graphs)			// FPG / Graphic data
 
 #define sp              (*_sp)              // Stack pointer (as a mem[] index)
 #define wide            (*_wide)            // Screen wide (pixels)
@@ -304,6 +311,7 @@ EXTERN int32_t  *_mem;
 EXTERN char *_palette;
 EXTERN char *_active_palette;
 EXTERN char *_key;
+EXTERN t_g  *_graphs;
 
 EXTERN int32_t  *_sp;
 EXTERN int32_t  *_wide;
@@ -392,6 +400,7 @@ mem              =(int32_t *)DIV_import("mem");                   \
 palette          =(byte*)DIV_import("palette");               \
 active_palette   =(byte*)DIV_import("active_palette");        \
 key              =(byte*)DIV_import("key");                   \
+graphs			 =(t_g*)DIV_import("graphs");					\
 _buffer          =(unsigned long)DIV_import("buffer");        \
 _background      =(unsigned long)DIV_import("background");    \
 _ghost           =(unsigned long)DIV_import("ghost");         \

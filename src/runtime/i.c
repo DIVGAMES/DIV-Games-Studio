@@ -632,6 +632,7 @@ init_rnd(dtime);
   DIV_export("palette",(void *)paleta);
   DIV_export("active_palette",(void *)dac);
   DIV_export("key",(void *)kbdFLAGS);
+  DIV_export("graphs",(void *)g);
 #endif
 
   ss_time=3000; ss_time_counter=0;
@@ -1150,9 +1151,12 @@ void frame_start(void) {
 		if(old_reloj<(int)freloj) {
 
 		do {
+#ifdef WIN32
+			SDL_Delay(((int)freloj-old_reloj)-1);
+#else
 			sched_yield();			
 			usleep(((int)freloj-old_reloj)-1); 
-			
+#endif			
 		} while (get_reloj()<(int)freloj); // TO keep FPS
 		}
 #else
@@ -1883,8 +1887,8 @@ int main(int argc,char * argv[]) {
 
 // fix stderr / stdout
 #ifdef WIN32
-	freopen( "CON", "w", stdout );
-	freopen( "CON", "w", stderr );
+//	freopen( "CON", "w", stdout );
+//	freopen( "CON", "w", stderr );
 #endif
 
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
