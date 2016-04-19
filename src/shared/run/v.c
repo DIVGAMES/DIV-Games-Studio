@@ -58,6 +58,9 @@ void crear_ghost_slow(void);
 
 int IsFullScreen(SDL_Surface *surface)
 {
+	if ( surface== NULL )
+		return 0;
+
     if (surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
     return 0; // Return false if surface is windowed
 }
