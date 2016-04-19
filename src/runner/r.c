@@ -47,6 +47,17 @@ void sleep_ms(int milliseconds) // cross-platform sleep function
 
 #endif
 
+
+#ifdef __APPLE__
+#include <unistd.h>
+#include <string.h>
+#include <CoreFoundation/CFBundle.h>
+#define PATH_MAX 4092
+#endif
+
+
+
+
 int main(int argc, char *argv[]) {
 #ifdef __WIN32
 freopen( "CON", "w", stdout );
@@ -55,6 +66,21 @@ freopen( "CON", "w", stderr );
 
 printf("[%s]\n",ide);
 printf("[%s]\n",dbg);
+
+#ifdef __APPLE__
+ CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef resourcesURL = CFBundleCopyBundleURL(mainBundle);
+	CFStringRef str = CFURLCopyFileSystemPath( resourcesURL, kCFURLPOSIXPathStyle );
+	CFRelease(resourcesURL);
+	char path[PATH_MAX];
+	
+	CFStringGetCString( str, path, FILENAME_MAX, kCFStringEncodingASCII );
+	CFRelease(str);
+	printf("%s\n", path);
+strcat(path,"/Contents/Resources/");
+chdir(path);
+
+#endif
 
 int a=0;
 char init[255];
