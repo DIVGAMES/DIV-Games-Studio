@@ -143,6 +143,7 @@ drawing too slow), the delay is zero and the delay interpolation is reset.
 
 \return The time that passed since the last call to the function in ms. May return 0.
 */
+#ifndef WIN32
 void delay(unsigned int milliseconds)
 {
 	if(milliseconds<1)
@@ -171,6 +172,9 @@ void delay(unsigned int milliseconds)
         sched_yield();
     }
 }
+
+#endif
+
 Uint32 SDL_framerateDelay(FPSmanager * manager)
 {
 	Uint32 current_ticks;
@@ -207,10 +211,15 @@ Uint32 SDL_framerateDelay(FPSmanager * manager)
 
 	if (current_ticks <= target_ticks) {
 		the_delay = target_ticks - current_ticks;
+#ifdef WIN32
+		SDL_Delay(the_delay);
+#else
 //		delay(the_delay/1000);
 		sched_yield();
 //		printf("%d\n",the_delay);
-		usleep(the_delay-1);
+		if(the_delay>2)
+			usleep(the_delay-1);
+#endif
 	} else {
 		manager->framecount = 0;
 		manager->baseticks = _getTicks();
