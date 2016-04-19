@@ -67,21 +67,6 @@ freopen( "CON", "w", stderr );
 printf("[%s]\n",ide);
 printf("[%s]\n",dbg);
 #endif
-#ifdef __APPLE__
- CFBundleRef mainBundle = CFBundleGetMainBundle();
-        CFURLRef resourcesURL = CFBundleCopyBundleURL(mainBundle);
-	CFStringRef str = CFURLCopyFileSystemPath( resourcesURL, kCFURLPOSIXPathStyle );
-	CFRelease(resourcesURL);
-	char path[PATH_MAX];
-	
-	CFStringGetCString( str, path, FILENAME_MAX, kCFStringEncodingASCII );
-	CFRelease(str);
-	printf("%s\n", path);
-strcat(path,"/Contents/Resources/");
-chdir(path);
-
-#endif
-
 
 #ifdef __APPLE__
  CFBundleRef mainBundle = CFBundleGetMainBundle();
