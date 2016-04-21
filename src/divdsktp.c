@@ -1,11 +1,9 @@
 #include "global.h"
 #include "fpgfile.hpp"
 
-#ifndef WIN32
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#endif
 
 int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny);
 int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla);
@@ -64,7 +62,6 @@ void Load_Font_session(FILE *file);
 int Save_Font_session(FILE *file,int);
 FILE *desktop;
 
-#ifndef WIN32
 char pathtmp[1024];
 
 int getFileCreationTime(char *path) {
@@ -73,7 +70,6 @@ int getFileCreationTime(char *path) {
 	return (int)attr.st_mtime;
 }
 
-#endif
 
 /*
 
@@ -465,9 +461,7 @@ int UpLoad_Desktop()
 	int iWork,iWork2,iWork3,x,numvent;
 	FILE *f;
 	
-#ifndef WIN32
 	int dtime = getFileCreationTime("system/session.dtf");
-#endif
 		
         desktop=fopen("system/session.dtf","rb");
         if(desktop==NULL)
@@ -630,7 +624,6 @@ int UpLoad_Desktop()
                                                 if(!Interpretando)
                                                         actualiza_caja(0,0,vga_an,vga_al);
                                         }                                        
-#ifndef WIN32
 										// check if prg on disk is newer than session
 										strcpy(pathtmp,v_prg->path);
 										strcat(pathtmp,"/");
@@ -655,7 +648,6 @@ int UpLoad_Desktop()
 												abrir_programa();
 											}
 										}
-#endif
                                         break;
                                 }
                                 else
