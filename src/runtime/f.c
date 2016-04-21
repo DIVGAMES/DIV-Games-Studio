@@ -3608,7 +3608,7 @@ void _mkdir(void) {
       cwork[x]=0;
       mkdir(cwork);
     }
-  } mkdir(buffer);
+  } __mkdir(buffer);
 
   pila[sp]=0;
 }

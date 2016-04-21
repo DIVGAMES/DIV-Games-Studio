@@ -360,13 +360,9 @@ unsigned int _dos_setfileattr(const char *filename, unsigned int attr) {
 	return 1;
 }
 
-#ifndef __llvm___
-#ifdef __cplusplus
-void mkdir(char *dir) {
+void __mkdir(char *dir) {
 	printf("mkdir %s\n",dir);
 }
-#endif
-#endif
 
 
 void textcolor(int attr, int fg, int bg)

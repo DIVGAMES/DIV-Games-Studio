@@ -1,6 +1,12 @@
 #include "global.h"
 #include "fpgfile.hpp"
 
+#ifndef WIN32
+#include <time.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
+
 int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny);
 int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla);
 void nuevo_mapa3d_carga(void);
@@ -57,6 +63,17 @@ void Fonts1(void); void Fonts2(void); void Fonts3(void);
 void Load_Font_session(FILE *file);
 int Save_Font_session(FILE *file,int);
 FILE *desktop;
+
+#ifndef WIN32
+char pathtmp[1024];
+
+int getFileCreationTime(char *path) {
+    struct stat attr;
+    stat(path, &attr);
+	return (int)attr.st_mtime;
+}
+
+#endif
 
 /*
 
@@ -445,12 +462,18 @@ char *          baux;
 
 int UpLoad_Desktop()
 {
-int iWork,iWork2,iWork3,x,numvent;
-FILE *f;
-
+	int iWork,iWork2,iWork3,x,numvent;
+	FILE *f;
+	
+#ifndef WIN32
+	int dtime = getFileCreationTime("system/session.dtf");
+#endif
+		
         desktop=fopen("system/session.dtf","rb");
         if(desktop==NULL)
                 return(0);
+		
+		
 	//	printf("loading saved session\n");
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
@@ -606,7 +629,33 @@ FILE *f;
                                                 wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
                                                 if(!Interpretando)
                                                         actualiza_caja(0,0,vga_an,vga_al);
-                                        }
+                                        }                                        
+#ifndef WIN32
+										// check if prg on disk is newer than session
+										strcpy(pathtmp,v_prg->path);
+										strcat(pathtmp,"/");
+										strcat(pathtmp,v_prg->filename);
+
+										if(dtime < getFileCreationTime(&pathtmp[0])) {
+											v_titulo=v_prg->filename;
+											//(char *)texto[75];
+											v_texto="File on disk is newer, reload?";
+											//(char *)texto[76];
+											dialogo(aceptar0);
+
+											if(v_aceptar) {
+												strcpy(tipo[0].path,v_prg->path);
+												strcpy(input,v_prg->filename);
+												
+												// close old prg
+												cierra_ventana();
+												v_terminado = 1;
+												
+												// load replacement prg							
+												abrir_programa();
+											}
+										}
+#endif
                                         break;
                                 }
                                 else

@@ -189,9 +189,7 @@ unsigned int _dos_findnext(struct find_t *result);
 
 unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
 
-#ifndef __WIN32__
-void mkdir(char *dir);
-#endif
+void __mkdir(char *dir);
 
 void _dos_getdrive( unsigned int *drive);
 void _makepath(
