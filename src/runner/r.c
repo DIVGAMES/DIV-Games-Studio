@@ -67,6 +67,7 @@ freopen( "CON", "w", stderr );
 printf("[%s]\n",ide);
 printf("[%s]\n",dbg);
 #endif
+
 #ifdef __APPLE__
  CFBundleRef mainBundle = CFBundleGetMainBundle();
         CFURLRef resourcesURL = CFBundleCopyBundleURL(mainBundle);
@@ -81,7 +82,6 @@ strcat(path,"/Contents/Resources/");
 chdir(path);
 
 #endif
-
 
 int a=0;
 char init[255];
