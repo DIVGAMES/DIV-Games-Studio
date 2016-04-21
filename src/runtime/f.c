@@ -1874,7 +1874,7 @@ FILE * open_save_file(byte * file) {
         strcat(full,fname);
         strcat(full,ext);
         if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
-          if (strchr(ext,'.')==NULL) mkdir(ext); else mkdir(strchr(ext,'.')+1);
+          if (strchr(ext,'.')==NULL) __mkdir(ext); else __mkdir(strchr(ext,'.')+1);
           if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
             strcpy(full,fname);
             strcat(full,ext);
@@ -3606,7 +3606,7 @@ void _mkdir(void) {
     if(buffer[x]=='/') {
       strcpy(cwork,buffer);
       cwork[x]=0;
-      mkdir(cwork);
+      __mkdir(cwork);
     }
   } __mkdir(buffer);
 
