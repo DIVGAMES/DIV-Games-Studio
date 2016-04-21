@@ -120,7 +120,7 @@ void Vid_Setup3(void) {
 //	SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 	v_titulo=(char *)texto[385];
     v_texto =(char *)texto[386];
-    dialogo((voidReturnType)info0);
+//    dialogo((voidReturnType)info0);
     salir_del_entorno=1; //Salida directa sin preguntar
     modo_de_retorno=2;
     

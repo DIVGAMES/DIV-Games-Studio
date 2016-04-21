@@ -741,7 +741,7 @@ void inicializa_entorno() {
     if (n==max_windows) nueva_ventana(menu_principal0);
   }
 
-  if (test_video) dialogo(test0);
+//  if (test_video) dialogo(test0);
 // Have we come back from running a prog?
   if (Interpretando) {
     vacia_buffer();
