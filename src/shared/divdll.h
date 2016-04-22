@@ -8,6 +8,29 @@
 extern "C" {
 #endif
 #include <stdio.h>
+
+#ifndef __WIN32
+#include <dlfcn.h>
+#else
+#include <windows.h>
+#endif
+
+typedef struct EXPORTENTRY{
+	struct EXPORTENTRY *next;
+	char *name;
+	void *obj;
+} EXPORTENTRY;
+
+
+typedef void (__stdcall * dlfunc) (void *(*)(char *), void (*)(char *, char *, int, void *));
+
+#ifdef __WIN32
+#define dlopen(a,b)     LoadLibrary(a)
+#define dlsym(a,b)      (dlfunc)GetProcAddress(a,b)
+#define dlclose(a)    FreeLibrary(a)
+#endif
+
+
 // Declare PE type as void *.. we don't want to bother the calling program
 // with the complex PE defines..
 #pragma align 1
@@ -38,6 +61,9 @@ extern void    *ExternDirs[1024];
 #define AutoLoad()      DIV_export("Autoload",divmain)
 void  DIV_export(char *name,void *obj);
 void *DIV_import(char *name);
+
+
+void (*COM_export)(char *name,void *dir,int nparms);
 
 
 #ifdef __cplusplus
