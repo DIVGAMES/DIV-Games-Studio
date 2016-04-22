@@ -54,7 +54,7 @@ void InitSound              (void);
 void ResetSound             (void);
 int  LoadSound              (char *ptr, long Len, int Loop);
 int  UnloadSound            (int NumSonido);
-int  PlaySound              (int NumSonido,int Volumen,int Frec);
+int  DivPlaySound           (int NumSonido,int Volumen,int Frec);
 int  StopSound              (int NumChannel);
 int  ChangeSound            (int NumChannel,int Volumen,int Frec);
 int  ChangeChannel          (int NumChannel,int Volumen,int Panning);

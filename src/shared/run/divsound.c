@@ -494,7 +494,7 @@ channels[chan].pos=pos;
 }
 #endif
 
-int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
+int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
   int con=0;
   int loop=-1;

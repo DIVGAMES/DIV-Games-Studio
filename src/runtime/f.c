@@ -2134,7 +2134,7 @@ void _sound(void) {
   if (fre<8) fre=8;
   if (fre) { 
 #ifdef MIXER
-	pila[sp]=PlaySound(pila[sp],vol,fre);
+	pila[sp]=DivPlaySound(pila[sp],vol,fre);
 //	printf("New sound on channel %d\n",pila[sp]);
 #else
 pila[sp]=0;

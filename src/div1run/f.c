@@ -98,7 +98,7 @@ int joy_position(int eje);
 
 // sound prototypes
 int LoadSound(char *ptr, long Len, int Loop);
-int PlaySound(int n, int m, int o);
+int DivPlaySound(int n, int m, int o);
 int UnloadSound(int n);
 int StopSound(int n);
 int ChangeSound(int n, int m, int o);
