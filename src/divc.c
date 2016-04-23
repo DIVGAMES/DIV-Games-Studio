@@ -3377,7 +3377,13 @@ void sintactico (void) {
   while (pieza==p_import) {
     inicio_sentencia();
     lexico();
-    if (pieza!=p_lit && !(pieza==p_id && (*o).tipo==tcons && (*o).cons.literal)) c_error(1,62);
+    if (pieza!=p_lit && !(pieza==p_id && (*o).tipo==tcons && (*o).cons.literal))
+		c_error(1,62);
+	lexico();
+    if (!free_sintax) 
+		if (pieza!=p_ptocoma) 
+			c_error(3,66);
+
     old_source=source;
     nombre_dll=(byte*)&mem[pieza_num];
 
@@ -3403,8 +3409,6 @@ void sintactico (void) {
       free(ImpDLL);
       UnimportDll();
     }
-    source=old_source; lexico();
-    if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
     while (pieza==p_ptocoma || pieza==p_coma) lexico();
     final_sentencia();
 
