@@ -704,7 +704,7 @@ GLOBAL t_texto texto[max_textos+1];
 // Sistema de impresiขn de primitivas gr ficas
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-#define max_drawings 256 // Nฃmero m ximo de primitivas en ejecuciขn
+#define max_drawings 16384 // Nฃmero m ximo de primitivas en ejecuciขn
 
 typedef struct _t_drawing {
   int tipo;     // Tipo de primitiva 0-n/a, 1-linea, ...
