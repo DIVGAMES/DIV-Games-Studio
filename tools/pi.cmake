@@ -6,27 +6,21 @@
 #    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-Ubuntu-mingw64.cmake ..
 
 set(CMAKE_SYSTEM_NAME PI)
-SET(GCW=1)
 SET(PLATFORM "PI")
-
 
 # set per-build values
 SET(HAS_SDL 1)
 SET(HAS_SDLTTF 0)
 SET(HAS_SDLIMAGE 0)
-SET(HAS_ZLIB 0)
-SET(HAS_SDLMIXER 0)
+SET(HAS_ZLIB 1)
+SET(HAS_SDLMIXER 1)
 SET(HAS_DLL 1)
-SET(HAS_JPEG 1)
+SET(HAS_JPEG 0)
 SET(HAS_DLL 1)
 SEt(HAS_FLI 1)
 
 SET(OS_DEFINITIONS " -D_GNU_SOURCE=1 -D_REENTRANT ")
-set ( CMAKE_EXE_LINKER_FLAGS "-L/home/mike/raspidev/SDL_cross/lib -Wl,-rpath,/home/mike/raspidev/SDL_cross/lib -lSDL -lpthread")
-
-
-set(TOOLCHAIN_PREFIX arm-bcm2708hardfp-linux-gnueabi)
-#set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
+set(TOOLCHAIN_PREFIX /home/mike/raspidev/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin/arm-bcm2708hardfp-linux-gnueabi)
 
 # cross compilers to use for C and C++
 set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
@@ -36,7 +30,7 @@ set(CMAKE_RC_COMPILER ${TOOLCHAIN_PREFIX}-windres)
 # target environment on the build host system
 #   set 1st to dir with the cross compiler's C/C++ headers/libs
 set(CMAKE_FIND_ROOT_PATH ~/raspidev/ )
-set(CMAKE_SYSTEM_LIBRARY_PATH "~/raspidev/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/arm-bcm2708-linux-gnueabi/sysroot/usr/" )
+set(CMAKE_SYSTEM_LIBRARY_PATH "/home/mike/raspidev/tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/arm-bcm2708-linux-gnueabi/sysroot/usr/" )
 
 #/${TOOLCHAIN_PREFIX})
 
@@ -53,7 +47,7 @@ include_directories("/home/mike/raspidev/SDL_cross/include/")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
 
 #ADD_DEFINITIONS( -DRPI  )
-set ( CMAKE_EXE_LINKER_FLAGS "-L/home/mike/raspidev/SDL_cross/lib -Wl,-rpath,/home/mike/raspidev/SDL_cross/lib -lSDL -lpthread")
+set ( CMAKE_EXE_LINKER_FLAGS "-L/home/mike/raspidev/SDL_cross/lib -Wl,-rpath,/home/mike/raspidev/SDL_cross/lib -lSDL -lpthread -ldl")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmad" )
 
 # -DGCW_SOFTSTRETCH )
