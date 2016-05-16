@@ -421,7 +421,7 @@ char *Buffer;
                 return;
         }
         strcpy(full,tipo[4].path);
-        if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+        if (full[strlen(full)-1]!='/') strcat(full,"/");
         strcat(full,input);
 
         FileOrg=fopen((char *)Fpg->ActualFile,"rb");
