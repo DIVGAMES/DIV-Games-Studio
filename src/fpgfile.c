@@ -337,7 +337,7 @@ byte MiTabla[256];
         //Nombre del fichero temporal
         strcpy(ActualPath,(char *)Fpg->ActualFile);
         for(x=strlen(ActualPath);x>=0;x--)
-                if(ActualPath[x]=='\\')
+                if(ActualPath[x]=='/')
                         x=-1;
                 else
                         ActualPath[x]=0;
@@ -421,7 +421,7 @@ char *Buffer;
                 return;
         }
         strcpy(full,tipo[4].path);
-        if (full[strlen(full)-1]!='\\') strcat(full,"\\");
+        if (full[strlen(full)-1]!='/') strcat(full,"/");
         strcat(full,input);
 
         FileOrg=fopen((char *)Fpg->ActualFile,"rb");
@@ -493,7 +493,7 @@ debugprintf("Deleting map %d\n",COD);
         //Nombre del fichero temporal
         strcpy(ActualPath,(char *)Fpg->ActualFile);
         for(x=strlen(ActualPath);x>=0;x--)
-                if(ActualPath[x]=='\\')
+                if(ActualPath[x]=='/')
                         x=-1;
                 else
                         ActualPath[x]=0;
@@ -607,7 +607,7 @@ int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
 
   strcpy(ActualPath,(char *)Fpg->ActualFile); //Nombre del fichero temporal
   for(x=strlen(ActualPath);x>=0;x--)
-    if(ActualPath[x]=='\\') x=-1; else ActualPath[x]=0;
+    if(ActualPath[x]=='/') x=-1; else ActualPath[x]=0;
   strcat(ActualPath,"_DIV_.FPG");
   DaniDel(ActualPath);
 

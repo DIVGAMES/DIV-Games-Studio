@@ -230,7 +230,7 @@ SET(RUNNER_SOURCES "src/runner/r.c")
 FILE(GLOB DIV_SOURCES "src/*.c")
 
 
-FILE(GLOB SDLGFX_SOURCES "src/shared/lib/sdlgfx/*.c")
+FILE(GLOB SDLGFX_SOURCES "src/shared/lib/sdlgfx/SDL_framerate.c")
 SET(DIV_SOURCES ${DIV_SOURCES} ${SDLGFX_SOURCES} )
 
 IF(HAS_TTF)
