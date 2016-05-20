@@ -11,9 +11,9 @@ void DrawObject(struct VDraw *pVDraw)
   struct PicInfo *pic;
   struct VLine   *clip;
   struct WLine   *pw;
-  BYTE *PalPtr;
-  FIXED TS, BS, Hor, dHor, dVer;
-  FIXED t, t1;
+  VPEByte *PalPtr;
+  VPEFixed TS, BS, Hor, dHor, dVer;
+  VPEFixed t, t1;
   int Top, Bot, i, DrawnFlag, Trans;
   int pp;
 
@@ -69,7 +69,7 @@ void DrawObject(struct VDraw *pVDraw)
       // Check mirroring
       if (ptc->IsMirror)
         t=(pic->Height-1)-t;
-      pw->RawPtr=pic->Raw+t*(DWORD)pic->Width;
+      pw->RawPtr=pic->Raw+t*(VPEDword)pic->Width;
       pw->Coord=FixMul(INT_FIX(Top+1)-TS,dVer);
       pw->PixPtr=CurView->BufScan[Top]+i;
       pw->PalPtr=PalPtr;
@@ -102,7 +102,7 @@ void DrawObject(struct VDraw *pVDraw)
 }
 
 struct WLine BackLine;
-FIXED BackTexCol;
+VPEFixed BackTexCol;
 int   BackNextCol;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -112,7 +112,7 @@ int   BackNextCol;
 void DrawBackCol(int Col, int Top, int Bot)
 {
   struct PicInfo *pic;
-  FIXED t;
+  VPEFixed t;
 
   BackLine.Count=Bot-Top;
   if (BackLine.Count<=0) return;
@@ -128,7 +128,7 @@ void DrawBackCol(int Col, int Top, int Bot)
   else if (BackTexCol<0)
     BackTexCol+=INT_FIX(pic->Height);
 
-  BackLine.RawPtr=pic->Raw+FIX_INT(BackTexCol)*(DWORD)pic->Width;
+  BackLine.RawPtr=pic->Raw+FIX_INT(BackTexCol)*(VPEDword)pic->Width;
 
   t=INT_FIX(Top-CurView->Horizon)+CurView->BackH;
   BackLine.Coord=FixMul(t,BackLine.Delta);

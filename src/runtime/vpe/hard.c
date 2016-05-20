@@ -85,19 +85,10 @@ void FatalError(int type, char *msg)
 
 
 
-FIXED FixMul(FIXED a, FIXED b) {
-	FIXED c = a*b;// (uint64_t)(a) <<16 * (uint64_t)(b) <<16;
-	return (c>>16);
+VPEFixed FixMul(VPEFixed a, VPEFixed b) {
+	return (VPEFixed)(((int64_t)a * (int64_t)b) >> 16);
 }
 
-FIXED FixDiv(FIXED a, FIXED b) {
-	uint64_t c=0;
-	
-	if(b>0) 
-		c = (uint64_t)(a) <<16 / (b);
-
-	return (FIXED) c>>16;
-	
-	//return (FIXED) (c>>16);
+VPEFixed FixDiv(VPEFixed a, VPEFixed b) {
+	return (((int64_t)a << 16) / (int64_t)b);
 }
-

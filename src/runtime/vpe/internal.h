@@ -61,35 +61,35 @@ void LoadPic2(struct PicInfo *pic);
 // Internal data structs
 //=======================
 struct VLine {
-  SHORT Top, Bot;
+  VPEShort Top, Bot;
 };
 struct FLine {
-  BYTE  *RawPtr, *PalPtr, *PixPtr;
-  DWORD  Coord, Delta;
-  SHORT  LeftCol, Count, Width2;
+  VPEByte  *RawPtr, *PalPtr, *PixPtr;
+  VPEDword  Coord, Delta;
+  VPEShort  LeftCol, Count, Width2;
   struct Region *pRegion;
 };
 struct WLine {
-  BYTE  *RawPtr, *PalPtr, *PixPtr;
-  FIXED  Coord, Delta;
-  SHORT  BufWidth, Count, Mask;
-  BYTE   IsTrans, IsTile;
+  VPEByte  *RawPtr, *PalPtr, *PixPtr;
+  VPEFixed  Coord, Delta;
+  VPEShort  BufWidth, Count, Mask;
+  VPEByte   IsTrans, IsTile;
 };
 struct VDraw {
-  DWORD  Type;
+  VPEDword  Type;
   void  *ptr;
   struct VDraw  *Prev, *Next;
-  SHORT LeftCol,RightCol;
-  FIXED LD,RD,dLD,dRD;
-  FIXED XStart,XLen;
-  FIXED px1,px2;
+  VPEShort LeftCol,RightCol;
+  VPEFixed LD,RD,dLD,dRD;
+  VPEFixed XStart,XLen;
+  VPEFixed px1,px2;
 };
 struct Level {
   struct Region *Start;
   struct Region *From;
   struct VLine *Clip;
   int ClipCount;
-  FIXED MinDist;
+  VPEFixed MinDist;
 };
 struct RTEffect {
   struct Effect *Eff;
@@ -106,11 +106,11 @@ extern struct VLine    *VLines;   // VLines (for clipping)
 extern struct Level     Levels[MAX_LEVELS]; // Levels (for 3d regions)
 extern struct Level    *CurLevel; // Current level during rendering
 extern struct VDraw     LeftVDraw,RightVDraw;
-extern FIXED           *SinTable, *CosTable, *ITanTable, *FPSTable;
-extern BYTE            *Reject;
+extern VPEFixed           *SinTable, *CosTable, *ITanTable, *FPSTable;
+extern VPEByte            *Reject;
 
-extern LONG CurStamp;
-extern FIXED ViewX,ViewY,ViewCos,ViewSin;
+extern VPELong CurStamp;
+extern VPEFixed ViewX,ViewY,ViewCos,ViewSin;
 extern int NumWallPtrs, NumRTE, NumVDraws, NumMLines, NumLevels;
 extern int PickVX, PickVY, PickVFlag;
 
@@ -120,10 +120,10 @@ void DrawView(struct View *);   // Draw view into buffer
 void ScanLevel(struct Level *);   // Scan level's data
 void ScanRegion(struct Region *); // Scan region data
 
-void UpdateFloor(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
-void UpdateAboveHole(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
-void UpdateBelowHole(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
-void UpdateBack(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
+void UpdateFloor(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
+void UpdateAboveHole(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
+void UpdateBelowHole(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
+void UpdateBack(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
 
 void DrawSimpleWall(struct VDraw *);  // Render simple wall
 void DrawComplexWall(struct VDraw *); // Render cplx wall
@@ -151,7 +151,7 @@ void ShutMemory(void);
 
 void LoadMath(void);
 void LoadPalette(char *);
-void InitReject(BYTE *);
+void InitReject(VPEByte *);
 
 struct PicInfo *GetPic(int,int num_fpg);
 void LoadPic(struct PicInfo *);
@@ -159,11 +159,11 @@ void LoadPic(struct PicInfo *);
 void UpdateZone(void);
 void UpdateZoneViews(void);
 void ClearZone(void);
-void MoveWall(struct Wall *, FIXED, FIXED, FIXED, FIXED);
-void MovePoint(struct Point *, FIXED, FIXED);
+void MoveWall(struct Wall *, VPEFixed, VPEFixed, VPEFixed, VPEFixed);
+void MovePoint(struct Point *, VPEFixed, VPEFixed);
 
 void InitEffects(void);
-void SetupEffects(DWORD);
+void SetupEffects(VPEDword);
 void AddRTEffect(struct Effect *, void *);
 void DelRTEffect(void *);
 

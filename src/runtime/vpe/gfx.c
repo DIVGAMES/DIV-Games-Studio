@@ -1,8 +1,8 @@
 #include "vpe.h"
 #include "gfx.h"
-#include <SDL.h>
+#include <SDL/SDL.h>
 
-DWORD ScrBase;
+VPEDword ScrBase;
 int ScrWidth, ScrHeight;
 int GfxOn=FALSE;
 
@@ -14,7 +14,7 @@ Info:	Initializes graphics system.
 void InitGraph(char *buffer,int ancho,int alto)
 {
   GfxOn=TRUE;
-  ScrBase=(DWORD)buffer;
+  ScrBase=(VPEDword)buffer;
   ScrWidth=ancho;
   ScrHeight=alto;
 }
@@ -47,14 +47,14 @@ int GetGraphHeight(void)
 }
 
 /****************************************************************************
-Func:	void SetPalette(BYTE *pal_ptr)
+Func:	void SetPalette(VPEByte *pal_ptr)
 Params:	pal_ptr - pointer to the pal data
 Info:	Sets current palette to pal_ptr. It's called from inside of VPE.
 *****************************************************************************/
 
 extern SDL_Surface *vga;
 
-void SetPalette(BYTE *pal_ptr)
+void SetPalette(VPEByte *pal_ptr)
 {
 #ifndef DOS
        SDL_Color colors[256];
@@ -72,7 +72,7 @@ void SetPalette(BYTE *pal_ptr)
        retrazo();
 #else
 
-	SHORT i;
+	VPEShort i;
 
 	for(i=0;i<256;i++) {
 		outp(0x3c8,i);
@@ -90,9 +90,9 @@ Func:	void DrawBuffer(struct View *V)
 Params:	V - pointer to view to blit
 Info:	Blits view buffer to the output device. Called from inside VPE
 *****************************************************************************/
-void draw_buffer(DWORD src, DWORD dest, DWORD w, DWORD h, DWORD delta);
+void draw_buffer(VPEDword src, VPEDword dest, VPEDword w, VPEDword h, VPEDword delta);
 
-void draw_buffer(DWORD src, DWORD dest, DWORD w, DWORD h, DWORD delta) {
+void draw_buffer(VPEDword src, VPEDword dest, VPEDword w, VPEDword h, VPEDword delta) {
 
 //printf("draw_buffer\n");
 
@@ -103,11 +103,11 @@ memcpy(dest,src,w*h);
 
 void DrawBuffer(struct View *v)
 {
-	DWORD Dest;
+	VPEDword Dest;
 
 	Dest=ScrBase+v->ScrX+v->ScrY*ScrWidth;
-	draw_buffer((DWORD)v->Buffer,Dest,(DWORD)v->Width>>2,(DWORD)v->Height,
-		(DWORD)(ScrWidth-v->Width));
+	draw_buffer((VPEDword)v->Buffer,Dest,(VPEDword)v->Width>>2,(VPEDword)v->Height,
+		(VPEDword)(ScrWidth-v->Width));
 }
 
 /****************************************************************************
@@ -126,13 +126,13 @@ void DrawBuffer(struct View *v)
 /****************************************************************************
  Internal functions for Filler
 *****************************************************************************/
-void ScrDraw(BYTE *src)
+void ScrDraw(VPEByte *src)
 {
 	int i,j;
-	BYTE *dest;
+	VPEByte *dest;
 
 	for(i=0;i<ScrWidth;i++) {
-		dest=(BYTE *)ScrBase+i;
+		dest=(VPEByte *)ScrBase+i;
 		for(j=0;j<ScrHeight;j++) {
 			*dest=*src;
 			dest+=ScrWidth;
@@ -143,6 +143,6 @@ void ScrDraw(BYTE *src)
 
 void ScrClear(void)
 {
-	memset((BYTE *)ScrBase,0,ScrWidth*ScrHeight);
+	memset((VPEByte *)ScrBase,0,ScrWidth*ScrHeight);
 }
 

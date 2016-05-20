@@ -21,10 +21,10 @@ struct VLine    *VLines;
 struct Level     Levels[MAX_LEVELS];
 struct Level    *CurLevel;
 struct VDraw     LeftVDraw,RightVDraw;
-FIXED           *SinTable, *CosTable, *ITanTable, *FPSTable;
+VPEFixed           *SinTable, *CosTable, *ITanTable, *FPSTable;
 
-FIXED ViewX, ViewY, ViewCos, ViewSin;
-LONG  CurStamp,TotalFrames;
+VPEFixed ViewX, ViewY, ViewCos, ViewSin;
+VPELong  CurStamp,TotalFrames;
 int   NumWallPtrs, NumRTE, NumVDraws, NumMLines, NumLevels;
 int   PickVX, PickVY, PickVFlag;
 

@@ -24,7 +24,7 @@ void UpdateZoneViews(void)
 {
   struct Object   *pObject;
   struct View     *pView;
-  FIXED t1,vc,vs;
+  VPEFixed t1,vc,vs;
   int i;
 
   // Update Views
@@ -45,7 +45,7 @@ void UpdateZoneViews(void)
   }
 }
 
-void MoveWall(struct Wall *pWall, FIXED dist, FIXED c, FIXED s, FIXED pos)
+void MoveWall(struct Wall *pWall, VPEFixed dist, VPEFixed c, VPEFixed s, VPEFixed pos)
 /*
   pWall - wall to move
   dist  - distance to move
@@ -58,7 +58,7 @@ void MoveWall(struct Wall *pWall, FIXED dist, FIXED c, FIXED s, FIXED pos)
 }
 
 
-void MovePoint(struct Point *pp, FIXED dx, FIXED dy)
+void MovePoint(struct Point *pp, VPEFixed dx, VPEFixed dy)
 {
   struct Point *p;
 

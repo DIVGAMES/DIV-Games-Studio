@@ -99,11 +99,11 @@ void ClearObjRegion(struct Object *pObject)
 //  Encuentra una region sin tener en cuenta la altura
 //-----------------------------------------------------------------------------
 
-struct Region *FindRegion(FIXED x, FIXED y, FIXED h, int StrucFlag)
+struct Region *FindRegion(VPEFixed x, VPEFixed y, VPEFixed h, int StrucFlag)
 {
   struct Wall   *pWall;
   struct Region *p;
-  FIXED x1, x2, y1, y2, dist, t;
+  VPEFixed x1, x2, y1, y2, dist, t;
   int i;
 
 

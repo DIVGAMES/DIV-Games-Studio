@@ -1,6 +1,6 @@
 #include "internal.h"
 
-void UpdateBack(SHORT Col,SHORT Top,SHORT Bot,struct VLine *prev,
+void UpdateBack(VPEShort Col,VPEShort Top,VPEShort Bot,struct VLine *prev,
 		 struct PicInfo *pic, struct Region *pRegion)
 {
 	if (Top>=Bot) return;
@@ -8,13 +8,13 @@ void UpdateBack(SHORT Col,SHORT Top,SHORT Bot,struct VLine *prev,
 }
 
 
-void UpdateFloor(SHORT Col,SHORT Top,SHORT Bot,struct VLine *prev,
+void UpdateFloor(VPEShort Col,VPEShort Top,VPEShort Bot,struct VLine *prev,
 		 struct PicInfo *pic, struct Region *pRegion)
 {
 	struct FLine *hl;
 	struct Wall *pWall;
-	FIXED H,scan,t,fade;
-	DWORD X,Y;
+	VPEFixed H,scan,t,fade;
+	VPEDword X,Y;
   int i,pp;
 
 

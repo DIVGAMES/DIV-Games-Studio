@@ -1,8 +1,8 @@
 #include "internal.h"
 
 // Func ptrs for Floor/Ceil updates (UpdateFloor/UpdateBack/UpdateXXHole)
-static void (*upd_ceil)(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
-static void (*upd_flr)(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
+static void (*upd_ceil)(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
+static void (*upd_flr)(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
 
 void DrawSimpleWall(struct VDraw *pVDraw)
 {
@@ -12,11 +12,11 @@ void DrawSimpleWall(struct VDraw *pVDraw)
 	struct WLine    w;
 	struct PicInfo *pic, *fpic, *cpic;
 	struct VLine PrevCeil, PrevFloor, *clip;
-	FIXED LD,dLD,RD,dRD;
-	FIXED TS,dTS,BS,dBS,Fade,dFade;
-	FIXED FrontFloorH, FrontCeilH;
-	FIXED t,t1,t2,Width;
-	SHORT Top,Bot;
+	VPEFixed LD,dLD,RD,dRD;
+	VPEFixed TS,dTS,BS,dBS,Fade,dFade;
+	VPEFixed FrontFloorH, FrontCeilH;
+	VPEFixed t,t1,t2,Width;
+	VPEShort Top,Bot;
   int PickTop,PickBot,i,pp;
 
 	po=CurView->pObject;
