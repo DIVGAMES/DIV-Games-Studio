@@ -31,4 +31,4 @@ Future Possible Platforms:
 * Pyra Handheld
 
 
-100% compatible with existing DIV1 and DIV2 code including plugin dlls (except mode8!)
+100% compatible with existing DIV1 and DIV2 code including plugin dlls - EVEN MODE8 3D! 
