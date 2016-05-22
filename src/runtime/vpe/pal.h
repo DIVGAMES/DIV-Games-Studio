@@ -13,18 +13,18 @@
 
 
 struct PalHeader {		// Header of a palette file
-	BYTE   IDStr[4];		// ID string == PL1
-	WORD   NumTables;		// Number of tables
-	WORD   NumShades;		// Number of shades in tables
+	VPEByte   IDStr[4];		// ID string == PL1
+	VPEWord   NumTables;		// Number of tables
+	VPEWord   NumShades;		// Number of shades in tables
 };
 
 struct Palette {		// Main Palette structure
 	struct PalHeader  PH;		// File header
-	BYTE   VGAPal[768];		// VGA palette
-	BYTE   BackFade[MAX_TABLES];	// Background shades for each table
-	BYTE  *Tables[MAX_TABLES];	// Shade tables' offsets
-	BYTE  *Trans;			// Translucency table offset
-	BYTE  *MemTables;		// Tables raw ptr
+	VPEByte   VGAPal[768];		// VGA palette
+	VPEByte   BackFade[MAX_TABLES];	// Background shades for each table
+	VPEByte  *Tables[MAX_TABLES];	// Shade tables' offsets
+	VPEByte  *Trans;			// Translucency table offset
+	VPEByte  *MemTables;		// Tables raw ptr
 };
 
 
@@ -34,9 +34,9 @@ struct Palette {		// Main Palette structure
 --------------------------------------------------------------
 
 	Header		- PalHeader
-	Raw palette	- BYTE * 256 * 3
-	Background	- BYTE * 32
-	Shade tables	- BYTE * 256 * NumShades * NumTables
-	Trans table     - BYTE * 256 * 256
+	Raw palette	- VPEByte * 256 * 3
+	Background	- VPEByte * 32
+	Shade tables	- VPEByte * 256 * NumShades * NumTables
+	Trans table     - VPEByte * 256 * 256
 
 **************************************************************/

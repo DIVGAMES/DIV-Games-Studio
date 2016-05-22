@@ -45,7 +45,7 @@ void VPE_Init(void)
 
 void VPE_Config(int Width, int Height)
 {
-  FIXED t1,t2;
+  VPEFixed t1,t2;
   int i;
 
   Engine.ScrWidth=Width;    // Set screen width
@@ -75,7 +75,7 @@ void VPE_Start(void)
 
 void VPE_Update(void)
 {
-//  LONG last;
+//  VPELong last;
 
   if (!VPE_Working) return;
   // Update the zone
@@ -118,7 +118,7 @@ void SetPickWatch(int x, int y)
   Engine.PickY=y;
 }
 
-WORD GetPickWatch(void *data, FIXED *dist)
+VPEWord GetPickWatch(void *data, VPEFixed *dist)
 {
   data=Engine.PickPtr;
   *dist=Engine.PickDist;

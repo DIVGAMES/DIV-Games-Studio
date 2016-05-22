@@ -27,9 +27,9 @@ void DoObjectUpdate(struct Object *po)
   struct Wall    *pWall;
   struct Region  *pRegion, *reg;
   struct Move    *pSpeed;
-  FIXED MoveX,MoveY,AddX,AddY,X,Y,AddRH,RegDist;
-  FIXED c,s,t,t1,t2,tx,ty,x1,y1,x2,y2,x,y,dist,check;
-  BYTE  Flag,ColFlag,RotateFlag;
+  VPEFixed MoveX,MoveY,AddX,AddY,X,Y,AddRH,RegDist;
+  VPEFixed c,s,t,t1,t2,tx,ty,x1,y1,x2,y2,x,y,dist,check;
+  VPEByte  Flag,ColFlag,RotateFlag;
   int i, Steps, hueco;
 
   //---------------------------------------------------------------------------

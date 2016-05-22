@@ -35,8 +35,9 @@ void LoadZone(char *Buffer)
   struct Region        *new_region;
   struct Wall          *wall;
   struct View          *view;
-  int n, i, t1, t2;
-  LONG  Pos;
+  int n, i;
+	VPEFixed t1, t2;
+  VPELong  Pos;
 
   // Clear all the zone memory
   ClearZone();
@@ -661,7 +662,7 @@ void LoadPalette(char *palname)
   //---------------------------------------------------------------------------
   size=256*Pal.PH.NumShades*Pal.PH.NumTables; //+256*256;
   Pal.MemTables=CacheAlloc(size+256);
-  Pal.Tables[0]=(BYTE *)(((DWORD)Pal.MemTables+255)&0xFFFFFF00);
+  Pal.Tables[0]=(VPEByte *)(((VPEDword)Pal.MemTables+255)&0xFFFFFF00);
 
   //---------------------------------------------------------------------------
   // Puntero a la tabla de transparencias
@@ -730,13 +731,13 @@ void LoadMath(void)
   // Creo las tablas de senos y cosenos
   //---------------------------------------------------------------------------
   for (i=0;i<DEG360;i++) {
-    SinTable[i]=(FIXED)(65536.0*sin((2.0*PI*(float)i)/(float)DEG360));
-    CosTable[i]=(FIXED)(65536.0*cos((2.0*PI*(float)i)/(float)DEG360));
-    printf("sini %05lu.%05lu cosi: %lu\n",((SinTable[i]<<16) & 0xFFFF0000), SinTable[i]&0xFFFF,CosTable[i]);
+    SinTable[i]=(VPEFixed)(65536.0*sin((2.0*PI*(float)i)/(float)DEG360));
+    CosTable[i]=(VPEFixed)(65536.0*cos((2.0*PI*(float)i)/(float)DEG360));
+    //printf("sini %05lu.%05lu cosi: %lu\n",((SinTable[i]<<16) & 0xFFFF0000), SinTable[i]&0xFFFF,CosTable[i]);
   }
 //  printf("tantable: %d\n",sizeof(itangente));
   
-  ITanTable=(FIXED *)itangente;
+  ITanTable=(VPEFixed *)itangente;
 //  printf("tantable: %d\n",sizeof(ITanTable));
   
 }

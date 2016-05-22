@@ -64,8 +64,8 @@ struct  Region *ToScan=NULL;
 struct  Point  *pp1, *pp2;
 struct  VDraw  *pVDraw;
 struct  Object *po;
-FIXED   MinDist,t,t1,t2,dx;
-FIXED   aux1,aux2,inca=0;
+VPEFixed   MinDist,t,t1,t2,dx;
+VPEFixed   aux1,aux2,inca=0;
 
   po     =CurView->pObject;
   MinDist=CurLevel->MinDist;
@@ -297,7 +297,7 @@ void ScanObject(struct Object *pObject)
 struct VDraw     *pVDraw;
 struct Point     *pp1;
 struct TexCon    *ptc;
-FIXED t,t1,t2;
+VPEFixed t,t1,t2;
 
 // Check for NULL texture
   if (pObject->TC.pPic==NULL) return;
@@ -382,7 +382,7 @@ FIXED t,t1,t2;
 
 void TransformPoint(struct Point *p)
 {
-FIXED tx, ty;
+VPEFixed tx, ty;
 
   tx=p->x-ViewX;
   ty=p->y-ViewY;
