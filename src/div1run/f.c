@@ -7,7 +7,9 @@
 #include "divsound.h"
 #include "cdrom.h"
 #include "net.h"
-
+#ifdef DIVDLL
+#include "divdll.h"
+#endif
 
 // file prototypes
 
@@ -1535,7 +1537,7 @@ void unload_pcm(void) {
 void _sound(void) {
   int vol,fre;
   fre=pila[sp--]; vol=pila[sp--];
-  if (fre) pila[sp]=PlaySound(pila[sp],vol,fre);
+  if (fre) pila[sp]=DivPlaySound(pila[sp],vol,fre);
   // if (pila[sp]==-1) e(e129);
 }
 

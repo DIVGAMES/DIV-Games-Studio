@@ -18,6 +18,10 @@
 #include <emscripten.h>
 #endif
 
+#ifdef DIVDLL
+#include "divdll.h"
+#endif
+
 // FILE PROTOTYPES
 void interprete (void);
 void crea_cuad(void);
