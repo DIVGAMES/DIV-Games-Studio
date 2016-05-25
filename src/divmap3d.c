@@ -2937,10 +2937,12 @@ void map_deletenullwalls()
   int i=0;
 
   do {
-    if (my_map->walls[i]->front_region==-1)
-      map_deletewall(i);
-    else
-      i++;
+    if(my_map->walls[i]!=NULL) {
+      if (my_map->walls[i]->front_region==-1)
+        map_deletewall(i);
+      else
+        i++;
+    }
   } while (i<my_map->num_walls);
 }
 
