@@ -1,6 +1,9 @@
 #include "internal.h"
 #include "gfx.h"
+
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
 
 #include "inter.h"
 
