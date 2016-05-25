@@ -11,6 +11,7 @@
 FILE * div_open_file(char * file);
 #include "inter.h"
 #include "vpe.h"
+void _object_destroy(int num_object);
 
 void DoObjectUpdate(struct Object *po);
 
@@ -820,7 +821,8 @@ void _object_destroy(int num_object)
 
   if (!vpe_inicializada)
     return;
-
+  if(num_object<0)
+    return;
   po=(struct Object *)Objects.ptr[num_object];
   DelPoint(po->pp);
   DelObject(po);

@@ -5,6 +5,7 @@
 VPEDword ScrBase;
 int ScrWidth, ScrHeight;
 int GfxOn=FALSE;
+void retrazo(void);
 
 /****************************************************************************
 Func:	void InitGraph(void)

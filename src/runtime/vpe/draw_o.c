@@ -3,6 +3,8 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Pinta un objeto
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+#define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
+#define max(a,b)             (((a) > (b)) ? (a) : (b)) // max: Choose greater of two scalars.
 
 void DrawObject(struct VDraw *pVDraw)
 {
