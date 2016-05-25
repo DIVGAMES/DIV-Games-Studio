@@ -14,6 +14,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #define DEFINIR_AQUI // DEFINED HERE - see global.h
+#ifdef WIN32
+#include <windows.h>
+#include <malloc.h>
+#include <stdio.h>
+#endif
+
 #include "global.h"
 #include "divsound.h"
 #include "divmixer.hpp"
@@ -3911,11 +3917,6 @@ void default_reglas(void) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Function to determine the present drives (in string unidades[])
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-#ifdef WIN32
-#include <windows.h>
-#include <malloc.h>
-#include <stdio.h>
-#endif
 
 void determina_unidades(void) {
 #ifdef WIN32

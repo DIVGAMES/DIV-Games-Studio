@@ -354,7 +354,7 @@ int create_object(int ide)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #define radian 57295.77951
-
+#define Z_OFFSET -32
 void _object_data_input(int ide)
 {
 	struct Object *po;
@@ -381,7 +381,7 @@ void _object_data_input(int ide)
     return;
 
   if (mem[ide+_Resolution]<2) {
-    po->H=INT_FIX(mem[ide+_Z]);
+    po->H=INT_FIX(mem[ide+_Z]+Z_OFFSET);
     if (FIX_INT(po->pp->x)!=mem[ide+_X] ||
         FIX_INT(po->pp->y)!=FIN_GRID-mem[ide+_Y]) {
       po->pp->x=INT_FIX(mem[ide+_X]);
@@ -533,7 +533,7 @@ void _object_data_output(int ide)
   po=(struct Object *)Objects.ptr[mem[ide+_M8_Object]];
 
   if (mem[ide+_Resolution]<2) {
-    mem[ide+_Z]=FIX_INT(po->H);
+    mem[ide+_Z]=FIX_INT(po->H)-Z_OFFSET;
     mem[ide+_X]=FIX_INT(po->pp->x);
     mem[ide+_Y]=FIN_GRID-FIX_INT(po->pp->y);
   }

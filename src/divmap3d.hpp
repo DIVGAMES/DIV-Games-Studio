@@ -64,11 +64,11 @@ void lf_free_all();
 //  Definiciones del formato de las VPE
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-typedef int16_t     SHORT;
+typedef int16_t     M8SHORT;
 //#ifndef WIN32
-typedef int32_t DWORD;
+typedef int32_t M8DWORD;
 //#endif
-typedef int32_t      LONG;
+typedef int32_t      M8LONG;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Definicion de estructuras
@@ -76,14 +76,14 @@ typedef int32_t      LONG;
 
 struct ZF_Header {  // Zone file header
   char  IDStr[4];   // Zone file ID string
-  SHORT NumPoints;  // Number of points
-  SHORT NumRegions; // Number of floors
-  SHORT NumWalls;   // Number of walls
-  SHORT NumFlags;   // Number of flags
+  M8SHORT NumPoints;  // Number of points
+  M8SHORT NumRegions; // Number of floors
+  M8SHORT NumWalls;   // Number of walls
+  M8SHORT NumFlags;   // Number of flags
 };
 
 struct ZF_Move {  // Used for movement data
-  SHORT x,y,z,t;  // x,y,z and torque
+  M8SHORT x,y,z,t;  // x,y,z and torque
 };
 
 struct ZF_General {     // General information
@@ -92,49 +92,49 @@ struct ZF_General {     // General information
   int32_t   ScrTex;         // Name of screen texture
   int32_t   BackTex;        // Background texture name
   char  BackEff[9];     // Background Eff program
-  SHORT BackAngle;      // Angle of view covered by BackTex
-  SHORT ActView;        // Index of view which gets kbd input
+  M8SHORT BackAngle;      // Angle of view covered by BackTex
+  M8SHORT ActView;        // Index of view which gets kbd input
   struct ZF_Move Force; // Global force
 };
 
 struct ZF_Flag {    // Flag struture
-  LONG  x,y;        // Point coordinates
+  M8LONG  x,y;        // Point coordinates
   int32_t   number;     // Numero asociado
 };
 
 struct ZF_Point {   // Point struture
-  DWORD Type;       // Type
-  LONG  x,y;        // Point coordinates
-  SHORT path;       // Path index
-  SHORT link;       // Index of the next point in the link
+  M8DWORD Type;       // Type
+  M8LONG  x,y;        // Point coordinates
+  M8SHORT path;       // Path index
+  M8SHORT link;       // Index of the next point in the link
 };
 
 struct ZF_Region {  // Region structure
-  DWORD Type;       // Type
-  SHORT FloorH;     // Floor height
-  SHORT CeilH;      // Ceiling height
-  SHORT Below;      // Region below
-  SHORT Above;      // Region above
+  M8DWORD Type;       // Type
+  M8SHORT FloorH;     // Floor height
+  M8SHORT CeilH;      // Ceiling height
+  M8SHORT Below;      // Region below
+  M8SHORT Above;      // Region above
   int32_t   FloorTex;   // Floor texture name
   int32_t   CeilTex;    // Ceiling texture name
   char  Eff[9];     // Eff program
-  SHORT Fade;       // Effect's param
-  SHORT Tag;        // Tag ID
+  M8SHORT Fade;       // Effect's param
+  M8SHORT Tag;        // Tag ID
 };
 
 struct ZF_Wall {    // Wall structure
-  DWORD Type;       // Wall type
-  SHORT p1, p2;     // Point indeces
-  SHORT Front;      // Front Region
-  SHORT Back;       // Back Region
+  M8DWORD Type;       // Wall type
+  M8SHORT p1, p2;     // Point indeces
+  M8SHORT Front;      // Front Region
+  M8SHORT Back;       // Back Region
   int32_t   TopTex;     // Top texture name
   int32_t   MidTex;     // Middle texture name
   int32_t   BotTex;     // Bottom texture name
   char  Eff[9];     // Eff program
-  SHORT Fade;       // Effect's param
-  SHORT TexX, TexY; // Texture adjusting
-  SHORT Mass;       // Mass for movable walls
-  SHORT Tag;        // Tag ID
+  M8SHORT Fade;       // Effect's param
+  M8SHORT TexX, TexY; // Texture adjusting
+  M8SHORT Mass;       // Mass for movable walls
+  M8SHORT Tag;        // Tag ID
 };
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

@@ -38,7 +38,6 @@ void print_init_flags(int flags)
         PFLAG(MOD);
         PFLAG(MP3);
         PFLAG(OGG);
-        PFLAG(FLUIDSYNTH);
         
         if(!flags)
                 printf("None");
@@ -64,7 +63,7 @@ int audio_buffers = 1024;
 #ifndef GP2X
 #ifndef PS2
 #ifndef PSP
-  int flags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_FLUIDSYNTH;
+  int flags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG ;
   
   initted=Mix_Init(flags);
 

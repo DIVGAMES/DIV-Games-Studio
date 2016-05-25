@@ -3164,7 +3164,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
 }
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
+#ifdef DIVDLL
 typedef struct _DLL{
         char    *Name;
         int     nParms;
@@ -3228,6 +3228,7 @@ struct _dlls {
 } dlls[64];
 
 int idlls;              // Indice de la estructura anterior
+#endif
 
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
@@ -3360,6 +3361,7 @@ void sintactico (void) {
   while (pieza==p_ptocoma || pieza==p_coma) lexico();
   final_sentencia();
 
+#ifdef DIVDLL
   dlls[0].linea1=linea1;
   dlls[0].columna1=columna1;
   dlls[0].linea2=linea2;
@@ -3421,6 +3423,7 @@ void sintactico (void) {
     }
   }
 
+#endif
 
 	while(pieza==p_include) {
 		inicio_sentencia();
@@ -4185,6 +4188,7 @@ void sintactico (void) {
 
   g2(ltyp,(memptrsize)bloque_actual);
   g2(lcbp,0);
+#ifdef DIVDLL
   linea1=dlls[0].linea1;
   columna1=dlls[0].columna1;
   linea2=dlls[0].linea2;
@@ -4205,6 +4209,8 @@ void sintactico (void) {
     columna2=dlls[n].columna2;
     grabar_sentencia();
   }
+
+#endif
 
   // El primer FRAME, y la carga de variables PRIVATE, se ejecutan
   // conjuntamente en el BEGIN del programa principal.

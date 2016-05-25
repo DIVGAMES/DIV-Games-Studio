@@ -3178,14 +3178,14 @@ void map_save()
 
   for (i=0;i<my_map->num_regions;i++) {
     zr[i].Type=0;                                           // Type
-    zr[i].FloorH=(SHORT)my_map->regions[i]->floor_height;   // Floor height
-    zr[i].CeilH=(SHORT)my_map->regions[i]->ceil_height;     // Ceiling height
+    zr[i].FloorH=(M8SHORT)my_map->regions[i]->floor_height;   // Floor height
+    zr[i].CeilH=(M8SHORT)my_map->regions[i]->ceil_height;     // Ceiling height
     zr[i].Below=-1;                                         // Region below
     zr[i].Above=-1;                                         // Region above
     zr[i].FloorTex=my_map->regions[i]->floor_tex;           // Textura de suelo
     zr[i].CeilTex=my_map->regions[i]->ceil_tex;             // Textura de techo
     strcpy(zr[i].Eff,"NO_NAME");                            // Eff program
-    zr[i].Fade=(SHORT)my_map->regions[i]->fade;             // Effect's param
+    zr[i].Fade=(M8SHORT)my_map->regions[i]->fade;             // Effect's param
     zr[i].Tag=0;                                            // Tag ID
   }
 
@@ -3209,7 +3209,7 @@ void map_save()
     zw[i].BotTex=my_map->walls[i]->texture_bot;       // Bot texture name
     strcpy(zw[i].Eff,"NO_NAME");                      // Eff program
 
-    zw[i].Fade=(SHORT)my_map->walls[i]->fade;         // Effect's param
+    zw[i].Fade=(M8SHORT)my_map->walls[i]->fade;         // Effect's param
     zw[i].TexX=0;
     zw[i].TexY=0;                                     // Texture adjusting
     zw[i].Mass=0;                                     // Mass for movable walls

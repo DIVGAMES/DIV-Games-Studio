@@ -4,6 +4,7 @@
 #ifndef DIVDLL_H
 #define DIVDLL_H
 
+#ifdef DIVDLL
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -69,5 +70,7 @@ void (*COM_export)(char *name,void *dir,int nparms);
 #ifdef __cplusplus
 }
 #endif
+#endif
+
 
 #endif

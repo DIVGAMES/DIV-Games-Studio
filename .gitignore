@@ -1,4 +1,4 @@
-*.o
+
 a.out
 CMakeCache.txt
 CMakeFiles/
@@ -16,6 +16,8 @@ cmake_install.cmake
 div
 div-LINUX
 old/
+system/EXEC.EXE
+system/div*-*
 system/Dos4gw.exe
 system/SESSION.DTF
 system/SETUP.BIN
@@ -27,3 +29,7 @@ system/session.dtf
 system/setup.bin
 system/user.nfo
 system/xec.pgm
+*.tar.gz
+*.zip
+html
+zipdiv
