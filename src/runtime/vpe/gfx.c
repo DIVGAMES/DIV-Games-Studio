@@ -97,7 +97,7 @@ void draw_buffer(VPEDword src, VPEDword dest, VPEDword w, VPEDword h, VPEDword d
 
 //printf("draw_buffer\n");
 
-memcpy(dest,src,w*h);
+//memcpy(dest,src,w*h);
 
 }
 
