@@ -211,7 +211,7 @@ void LoadZone(char *Buffer)
     view=(struct View *)Views.ptr[i];
   }
   // Prepare WallPtrs
-  WallPtrs=(struct Wall **)CacheAlloc(Walls.Number*2*sizeof(int64_t));
+  WallPtrs=(struct Wall **)CacheAlloc(Walls.Number*2*sizeof(memptrsize));
   for(n=0;n<Regions.Number;n++) {
     new_region=(struct Region *)Regions.ptr[n];
     new_region->WallPtrs=&WallPtrs[NumWallPtrs];
@@ -661,8 +661,9 @@ void LoadPalette(char *palname)
   // Reserva memoria para tablas de fade y transparencias
   //---------------------------------------------------------------------------
   size=256*Pal.PH.NumShades*Pal.PH.NumTables; //+256*256;
-  Pal.MemTables=CacheAlloc(size+256);
-  Pal.Tables[0]=(VPEByte *)(((VPEDword)Pal.MemTables+255)&0xFFFFFF00);
+  Pal.MemTables=(VPEByte  *)CacheAlloc(size+256);
+  Pal.Tables[0]=(VPEByte *)Pal.MemTables+255;//&0xFFFFFF00);
+printf("%x\n",Pal.Tables[0]);
 
   //---------------------------------------------------------------------------
   // Puntero a la tabla de transparencias
@@ -677,8 +678,8 @@ void LoadPalette(char *palname)
 void set_fog_table(int intensidad,int r,int g, int b)
 {
   int i,j;
-  char *tabla_color;
-  tabla_color=Pal.Tables[0];
+  VPEByte *tabla_color=(VPEByte *)Pal.Tables[0];
+//  tabla_color=Pal.Tables[0];
 
   if (intensidad==0)
   {

@@ -135,7 +135,7 @@ void start_mode8(void)
     return;
   }
 
-  my_region=(t_region *)((int)region+sizeof(t_region)*num_region);
+  my_region=(t_region *)((memptrsize)region+sizeof(t_region)*num_region);
 
   ancho=my_region->x1-my_region->x0;
   alto=my_region->y1-my_region->y0;
@@ -204,8 +204,14 @@ void get_sector_height(void)
 
   if (!vpe_inicializada)
     return;
+  
+  if(num_region<0)
+    return;
 
   new_region=(struct Region *)Regions.ptr[num_region];
+ // fprintf(stdout,"region: %d NEW REGION: %x\n",num_region,new_region);
+
+//return;
   mem[suelo]=FIX_INT(new_region->FloorH);
   mem[techo]=FIX_INT(new_region->CeilH);
 }
@@ -248,7 +254,7 @@ void loop_mode8(void)
       if (mem[m8[i].camera+_Height]-m8[i].height<8)
         m8[i].height=mem[m8[i].camera+_Height]-8;
 
-      my_region=(t_region *)((int)region+sizeof(t_region)*mode8_list[i]);
+      my_region=(t_region *)((memptrsize)region+sizeof(t_region)*mode8_list[i]);
       ancho=my_region->x1-my_region->x0;
       alto=my_region->y1-my_region->y0;
       InitGraph((char *)(copia+my_region->y0*vga_an+my_region->x0),ancho,alto);    // Init gfx system
@@ -354,7 +360,7 @@ int create_object(int ide)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #define radian 57295.77951
-#define Z_OFFSET -32
+#define Z_OFFSET 0
 void _object_data_input(int ide)
 {
 	struct Object *po;
@@ -709,8 +715,11 @@ void get_sector_texture(void)
 
   new_region=(struct Region *)Regions.ptr[num_region];
   mem[fade ]=new_region->Fade;
-  mem[suelo]=new_region->FloorTC.pPic->code;
-  mem[techo]=new_region->CeilTC.pPic->code;
+  if(new_region->FloorTC.pPic!=0)
+    mem[suelo]=new_region->FloorTC.pPic->code;
+  
+  if(new_region->CeilTC.pPic!=0)  
+    mem[techo]=new_region->CeilTC.pPic->code;
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

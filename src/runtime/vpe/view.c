@@ -1,6 +1,6 @@
 #include "internal.h"
 #include "gfx.h"
-
+#include "osdep.h"
 struct Level *LevelAbove;
 struct Level *LevelBelow;
 
@@ -389,7 +389,7 @@ void SetActiveView(int altura,int objeto,int w,int h,VPEByte *buf_ptr,int buf_wi
 
   // Do the rest
   if (pv->BufScan) free(pv->BufScan);
-  pv->BufScan=(VPEByte **)malloc(pv->Height*sizeof(int64_t));
+  pv->BufScan=(VPEByte **)malloc(pv->Height*sizeof(memptrsize));
 
   pv->ConstHDist=FixMul(INT_FIX(pv->Width>>1),F_VIEW_CONST);
   pv->ConstVDist=FixMul(pv->ConstHDist,Engine.ScrConst);
