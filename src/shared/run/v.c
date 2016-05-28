@@ -586,9 +586,8 @@ SDL_RenderPresent(divRender);
 //	printf("draw screen\n");
 	if(SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
-	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 
-
+//	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 	SDL_Flip(vga);
 }
 
