@@ -526,7 +526,11 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 // this permits slow playing sound to run for the correct length.
 
 	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
-
+//  printf("channel = %d\n",con);
+  
+  if(con==-1)
+    return(0);
+  
   channels[con].freq = Frec;
   channels[con].vol = Volumen;
   channels[con].pos = 0;
