@@ -1,8 +1,8 @@
 #include "vpe.h"
 #include "gfx.h"
 #include <SDL/SDL.h>
-
-VPEDword ScrBase;
+#include "osdep.h"
+memptrsize ScrBase;
 int ScrWidth, ScrHeight;
 int GfxOn=FALSE;
 void retrazo(void);
@@ -15,7 +15,7 @@ Info:	Initializes graphics system.
 void InitGraph(char *buffer,int ancho,int alto)
 {
   GfxOn=TRUE;
-  ScrBase=(VPEDword)buffer;
+  ScrBase=(memptrsize)buffer;
   ScrWidth=ancho;
   ScrHeight=alto;
 }

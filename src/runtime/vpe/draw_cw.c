@@ -1,4 +1,5 @@
 #include "internal.h"
+#include "osdep.h"
 
 extern struct Level *LevelBelow, *LevelAbove;
 
@@ -19,9 +20,9 @@ VPEFixed FTS,dFTS,FBS,dFBS;
 VPEFixed BTS,dBTS,BBS,dBBS;
 VPEFixed FrontCeilH, BackCeilH, FrontFloorH, BackFloorH;
 VPEFixed t,t1,t2,TopAdd,Width;
-int i,ScanFlag,Masked,Trans;
-int FTop,FBot,BTop,BBot,*pNewTop,*pNewBot;
-int pp;
+memptrsize i,ScanFlag,Masked,Trans;
+int32_t FTop,FBot,BTop,BBot,*pNewTop,*pNewBot;
+int32_t pp;
 
   po   =CurView->pObject;
 	pWall=(struct Wall *)pVDraw->ptr;

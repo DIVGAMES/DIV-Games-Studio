@@ -91,9 +91,12 @@ void DrawSimpleWall(struct VDraw *pVDraw)
     dFade=FixDiv(dFade,CurView->FLen);
 	}
 // Misc stuff
-	PickTop=CurLevel->Clip[PickVX].Top;
-	PickBot=CurLevel->Clip[PickVX].Bot;
-	PrevCeil.Top=PrevCeil.Bot=0;
+	if(PickVX>=0)
+	{
+		PickTop=CurLevel->Clip[PickVX].Top;
+		PickBot=CurLevel->Clip[PickVX].Bot;
+	}
+		PrevCeil.Top=PrevCeil.Bot=0;
 	PrevFloor.Top=PrevFloor.Bot=0;
 	w.BufWidth=CurView->BufWidth;
 	if (pic) w.Mask=(1<<pic->Width2)-1;

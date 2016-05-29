@@ -2,6 +2,11 @@
 #include <stdint.h>
 
 #include "internal.h"
+#include "osdep.h"
+
+extern memptrsize ScrBase;
+extern int ScrWidth;
+extern int ScrHeight;
 
 /* ------------------------------ *** VPE.INC *** ------------------------------ */
 
@@ -402,7 +407,8 @@ void DrawFSpan(struct FLine *pFLine) {
 		                                          // xor eax, eax
 		Raw = ((Coord >> N32MWidth2) << Width2) | // shld eax, edx, cl
 		      ((Coord & 0xFFFF) >> N16MWidth2);   // shld ax, dx, cl
-		PixPtr[0] = PalPtr[RawPtr[Raw]];          // mov bl, [esi+eax]
+		if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
+			PixPtr[0] = PalPtr[RawPtr[Raw]];          // mov bl, [esi+eax]
 		                                          // mov bl, [ebx]
 		                                          // mov [edi], bl
 		PixPtr += 1;                              // inc edi
@@ -779,7 +785,8 @@ WLoopStart:
 	do {                                                         // WLoopStart:				; Start of unrolled loop
 
 		Coord &= ((CoordM2 & 0xFF00) >> 8);                        // and dl, ah
-		PixPtr[0] = PalPtr[RawPtr[Coord]];                         // mov bl, [esi+edx]
+		if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
+			PixPtr[0] = PalPtr[RawPtr[Coord]];                         // mov bl, [esi+edx]
 		                                                           // mov bl, [ebx]
 		                                                           // mov [edi], bl
 		PixPtr  += ViewWidth;                                      // add edi, ebp
@@ -1551,8 +1558,10 @@ WTLoopStart:
 		Coord = (Coord & 0xFFFFFF00) |
 		       ((Coord & 0xFF)       &
 		     ((CoordM2 & 0xFF00) >> 8));                           // and dl, ah
+		
 		if(PalPtr[RawPtr[Coord]]>0)                                                        // WLoopStart:				; Start of unrolled loop
-			PixPtr[0] = PalPtr[RawPtr[Coord]];                         // mov bl, [esi+edx]
+			if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
+				PixPtr[0] = PalPtr[RawPtr[Coord]];                         // mov bl, [esi+edx]
 		                                                           // mov bl, [ebx]
 		                                                           // mov [edi], bl
 		PixPtr  += ViewWidth;                                      // add edi, ebp
@@ -1910,7 +1919,8 @@ OLoopStart:
 	PixPtr    = PWline->PixPtr;                     // mov edi, [ebx+PixPtr_]
 	PalPtr    = PWline->PalPtr;                     // mov ebx, [ebx+PalPtr_]
 
-	do {                                            // OLoopStart:				; Start of unrolled loop
+	do {                      
+	if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
 		PixPtr[0] = PalPtr[RawPtr[0]];                // mov bl, [esi]
 		                                              // mov bl, [ebx]
 		                                              // mov [edi], bl
@@ -2288,7 +2298,8 @@ OMLoopStart:
 
 	do {             
 		if(PalPtr[RawPtr[0]]>0)                               // OLoopStart:				; Start of unrolled loop
-			PixPtr[0] = PalPtr[RawPtr[0]];                // mov bl, [esi]
+			if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
+				PixPtr[0] = PalPtr[RawPtr[0]];                // mov bl, [esi]
 		                                              // mov bl, [ebx]
 		                                              // mov [edi], bl
 		PixPtr  += ViewWidth;                         // add edi, ebp
@@ -2635,7 +2646,8 @@ OTLoopStart:
 
 	do {     
 		if(PalPtr[RawPtr[0]]>0)
-			PixPtr[0] = PalPtr[RawPtr[0]+256*PixPtr[0]];                // mov bl, [esi]
+			if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
+				PixPtr[0] = PalPtr[RawPtr[0]+256*PixPtr[0]];                // mov bl, [esi]
 		                                              // mov bl, [ebx]
 		                                              // mov [edi], bl
 		PixPtr  += ViewWidth;                         // add edi, ebp
@@ -2648,5 +2660,4 @@ OTLoopStart:
 
 
 
-extern VPEDword ScrBase;
-
+//extern VPint

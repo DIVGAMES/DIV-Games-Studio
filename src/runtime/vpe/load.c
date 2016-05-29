@@ -663,7 +663,6 @@ void LoadPalette(char *palname)
   size=256*Pal.PH.NumShades*Pal.PH.NumTables; //+256*256;
   Pal.MemTables=(VPEByte  *)CacheAlloc(size+256);
   Pal.Tables[0]=(VPEByte *)Pal.MemTables+255;//&0xFFFFFF00);
-printf("%x\n",Pal.Tables[0]);
 
   //---------------------------------------------------------------------------
   // Puntero a la tabla de transparencias
