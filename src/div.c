@@ -510,11 +510,12 @@ int main(int argc, char * argv[]) {
 
 	if(compilemode==1) {	
 		inicializa_compilador();
+
 		compilado=1; mouse_graf=3; numero_error=-1;
 
 		if(argc<3) {
-			printf("DIV Games Studio Compiler V2.02 - http://www.div-arena.co.uk\n");
-			printf("Usage: -c [program name] [output.exe]\n");
+			fprintf(stdout,"DIV Games Studio Compiler V2.02 - http://www.div-arena.co.uk\n");
+			fprintf(stdout,"Usage: -c [program name] [output.exe]\n");
 			exit(-1);
 		}
 
@@ -526,7 +527,7 @@ int main(int argc, char * argv[]) {
 			fseek(f,0,SEEK_SET);
 			prgbuf = (byte *)malloc(source_len+10);
 			if(prgbuf) {
-				printf("Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
+				fprintf(stdout,"Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
 				source_ptr=prgbuf;
 				comp();
 				if (numero_error>=0) {

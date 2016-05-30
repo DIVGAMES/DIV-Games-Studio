@@ -981,7 +981,7 @@ void inicializa_compilador(void) {
 
 void mensaje_compilacion(byte * p) {
   if(compilemode) {
-	  printf("%s\n",p);
+	  fprintf(stdout,"%s\n",p);
   } else {
    wbox(v.ptr,v.an/big2,v.al/big2,c2,2,20,v.an/big2-4,7);
    wwrite(v.ptr,v.an/big2,v.al/big2,3,20,0,p,c3);
