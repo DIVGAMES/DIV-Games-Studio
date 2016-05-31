@@ -757,7 +757,7 @@ void guarda_pila(int id, int sp1, int sp2) {
 
 void carga_pila(int id) {
   int n;
-  memptrsize * p;
+  int32_t * p;
   if (mem[id+_SP]) {
     p=stack[mem[id+_SP]];
     
@@ -773,7 +773,7 @@ void carga_pila(int id) {
 }
 
 void actualiza_pila(int id, int valor) {
-  memptrsize * p;
+  int32_t * p;
   if (mem[id+_SP]) {
     p=stack[mem[id+_SP]];
     p[p[1]-p[0]+2]=valor;
