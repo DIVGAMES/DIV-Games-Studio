@@ -5,21 +5,19 @@
 #include "osdep.h"
 
 extern memptrsize ScrBase;
-extern int ScrWidth;
-extern int ScrHeight;
 
 /* ------------------------------ *** VPE.INC *** ------------------------------ */
 
 //struct FLine {
 //	VPEByte  *RawPtr, *PalPtr, *PixPtr;
 //	VPEDword  Coord, Delta;
-//	VPEShort  LeftCol, Count, Width2;
+//	SHORT  LeftCol, Count, Width2;
 //	struct Region *pRegion;
 //};
 //struct WLine {
 //	VPEByte  *RawPtr, *PalPtr, *PixPtr;
 //	VPEFixed  Coord, Delta;
-//	VPEShort  ViewWidth, Count, Mask;
+//	SHORT  ViewWidth, Count, Mask;
 //};
 
 #define RawPtr_     0 // Tex ptr
@@ -407,8 +405,7 @@ void DrawFSpan(struct FLine *pFLine) {
 		                                          // xor eax, eax
 		Raw = ((Coord >> N32MWidth2) << Width2) | // shld eax, edx, cl
 		      ((Coord & 0xFFFF) >> N16MWidth2);   // shld ax, dx, cl
-		if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
-			PixPtr[0] = PalPtr[RawPtr[Raw]];          // mov bl, [esi+eax]
+		PixPtr[0] = PalPtr[RawPtr[Raw]];          // mov bl, [esi+eax]
 		                                          // mov bl, [ebx]
 		                                          // mov [edi], bl
 		PixPtr += 1;                              // inc edi
@@ -457,14 +454,14 @@ int32_t WTLoopOffset[] = {
 //****************************************************************************
 // Draws a vertical wall span
 //					EAX
-//	void DrawWSpan(struct WLine *PWline)
+//	void DrawWSpan(struct WLine *pWLine)
 //****************************************************************************
-void DrawWSpan(struct WLine *PWline) {
+void DrawWSpan(struct WLine *pWLine) {
 /*
 	_asm {
 		pushad
 
-		mov ebx, dword ptr [PWline]
+		mov ebx, dword ptr [pWLine]
 
 		movzx eax, word ptr [ebx+Count_]
 		mov dword ptr [LoopCount], eax
@@ -757,37 +754,39 @@ WLoopStart:
 	VPEDword  Coord, CoordM2, DeltaM2;
 	VPEByte  *RawPtr, *PalPtr, *PixPtr;
 
-	LoopCount = PWline->Count;                                  // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
+	LoopCount = pWLine->Count;                                  // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
 	                                                            // mov LoopCount, eax		; LoopCount=EAX
 	if(LoopCount == 0) {
 		return;
 	}
 
-	DeltaM2   = (PWline->Delta & 0x0000FFFF) << 16;             // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
+	DeltaM2   = (pWLine->Delta & 0x0000FFFF) << 16;             // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
 	                                                            // xor cx, cx			; clear lower ecx
 
-	CoordM2   = ((PWline->Coord & 0x0000FFFF) << 16) |          // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
-	            ((PWline->Delta & 0x00FF0000) >> 16) |          // mov al, [ebx+Delta_+2]
-	            ((PWline->Mask  & 0x000000FF) <<  8);           // mov ah, [ebx+WMask_]
+	CoordM2   = ((pWLine->Coord & 0x0000FFFF) << 16) |          // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
+	            ((pWLine->Delta & 0x00FF0000) >> 16) |          // mov al, [ebx+Delta_+2]
+	            ((pWLine->Mask  & 0x000000FF) <<  8);           // mov ah, [ebx+WMask_]
 
-	Coord     = ((PWline->Coord & 0x00FF0000) >> 16);           // xor edx, edx			; int Coord in low edx
+	Coord     = ((pWLine->Coord & 0x00FF0000) >> 16);           // xor edx, edx			; int Coord in low edx
 	                                                            // mov dl, [ebx+Coord_+2]
 
-	ViewWidth = PWline->BufWidth;                               // movzx ebp, word ptr [ebx+ViewWidth_]
-	RawPtr    = PWline->RawPtr;                                 // mov esi, [ebx+RawPtr_]		; raw ptr in esi
-	PixPtr    = PWline->PixPtr;                                 // mov edi, [ebx+PixPtr_]
-	PalPtr    = PWline->PalPtr;                                 // mov ebx, [ebx+PalPtr_]
+	ViewWidth = pWLine->BufWidth;                               // movzx ebp, word ptr [ebx+ViewWidth_]
+	RawPtr    = pWLine->RawPtr;                                 // mov esi, [ebx+RawPtr_]		; raw ptr in esi
+	PixPtr    = pWLine->PixPtr;                                 // mov edi, [ebx+PixPtr_]
+	PalPtr    = pWLine->PalPtr;                                 // mov ebx, [ebx+PalPtr_]
 
 	// eax = CoordM2
 	// ecx = DeltaM2
 	// edx = Coord
 	// ebp = ViewWidth
 	do {                                                         // WLoopStart:				; Start of unrolled loop
-
-		Coord &= ((CoordM2 & 0xFF00) >> 8);                        // and dl, ah
-		if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
-			PixPtr[0] = PalPtr[RawPtr[Coord]];                         // mov bl, [esi+edx]
-		                                                           // mov bl, [ebx]
+		//Coord = (Coord & 0xFFFFFF00) |
+		//       ((Coord & 0xFF)       &
+		//     ((CoordM2 & 0xFF00) >> 8));                           // and dl, ah
+		if(PixPtr>=ScrBase && PixPtr<&((unsigned char *)ScrBase)[Engine.ScrWidth*Engine.ScrHeight]) {
+			Coord &= ((CoordM2 & 0xFF00) >> 8);                    // and dl, ah
+			PixPtr[0] = PalPtr[RawPtr[Coord]];                     // mov bl, [esi+edx]
+		}                                                           // mov bl, [ebx]
 		                                                           // mov [edi], bl
 		PixPtr  += ViewWidth;                                      // add edi, ebp
 		CoordM2 += DeltaM2;                                        // add eax, ecx
@@ -803,14 +802,14 @@ WLoopStart:
 //****************************************************************************
 // Draws a vertical masked wall span (any Tex width)
 //					EAX
-//	void DrawMaskWSpan(struct WLine *PWline)
+//	void DrawMaskWSpan(struct WLine *pWLine)
 //****************************************************************************
-void DrawMaskWSpan(struct WLine *PWline) {
+void DrawMaskWSpan(struct WLine *pWline) {
 /*
 	_asm {
 		pushad
 
-	mov ebx, dword ptr [PWline]
+	mov ebx, dword ptr [pWline]
 
 	movzx eax, word ptr [ebx+Count_]
 	mov dword ptr [LoopCount], eax
@@ -1166,9 +1165,9 @@ WMLoopStart:
 //****************************************************************************
 // Draws a vertical translucent wall span (any Tex width)
 //					EAX
-//	void DrawTransWSpan(struct WLine *PWline)
+//	void DrawTransWSpan(struct WLine *pWLine)
 //****************************************************************************
-void DrawTransWSpan(struct WLine *PWline) {
+void DrawTransWSpan(struct WLine *pWline) {
 /*
 	_asm {
 		pushad
@@ -1525,54 +1524,6 @@ WTLoopStart:
 		popad
 	}
 */
-		VPEDword  ViewWidth;
-	VPEDword  Coord, CoordM2, DeltaM2;
-	VPEByte  *RawPtr, *PalPtr, *PixPtr;
-
-	LoopCount = PWline->Count;                                  // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
-	                                                            // mov LoopCount, eax		; LoopCount=EAX
-	if(LoopCount == 0) {
-		return;
-	}
-
-	DeltaM2   = (PWline->Delta & 0x0000FFFF) << 16;             // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
-	                                                            // xor cx, cx			; clear lower ecx
-
-	CoordM2   = ((PWline->Coord & 0x0000FFFF) << 16) |          // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
-	            ((PWline->Delta & 0x00FF0000) >> 16) |          // mov al, [ebx+Delta_+2]
-	            ((PWline->Mask  & 0x000000FF) <<  8);           // mov ah, [ebx+WMask_]
-
-	Coord     = ((PWline->Coord & 0x00FF0000) >> 16);           // xor edx, edx			; int Coord in low edx
-	                                                            // mov dl, [ebx+Coord_+2]
-
-	ViewWidth = PWline->BufWidth;                               // movzx ebp, word ptr [ebx+ViewWidth_]
-	RawPtr    = PWline->RawPtr;                                 // mov esi, [ebx+RawPtr_]		; raw ptr in esi
-	PixPtr    = PWline->PixPtr;                                 // mov edi, [ebx+PixPtr_]
-	PalPtr    = PWline->PalPtr;                                 // mov ebx, [ebx+PalPtr_]
-
-	// eax = CoordM2
-	// ecx = DeltaM2
-	// edx = Coord
-	// ebp = ViewWidth
-	do { 
-		Coord = (Coord & 0xFFFFFF00) |
-		       ((Coord & 0xFF)       &
-		     ((CoordM2 & 0xFF00) >> 8));                           // and dl, ah
-		
-		if(PalPtr[RawPtr[Coord]]>0)                                                        // WLoopStart:				; Start of unrolled loop
-			if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
-				PixPtr[0] = PalPtr[RawPtr[Coord]];                         // mov bl, [esi+edx]
-		                                                           // mov bl, [ebx]
-		                                                           // mov [edi], bl
-		PixPtr  += ViewWidth;                                      // add edi, ebp
-		CoordM2 += DeltaM2;                                        // add eax, ecx
-		Coord    = (Coord & 0xFFFFFF00) |
-		        ((((Coord & 0xFF)       +
-		         (CoordM2 & 0xFF)) & 0xFF) + (CoordM2 < DeltaM2)); // adc dl, al
-
-		LoopCount -= 1;                                            // sub dword ptr LoopCount, 1
-	}while(LoopCount > 0);                                       // jae WLoopStart
-//*/
 }
 
 
@@ -1608,14 +1559,14 @@ int32_t OTLoopOffset[] = {
 //****************************************************************************
 // Draws a vertical object span (any Tex width)
 //					EAX
-//	void DrawOSpan(struct WLine *PWline)
+//	void DrawOSpan(struct WLine *pWLine)
 //****************************************************************************
-void DrawOSpan(struct WLine *PWline) {
+void DrawOSpan(struct WLine *pWLine) {
 /*
 	_asm {
 		pushad
 
-		mov ebx, dword ptr [PWline]
+		mov ebx, dword ptr [pWLine]
 
 		movzx eax, word ptr [ebx+Count_]
 		mov dword ptr [LoopCount], eax
@@ -1882,7 +1833,7 @@ OLoopStart:
 //struct WLine {
 //	VPEByte  *RawPtr, *PalPtr, *PixPtr;
 //	VPEFixed  Coord, Delta;
-//	VPEShort  ViewWidth, Count, Mask;
+//	SHORT  ViewWidth, Count, Mask;
 //};
 //#define RawPtr_     0 // Tex ptr
 //#define PalPtr_     4 // Pal table ptr
@@ -1899,28 +1850,27 @@ OLoopStart:
 	VPEDword  CoordM2, Delta, DeltaM2;
 	VPEByte  *RawPtr, *PalPtr, *PixPtr;
 
-	LoopCount = PWline->Count;                      // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
-                                                  // mov LoopCount, eax		; LoopCount=EAX
+	LoopCount = pWLine->Count;                      // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
+	                                                // mov LoopCount, eax		; LoopCount=EAX
 	if(LoopCount == 0) {
 		return;
 	}
 
-	CoordM2   = (PWline->Coord & 0x0000FFFF) << 16; // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
+	CoordM2   = (pWLine->Coord & 0x0000FFFF) << 16; // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
 	                                                // xor ax, ax
-	DeltaM2   = (PWline->Delta & 0x0000FFFF) << 16; // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
+	DeltaM2   = (pWLine->Delta & 0x0000FFFF) << 16; // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
 	                                                // xor cx, cx			; clear lower ecx
-	Delta     = (PWline->Delta & 0xFFFF0000) >> 16; // xor edx, edx			; int Delta in low edx
+	Delta     = (pWLine->Delta & 0xFFFF0000) >> 16; // xor edx, edx			; int Delta in low edx
 	                                                // mov dx, [ebx+Delta_+2]
-	ViewWidth = PWline->BufWidth;                   // movzx ebp, word ptr [ebx+ViewWidth_]
-	RawPtr    = PWline->RawPtr +                    // mov esi, [ebx+RawPtr_]		; raw ptr in esi
-	          ((PWline->Coord & 0xFFFF0000) >> 16); // xor edx, edx			; int Coord in low edx
+	ViewWidth = pWLine->BufWidth;                   // movzx ebp, word ptr [ebx+ViewWidth_]
+	RawPtr    = pWLine->RawPtr +                    // mov esi, [ebx+RawPtr_]		; raw ptr in esi
+	          ((pWLine->Coord & 0xFFFF0000) >> 16); // xor edx, edx			; int Coord in low edx
 	                                                // mov dx, [ebx+Coord_+2]
 	                                                // add esi, edx			; Advance raw ptr
-	PixPtr    = PWline->PixPtr;                     // mov edi, [ebx+PixPtr_]
-	PalPtr    = PWline->PalPtr;                     // mov ebx, [ebx+PalPtr_]
+	PixPtr    = pWLine->PixPtr;                     // mov edi, [ebx+PixPtr_]
+	PalPtr    = pWLine->PalPtr;                     // mov ebx, [ebx+PalPtr_]
 
-	do {                      
-	if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
+	do {                                            // OLoopStart:				; Start of unrolled loop
 		PixPtr[0] = PalPtr[RawPtr[0]];                // mov bl, [esi]
 		                                              // mov bl, [ebx]
 		                                              // mov [edi], bl
@@ -1936,14 +1886,14 @@ OLoopStart:
 //****************************************************************************
 // Draws a vertical masked object span (any Tex width)
 //					EAX
-//	void DrawMaskOSpan(struct WLine *PWline)
+//	void DrawMaskOSpan(struct WLine *pWLine)
 //****************************************************************************
-void DrawMaskOSpan(struct WLine *PWline) {
+void DrawMaskOSpan(struct WLine *pWLine) {
 /*
 	_asm {
 		pushad
 
-	mov ebx, dword ptr [PWline]
+	mov ebx, dword ptr [pWLine]
 
 	movzx eax, word ptr [ebx+Count_]
 	mov dword ptr [LoopCount], eax
@@ -2270,394 +2220,391 @@ OMLoopStart:
 		popad
 	}
 */
-
-
+///*
 	VPEDword  ViewWidth;
 	VPEDword  CoordM2, Delta, DeltaM2;
 	VPEByte  *RawPtr, *PalPtr, *PixPtr;
 
-	LoopCount = PWline->Count;                      // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
-                                                  // mov LoopCount, eax		; LoopCount=EAX
+	LoopCount = pWLine->Count;                      // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
+	                                                // mov LoopCount, eax		; LoopCount=EAX
 	if(LoopCount == 0) {
 		return;
 	}
 
-	CoordM2   = (PWline->Coord & 0x0000FFFF) << 16; // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
+	CoordM2   = (pWLine->Coord & 0x0000FFFF) << 16; // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
 	                                                // xor ax, ax
-	DeltaM2   = (PWline->Delta & 0x0000FFFF) << 16; // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
+	DeltaM2   = (pWLine->Delta & 0x0000FFFF) << 16; // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
 	                                                // xor cx, cx			; clear lower ecx
-	Delta     = (PWline->Delta & 0xFFFF0000) >> 16; // xor edx, edx			; int Delta in low edx
+	Delta     = (pWLine->Delta & 0xFFFF0000) >> 16; // xor edx, edx			; int Delta in low edx
 	                                                // mov dx, [ebx+Delta_+2]
-	ViewWidth = PWline->BufWidth;                   // movzx ebp, word ptr [ebx+ViewWidth_]
-	RawPtr    = PWline->RawPtr +                    // mov esi, [ebx+RawPtr_]		; raw ptr in esi
-	          ((PWline->Coord & 0xFFFF0000) >> 16); // xor edx, edx			; int Coord in low edx
+	ViewWidth = pWLine->BufWidth;                   // movzx ebp, word ptr [ebx+ViewWidth_]
+	RawPtr    = pWLine->RawPtr +                    // mov esi, [ebx+RawPtr_]		; raw ptr in esi
+	          ((pWLine->Coord & 0xFFFF0000) >> 16); // xor edx, edx			; int Coord in low edx
 	                                                // mov dx, [ebx+Coord_+2]
 	                                                // add esi, edx			; Advance raw ptr
-	PixPtr    = PWline->PixPtr;                     // mov edi, [ebx+PixPtr_]
-	PalPtr    = PWline->PalPtr;                     // mov ebx, [ebx+PalPtr_]
+	PixPtr    = pWLine->PixPtr;                     // mov edi, [ebx+PixPtr_]
+	PalPtr    = pWLine->PalPtr;                     // mov ebx, [ebx+PalPtr_]
 
-	do {             
-		if(PalPtr[RawPtr[0]]>0)                               // OLoopStart:				; Start of unrolled loop
-			if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
-				PixPtr[0] = PalPtr[RawPtr[0]];                // mov bl, [esi]
-		                                              // mov bl, [ebx]
+	do {                                            // OLoopStart:				; Start of unrolled loop
+		                     						// mov bl, [esi]
+		    if(RawPtr[0]>0) {                       // or bl, bl
+		                                            // je $+6
+			PixPtr[0] = PalPtr[RawPtr[0]];              // mov bl, [ebx]
 		                                              // mov [edi], bl
+		}
 		PixPtr  += ViewWidth;                         // add edi, ebp
 		CoordM2 += DeltaM2;                           // add eax, ecx
 		RawPtr  += Delta + (CoordM2 < DeltaM2);       // adc esi, edx
 
 		LoopCount -= 1;                               // sub dword ptr LoopCount, 1
 	}while(LoopCount > 0);                          // jae OLoopStart
-
+//*/
 }
 
 //****************************************************************************
 // Draws a vertical translucent object span (any Tex width)
 //					EAX
-//	void DrawTransOSpan(struct WLine *PWline)
+//	void DrawTransOSpan(struct WLine *pWLine)
 //****************************************************************************
-void DrawTransOSpan(struct WLine *PWline) {
+void DrawTransOSpan(struct WLine *pWLine) {
 /*
 	_asm {
 		pushad
 
-	mov ebx, dword ptr [PWline]
+		mov ebx, dword ptr [pWLine]
 
-	movzx eax, word ptr [ebx+Count_]
-	mov dword ptr [LoopCount], eax
-	and eax, OTLOOP_LEN-1
-	mov esi, offset OTLoopOffset
-	mov eax, [esi+eax*4]
-	add eax, offset OTLoopStart
-	push eax
+		movzx eax, word ptr [ebx+Count_]
+		mov dword ptr [LoopCount], eax
+		and eax, OTLOOP_LEN-1
+		mov esi, offset OTLoopOffset
+		mov eax, [esi+eax*4]
+		add eax, offset OTLoopStart
+		push eax
 
-	mov esi, [ebx+RawPtr_]		; raw ptr in esi
+		mov esi, [ebx+RawPtr_]		; raw ptr in esi
 
-	mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
-	xor ax, ax
+		mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
+		xor ax, ax
 
-	mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
-	xor cx, cx			; clear lower ecx
+		mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
+		xor cx, cx			; clear lower ecx
 
-	xor edx, edx			; int Coord in low edx
-	mov dx, [ebx+Coord_+2]
-	add esi, edx			; Advance raw ptr
+		xor edx, edx			; int Coord in low edx
+		mov dx, [ebx+Coord_+2]
+		add esi, edx			; Advance raw ptr
 
-	xor edx, edx			; int Delta in low edx
-	mov dx, [ebx+Delta_+2]
+		xor edx, edx			; int Delta in low edx
+		mov dx, [ebx+Delta_+2]
 
-	movzx ebp, word ptr [ebx+ViewWidth_]
+		movzx ebp, word ptr [ebx+ViewWidth_]
 
-	mov edi, [ebx+PixPtr_]
-	mov ebx, [ebx+PalPtr_]
+		mov edi, [ebx+PixPtr_]
+		mov ebx, [ebx+PalPtr_]
 
-	sub ebx, ecx			; make [ebx+ecx] pointer
+		sub ebx, ecx			; make [ebx+ecx] pointer
 
-	ret
+		ret
 
 OTLoopStart:
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
-       
-	mov bl, [edi]
-	mov ch, [esi]
-	mov bl, [ebx+ecx]
-	mov [edi], bl
-	add edi, ebp
-	add eax, ecx
-	adc esi, edx
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
 
-	sub dword ptr [LoopCount], OTLOOP_LEN
-	jae OTLoopStart
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		mov bl, [edi]
+		mov ch, [esi]
+		mov bl, [ebx+ecx]
+		mov [edi], bl
+		add edi, ebp
+		add eax, ecx
+		adc esi, edx
+
+		sub dword ptr [LoopCount], OTLOOP_LEN
+		jae OTLoopStart
 
 		popad
 	}
 */
-
-
+///*
 	VPEDword  ViewWidth;
 	VPEDword  CoordM2, Delta, DeltaM2;
 	VPEByte  *RawPtr, *PalPtr, *PixPtr;
 
-	LoopCount = PWline->Count;                      // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
-                                                  // mov LoopCount, eax		; LoopCount=EAX
+	LoopCount = pWLine->Count;                      // movzx eax, word ptr [ebx+Count]	; EAX=pixels_to_draw
+	                                                // mov LoopCount, eax		; LoopCount=EAX
 	if(LoopCount == 0) {
 		return;
 	}
 
-	CoordM2   = (PWline->Coord & 0x0000FFFF) << 16; // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
-	                                                // xor ax, ax
-	DeltaM2   = (PWline->Delta & 0x0000FFFF) << 16; // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
-	                                                // xor cx, cx			; clear lower ecx
-	Delta     = (PWline->Delta & 0xFFFF0000) >> 16; // xor edx, edx			; int Delta in low edx
-	                                                // mov dx, [ebx+Delta_+2]
-	ViewWidth = PWline->BufWidth;                   // movzx ebp, word ptr [ebx+ViewWidth_]
-	RawPtr    = PWline->RawPtr +                    // mov esi, [ebx+RawPtr_]		; raw ptr in esi
-	          ((PWline->Coord & 0xFFFF0000) >> 16); // xor edx, edx			; int Coord in low edx
-	                                                // mov dx, [ebx+Coord_+2]
-	                                                // add esi, edx			; Advance raw ptr
-	PixPtr    = PWline->PixPtr;                     // mov edi, [ebx+PixPtr_]
-	PalPtr    = PWline->PalPtr;                     // mov ebx, [ebx+PalPtr_]
+	CoordM2    = (pWLine->Coord & 0x0000FFFF) << 16; // mov eax, [ebx+Coord_-2]		; frac Coord in hi eax
+	                                                 // xor ax, ax
+	DeltaM2    = (pWLine->Delta & 0x0000FFFF) << 16; // mov ecx, [ebx+Delta_-2]		; frac Delta in hi ecx
+	                                                 // xor cx, cx			; clear lower ecx
+	Delta      = (pWLine->Delta & 0xFFFF0000) >> 16; // xor edx, edx			; int Delta in low edx
+	                                                 // mov dx, [ebx+Delta_+2]
+	ViewWidth  = pWLine->BufWidth;                   // movzx ebp, word ptr [ebx+ViewWidth_]
+	RawPtr     = pWLine->RawPtr +                    // mov esi, [ebx+RawPtr_]		; raw ptr in esi
+	           ((pWLine->Coord & 0xFFFF0000) >> 16); // xor edx, edx			; int Coord in low edx
+	                                                 // mov dx, [ebx+Coord_+2]
+	                                                 // add esi, edx			; Advance raw ptr
+	PixPtr     = pWLine->PixPtr;                     // mov edi, [ebx+PixPtr_]
+	PalPtr     = pWLine->PalPtr - DeltaM2;           // mov ebx, [ebx+PalPtr_]
+	                                                 // sub ebx, ecx			; make [ebx+ecx] pointer
 
-	do {     
-		if(PalPtr[RawPtr[0]]>0)
-			if(PixPtr>=ScrBase && PixPtr<ScrBase+ScrWidth*ScrHeight)                      // OLoopStart:				; Start of unrolled loop
-				PixPtr[0] = PalPtr[RawPtr[0]+256*PixPtr[0]];                // mov bl, [esi]
-		                                              // mov bl, [ebx]
-		                                              // mov [edi], bl
-		PixPtr  += ViewWidth;                         // add edi, ebp
-		CoordM2 += DeltaM2;                           // add eax, ecx
-		RawPtr  += Delta + (CoordM2 < DeltaM2);       // adc esi, edx
+	do {                                             // OLoopStart:				; Start of unrolled loop
+		PixPtr[0] = PalPtr[PixPtr[0] +                 // mov bl, [edi]
+		           (DeltaM2 | (RawPtr[0] << 8))];      // mov ch, [esi]
+		                                               // mov bl, [ebx+ecx]
+		                                               // mov [edi], bl
+		PixPtr  += ViewWidth;                          // add edi, ebp
+		CoordM2 += DeltaM2;                            // add eax, ecx
+		RawPtr  += Delta + (CoordM2 < DeltaM2);        // adc esi, edx
 
-		LoopCount -= 1;                               // sub dword ptr LoopCount, 1
-	}while(LoopCount > 0);                          // jae OLoopStart
+		LoopCount -= 1;                                // sub dword ptr LoopCount, 1
+	}while(LoopCount > 0);                           // jae OLoopStart
+//*/
 }
 
-
-
-//extern VPint
