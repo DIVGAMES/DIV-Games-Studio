@@ -486,8 +486,13 @@ pos+=(int)j;
 if(pos>=s->sound->alen/2) {
 	if(s->loop==1)
 		pos=0;
-	else
-		Mix_HaltChannel(chan);
+	else {
+    for(; i < len/2; i++) {
+      samples[i] = 0;
+    }
+    StopSound(chan);
+    return;
+  }
 } 
 channels[chan].pos=pos;
 
@@ -566,8 +571,14 @@ int StopSound(int NumChannel)
 {
   //printf("Stopping sound %d\n",NumChannel);
 #ifdef MIXER
-if(Mix_Playing(NumChannel))
+if(Mix_Playing(NumChannel)) {
+  if(!Mix_UnregisterAllEffects(NumChannel)) {
+   printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
+  }
   Mix_HaltChannel(NumChannel);
+}
+
+//  remove all effects from channel 0
 
   if(NumChannel >= CHANNELS) return(-1);
 #ifdef DOS
