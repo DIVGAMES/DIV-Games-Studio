@@ -486,8 +486,13 @@ pos+=(int)j;
 if(pos>=s->sound->alen/2) {
 	if(s->loop==1)
 		pos=0;
-	else
-		Mix_HaltChannel(chan);
+	else {    
+    // remove all effects from channel 0
+    if(!Mix_UnregisterAllEffects(chan)) {
+      printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
+    }
+    Mix_HaltChannel(chan);
+  }
 } 
 channels[chan].pos=pos;
 
