@@ -20,12 +20,13 @@ int SongInst[128];
 int Freq_original[CHANNELS];
 
 int SoundActive=1;
+void print_init_flags(int flags)
+{
 #ifndef GP2X
 #ifndef PS2
 #ifndef PSP
 #ifdef MIXER
-void print_init_flags(int flags)
-{
+
 //	int i=0;
 	
 //	int n = Mix_GetNumMusicDecoders();
@@ -43,11 +44,11 @@ void print_init_flags(int flags)
                 printf("None");
         
         printf("\n");
+#endif
+#endif
+#endif
+#endif
 }
-#endif
-#endif
-#endif
-#endif
 
 static int initted=0;
 void InitSound(void)
@@ -346,18 +347,21 @@ int LoadSound(char *ptr, long Len, int Loop)
 	
 	res=pcm2wav(mem,Len,fdst,(int)Len+40);
 	fclose(mem);
-	fseek(fdst,0,SEEK_SET);
+
+#ifdef WIN32
 	fflush(fdst);
-	
+  fseek(fdst,0,SEEK_SET);
+#endif
+
 	if(res>1) { // 0 = ok. 1 = already wav. 2=failed save, 3=failed read, 4=out of mem
 		printf("failed: err %d\n",res);
+    fclose(fdst);
 		free(dst);
 		return(-1);
 	}
 	if(res==1) {
 		memcpy(dst,ptr,Len);
 	}
-	fclose(fdst);
 #ifdef WIN32
 if(res==1)
 	sound = Mix_LoadWAV("divpcm.tmp");
@@ -367,11 +371,13 @@ else
 	remove("divwav.tmp");
 	remove("divpcm.tmp");
 #else
-	rw = SDL_RWFromMem(dst, (int)(Len+255));
+	rw = SDL_RWFromMem((void *)dst, (int)(Len+255));
 	sound = Mix_LoadWAV_RW(rw, 1);
 #endif
-	free(dst);
-	}
+	fclose(fdst);
+  free(dst);
+
+  }
 	if(!sound) {
 		printf("Mix_LoadWAV: %s\n", Mix_GetError());
 		return (-1);
