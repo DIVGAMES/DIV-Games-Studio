@@ -792,8 +792,8 @@ GLOBAL int snum; // Variable para indicar sobre que scroll se trata
 
 struct _divmalloc {
   byte *ptr;
-  int  imem1;
-  int  imem2;
+  memptrsize  imem1;
+  memptrsize  imem2;
 };
 
 GLOBAL struct _divmalloc divmalloc[256];
@@ -944,6 +944,7 @@ GLOBAL int debugger_step,call_to_debug,process_stoped;
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void init_debug(void);
+void end_debug(void);
 void debug(void);
 void init_colors(void);
 void init_big(void);

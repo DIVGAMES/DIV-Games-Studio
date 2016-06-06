@@ -1706,7 +1706,8 @@ void closefiles(void); // close fake fmemopen'd files
 #endif
 
 void finalizacion (void) {
-  int newmapcount;
+  int newmapcount = 0;
+  int snum = 0;
 #ifdef DIVDLL
 // unload dlls
 	while (nDLL--)
@@ -1749,11 +1750,54 @@ void finalizacion (void) {
       g[0].grf[newmapcount]=0; 
     }
   }
+  // Free fpg 0
+  free(g[0].grf);
+
+// Free screen ram
+  free(copia);
+  free(copia2);
+
+// Free div mem
+  free(mem);
+
+// Free scroll mem
+  for (snum=0;snum<10;snum++) {
+    if(iscroll[snum]._sscr1!=0) 
+      free(iscroll[snum]._sscr1);
+      free(iscroll[snum]._sscr2);
+      free(iscroll[snum].fast);
+  }
+
+// Stop sounds
+  for(snum=0;snum<128;snum++) {
+    UnloadSound(snum);
+  }
+
+// Free ghost table
+  free(ghost_inicial);
+
+// Free quads
+  free(cuad);
+
+// Free system font
+  free(fonts[0]);
+  free(sys06x08);
+#ifdef MIXER
+  Mix_CloseAudio();
+  Mix_Quit();
+#endif
+
+#ifdef DEBUG
+  // Free debug window
+  end_debug();
+  free(copia_debug);
+#endif
 
 #if defined (WIN32) || defined (PSP)
 
 	closefiles();
 
+  SDL_Quit();
 #endif
 
 }
