@@ -1706,6 +1706,7 @@ void closefiles(void); // close fake fmemopen'd files
 #endif
 
 void finalizacion (void) {
+  int newmapcount;
 #ifdef DIVDLL
 // unload dlls
 	while (nDLL--)
@@ -1732,15 +1733,22 @@ void finalizacion (void) {
 
 #ifdef DEBUG
 	if(text_font!=NULL) {
-		printf("text_font = %x\n",text_font);
+//		printf("text_font = %x\n",text_font);
 		free(text_font);
 	}
 	if(graf_ptr!=NULL) {
-		printf("graf_ptr = %x\n",text_font);
+//		printf("graf_ptr = %x\n",text_font);
 		free(graf_ptr);
 	}
 #endif
 
+// free any new_map ptrs if any
+  for(newmapcount = 1000; newmapcount<2000; newmapcount++) {
+    if (g[0].grf[newmapcount]!=0) { 
+      free((byte*)(g[0].grf[newmapcount])-1330); 
+      g[0].grf[newmapcount]=0; 
+    }
+  }
 
 #if defined (WIN32) || defined (PSP)
 
