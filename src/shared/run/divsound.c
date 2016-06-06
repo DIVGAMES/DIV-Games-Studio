@@ -602,6 +602,12 @@ int ChangeSound(int NumChannel,int Volumen,int Frec)
 
 int ChangeChannel(int NumChannel,int Volumen,int Panning)
 {
+  // Set the volume
+  Mix_Volume(NumChannel,Volumen/2);
+
+  // set the balance
+  Mix_SetPanning(NumChannel, 255-Panning, Panning);
+
 #ifdef DOS
   CHANNEL *chptr;
 
@@ -623,7 +629,7 @@ int IsPlayingSound(int NumChannel)
 #ifdef DOS
   SAMPLE *smp = judas_channel[NumChannel].smp;
   char *pos   = judas_channel[NumChannel].pos;
-
+  
   if( (NumChannel >= CHANNELS) ||
       ((judas_channel[NumChannel].voicemode & VM_ON) == VM_OFF) ||
       (!judas_channel[NumChannel].smp) ) return(0);
