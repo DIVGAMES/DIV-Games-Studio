@@ -267,7 +267,10 @@ void MOD2(void) {
 void MOD3(void) {
   modinfo *mymodinfo=(modinfo *)v.aux;
 
-  if(mymodinfo->SongCode==SongCode) FreeMOD();
+  FreeMOD();
+
+  if(mymodinfo->SongCode!=0)
+    Mix_FreeMusic(mymodinfo->SongCode);
 
   free(v.aux);
 }
@@ -296,6 +299,7 @@ void MOD0(void) {
 void FreeMOD(void)
 {
 	printf("TODO - JUDAS FREE MOD \n");
+  Mix_HaltMusic();
 /*  switch(SongType)
   {
     case XM:   judas_freexm();  break;
@@ -914,16 +918,18 @@ void PlaySong(char *pathname)
 
 	music=Mix_LoadMUS(pathname);
 	
+  mymodinfo->SongCode=music;
 	if(!music) {
 		printf("Song error : %s\n", Mix_GetError());
 		v_texto=(char *)Mix_GetError();//texto[46];
 		dialogo(err0);
 		return;
 	}
+
 	if(Mix_PlayMusic(music, -1)==-1) {
     debugprintf("Mix_PlayMusic: %s\n", Mix_GetError());
     // well, there's no music, but most games don't break without music...
-}
+  }
 //printf("%x\n",music);
 
 #ifdef NOTYET
