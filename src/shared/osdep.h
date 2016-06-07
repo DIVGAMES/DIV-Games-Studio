@@ -1,5 +1,6 @@
 #ifndef __OSDEP_H
 #define __OSDEP_H
+
 // OSDEP includes
 // should be good for most SDL ports
 
@@ -7,9 +8,28 @@
 #include <emscripten.h>
 #endif
 
+#ifdef SDL
+#include <SDL/SDL.h>
+#endif
+
+#ifdef MIXER
+#include <SDL/SDL_mixer.h>
+#endif
+
+#ifdef IMAGE
+#include <SDL/SDL_image.h>
+#endif
+
+#include "lib/sdlgfx/SDL_rotozoom.h"
+
 #ifdef ZLIB
 #include "unzip.h"
 #endif
+
+#ifdef TTF
+#include "ttf.h"
+#endif
+
 
 #ifndef PS2
 #include <stdint.h>
@@ -56,16 +76,13 @@ typedef int int32_t;
 
 
 
-#include <SDL/SDL.h>
-#ifdef MIXER
-#include <SDL/SDL_mixer.h>
-#endif
+
 
 
 #if __WORDSIZE == 32
-#define memptrsize int
+#define memptrsize uint32_t
 #else
-#define memptrsize long
+#define memptrsize uint64_t
 #endif
 
 
@@ -172,9 +189,7 @@ unsigned int _dos_findnext(struct find_t *result);
 
 unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
 
-#ifndef __WIN32__
-void mkdir(char *dir);
-#endif
+void __mkdir(char *dir);
 
 void _dos_getdrive( unsigned int *drive);
 void _makepath(

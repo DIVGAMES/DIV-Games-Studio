@@ -22,7 +22,7 @@ void muestra_thumb(struct t_listboxbr * l, int num);
 
 
 
-#define incremento_maximo 65536
+#define incremento_maximo 6553600
 int incremento=incremento_maximo;
 
 int opc_img[8]={0,0,1,1,0,1,1,1}; // imagenes on/off en ventanas (v_tipo)
@@ -34,7 +34,13 @@ int num_taggeds;
 int ini_tagged;
 int song_playing=0;
 
-//SAMPLE * smp=NULL;
+
+#define FILE_CHUNK 2048
+
+#ifdef MIXER
+Mix_Chunk * smp=NULL;
+
+#endif
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Variables del mขdulo
@@ -244,7 +250,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
         fseek(f,0,SEEK_END);
         thumb[num].filesize=ftell(f);
         fseek(f,0,SEEK_SET);
-        if (thumb[num].filesize<=2048) incremento=2048;
+        if (thumb[num].filesize<=FILE_CHUNK) incremento=FILE_CHUNK;
         if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))!=NULL) {
           if (thumb[num].filesize>incremento) {
             if (fread(thumb[num].ptr,1,incremento,f)==incremento) {
@@ -428,7 +434,7 @@ void crear_un_thumb_PAL(struct t_listboxbr * l)
     incremento=0;
   } else if (incremento<incremento_maximo) incremento+=128;
 
-  if (l->maximo && incremento>=16384)
+  if (l->maximo && incremento>=FILE_CHUNK)
   {
     num=l->inicial;
     do
@@ -605,7 +611,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       fseek(f,0,SEEK_END);
       thumb[num].filesize=ftell(f);
       fseek(f,0,SEEK_SET);
-      if (thumb[num].filesize<=2048) incremento=2048;
+      if (thumb[num].filesize<=FILE_CHUNK) incremento=FILE_CHUNK;
       if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))==NULL)
       {
         fclose(f);
@@ -1035,7 +1041,7 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
         thumb[num].status=-1;
         return;
       }
-      if (thumb[num].filesize<=2048) incremento=2048;
+      if (thumb[num].filesize<=FILE_CHUNK) incremento=FILE_CHUNK;
       if ((thumb[num].ptr=(char *)malloc(thumb[num].filesize))==NULL)
       {
         fclose(f);
@@ -1544,7 +1550,10 @@ int ns,chn;
 void browser2(void) {
   unsigned n, selected;
   unsigned pos1, pos2;
-  SoundInfo *SI=NULL;
+#ifdef MIXER
+  Mix_Chunk *SI = NULL;
+#endif
+
   int need_refresh=0;
   int estado;
 //FILE *f;
@@ -1688,43 +1697,54 @@ void browser2(void) {
         strcpy(input, full);
         browser1();
         v.volcar=1;
-#ifdef NOTYET
+#ifdef MIXER
 
         if(v_thumb==7 && opc_pru) {
+#ifdef NOTYET
           if ( judascfg_device == DEV_NOSOUND) {
             if ( SoundError ) {
               v_texto=texto[549]; dialogo(err0);
             } else {
               v_texto=texto[548]; dialogo(err0);
             } return;
-          } else {
+          } else 
+#else
+			if(true) 
+#endif
+			{
             strcpy(full,tipo[v_tipo].path);
             if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
-              strcat(full,'/');
+              strcat(full,"/");
             strcat(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
 
-            if(judas_channel[0].smp) judas_stopsample(0);
-            if(smp!=NULL) { judas_freesample(smp); smp=NULL; }
-
-            SI = judas_loadwav(full);
-            if(judas_error != JUDAS_OK && judas_error == JUDAS_WRONG_FORMAT)
+			Mix_HaltChannel(-1);
+			if ( smp !=NULL)
+				Mix_FreeChunk(smp);
+			
+			smp=NULL;
+			
+            smp = Mix_LoadWAV(full);
+            if(smp==NULL) 
             {
-              SI = judas_loadrawsample(full, 0, 0, 0);
+				// try loading PCM
+//              SI = judas_loadrawsample(full, 0, 0, 0);
             }
-            if(judas_error != JUDAS_OK || SI == NULL)
-            {
-              if(SI != NULL) free(SI);
-            }
+            if ( smp == NULL ) {
+				debugprintf("failed to load %s\n",full);
+				
+			}
             else
             {
-              smp=SI->sample;
-              judas_playsample(smp, 0, SI->SoundFreq, 64*256, MIDDLE);
-              free(SI);
+//              smp=SI->sample;
+			Mix_PlayChannel(0,smp,0);
+//              judas_playsample(smp, 0, SI->SoundFreq, 64*256, MIDDLE);
+//              free(SI);
               while (mouse_b&1) read_mouse();
             }
           }
 //        strcpy(full,archivo+(larchivosbr.zona-10+larchivosbr.inicial)*an_archivo);
         } else if(v_tipo==16 && opc_pru) {
+#ifdef NOTYET
           strcpy(full,tipo[v_tipo].path);
           if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
             strcat(full,"/");
@@ -1748,6 +1768,7 @@ void browser2(void) {
             }
           }
           while (mouse_b&1) read_mouse();
+#endif
         }
       } else {
         if(num_taggeds==1) v_existe=1, v_terminado=1;
@@ -1861,8 +1882,9 @@ void dir_abrirbr(void) {
 
   n=0; m=_dos_findfirst("*.*",_A_SUBDIR,&fileinfo);
   while (m==0 && n<max_directorios) {
-    if (strcmp(fileinfo.name,".") && (fileinfo.attrib&16))
+    if (strcmp(fileinfo.name,".") && (fileinfo.attrib&16)) {
       strcpy(directorio+n++*an_directorio,fileinfo.name);
+   }
     m=_dos_findnext(&fileinfo);
   } ldirectoriosbr.maximo=n;
   qsort(directorio,ldirectoriosbr.maximo,an_directorio,(int (*)(const void *, const void *))strcmp);

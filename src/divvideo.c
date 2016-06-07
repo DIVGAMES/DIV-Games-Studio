@@ -6,7 +6,14 @@
 #include "global.h"
 //#include "inc\svga.h"
 //#include "inc\vesa.h"
+#include "lib/sdlgfx/SDL_framerate.h"
 
+
+#ifdef TTF
+#define CDEPTH 32
+#else
+#define CDEPTH 8
+#endif
 
 void snapshot(byte *p);
 void volcadocsvga(byte *p);
@@ -15,7 +22,7 @@ void volcadocx(byte * p);
 void volcadopsvga(byte *p);
 void volcadop320200(byte *p);
 void volcadopx(byte * p);
-
+void volcadosdl(byte *p);
 
 ///////////////////////////////////////////////////////////////////////////////
 //	Declarations and module-level data
@@ -40,25 +47,33 @@ int IsFullScreen(SDL_Surface *surface)
     return 0; // Return false if surface is windowed
 }
 
-int SDL_ToggleFS(SDL_Surface *surface)
+void SDL_ToggleFS(SDL_Surface *surface)
 {
-    Uint32 flags = surface->flags; // Get the video surface flags
-
     if (IsFullScreen(surface))
-    {
+		fsmode=0;
+	else 
+		fsmode=1;
+	
+	svmode();
+}
+
+int nothing(SDL_Surface *surface) {
         // Switch to WINDOWED mode
+     Uint32 flags = surface->flags; // Get the video surface flags
+
+   if (IsFullScreen(surface)) {
         flags &= ~SDL_FULLSCREEN;
-        if ((vga = SDL_SetVideoMode(vga_an,vga_al,8, 0)) == NULL) 
+        if ((vga = SDL_SetVideoMode(vga_an, vga_al, CDEPTH, 0)) == NULL) 
 			return 0;
 		
-		vga = SDL_SetVideoMode(vga_an,vga_al,8, 0);
+		vga = SDL_SetVideoMode(vga_an, vga_al, CDEPTH, 0);
 		fsmode=0;
     } else {
 		
-		vga = SDL_SetVideoMode(vga_an,vga_al, 8,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga = SDL_SetVideoMode(vga_an,vga_al, CDEPTH,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 		if (vga == NULL) {
-			vga = SDL_SetVideoMode(vga_an,vga_al, 8, 0);
+			vga = SDL_SetVideoMode(vga_an,vga_al, CDEPTH, 0);
 		}
 		fsmode=1;
 	}
@@ -96,20 +111,26 @@ struct {
 //      Awaits the arrival of the vertical retrace (vsync)
 ///////////////////////////////////////////////////////////////////////////////
 
+FPSmanager fpsman;
+
 void retrazo(void) {
+
 //printf("retrazo (vsync)\n");
+SDL_framerateDelay(&fpsman);
+
 #ifdef NOTYET
   while (inp(0x3da)&8);
   while ((inp(0x3da)&8)==0);
 #endif
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Activate a palette
 ///////////////////////////////////////////////////////////////////////////////
 
+
 void set_dac(byte *_dac) {
-	SDL_Color colors[256];
 	int i;
 	int b=0;
 	for(i=0;i<256;i++){
@@ -118,9 +139,10 @@ void set_dac(byte *_dac) {
           colors[i].b=_dac[b+2]*4;
           b+=3;
     }
-	if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
-		printf("Failed to set palette :(\n"); 
-	
+	if(vga->format->BitsPerPixel==8) {
+		if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+			printf("Failed to set palette :(\n"); 
+	}	
 	retrazo();
 }
 
@@ -136,10 +158,38 @@ float w_ratio=1.0;
 float h_ratio=1.0;
 #endif
 
+SDL_Surface* copy_surface(SDL_Surface* source)
+{
+    SDL_Surface *target;
+
+    target = SDL_CreateRGBSurface(0, source->w, source->h,
+                                  source->format->BitsPerPixel,
+                                  source->format->Rmask, source->format->Gmask,
+                                  source->format->Bmask, source->format->Amask);
+
+    /*
+     * I really don't understand why this is necessary. This is supposed to
+     * clear the SDL_SRCALPHA flag presumably set by IMG_Load. But why wouldn't
+     * blitting work otherwise?
+     */
+//    SDL_SetAlpha(source, 0, 0);
+    
+    SDL_BlitSurface(source, 0, target, 0);
+    return target;
+}
+
+
 void svmode(void) {
 //	printf("TODO - Set video mode (%dx%d)\n",vga_an,vga_al);
+ Uint32 colorkey=0;
+ int vn=0;
 
-  printf("full screen: %d\n",fsmode);
+SDL_initFramerate(&fpsman);
+SDL_setFramerate(&fpsman, 60);
+
+ 
+  debugprintf("full screen: %d\n",fsmode);
+
 #ifdef GCW_SOFTSTRETCH
 	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
@@ -147,6 +197,7 @@ void svmode(void) {
 #else
 
 #ifdef SDL2
+
 divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
@@ -154,19 +205,72 @@ divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
                              SDL_WINDOW_SHOWN);
 divRender = SDL_CreateRenderer(divWindow, -1, 0);
 #else
+
 	if(fsmode==0)
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8,  0);
+		vga=SDL_SetVideoMode(vga_an, vga_al, CDEPTH, SDL_SWSURFACE | SDL_RESIZABLE);
 
 	else
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga=SDL_SetVideoMode(vga_an, vga_al, CDEPTH,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
-#endif
-	modovesa=1;
 
-//printf("%d %d \n",vga->pitch,vga->format->BytesPerPixel);
+#endif
+
+//	if(copia_surface)
+//		SDL_FreeSurface(copia_surface);
+//			SDL_SetAlpha(copia_surface,SDL_SRCALPHA | SDL_RLEACCEL,128);
+
+	copia_surface = SDL_DisplayFormat( vga );
+
+//	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
+
+//	SDL_FillRect(copia_surface, NULL, 0);
+
+//	if(SDL_SetColorKey(copia_surface , SDL_SRCCOLORKEY , colorkey)==-1)
+//		fprintf(stderr, "Warning: colorkey will not be used, reason: %s\n", SDL_GetError());;
+	
+
+#ifdef TTF
+	if(vga!=NULL) {
+		
+		if(tapiz_surface!=NULL) {
+			tempsurface = SDL_DisplayFormat(tapiz_surface);
+			if(tempsurface!=NULL) {
+				SDL_FreeSurface(tapiz_surface);
+				tapiz_surface=tempsurface;
+				tempsurface=NULL;
+			}
+		}
+		
+		if(mouse_surface!=NULL) {
+			tempsurface = SDL_DisplayFormatAlpha(mouse_surface);
+			if(tempsurface!=NULL) {
+				SDL_FreeSurface(mouse_surface);
+				mouse_surface=tempsurface;
+				tempsurface=NULL;
+			}
+		}
+		
+		for(vn=max_windows-1;vn>=0; vn--) {
+			if(ventana[vn].surfaceptr!=NULL) {
+				tempsurface=SDL_DisplayFormat(ventana[vn].surfaceptr);
+				if(tempsurface!=NULL) {
+					SDL_FreeSurface(ventana[vn].surfaceptr);
+					ventana[vn].surfaceptr=tempsurface;
+					tempsurface=NULL;
+				}
+			}
+		}	
+	}
+#endif
+
+	modovesa=1;
+	
+	set_dac(dac);
+
 #ifdef NOTYET
+
   VBESCREEN Screen;
 
   int mode=0;
@@ -258,17 +362,15 @@ void svmodex(int m) {
 void rvmode(void) {
 	if(IsFullScreen(vga))
 		SDL_ToggleFS(vga);
-//	printf("TODO - rvmode - Reset Video Mode\n");
-#ifdef NOTYET
-  SV_restoreMode();
-  _setvideomode(3);
-#endif
+	SDL_FreeSurface(copia_surface);
+	
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Dump buffer to vga (screen)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 #ifdef GCW_SOFTSTRETCH
+
 void volcadogcw(byte *p) {
 	// blit screen to smaller 320x240 screen
 	byte *q = (byte *)vga->pixels;
@@ -296,9 +398,79 @@ void volcadogcw(byte *p) {
 }
 #endif
 
+void vgacpy(byte * q, byte * p, int n) ;
+
+
+void volcadosdlp(byte *p) {
+volcadosdl(p);
+return;
+
+	  int y=0,n;
+	  byte *oldp = (byte *)p;
+	  uint32_t x1=vga_an,y1=vga_al,w1=1,h1=1;
+	SDL_Rect rc;  
+	byte *q = (byte *)vga->pixels;
+	uint32_t *q32 = (uint32_t *)vga->pixels;
+	SDL_LockSurface(vga);
+	
+  while (y<vga_al) {
+    n=y*4;
+    if (scan[n+1]) {
+//		printf("y:%d n: %d\n",y,n+1); 
+		memcpy(q+scan[n],p+scan[n],scan[n+1]);
+		if(scan[n]<x1)
+			x1=scan[n];
+		if(y<y1)
+			y1=y;
+		if(scan[n]+scan[n+1]+1-x1>w1)
+			w1=scan[n]+scan[n+1]+1-x1;
+			
+		if(y+1-y1>h1)
+			h1=(y+1-y1);
+			
+	}
+    if (scan[n+3]) {
+//		printf("y:%d n: %d\n",y,n+3); 
+		memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
+		if(scan[n+2]<x1)
+			x1=scan[n+2];
+		if(y<y1)
+			y1=y;
+		if(scan[n+2]+scan[n+3]+1-x1>w1)
+			w1=scan[n+2]+scan[n+3]+1-x1;
+			
+		if(y+1-y1>h1)
+			h1=(y+1-y1);
+			
+//		SDL_UpdateRect(vga,scan[n+2],y,scan[n+3],1);
+
+	}
+
+//    q+=vga_an; 
+    q+=vga->pitch; 
+    p+=vga_an; 
+    y++;
+  }
+  SDL_UnlockSurface(vga);
+  printf("changed rect: %d %d %d %d     \r",x1,y1,w1,h1);
+  
+ SDL_UpdateRect(vga,x1,y1,w1,h1);
+	 
+//	SDL_Flip(vga);
+//	volcadosdl(p);
+	return;
+}
 
 void volcadosdl(byte *p) {
 	int vy;
+	int vx;
+
+	byte *oldp=(byte *)p;
+	
+	uint32_t colorkey = 0;
+	SDL_Rect trc;
+	int vn=0;
+		
 #ifdef GCW_SOFTSTRETCH
 	if(vga_an>=GCW_W && vga_al>=GCW_H) {
 		volcadogcw(p);
@@ -306,33 +478,147 @@ void volcadosdl(byte *p) {
 		return;
 	}
 #endif
-if(SDL_MUSTLOCK(vga))
-	SDL_LockSurface(vga);
+
+	int64_t n,m=(vga_an*vga_al)/4,plano=0x100,y;
+	byte * v2, * p2;
+
+	if(SDL_MUSTLOCK(vga))
+		SDL_LockSurface(vga);
 
 	byte *q = (byte *)vga->pixels;
-	for (vy=0; vy<vga_al;vy++) {
-		memcpy(q,p,vga_an);
-		p+=vga_an;
-		q+=vga->pitch;
-		//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+	uint32_t *q32 = (uint32_t *)vga->pixels;
+
+//	SDL_FillRect(vga, NULL, 0);
+
+
+#ifndef TTF	
+	if(0) {
+		do { 
+			v2=q+m; 
+			y=0; 
+			p2=p++; 
+			plano<<=1;
+			while (y<vga_al) {
+				n=y*4;
+				
+				if (scan[n+1]) 
+					vgacpy(v2+scan[n],p2+scan[n]*4,scan[n+1]);
+				
+				if (scan[n+3]) 
+					vgacpy(v2+scan[n+2],p2+scan[n+2]*4,scan[n+3]);
+				
+				v2+=vga_an/4; 
+					p2+=vga_an; y++; 
+			}
+		} while (plano<=0x800);
+
+		y=0; 
+		v2=(byte *)vga->pixels; 
+
+		while (y<vga_al) {
+			n=y*4;
+			if (scan[n+1]) 
+				memcpyb(v2+scan[n],v2+scan[n]+m,scan[n+1]);
+			if (scan[n+3]) 
+				memcpyb(v2+scan[n+2],v2+scan[n+2]+m,scan[n+3]);
+			v2+=vga_an/4; y++;
+		} 
+
+	} else {
+		for (vy=0; vy<vga_al;vy++) {
+			switch(vga->format->BitsPerPixel) {
+				case 32:
+					q32= (uint32_t*)q;
+					for(vx=0;vx<vga_an;vx++) {
+						q32[vx]=(uint32_t)((colors[*p].b)+(colors[*p].g<<8)+(colors[*p].r<<16));
+						*p++;
+					} 
+					break;
+
+				case 24:
+					for(vx=0;vx<vga_an;vx++) {
+						q[vx*3]=colors[*p].b;
+						q[vx*3+1]=colors[*p].g;
+						q[vx*3+2]=colors[*p].r;
+						*p++;
+					}
+					break;
+
+					
+				case 16:
+					for(vx=0;vx<vga_an;vx++) {
+						q[vx*2]=colors[*p].b+colors[*p].g<<8;
+						q[vx*2+1]=colors[*p].g;
+						*p++;
+					}
+					break;
+				
+				case 8: 
+					memcpy(q,p,vga_an);
+					p+=vga_an;
+			}
+		
+			q+=vga->pitch;
+
+		}
 	}
-	if(SDL_MUSTLOCK(vga))
-		SDL_UnlockSurface(vga);
 	
+#else
+	
+	
+	if(tapiz_surface!=NULL);
+		SDL_BlitSurface(tapiz_surface, NULL, vga, NULL);
+
+	for(vn=max_windows-1;vn>=0; vn--) {
+		if(ventana[vn].surfaceptr!=NULL) {
+			trc.x=ventana[vn].x;
+			trc.y=ventana[vn].y;
+			trc.w=ventana[vn].an;
+			trc.h=ventana[vn].al;
+
+			
+			//SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL, 230);
+			
+			if(ventana[vn].exploding==1) {
+				SDL_SetAlpha(ventana[vn].surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL,explode_num*25);
+			}
+			SDL_BlitSurface(ventana[vn].surfaceptr,NULL,vga,&trc);
+			
+		}
+		
+	}
+
+	trc.x=mouse_x;
+	trc.y=mouse_y;
+	trc.w=mouse_surface->w;
+	trc.h=mouse_surface->h;
+
+	SDL_SetAlpha(mouse_surface,SDL_SRCALPHA | SDL_RLEACCEL,32);
+	
+	SDL_BlitSurface(mouse_surface,NULL,vga,&trc);
+
+//printf("window zero is %d\n",v.tipo);
+#endif
+		
 	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 
+	if(SDL_MUSTLOCK(vga))
+		SDL_UnlockSurface(vga);
+
 	SDL_Flip(vga);
+
+//	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
+//	SDL_FillRect(copia_surface, NULL, colorkey);
+
+
+	memset(oldp,vga_an*vga_al,0);
+
 }
 
 void volcado(byte *p) {
-//printf("frame\n");
 
   if ((shift_status&4) && (shift_status&8) && scan_code==_P) snapshot(p);
 
-  if (shift_status&8 && key(_ENTER)) {
-	SDL_ToggleFS(vga);
-	//do{tecla();} while (key(_ENTER));
- } 
 
   if (volcado_completo) {
     if (modovesa) volcadosdl(p);
@@ -345,8 +631,7 @@ void volcado(byte *p) {
       case 376282: volcadocx(p); break;
     }
   } else {
-	  
-    if (modovesa) volcadosdl(p); 
+    if (modovesa) volcadosdlp(p); 
     else switch(vga_an*1000+vga_al) {
       case 320200: volcadop320200(p); break;
       case 320240: volcadopx(p); break;
@@ -356,7 +641,15 @@ void volcado(byte *p) {
       case 376282: volcadopx(p); break;
     }
   } 
+
+  if (shift_status&8 && key(_ENTER)) {
+	SDL_ToggleFS(vga);
+ } 
+
+
   init_volcado();
+
+
 }
 
 void snapshot(byte *p) {
@@ -382,7 +675,7 @@ void snapshot(byte *p) {
 
 void volcadop320200(byte *p) { // PARTIAL
 //printf("partial dump\n");
-//#ifdef NOTYET
+#ifdef NOTYET
   int y=0,n;
   byte * q=(byte *)vga->pixels;
 
@@ -396,8 +689,8 @@ void volcadop320200(byte *p) { // PARTIAL
     if (scan[n+3]) memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
     q+=vga_an; p+=vga_an; y++;
   }
-//#endif
-SDL_Flip(vga);
+#endif
+//SDL_Flip(vga);
 }
 
 void volcadoc320200(byte *p) { // COMPLETE
@@ -485,7 +778,7 @@ void volcadocsvga(byte *p) {
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void volcadopx(byte * p) {
-printf("divvideo.cpp volcadopx\n");
+debugprintf("divvideo.cpp volcadopx\n");
 #ifdef NOTYET
   int n,m=(vga_an*vga_al)/4,plano=0x100,y;
   byte * v2, * p2;
@@ -533,6 +826,8 @@ void volcadocx(byte * p) {
 void vgacpy(byte * q, byte * p, int n) {
   int m;
 
+return;
+
   m=n>>2; while (m--) {
     *(int*)q=*p+256*(*(p+4)+256*(*(p+8)+256*(*(p+12)))); q+=4; p+=16;
   }
@@ -546,7 +841,9 @@ void vgacpy(byte * q, byte * p, int n) {
 //      Select a window for subsequent dump
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void init_volcado(void) { memset(&scan[0],0,MAX_YRES*8); volcado_completo=0; }
+void init_volcado(void) { 
+	memset(&scan[0],0,MAX_YRES*8); volcado_completo=0; 
+}
 
 void volcado_parcial(int x,int y,int an,int al) {
   int ymax,xmax,n,d1,d2,x2;

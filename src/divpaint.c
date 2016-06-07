@@ -2176,7 +2176,7 @@ void bezier(int x0,int y0,int x1,int y1,int _x0,int _y0,int _x1,int _y1,int inc0
 
 void line0(int x0, int y0, int x1, int y1, int inc0) {
 
-  int dx,dy,a,b,d,x,y;
+  int dx=0,dy=0,a=0,b=0,d=0,x=0,y=0;
   int64_t unded=1;
 
   if (x0>x1) {x=x1; dx=x0-x1;} else {x=x0; dx=x1-x0;}
@@ -2215,7 +2215,7 @@ void line0(int x0, int y0, int x1, int y1, int inc0) {
 // Intentando a¤adir que pinten de abajo hacia arriba y de derecha a izquierda
 
 void line(int x0, int y0, int x1, int y1, int inc0) {
-  int dx,dy,a,b,d,x,y;
+  int dx=0,dy=0,a=0,b=0,d=0,x=0,y=0;
   int64_t unded=1;
 
   if (x0>x1) {x=x1; dx=x0-x1;} else {x=x0; dx=x1-x0;}
@@ -4709,6 +4709,8 @@ void select_zoom(void) {
       mouse_x=barra_x+(mouse_shift_x-barra_x)/2;
       mouse_y=barra_y+(mouse_shift_y-barra_y)/2; }
   }
+   
+  zoom=zoom%4;
 
 }
 

@@ -138,6 +138,9 @@ return out;
    if (strlen(full)) strcat(full,"/");
    strcat(full,fname);
    strcat(full,ext);
+
+if(!len) {
+	   strlwr(full);
    len = divz_open_file(full);
 
 if(len) {
@@ -145,6 +148,7 @@ out = fmemopen(zipptr,len,"rb");
 printf("zipptr %x, len: %d\n",zipptr, len);
 
 return out;
+}
 }
 
 return NULL;
@@ -157,7 +161,7 @@ return NULL;
 int divz_open_file(char *full) {
   unz_file_info fileInfo;
 
-printf("divz open file: %s\n",full);
+printf("divz open file: [%s]\n",full);
 
   int readBytes=0;
 

@@ -1,10 +1,11 @@
 #include "internal.h"
+#include "osdep.h"
 
 extern struct Level *LevelBelow, *LevelAbove;
 
 // Func ptrs for Floor/Ceil updates (UpdateFloor/UpdateBack/UpdateXXHole)
-static void (*upd_ceil)(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
-static void (*upd_flr)(SHORT,SHORT,SHORT,struct VLine *,struct PicInfo *,struct Region *);
+static void (*upd_ceil)(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
+static void (*upd_flr)(VPEShort,VPEShort,VPEShort,struct VLine *,struct PicInfo *,struct Region *);
 
 void DrawComplexWall(struct VDraw *pVDraw)
 {
@@ -14,14 +15,14 @@ struct Object  *po;
 struct WLine    tw, bw, *ml;
 struct PicInfo *tpic, *bpic, *mpic, *fpic, *cpic;
 struct VLine PrevCeil, PrevFloor, *clip;
-FIXED LD,dLD,RD,dRD,Fade,dFade;
-FIXED FTS,dFTS,FBS,dFBS;
-FIXED BTS,dBTS,BBS,dBBS;
-FIXED FrontCeilH, BackCeilH, FrontFloorH, BackFloorH;
-FIXED t,t1,t2,TopAdd,Width;
-int i,ScanFlag,Masked,Trans;
-int FTop,FBot,BTop,BBot,*pNewTop,*pNewBot;
-int pp;
+VPEFixed LD,dLD,RD,dRD,Fade,dFade;
+VPEFixed FTS,dFTS,FBS,dFBS;
+VPEFixed BTS,dBTS,BBS,dBBS;
+VPEFixed FrontCeilH, BackCeilH, FrontFloorH, BackFloorH;
+VPEFixed t,t1,t2,TopAdd,Width;
+memptrsize i,ScanFlag,Masked,Trans;
+int32_t FTop,FBot,BTop,BBot,*pNewTop,*pNewBot;
+int32_t pp;
 
   po   =CurView->pObject;
 	pWall=(struct Wall *)pVDraw->ptr;

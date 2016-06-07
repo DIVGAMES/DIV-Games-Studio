@@ -67,6 +67,10 @@ void salvaguarda(byte * p, int x, int y, int n, int flag) {
   x-=*((word*)(graf[n]+4));
   y-=*((word*)(graf[n]+6));
 
+
+	if(x>vga_an | y>vga_al)
+		return;
+
   volcado_parcial(x,y,an,al);
 
   q=copia+y*vga_an+x;

@@ -25,6 +25,7 @@ typedef struct _FPG{
         int     FPGInfo;
         int     thumb_on;
         t_thumb thumb[1000];
+		byte version;
 }FPG;
 
         void Sort(FPG *Fpg);

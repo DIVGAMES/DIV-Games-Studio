@@ -1,10 +1,11 @@
 #include "internal.h"
 #include "gfx.h"
-//#include <i86.h>
-//#include <dos.h>
-#include <malloc.h>
 
-#include "../inter.h"
+#ifndef __APPLE__
+#include <malloc.h>
+#endif
+
+#include "inter.h"
 
 // For debug purposes
 int num_blocks;
@@ -87,16 +88,10 @@ void FatalError(int type, char *msg)
 
 
 
-FIXED FixMul(FIXED a, FIXED b) {
-	FIXED c = a*b;
-	return c>>16;
+VPEFixed FixMul(VPEFixed a, VPEFixed b) {
+	return (VPEFixed)(((int64_t)a * (int64_t)b) >> 16);
 }
 
-FIXED FixDiv(FIXED a, FIXED b) {
-	FIXED c=0;
-	if(b>0) 
-		c = a/b;
-
-	return c>>16;
+VPEFixed FixDiv(VPEFixed a, VPEFixed b) {
+	return (((int64_t)a << 16) / (int64_t)b);
 }
-

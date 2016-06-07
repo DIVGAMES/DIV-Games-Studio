@@ -32,6 +32,11 @@
 #define GCW_H 240
 #endif
 
+#ifdef DIVGIT
+#include "divgit.h"
+#endif
+
+
 typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 
@@ -74,6 +79,13 @@ typedef unsigned short uint16_t;
 //      Constants defined at the application level
 //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
+
+#ifdef DEBUG
+#define debugprintf(...) printf ( __VA_ARGS__ )
+#else
+#define printf debugprintf
+#define debugprintf(...) 
+#endif
 
 #define uchar uint8_t
 //unsigned char
@@ -140,6 +152,8 @@ void explode(int x,int y,int an,int al);
 void activar(void);
 void DaniDel(char *name);
 
+void window_surface(int an, int al, byte type);
+ 
 ///////////////////////////////////////////////////////////////////////////////
 //     Functions exported by DIVBASIC (divbasic.c)
 ///////////////////////////////////////////////////////////////////////////////
@@ -249,9 +263,9 @@ void EditPal();
 void LoadPal();
 void SaveAsPal();
 void RefPalAndDlg(int,int);
-void ordena_paleta();  // palette order (arrange?)
+void ordena_paleta();  // sort palette
 void fusiona_paleta(); // merge palette
-void preparar_tapiz(); // skin preperation (???)
+void preparar_tapiz(); // background wallpaper setup (???)
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions exported by DIVSETUP (divsetup.c)
@@ -530,6 +544,17 @@ GLOBAL_DATA byte * cuad; // Diferencias elevadas al cuadrado para la paleta
 GLOBAL_DATA int * system_clock, cclock, mclock;
 
 GLOBAL_DATA byte * copia; // Copia virtual de pantalla (del entorno)
+
+GLOBAL_DATA SDL_Surface *copia_surface;
+GLOBAL_DATA	SDL_Surface *tempsurface;
+GLOBAL_DATA SDL_Surface *mouse_surface;
+GLOBAL_DATA SDL_Surface *tapiz_surface; // background
+GLOBAL_DATA SDL_Surface *tapiz_temp_surface; // surface for preview
+
+GLOBAL_DATA uint32_t colorkey;
+GLOBAL_DATA uint32_t rmask, gmask, bmask, amask;
+GLOBAL_DATA byte explode_num;
+
 GLOBAL_DATA byte * undo; // Copias del mapa editado (para deshacer, NULL si falta memoria)
 GLOBAL_DATA byte * barra; // Barra de edici줻
 
@@ -598,8 +623,17 @@ GLOBAL_DATA char help_xlat[256];               // Para convertir los gr쟣icos de
 
 GLOBAL_DATA byte * text_font; // Font est쟮dar, 7 puntos de alto, ancho proporcional
 
+#ifdef TTF
+GLOBAL_DATA TTF_Font* sysfont;
+GLOBAL_DATA TTF_Font* editorfont;
+
+#endif
+
+GLOBAL_DATA SDL_Color colors[256];
+
 GLOBAL_DATA byte * font; // Font para el editor de programas / hipertexto
 GLOBAL_DATA int font_an,font_al; // Ancho y alto de los car쟠teres
+GLOBAL_DATA int editor_font_an,editor_font_al; // Ancho y alto de los car쟠teres
 GLOBAL_DATA int char_size; // font_an*font_al
 
 GLOBAL_DATA int actual_mouse; // Dibujo del rat줻
@@ -680,6 +714,9 @@ struct tventana {
   int x,y,an,al;                        // Posici줻 y dimensiones de la ventana
   int _x,_y,_an,_al;                    // Posici줻 salvada al minimizarse
   byte * ptr;                           // Buffer de la ventana
+#ifdef TTF
+  SDL_Surface *surfaceptr;  
+#endif
   struct tmapa * mapa;                  // Puntero a otro struct tipo mapa
   struct tprg * prg;                    // Puntero a otro struct tipo prg
   int volcar;                           // Indica si se debe volcar la ventana
@@ -691,6 +728,8 @@ struct tventana {
   int active_item;                      // Cuando alg즢 item produce un efecto
   int selected_item;                    // El item seleccionado (para teclado)
   int lado;                             // 0 Derecha, 1 Izquierda (autoemplazar con doble click)
+  int exploding;
+	
 };
 
 GLOBAL_DATA struct tventana ventana[max_windows];
@@ -901,6 +940,9 @@ typedef struct _pcminfo{
         int    SoundBits;
         int    SoundSize;
         short  *SoundData;
+#ifdef MIXER
+		Mix_Chunk *SI;
+#endif
 //        SAMPLE *sample;
 		char *sample;
 } pcminfo;
@@ -1035,6 +1077,7 @@ typedef struct {
 typedef struct {
   int an,al;            // Ancho y Alto de la reducci줻
   char * ptr;           // ==NULL si el thumbnail no se ha comenzado a cargar
+  SDL_Surface *surfaceptr;
   int status;           // -1-No es una imagen, 0-Cargado, +N-N� de bytes leidos
   int filesize;         // Longitud en bytes del fichero
   int tagged;           // Si esta se쨅lizado o no (1/0)

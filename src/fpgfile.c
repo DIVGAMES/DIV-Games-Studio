@@ -57,97 +57,111 @@ void ReadHeadImageAndPoints(HeadFPG *MiHeadFPG,FILE *fpg)
 
 void Crear_FPG(FPG *Fpg,char *Name)
 {
-int x;
-FILE *fpg;
-        if( (fpg=fopen(Name,"wb") )==NULL)
-                return;
-        for(x=0;x<1000;x++)
-        {
-                Fpg->OffsGrf[x]=0;
-                Fpg->DesIndex[x]=0;
-        }
-        Fpg->nIndex=0;
-        Fpg->LastUsed=0;
-        strcpy((char *)Fpg->ActualFile,Name);
-        fwrite("fpg\x1a\x0d\x0a\x00\x00",8,1,fpg);
-        fwrite(dac,768,1,fpg);
+	int x;
+	FILE *fpg;
+	if( (fpg=fopen(Name,"wb") )==NULL)
+	return;
+	for(x=0;x<1000;x++)	{
+		Fpg->OffsGrf[x]=0;
+		Fpg->DesIndex[x]=0;
+	}
 
-        fwrite(reglas,sizeof(reglas),1,fpg);
-        fclose(fpg);
+	Fpg->nIndex=0;
+	Fpg->LastUsed=0;
 
-        if(Fpg->thumb_on) {
-          Fpg->lInfoFPG.columnas=3;
-          Fpg->lInfoFPG.lineas=2;
-          Fpg->lInfoFPG.an=47;
-          Fpg->lInfoFPG.al=26;
-        } else {
-          Fpg->lInfoFPG.columnas=1;
-          Fpg->lInfoFPG.lineas=6;
-          Fpg->lInfoFPG.an=143;
-          Fpg->lInfoFPG.al=8;
-        }
-        Fpg->lInfoFPG.x=3;
-        Fpg->lInfoFPG.y=11;
-        Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
-        Fpg->lInfoFPG.maximo=Fpg->nIndex;
-        Fpg->lInfoFPG.lista_an=38+2;
+	Fpg->version=0; // 32 bit fpg files
+	
+	strcpy((char *)Fpg->ActualFile,Name);
+	fwrite("fpg\x1a\x0d\x0a\x00",7,1,fpg);
+
+	fwrite(&Fpg->version,1,1,fpg);
+
+	fwrite(dac,768,1,fpg);
+
+	fwrite(reglas,sizeof(reglas),1,fpg);
+	fclose(fpg);
+
+	if(Fpg->thumb_on) {
+		Fpg->lInfoFPG.columnas=3;
+		Fpg->lInfoFPG.lineas=2;
+		Fpg->lInfoFPG.an=47;
+		Fpg->lInfoFPG.al=26;
+	} else {
+		Fpg->lInfoFPG.columnas=1;
+		Fpg->lInfoFPG.lineas=6;
+		Fpg->lInfoFPG.an=143;
+		Fpg->lInfoFPG.al=8;
+	}
+
+	Fpg->lInfoFPG.x=3;
+	Fpg->lInfoFPG.y=11;
+	Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
+	Fpg->lInfoFPG.maximo=Fpg->nIndex;
+	Fpg->lInfoFPG.lista_an=38+2;
 }
 
-int Abrir_FPG(FPG *Fpg,char *Name)
-{
-int x;
-FILE *fpg;
-HeadFPG kkhead;
-char buffer[768];
+int Abrir_FPG(FPG *Fpg,char *Name) {
+	int x;
+	FILE *fpg;
+	HeadFPG kkhead;
+	char buffer[768];
 
-        if((fpg=fopen(Name,"rb"))==NULL) {
-                return 0;
-        }
-        fread(buffer,8,1,fpg);
-        if (strcmp(buffer,"fpg\x1a\x0d\x0a"))
-        {
-                fclose(fpg);
-                return 0;
-        }
-        for(x=0;x<1000;x++)
-        {
-                Fpg->OffsGrf[x]=0;
-                Fpg->DesIndex[x]=0;
-        }
-        Fpg->nIndex=0;
-        strcpy((char *)Fpg->ActualFile,Name);
-        fread(newdac,768,1,fpg);
-        memcpy(dac4,newdac,768);
-        NewDacLoaded=1;
-        fread((byte *)reglas,1,sizeof(reglas),fpg);
-        while(ReadHead(&kkhead,fpg))
-        {
-                Fpg->OffsGrf[kkhead.COD]=ftell(fpg)-FPG_HEAD;
-                Fpg->DesIndex[Fpg->nIndex]=kkhead.COD;
-                sprintf((char *)Fpg->CodDes[Fpg->nIndex++],"%c %03d %s",255,kkhead.COD,kkhead.Descrip);
-                fseek(fpg,Fpg->OffsGrf[kkhead.COD]+kkhead.LONG,SEEK_SET);
-        }
-        Sort(Fpg);
-        fclose(fpg);
+	if((fpg=fopen(Name,"rb"))==NULL) {
+		return 0;
+	}
 
-        if(Fpg->thumb_on) {
-          Fpg->lInfoFPG.columnas=3;
-          Fpg->lInfoFPG.lineas=2;
-          Fpg->lInfoFPG.an=47;
-          Fpg->lInfoFPG.al=26;
-        } else {
-          Fpg->lInfoFPG.columnas=1;
-          Fpg->lInfoFPG.lineas=6;
-          Fpg->lInfoFPG.an=143;
-          Fpg->lInfoFPG.al=8;
-        }
-        Fpg->lInfoFPG.x=3;
-        Fpg->lInfoFPG.y=11;
-        Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
-        Fpg->lInfoFPG.maximo=Fpg->nIndex;
-        Fpg->lInfoFPG.lista_an=38+2;
+	fread(buffer,7,1,fpg);
 
-return 1;
+	if (strcmp(buffer,"fpg\x1a\x0d\x0a")) {
+		fclose(fpg);
+		return 0;
+	}
+
+	fread(&Fpg->version,1,1,fpg);
+#ifdef DEBUG
+	printf("FPG version: %d\n",Fpg->version);
+#endif
+	for(x=0;x<1000;x++) {
+		Fpg->OffsGrf[x]=0;
+		Fpg->DesIndex[x]=0;
+	}
+
+	Fpg->nIndex=0;
+	strcpy((char *)Fpg->ActualFile,Name);
+	fread(newdac,768,1,fpg);
+	memcpy(dac4,newdac,768);
+	NewDacLoaded=1;
+	fread((byte *)reglas,1,sizeof(reglas),fpg);
+
+	while(ReadHead(&kkhead,fpg)) {
+		Fpg->OffsGrf[kkhead.COD]=ftell(fpg)-FPG_HEAD;
+		Fpg->DesIndex[Fpg->nIndex]=kkhead.COD;
+		sprintf((char *)Fpg->CodDes[Fpg->nIndex++],"%c %03d %s",255,kkhead.COD,kkhead.Descrip);
+		fseek(fpg,Fpg->OffsGrf[kkhead.COD]+kkhead.LONG,SEEK_SET);
+	}
+
+	Sort(Fpg);
+	fclose(fpg);
+
+	if(Fpg->thumb_on) {
+		Fpg->lInfoFPG.columnas=3;
+		Fpg->lInfoFPG.lineas=2;
+		Fpg->lInfoFPG.an=47;
+		Fpg->lInfoFPG.al=26;
+	} else {
+		Fpg->lInfoFPG.columnas=1;
+		Fpg->lInfoFPG.lineas=6;
+		Fpg->lInfoFPG.an=143;
+		Fpg->lInfoFPG.al=8;
+	}
+
+	Fpg->lInfoFPG.x=3;
+	Fpg->lInfoFPG.y=11;
+	Fpg->lInfoFPG.lista=(char *)Fpg->CodDes;
+	Fpg->lInfoFPG.maximo=Fpg->nIndex;
+	Fpg->lInfoFPG.lista_an=38+2;
+
+	return 1;
 }
 
 void Sort(FPG *Fpg)
@@ -323,7 +337,7 @@ byte MiTabla[256];
         //Nombre del fichero temporal
         strcpy(ActualPath,(char *)Fpg->ActualFile);
         for(x=strlen(ActualPath);x>=0;x--)
-                if(ActualPath[x]=='\\')
+                if(ActualPath[x]=='/')
                         x=-1;
                 else
                         ActualPath[x]=0;
@@ -474,10 +488,12 @@ int x,len,n;
 FILE *fpg;
 FILE *Oldfpg;
 
+debugprintf("Deleting map %d\n",COD);
+
         //Nombre del fichero temporal
         strcpy(ActualPath,(char *)Fpg->ActualFile);
         for(x=strlen(ActualPath);x>=0;x--)
-                if(ActualPath[x]=='\\')
+                if(ActualPath[x]=='/')
                         x=-1;
                 else
                         ActualPath[x]=0;
@@ -497,6 +513,7 @@ FILE *Oldfpg;
           if(Fpg->DesIndex[n]==COD || Fpg->DesIndex[n]==0) break;
           n++;
         }
+debugprintf("found COD at index: %d\n",n);
 
         if(Fpg->thumb[n].ptr!=NULL) free(Fpg->thumb[n].ptr);
         memmove(&(Fpg->thumb[n]),&(Fpg->thumb[n+1]),sizeof(t_thumb)*(999-n));
@@ -565,10 +582,15 @@ FILE *Oldfpg;
         Progress((char *)texto[436],len,len);
 
         DaniDel((char *)Fpg->ActualFile);
+        
+        debugprintf("MOVE %s to %s\n",ActualPath, (char *)Fpg->ActualFile);
+        
+        
         rename(ActualPath,(char *)Fpg->ActualFile);
+        
         if(!Abrir_FPG(Fpg,(char *)Fpg->ActualFile))
                 return 0;
-return 1;
+		return 1;
 }
 
 int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
@@ -585,7 +607,7 @@ int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
 
   strcpy(ActualPath,(char *)Fpg->ActualFile); //Nombre del fichero temporal
   for(x=strlen(ActualPath);x>=0;x--)
-    if(ActualPath[x]=='\\') x=-1; else ActualPath[x]=0;
+    if(ActualPath[x]=='/') x=-1; else ActualPath[x]=0;
   strcat(ActualPath,"_DIV_.FPG");
   DaniDel(ActualPath);
 

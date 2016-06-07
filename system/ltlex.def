@@ -19,6 +19,8 @@
 &08private              ;Private
 &09struct               ;Struct
 &0Aimport               ;Import
+&75include				;Include (additional prg)
+
 &0Bsetup_program        ;Setup_program
 
 &0Cstring               ;String

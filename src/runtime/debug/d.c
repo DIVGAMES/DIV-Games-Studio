@@ -366,6 +366,16 @@ void init_debug(void) {
 
 }
 
+void end_debug(void) {
+  free(fondo_raton); 
+  free(o);
+  free(var);
+  free(usado);
+  free(ids);
+  free(visor);
+  free(source);
+  free(line);
+}
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Inicializa el font
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

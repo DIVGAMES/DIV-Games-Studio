@@ -1,6 +1,6 @@
 #include "internal.h"
 #include "gfx.h"
-
+#include "osdep.h"
 struct Level *LevelAbove;
 struct Level *LevelBelow;
 
@@ -44,11 +44,8 @@ void DrawView(struct View *pv)
 // Draw masked stuff
   DrawMasked();
 // Transfer buffer to screen
-
-#ifdef NOTYET
   if (CurView->ScrX>=0&&CurView->ScrY>=0)
     DrawBuffer(CurView);
-#endif
 }
 
 void InitLevel(void)
@@ -65,14 +62,14 @@ void InitLevel(void)
 
 
 extern struct WLine BackLine;
-extern FIXED BackTexCol;
+extern VPEFixed BackTexCol;
 extern int   BackNextCol;
 
 void InitView(void)
 {
   struct Object *po;
   struct VLine  *line, *clip;
-  FIXED t;
+  VPEFixed t;
 
   po=CurView->pObject;
   NumMLines=0;
@@ -168,7 +165,7 @@ void DrawMasked(void)
 struct VDraw *FindVDraw(void)
 {
 struct VDraw *pVDraw, *pvd;
-FIXED MinZ, MaxZ, Z1, Z2, t, t1, t2, c;
+VPEFixed MinZ, MaxZ, Z1, Z2, t, t1, t2, c;
 
 // Find VDraw to draw
   pVDraw=LeftVDraw.Next;
@@ -370,10 +367,10 @@ FIXED MinZ, MaxZ, Z1, Z2, t, t1, t2, c;
 //  Sets view size. If ptr is given, do not allocate buffer.
 //-----------------------------------------------------------------------------
 
-void SetActiveView(int altura,int objeto,int w,int h,BYTE *buf_ptr,int buf_width)
+void SetActiveView(int altura,int objeto,int w,int h,VPEByte *buf_ptr,int buf_width)
 {
-  BYTE *ptr;
-  FIXED t;
+  VPEByte *ptr;
+  VPEFixed t;
   int i;
   struct View *pv=ActView;
 
@@ -388,11 +385,11 @@ void SetActiveView(int altura,int objeto,int w,int h,BYTE *buf_ptr,int buf_width
   // Asigno el objeto
   pv->pObject=(struct Object *)Objects.ptr[objeto];
   pv->H=pv->pObject->H;
-  pv->ObjHeight=INT_FIX(altura);
+  pv->ObjHeight=INT_FIX(altura+16);
 
   // Do the rest
   if (pv->BufScan) free(pv->BufScan);
-  pv->BufScan=(BYTE **)malloc(pv->Height*4);
+  pv->BufScan=(VPEByte **)malloc(pv->Height*sizeof(memptrsize));
 
   pv->ConstHDist=FixMul(INT_FIX(pv->Width>>1),F_VIEW_CONST);
   pv->ConstVDist=FixMul(pv->ConstHDist,Engine.ScrConst);

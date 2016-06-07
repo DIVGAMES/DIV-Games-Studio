@@ -1,6 +1,10 @@
 #include "global.h"
 #include "fpgfile.hpp"
 
+#include <time.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny);
 int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla);
 void nuevo_mapa3d_carga(void);
@@ -57,6 +61,15 @@ void Fonts1(void); void Fonts2(void); void Fonts3(void);
 void Load_Font_session(FILE *file);
 int Save_Font_session(FILE *file,int);
 FILE *desktop;
+
+char pathtmp[1024];
+
+int getFileCreationTime(char *path) {
+    struct stat attr;
+    stat(path, &attr);
+	return (int)attr.st_mtime;
+}
+
 
 /*
 
@@ -213,7 +226,7 @@ fflush(lst);
         fprintf(lst,"ghost %d elementos escritos <<<\n",n);
 #endif
         // Mira y guarda una por una las ventanas utilizadas
-        for(x=max_windows;x>=0;x--)
+        for(x=max_windows-1;x>=0;x--)
         {
                 if(ventana[x].tipo!=0 && ventana[x].titulo)
                 {
@@ -360,7 +373,7 @@ fflush(lst);
                                         // fprintf(lst,"path %d elementos escritos <<<\n",n);
                                         // fprintf(lst,"  font\n");
                                         break;
-
+#ifdef NOTYET
                                  case    105: //pcm
                                         mypcminfo=(pcminfo *)ventana[x].aux;
                                         SaveDesktopSound(mypcminfo, desktop);
@@ -378,7 +391,10 @@ fflush(lst);
                                         n=fwrite(mypcminfo, 1, sizeof(pcminfo), desktop);
                                         n=fwrite(mypcminfo->SoundData, 2, mypcminfo->SoundSize, desktop);
 */
+										free(mypcminfo->SoundData);
+										Mix_FreeChunk(mypcminfo->SI);
                                         break;
+#endif
                                  case    106: //map3d
                                         n=fwrite(ventana[x].aux,1,sizeof(M3D_info)-sizeof(tmap),desktop);
                                         m3d=(M3D_info *) ventana[x].aux;
@@ -391,6 +407,8 @@ fflush(lst);
                                         break;
                         }
                 }
+			if(ventana[x].ptr!=NULL)
+				free(ventana[x].ptr);
         }
         fseek(desktop,0,SEEK_SET);
         fseek(desktop,8+4,SEEK_SET);
@@ -440,12 +458,16 @@ char *          baux;
 
 int UpLoad_Desktop()
 {
-int iWork,iWork2,iWork3,x,numvent;
-FILE *f;
-
+	int iWork,iWork2,iWork3,x,numvent;
+	FILE *f;
+	
+	int dtime = getFileCreationTime("system/session.dtf");
+		
         desktop=fopen("system/session.dtf","rb");
         if(desktop==NULL)
                 return(0);
+		
+		
 	//	printf("loading saved session\n");
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
@@ -601,7 +623,31 @@ FILE *f;
                                                 wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
                                                 if(!Interpretando)
                                                         actualiza_caja(0,0,vga_an,vga_al);
-                                        }
+                                        }                                        
+										// check if prg on disk is newer than session
+										strcpy(pathtmp,v_prg->path);
+										strcat(pathtmp,"/");
+										strcat(pathtmp,v_prg->filename);
+
+										if(dtime < getFileCreationTime(&pathtmp[0])) {
+											v_titulo=v_prg->filename;
+											//(char *)texto[75];
+											v_texto="File on disk is newer, reload?";
+											//(char *)texto[76];
+											dialogo(aceptar0);
+
+											if(v_aceptar) {
+												strcpy(tipo[0].path,v_prg->path);
+												strcpy(input,v_prg->filename);
+												
+												// close old prg
+												cierra_ventana();
+												v_terminado = 1;
+												
+												// load replacement prg							
+												abrir_programa();
+											}
+										}
                                         break;
                                 }
                                 else
@@ -640,6 +686,10 @@ FILE *f;
                                 // Descargarse
                                 fread(Load_FontName,1,14,desktop);
                                 fread(Load_FontPathName,1,_MAX_PATH-14,desktop);
+
+                                debugprintf("fontname [%s], fontpathname [%s]\n",Load_FontName,Load_FontPathName);
+								fflush(stdout);
+								
                                 if ((f=fopen(Load_FontPathName,"rb"))!=NULL) {
                                   fclose(f);
                                   nueva_ventana_carga(ShowFont0,ventana_aux.x,ventana_aux.y);
@@ -647,6 +697,7 @@ FILE *f;
                                   if(!Interpretando) actualiza_caja(0,0,vga_an,vga_al);
                                 }
                                 break;
+#ifdef NOTYET                                
                         case    105: //pcm
 /*
                                 fread(SoundName,1,14,desktop);
@@ -665,6 +716,7 @@ FILE *f;
 */
                                 OpenDesktopSound(desktop);
                                 break;
+#endif
                         case    106: //map3d
                                 nuevo_mapa3d_carga();
                                 break;
@@ -694,9 +746,11 @@ return(1);
 int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 {
 
-  byte * ptr;
-  int n,m,x,y,an,al;
-  int vtipo;
+	  byte * ptr;
+	  int n,m,x,y,an,al;
+	  int vtipo;
+
+	uint32_t colorkey=0;
 
   if (!ventana[max_windows-1].tipo) {
 /*
@@ -840,8 +894,14 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 
       v.ptr=ptr;
 
+		window_surface(an,al,0);
+		
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+//		SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
+
+		      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
+
       wput(ptr,an,al,an-9,2,35);
       wput(ptr,an,al,an-17,2,37);
       wgra(ptr,an,al,c_b_low,2,2,an-20,7);
@@ -884,8 +944,15 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
       if (big) { an*=2; al*=2; }
 
       if(!Interpretando && exploding_windows) {
-        if (v.primer_plano==2) explode(v.x,v.y,v.an,v.al);
-        else explode(x,y,an,al);
+        if (v.primer_plano==2) {
+			v.exploding=1;
+			explode(v.x,v.y,v.an,v.al);
+			v.exploding=0;
+		} else {
+			v.exploding=1;
+			explode(x,y,an,al);
+			v.exploding=0;
+		}
       }
 
       if (v.primer_plano!=2) {
@@ -995,18 +1062,18 @@ void carga_programa0(void)
   if (v.prg->an<4*big2) v.prg->an=4*big2;
   if (v.prg->al<2*big2) v.prg->al=2*big2;
 
-  v.an=(4+8)*big2+font_an*v_prg->an;
-  v.al=(12+16)*big2+font_al*v_prg->al;
+  v.an=(4+8)*big2+editor_font_an*v_prg->an;
+  v.al=(12+16)*big2+editor_font_al*v_prg->al;
 
   if (v.an>vga_an) {
-    v.prg->an=(vga_an-12*big2)/font_an; // Calcula tama¤o (en chr) maximizada
-    v.an=(4+8)*big2+font_an*v.prg->an;
+    v.prg->an=(vga_an-12*big2)/editor_font_an; // Calcula tama¤o (en chr) maximizada
+    v.an=(4+8)*big2+editor_font_an*v.prg->an;
     ventana_aux.an=v.an;
   }
 
   if (v.al>vga_al) {
-    v.prg->al=(vga_al-28*big2)/font_al;
-    v.al=(12+16)*big2+font_al*v.prg->al;
+    v.prg->al=(vga_al-28*big2)/editor_font_al;
+    v.al=(12+16)*big2+editor_font_al*v.prg->al;
     ventana_aux.al=v.al;
   }
 

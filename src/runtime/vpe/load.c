@@ -1,6 +1,6 @@
 #include "internal.h"
 #include "atan.h"
-#include "../inter.h"
+#include "inter.h"
 
 void set_fog_table(int intensidad,int r,int g, int b);
 
@@ -10,7 +10,7 @@ extern int num_fpg_aux;
 struct ZF_Flag *flags[1000];
 int num_flags;
 extern int error_vpe;
-static char combo_error[128]; // para componer mensajes de error compuestos.
+char combo_error[128]; // para componer mensajes de error compuestos.
 
 int *tex_pointer;
 int tex_size;
@@ -35,8 +35,9 @@ void LoadZone(char *Buffer)
   struct Region        *new_region;
   struct Wall          *wall;
   struct View          *view;
-  int n, i, t1, t2;
-  LONG  Pos;
+  int n, i;
+	VPEFixed t1, t2;
+  VPELong  Pos;
 
   // Clear all the zone memory
   ClearZone();
@@ -210,7 +211,7 @@ void LoadZone(char *Buffer)
     view=(struct View *)Views.ptr[i];
   }
   // Prepare WallPtrs
-  WallPtrs=(struct Wall **)CacheAlloc(Walls.Number*2*4);
+  WallPtrs=(struct Wall **)CacheAlloc(Walls.Number*2*sizeof(memptrsize));
   for(n=0;n<Regions.Number;n++) {
     new_region=(struct Region *)Regions.ptr[n];
     new_region->WallPtrs=&WallPtrs[NumWallPtrs];
@@ -660,8 +661,8 @@ void LoadPalette(char *palname)
   // Reserva memoria para tablas de fade y transparencias
   //---------------------------------------------------------------------------
   size=256*Pal.PH.NumShades*Pal.PH.NumTables; //+256*256;
-  Pal.MemTables=CacheAlloc(size+256);
-  Pal.Tables[0]=(BYTE *)(((DWORD)Pal.MemTables+255)&0xFFFFFF00);
+  Pal.MemTables=(VPEByte  *)CacheAlloc(size+256);
+  Pal.Tables[0]=(VPEByte *)Pal.MemTables+255;//&0xFFFFFF00);
 
   //---------------------------------------------------------------------------
   // Puntero a la tabla de transparencias
@@ -676,8 +677,8 @@ void LoadPalette(char *palname)
 void set_fog_table(int intensidad,int r,int g, int b)
 {
   int i,j;
-  char *tabla_color;
-  tabla_color=Pal.Tables[0];
+  VPEByte *tabla_color=(VPEByte *)Pal.Tables[0];
+//  tabla_color=Pal.Tables[0];
 
   if (intensidad==0)
   {
@@ -730,9 +731,14 @@ void LoadMath(void)
   // Creo las tablas de senos y cosenos
   //---------------------------------------------------------------------------
   for (i=0;i<DEG360;i++) {
-    SinTable[i]=(int)(65536.0*sin((2.0*PI*(float)i)/(float)DEG360));
-    CosTable[i]=(int)(65536.0*cos((2.0*PI*(float)i)/(float)DEG360));
+    SinTable[i]=(VPEFixed)(65536.0*sin((2.0*PI*(float)i)/(float)DEG360));
+    CosTable[i]=(VPEFixed)(65536.0*cos((2.0*PI*(float)i)/(float)DEG360));
+    //printf("sini %05lu.%05lu cosi: %lu\n",((SinTable[i]<<16) & 0xFFFF0000), SinTable[i]&0xFFFF,CosTable[i]);
   }
-  ITanTable=(FIXED *)itangente;
+//  printf("tantable: %d\n",sizeof(itangente));
+  
+  ITanTable=(VPEFixed *)itangente;
+//  printf("tantable: %d\n",sizeof(ITanTable));
+  
 }
 

@@ -20,12 +20,13 @@ int SongInst[128];
 int Freq_original[CHANNELS];
 
 int SoundActive=1;
+void print_init_flags(int flags)
+{
 #ifndef GP2X
 #ifndef PS2
 #ifndef PSP
 #ifdef MIXER
-void print_init_flags(int flags)
-{
+
 //	int i=0;
 	
 //	int n = Mix_GetNumMusicDecoders();
@@ -38,17 +39,16 @@ void print_init_flags(int flags)
         PFLAG(MOD);
         PFLAG(MP3);
         PFLAG(OGG);
-        PFLAG(FLUIDSYNTH);
         
         if(!flags)
                 printf("None");
         
         printf("\n");
+#endif
+#endif
+#endif
+#endif
 }
-#endif
-#endif
-#endif
-#endif
 
 static int initted=0;
 void InitSound(void)
@@ -64,7 +64,7 @@ int audio_buffers = 1024;
 #ifndef GP2X
 #ifndef PS2
 #ifndef PSP
-  int flags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_FLUIDSYNTH;
+  int flags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG ;
   
   initted=Mix_Init(flags);
 
@@ -347,18 +347,21 @@ int LoadSound(char *ptr, long Len, int Loop)
 	
 	res=pcm2wav(mem,Len,fdst,(int)Len+40);
 	fclose(mem);
-	fseek(fdst,0,SEEK_SET);
+
+#ifdef WIN32
 	fflush(fdst);
-	
+  fseek(fdst,0,SEEK_SET);
+#endif
+
 	if(res>1) { // 0 = ok. 1 = already wav. 2=failed save, 3=failed read, 4=out of mem
 		printf("failed: err %d\n",res);
+    fclose(fdst);
 		free(dst);
 		return(-1);
 	}
 	if(res==1) {
 		memcpy(dst,ptr,Len);
 	}
-	fclose(fdst);
 #ifdef WIN32
 if(res==1)
 	sound = Mix_LoadWAV("divpcm.tmp");
@@ -368,11 +371,13 @@ else
 	remove("divwav.tmp");
 	remove("divpcm.tmp");
 #else
-	rw = SDL_RWFromMem(dst, (int)(Len+255));
+	rw = SDL_RWFromMem((void *)dst, (int)(Len+255));
 	sound = Mix_LoadWAV_RW(rw, 1);
 #endif
-	free(dst);
-	}
+	fclose(fdst);
+  free(dst);
+
+  }
 	if(!sound) {
 		printf("Mix_LoadWAV: %s\n", Mix_GetError());
 		return (-1);
@@ -481,8 +486,13 @@ pos+=(int)j;
 if(pos>=s->sound->alen/2) {
 	if(s->loop==1)
 		pos=0;
-	else
-		Mix_HaltChannel(chan);
+	else {
+    for(; i < len/2; i++) {
+      samples[i] = 0;
+    }
+    StopSound(chan);
+    return;
+  }
 } 
 channels[chan].pos=pos;
 
@@ -494,7 +504,7 @@ channels[chan].pos=pos;
 }
 #endif
 
-int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
+int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
   int con=0;
   int loop=-1;
@@ -527,7 +537,11 @@ int PlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 // this permits slow playing sound to run for the correct length.
 
 	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
-
+//  printf("channel = %d\n",con);
+  
+  if(con==-1)
+    return(0);
+  
   channels[con].freq = Frec;
   channels[con].vol = Volumen;
   channels[con].pos = 0;
@@ -557,8 +571,14 @@ int StopSound(int NumChannel)
 {
   //printf("Stopping sound %d\n",NumChannel);
 #ifdef MIXER
-if(Mix_Playing(NumChannel))
+if(Mix_Playing(NumChannel)) {
+  if(!Mix_UnregisterAllEffects(NumChannel)) {
+   printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
+  }
   Mix_HaltChannel(NumChannel);
+}
+
+//  remove all effects from channel 0
 
   if(NumChannel >= CHANNELS) return(-1);
 #ifdef DOS
@@ -593,6 +613,12 @@ int ChangeSound(int NumChannel,int Volumen,int Frec)
 
 int ChangeChannel(int NumChannel,int Volumen,int Panning)
 {
+  // Set the volume
+  Mix_Volume(NumChannel,Volumen/2);
+
+  // set the balance
+  Mix_SetPanning(NumChannel, 255-Panning, Panning);
+
 #ifdef DOS
   CHANNEL *chptr;
 
@@ -614,7 +640,7 @@ int IsPlayingSound(int NumChannel)
 #ifdef DOS
   SAMPLE *smp = judas_channel[NumChannel].smp;
   char *pos   = judas_channel[NumChannel].pos;
-
+  
   if( (NumChannel >= CHANNELS) ||
       ((judas_channel[NumChannel].voicemode & VM_ON) == VM_OFF) ||
       (!judas_channel[NumChannel].smp) ) return(0);
@@ -828,6 +854,11 @@ int IsPlayingSong(void)
 
   return(0);
 #endif
+
+#ifdef MIXER
+	return (Mix_PlayingMusic());
+#endif
+
 }
 
 #endif

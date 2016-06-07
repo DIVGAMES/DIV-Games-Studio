@@ -1,4 +1,5 @@
-
+#ifndef __INTER_H_
+#define __INTER_H_
 #ifdef DEFINIR_AQUI
 
 #define GLOBAL 
@@ -33,8 +34,6 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 #include <signal.h>
 
 #include <math.h>
-
-#include "divdll.h"
 
 #include "divkeybo.h"
 #include "divfli.h"
@@ -349,6 +348,7 @@ GLOBAL int id2;         // Identificador extra para las llamadas a procesos (cal
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla fกsica
+GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla fกsica
 GLOBAL byte fsmode;
 
 GLOBAL byte *copia;     // Copia virtual de pantalla
@@ -505,8 +505,10 @@ typedef struct _tfast { // Tabla de incrementos para el primer plano
 struct _iscroll { // x10
   int on,painted;
   int x,y,an,al;
-  byte *_scr1,*scr1;
-  byte *_scr2,*scr2;
+  byte * _scr1;
+  byte * scr1;
+  byte *_scr2;
+  byte * scr2;
   byte *map1,*map2;
   int map1_an,map1_al,map2_an,map2_al;
   int map_flags;
@@ -913,3 +915,4 @@ void e(int texto);
 */
 extern char * fname[];
 
+#endif

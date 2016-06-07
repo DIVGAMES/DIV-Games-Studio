@@ -105,22 +105,8 @@ void SetIRQVector(int n, TIRQHandler vec)
 
 void kbdInit(void)
 {
-//	printf("TODO - kbdInit\n");
-
-sdlkeyinit();
-#ifdef NOTYET
-    if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
-      OldIrqHandler=GetIRQVector(9);       // Get old handler.
-      SetIRQVector(9,IrqHandler);          // Set our handler.
-      OldIrq1b=GetIRQVector(0x1b);         // Get old handler.
-      SetIRQVector(0x1b,Irq1b);            // Set our handler.
-      OldIrq23=GetIRQVector(0x23);         // Get old handler.
-      SetIRQVector(0x23,Irq23);            // Set our handler.
-    }
-
-    signal(SIGBREAK,SIG_IGN);
-    signal(SIGINT,SIG_IGN);
-#endif
+	// call osdep keyboard init
+	sdlkeyinit();
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -129,14 +115,7 @@ sdlkeyinit();
 
 void kbdReset(void)
 {
-printf("TODO - kbdReset\n");
-#ifdef NOTYET
-    if (GetIRQVector(9) == IrqHandler) {   // If it was installed.
-      SetIRQVector(9,OldIrqHandler);       // Uninstall it.
-      SetIRQVector(0x1b,OldIrq1b);         // Uninstall it.
-      SetIRQVector(0x23,OldIrq23);         // Uninstall it.
-    }
-#endif
+	// nothing to do
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -144,39 +123,9 @@ printf("TODO - kbdReset\n");
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void tecla_bios(void) {
-printf("tecla_bios\n");
-#ifdef NOTYET
-  int as,sc,ss;
-  union REGS r;
-  struct SREGS s;
-
-  if (_bios_keybrd(_KEYBRD_READY)) {
-    s.ds=s.es=s.fs=s.gs=FP_SEG(&s);
-    do {
-      r.h.ah=0; int386x(0x16,&r,&r,&s);
-      as=r.h.al; sc=r.h.ah;
-      r.h.ah=2; int386x(0x16,&r,&r,&s); ss=r.h.al;
-      if (as>='0' && as<='9') {
-        kbdFLAGS[0x4B]=0;
-        kbdFLAGS[0x4D]=0;
-        kbdFLAGS[0x48]=0;
-        kbdFLAGS[0x50]=0;
-        sc=0;
-      }
-      buf[fbuf]=as; buf[fbuf+1]=sc; buf[fbuf+2]=ss;
-      if ((fbuf+=3)==64*3) fbuf=0;
-
-    } while (_bios_keybrd(_KEYBRD_READY));
-  }
-
-  if (ctrl_c==1) {
-    s.ds=s.es=s.fs=s.gs=FP_SEG(&s);
-    r.h.ah=2; int386x(0x16,&r,&r,&s); ss=r.h.al;
-    buf[fbuf]=0; buf[fbuf+1]=46; buf[fbuf+2]=ss;
-    if ((fbuf+=3)==64*3) fbuf=0; ctrl_c=0;
-  }
-#endif
+	// nothing to do
 }
+
 extern int reloj;
 
 //extern float m_x=0.0,m_y;
@@ -197,6 +146,9 @@ SDL_Event event;
 #else
 while(SDL_PollEvent(&event))
         {
+			
+
+			
             /* If a quit event has been sent */
             if (event.type == SDL_QUIT)
             {

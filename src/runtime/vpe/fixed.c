@@ -1,21 +1,21 @@
 #include "internal.h"
 
 
-FIXED FixSin(SHORT a)
+VPEFixed FixSin(VPEShort a)
 {
 	a&=DEG360-1;
 	return(SinTable[a]);
 }
 
-FIXED FixCos(SHORT a)
+VPEFixed FixCos(VPEShort a)
 {
 	a&=DEG360-1;
 	return(CosTable[a]);
 }
 
-FIXED FixITan(FIXED x, FIXED y)
+VPEFixed FixITan(VPEFixed x, VPEFixed y)
 {
-	FIXED a;
+	VPEFixed a;
 
 	if (FixMod(x)>=FixMod(y)) {
 		if (x==0) return 0;
@@ -59,18 +59,18 @@ FIXED FixITan(FIXED x, FIXED y)
 	return(a);
 }
 
-FIXED FixDist(FIXED x1, FIXED y1, FIXED x2, FIXED y2)
+VPEFixed FixDist(VPEFixed x1, VPEFixed y1, VPEFixed x2, VPEFixed y2)
 {
 	if ((x2-=x1)<0) x2=-x2;
 	if ((y2-=y1)<0) y2=-y2;
 	return(x2+y2-( ((x2>y2)?y2:x2)>>1 ));
 }
 
-LONG LongSqrt(LONG v)
+VPELong LongSqrt(VPELong v)
 {
-	SHORT i;
-	DWORD result,tmp;
-	DWORD low,high;
+	VPEShort i;
+	VPEDword result,tmp;
+	VPEDword low,high;
 
 	if (v<=1L) return((unsigned)v);
 

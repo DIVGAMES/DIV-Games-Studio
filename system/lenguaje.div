@@ -240,11 +240,10 @@
 177 "Mode:"
 
 178 "Appearance:"
-179 "Mosaic"
-
-181 "Spectrum"
+179 "Tiled"
+181 "Gradient"
 182 "Select background"
-183 "Edit spectrum"
+183 "Edit gradient"
 
 186 "New program..."
 187 "Substitute the program?"
@@ -255,11 +254,11 @@
 192 " change(s)was(ere) made"
 
 193 "Error in the Heap."
-194 "Free memory : %d.%03d Kbyte(s)."
-195 "Free memory : %d Kbyte(s)."
-196 "Maps : %d.%03d Kbyte(s)."
-197 "Maps : %d Kbyte(s)."
-198 "Resources in use : %d %c."
+194 "Free memory : %d,%03d %s."
+195 "Free memory : %.3f %s"
+196 "Maps : %d,%03d %s"
+197 "Maps : %d %s."
+198 "Resources in use : %d%c."
 199 "System information"
 
 200 "Compiling..."
@@ -568,7 +567,7 @@
 485 "DX Games Studio - v3.01"
 486 "Daniel Navarro & MikeDX"
 
-487 "MAP/Div.map"
+487 "system/Div.map"
 
 488 "\# << "
 489 "\# >> "

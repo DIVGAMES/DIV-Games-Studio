@@ -311,6 +311,8 @@ void add_code(int dir, int param, int op);
 #define p_private       0x08
 #define p_struct        0x09
 #define p_import        0x0A
+#define p_include       0x75 
+
 #define p_setup_program 0x0B
 
 #define p_string        0x0C
@@ -979,7 +981,7 @@ void inicializa_compilador(void) {
 
 void mensaje_compilacion(byte * p) {
   if(compilemode) {
-	  printf("%s\n",p);
+	  fprintf(stdout,"%s\n",p);
   } else {
    wbox(v.ptr,v.an/big2,v.al/big2,c2,2,20,v.an/big2-4,7);
    wwrite(v.ptr,v.an/big2,v.al/big2,3,20,0,p,c3);
@@ -1043,6 +1045,11 @@ free_resources();
 	linf=fopen("system/exec.fs","wb");
 	if(linf) {
 		fwrite(&fsmode,1,1,linf);
+		fclose(linf);
+	}
+	linf = fopen("system/exec.path","wb");
+	if(linf) {
+		fputs((char *)&tipo[8],linf);
 		fclose(linf);
 	}
   if ((linf=fopen("system/exec.lin","wb"))==NULL) c_error(0,0);
@@ -3157,7 +3164,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
 }
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
+#ifdef DIVDLL
 typedef struct _DLL{
         char    *Name;
         int     nParms;
@@ -3188,7 +3195,7 @@ void CMP_export(char *name,void *dir,int nparms)
 
 int ImportDll(char *name)
 {
-printf("Looking for funcs in %s\n",name);
+debugprintf("Looking for funcs in %s\n",name);
   nFuns=0;
 #ifdef DIVDLL
   COM_export=CNT_export;
@@ -3221,6 +3228,7 @@ struct _dlls {
 } dlls[64];
 
 int idlls;              // Indice de la estructura anterior
+#endif
 
 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -3228,7 +3236,7 @@ void sintactico (void) {
 
   struct objeto * ob, * member2;
   int _imem,_imem_old,num_par,n;
-  byte * old_source,*nombre_dll,*oimemptr;
+  byte * old_source,*nombre_dll,*oimemptr, *nombre_include;
   int _itxt,dup;
   char cWork[256];
 
@@ -3353,6 +3361,7 @@ void sintactico (void) {
   while (pieza==p_ptocoma || pieza==p_coma) lexico();
   final_sentencia();
 
+#ifdef DIVDLL
   dlls[0].linea1=linea1;
   dlls[0].columna1=columna1;
   dlls[0].linea2=linea2;
@@ -3370,7 +3379,13 @@ void sintactico (void) {
   while (pieza==p_import) {
     inicio_sentencia();
     lexico();
-    if (pieza!=p_lit && !(pieza==p_id && (*o).tipo==tcons && (*o).cons.literal)) c_error(1,62);
+    if (pieza!=p_lit && !(pieza==p_id && (*o).tipo==tcons && (*o).cons.literal))
+		c_error(1,62);
+	lexico();
+    if (!free_sintax) 
+		if (pieza!=p_ptocoma) 
+			c_error(3,66);
+
     old_source=source;
     nombre_dll=(byte*)&mem[pieza_num];
 
@@ -3383,7 +3398,6 @@ void sintactico (void) {
     if ((num_extern=ImportDll((char *)nombre_dll))==0) c_error(0,63);
     if (num_extern>0) {
 		printf("num funcs: %d\n",num_extern);
-		
       save_error(0);
       for (n=0;n<num_extern;n++) {
         source=(byte *)ImpDLL[n].Name;
@@ -3397,8 +3411,6 @@ void sintactico (void) {
       free(ImpDLL);
       UnimportDll();
     }
-    source=old_source; lexico();
-    if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
     while (pieza==p_ptocoma || pieza==p_coma) lexico();
     final_sentencia();
 
@@ -3411,6 +3423,23 @@ void sintactico (void) {
     }
   }
 
+#endif
+
+	while(pieza==p_include) {
+		inicio_sentencia();
+		lexico();
+		if (pieza!=p_lit && !(pieza==p_id && (*o).tipo==tcons && (*o).cons.literal)) c_error(1,62);
+		old_source=source;
+		nombre_include=(byte*)&mem[pieza_num];
+
+
+	//
+		
+		source=old_source; lexico();
+		if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
+		while (pieza==p_ptocoma || pieza==p_coma) lexico();
+		final_sentencia();
+	}
   //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   // Zona de constantes
   //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -4159,6 +4188,7 @@ void sintactico (void) {
 
   g2(ltyp,(memptrsize)bloque_actual);
   g2(lcbp,0);
+#ifdef DIVDLL
   linea1=dlls[0].linea1;
   columna1=dlls[0].columna1;
   linea2=dlls[0].linea2;
@@ -4179,6 +4209,8 @@ void sintactico (void) {
     columna2=dlls[n].columna2;
     grabar_sentencia();
   }
+
+#endif
 
   // El primer FRAME, y la carga de variables PRIVATE, se ejecutan
   // conjuntamente en el BEGIN del programa principal.

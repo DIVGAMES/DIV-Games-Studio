@@ -9,6 +9,6 @@ int  GetGraphWidth(void);	// Returns width of output device
 int  GetGraphHeight(void);	// Returns height of output device
 
 // The following functions have to be provided
-void SetPalette(BYTE *);	// Set palette (all 256 entries)
-void DrawBuffer(View *);	// Blitting function
+void SetPalette(VPEByte *);	// Set palette (all 256 entries)
+void DrawBuffer(struct View *);	// Blitting function
 void DrawScreen(void);		// Filling function

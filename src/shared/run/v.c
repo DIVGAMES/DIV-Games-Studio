@@ -58,6 +58,9 @@ void crear_ghost_slow(void);
 
 int IsFullScreen(SDL_Surface *surface)
 {
+	if ( surface == NULL)
+		return 0;
+
     if (surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
     return 0; // Return false if surface is windowed
 }
@@ -184,7 +187,9 @@ void set_dac (void) {
 	if(vga==NULL) 
 		return;
 #ifndef DOS
-	SDL_Color colors[256];
+
+	SDL_Color colors[512];
+
 	int i;
 	int b=0;
 	for(i=0;i<256;i++){
@@ -193,7 +198,7 @@ void set_dac (void) {
           colors[i].b=dac[b+2]*4;
           b+=3;
     }
-	if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+	if(!SDL_SetPalette(vga, SDL_LOGPAL | SDL_PHYSPAL, colors, 0, 256)) 
 		printf("Failed to set palette :(\n"); 
 	
 	retrazo();
@@ -365,7 +370,7 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef STDOUTLOG
 	printf("SET VIDEO MODE %x\n",vga);
 #endif
-	SDL_WM_SetCaption( "DIV2015", "" );
+	SDL_WM_SetCaption( "DIVDX 3.01", "" );
 
 	modovesa=1;
 #ifdef DOS
@@ -581,9 +586,8 @@ SDL_RenderPresent(divRender);
 //	printf("draw screen\n");
 	if(SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
-	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 
-
+//	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 	SDL_Flip(vga);
 }
 

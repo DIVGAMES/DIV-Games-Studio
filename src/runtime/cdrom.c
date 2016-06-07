@@ -901,14 +901,14 @@ return(cdrom_data.status);
 }
 
 
-int CD_ROM;
+int cdrom;
 int CDEnd;
 
 void Init_CD()
 {
 int tracks;
 int startpos, endpos;
-        CD_ROM=0;
+        cdrom=0;
 //      return;
         if(!cdrom_installed ())
                 return;
@@ -916,7 +916,7 @@ int startpos, endpos;
                 return;
         if(cdrom_data.low_audio+cdrom_data.high_audio==0)
                 return;
-        CD_ROM=1;
+        cdrom=1;
         tracks = cdrom_data.high_audio - cdrom_data.low_audio + 1;
         cd_set_track(tracks+1);
         get_musicpos(&startpos, &endpos);
@@ -926,7 +926,7 @@ int startpos, endpos;
 void Play_CD(int pista,int modo)
 {
 int startpos, endpos;
-        if(!CD_ROM)     return;
+        if(!cdrom)     return;
         cd_set_track(pista);
         get_musicpos(&startpos, &endpos);
         if(modo==0)
@@ -936,13 +936,13 @@ int startpos, endpos;
 }
 void Stop_CD()
 {
-        if(!CD_ROM)     return;
+        if(!cdrom)     return;
         cd_stop_audio ();
 }
 
 int IsPaying_CD()
 {
-        if(!CD_ROM)     return 0;        
+        if(!cdrom)     return 0;        
 
         if(get_cd_status()&1)
         {

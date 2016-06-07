@@ -6,7 +6,6 @@
 #define _VPE_H_
 
 #include <stdio.h>
-//#include <conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "hard.h"
@@ -83,19 +82,19 @@
 // Engine configuration
 //======================
 struct EngineCFG {    // Engine configuration
-  WORD  ScrWidth;     // _Screen_ width
-  WORD  ScrHeight;    // _Screen_ height
-  FIXED ScrConst;     // Constant (depends on aspect ratio)
-  FIXED TimeRate;     // Timer rate (ticks per second)
-  LONG  Ticks;      // Ticks during last frame
-  FIXED FPS;      // Drawing speed in frames per sec
-  FIXED IFPS;     // 1/fps
-  FIXED TimeUnit;     // How long in (1/100 sec) frame takes
-  FIXED MaxStairs;    // Max height of a step in stairs
-  SHORT PickX,PickY;    // Scr coords to check for pick
-  WORD  PickType;     // Type of picked thing
+  VPEWord  ScrWidth;     // _Screen_ width
+  VPEWord  ScrHeight;    // _Screen_ height
+  VPEFixed ScrConst;     // Constant (depends on aspect ratio)
+  VPEFixed TimeRate;     // Timer rate (ticks per second)
+  VPELong  Ticks;      // Ticks during last frame
+  VPEFixed FPS;      // Drawing speed in frames per sec
+  VPEFixed IFPS;     // 1/fps
+  VPEFixed TimeUnit;     // How long in (1/100 sec) frame takes
+  VPEFixed MaxStairs;    // Max height of a step in stairs
+  VPEShort PickX,PickY;    // Scr coords to check for pick
+  VPEWord  PickType;     // Type of picked thing
   void *PickPtr;      // Ptr of the picked thing
-  FIXED PickDist;     // Distance to picked thing
+  VPEFixed PickDist;     // Distance to picked thing
 };
 
 //================
@@ -113,59 +112,59 @@ struct Table {      // Table structure
 //=================
 
 struct Move {     // Physics structure
-  FIXED X, Y, Z, T;
+  VPEFixed X, Y, Z, T;
 };
 
 struct Point {      // Point structure
-  DWORD Type;     // Type
-  FIXED x,y;      // Current coords
-  FIXED nx,ny;      // Transformed coords
-  FIXED ld,rd,a;      // Renderer data
-  SHORT Coord;      // Current coord (in PATH)
-  FIXED Count;      // Counter (for PATH coord change)
+  VPEDword Type;     // Type
+  VPEFixed x,y;      // Current coords
+  VPEFixed nx,ny;      // Transformed coords
+  VPEFixed ld,rd,a;      // Renderer data
+  VPEShort Coord;      // Current coord (in PATH)
+  VPEFixed Count;      // Counter (for PATH coord change)
   struct Point *link;   // Ptr to the next link
-  LONG  Stamp;      // Time-stamp of last transform
+  VPELong  Stamp;      // Time-stamp of last transform
 };
 
 struct Region {     // Region structure
-  DWORD Type;     // Type
-  FIXED FloorH, CeilH;    // Height of floor and ceiling
+  VPEDword Type;     // Type
+  VPEFixed FloorH, CeilH;    // Height of floor and ceiling
   struct TexCon   FloorTC, CeilTC;// Textures
   struct Region  *Below, *Above;  // Region(s) above/below
-  SHORT Fade;     // Light control
-  SHORT Tag;      // Tag control
+  VPEShort Fade;     // Light control
+  VPEShort Tag;      // Tag control
   struct Move     Resist;   // Local physics
   struct Object  *First;    // First object in the Region list
   struct Wall    **WallPtrs;  // Ptr to Wall pointers array
-  LONG  NumWallPtrs;    // Number of wall pointers
-  LONG  Stamp;      // Time-stamp of last render
-  SHORT Idx;      // Region's index (for REJECT)
+  VPELong  NumWallPtrs;    // Number of wall pointers
+  VPELong  Stamp;      // Time-stamp of last render
+  VPEShort Idx;      // Region's index (for REJECT)
 };
 struct Wall {     // Wall structure
-  DWORD  Type;      // Type
+  VPEDword  Type;      // Type
   struct Point   *p1, *p2;  // Points
   struct TexCon   TopTC;    // Top texture
   struct TexCon   MidTC;    // Mid texture
   struct TexCon   BotTC;    // Bottom texture
   struct Region  *Front, *Back; // Front and Back regions
-  FIXED  Length, Mass;    // Length and (optional) mass
-  FIXED  TexX, TexY;    // Texture adjust
-  SHORT  Fade;      // Light control
-  SHORT  Tag;     // Tag control
-  LONG Stamp;     // Time-stamp of last render
+  VPEFixed  Length, Mass;    // Length and (optional) mass
+  VPEFixed  TexX, TexY;    // Texture adjust
+  VPEShort  Fade;      // Light control
+  VPEShort  Tag;     // Tag control
+  VPELong Stamp;     // Time-stamp of last render
 };
 struct Object {     // Object structure
-  DWORD  Type;      // Object's type
+  VPEDword  Type;      // Object's type
   struct Point   *pp;   // Coords
-  DWORD  Event;     // Event to/from engine
-  SHORT  Angle;     // Direction
-  FIXED  H,RH;      // World Z coord, Render Z Coord
-  FIXED  Height, Radius, Step;    // Obj dimensions
-  FIXED  Mass;      // Obj mass
-  SHORT  Fade;      // Light control
-  SHORT  wall_number;   // Para el control de colisiones
-  SHORT  region_number; // Para el control de colisiones
-  SHORT  nextregion_number; // Para el control de colisiones
+  VPEDword  Event;     // Event to/from engine
+  VPEShort  Angle;     // Direction
+  VPEFixed  H,RH;      // World Z coord, Render Z Coord
+  VPEFixed  Height, Radius, Step;    // Obj dimensions
+  VPEFixed  Mass;      // Obj mass
+  VPEShort  Fade;      // Light control
+  VPEShort  wall_number;   // Para el control de colisiones
+  VPEShort  region_number; // Para el control de colisiones
+  VPEShort  nextregion_number; // Para el control de colisiones
   struct TexCon     TC;   // Texture
   struct Move       MSpeed; // Max speed
   struct Move       Acc;    // Obj acceleration
@@ -174,36 +173,36 @@ struct Object {     // Object structure
   struct Object    *Next;   // Next object in the Region's list
 };
 struct View {     // View structure
-  SHORT  ScrX, ScrY;    // Top-left corner of window
-  SHORT  Width, Height;   // Width and height of the window
-  BYTE  *Buffer;      // Buffer to draw to
-  BYTE **BufScan;     // Table of ptrs to scanlines
-  DWORD  BufWidth;    // Width of the output buffer
-  DWORD  Size;      // Size of buffer (to check realloc)
+  VPEShort  ScrX, ScrY;    // Top-left corner of window
+  VPEShort  Width, Height;   // Width and height of the window
+  VPEByte  *Buffer;      // Buffer to draw to
+  VPEByte **BufScan;     // Table of ptrs to scanlines
+  VPEDword  BufWidth;    // Width of the output buffer
+  VPEDword  Size;      // Size of buffer (to check realloc)
   struct Object *pObject;   // Object which carries the camera
-  FIXED  ObjHeight;   // Height above object
-  FIXED  H;           // Z coord of camera
-  FIXED  FIni;        // Visibility
-  FIXED  FLen;        // Visibility
-  SHORT  Table;       // Fading table index
-  SHORT  HAngle;      // Direction relative to obj dir
-  SHORT  VAngle;      // Ver. angle (-127 to 128)
-  SHORT  Horizon;     // For tilting view
+  VPEFixed  ObjHeight;   // Height above object
+  VPEFixed  H;           // Z coord of camera
+  VPEFixed  FIni;        // Visibility
+  VPEFixed  FLen;        // Visibility
+  VPEShort  Table;       // Fading table index
+  VPEShort  HAngle;      // Direction relative to obj dir
+  VPEShort  VAngle;      // Ver. angle (-127 to 128)
+  VPEShort  Horizon;     // For tilting view
   struct VLine  *StartClip; // Start clip array ptr
-  FIXED  dBackX,dBackY;   // Background texel size
-  FIXED  BackH;     // View height for the texel size
-  FIXED  dPicX,dPicY;   // Overlay texel size
-  FIXED  ConstHDist, ConstVDist;  // Constants
-  FIXED  ConstHSlope;   // One more constant
-  FIXED  tc1,ts1,tc2,ts2;   // Variables for floor stuff
+  VPEFixed  dBackX,dBackY;   // Background texel size
+  VPEFixed  BackH;     // View height for the texel size
+  VPEFixed  dPicX,dPicY;   // Overlay texel size
+  VPEFixed  ConstHDist, ConstVDist;  // Constants
+  VPEFixed  ConstHSlope;   // One more constant
+  VPEFixed  tc1,ts1,tc2,ts2;   // Variables for floor stuff
 };
 struct General {    // General info
   char Title[24];     // Zone title
   struct Move GlobalForce;  // Global force
   struct TexCon ScrTC;    // Screen texture
   struct TexCon BackTC;   // Back texture
-  SHORT  BackAngle;   // Angle, back covers
-  FIXED  BackConst;   // Background constant
+  VPEShort  BackAngle;   // Angle, back covers
+  VPEFixed  BackConst;   // Background constant
 };
 
 extern struct EngineCFG Engine;
@@ -218,7 +217,7 @@ extern struct Table     Objects;
 extern struct Table     Views;
 extern struct View     *ActView;
 
-extern LONG TotalFrames;
+extern VPELong TotalFrames;
 extern int VPE_fog;
 
 //=============================
@@ -229,7 +228,7 @@ void  VPE_Config(int,int);    // Configure VPE (scr size)
 void  VPE_Start(void);      // Start rendering process
 void  VPE_Stop(void);     // Stop rendering process
 void  VPE_Shut(void);     // Shut down the engine
-void  VPE_SetRate(FIXED);   // Set Engine speed rate
+void  VPE_SetRate(VPEFixed);   // Set Engine speed rate
 void  VPE_Update(void);     // Prepare zone for next frame
 void  VPE_Render(void);     // Render screen
 
@@ -251,33 +250,35 @@ struct Object  *AddObject(void);    // Add a new object
 int             DelObject(struct Object *); // Delete an object
 struct Point   *AddPoint(void);     // Add a new point
 struct Point   *DelPoint(struct Point *); // Delete a point
-struct Region  *FindRegion(FIXED,FIXED,FIXED,int);// Find region from coords
+struct Region  *FindRegion(VPEFixed,VPEFixed,VPEFixed,int);// Find region from coords
 void            SetObjRegion(struct Object *,struct Region *);// Set r. for o.
 void            ClearObjRegion(struct Object *);// Clear reg. from an obj.
-void SetViewSize(struct View *,int,int,BYTE *,int);// Set view size
+void SetViewSize(struct View *,int,int,VPEByte *,int);// Set view size
 void SetViewDir(struct View *,int,int);   // Set view direction
-void SetActiveView(int altura,int objeto,int w,int h,BYTE *buf_ptr,int buf_width);
+void SetActiveView(int altura,int objeto,int w,int h,VPEByte *buf_ptr,int buf_width);
 
 //================
 // Math functions
 //================
-FIXED FixSin(SHORT);      // SIN of an angle given in units
-FIXED FixCos(SHORT);      // COS
-FIXED FixITan(FIXED,FIXED);   // Angle in units
-FIXED FixDist(FIXED,FIXED,FIXED,FIXED); // Fast approx for distance
-LONG  LongSqrt(LONG);     // Pretty fast sqrt
+VPEFixed FixSin(VPEShort);      // SIN of an angle given in units
+VPEFixed FixCos(VPEShort);      // COS
+VPEFixed FixITan(VPEFixed,VPEFixed);   // Angle in units
+VPEFixed FixDist(VPEFixed,VPEFixed,VPEFixed,VPEFixed); // Fast approx for distance
+VPELong  LongSqrt(VPELong);     // Pretty fast sqrt
 
 //=================
 // Misc. functions
 //=================
-void *CacheAlloc(LONG);               // Alloc. mem. freeing some cache
+void *CacheAlloc(VPELong);               // Alloc. mem. freeing some cache
 void *MemRealloc(int *, int *, int);  // Alloc. mem. freeing some cache
 void *AddEntry(struct Table *);       // Add entry to a table
 void *DelEntry(struct Table *, int);  // Del entry from a table by idx
-FIXED GetSPF(FIXED);                  // Get speed per frame
+VPEFixed GetSPF(VPEFixed);                  // Get speed per frame
 void DrawOverlay(struct TexCon *,int,int,int); // Draw overlay on screen
 void SetPickWatch(int,int);          // Set pick watch for scr coords
-WORD GetPickWatch(void *,FIXED *);   // Get result of pick watching
+VPEWord GetPickWatch(void *,VPEFixed *);   // Get result of pick watching
+
+#define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
 
 //==================
 //  Funciones de movimiento
@@ -287,10 +288,5 @@ void _object_avance(int num_object,int angulo,int velocidad);
 void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto);
 void _vpe_fin();
 void InitGraph(char *buffer,int ancho,int alto);
-
-#define  max( a, b ) ( ( a > b) ? a : b ) 
-
-#define  min( a, b ) ( ( a < b) ? a : b ) 
-
 
 #endif

@@ -32,6 +32,7 @@ find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
 
 rm *.exe
 mv *.pak ../buildhtml2
+mv *.dll.js ../buildhtml2
 rm *.prg
 rm *.dll
 
@@ -135,8 +136,7 @@ cat << EOF > html/$3.html
 		</div>
 		</div>
 		<div class='container'>
-			<canvas class="emscripten" id="canvas" oncontextmenu=
-				"event.preventDefault()"></canvas>
+			<canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 			<input id='fullscreenbtn' class="btn btn-primary" type="button" value="Play in Fullscreen" />
 			<textarea class='hidden-phone hidden-tablet hidden-desktop' id="output" rows="8">
 			</textarea>

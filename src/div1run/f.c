@@ -7,7 +7,9 @@
 #include "divsound.h"
 #include "cdrom.h"
 #include "net.h"
-
+#ifdef DIVDLL
+#include "divdll.h"
+#endif
 
 // file prototypes
 
@@ -25,7 +27,7 @@ void get_angle(void);
 void load_fnt(void); 
 void load_fpg(void); 
 void fade(void); 
-void _write(void); 
+void __write(void); 
 void write_int(void); 
 void delete_text(void); 
 void unload_fpg(void);
@@ -98,7 +100,7 @@ int joy_position(int eje);
 
 // sound prototypes
 int LoadSound(char *ptr, long Len, int Loop);
-int PlaySound(int n, int m, int o);
+int DivPlaySound(int n, int m, int o);
 int UnloadSound(int n);
 int StopSound(int n);
 int ChangeSound(int n, int m, int o);
@@ -132,7 +134,7 @@ void function(void) {
     case 13: get_dist(); break;
     case 14: fade(); break;
     case 15: load_fnt(); break;
-    case 16: _write(); break;
+    case 16: __write(); break;
     case 17: write_int(); break;
     case 18: delete_text(); break;
     case 19: move_text(); break;
@@ -278,7 +280,7 @@ void _key(void) {
 
 char full[_MAX_PATH+1];
 
-static FILE * open_file(byte * file) {
+FILE * open_file(byte * file) {
   FILE * f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
@@ -901,7 +903,7 @@ void load_fnt(void) {
 //      Write(font,x,y,centro,ptr)
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
-void _write(void) {
+void __write(void) {
   int f=pila[sp-4];
   if (f<0 || f>=max_fonts) { e(e116); f=0; }
   if (fonts[f]==0) { e(e116); f=0; }
@@ -1535,7 +1537,7 @@ void unload_pcm(void) {
 void _sound(void) {
   int vol,fre;
   fre=pila[sp--]; vol=pila[sp--];
-  if (fre) pila[sp]=PlaySound(pila[sp],vol,fre);
+  if (fre) pila[sp]=DivPlaySound(pila[sp],vol,fre);
   // if (pila[sp]==-1) e(e129);
 }
 
@@ -1581,8 +1583,10 @@ void set_fps(void) {
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 
 void start_fli(void) {
-  int x,y;
-  y=pila[sp--]; x=pila[sp--];
+
+	int x,y;
+	y=pila[sp--]; x=pila[sp--];
+#ifdef USE_FLI
 
   if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e147);
@@ -1593,6 +1597,7 @@ void start_fli(void) {
   }
 //  pila[sp]=StartFLI((byte*)&mem[itxt+pila[sp]],copia2,vga_an,vga_al,x,y);
 //  if (pila[sp]==0) e(e130);
+#endif
 }
 
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様

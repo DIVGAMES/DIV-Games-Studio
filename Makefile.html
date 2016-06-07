@@ -7,13 +7,14 @@
 
 BUILDLVL= -O3
 
-SDL_CFLAGS = -DZLIB -DMIXER -DSDL
+SDL_CFLAGS = -DZLIB -DMIXER -DSDL -DDIVDLL -DMODE8
 
 SDL_LIBS = -lSDL
 
 CXX=emcc
 CC=emcc
-EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456  
+
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s ASM_JS=1 -s TOTAL_MEMORY=268435456 -s MAIN_MODULE=1
 
 # -s ASYNCIFY=1 -s TOTAL_MEMORY=268435456  
 #-s ASSERTIONS=2
@@ -43,11 +44,12 @@ EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses
 SCFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc/shared -Isrc -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2 
 LIBS = $(SDL_LIBS) -lm --emrun
 
-	OSDEP = src/shared/osdep.c src/shared/unzip.c
+OSDEP = src/shared/osdep.c src/shared/unzip.c src/shared/mikedll.c
 
 CSRC = $(wildcard src/*.c) ${OSDEP}
 SHAREDSRC = $(wildcard src/shared/run/*.c) 
-RSRC = $(wildcard src/runtime/*.c)  ${OSDEP} ${SHAREDSRC}
+MODE8SRC = $(wildcard src/runtime/vpe/*.c) 
+RSRC = $(wildcard src/runtime/*.c)  ${OSDEP} ${SHAREDSRC} ${MODE8SRC}
 D1SRC = $(wildcard src/div1run/*.c)  ${OSDEP} ${SHAREDSRC}
 DSRC = $(wildcard src/runtime/*.c)  ${OSDEP} src/runtime/debug/d.c ${SHAREDSRC}
 #src/SDL_gfxPrimitives.c src/SDL_gfxBlitFunc.c src/SDL_rotozoom.c
@@ -57,7 +59,10 @@ DSRC = $(wildcard src/runtime/*.c)  ${OSDEP} src/runtime/debug/d.c ${SHAREDSRC}
 
 all: dirs  ${RUNNER} ${DIV1RUN} ${DRUNNER} ${DIVIDE}
 
-dirs: obj/src/runtime/debug obj_d/src/runtime/debug obj/src/div1run obj/src/shared/run
+dirs: obj/src/runtime/vpe obj/src/runtime/debug obj_d/src/runtime/debug obj/src/div1run obj/src/shared/run
+
+obj/src/runtime/vpe:
+	mkdir -p obj/src/runtime/vpe
 
 obj/src/shared/run:
 	mkdir -p obj/src/shared/run

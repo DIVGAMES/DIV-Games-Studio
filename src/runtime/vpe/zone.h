@@ -41,14 +41,14 @@
 
 struct ZF_Header {    // Zone file header
   char  IDStr[4];     // Zone file ID string
-  SHORT NumPoints;    // Number of points
-  SHORT NumRegions;   // Number of floors
-  SHORT NumWalls;     // Number of walls
-  SHORT NumFlags;     // Number of flags
+  VPEShort NumPoints;    // Number of points
+  VPEShort NumRegions;   // Number of floors
+  VPEShort NumWalls;     // Number of walls
+  VPEShort NumFlags;     // Number of flags
 };
 
 struct ZF_Move {    // Used for movement data
-  SHORT x,y,z,t;      // x,y,z and torque
+  VPEShort x,y,z,t;      // x,y,z and torque
 };
 
 struct ZF_General {     // General information
@@ -57,50 +57,50 @@ struct ZF_General {     // General information
   int   ScrTex;         // Name of screen texture
   int   BackTex;        // Background texture name
   char  BackEff[9];     // Background Eff program
-  SHORT BackAngle;      // Angle of view covered by BackTex
-  SHORT ActView;        // Index of view which gets kbd input
+  VPEShort BackAngle;      // Angle of view covered by BackTex
+  VPEShort ActView;        // Index of view which gets kbd input
   struct ZF_Move Force; // Global force
 };
 
 
 struct ZF_Flag {   // Point struture
-  LONG  x,y;      // Point coordinates
+  VPELong  x,y;      // Point coordinates
   int   number;
 };
 
 struct ZF_Point {   // Point struture
-  DWORD Type;     // Type
-  LONG  x,y;      // Point coordinates
-  SHORT path;     // Path index
-  SHORT link;     // Index of the next point in the link
+  VPEDword Type;     // Type
+  VPELong  x,y;      // Point coordinates
+  VPEShort path;     // Path index
+  VPEShort link;     // Index of the next point in the link
 };
 
 struct ZF_Region {  // Region structure
-  DWORD Type;       // Type
-  SHORT FloorH;     // Floor height
-  SHORT CeilH;      // Ceiling height
-  SHORT Below;      // Region below
-  SHORT Above;      // Region above
+  VPEDword Type;       // Type
+  VPEShort FloorH;     // Floor height
+  VPEShort CeilH;      // Ceiling height
+  VPEShort Below;      // Region below
+  VPEShort Above;      // Region above
   int   FloorTex;   // Floor texture name
   int   CeilTex;    // Ceiling texture name
   char  Eff[9];     // Eff program
-  SHORT Fade;       // Luminosidad de la region 0-65535
-  SHORT Tag;        // Tag ID
+  VPEShort Fade;       // Luminosidad de la region 0-65535
+  VPEShort Tag;        // Tag ID
 };
 
 struct ZF_Wall {    // Wall structure
-  DWORD Type;       // Wall type
-  SHORT p1, p2;     // Point indeces
-  SHORT Front;      // Front Region
-  SHORT Back;       // Back Region
+  VPEDword Type;       // Wall type
+  VPEShort p1, p2;     // Point indeces
+  VPEShort Front;      // Front Region
+  VPEShort Back;       // Back Region
   int   TopTex;     // Top texture name
   int   MidTex;     // Middle texture name
   int   BotTex;     // Bottom texture name
   char  Eff[9];     // Eff program
-  SHORT Fade;       // Luminosidad de la pared 0-65535
-  SHORT TexX, TexY; // Texture adjusting
-  SHORT Mass;       // Mass for movable walls
-  SHORT Tag;        // Tag ID
+  VPEShort Fade;       // Luminosidad de la pared 0-65535
+  VPEShort TexX, TexY; // Texture adjusting
+  VPEShort Mass;       // Mass for movable walls
+  VPEShort Tag;        // Tag ID
 };
 
 

@@ -14,19 +14,23 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #define DEFINIR_AQUI // DEFINED HERE - see global.h
+#ifdef WIN32
+#include <windows.h>
+#include <malloc.h>
+#include <stdio.h>
+#endif
+
 #include "global.h"
 #include "divsound.h"
 #include "divmixer.hpp"
 #include "divsb.h"
 #include "sysdac.h"
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
 void mainloop(void);
-
-//#include "inc\svga.h"
-
 void heap_dump(void );
 void DebugFile(char *Cadena,char *Nombre);
 void save_prg_buffer(memptrsize);
@@ -120,11 +124,13 @@ extern byte * index_end;
 ///////////////////////////////////////////////////////////////////////////////
 
 int primera_vez=0;  // Marks first time DIV runs
+
 #ifdef SHARE
 int mostrar_demo=1;  // La primera vez no saldr  el mensaje de la demo
 #else
 int mostrar_demo=0;
 #endif
+
 int volcados_parciales=0;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -201,39 +207,42 @@ void demo0(void) {
 }
 
 void chk_demo(void) {
-  FILE *f;
+	FILE *f;
 
-  _dos_setfileattr(exe_name, _A_NORMAL);
+	_dos_setfileattr(exe_name, _A_NORMAL);
 
-  f=fopen(exe_name, "rb");
-  printf("DEMO VERSION: %s %x\n",exe_name,f);
-  
-  if(f) {
+	f=fopen(exe_name, "rb");
+	printf("DEMO VERSION: %s %x\n",exe_name,f);
 
-  fseek(f, 0, SEEK_END);
-	fseek(f,-8,SEEK_CUR);
-	
-  fread(&exe_cola[0], 1, 8, f);
-printf("0x%x\n",exe_cola[0]);
+	if(f) {
 
-  if(exe_cola[0]==0xDABACA2A) {
-    if (exe_cola[1]-0xF31725AB>1024) beta_status=1; else exe_cola[1]++;
-    fseek(f, -4, SEEK_END);
-//    fwrite(&exe_cola[1], 1, 4, f);
-  } else {
-    fclose(f);
-    f=fopen(exe_name, "ab");
-    if(f) {
 		fseek(f, 0, SEEK_END);
-		exe_cola[0]=0xDABACA2A;
-		exe_cola[1]=1+0xF31725AB;
-		fwrite(&exe_cola[0], 1, 8, f);
-	}
-  }
-  if(f)
-	fclose(f);
+		fseek(f,-8,SEEK_CUR);
 
-}
+		fread(&exe_cola[0], 1, 8, f);
+
+		printf("0x%x\n",exe_cola[0]);
+
+		if(exe_cola[0]==0xDABACA2A) {
+			if (exe_cola[1]-0xF31725AB>1024) beta_status=1; else exe_cola[1]++;
+			fseek(f, -4, SEEK_END);
+			//    fwrite(&exe_cola[1], 1, 4, f);
+		} else {
+			fclose(f);
+			f=fopen(exe_name, "ab");
+
+			if(f) {
+				fseek(f, 0, SEEK_END);
+				exe_cola[0]=0xDABACA2A;
+				exe_cola[1]=1+0xF31725AB;
+				fwrite(&exe_cola[0], 1, 8, f);
+			}
+		}
+		
+		if(f)
+			fclose(f);
+
+	}
 }
 
 #endif
@@ -361,8 +370,8 @@ int DPMIalloc4k(void);
 
 
 #endif
-#ifndef GP2X
-#ifndef PS2
+
+#if !defined ( GP2X ) && !defined (PS2)
 #ifdef MIXER
 void print_init_flags(int flags)
 {
@@ -372,10 +381,9 @@ void print_init_flags(int flags)
         PFLAG(MP3);
         PFLAG(OGG);
         if(!flags)
-                printf("None");
-        printf("\n");
+			debugprintf("None");
+        debugprintf("\n");
 }
-#endif
 #endif
 #endif
 
@@ -385,267 +393,277 @@ void mensaje_compilacion(byte * p);
 extern int compilado;
 
 int main(int argc, char * argv[]) {
-  FILE *f;
-  byte *prgbuf;
-  unsigned n;
-  SDL_Init( SDL_INIT_EVERYTHING);
-#ifndef GP2X
-#ifndef PS2
-#ifndef PSP
-  SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
-#endif
-#endif
-#endif
+	FILE *f;
+	byte *prgbuf;
+	unsigned n;
+	debugprintf("Welcome to DIV\n");
+	
+	SDL_Init( SDL_INIT_EVERYTHING);
 
-printf("argv[0]=%s\n",argv[0]);
+#if !defined( GP2X ) && !defined( PS2 ) && !defined( PSP )
+	SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+#endif
 
 // on windows, get printf working.
 #ifdef __WIN32
-freopen( "CON", "w", stdout );
-freopen( "CON", "w", stderr );
+	freopen( "CON", "w", stdout );
+	freopen( "CON", "w", stderr );
 #endif
 
-  atexit(SDL_Quit);
-  atexit(free_resources);
+	atexit(SDL_Quit);
+	atexit(free_resources);
   
-//  SDL_WM_GrabInput( SDL_GRAB_ON );
-  system_clock = &mclock;
+	system_clock = &mclock;
 
-//  if (strstr(argv[0],".386")==NULL) cpu_type=5; else cpu_type=3;
-
-// Treat all modern targets as '586' type
 	cpu_type = 5;
 
-//GetFree4kBlocks();
-
-//  _harderr(critical_error);
-
-//  remove("DEBUGDIV.TXT");
-
-  modo_de_retorno=0;
-  salir_del_entorno=0;
-  MustCreate=1;
-  siguiente_orden=0;
-  Interpretando=1;
-  safe=34; // Text in lower right corner
-  compilemode = 0;
+	modo_de_retorno=0;
+	salir_del_entorno=0;
+	MustCreate=1;
+	siguiente_orden=0;
+	Interpretando=1;
+	safe=34; // Text in lower right corner
+	compilemode = 0;
   
-  if(argc>1 && !strcmp(argv[1],"INIT")) Interpretando=0;
-  else beta_status=4;
-  if(argc>1 && !strcmp(argv[1],"TEST")) test_video=1;
-
-  if(argc>1 && !strcmp(argv[1],"-c")) {
-	  compilemode=1;
-  }
-
-  getcwd(tipo[0].path,PATH_MAX+1);
-
-  if (argc<1) exit(0);
-
-  _fullpath(full,argv[0],_MAX_PATH+1);
-#ifdef SHARE
-  strcpy(exe_name,full);
-#endif
-  strupr(full);
-  n=strlen(full);
-  while (n && full[n]!='/') n--;
-  full[n]=0;
-  if (full[n-1]==':') strcat(full,"/");
-  _dos_setdrive((memptrsize)toupper(full[0])-'A'+1,&n);
-//  _chdir(full);
-
-  if (cpu_type==3) chdir("..");
-
-  getcwd(tipo[1].path,PATH_MAX+1);
+	if(argc>1 && !strcmp(argv[1],"INIT")) 
+		Interpretando=0;
+	else 
+		beta_status=4;
 	
-  if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
-    safe=33;
-    DaniDel("sound.cfg");
-    DaniDel("system/setup.bin");
-    DaniDel("system/session.dtf");
-  } else {
-    if ((f=fopen("system/setup.bin","rb"))!=NULL) {
-      fclose(f);
-      primera_vez=0;
-    } else {
-      primera_vez=1;
-      mostrar_demo=0;
-    }
-  }
+	if(argc>1 && !strcmp(argv[1],"TEST")) 
+		test_video=1;
 
-  tipo[2].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
-  tipo[3].ext="*.* *.PAL *.FPG *.FNT *.MAP *.BMP *.PCX *.JPG *.JPE";
-  tipo[4].ext="*.FPG *.*";
-  tipo[5].ext="*.FNT *.*";
-  tipo[6].ext="*.IFS *.*";
-  tipo[7].ext="*.* *.WAV *.PCM";
-  tipo[8].ext="*.PRG *.*";
-  tipo[9].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE";
-  tipo[10].ext="*.PAL";
-  tipo[11].ext="*.WAV *.PCM";
-  tipo[12].ext="*.PRJ";
-  tipo[13].ext="*.*";
-  tipo[14].ext="*.MAP *.PCX *.BMP";
-  tipo[15].ext="*.WLD *.*";
-  tipo[16].ext="*.* *.MOD *.S3M *.XM";
+	if(argc>1 && !strcmp(argv[1],"-c")) 
+		compilemode=1;
 
-  for (n=0;n<24;n++) { tipo[n].defecto=0; tipo[n].inicial=0; }
+	getcwd(tipo[0].path,PATH_MAX+1);
 
-  inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+	if (argc<1) 
+	exit(0);
 
-if(compilemode==1) {	
-	inicializa_compilador();
-	compilado=1; mouse_graf=3; numero_error=-1;
-	if(argc<3) {
-		printf("DIV Games Studio Compiler V2.02 - http://www.div-arena.co.uk\n");
-		printf("Usage: -c [program name] [output.exe]\n");
-		exit(-1);
+	_fullpath(full,argv[0],_MAX_PATH+1);
+
+	#ifdef SHARE
+	strcpy(exe_name,full);
+	#endif
+
+#ifdef DIVGIT
+	gitinit();
+#endif
+
+	strupr(full);
+	n=strlen(full);
+
+	while (n && full[n]!='/') n--;
+
+	full[n]=0;
+
+	if (full[n-1]==':')
+	strcat(full,"/");
+
+	_dos_setdrive((memptrsize)toupper(full[0])-'A'+1,&n);
+
+	if (cpu_type==3) chdir("..");
+
+	getcwd(tipo[1].path,PATH_MAX+1);
+
+	if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
+		safe=33;
+		DaniDel("sound.cfg");
+		DaniDel("system/setup.bin");
+		DaniDel("system/session.dtf");
+	} else {
+
+		if ((f=fopen("system/setup.bin","rb"))!=NULL) {
+			fclose(f);
+			primera_vez=0;
+	} else {
+			primera_vez=1;
+			mostrar_demo=0;
+		}
 	}
-	f=fopen(argv[2],"rb");
-	if(f) {
-		fseek(f,0,SEEK_END);
-		source_len = ftell(f);
-		fseek(f,0,SEEK_SET);
-		prgbuf = (byte *)malloc(source_len+10);
-		if(prgbuf) {
-			printf("Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
-			source_ptr=prgbuf;
-			comp();
-			if (numero_error>=0) {
-				get_error(500+numero_error);
-				mensaje_compilacion(cerror);
-			} else {
-				mensaje_compilacion(texto[202]);
-			}
-			free(prgbuf);
-			prgbuf=NULL;
-		} else {
-			printf("Out of memory\n");
+
+	tipo[2].ext="*.* *.MAP *.PCX *.BMP *.JPG *.JPE *.PNG *.GIF *.TGA *.TIF"; // Maps browser
+	tipo[3].ext="*.* *.PAL *.FPG *.FNT *.MAP *.BMP *.PCX *.JPG *.PNG *.GIF *.TGA *.TIF"; // Palette Browser
+	tipo[4].ext="*.FPG *.*"; // FPG FILES
+	tipo[5].ext="*.FNT *.*"; // FNT FILES
+	tipo[6].ext="*.IFS *.*"; // IFS Font templates
+	tipo[7].ext="*.* *.7 *.WAV *.PCM *.MP3 *.OGG *.FLAC"; // Audio files
+	tipo[8].ext="*.PRG *.*"; // Program files
+	
+	tipo[9].ext="*.* *.JPG *.PNG *.BMP *.TIF"; // wallpaper files
+	
+	tipo[10].ext="*.PAL"; // Save Palettes
+	tipo[11].ext="*.WAV *.PCM"; // Save Audio
+	tipo[12].ext="*.PRJ"; // Save Project
+
+	tipo[13].ext="*.* *.13"; // unknown 
+
+	tipo[14].ext="*.MAP *.PCX *.BMP"; // Save image
+	tipo[15].ext="*.WLD *.*"; // 3D Map files
+	tipo[16].ext="*.* *.MOD *.S3M *.XM *.MID"; // Tracker modules
+
+	for (n=0;n<24;n++) 
+		tipo[n].defecto=0; tipo[n].inicial=0; 
+
+	inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+
+	if(compilemode==1) {	
+		inicializa_compilador();
+
+		compilado=1; mouse_graf=3; numero_error=-1;
+
+		if(argc<3) {
+			fprintf(stdout,"DIV Games Studio Compiler V2.02 - http://www.div-arena.co.uk\n");
+			fprintf(stdout,"Usage: -c [program name] [output.exe]\n");
 			exit(-1);
 		}
-		fclose(f);	
-  } else {
-	  printf("Failed to open %s\n",argv[2]);
-	  exit(-1);
-  }
-  exit(0);
 
-}
+		f=fopen(argv[2],"rb");
 
+		if(f) {
+			fseek(f,0,SEEK_END);
+			source_len = ftell(f);
+			fseek(f,0,SEEK_SET);
+			prgbuf = (byte *)malloc(source_len+10);
+			if(prgbuf) {
+				fprintf(stdout,"Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
+				source_ptr=prgbuf;
+				comp();
+				if (numero_error>=0) {
+					get_error(500+numero_error);
+					mensaje_compilacion(cerror);
+				} else {
+					mensaje_compilacion(texto[202]);
+				}
+				free(prgbuf);
+				prgbuf=NULL;
+			} else {
+				printf("Out of memory\n");
+				exit(-1);
+			}
+			fclose(f);	
+		} else {
+		  printf("Failed to open %s\n",argv[2]);
+		  exit(-1);
+		}
+		exit(0);
 
- 
-  if(SDL_NumJoysticks() > 0)
-	SDL_JoystickOpen(0);
+	}
 
-#ifndef GP2X
-#ifndef PS2
+	if(SDL_NumJoysticks() > 0)
+		SDL_JoystickOpen(0);
+
+#if !defined( GP2X ) && !defined (PS2) && !defined ( PSP )
 #ifdef MIXER
-  int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
-  
-  int initted=Mix_Init(flags);
-//
-  if((initted&flags) != flags) {
-	printf("Mix_Init: %s\n", Mix_GetError());
-	print_init_flags(initted);
-	//  printf("Mix_Init: Failed to init required ogg and mod support!\n");	
-   }
-#endif 
+	int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
+
+	int initted=Mix_Init(flags);
+
+	if((initted&flags) != flags) {
+		printf("Mix_Init: %s\n", Mix_GetError());
+		print_init_flags(initted);
+	}
 #endif
 #endif
 
 #ifndef __EMSCRIPTEN__
-  SDL_WM_SetCaption((char *)texto[34], "" );
-  SDL_ShowCursor( SDL_FALSE );
+	SDL_WM_SetCaption((char *)texto[34], "" );
+	SDL_ShowCursor( SDL_FALSE );
 #else
-SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
-  
+	SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
 #endif
 
+	check_mouse();
 
- check_mouse();
+	Load_Cfgbin();
 
-  Load_Cfgbin();
+	strcpy(full,"Be");
+	strcat(full,"ta");
 
-  strcpy(full,"Be");
-  strcat(full,"ta");
+	if (strstr((char *)texto[34],(char *)full)==NULL && strstr((char *)texto[35],(char *)full)==NULL) {
+		strupr(full);
+		if (strstr((char *)texto[34],(char *)full)==NULL && strstr((char *)texto[35],(char *)full)==NULL) {
+		  beta_status=4;
+		}
+	}
 
-  if (strstr((char *)texto[34],(char *)full)==NULL && 
-	strstr((char *)texto[35],(char *)full)==NULL) {
-    strupr(full);
-    if (strstr((char *)texto[34],(char *)full)==NULL && 
-		strstr((char *)texto[35],(char *)full)==NULL) {
-      beta_status=4;
-    }
-  }
-
-  if(!Interpretando) {
-#ifdef NOTYET
-    _setvideomode(_TEXTC80);
-    _setbkcolor(1); _settextcolor(15);
-    _outtext(texto[1]);
+	if(!Interpretando) {
+#ifdef DOS
+		_setvideomode(_TEXTC80);
+		_setbkcolor(1); _settextcolor(15);
+		_outtext(texto[1]);
 #endif
-textcolor(BRIGHT, WHITE, RED);	
-    printf("%s",texto[1]);
-    textcolor(TXTRESET, WHITE, BLACK);	
-printf("\n");
-  }
+		textcolor(BRIGHT, WHITE, RED);	
+		printf("%s",texto[1]);
+		textcolor(TXTRESET, WHITE, BLACK);	
+		printf("\n");
+	}
 
-  inicializacion();
+	inicializacion();
 
-  inicializa_entorno();
+	inicializa_entorno();
   
   /////////////////////////////////////////////////////////////////////////////
   
-  if(beta_status==0) dialogo(betatest0);
+	if(beta_status==0) 
+		dialogo(betatest0);
+		
 #ifdef SHARE
-  else {
-    if (!Interpretando) {
-      chk_demo();
-      if (mostrar_demo) {
-        dialogo(demo0);
-        if (v_aceptar) help(2007);
-      }
-    }
-  }
+	else {
+		if (!Interpretando) {
+			chk_demo();
+
+			if (mostrar_demo) {
+				dialogo(demo0);
+
+				if (v_aceptar) 
+					help(2007);
+			}
+		}
+	}
 #endif
+
 #ifdef __EMSCRIPTEN__
   // void emscripten_set_main_loop(em_callback_func func, int fps, int simulate_infinite_loop);
-  emscripten_cancel_main_loop();
-  emscripten_set_main_loop(mainloop, 0, 0);
+	emscripten_cancel_main_loop();
+	emscripten_set_main_loop(mainloop, 0, 0);
 	return 0;
-#else
+#endif
 
-  entorno(); // Environment
+	entorno(); // Environment
+
+
  
   /////////////////////////////////////////////////////////////////////////////
 
-  mouse_graf=3; volcado_copia();
+	mouse_graf=3; volcado_copia();
 
-  if (auto_save_session || modo_de_retorno!=0)
-    if (modo_de_retorno!=3) DownLoad_Desktop(); // Si no fallo el test
-  //New_DownLoad_Desktop();
+	if (auto_save_session || modo_de_retorno!=0)
+		if (modo_de_retorno!=3) 
+			DownLoad_Desktop(); // Si no fallo el test
+	//New_DownLoad_Desktop();
 
-  Save_Cfgbin();
-  
-  finalizacion();
+	Save_Cfgbin();
 
-  finaliza_textos();
+	finalizacion();
 
-  #ifdef GRABADORA
-    EndGrabador();
-  #endif
+	finaliza_textos();
 
-  
-
-  if (modo_de_retorno==1) {
-    _dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
-    _chdir(tipo[1].path);
-  } else {
-    _dos_setdrive((memptrsize)toupper(*tipo[0].path)-'A'+1,&n);
-    _chdir(tipo[0].path);
-  }
-  return(modo_de_retorno);
+#ifdef GRABADORA
+	EndGrabador();
 #endif
+
+  
+
+	if (modo_de_retorno==1) {
+		_dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
+		_chdir(tipo[1].path);
+	} else {
+		_dos_setdrive((memptrsize)toupper(*tipo[0].path)-'A'+1,&n);
+		_chdir(tipo[0].path);
+	}
+	return(modo_de_retorno);
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -707,6 +725,9 @@ void inicializa_entorno() {
     fclose(f);
   }
 
+	actualiza_caja(0,0,vga_an,vga_al);
+    volcado_completo=1; volcado(copia);
+    
   if(!Interpretando) {
     if (!strlen(user1) || !strlen(user2)) {
       dialogo(usuario0);
@@ -727,7 +748,7 @@ void inicializa_entorno() {
     if (n==max_windows) nueva_ventana(menu_principal0);
   }
 
-  if (test_video) dialogo(test0);
+//  if (test_video) dialogo(test0);
 // Have we come back from running a prog?
   if (Interpretando) {
     vacia_buffer();
@@ -755,8 +776,7 @@ void inicializa_entorno() {
     //abrir_programa(); if (v_terminado) maximizar();
     nueva_ventana(menu_principal0);
     minimiza_ventana();
-//    actualiza_caja(0,0,vga_an,vga_al);
-//    volcado_completo=1; volcado(copia);
+    
     primera_vez=2;
     help(2000);
     primera_vez=0;
@@ -863,635 +883,869 @@ extern int reloj; // clock
 
 void mainloop(void) {
 
-  int n,m,oldn=max_windows;
-  int llamar;
-  char cwork[256],*p;
-#ifdef NOTYET
-  printf("%d %d %d\n",reloj, old_reloj,loop_count);
+	int n,m,oldn=max_windows;
+	int llamar;
+	char cwork[256],*p;
+
+	if (arrastrar==3) { // drag == 3?
+		goto fin_bucle_entorno; // end loop environment
+	}
+
+	tecla();
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Busca la ventana sobre la que estamos (n) n=max_windows si no hay
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	n=0; 
 	
-    if (reloj==old_reloj) loop_count++; else loop_count=0;
-    if (loop_count>=500) {
-      EndSound();
-      loop_count=0;
-      InitSound();
-    } old_reloj=reloj;
+	while(n<max_windows && !(ventana[n].tipo>0 && mouse_in(ventana[n].x,ventana[n].y,
+	  ventana[n].x+ventana[n].an-1,ventana[n].y+ventana[n].al-1))) 
+		n++;
 
-    if (GetIRQVector(0) != Irq0Handler) { // in dialogue environment and paint
+	if (n<max_windows && arrastrar==4 && ventana[n].orden==quien_arrastra)
+		arrastrar=5;
 
-      svmode(); set_dac(dac);
-      set_mouse(mouse_x,mouse_y);
-      read_mouse();
-      volcado_completo=1; volcado_copia();
-      v_texto="Interrupt vector lost!";
-      dialogo(err0);
-    }
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//  Arrastrar hacia el tapiz
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    IntIncr = 1193180 / 100;
+	if (arrastrar==4 && (n==max_windows || ventana[n].tipo==2)) {
+		arrastrar=5; 
+		free_drag=0;
+		v_titulo=(char *)texto[57]; 
+		v_texto=NULL;
+		dialogo(aceptar0);
 
-    outp(0x43, 54);
-    outp(0x40, (byte) IntIncr);
-    outp(0x40, (byte)(IntIncr>>8));    // Set the timer to 100 Hz.
+		if (v_aceptar) {
 
-    SetIRQVector(0, Irq0Handler);
-#endif
+			if(v.tipo==101) 
+				MustCreate=0;
 
-    if (arrastrar==3) { // drag == 3?
-      goto fin_bucle_entorno; // end loop environment
-    }
+			if (!nuevo_mapa(NULL)) {
 
-    tecla();
+				if(MustCreate==0) {
+					  memcpy(v_mapa->filename,v.mapa->filename,13);
+					  nueva_ventana(mapa0);
+					  MustCreate=1;
+				}
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Busca la ventana sobre la que estamos (n) n=max_windows si no hay
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+				v_mapa=ventana[1].mapa;
+				memcpy(v.mapa->map,v_mapa->map,map_an*map_al);
+				v.mapa->zoom=v_mapa->zoom;
+				v.mapa->zoom_x=v_mapa->zoom_x;
+				v.mapa->zoom_y=v_mapa->zoom_y;
+				v.mapa->zoom_cx=v_mapa->zoom_cx;
+				v.mapa->zoom_cy=v_mapa->zoom_cy;
 
-    n=0; while(n<max_windows && !(ventana[n].tipo>0 && mouse_in(ventana[n].x,ventana[n].y,
-      ventana[n].x+ventana[n].an-1,ventana[n].y+ventana[n].al-1))) n++;
+			for (n=0;n<512;n++) 
+				v.mapa->puntos[n]=v_mapa->puntos[n];
 
-    if (n<max_windows && arrastrar==4 && ventana[n].orden==quien_arrastra) arrastrar=5;
+			if(v_mapa->TengoNombre==1) {
+				v_mapa->TengoNombre=0;
+				memcpy(v.mapa->filename,v_mapa->filename,13);
+				memcpy(v.nombre,v_mapa->filename,13);
+				memcpy(v.titulo,v_mapa->filename,13);
+				v.mapa->Codigo=0;
+				memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
+			} else if(v_mapa->TengoNombre==2) {
+				v.mapa->TengoNombre=0;
+				v.mapa->Codigo=v_mapa->Codigo;
+				memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
+				memcpy(v.mapa->filename,v_mapa->filename,13);
+			} else 
+				v.mapa->Codigo=0;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    //  Arrastrar hacia el tapiz
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+			call((voidReturnType )v.paint_handler);
+			wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
 
-    if (arrastrar==4 && (n==max_windows || ventana[n].tipo==2)) {
-      arrastrar=5; free_drag=0;
-      v_titulo=(char *)texto[57]; v_texto=NULL;
-      dialogo(aceptar0);
-      if (v_aceptar) {
+			} else MustCreate=1;
 
-        if(v.tipo==101) MustCreate=0;
+		} free_drag=1;
+	}
 
-        if (!nuevo_mapa(NULL)) {
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Si antes est bamos en una ventana en la que hemos dejado de estar
+	// debemos repintar esta £ltima (para borrar posibles "hi-lite")
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-          if(MustCreate==0) {
-                  memcpy(v_mapa->filename,v.mapa->filename,13);
-                  nueva_ventana(mapa0);
-                  MustCreate=1;
-          }
+	if (arrastrar!=4) {
 
-          v_mapa=ventana[1].mapa;
-          memcpy(v.mapa->map,v_mapa->map,map_an*map_al);
-          v.mapa->zoom=v_mapa->zoom;
-          v.mapa->zoom_x=v_mapa->zoom_x;
-          v.mapa->zoom_y=v_mapa->zoom_y;
-          v.mapa->zoom_cx=v_mapa->zoom_cx;
-          v.mapa->zoom_cy=v_mapa->zoom_cy;
+		if (n==0) 
+			if (v.primer_plano==1) 
+				if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) 
+					n--;
 
-          for (n=0;n<512;n++) v.mapa->puntos[n]=v_mapa->puntos[n];
-          if(v_mapa->TengoNombre==1) {
-            v_mapa->TengoNombre=0;
-            memcpy(v.mapa->filename,v_mapa->filename,13);
-            memcpy(v.nombre,v_mapa->filename,13);
-            memcpy(v.titulo,v_mapa->filename,13);
-            v.mapa->Codigo=0;
-            memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
-          } else if(v_mapa->TengoNombre==2) {
-            v.mapa->TengoNombre=0;
-            v.mapa->Codigo=v_mapa->Codigo;
-            memcpy(v.mapa->descripcion,v_mapa->descripcion,32);
-            memcpy(v.mapa->filename,v_mapa->filename,13);
-          } else v.mapa->Codigo=0;
+		if (n!=oldn && oldn==0) {
+			if (v.primer_plano==1) {
+				wmouse_x=-1; 
+				wmouse_y=-1; 
+				m=mouse_b; 
+				mouse_b=0;
+				call((voidReturnType )v.click_handler); 
+				mouse_b=m;
+				
+				if (v.volcar) { 
+					vuelca_ventana(0); 
+					v.volcar=0;
+				}
+			} 
+		}
+		oldn=max_windows; 
+			
+		if (n<0)
+			n++;
 
-          call((voidReturnType )v.paint_handler);
-          wvolcado(copia,vga_an,vga_al,v.ptr,v.x,v.y,v.an,v.al,0);
-
-        } else MustCreate=1;
-
-      } free_drag=1;
-    }
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Si antes est bamos en una ventana en la que hemos dejado de estar
-    // debemos repintar esta £ltima (para borrar posibles "hi-lite")
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    if (arrastrar!=4) {
-
-      if (n==0) if (v.primer_plano==1)
-        if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) n--;
-
-      if (n!=oldn && oldn==0) if (v.primer_plano==1) {
-        wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-        call((voidReturnType )v.click_handler); mouse_b=m;
-        if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-      } oldn=max_windows; if (n<0) n++;
-
-    }
-
+	}
     
-    ///////////////////////////////////////////////////////////////////////////
-    // Determine the shape of the cursor (mouse pointer)
-    ///////////////////////////////////////////////////////////////////////////
-    if (n==max_windows) mouse_graf=1;
-    else switch(ventana[n].primer_plano) {
-      case 0:
-        mouse_graf=7; break;
-      case 1:
-        if (mouse_in(ventana[n].x+2*big2,ventana[n].y+2*big2,ventana[n].x+ventana[n].an-2*big2,ventana[n].y+9*big2))
-          if (mouse_x<=ventana[n].x+ventana[n].an-18*big2) mouse_graf=2;
-          else if (mouse_x<=ventana[n].x+ventana[n].an-10*big2) mouse_graf=4;
-               else mouse_graf=5;
-        else mouse_graf=1; break;
-      case 2:
-        if (mouse_x>=ventana[n].x+7*big2) mouse_graf=2; else mouse_graf=6; break;
-    }
+	///////////////////////////////////////////////////////////////////////////
+	// Determine the shape of the cursor (mouse pointer)
+	///////////////////////////////////////////////////////////////////////////
+
+	if (n>=max_windows || n<0) {
+		mouse_graf=1;
+	} else { 
+		switch(ventana[n].primer_plano) {
+			case 0:
+				mouse_graf=7; 
+				break;
+			case 1:
+				if (mouse_in(ventana[n].x+2*big2,ventana[n].y+2*big2,ventana[n].x+ventana[n].an-2*big2,ventana[n].y+9*big2))
+					if (mouse_x<=ventana[n].x+ventana[n].an-18*big2) 
+						mouse_graf=2;
+					else if (mouse_x<=ventana[n].x+ventana[n].an-10*big2) 
+						mouse_graf=4;
+					else 
+						mouse_graf=5;
+				else 
+					mouse_graf=1; 
+				break;
+			case 2:
+				if (mouse_x>=ventana[n].x+7*big2) 
+					mouse_graf=2; 
+				else 
+					mouse_graf=6; 
+				break;
+		}
+	}
+	
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// If we are on a window that is not the first ...
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (n!=0 && n<max_windows) {
+
+		// Pasa la ventana a la ventana 0 si esta en primer plano o se pulsa
+
+		if (ventana[n].primer_plano==1 || (mouse_b&1)) {
+			move(0,n); n=0;
+		}
+
+		if (n==0 && v.primer_plano!=1) { // Se puls¢ icono o 2§ plano
+			for (m=1;m<max_windows;m++) {
+				if (ventana[m].tipo && ventana[m].primer_plano==1) {
+					if (colisionan(0,m)) {
+						ventana[m].primer_plano=0; 
+						vuelca_ventana(m);
+					}
+				}
+			}
+			if (v.primer_plano==0) { // Si estaba en segundo plano
+				if (v.tipo>=100 && !v.estado) 
+					activar(); // Activa un mapa
+				
+				v.primer_plano=1; 
+				vuelca_ventana(0);
+				do { 
+					read_mouse(); 
+				} while(mouse_b&1); 
+				
+				old_mouse_b=0;
+			}
+		}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Activa una ventana excluible (tipo>=100) cuando se haga algo sobre ella
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	} else if (n==0 && (mouse_b&1) && v.tipo>=100 && v.primer_plano<2 && !v.estado && mouse_graf!=4 && mouse_graf!=5) { 
+		activar(); 
+		vuelca_ventana(0); 
+	}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//  Suelta algo sobre una ventana que esta en segundo plano
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (n<max_windows && ventana[n].primer_plano==0 && arrastrar==4 && v.tipo>=100 && ventana[n].tipo!=2) {
+		move(0,n); n=0;
+
+		if (v.tipo==100) 
+			mouse_b|=1; 
+		
+		activar();
+		wmouse_x=mouse_x-v.x; 
+		wmouse_y=mouse_y-v.y;
+
+		if (big) { 
+			wmouse_x/=2; 
+			wmouse_y/=2; 
+		}
+		
+		call((voidReturnType )v.click_handler);
+
+		for (m=1;m<max_windows;m++) 
+			if (ventana[m].tipo && ventana[m].primer_plano==1)
+				if (colisionan(0,m)) {
+					ventana[m].primer_plano=0; 
+					vuelca_ventana(m);
+				}
+
+		v.primer_plano=1; 
+		vuelca_ventana(0); 
+		v.volcar=0;
+		do { 
+			read_mouse(); 
+		} while(mouse_b&1);
+
+		goto fin_bucle_entorno; // end loop environment
+	}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// If we are within the contents of a window ...
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (n==0 && v.primer_plano==1) 
+		if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
+
+			llamar=1; // Llamamos a su click_handler
+
+			if (v.tipo==100 && arrastrar!=4) {
+
+				if (arrastrar==1) {
+					arrastrar_graf=8;
+					arrastrar=2;
+					map_an=v.mapa->map_an;
+					map_al=v.mapa->map_al;
+				}
+
+				llamar=0;
+
+				if ((mouse_b&1) && !(old_mouse_b&1)) {
+					if (*system_clock<doble_click+10 && *system_clock>doble_click && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
+						llamar=1;
+					} else {
+					doble_click=*system_clock;
+					doble_click_x=mouse_x; doble_click_y=mouse_y;
+					}
+				}
+			}
+
+			if (v.tipo==106) {
+				llamar=0;
+
+				if ((mouse_b&1) && !(old_mouse_b&1)) {
+					if (*system_clock<doble_click+10 && *system_clock>doble_click && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
+						llamar=1;
+					} else {
+						doble_click=*system_clock;
+						doble_click_x=mouse_x; doble_click_y=mouse_y;
+					}
+				}
+			}
+
+			if (v.tipo>=100 && arrastrar==4) {
+				if (v.tipo==100) mouse_b|=1; 
+					activar();
+			}
+
+			if (llamar) {
+				wmouse_x=mouse_x-v.x; 
+				wmouse_y=mouse_y-v.y;
+				
+				if (big) { 
+					wmouse_x/=2; 
+					wmouse_y/=2; 
+				}
+				
+				call((voidReturnType )v.click_handler);
+				volcados_parciales=1;
+				if (v.volcar) { 
+					vuelca_ventana(0); 
+					v.volcar=0; 
+				}
+				volcados_parciales=0;
+			}
+
+			oldn=0;
 
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // If we are on a window that is not the first ...
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    if (n!=0 && n<max_windows) {
-
-      // Pasa la ventana a la ventana 0 si esta en primer plano o se pulsa
-
-      if (ventana[n].primer_plano==1 || (mouse_b&1)) {
-        move(0,n); n=0;
-      }
-
-      if (n==0 && v.primer_plano!=1) { // Se puls¢ icono o 2§ plano
-        for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
-          if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
-        if (v.primer_plano==0) { // Si estaba en segundo plano
-          if (v.tipo>=100 && !v.estado) activar(); // Activa un mapa
-          v.primer_plano=1; vuelca_ventana(0);
-          do { read_mouse(); } while(mouse_b&1); old_mouse_b=0;
-        }
-      }
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Activa una ventana excluible (tipo>=100) cuando se haga algo sobre ella
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    } else if (n==0 && (mouse_b&1) && v.tipo>=100 && v.primer_plano<2 && !v.estado
-      && mouse_graf!=4 && mouse_graf!=5) { activar(); vuelca_ventana(0); }
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    //  Suelta algo sobre una ventana que esta en segundo plano
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    if (n<max_windows && ventana[n].primer_plano==0 && arrastrar==4 && v.tipo>=100 && ventana[n].tipo!=2) {
-      move(0,n); n=0;
-
-      if (v.tipo==100) mouse_b|=1; activar();
-      wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
-      if (big) { wmouse_x/=2; wmouse_y/=2; }
-      call((voidReturnType )v.click_handler);
-
-      for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
-        if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
-
-      v.primer_plano=1; vuelca_ventana(0); v.volcar=0;
-      do { read_mouse(); } while(mouse_b&1);
-
-      goto fin_bucle_entorno; // end loop environment
-    }
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // If we are within the contents of a window ...
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
-    if (n==0 && v.primer_plano==1) if (mouse_in(v.x+2*big2,
-      v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
-
-      llamar=1; // Llamamos a su click_handler
-
-      if (v.tipo==100 && arrastrar!=4) {
-
-        if (arrastrar==1) {
-          arrastrar_graf=8;
-          arrastrar=2;
-          map_an=v.mapa->map_an;
-          map_al=v.mapa->map_al;
-        }
-
-        llamar=0;
-        if ((mouse_b&1) && !(old_mouse_b&1)) {
-          if (*system_clock<doble_click+10 && *system_clock>doble_click
-              && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
-            llamar=1;
-          } else {
-            doble_click=*system_clock;
-            doble_click_x=mouse_x; doble_click_y=mouse_y;
-          }
-        }
-      }
-
-      if (v.tipo==106) {
-        llamar=0;
-        if ((mouse_b&1) && !(old_mouse_b&1)) {
-          if (*system_clock<doble_click+10 && *system_clock>doble_click
-              && abs(doble_click_x-mouse_x)<8 && abs(doble_click_y-mouse_y)<8) {
-            llamar=1;
-          } else {
-            doble_click=*system_clock;
-            doble_click_x=mouse_x; doble_click_y=mouse_y;
-          }
-        }
-      }
-
-      if (v.tipo>=100 && arrastrar==4) {
-        if (v.tipo==100) mouse_b|=1; activar();
-      }
-
-      if (llamar) {
-        wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
-        if (big) { wmouse_x/=2; wmouse_y/=2; }
-        call((voidReturnType )v.click_handler);
-        volcados_parciales=1;
-        if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-        volcados_parciales=0;
-      }
-
-      oldn=0;
-
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    } else { // If we are in the control bar of the window ...
+		} else { // If we are in the control bar of the window ...
     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Move a window
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-      if (mouse_graf==2 && (mouse_b&1) && !(old_mouse_b&1)) {
-        mueve_ventana();
-      }
+			if (mouse_graf==2 && (mouse_b&1) && !(old_mouse_b&1)) {
+				mueve_ventana();
+			}
 
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Close the window
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-      if (mouse_graf==5) {
-        if (mouse_b&1) {
-          if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-          else wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-          vuelca_ventana(0);
-        }
-        if (!(mouse_b&1) && (old_mouse_b&1)) {
-          if (v.click_handler==menu_principal2) {
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-            
-            vuelca_ventana(0); volcado_copia();
-            
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+			if (mouse_graf==5) {
+				if (mouse_b&1) {
+					if (big) 
+						wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+					else 
+						wput(v.ptr,v.an,v.al,v.an-9,2,-45);
 
-            do 
-				read_mouse(); 
-			while (mouse_b&1);
-            
-            v_titulo=(char *)texto[40]; 
-            v_texto=NULL; 
-            dialogo(aceptar0);
-            if (v_aceptar) 
-				salir_del_entorno=1;
-          } else if (v.tipo>=100) {
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-            
-            vuelca_ventana(0); 
-            volcado_copia();
-            if (big) 
-				wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-            else 
-				wput(v.ptr,v.an,v.al,v.an-9,2,-35);
-            do 
-				read_mouse(); 
-			while (mouse_b&1);
- 
-            switch(v.tipo) {
-              case 100: 
-					v_titulo=(char *)texto[50]; 
-					v_texto=(char *)v.titulo; 
-					break;
-					
-              case 102: 
-					v_titulo=(char *)texto[188]; 
-					v_texto=(char *)v.titulo; 
-					break;
-            }
-            if (v.tipo==100 || (v.tipo==102 && v.prg!=NULL))
-              dialogo(aceptar0); else v_aceptar=1;
-            if (v_aceptar) cierra_ventana();
-          } else cierra_ventana();
-        } else if (mouse_b&1) restore_button=3;
-      }
+					vuelca_ventana(0);
+				}
+				
+				if (!(mouse_b&1) && (old_mouse_b&1)) {
+					if (v.click_handler==menu_principal2) {
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-45);
+
+						vuelca_ventana(0); volcado_copia();
+
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+
+						do {
+							read_mouse(); 
+						} while (mouse_b&1);
+
+						v_titulo=(char *)texto[40]; 
+						v_texto=NULL; 
+						dialogo(aceptar0);
+
+						if (v_aceptar) 
+							salir_del_entorno=1;
+					} else if (v.tipo>=100) {
+						
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-45);
+
+						vuelca_ventana(0); 
+						volcado_copia();
+						
+						if (big) 
+							wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+						else 
+							wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+						
+						do {
+							read_mouse(); 
+						} while (mouse_b&1);
+
+						switch(v.tipo) {
+							case 100: 
+								v_titulo=(char *)texto[50]; 
+								v_texto=(char *)v.titulo; 
+							break;
+
+							case 102: 
+								v_titulo=(char *)texto[188]; 
+								v_texto=(char *)v.titulo; 
+							break;
+						}
+
+						if (v.tipo==100 || (v.tipo==102 && v.prg!=NULL))
+							dialogo(aceptar0); 
+						else 
+							v_aceptar=1;
+
+						if (v_aceptar) 
+							cierra_ventana();
+					} else 
+						cierra_ventana();
+				} else if (mouse_b&1) restore_button=3;
+			}
 
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Minimiza una ventana
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-      if (mouse_graf==4) {
-        if (mouse_b&1) {
-          wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-47);
-          vuelca_ventana(0);
-        }
-        if (!(mouse_b&1) && (old_mouse_b&1)) {
-          minimiza_ventana();
-        } else if (mouse_b&1) restore_button=1;
-      }
+			if (mouse_graf==4) {
+				if (mouse_b&1) {
+					wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-47);
+					vuelca_ventana(0);
+				}
 
-      oldn=-1;
+				if (!(mouse_b&1) && (old_mouse_b&1)) {
+					minimiza_ventana();
+				} else if (mouse_b&1) 
+					restore_button=1;
+			}
 
-    }
+			oldn=-1;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Estamos sobre un icono
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		}
 
-    if (n==0 && v.primer_plano==2) {
-      if (mouse_graf==2) {
-        if ((mouse_b&1) && !(old_mouse_b&1)) mueve_ventana();
-      } else {
-        if (mouse_b&1) {
-          if (big) {
-            wput(copia,-vga_an,vga_al,v.x,v.y,-48);
-            volcado_parcial(v.x,v.y,14,14);
-          } else {
-            wput(copia,vga_an,vga_al,v.x,v.y,-48);
-            volcado_parcial(v.x,v.y,7,7);
-          }
-        }
-        if (!(mouse_b&1) && (old_mouse_b&1)) {
-          maximiza_ventana();
-        } else if (mouse_b&1) restore_button=2;
-      }
-    }
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Estamos sobre un icono
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Type windows control timer
-    ///////////////////////////////////////////////////////////////////////////
-    
-    fin_bucle_entorno:
+	if (n==0 && v.primer_plano==2) {
+		if (mouse_graf==2) {
+			if ((mouse_b&1) && !(old_mouse_b&1)) 
+				mueve_ventana();
+		} else {
+			if (mouse_b&1) {
+				if (big) {
+					wput(copia,-vga_an,vga_al,v.x,v.y,-48);
+					volcado_parcial(v.x,v.y,14,14);
+				} else {
+					wput(copia,vga_an,vga_al,v.x,v.y,-48);
+					volcado_parcial(v.x,v.y,7,7);
+				}
+			}
+			
+			if (!(mouse_b&1) && (old_mouse_b&1)) {
+				maximiza_ventana();
+			} else if (mouse_b&1) 
+				restore_button=2;
+		}
+	}
 
-    for (m=0;m<max_windows;m++) {
-      if ( m==0 &&
-           mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2) &&
-           ventana[m].tipo!=107 ) continue;
-      if (ventana[m].tipo==4 ||
-         (ventana[m].tipo==101 && ventana[m].primer_plano!=2) ||
-         (ventana[m].tipo==107 && ventana[m].primer_plano!=2) ||
-         (ventana[m].tipo==102 && ventana[m].estado && ventana[m].primer_plano!=2)) {
+	///////////////////////////////////////////////////////////////////////////
+	// Type windows control timer
+	///////////////////////////////////////////////////////////////////////////
 
-        if (m) {
-          wup(m);
-        }
+	fin_bucle_entorno:
 
-        fin_ventana=1; wmouse_x=-1; wmouse_y=-1;
+	for (m=0;m<max_windows;m++) {
+		if ( m==0 &&
+			mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2) &&
+			ventana[m].tipo!=107 ) 
+			continue;
+			
+		if (ventana[m].tipo==4 ||
+			(ventana[m].tipo==101 && ventana[m].primer_plano!=2) ||
+			(ventana[m].tipo==107 && ventana[m].primer_plano!=2) ||
+			(ventana[m].tipo==102 && ventana[m].estado && ventana[m].primer_plano!=2)) {
 
-        switch(v.tipo)
-        {
-          case 101:
-            cargar_thumbs();
-            break;
-          case 107:
-            mostrar_mod_meters();
-            break;
-          default:
-            call((voidReturnType )v.click_handler);
-            break;
-        }
+			if (m) {
+				wup(m);
+			}
 
-        if (m) {
-          wdown(m);
-        }
+			fin_ventana=1; 
+			wmouse_x=-1; 
+			wmouse_y=-1;
 
-        if (fin_ventana==2) { // Close the window(m)
-          move(0,m);
-          cierra_ventana();
-        } else if (ventana[m].volcar) {
-          volcados_parciales=1;
-          vuelca_ventana(m); ventana[m].volcar=0;
-          volcados_parciales=0;
-        } fin_ventana=0;
-      }
-    }
+			switch(v.tipo) {
 
-    ///////////////////////////////////////////////////////////////////////////
-    //  Hotkey del menu programas
-    ///////////////////////////////////////////////////////////////////////////
-    
-    for (m=0;m<max_windows;m++)
-      if (ventana[m].tipo==102 && ventana[m].estado && ventana[m].prg!=NULL) break;
+				case 101:
+					cargar_thumbs();
+				break;
+			
+				case 107:
+					mostrar_mod_meters();
+				break;
 
-    if (m<max_windows && beta_status==4) { // If a PRG ...
-      n=0;
-      if (shift_status&8) switch(scan_code) {
-        case 33: n=1; break; // alt+f
-        case 49: n=2; break; // alt+n
-        case 19: n=3; break; // alt+r
-      } else if (shift_status&4) switch(scan_code) {
-        case 33: n=1; break; // ctrl+f
-        case 38: n=2; break; // ctrl+l
-        case 19: n=3; break; // ctrl+r
-        case 44: n=9; break; // ctrl+z
-      } else switch(scan_code) {
-        case 60: n=4; break; // f2
-        case 61: n=2; break; // f3
-        case 63: n=8; break; // f5
-        case 68: n=6; break; // f10
-      }
-      if (kbdFLAGS[87]) n=5; // f11
-      if (kbdFLAGS[88]) n=7; // f12
+				default:
+					call((voidReturnType )v.click_handler);
+				break;
+			}
 
-      if (n) { // Si se pulso alg£n hotkey ...
-        if (m) {
-          wmouse_x=-1; wmouse_y=-1; mouse_b=0; call((voidReturnType )v.click_handler);
-          if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-          move(0,m);
-          if (v.primer_plano==0) {
-            for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
-              if (colisionan(0,m)) { ventana[m].primer_plano=0; vuelca_ventana(m); }
-            v.primer_plano=1;
-          } vuelca_ventana(0);
-        }
-        switch(n) {
-          case 1:
-            dialogo(buscar_texto0);
-            if (v_aceptar) buscar_texto();
-            break;
-          case 2:
-            buscar_texto();
-            break;
-          case 3:
-            dialogo(sustituir_texto0);
-            if (v_aceptar) sustituir_texto();
-            break;
-          case 4:
-            mouse_graf=3; volcado_copia();
-            v_tipo=8; save_prg_buffer(0);
-            strcpy(tipo[8].path,v.prg->path);
-            strcpy(input,v.prg->filename);
-            guardar_prg();
-            break;
-          case 5:
-            v_tipo=8; save_prg_buffer(0);
-            source_ptr=v.prg->buffer;
-            source_len=v.prg->file_lon;
-            v_ventana=0;
-            ejecutar_programa=0;
-            compilar_programa();
-            if(numero_error!=-1) {
-              goto_error();
-              if (v_ayuda) help(500+numero_error);
-            } else if (v_ayuda) help(599);
-            break;
-          case 6:
-          case 7:
-            v_tipo=8; save_prg_buffer(0);
-            strcpy(tipo[8].path,v.prg->path);
-            strcpy(input,v.prg->filename);
-            guardar_prg();
-            source_ptr=v.prg->buffer;
-            source_len=v.prg->file_lon;
-            v_ventana=0;
-            if (n==6) ejecutar_programa=1; else ejecutar_programa=3;
-            compilar_programa();
-            if(numero_error!=-1) {
-              goto_error();
-              if (v_ayuda) help(500+numero_error);
-              break;
-            } modo_de_retorno=1; salir_del_entorno=1;
-            break;
-          case 8:
-            v_tipo=8; save_prg_buffer(0);
-            dialogo(lista_procesos0);
-            scan_code=0; ascii=0;
-            if (v_aceptar) {
-              f_bop(); f_inicio();
-              while (v.prg->linea>lp1[lp_select]) {
-                write_line(); retrocede_lptr();
-                read_line(); retrocede_vptr();
-              }
-              while (v.prg->linea<lp1[lp_select]) {
-                write_line(); avanza_lptr();
-                read_line(); avanza_vptr();
-              } v.volcar=2;
-            } break;
-          case 9:
-            maximizar();
-            break;
-        }
-      }
-    }
+			if (m) {
+				wdown(m);
+			}
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Comprobaci¢n de beta
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+			if (fin_ventana==2) { // Close the window(m)
+				move(0,m);
+				cierra_ventana();
+			} else if (ventana[m].volcar) {
+				volcados_parciales=1;
+				vuelca_ventana(m); 
+				ventana[m].volcar=0;
+				volcados_parciales=0;
+			} 
+			
+			fin_ventana=0;
+		}
+	}
 
-    if (rndb()>200) switch(beta_status) {
-      case 1: call((voidReturnType )betatest4); break;
-      case 2: call((voidReturnType )betatest5); break;
-      case 3: call((voidReturnType )betatest6); break;
-      case 5: salir_del_entorno=1; break;
-    }
+	///////////////////////////////////////////////////////////////////////////
+	//  Hotkey del menu programas
+	///////////////////////////////////////////////////////////////////////////
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Otros hotkey
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	for (m=0;m<max_windows;m++)
+		if (ventana[m].tipo==102 && ventana[m].estado && ventana[m].prg!=NULL) 
+			break;
 
-    if (scan_code==62) { // F4 Open PRG
-      v_tipo=8; 
-      v_modo=0; 
-      v_texto=(char *)texto[346];
-      dialogo(browser0);
-      if (v_terminado) {
-        if (!v_existe) {
-          v_texto=(char *)texto[43]; 
-          dialogo(err0);
-        } else {
-          mouse_graf=3; volcado_copia(); mouse_graf=1;
-          abrir_programa();
-        }
-      }
-    }
+	if (m<max_windows && beta_status==4) { // If a PRG ...
+		n=0;
+		if (shift_status&8) 
+			switch(scan_code) {
+				case 33: 
+					n=1; 
+				break; // alt+f
+				
+				case 49: 
+					n=2; 
+				break; // alt+n
+				
+				case 19: 
+					n=3; 
+				break; // alt+r
+			} 
+		else if (shift_status&4) 
 
-    if (scan_code==59) { // F1 Help
-      determina_prg2();
-      if (v_ventana!=-1) {
-        if(numero_error!=-1 && ventana[v_ventana].prg==eprg) {
-          help(500+numero_error);
-        } else {
-          n=ventana[v_ventana].prg->columna-1;
-          p=ventana[v_ventana].prg->l;
-          if (n<=strlen(p)) {
-            if (!lower[p[n]] && n) n--;
-            if (lower[p[n]]) {
-              while (p) if (lower[p[n-1]]) n--; else break;
-              cwork[0]=0;
-              while (lower[p[n]]) {
-                cwork[strlen(cwork)+1]=0;
-                cwork[strlen(cwork)]=lower[p[n++]];
-              }
-              p=(char *)div_index;
-              while (p<(char *)index_end) {
-                if (!strcmp(cwork,p)) {
-                  help(*(word*)(p+strlen(p)+1)); break;
-                } else p+=strlen(p)+3;
-              } if (p>=(char *)index_end) help(3);
-            } else help(3);
-          } else help(3);
-        }
-      } else {
-        determina_calc();
-        if (v_ventana!=-1) {
-          help(1301);
-        } else help(3);
-      }
-    }
+			switch(scan_code) {
+				case 33: 
+					n=1; 
+				break; // ctrl+f
+				
+				case 38: 
+					n=2; 
+				break; // ctrl+l
+				
+				case 19: 
+					n=3; 
+				break; // ctrl+r
+				
+				case 44: 
+					n=9; 
+				break; // ctrl+z
+			} 
+		else 
+			switch(scan_code) {
+				case 60: 
+					n=4; 
+				break; // f2
+				
+				case 61: 
+					n=2; 
+				break; // f3
+				
+				case 63: 
+					n=8; 
+				break; // f5
+				
+				case 68: 
+					n=6; 
+				break; // f10
+			}
 
-    if ((shift_status&8) && scan_code==45) { // Alt-X Exit
-      v_titulo=(char *)texto[40]; v_texto=NULL; dialogo(aceptar0);
-      if (v_aceptar) salir_del_entorno=1;
-    }
+		if (kbdFLAGS[87]) 
+			n=5; // f11
+		
+		if (kbdFLAGS[88]) 
+			n=7; // f12
 
-    if ((shift_status&8) && scan_code==31) shell();
+		if (n) { // Si se pulso alg£n hotkey ...
+			if (m) {
+				wmouse_x=-1; 
+				wmouse_y=-1; 
+				mouse_b=0; 
+				call((voidReturnType )v.click_handler);
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Finaliza el bucle central
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+				if (v.volcar) { 
+					vuelca_ventana(0); 
+					v.volcar=0; 
+				}
 
-    volcado_copia();
+				move(0,m);
 
-    if (restore_button==1) {
-      wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-37);
-      vuelca_ventana(0);
-    } else if (restore_button==2) {
-     if (big) {
-       wput(copia,-vga_an,vga_al,v.x,v.y,-38);
-       volcado_parcial(v.x,v.y,14,14);
-     } else {
-       wput(copia,vga_an,vga_al,v.x,v.y,-38);
-       volcado_parcial(v.x,v.y,7,7);
-     }
-    } else if (restore_button==3) {
-      if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-      else wput(v.ptr,v.an,v.al,v.an-9,2,-35);
-      vuelca_ventana(0);
-    } restore_button=0;
+				if (v.primer_plano==0) {
+					for (m=1;m<max_windows;m++) 
+						if (ventana[m].tipo && ventana[m].primer_plano==1)
+							if (colisionan(0,m)) { 
+								ventana[m].primer_plano=0; 
+								vuelca_ventana(m); 
+							}
 
-    if (key(_ESC) && key(_L_CTRL)) salir_del_entorno=1;
+					v.primer_plano=1;
+				} 
+				
+				vuelca_ventana(0);
+			}
+			
+			switch(n) {
+
+				case 1:
+					dialogo(buscar_texto0);
+					if (v_aceptar) 
+						buscar_texto();
+				break;
+
+				case 2:
+					buscar_texto();
+				break;
+
+				case 3:
+					dialogo(sustituir_texto0);
+					if (v_aceptar) 
+						sustituir_texto();
+				break;
+
+				case 4:
+					mouse_graf=3; 
+					volcado_copia();
+					v_tipo=8; 
+					save_prg_buffer(0);
+					strcpy(tipo[8].path,v.prg->path);
+					strcpy(input,v.prg->filename);
+					guardar_prg();
+				break;
+
+				case 5:
+					v_tipo=8; save_prg_buffer(0);
+					source_ptr=v.prg->buffer;
+					source_len=v.prg->file_lon;
+					v_ventana=0;
+					ejecutar_programa=0;
+					compilar_programa();
+					
+					if(numero_error!=-1) {
+						goto_error();
+					if (v_ayuda) 
+						help(500+numero_error);
+					} else if (v_ayuda) 
+						help(599);
+				break;
+
+				case 6:
+				case 7:
+					v_tipo=8; 
+					save_prg_buffer(0);
+					strcpy(tipo[8].path,v.prg->path);
+					strcpy(input,v.prg->filename);
+					guardar_prg();
+					source_ptr=v.prg->buffer;
+					source_len=v.prg->file_lon;
+					v_ventana=0;
+					
+					if (n==6) 
+						ejecutar_programa=1; 
+					else ejecutar_programa=3;
+					
+					compilar_programa();
+					
+					if(numero_error!=-1) {
+						goto_error();
+
+						if (v_ayuda) 
+							help(500+numero_error);
+
+						break;
+					} 
+					modo_de_retorno=1; 
+					salir_del_entorno=1;
+				break;
+
+				case 8:
+					v_tipo=8; 
+					save_prg_buffer(0);
+				
+					dialogo(lista_procesos0);
+					scan_code=0; 
+					ascii=0;
+					
+					if (v_aceptar) {
+						f_bop(); 
+						f_inicio();
+
+						while (v.prg->linea>lp1[lp_select]) {
+							write_line(); retrocede_lptr();
+							read_line(); retrocede_vptr();
+						}
+						
+						while (v.prg->linea<lp1[lp_select]) {
+							write_line(); avanza_lptr();
+							read_line(); avanza_vptr();
+						} 
+						
+						v.volcar=2;
+					} 
+				break;
+
+				case 9:
+					maximizar();
+				break;
+			}
+		}
+	}
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Comprobaci¢n de beta
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (rndb()>200) {
+		switch(beta_status) {
+			case 1: 
+				call((voidReturnType )betatest4); 
+			break;
+			
+			case 2: 
+				call((voidReturnType )betatest5); 
+			break;
+			
+			case 3: 
+				call((voidReturnType )betatest6); 
+			break;
+			
+			case 5: 
+				salir_del_entorno=1; 
+			break;
+		}
+	}
+	
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Otros hotkey
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (scan_code==62) { // F4 Open PRG
+		v_tipo=8; 
+		v_modo=0; 
+		v_texto=(char *)texto[346];
+		dialogo(browser0);
+
+		if (v_terminado) {
+			if (!v_existe) {
+				v_texto=(char *)texto[43]; 
+				dialogo(err0);
+			} else {
+				mouse_graf=3; volcado_copia(); mouse_graf=1;
+				abrir_programa();
+			}
+		}
+	}
+
+	if (scan_code==59) { // F1 Help
+		determina_prg2();
+
+		if (v_ventana!=-1) {
+			if(numero_error!=-1 && ventana[v_ventana].prg==eprg) {
+				help(500+numero_error);
+			} else {
+				n=ventana[v_ventana].prg->columna-1;
+				p=ventana[v_ventana].prg->l;
+				
+				if (n<=strlen(p)) {
+					if (!lower[p[n]] && n) 
+						n--;
+						
+					if (lower[p[n]]) {
+						while (p) 
+							if (lower[p[n-1]]) 
+								n--; 
+							else 
+								break;
+
+						cwork[0]=0;
+
+						while (lower[p[n]]) {
+							cwork[strlen(cwork)+1]=0;
+							cwork[strlen(cwork)]=lower[p[n++]];
+						}
+
+						p=(char *)div_index;
+
+						while (p<(char *)index_end) {
+
+							if (!strcmp(cwork,p)) {
+								help(*(word*)(p+strlen(p)+1)); break;
+							} else 
+								p+=strlen(p)+3;
+						} 
+						
+						if (p>=(char *)index_end) 
+							help(3);
+					
+					} else 
+						help(3);
+				
+				} else 
+					help(3);
+					
+			}
+		
+		} else {
+			determina_calc();
+		
+			if (v_ventana!=-1) {
+				help(1301);
+			} else 
+				help(3);
+		}
+	}
+
+	if ((shift_status&8) && scan_code==45) { // Alt-X Exit
+		v_titulo=(char *)texto[40]; 
+		v_texto=NULL; 
+		dialogo(aceptar0);
+		
+		if (v_aceptar) 
+			salir_del_entorno=1;
+	}
+
+	if ((shift_status&8) && scan_code==31) 
+		shell();
+
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Finaliza el bucle central
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	volcado_copia();
+
+	if (restore_button==1) {
+		wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-17,2,-37);
+		vuelca_ventana(0);
+	} else if (restore_button==2) {
+		if (big) {
+			wput(copia,-vga_an,vga_al,v.x,v.y,-38);
+			volcado_parcial(v.x,v.y,14,14);
+		} else {
+			wput(copia,vga_an,vga_al,v.x,v.y,-38);
+			volcado_parcial(v.x,v.y,7,7);
+		}
+	} else if (restore_button==3) {
+		if (big) 
+			wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+		else 
+			wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+		
+		vuelca_ventana(0);
+	} 
+	
+	restore_button=0;
+
+	if (key(_ESC) && key(_L_CTRL)) 
+		salir_del_entorno=1;
 
 
 }
 
 void entorno(void) {
 
-  int n,m,oldn=max_windows;
-  int llamar;
-  char cwork[256],*p;
-//  check_free();
-  do {
-	  mainloop();
-	    } while (!salir_del_entorno);
-  do { read_mouse(); } while(mouse_b&1);
-printf("env end\n");
+	int n,m,oldn=max_windows;
+
+	int llamar;
+
+	char cwork[256],*p;
+	//  check_free();
+
+	do {
+		mainloop();
+	} while (!salir_del_entorno);
+
+	do { 
+		read_mouse();
+	} while(mouse_b&1);
+
+	printf("env end\n");
+
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -1520,41 +1774,39 @@ char *command_path() {
 
 void shell(void) {
 	
-  char *s=command_path();
-  unsigned n;
+	char *s=command_path();
+	unsigned n;
 
-  if (s==NULL) {
-    v_texto=(char *)texto[390]; dialogo(err0);
-  } else {
+	if (s==NULL) {
+		v_texto=(char *)texto[390]; dialogo(err0);
+	} else {
+		
+		EndSound();
 
-    EndSound();
-
-//    _setvideomode(_TEXTC80);
-#ifndef GP2X
-#ifndef PS2
-#ifndef PSP
-    SDL_putenv("PROMPT=[DIV] $P$G");
+#if !defined ( GP2X ) && !defined (PS2) && !defined (PSP)
+		SDL_putenv("PROMPT=[DIV] $P$G");
 #endif
-#endif
-#endif
-    chdir(tipo[0].path);
 
-  //  flushall();
-  //  _heapmin();
-  //  _heapshrink();
-    system(s);
 
-    _dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
-    chdir(tipo[1].path);
+		chdir(tipo[0].path);
 
-    svmode(); set_dac(dac);
-    set_mouse(mouse_x,mouse_y);
-    read_mouse();
+		system(s);
 
-    volcado_completo=1; volcado_copia();
+		_dos_setdrive((memptrsize)toupper(*tipo[1].path)-'A'+1,&n);
+		
+		chdir(tipo[1].path);
 
-    InitSound();
-  }
+		svmode(); 
+		set_dac(dac);
+		
+		set_mouse(mouse_x,mouse_y);
+		
+		read_mouse();
+
+		volcado_completo=1; volcado_copia();
+
+		InitSound();
+	}
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -1570,170 +1822,221 @@ void dialog_loop(void) {
 
 	dialogo_invocado=0;
 
-/*    if (reloj==old_reloj) loop_count++; else loop_count=0;
-    if (loop_count>=500) {
-      EndSound();
-      loop_count=0;
-      InitSound();
-    } old_reloj=reloj;
-*/
-    tecla();
+	tecla();
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Busca la ventana sobre la que estamos (n) n=max_windows si no hay
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Busca la ventana sobre la que estamos (n) n=max_windows si no hay
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if (mouse_in(v.x,v.y,v.x+v.an-1,v.y+v.al-1)) n=0; else n=max_windows;
+	if (mouse_in(v.x,v.y,v.x+v.an-1,v.y+v.al-1)) 
+		n=0; 
+	else 
+		n=max_windows;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Si antes est bamos en una ventana en la que hemos dejado de estar
-    // debemos repintar esta £ltima (para borrar posibles "hi-lite")
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Si antes est bamos en una ventana en la que hemos dejado de estar
+	// debemos repintar esta £ltima (para borrar posibles "hi-lite")
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if (n==0) // Si ahora estamos en la barra, tambi‚n se repinta la ventana
-      if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) n--;
+	if (n==0) // Si ahora estamos en la barra, tambi‚n se repinta la ventana
+		if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) 
+			n--;
 
-    if (n!=oldn && oldn==0) if (v.primer_plano==1) {
-      dialogo_invocado=1;
-//      printf("%d\n", dialogo_invocado);
-      wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-      call((voidReturnType )v.click_handler); mouse_b=m;
-      volcados_parciales=1;
-      if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-      volcados_parciales=0;
-      salir_del_dialogo=0;
-    } oldn=max_windows; if (n<0) n++;
+	if (n!=oldn && oldn==0) if (v.primer_plano==1) {
+		dialogo_invocado=1;
+		wmouse_x=-1; 
+		wmouse_y=-1; 
+		m=mouse_b; 
+		mouse_b=0;
+		
+		call((voidReturnType )v.click_handler); 
+			mouse_b=m;
+		
+		volcados_parciales=1;
+		
+		if (v.volcar) { 
+			vuelca_ventana(0); 
+			v.volcar=0; 
+		}
+		
+		volcados_parciales=0;
+		salir_del_dialogo=0;
+	} 
+	
+	oldn=max_windows; 
+	
+	if (n<0) 
+		n++;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Determina la forma del cursor
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Determina la forma del cursor
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if (n==max_windows) mouse_graf=1;
-    else if (mouse_in(v.x+2*big2,v.y+2*big2,v.x+v.an-2*big2,v.y+9*big2))
-      if (mouse_x<=v.x+v.an-10*big2) mouse_graf=2;
-      else mouse_graf=5;
-    else mouse_graf=1;
+	if (n==max_windows) 
+		mouse_graf=1;
+	else if (mouse_in(v.x+2*big2,v.y+2*big2,v.x+v.an-2*big2,v.y+9*big2))
+		if (mouse_x<=v.x+v.an-10*big2) 
+			mouse_graf=2;
+		else 
+			mouse_graf=5;
+	else
+		mouse_graf=1;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Si estamos dentro del contenido de una ventana ...
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Si estamos dentro del contenido de una ventana ...
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if (n==0) if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
+	if (n==0) 
+		if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
 
-      dialogo_invocado=1;
-      wmouse_x=mouse_x-v.x; wmouse_y=mouse_y-v.y;
-      if (big) { wmouse_x/=2; wmouse_y/=2; }
-      call((voidReturnType )v.click_handler);
-      volcados_parciales=1;
-      if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-      volcados_parciales=0;
-      oldn=0;
-      salir_del_dialogo=0;
+			dialogo_invocado=1;
+			wmouse_x=mouse_x-v.x; 
+			wmouse_y=mouse_y-v.y;
+			
+			if (big) { 
+				wmouse_x/=2;
+				wmouse_y/=2;
+			}
+			
+			call((voidReturnType )v.click_handler);
+			volcados_parciales=1;
+			
+			if (v.volcar) {
+				vuelca_ventana(0); 
+				v.volcar=0; 
+			}
+			
+			volcados_parciales=0;
+			oldn=0;
+			salir_del_dialogo=0;
 
-    } else { // Si estamos en la barra de control de la ventana ...
+		} else { // Si estamos en la barra de control de la ventana ...
 
-      if (mouse_graf==2 && (mouse_b&1) && !(old_mouse_b&1)) mueve_ventana();
-      if (mouse_graf==5) {
-        if (mouse_b&1) {
-          if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
-          else wput(v.ptr,v.an,v.al,v.an-9,2,-45);
-          volcados_parciales=1;
-          vuelca_ventana(0);
-          volcados_parciales=0;
-        }
-        if (!(mouse_b&1) && (old_mouse_b&1)) {
-          cierra_ventana(); salir_del_dialogo=1;
-        } else if (mouse_b&1) restore_button=3;
-      } oldn=-1;
-    } else if (modo<100 && (mouse_b&1)) {
-      cierra_ventana(); salir_del_dialogo=1;
-    }
+			if (mouse_graf==2 && (mouse_b&1) && !(old_mouse_b&1)) 
+				mueve_ventana();
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    //  Los di logos se deben invocar siempre
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+			if (mouse_graf==5) {
+				if (mouse_b&1) {
+					if (big) 
+						wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
+					else 
+						wput(v.ptr,v.an,v.al,v.an-9,2,-45);
 
-    if (!dialogo_invocado && !salir_del_dialogo) {
-      dialogo_invocado=1;
-      wmouse_x=-1; wmouse_y=-1; m=mouse_b; mouse_b=0;
-      call((voidReturnType )v.click_handler); mouse_b=m;
-      volcados_parciales=1;
-      if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
-      volcados_parciales=0;
-      salir_del_dialogo=0;
-    }
+					volcados_parciales=1;
+					vuelca_ventana(0);
+					volcados_parciales=0;
+				}
+				if (!(mouse_b&1) && (old_mouse_b&1)) {
+					cierra_ventana(); 
+					salir_del_dialogo=1;
+				} else if (mouse_b&1) 
+					restore_button=3;
+			} 
+			
+			oldn=-1;
+		} else if (modo<100 && (mouse_b&1)) {
+			cierra_ventana(); salir_del_dialogo=1;
+	}
 
-    if (fin_dialogo && !salir_del_dialogo) {
-      cierra_ventana(); salir_del_dialogo=1;
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//  Los di logos se deben invocar siempre
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+	if (!dialogo_invocado && !salir_del_dialogo) {
+		dialogo_invocado=1;
+		wmouse_x=-1; 
+		wmouse_y=-1; 
+		m=mouse_b; 
+		mouse_b=0;
+		call((voidReturnType )v.click_handler); mouse_b=m;
+		volcados_parciales=1;
+		if (v.volcar) { 
+			vuelca_ventana(0); 
+			v.volcar=0; 
+		}
+		
+		volcados_parciales=0;
+		salir_del_dialogo=0;
+	}
+
+	if (fin_dialogo && !salir_del_dialogo) {
+		cierra_ventana(); salir_del_dialogo=1;
+
 #ifdef __EMSCRIPTEN__
-printf("resuming main loop\n");
- emscripten_cancel_main_loop();
-  emscripten_set_main_loop(mainloop,0,0);
-   fin_dialogo=0;
+		printf("resuming main loop\n");
+		emscripten_cancel_main_loop();
+		emscripten_set_main_loop(mainloop,0,0);
 
-  get[0]=0;
+		fin_dialogo=0;
 
-  wmouse_x=-1; wmouse_y=-1;
+		get[0]=0;
+
+		wmouse_x=-1; wmouse_y=-1;
 #endif
     }
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Keyboard Control
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// Keyboard Control
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if ((key(_ESC) && !key(_L_CTRL)) ||
-        (modo<100 && (mouse_b&2))) {
-      for (n=0;n<v.items;n++)
-        if (v.item[n].tipo==2 && (v.item[n].estado&2)) break;
-      if (n==v.items) { cierra_ventana(); salir_del_dialogo=1; }
-    }
+	if ((key(_ESC) && !key(_L_CTRL)) ||
+		(modo<100 && (mouse_b&2))) {
+		
+		for (n=0;n<v.items;n++)
+			if (v.item[n].tipo==2 && (v.item[n].estado&2)) 
+				break;
+			if (n==v.items) { 
+				cierra_ventana(); 
+				salir_del_dialogo=1; 
+			}
+	}
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // End central loop
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+	// End central loop
+	//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-    if ((shift_status&8) && scan_code==31) shell();
+	if ((shift_status&8) && scan_code==31) 
+		shell();
 
-    volcado_copia();
+	volcado_copia();
 
-    if (restore_button==3) {
-      if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
-      else wput(v.ptr,v.an,v.al,v.an-9,2,-35);
-      vuelca_ventana(0);
-    } restore_button=0;
-
-  // ???
-
-
-   	
+	if (restore_button==3) {
+		if (big) 
+			wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-35);
+		else 
+			wput(v.ptr,v.an,v.al,v.an-9,2,-35);
+		vuelca_ventana(0);
+	} 
 	
+	restore_button=0;
 }
 
 void entorno_dialogo(void) {
 	
 	salir_del_dialogo=0;
 
-  fin_dialogo=0;
+	fin_dialogo=0;
 
 #ifdef __EMSCRIPTEN__
-// kill main loop and start new one
-  emscripten_cancel_main_loop();
-  emscripten_set_main_loop(dialog_loop,0,0);
-
+	// kill main loop and start new one
+	emscripten_cancel_main_loop();
+	emscripten_set_main_loop(dialog_loop,0,0);
 #else
-  do { 
-	  dialog_loop();
-  }
-  while (!salir_del_dialogo); 
-  fin_dialogo=0;
+	do { 
+		dialog_loop();
+	}
+	while (!salir_del_dialogo); 
+		fin_dialogo=0;
 
-  get[0]=0;
+	get[0]=0;
 
-  wmouse_x=-1; wmouse_y=-1;
+	wmouse_x=-1; wmouse_y=-1;
 
-//  if (flushall()>10) fcloseall();
+	//  if (flushall()>10) fcloseall();
 
-  do { read_mouse(); } while((mouse_b) || key(_ESC));
+	do { 
+		read_mouse();
+	} while((mouse_b) || key(_ESC));
 
 #endif  
 }
@@ -1820,7 +2123,7 @@ void maximiza_ventana(void) {
 
   do { read_mouse(); } while(mouse_b&1);
 
-  if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+//  if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
 
   se_ha_movido_desde(x,y,an,al);
 
@@ -1863,7 +2166,9 @@ void minimiza_ventana(void) {
   v.primer_plano=2;
 
   do { read_mouse(); } while(mouse_b&1);
-  if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+  
+  //if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+  
   se_ha_movido_desde(x,y,an,al);
 
 }
@@ -1873,10 +2178,16 @@ void minimiza_ventana(void) {
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void cierra_ventana(void) {
-  int x,y,an,al,n,m;
+  int x=0,y=0,an=0,al=0,n=0,m=0;
 
   if (v.tipo==102 && fin_ventana==1) { fin_ventana=2; return; }
-
+  
+  if (exploding_windows) {
+	  v.exploding=1;
+	  implode(x,y,an,al);
+	  v.exploding=0;
+  }
+  
   call((voidReturnType )v.close_handler);
   if (!cierra_rapido) {
     if (big) wput(v.ptr,v.an/2,v.al/2,v.an/2-9,2,-45);
@@ -1888,6 +2199,10 @@ void cierra_ventana(void) {
 
   if (v.click_handler!=err2) { 
 	  free(v.ptr);
+#ifdef TTF
+	  SDL_FreeSurface(v.surfaceptr);
+	  v.surfaceptr=NULL;
+#endif
 	  v.ptr=NULL;
   }
   
@@ -1959,7 +2274,7 @@ void cierra_ventana(void) {
 
   scan_code=0; ascii=0; mouse_b=0;
 
-  if (exploding_windows) implode(x,y,an,al);
+
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -2011,7 +2326,7 @@ void mueve_ventana(void) {
 //      actualiza_dialogos(x,y,an,al);
 //    } else actualiza_caja(oldx,oldy,an,al);
     se_ha_movido_desde(oldx,oldy,an,al);
-//    volcado_completo=1;
+    volcado_completo=1;
     volcado_copia();
   }
 
@@ -2105,15 +2420,15 @@ void mueve_ventana_completa(void) {
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Actualiza una caja de la pantalla
+//      updates a screen box (region)
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void actualiza_caja(int x, int y, int an, int al) {
 
-  int n;
-  byte * _ptr;
-  int _x,_y,_an,_al;
-  int salta_x,salta_y;
+  int n=0;
+  byte * _ptr=NULL;
+  int _x=0,_y=0,_an=0,_al=0;
+  int salta_x=0,salta_y=0;
 
   if (x<0) { an+=x; x=0; }
   if (y<0) { al+=y; y=0; }
@@ -2128,7 +2443,10 @@ void actualiza_caja(int x, int y, int an, int al) {
     wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-2-x,vga_al-1-y,18,texto[safe],c2);
   }
 
-  for (n=max_windows-1;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al))
+  for (n=max_windows-1;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al)) {
+	  
+
+	  
   if (ventana[n].primer_plano<2) {
 
     _ptr=ventana[n].ptr;
@@ -2162,8 +2480,9 @@ void actualiza_caja(int x, int y, int an, int al) {
       } else wput_in_box(copia+y*vga_an+x,vga_an,an,al,ventana[n].x-x,ventana[n].y-y,38);
 
       }
-
+	}
   volcado_parcial(x,y,an,al);
+
 }
 
 void actualiza_dialogos(int x, int y, int an, int al) {
@@ -2354,6 +2673,8 @@ void vuelca_ventana(int m) {
   int _x,_y,_an,_al;
   int salta_x,salta_y;
 
+SDL_Rect trc;
+
   if (no_volcar_ventanas) return;
 
   if (volcados_parciales) {
@@ -2418,7 +2739,21 @@ if(_ptr==NULL)
 
   }
 
-  volcado_parcial(x,y,an,al);
+	trc.x=ventana[n].x;
+	trc.y=ventana[n].y;
+	trc.w=ventana[n].an;
+	trc.h=ventana[n].al;
+
+#ifdef TTF
+if(0) {
+	if(ventana[n].surfaceptr!=NULL)
+		SDL_BlitSurface(ventana[n].surfaceptr,NULL,copia_surface,&trc);
+
+}
+#endif
+
+	volcado_parcial(x,y,an,al);
+
 
 }
 
@@ -2592,14 +2927,71 @@ void volcado_copia(void) {
   }
 }
 
+void window_surface(int an, int al, byte type) {
+#ifdef TTF
+
+//	if(v.surfaceptr!=NULL)
+//		SDL_FreeSurface(v.surfaceptr
+	tempsurface=NULL;
+
+#ifdef IMAGE
+	if(type==1) 
+		v.surfaceptr = IMG_Load("/home/mike/div2015/system/red_panel.png");
+	else
+		v.surfaceptr = IMG_Load("/home/mike/div2015/system/blue_panel.png");
+#endif
+
+//		SDL_SetAlpha(v.surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL ,128);
+
+	if(v.surfaceptr!=NULL) {
+		tempsurface=zoomSurface(v.surfaceptr, (float)((an*1.0f)/(v.surfaceptr->w*1.0f)), (float)((al*1.0f)/(v.surfaceptr->h*1.0f)),0);
+		SDL_FreeSurface(v.surfaceptr);
+	}
+
+	// if couldnt be found
+//	if(tempsurface==NULL) 
+//		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
+//											rmask, gmask, bmask, amask);
+
+
+//	SDL_SetAlpha(tempsurface,SDL_SRCALPHA | SDL_RLEACCEL ,128);
+
+	if(tempsurface!=NULL) {
+		v.surfaceptr=SDL_DisplayFormat(tempsurface);
+		SDL_SetAlpha(v.surfaceptr,SDL_SRCALPHA | SDL_RLEACCEL ,255);
+	}
+	if(tempsurface!=NULL)
+		SDL_FreeSurface(tempsurface);
+
+#endif
+                                   	
+}
+
+
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 //      Create a new window
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void nueva_ventana(voidReturnType init_handler) {
-  byte * ptr;
-  int n,m,om,x,y,an,al;
-  int vtipo;
+	byte * ptr;
+	int n,m,om,x,y,an,al;
+	int vtipo;
+	uint32_t colorkey=0;
+	v.exploding=0;
+	
+	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
+	on the endianness (byte order) of the machine */
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0xff000000;
+		gmask = 0x00ff0000;
+		bmask = 0x0000ff00;
+		amask = 0x000000ff;
+	#else
+		rmask = 0x000000ff;
+		gmask = 0x0000ff00;
+		bmask = 0x00ff0000;
+		amask = 0xff000000;
+	#endif
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -2638,7 +3030,10 @@ void nueva_ventana(voidReturnType init_handler) {
     v.selected_item=-1;
     v.prg=NULL;
     v.aux=NULL;
-
+	v.ptr=NULL;
+#ifdef TTF
+	v.surfaceptr=NULL;
+#endif	
     call(init_handler);
 
     if (big) if (v.an>0) { v.an=v.an*2; v.al=v.al*2; } else v.an=-v.an;
@@ -2697,7 +3092,8 @@ void nueva_ventana(voidReturnType init_handler) {
     if (!n) ptr=(byte *)malloc(an*al); else ptr=NULL;
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
-
+		window_surface(an,al,0);
+		
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Pasa a segundo plano las ventanas que corresponda
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -2736,8 +3132,12 @@ void nueva_ventana(voidReturnType init_handler) {
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+ //     SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0,0,0));
+      //colors[c0].b,colors[c0].g,colors[c0].r));
+      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
+      
       if (v.tipo==1) { // Los di logos no se minimizan
         wgra(ptr,an,al,c_b_low,2,2,an-12,7);
         if (text_len(v.titulo)+3>an-12) {
@@ -2774,8 +3174,11 @@ void nueva_ventana(voidReturnType init_handler) {
 
       if (primera_vez!=1) {
         do { read_mouse(); } while((mouse_b&1) || key(_ESC));
-        if (exploding_windows) explode(x,y,an,al);
-
+        if (exploding_windows) {
+			v.exploding=1;
+			explode(x,y,an,al);
+			v.exploding=0;
+		}		
         wvolcado(copia,vga_an,vga_al,ptr,x,y,an,al,0);
         volcado_parcial(x,y,an,al);
       }
@@ -2838,6 +3241,7 @@ void explode(int x,int y,int an,int al) {
     volcado_parcial(xx,yy,1,aal);
     volcado_parcial(xx,yy+aal-1,aan,1);
     volcado_parcial(xx+aan-1,yy,1,aal);
+    explode_num=n;
     retrazo();
     volcado_copia();
     if (modo<100) {
@@ -2857,8 +3261,9 @@ void explode(int x,int y,int an,int al) {
 
 void implode(int x,int y,int an,int al) {
   int n=9,b=big;
-  int xx,yy,aan,aal;
+  int xx=0,yy=0,aan=0,aal=0;
   big=0; do {
+
     aan=(an*n)/10; if (!aan) aan=1;
     aal=(al*n)/10; if (!aal) aal=1;
     xx=x+an/2-aan/2; yy=y+al/2-aal/2;
@@ -2867,6 +3272,7 @@ void implode(int x,int y,int an,int al) {
     volcado_parcial(xx,yy,1,aal);
     volcado_parcial(xx,yy+aal-1,aan,1);
     volcado_parcial(xx+aan-1,yy,1,aal);
+    explode_num=n;
     volcado_copia();
     if (modo<100) {
       if (b) big=1;
@@ -2929,11 +3335,13 @@ void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
 //      Create ( it must return to the caller as is) a dialog
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
+
 void dialogo(voidReturnType init_handler) {
 
   int vtipo,_get_pos;
   byte * ptr;
   int n,m,x,y,an,al;
+uint32_t colorkey=0;
 
   if (!ventana[max_windows-1].tipo) {
 
@@ -2985,7 +3393,9 @@ void dialogo(voidReturnType init_handler) {
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 		memset(ptr,0,an*al);
-		
+
+		window_surface(an,al,1);
+
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
       // Pasa a segundo plano las ventanas que corresponda
       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -3013,7 +3423,10 @@ void dialogo(voidReturnType init_handler) {
       v.ptr=ptr;
 
       memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+//      SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
+      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
+
       wput(ptr,an,al,an-9,2,35);
       if (!strcmp((char *)v.titulo,(char *)texto[41]) || !strcmp((char *)v.titulo,(char *)texto[367]))
         wgra(ptr,an,al,c_r_low,2,2,an-12,7);
@@ -3032,8 +3445,11 @@ void dialogo(voidReturnType init_handler) {
 
       do { read_mouse(); } while((mouse_b&1) || key(_ESC));
 
-      if (exploding_windows) explode(x,y,an,al);
-
+      if (exploding_windows) {
+		  v.exploding=1;
+		  explode(x,y,an,al);
+			v.exploding=0;
+		}
       wvolcado(copia,vga_an,vga_al,ptr,x,y,an,al,0);
       volcado_parcial(x,y,an,al);
       do { read_mouse(); } while(mouse_b&1);
@@ -3053,9 +3469,12 @@ void dialogo(voidReturnType init_handler) {
 
 void refrescadialogo(void)
 {
-byte * ptr=v.ptr;
-int an=v.an,al=v.al;
-      memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+	byte * ptr=v.ptr;
+	int an=v.an,al=v.al;
+	memset(ptr,c0,an*al); if (big) { an/=2; al/=2; }
+#ifdef TTF
+	SDL_FillRect(v.surfaceptr,NULL,SDL_MapRGB( v.surfaceptr->format, 0, 0, 0 ));
+#endif      
       wrectangulo(ptr,an,al,c2,0,0,an,al);
       wput(ptr,an,al,an-9,2,35);
       if (!strcmp((char *)v.titulo,(char *)texto[41])) wgra(ptr,an,al,c_r_low,2,2,an-12,7);
@@ -3076,6 +3495,7 @@ int an=v.an,al=v.al;
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void init_lexcolor(void);
+void end_lexcolor(void);
 
 //typedef enum    {SV_cpu86,SV_cpu186,SV_cpu286,SV_cpu286p,
 //                 SV_cpu386,SV_cpu386p,SV_cpu486,SV_cpu486p,
@@ -3083,136 +3503,243 @@ void init_lexcolor(void);
 
 void inicializacion(void) {
 
-  FILE *f;
-  int n;
-  byte *ptr,*ptr2;
+	FILE *f;
+	int n;
+	byte *ptr,*ptr2;
 
 #ifdef __EMSCRIPTEN__
 	int len_=1;
 	int num_=1;
 #endif
 
-  detectar_vesa();
-//printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
-  for (n=0;n<num_modos;n++) {
-    if (modos[n].ancho==vga_an && modos[n].alto==vga_al) {
-      break;
-    }
-  }
+	detectar_vesa();
 
-  if (n==num_modos) {
-    VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=320; // Video mode
-    VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=200;
-    VS_BIG  =big     =Setupfile.Vid_modeBig=0;
-    editor_font      =Setupfile.editor_font=0;
-    big2=big+1;
-  }
+	printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
 
-  kbdInit();
+	for (n=0;n<num_modos;n++) {
+		if (modos[n].ancho==vga_an && modos[n].alto==vga_al) {
+			break;
+		}
+	}
+/*
+	if (n==num_modos) {
+		VS_ANCHO=vga_an  =Setupfile.Vid_modeAncho=640; // Video mode
+		VS_ALTO =vga_al  =Setupfile.Vid_modeAlto=480;
+		VS_BIG  =big     =Setupfile.Vid_modeBig=1;
+		editor_font      =Setupfile.editor_font=3;
+		big2=big+1;
+	}
+*/
+	kbdInit();
 
 
+	if(!Interpretando) {
+		printf("%s (%d,%d)\n\n",marcavga,vga_an,vga_al); // *** Solo info usuario ***
+		check_oldpif();
+	}
 
-  if(!Interpretando) {
-        printf("%s (%d,%d)\n\n",marcavga,vga_an,vga_al); // *** Solo info usuario ***
-        check_oldpif();
-  }
+	make_helpidx(); // *** Crea el ¡ndice del hipertexto ***
+	load_index();   // *** Carga el glosario del hipertexto ***
 
-  make_helpidx(); // *** Crea el ¡ndice del hipertexto ***
-  load_index();   // *** Carga el glosario del hipertexto ***
+	if(!Interpretando)
+		printf("%s",(char *)texto[6]); // *** Init buffers gr ficos ***
 
-  if(!Interpretando)
-        printf("%s",(char *)texto[6]); // *** Init buffers gr ficos ***
+	undo=(byte*)malloc(undo_memory);
+	tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
 
-  undo=(byte*)malloc(undo_memory);
-  tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
+	for(n=0;n<max_windows;n++) {
+		ventana[n].tipo=0;
+		ventana[n].lado=0;
+	}
 
-  for(n=0;n<max_windows;n++) {
-        ventana[n].tipo=0;
-        ventana[n].lado=0;
-  }
-
-  fondo_raton=(byte*)malloc(1024*big2);
-  copia=(byte*)malloc(vga_an*vga_al+6)+6;
-  dac=(byte*)malloc(768);
-  dac4=(byte*)malloc(768);
-  cuad=(byte*)malloc(16384);
+	fondo_raton=(byte*)malloc(1024*big2);
+	copia=(byte*)malloc(vga_an*vga_al+6)+6;
+	dac=(byte*)malloc(768);
+	dac4=(byte*)malloc(768);
+	cuad=(byte*)malloc(16384);
   
-  ghost=(byte*)malloc(65536); // 256*256 combinations
-  
-  barra=(byte*)malloc(vga_an*19*big2); //OJO
-  fill_dac=(byte*)malloc(256);
-  error_window=(byte*)malloc(640*38*2);
+	ghost=(byte*)malloc(65536); // 256*256 combinations
 
-  if (fondo_raton==NULL || copia==NULL || dac==NULL || dac4==NULL ||
-      cuad==NULL || ghost==NULL || barra==NULL || undo==NULL || tundo==NULL ||
-      fill_dac==NULL || error_window==NULL) error(0);
+	barra=(byte*)malloc(vga_an*19*big2); //OJO
+	fill_dac=(byte*)malloc(256);
+	error_window=(byte*)malloc(640*38*2);
 
-  if (big) f=fopen("system/grande.fon","rb"); else f=fopen("system/pequeno.fon","rb");
-  if (f==NULL) error(0);
-  fseek(f,0,SEEK_END); n=ftell(f);
-  if ((text_font=(byte *)malloc(n))!=NULL) {
-    fseek(f,0,SEEK_SET); fread(text_font,1,n,f); fclose(f);
-  } else { fclose(f); error(0); }
+	if (fondo_raton==NULL || copia==NULL || dac==NULL || dac4==NULL ||
+			cuad==NULL || ghost==NULL || barra==NULL || undo==NULL || tundo==NULL ||
+			fill_dac==NULL || error_window==NULL)
+		error(0);
 
-  switch(editor_font) {
-    case 0: f=fopen("system/SYS06X08.BIN","rb"); font_an=6; font_al=8; break;
-    case 1: f=fopen("system/SYS08X08.BIN","rb"); font_an=8; font_al=8; break;
-    case 2: f=fopen("system/SYS08X11.BIN","rb"); font_an=8; font_al=11; break;
-    case 3: f=fopen("system/SYS09X16.BIN","rb"); font_an=9; font_al=16; break;
-  } char_size=font_an*font_al;
+	if (big)
+		f=fopen("system/grande.fon","rb");
+	else
+		f=fopen("system/pequeno.fon","rb");
+
+	if (f==NULL)
+		error(0);
+	
+	fseek(f,0,SEEK_END);
+	n=ftell(f);
+	
+	if ((text_font=(byte *)malloc(n))!=NULL) {
+		fseek(f,0,SEEK_SET);
+		fread(text_font,1,n,f); 
+		fclose(f);
+	} else { 
+		fclose(f); 
+		error(0); 
+	}
+
+	switch(editor_font) {
+		case 0: 
+			f=fopen("system/SYS06X08.BIN","rb"); 
+			font_an=6; 
+			font_al=8; 
+		break;
+		
+		case 1: 
+			f=fopen("system/SYS08X08.BIN","rb"); 
+			font_an=8; 
+			font_al=8; 
+		break;
+		
+		case 2: 
+			f=fopen("system/SYS08X11.BIN","rb"); 
+			font_an=8; 
+			font_al=11; 
+		break;
+		
+		case 3: 
+			f=fopen("system/SYS09X16.BIN","rb");
+			font_an=9; 
+			font_al=16; 
+		break;
+	} char_size=font_an*font_al;
 
 
-  if (f==NULL) error(0);
+	if (f==NULL) 
+		error(0);
 
-  fseek(f,0,SEEK_END); n=ftell(f);
-  if ((font=(byte *)malloc(n))!=NULL) {
-    fseek(f,0,SEEK_SET); fread(font,1,n,f); fclose(f);
-  } else { fclose(f); error(0); }
+	fseek(f,0,SEEK_END); 
+	n=ftell(f);
+	
+	if ((font=(byte *)malloc(n))!=NULL) {
+		fseek(f,0,SEEK_SET); 
+		fread(font,1,n,f); 
+		fclose(f);
+	} else { 
+		fclose(f); 
+		error(0); 
+	}
 
-  f=fopen("system/tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
 
-  if (big) f=fopen("system/GRAF_G.DIV","rb"); else f=fopen("system/GRAF_P.DIV","rb");
-  if (f==NULL) error(0);
-  else {
-    fseek(f,0,SEEK_END); n=ftell(f)-1352;
-    if (n>0 && (graf_ptr=(byte *)malloc(n))!=NULL) {
-      memset(graf,0,sizeof(graf));
-      ptr=graf_ptr; fseek(f,1352,SEEK_SET);
-      fread(graf_ptr,1,n,f); fclose(f);
-      while (graf_ptr<ptr+n && *((int*)graf_ptr)<256) {
-        if (*(int*)(graf_ptr+60)) {
-          graf[*((int*)graf_ptr)]=graf_ptr+60;
-          *(word*)(graf_ptr+60)=*(int*)(graf_ptr+52);
-          *(word*)(graf_ptr+62)=*(int*)(graf_ptr+56);
-          graf_ptr+=*(word*)(graf_ptr+60)**(word*)(graf_ptr+62)+68;
-        } else {
-          graf[*((int*)graf_ptr)]=graf_ptr+56;
-          *(word*)(graf_ptr+58)=*(int*)(graf_ptr+56);
-          *(word*)(graf_ptr+56)=*(int*)(graf_ptr+52);
-          *(int*)(graf_ptr+60)=0;
-          graf_ptr+=*(word*)(graf_ptr+56)**(word*)(graf_ptr+58)+64;
-        }
-      } graf_ptr=ptr;
-    } else { fclose(f); error(0); }
-  }
+#ifdef TTF
+
+	TTF_Init();
+
+	IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF);
+
+	sysfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf",(big==1)?18:9);
+	editorfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf", (big==1)?18:9);
+
+	//sysfont = loadfont("system/KenPixel.ttf",(big==1)?12:6);
+	//sysfont = loadfont("/usr/share/fuze/assets/fuzebasic/zx.ttf",(big==1)?30:15);
+	//sysfont = loadfont("/usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
+	//sysfont = loadfont("/home/mike/cool-retro-term/app/qml/fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf",20);
+	//usr/share/wine/fonts/tahoma.ttf",(big==1)?14:7);
+
+	//printf("Loaded TTF: %x\n",sysfont);
+
+//	font_an=(big==1)?16:8;
+	tempsurface = drawtext(sysfont, colors[c].r,colors[c].g,colors[c].b,0, 255, 255,255, 0, "W", solid);
+	font_an=tempsurface->w;
+	SDL_FreeSurface(tempsurface);	
+	font_al=TTF_FontHeight(sysfont)+2;
+
+	tempsurface = drawtext(sysfont, colors[c].r,colors[c].g,colors[c].b,0, 255, 255,255, 0, "W", solid);
+	editor_font_an=tempsurface->w;
+	SDL_FreeSurface(tempsurface);
+	editor_font_al=TTF_FontHeight(editorfont)+2;
+	
+	tapiz_surface=NULL;
+	mouse_surface=NULL;
+	tempsurface=NULL;
+#else
+
+editor_font_al = font_al;
+editor_font_an = font_an;
+
+
+#endif
+
+#ifdef IMAGE
+mouse_surface = IMG_Load("system/cursor.png");
+#endif
+
+
+
+	f=fopen("system/tab_cuad.div","rb"); fread(cuad,4,4096,f); fclose(f);
+
+	if (big) 
+		f=fopen("system/GRAF_G.DIV","rb"); 
+	else 
+		f=fopen("system/GRAF_P.DIV","rb");
+
+	if (f==NULL) 
+		error(0);
+
+	else {
+		fseek(f,0,SEEK_END); 
+		
+		n=ftell(f)-1352;
+
+		if (n>0 && (graf_ptr=(byte *)malloc(n))!=NULL) {
+			memset(graf,0,sizeof(graf));
+			ptr=graf_ptr; 
+			fseek(f,1352,SEEK_SET);
+			fread(graf_ptr,1,n,f); 
+			fclose(f);
+
+			while (graf_ptr<ptr+n && *((int*)graf_ptr)<256) {
+				if (*(int*)(graf_ptr+60)) {
+					graf[*((int*)graf_ptr)]=graf_ptr+60;
+					*(word*)(graf_ptr+60)=*(int*)(graf_ptr+52);
+					*(word*)(graf_ptr+62)=*(int*)(graf_ptr+56);
+					graf_ptr+=*(word*)(graf_ptr+60)**(word*)(graf_ptr+62)+68;
+				} else {
+					graf[*((int*)graf_ptr)]=graf_ptr+56;
+					*(word*)(graf_ptr+58)=*(int*)(graf_ptr+56);
+					*(word*)(graf_ptr+56)=*(int*)(graf_ptr+52);
+					*(int*)(graf_ptr+60)=0;
+					graf_ptr+=*(word*)(graf_ptr+56)**(word*)(graf_ptr+58)+64;
+				}
+			} 
+			graf_ptr=ptr;
+		} else { 
+			fclose(f); 
+			error(0); 
+		}
+	}
 
   // HYPERLINK
 
   // *** Inicializa graf_help[384].offset/an/al/ptr=0
 
-  if ((f=fopen("help/help.fig","rb"))==NULL) error(0); else {
-    fseek(f,0,SEEK_END); n=ftell(f);
+	if ((f=fopen("help/help.fig","rb"))==NULL) 
+		error(0); 
+	else {
+		fseek(f,0,SEEK_END); 
+		n=ftell(f);
 #ifndef __EMSCRIPTEN__
 //n=1352;
 #endif
-    if ((ptr2=(byte *)malloc(n))!=NULL) {
-      memset(graf_help,0,sizeof(graf_help));
-      ptr=ptr2; fseek(f,0,SEEK_SET);
-      fread(ptr2,1,n,f); 
+		if ((ptr2=(byte *)malloc(n))!=NULL) {
+			memset(graf_help,0,sizeof(graf_help));
+			ptr=ptr2; fseek(f,0,SEEK_SET);
+			fread(ptr2,1,n,f); 
 #ifndef __EMSCRIPTEN__
-	fclose(f);
+			fclose(f);
 #endif
-      ptr2+=1352;
+			ptr2+=1352;
 
 #ifdef __EMSRIPTEN__
 
@@ -3305,7 +3832,7 @@ fclose(f);
 
   crea_gama(Setupfile.t_gama,tapiz_gama);
 
-  tapiz=NULL; preparar_tapiz();
+  tapiz=NULL; 
 
   mouse_x=vga_an/2; mouse_y=vga_al/2;
   _mouse_x=mouse_x; _mouse_y=mouse_y; mouse_graf=1;
@@ -3318,6 +3845,7 @@ fclose(f);
   crea_barratitulo();
   
   svmode(); set_dac(dac); read_mouse();
+  preparar_tapiz();
   volcado_completo=1;
   volcado(copia);
 
@@ -3347,6 +3875,8 @@ void finalizacion(void) {
     graf_ptr=NULL;
   }
   
+  free(font);
+  
   free(tapiz);
   free(fill_dac);
   free(barra);
@@ -3363,6 +3893,7 @@ void finalizacion(void) {
         rvmode();
 
 //  EndSound();
+	end_lexcolor();
 
   kbdReset();
 }
@@ -3389,6 +3920,71 @@ void default_reglas(void) {
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void determina_unidades(void) {
+#ifdef WIN32
+  int n,m,uni=0;
+DWORD cchBuffer;
+    char* driveStrings;
+    int driveType;
+    char driveTypeString[255];
+    uint64_t freeSpace;
+
+    // Find out how big a buffer we need
+    cchBuffer = GetLogicalDriveStrings(0, NULL);
+
+    driveStrings = (char*)malloc((cchBuffer + 1) * sizeof(char));
+    if (driveStrings == NULL)
+    {
+        return -1;
+    }
+
+    // Fetch all drive strings    
+    GetLogicalDriveStrings(cchBuffer, driveStrings);
+
+    // Loop until we find the final '\0'
+    // driveStrings is a double null terminated list of null terminated strings)
+    while (*driveStrings)
+    {
+        // Dump drive information
+        driveType = GetDriveType(driveStrings);
+//        GetDiskFreeSpaceEx(driveStrings, &freeSpace, NULL, NULL);
+
+        switch (driveType)
+        {
+        case DRIVE_FIXED:
+            strcpy(driveTypeString,"Hard disk");
+            break;
+
+        case DRIVE_CDROM:
+            strcpy(driveTypeString,"CD/DVD");
+            break;
+
+        case DRIVE_REMOVABLE:
+            strcpy(driveTypeString,"Removable");
+            break;
+
+        case DRIVE_REMOTE:
+            strcpy(driveTypeString,"Network");
+            break;
+
+        default:
+            strcpy(driveTypeString,"Unknown");
+            break;
+        }
+
+//        printf("%s - %s - %I64u GB free\n", driveStrings, driveTypeString,
+//                  freeSpace / 1024 / 1024 / 1024);
+
+        // Move to next drive string
+        // +1 is to move past the null at the end of the string.
+        unidades[uni++]=driveStrings[0];
+        driveStrings += lstrlen(driveStrings) + 1;
+
+    }
+
+    free(driveStrings);
+
+    return 0;
+#endif
 #ifdef NOTYET
   int n,m,uni=0;
   union REGS r;
@@ -3421,6 +4017,7 @@ void _fwrite(char * s, byte * buf, int n) {
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void error(int n) {
+	debugprintf("WHOOPS!\n");
     finalizacion();
     printf((char *)texto[14],n);
     printf("\n");
@@ -4410,8 +5007,10 @@ void wdown(int a) {
 }
 
 void DaniDel(char *name) {
+
 #ifdef WIN32
-	printf("DaniDel %s\n",name);
+	debugprintf("DaniDel %s\n",name);
+	remove(name);
 	return;
 #endif
 	

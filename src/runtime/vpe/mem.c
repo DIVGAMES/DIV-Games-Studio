@@ -4,7 +4,7 @@
 
 static void *Blocks[MAX_BLOCKS];
 static int   NumBlocks;
-static BYTE  CacheEmpty;
+static VPEByte  CacheEmpty;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //  Inicializa el gestor de memoria
@@ -34,10 +34,10 @@ void InitMemory(void)
   // Set number of allocated blocks
   NumBlocks=0;
   // Allocate memory for math tables
-  SinTable=MemAlloc(DEG360*4);
+  SinTable=(VPEFixed*)MemAlloc((DEG360+16)*sizeof(VPEFixed));
   if (SinTable==NULL)
     FatalError(ER_MEMORY,NULL);
-  CosTable=MemAlloc(DEG360*4);
+  CosTable=(VPEFixed*)MemAlloc((DEG360+16)*sizeof(VPEFixed));
   if (CosTable==NULL)
     FatalError(ER_MEMORY,NULL);
   // Allocate memory for misc renderer data
@@ -47,7 +47,7 @@ void InitMemory(void)
   MLines=(struct WLine  *)MemZAlloc(MAX_MLINES*sizeof(struct WLine));
   if (MLines==NULL)
     FatalError(ER_MEMORY,NULL);
-  FPSTable=(FIXED *)MemZAlloc(FPSTABLE_NUM*FPSTABLE_SIZE*sizeof(FIXED));
+  FPSTable=(VPEFixed *)MemZAlloc(FPSTABLE_NUM*FPSTABLE_SIZE*sizeof(VPEFixed));
   if (FPSTable==NULL)
     FatalError(ER_MEMORY,NULL);
   // Set cache flag
@@ -68,9 +68,9 @@ void ShutMemory(void)
 //  Reserva memoria interna
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void *CacheAlloc(LONG size)
+void *CacheAlloc(VPELong size)
 {
-  BYTE *ptr;
+  VPEByte *ptr;
 
   if (size<=0)
     FatalError(ER_CACHE0,NULL);

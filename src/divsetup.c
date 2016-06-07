@@ -4,6 +4,7 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
+#include "newfuncs.h"
 
 
 void cfg_show_font(void);
@@ -102,6 +103,7 @@ int need_refresh=0;
   }
 
 }
+extern int soundstopped;
 
 void Vid_Setup3(void) {
   if(v_aceptar)
@@ -110,11 +112,18 @@ void Vid_Setup3(void) {
     VS_BIG  =stbig;
     VS_ANCHO=stvga_an;
     VS_ALTO =stvga_al;
-    v_titulo=(char *)texto[385];
+//    vvga_an = VS_ANCHO;
+//	vvga_al = VS_ALTO;
+//	EndSound();
+//	soundstopped=1;
+
+//	SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
+	v_titulo=(char *)texto[385];
     v_texto =(char *)texto[386];
-    dialogo((voidReturnType)info0);
+//    dialogo((voidReturnType)info0);
     salir_del_entorno=1; //Salida directa sin preguntar
     modo_de_retorno=2;
+    
   }
 }
 
@@ -140,7 +149,7 @@ void Vid_Setup0(void) {
 
   for (n=0;n<num_modos;n++) {
     memset(&vgasizes[n*16],0,16);
-    sprintf(&vgasizes[n*16],"%s%d x %d",(modos[n].modo)?"VESA ":"VGA ",modos[n].ancho,modos[n].alto);
+    sprintf(&vgasizes[n*16],"%s%d x %d",(modos[n].modo)?"SDL ":"VGA ",modos[n].ancho,modos[n].alto);
   }
 
   lvgasizes.creada=0;
@@ -158,69 +167,104 @@ void Vid_Setup0(void) {
 //  Seleccion del tapiz de fondo
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-char Tap_name[14];
+char Tap_name[_MAX_PATH];
 char Tap_pathname[_MAX_PATH];
 int Tap_mosaico;
 int Tap_gama;
 struct _gcolor gama_vieja[9];
 
 void Get_Tapiz() {
-  int len,n;
-  char cwork[1024];
-  byte *ptr=NULL;
-  FILE *f;
+	int len,n;
+	char cwork[1024];
+	byte *ptr=NULL;
+	FILE *f;
 
-  v_modo=1; v_tipo=9;
-  v_texto=(char *)texto[182];
-  dialogo((voidReturnType)browser0);
+	v_modo=1; v_tipo=9;
+	v_texto=(char *)texto[182];
+	dialogo((voidReturnType)browser0);
 
-  strcpy(full,tipo[v_tipo].path);
-  if (full[strlen(full)-1]!='/') strcat(full,"/");
-  strcat(full,input);
+	strcpy(full,tipo[v_tipo].path);
 
-  if (v_terminado) if (v_existe) {
-    if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
-      fseek(f,0,SEEK_END);
-      len=ftell(f);
-      fseek(f,0,SEEK_SET);
+	if (full[strlen(full)-1]!='/') strcat(full,"/");
+		strcat(full,input);
 
-      if (len>1024) n=1024; else n=len;
+	if (v_terminado) {
 
-      if (fread(cwork,1,n,f)==n) {
+		if(v_existe) {
 
-        if ( es_MAP((byte *)cwork) || es_PCX((byte *)cwork) || es_BMP((byte *)cwork) ) {
+			if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
+#ifdef TTF
+			strcpy(Tap_name,input);
+			strcpy(Tap_pathname,full);
+			fclose(f);
+			return;
+#endif
 
-          strcpy(Tap_name,input);
-          strcpy(Tap_pathname,full);
+			fseek(f,0,SEEK_END);
+			len=ftell(f);
+			fseek(f,0,SEEK_SET);
 
-        } else {
+			if (len>1024) 
+				n=1024; 
+			else 
+				n=len;
 
-          if ((ptr=(byte *) malloc(len))!=NULL) {
+			if (fread(cwork,1,n,f)==n) {
 
-            fseek(f,0,SEEK_SET);
-            if (fread(ptr,1,len,f)==len) {
+				if ( es_MAP((byte *)cwork) || es_PCX((byte *)cwork) || es_BMP((byte *)cwork) ) {
 
-              if (es_JPG(ptr,len)) {
+					strcpy(Tap_name,input);
+					strcpy(Tap_pathname,full);
 
-                strcpy(Tap_name,input);
-                strcpy(Tap_pathname,full);
+				} else {
 
-              } else { v_texto=(char *)texto[46]; dialogo((voidReturnType)err0); }
+					if ((ptr=(byte *) malloc(len))!=NULL) {
 
-            } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
+						fseek(f,0,SEEK_SET);
 
-            free(ptr);
+						if (fread(ptr,1,len,f)==len) {
 
-          } else { v_texto=(char *)texto[45]; dialogo((voidReturnType)err0); }
+							if (es_JPG(ptr,len)) {
 
-        }
+								strcpy(Tap_name,input);
+								strcpy(Tap_pathname,full);
 
-      } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
+							} else { 
+								v_texto=(char *)texto[46]; 
+								dialogo((voidReturnType)err0); 
+							}
 
-      fclose(f);
+						} else { 
+							v_texto=(char *)texto[44]; 
+							dialogo((voidReturnType)err0); 
+						}
 
-    } else { v_texto=(char *)texto[44]; dialogo((voidReturnType)err0); }
-  } else { v_texto=(char *)texto[43]; dialogo((voidReturnType)err0); }
+						free(ptr);
+
+					} else { 
+						v_texto=(char *)texto[45]; 
+						dialogo((voidReturnType)err0); 
+					}
+
+				}
+
+			} else { 
+				v_texto=(char *)texto[44]; 
+				dialogo((voidReturnType)err0); 
+			}
+
+			fclose(f);
+
+			} else { 
+				v_texto=(char *)texto[44]; 
+				dialogo((voidReturnType)err0); 
+			}
+
+		} else { 
+			v_texto=(char *)texto[43]; 
+			dialogo((voidReturnType)err0); 
+		}
+	}
 }
 
 void Tap_Setup1(void) {
@@ -323,20 +367,78 @@ void Tap_Setup0(void)
 }
 
 typedef struct _meminfo{
-        unsigned Bloque_mas_grande_disponible;
-        unsigned Maximo_de_paginas_desbloqueadas;
-        unsigned Pagina_bloqueable_mas_grande;
-        unsigned Espacio_de_direccionamiento_lineal;
-        unsigned Numero_de_paginas_libres_disponibles;
-        unsigned Numero_de_paginas_fisicas_libres;
-        unsigned Total_de_paginas_fisicas;
-        unsigned Espacio_de_direccionamiento_lineal_libre;
-        unsigned Tamano_del_fichero_de_paginas;
-        unsigned reservado[3];
+        unsigned long Bloque_mas_grande_disponible; // largest block available
+        unsigned Maximo_de_paginas_desbloqueadas; // Maximum pages unblocked
+        unsigned Pagina_bloqueable_mas_grande; // Lockable larger page
+        unsigned Espacio_de_direccionamiento_lineal; // Linear address space
+        unsigned Numero_de_paginas_libres_disponibles; // Number of free pages available
+        unsigned Numero_de_paginas_fisicas_libres; // Number of free physical pages
+        unsigned Total_de_paginas_fisicas; // Total physical pages
+        unsigned Espacio_de_direccionamiento_lineal_libre; // Free linear address space
+        unsigned Tamano_del_fichero_de_paginas; // File size pages
+        unsigned reserved[3];
 }meminfo;
+
+
 
 int Mem_GetHeapFree()
 {
+	return 0;
+#ifdef NOTYET
+
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size * 1000;
+#endif
+
+#ifndef WIN32
+    FILE *meminfo = fopen("/proc/meminfo", "r");
+
+    if(meminfo == NULL)
+		return 0;
+//        ... // handle error
+
+    char line[256];
+    while(fgets(line, sizeof(line), meminfo))
+    {
+        int ram;
+        if(sscanf(line, "MemFree: %d kB", &ram) == 1)
+        {
+            fclose(meminfo);
+            return ram;
+        }
+    }
+
+    // If we got here, then we couldn't find the proper line in the meminfo file:
+    // do something appropriate like return an error code, throw an exception, etc.
+    fclose(meminfo);
+    return -1;
+#endif
+
+#ifdef NOTYET
+    FILE *meminfo = fopen("/proc/meminfo", "r");
+
+    if(meminfo == NULL)
+		return 0;
+//        ... // handle error
+
+    char line[256];
+    while(fgets(line, sizeof(line), meminfo))
+    {
+        int ram;
+        if(sscanf(line, "MemTotal: %d kB", &ram) == 1)
+        {
+            fclose(meminfo);
+            return ram;
+        }
+    }
+
+    // If we got here, then we couldn't find the proper line in the meminfo file:
+    // do something appropriate like return an error code, throw an exception, etc.
+    fclose(meminfo);
+    return -1;
+#endif
+
 #ifdef NOTYET
   struct _heapinfo miheap;
   int status=0,total=0;
@@ -353,9 +455,46 @@ int Mem_GetHeapFree()
 #endif
 return 0;
 }
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 void GetFreeMem(meminfo *Meminfo)
 {
+#ifdef WIN32
+   MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+	Meminfo->Bloque_mas_grande_disponible = status.ullAvailPhys;
+	return;
+#else
+    FILE *mem = fopen("/proc/meminfo", "r");
+
+    if(mem == NULL) {
+		Meminfo->Bloque_mas_grande_disponible = -1;
+		return;
+	}
+//        ... // handle error
+
+    char line[256];
+    while(fgets(line, sizeof(line), mem))
+    {
+        int64_t ram;
+        if(sscanf(line, "MemFree: %ds kB", &ram) == 1)
+        {
+            fclose(mem);
+            Meminfo->Bloque_mas_grande_disponible = ram*1024;
+			return;
+        }
+    }
+
+    // If we got here, then we couldn't find the proper line in the meminfo file:
+    // do something appropriate like return an error code, throw an exception, etc.
+    fclose(mem);
+    Meminfo->Bloque_mas_grande_disponible = -1;
+    return;
+#endif
+
 #ifdef NOTYET
   union REGS regs;
   struct SREGS sregs;
@@ -370,7 +509,10 @@ void GetFreeMem(meminfo *Meminfo)
 void MemInfo1(void) {
   char cWork[256];
   meminfo Mi_meminfo;
+  char sizes[][3]={"KB","MB","GB","TB","PB"};
+  byte csize=0;
   int mem,x,nuvent=0,meminmaps=0;
+  float fmem;
   int an=v.an/big2,al=v.al/big2;
 
   _show_items();
@@ -398,15 +540,25 @@ void MemInfo1(void) {
   if((mem=Mem_GetHeapFree())==-1) strcpy(cWork,(char *)texto[193]);
   else {
     mem=(Mi_meminfo.Bloque_mas_grande_disponible+mem)/1024;
-    if(mem/1000) sprintf(cWork,(char *)texto[194],mem/1000,mem%1000);
-    else         sprintf(cWork,(char *)texto[195],mem%1000);
+    fmem = mem;
+    fprintf(stdout,"Memory free: %d\n",mem);
+    while(fmem>1024) {
+		fmem=fmem/1024;
+		csize++;
+	}
+	fprintf(stdout,"Memory free: %d (%f)\n",mem, fmem);
+
+//	fmem=fmem*1000;
+//    if(fmem/1000) sprintf(cWork,(char *)texto[194],fmem,sizes[csize]);
+   // else         
+   sprintf(cWork,(char *)texto[195],fmem,sizes[csize]);
   }
   wwrite(v.ptr,an,al,an/2+1,44,1,(byte *)cWork,c1);
   wwrite(v.ptr,an,al,an/2,44,1,(byte *)cWork,c4);
 
   mem=meminmaps/1024;
-  if(mem/1000) sprintf(cWork,(char *)texto[196],mem/1000,mem%1000);
-  else         sprintf(cWork,(char *)texto[197],mem%1000);
+  if(mem/1000) sprintf(cWork,(char *)texto[196],mem/1000,mem%1000,"KB");
+  else         sprintf(cWork,(char *)texto[197],mem%1000,"KB");
   wwrite(v.ptr,an,al,an/2+1,52,1,(byte *)cWork,c1);
   wwrite(v.ptr,an,al,an/2,52,1,(byte *)cWork,c4);
 
@@ -686,6 +838,9 @@ void Cfg_Setup3(void) {
     auto_save_session=setup_switches[2];
     coloreador=setup_switches[3];
     paint_cursor=old_paint_cursor;
+  } else {
+	  c1=color_cfg[0];
+	  preparar_tapiz();
   }
 }
 
@@ -771,6 +926,7 @@ void Cfg_Setup_end(void) {
         case 3: f=fopen("system/sys09x16.bin","rb"); break;
       }
       if (f!=NULL) {
+		printf("loading new font %d %d\n",editor_font,old_editor_font);  
         fseek(f,0,SEEK_END); n=ftell(f);
         if ((ptr=(byte *)malloc(n))!=NULL) {
           fseek(f,0,SEEK_SET);
@@ -924,11 +1080,43 @@ byte *x_mapa_tapiz, *x_tapiz=NULL;
 
 void tapiz_thumb(void)
 {
-  int x, y, an, al, thumb_pos;
-  float coefredx, coefredy, a, b;
-  byte *ptr;
+	int x, y, an, al, thumb_pos;
 
-  preparar_tapiz_temp();
+	float coefredx, coefredy, a, b;
+	byte *ptr;
+
+
+	SDL_Rect rc;
+	an=128*big2; al=88*big2;
+
+	preparar_tapiz_temp();
+
+
+
+#ifdef TTF
+
+
+	tempsurface = zoomSurface(tapiz_temp_surface, (float)an/vga_an, (float)al/vga_al,0);
+
+	printf("creat wallpaper thumb %f %f \n",an/vga_an, al/vga_al);
+
+	thumb_pos=5*big2+(42*big2)*v.an;
+
+	rc.x=5*big2;
+	rc.y=(42*big2);
+	rc.w=an;
+	rc.h=al;
+
+	SDL_BlitSurface(tempsurface,NULL, v.surfaceptr, &rc);
+	SDL_FreeSurface(tempsurface);
+	tempsurface=NULL;
+
+
+
+
+#else
+
+
   if(x_tapiz==NULL) return;
 
   // Crea la reducciขn del tapiz
@@ -936,11 +1124,13 @@ void tapiz_thumb(void)
   coefredx=x_tapiz_an/((float)128*(float)big2);
   coefredy=x_tapiz_al/((float) 88*(float)big2);
 
-  an=128*big2; al=88*big2;
+
+	
 
   if ((ptr=(byte *)malloc(an*al))==NULL) return;
 
   memset(ptr,0,an*al);
+  
   a=(float)0.0;
   for(y=0;y<al;y++)
   {
@@ -968,9 +1158,15 @@ void tapiz_thumb(void)
     }
   }
   free(ptr);
+  
+#endif
+  
 }
 
 byte x_ctapiz[256];
+
+extern SDL_Surface *vga;
+
 
 void preparar_tapiz_temp(void) {
   FILE * f;
@@ -980,6 +1176,57 @@ void preparar_tapiz_temp(void) {
   byte pal[768];
   byte old_dac[768];
   byte old_dac4[768];
+
+#ifdef TTF
+	SDL_Rect rc;
+	
+	if(tapiz_temp_surface!=NULL)
+		SDL_FreeSurface(tapiz_temp_surface);
+		
+	tapiz_temp_surface = DIV_IMG_Load(Tap_pathname);
+
+	if(tapiz_temp_surface!=NULL) {
+
+		if(Tap_mosaico) {
+			tempsurface = SDL_DisplayFormat(vga);
+			SDL_FillRect(tempsurface,NULL,0);
+			x=0;
+			y=0;
+			while(x<vga_an) {
+				y=0;
+				
+				while(y<vga_al) {
+					rc.x=x;
+					rc.y=y;
+					rc.w=tapiz_temp_surface->w;
+					rc.h=tapiz_temp_surface->w;
+					SDL_BlitSurface(tapiz_temp_surface,NULL,tempsurface,&rc);
+					y+=rc.h;
+				}
+				x+=rc.w;
+			}
+
+		
+
+		} else {
+			
+			tempsurface = zoomSurface(tapiz_temp_surface,(float)vga_an/tapiz_temp_surface->w,(float)vga_al/tapiz_temp_surface->h,1);
+			
+		}
+		SDL_FreeSurface(tapiz_temp_surface);
+		
+		tapiz_temp_surface = SDL_DisplayFormat(tempsurface);
+		
+		SDL_FreeSurface(tempsurface);
+		
+	} else {
+		v_texto=(char *)texto[46]; dialogo((voidReturnType)err0);
+		return;
+	}
+
+#else
+
+
 
   // *** OJO ***
   // Mosaico/rescalado
@@ -1052,10 +1299,10 @@ void preparar_tapiz_temp(void) {
     do *p=x_ctapiz[*p]; while (++p<q);
   }
 
-  if (Tap_mosaico) {
-    if ((p=(byte *)malloc(vga_an*vga_al))==NULL) { free(temp); x_tapiz=NULL; return; }
-    x_tapiz_an=vga_an; x_tapiz_al=vga_al; x_mapa_tapiz=x_tapiz=p;
+  if ((p=(byte *)malloc(vga_an*vga_al))==NULL) { free(temp); x_tapiz=NULL; return; }
 
+  if (Tap_mosaico) {
+    x_tapiz_an=vga_an; x_tapiz_al=vga_al; x_mapa_tapiz=x_tapiz=p;
     // Hace el mosaico
 
     for(y=0; y<vga_al; y++)
@@ -1070,8 +1317,7 @@ void preparar_tapiz_temp(void) {
     }
 
     free(temp);
-  } else {
-    if ((p=(byte *)malloc(vga_an*vga_al))==NULL) { free(temp); x_tapiz=NULL; return; }
+  } else {    
     rescalar(temp,an,al,p,vga_an,vga_al);
     free(temp);
     x_tapiz_an=vga_an; x_tapiz_al=vga_al; x_mapa_tapiz=x_tapiz=p;
@@ -1079,6 +1325,8 @@ void preparar_tapiz_temp(void) {
 
   memcpy(dac,old_dac,768);
   memcpy(dac4,old_dac4,768);
+
+#endif
 
 }
 

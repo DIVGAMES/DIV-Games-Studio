@@ -76,12 +76,21 @@ void FlcReadFile(Uint32 size)
   }
 } /* FlcReadFile */
 
+#ifdef DIV1
+extern FILE * open_file(byte * file);
+#else
+extern FILE * div_open_file(byte * file);
+#endif
 
+int FlcCheckHeader(char *filename) {
+#ifdef DIV1
+ if((flc.file=open_file((byte *)filename))==NULL) 
+#else
+ if((flc.file=div_open_file((byte *)filename))==NULL) 
+#endif
 
-int FlcCheckHeader(char *filename)
-{ if((flc.file=fopen(filename, "rb"))==NULL) {
     return(1);
-  }
+  
 
   FlcReadFile(128);
 
@@ -94,6 +103,7 @@ int FlcCheckHeader(char *filename)
   ReadU16(&flc.HeaderSpeed, flc.pMembuf+16);
 
 #ifdef DEBUG
+/*
   printf("flc.HeaderSize: %d\n", flc.HeaderSize);
   printf("flc.HeaderCheck: %d\n", flc.HeaderCheck);
   printf("flc.HeaderFrames: %d\n", flc.HeaderFrames);
@@ -101,6 +111,7 @@ int FlcCheckHeader(char *filename)
   printf("flc.HeaderHeight: %d\n", flc.HeaderHeight);
   printf("flc.HeaderDepth: %d\n", flc.HeaderDepth);
   printf("flc.HeaderSpeed: %d\n", flc.HeaderSpeed);
+*/
 #endif
 
   if((flc.HeaderCheck==0x0AF12) || (flc.HeaderCheck==0x0AF11)) { 
@@ -127,12 +138,16 @@ void FlcInitFirstFrame()
 
 extern SDL_Surface *vga;
 
-int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy)
+int StartFLI(char *flinombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy)
 {
+	char nombre[strlen(flinombre)+10];
 	flc.pMembuf=NULL;
 	flc.membufSize=0;
 	flc.mainscreen=vga;//Buffer;
 	flc.buffer=(byte *)Buffer;
+	
+	strcpy(nombre,flinombre);
+	
 	if(FlcCheckHeader(nombre)) {
 		printf("Wrong header\n");
 		return 0;
@@ -162,7 +177,7 @@ return flc.HeaderFrames;
 
   if((cx<0)||(cy<0)) return(0);
   if((info.Width+cx>Buff_anc)||(info.Height+cy>Buff_alt)) return(0);
-  if((TFframe=(TFUByte *)malloc(info.Height*info.Width))==NULL) return(0);
+  if((TFframe=(TFUByte *)malloc(info.Height*info.Width+256))==NULL) return(0);
   if( (TFpalette=malloc(768) )==NULL) return(0);
 
   TFBuffers_Set(animation, TFframe, TFpalette);
@@ -411,9 +426,13 @@ int FlcCheckFrame()
   ReadU16(&flc.FrameChunks, flc.pFrame+6);
 
 #ifdef DEBUG
+
+/*
   printf("flc.FrameSize: %d\n", flc.FrameSize);
   printf("flc.FrameCheck: %d\n", flc.FrameCheck);
   printf("flc.FrameChunks: %d\n", flc.FrameChunks);
+*/
+
 #endif
 
   flc.pFrame+=16;
@@ -445,8 +464,10 @@ void FlcDoOneFrame()
     ReadU16(&flc.ChunkType, flc.pChunk+4);
 
 #ifdef DEBUG
-    printf("flc.ChunkSize: %d\n", flc.ChunkSize);
+/*   
+	printf("flc.ChunkSize: %d\n", flc.ChunkSize);
     printf("flc.ChunkType: %d\n", flc.ChunkType);
+*/
 #endif
 
     switch(flc.ChunkType) {
@@ -523,8 +544,10 @@ void EndFli()
 {
 	if(flc.file!=NULL)
 		fclose(flc.file);
-	if(flc.pMembuf!=NULL)
+	if(flc.pMembuf!=NULL) {
 		free(flc.pMembuf);
+		flc.pMembuf=NULL;
+	}
 
 	flc.pMembuf=NULL;
 	flc.file=NULL;

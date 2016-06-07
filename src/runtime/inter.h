@@ -10,6 +10,8 @@
 #define true 1
 #endif
 
+
+
 //#include "include.div"
 
 #define INTERPRETE
@@ -66,6 +68,15 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 ///////////////////////////////////////////////////////////////////////////////
 // defines
 ///////////////////////////////////////////////////////////////////////////////
+
+
+#ifdef DEBUG
+#define debugprintf(...) printf ( __VA_ARGS__)
+#else
+#define printf(...)
+// debugprintf
+#define debugprintf(...) 
+#endif
 
 #pragma check_stack(off)
 
@@ -550,7 +561,11 @@ GLOBAL FILE * tabfiles[32]; // Tabla con los handles abiertos (a 0 los libres)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla fกsica
+GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla fกsica
+
 GLOBAL byte fsmode;
+
+GLOBAL char *prgpath[_MAX_PATH];
 
 GLOBAL byte *copia;     // Copia virtual de pantalla
 
@@ -689,7 +704,7 @@ GLOBAL t_texto texto[max_textos+1];
 // Sistema de impresiขn de primitivas gr ficas
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-#define max_drawings 256 // Nฃmero m ximo de primitivas en ejecuciขn
+#define max_drawings 16384 // Nฃmero m ximo de primitivas en ejecuciขn
 
 typedef struct _t_drawing {
   int tipo;     // Tipo de primitiva 0-n/a, 1-linea, ...
@@ -777,8 +792,8 @@ GLOBAL int snum; // Variable para indicar sobre que scroll se trata
 
 struct _divmalloc {
   byte *ptr;
-  int  imem1;
-  int  imem2;
+  memptrsize  imem1;
+  memptrsize  imem2;
 };
 
 GLOBAL struct _divmalloc divmalloc[256];
@@ -929,6 +944,7 @@ GLOBAL int debugger_step,call_to_debug,process_stoped;
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void init_debug(void);
+void end_debug(void);
 void debug(void);
 void init_colors(void);
 void init_big(void);
