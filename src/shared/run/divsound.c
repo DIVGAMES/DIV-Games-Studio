@@ -571,10 +571,14 @@ int StopSound(int NumChannel)
 {
   //printf("Stopping sound %d\n",NumChannel);
 #ifdef MIXER
-if(Mix_Playing(NumChannel)) {
-  if(!Mix_UnregisterAllEffects(NumChannel)) {
-   printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
-  }
+  if(Mix_Playing(NumChannel)) {
+
+#ifndef EMSCRIPTEN
+    if(!Mix_UnregisterAllEffects(NumChannel)) {
+      printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
+    }
+#endif
+
   Mix_HaltChannel(NumChannel);
 }
 
