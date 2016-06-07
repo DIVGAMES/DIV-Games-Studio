@@ -2150,8 +2150,10 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idðmemb
           test_buffer(&mem,&imem_max,i+(*ob).sglo.len_item*(*ob).sglo.totalitems);
           test_buffer(&frm,&ifrm_max,i+(*ob).sglo.len_item*(*ob).sglo.totalitems);
           while (--dup) {
-            memcpy(&mem[i],&mem[offstruct+len],(*ob).sglo.len_item<<2);
-            memcpy(&frm[i],&frm[offstruct+len],(*ob).sglo.len_item<<2);
+          	if(i!=offstruct+len) {
+	            memcpy(&mem[i],&mem[offstruct+len],(*ob).sglo.len_item<<2);
+	            memcpy(&frm[i],&frm[offstruct+len],(*ob).sglo.len_item<<2);
+	        }
             i+=(*ob).sglo.len_item;
           }
         }
@@ -3536,8 +3538,10 @@ void sintactico (void) {
             test_buffer(&mem,&imem_max,imem+(*ob).sglo.len_item*(*ob).sglo.totalitems);
             test_buffer(&frm,&ifrm_max,imem+(*ob).sglo.len_item*(*ob).sglo.totalitems);
             while (--dup) {
-              memcpy(&mem[imem],&mem[_imem],(*ob).sglo.len_item<<2);
-              memcpy(&frm[imem],&frm[_imem],(*ob).sglo.len_item<<2);
+            	if(imem!=_imem) {
+	              memcpy(&mem[imem],&mem[_imem],(*ob).sglo.len_item<<2);
+	              memcpy(&frm[imem],&frm[_imem],(*ob).sglo.len_item<<2);
+	            }
               imem+=(*ob).sglo.len_item;
             }
           } imem=_imem;
@@ -4380,9 +4384,11 @@ void analiza_private(void) {
             test_buffer(&mem,&imem_max,imem+(*ob).sloc.len_item*(*ob).sloc.totalitems);
             test_buffer(&frm,&ifrm_max,imem+(*ob).sloc.len_item*(*ob).sloc.totalitems);
             while (--dup) {
-              memcpy(&mem[imem],&mem[_imem],(*ob).sloc.len_item<<2);
-              memcpy(&frm[imem],&frm[_imem],(*ob).sloc.len_item<<2);
-              imem+=(*ob).sloc.len_item;
+            	if(imem!=_imem) {
+	              memcpy(&mem[imem],&mem[_imem],(*ob).sloc.len_item<<2);
+	              memcpy(&frm[imem],&frm[_imem],(*ob).sloc.len_item<<2);
+	          	}
+              	imem+=(*ob).sloc.len_item;
             }
           } imem=_imem;
 
@@ -4791,9 +4797,9 @@ void tloc_init(int tipo) {
 // OJO!!! tglo_init no puede llamar a test_buffer !!!
 
 #if __WORDSIZE == 64
-#define memptrsize long
+#define memptrsize int64_t
 #else
-#define memptrsize int
+#define memptrsize int32_t
 #endif
 
 
