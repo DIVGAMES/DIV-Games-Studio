@@ -788,9 +788,29 @@ int max,max_reloj;        // Process in order or _Priority and _Z
 extern int alt_x;
 int splashtime =0;
 int oldticks = 0;
+#ifdef EMSCRIPTEN
+byte running = 0;
+#endif
+
 void madewith(void);
 
 void mainloop(void) {
+#ifdef EMSCRIPTEN
+/*  fprintf(stdout,"Mainloop!\n");
+  if (running == 1) {
+    fprintf(stdout, "Already running.. skipping.\n");
+    return;
+  }
+  */
+  if(!(procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x)) {
+    fprintf(stdout, "Program finished. Ending.\n");
+    emscripten_cancel_main_loop();
+    finalizacion();
+    return;
+  }
+#endif
+//  running = 1;
+
 #ifndef DEBUG
 	if(splashtime>0 && SDL_GetTicks()-oldticks<splashtime) {
 		tecla();
@@ -818,6 +838,9 @@ void mainloop(void) {
     if (error_vpe!=0) {
       v_function=-2; e(error_vpe);
     }
+#ifdef EMSCRIPTEN
+//    running = 0;
+#endif
 }
 
 void interprete (void)
@@ -1825,13 +1848,13 @@ void exer(int e) {
 		printf("Error: ");
 		
 		switch(e) {
-			case 1: printf("Out of memory!"); break;
-			case 2: printf("Too many process!"); break;
-			case 3: printf("Stack overflow!"); break;
-			case 4: printf("DLL not found!"); break;
-			case 5: printf("System font file missed!"); break;
-			case 6: printf("System graphic file missed!"); break;
-			default: printf("Internal error!"); break;
+			case 1: fprintf(stdout,"Out of memory!"); break;
+			case 2: fprintf(stdout,"Too many process!"); break;
+			case 3: fprintf(stdout,"Stack overflow!"); break;
+			case 4: fprintf(stdout,"DLL not found!"); break;
+			case 5: fprintf(stdout,"System font file missed!"); break;
+			case 6: fprintf(stdout,"System graphic file missed!"); break;
+			default: fprintf(stdout,"Internal error!"); break;
 		}
 	}
 
@@ -1857,6 +1880,11 @@ void exer(int e) {
 #ifdef STDOUTLOG
 	printf("exited %d\n",e);
 #endif
+
+#ifdef EMSCRIPTEN
+  emscripten_cancel_main_loop();
+#endif
+  
 	exit(26);
 }
 
@@ -1918,6 +1946,10 @@ extern char exebin[255];
 
 
 int main(int argc,char * argv[]) {
+ EM_ASM(
+//  alert("Off we go!");
+//  _emscripten_debugger();
+  );
   FILE * f, *fsf;
   int a=0;
   byte * ptr;
@@ -1952,9 +1984,11 @@ int main(int argc,char * argv[]) {
 #ifdef DEBUG
 	copia_debug=NULL;
 #endif
-	
+
+#ifndef EMSCRIPTEN	
   atexit(SDL_Quit);
-  
+#endif
+
   SDL_Init( SDL_INIT_EVERYTHING);
 
   remove("DEBUGSRC.TXT");
@@ -2216,7 +2250,7 @@ for(a=0;a<10;a++){
   if (iloc_len&1) iloc_len++;
 
 #ifdef __EMSCRIPTEN__
-#define MEM_MULTI 1
+#define MEM_MULTI 2
 #else
 #define MEM_MULTI 2
 #endif
