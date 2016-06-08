@@ -317,31 +317,6 @@ divTexture = SDL_CreateTexture(divRender,
 #endif
 #else
 
-#ifdef GCW
-	if(vga)
-		SDL_FreeSurface(vga);
-	
-	vga=NULL;
-		
-	if(vga_an>640 || vga_al>480) {
-		
-		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
-
-		if(vga) {
-//		vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
-//		if(!vga) {
-//			vga=SDL_SetVideoMode(320,240, 8, 0);
-//		}
-
-//		w_ratio = vga_an / (float)(vga->w*1.0);
-//		h_ratio = vga_al / (float)(vga->h*1.0);		
-
-			printf("Setting soft mode %d %d\n",vga->w,vga->h);
-		
-		} 
-	}
-	else  // hardware scale
-#endif
 #ifdef PANDORA
 		vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 #else
@@ -359,6 +334,30 @@ divTexture = SDL_CreateTexture(divRender,
 
 		if(!vga || fsmode==0)
 			vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+
+#ifdef GCW
+    
+  if(vga_an>640 || vga_al>480) {
+    
+    vga=SDL_SetVideoMode(640,480, 8, 0);
+    if(!vga) 
+      vga=SDL_SetVideoMode(320,240, 8, 0);
+
+    if(vga) {
+//    vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+//    if(!vga) {
+//      vga=SDL_SetVideoMode(320,240, 8, 0);
+//    }
+
+//    w_ratio = vga_an / (float)(vga->w*1.0);
+//    h_ratio = vga_al / (float)(vga->h*1.0);   
+
+      printf("Setting soft mode %d %d\n",vga->w,vga->h);
+    
+    } 
+  }
+  // hardware scale
+#endif
 
 #endif
 		printf("Set mode: %d,%d\n",vga->w,vga->h);
