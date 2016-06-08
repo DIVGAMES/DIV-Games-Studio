@@ -1946,10 +1946,6 @@ extern char exebin[255];
 
 
 int main(int argc,char * argv[]) {
- EM_ASM(
-//  alert("Off we go!");
-//  _emscripten_debugger();
-  );
   FILE * f, *fsf;
   int a=0;
   byte * ptr;
