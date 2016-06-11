@@ -500,11 +500,10 @@ oldhatval = hatval;
 
 // unicode not working on android
 #ifndef DROID
-		if(event.key.keysym.unicode>=0 &&  event.key.keysym.unicode<0x80) {
+		if(event.key.keysym.unicode<0x80) {
 			ascii = event.key.keysym.unicode;
 			//printf("ascii val: %d\n",ascii);
-		}
-					
+		}					
 #endif
 //#ifndef GCW				
 		kbdFLAGS[scan_code]=1;	
