@@ -467,7 +467,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	for(x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
 		//float p = x - int(x);
 		samples[i++] = input[(int)x];// + p * input[int(x) + 1];
-		if(pos+x>s->sound->alen/2) {
+		if(pos+x>=s->sound->alen/2) {
 			if(s->loop==1) {
 				x=0;
 				j=0;
@@ -515,29 +515,10 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
   loop = sonido[NumSonido].loop?-1:0;
 #endif
 
-  /*int InitChannel=16;
-
-  if(MusicChannels>InitChannel) InitChannel=MusicChannels;
-  if(InitChannel>=32) return(-1);
-  if(!sonido[NumSonido].smp) return(-1);
-
-  con=InitChannel;
-  while(con<32 && IsPlayingSound(con)) con++;
-  if(con==32) {
-    con=InitChannel+NextChannel;
-    NextChannel++;
-    if(InitChannel+NextChannel>=32) NextChannel=0;
-    if(con>=32) con=InitChannel;
-  }
-  */
-
-//  StopSound(con);
-
 // always play as loop, let the freqEffect manage stop_sound when loop is zero
 // this permits slow playing sound to run for the correct length.
 
 	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
-//  printf("channel = %d\n",con);
   
   if(con==-1)
     return(0);
@@ -546,9 +527,6 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
   channels[con].vol = Volumen;
   channels[con].pos = 0;
 
-//printf("Playing sound %d, %d, Vol %d, Freq %d %x\n",NumSonido, con, Volumen, Frec, sonido[NumSonido].sound);
-	
-//	if(Frec!=256)
 #ifndef __EMSCRIPTEN__
 		Mix_RegisterEffect(con, freqEffect, NULL,NULL);
 #endif
@@ -556,14 +534,10 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 	Mix_Volume(con,Volumen/2);
 	channels[con].num=NumSonido;
 	channels[con].con = con;
-//	printf("playing via channel %d\n",con);
-//  judas_playsample(sonido[NumSonido].smp, con, (sonido[NumSonido].freq*Frec)/256, 32*Volumen, MIDDLE);
 
 	Freq_original[con]=channels[con].freq;
 
-//  channel(con)=1;
 #endif
-//printf("Playing con: %d\n",con);
   return(con);
 }
 
