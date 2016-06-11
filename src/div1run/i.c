@@ -88,32 +88,37 @@ void CNT_export(char *name,void *dir,int nparms)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Programa principal
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-int splashtime=0;
+int splashtime=5000;
 int oldticks = 0;
   int exesize;
 int datsize;
 
 void madewith(void);
+
 void mainloop(void) {
 	
-	if(splashtime>0 && SDL_GetTicks()-oldticks<splashtime) {
-		tecla();
-		return;
-	} 
-    splashtime=0;
-    frame_start();
-    #ifdef DEBUG
-    if (kbdFLAGS[_F12] || trace_program) { trace_program=0; call_to_debug=1; }
-    #endif
-    old_dump_type=dump_type;
-    old_restore_type=restore_type;
-    do {
-      #ifdef DEBUG
-      if (call_to_debug) { call_to_debug=0; debug(); }
-      #endif
-      exec_process();
-    } while (ide);
-    frame_end();
+  if(splashtime>0) {
+    if(SDL_GetTicks()<splashtime) {
+      tecla();
+      return;
+    } else {
+      splashtime=0;
+      svmode();
+    }
+  }
+  frame_start();
+#ifdef DEBUG
+  if (kbdFLAGS[_F12] || trace_program) { trace_program=0; call_to_debug=1; }
+#endif
+  old_dump_type=dump_type;
+  old_restore_type=restore_type;
+  do {
+#ifdef DEBUG
+    if (call_to_debug) { call_to_debug=0; debug(); }
+#endif
+    exec_process();
+  } while (ide);
+  frame_end();
 }
 char *jschar;
 
@@ -140,17 +145,11 @@ int main(int argc,char * argv[]) {
   atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-
-
-//printf("RUM\n");
-
-//exit;
-//printf("Numjoy: %d\n",SDL_NumJoysticks());
   if(SDL_NumJoysticks() > 0) { 
 		divjoy = SDL_JoystickOpen(0);
 		
 
-printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
+//printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
 
 	if (SDL_JoystickNumHats(divjoy)==0)  {
 		SDL_JoystickClose(divjoy);

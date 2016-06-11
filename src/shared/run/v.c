@@ -4,11 +4,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "inter.h"
-//#include "..\inc\svga.h"
-//#include "..\inc\vesa.h"
-#ifndef __EMSCRIPTEN__
 #include "madewith.h"
-#endif
 
 #ifdef GCW
 //#define GCW_W 640
@@ -56,6 +52,7 @@ void crear_ghost_slow(void);
 
 // Check if SDL is already loaded
 
+#ifndef __EMSCRIPTEN__
 int IsFullScreen(SDL_Surface *surface)
 {
 	if ( surface == NULL)
@@ -94,9 +91,7 @@ int SDL_ToggleFS(SDL_Surface *surface)
     
     return 1;
 }
-
-
-
+#endif
 
 #define MAX_YRES 2048
 
@@ -249,41 +244,23 @@ extern float m_x,m_y;
 
 
 extern int oldticks;
-#ifndef __EMSCRIPTEN__
 void madewith(void) {
-//	printf("madewith");
+
 	SDL_RWops *rwops = NULL;
 	SDL_Surface *mwsurface, *image;
 
 	rwops = SDL_RWFromMem(madewithsplash,256138);
-//	rwops = SDL_RWFromMem(madewithsplash,	307338);
-//	mwsurface = SDL_LoadBMP("/home/mike/Desktop/madewith.bmp");
-
-	
 	mwsurface = SDL_LoadBMP_RW(rwops,1);
-
-//	image = SDL_DisplayFormat(mwsurface);
-
-//	printf("%x %x %x\n",mwsurface,image,vga);
 
 	SDL_BlitSurface(mwsurface,NULL,vga,NULL);
 
-//	SDL_FreeSurface(image);
 	SDL_FreeSurface(mwsurface);
 
 	SDL_Flip(vga);
 
-//	oldticks = SDL_GetTicks();
-//	splashtime = 10000;
 }
-#endif
+
 void svmode(void) {
-#ifndef __EMSCRIPTEN__
-if(vga==NULL) {
-	splashtime=5000;
-	oldticks = SDL_GetTicks();
-}
-#endif
 
 //#ifdef STDOUTLOG
 printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
@@ -444,13 +421,11 @@ divTexture = SDL_CreateTexture(divRender,
   } else texto[max_textos].font=0;
 
 #ifndef DEBUG
-#ifndef __EMSCRIPTEN__
-	if(splashtime>0)
-		madewith();
+if(splashtime>0)
+  madewith();
 #endif
-#endif
-
 }
+
 
 void svmodex(int m) {
 #ifdef DOS
@@ -481,9 +456,12 @@ void svmodex(int m) {
 
 void rvmode(void) {
 
+// Emscripten has its own fullscreen controls
+#ifndef __EMSCRIPTEN__
 	if(IsFullScreen(vga))
 		SDL_ToggleFS(vga);
-	
+#endif
+
 #ifdef DOS
   SV_restoreMode();
   _setvideomode(3);

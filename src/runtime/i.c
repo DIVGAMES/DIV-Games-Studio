@@ -85,6 +85,16 @@ int process_level=0; // Para contabilizar los cal/ret (para el step del debug)
 int nullstring[4];
 int nstring=0;
 
+int max,max_reloj;        // Process in order or _Priority and _Z 
+extern int alt_x;
+int splashtime = 5000; // 5 seconds
+#ifdef EMSCRIPTEN
+byte running = 0;
+#endif
+
+void madewith(void);
+
+
 #ifdef LLPROC
 
 
@@ -784,24 +794,8 @@ void actualiza_pila(int id, int valor) {
 // Interpret the generated code
 ///////////////////////////////////////////////////////////////////////////////
 
-int max,max_reloj;        // Process in order or _Priority and _Z 
-extern int alt_x;
-int splashtime =0;
-int oldticks = 0;
-#ifdef EMSCRIPTEN
-byte running = 0;
-#endif
-
-void madewith(void);
-
 void mainloop(void) {
 #ifdef EMSCRIPTEN
-/*  fprintf(stdout,"Mainloop!\n");
-  if (running == 1) {
-    fprintf(stdout, "Already running.. skipping.\n");
-    return;
-  }
-  */
   if(!(procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x)) {
     fprintf(stdout, "Program finished. Ending.\n");
     emscripten_cancel_main_loop();
@@ -809,23 +803,29 @@ void mainloop(void) {
     return;
   }
 #endif
-//  running = 1;
 
 #ifndef DEBUG
-	if(splashtime>0 && SDL_GetTicks()-oldticks<splashtime) {
-		tecla();
-		return;
-	} 
-    splashtime=0;
+  if(splashtime>0) {
+    if(SDL_GetTicks()<splashtime) {
+      tecla();
+      return;
+    } else {
+      splashtime=0;
+      svmode();
+    }
+  }
 #endif
+
 	error_vpe=0;
-    frame_start();
+  frame_start();
+
 #ifdef DEBUG
     if (kbdFLAGS[_F12] || trace_program) {
       trace_program=0;
       if (debug_active) call_to_debug=1;
     }
 #endif
+
     old_dump_type=dump_type;
     old_restore_type=restore_type;
     do {
@@ -846,6 +846,12 @@ void mainloop(void) {
 void interprete (void)
 {
   inicializacion();
+#ifndef DEBUG
+//#ifndef __EMSCRIPTEN__
+//  madewith();
+//#endif
+#endif
+
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop(mainloop, 0, 0);
 #else
