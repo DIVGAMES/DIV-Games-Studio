@@ -39,6 +39,7 @@ int superget=0;
 //    Si todo fue bien, devuelve token=p_num y tnumero=n
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+
 enum tokens { p_inicio, p_ultimo, p_error, p_num, p_abrir, p_cerrar, p_add,
               p_sub, p_mul, p_div, p_mod, p_shl, p_shr, p_xor, p_or, p_and,
               p_not, p_sqrt, p_neg };
@@ -287,20 +288,47 @@ void calc1(void) {
   wwrite(v.ptr,an,al,4,12,0,(byte *)pcalc->cresult,c3);
 }
 
+byte oldchex=0;
+byte oldcint=0;
+
 void calc2(void) {
   int an=v.an/big2,al=v.al/big2;
 
   pcalc=(struct _calc *)v.aux;
 
+  // handle hex/int radio buttons
+  if(pcalc->chex == 0 && pcalc->cint == 0) {
+    if(oldcint == 0)
+      pcalc->cint = 1;
+    else 
+      pcalc->chex = 1;
+    call(v.paint_handler);
+  }
+
+  if(pcalc->chex !=oldchex) {
+    pcalc->cint = 0;
+    call(v.paint_handler);
+  }
+
+  if(pcalc->cint) {
+    pcalc->chex = 0;
+    call(v.paint_handler);
+  }
+
+  oldcint = pcalc->cint;
+  oldchex = pcalc->chex;
+
   if (v.estado) superget=1; else superget=0;
   get=pcalc->cget;
-  _process_items();
+  _process_items();    call(v.paint_handler);
+
   get=get_buffer;
   superget=0;
 
   if (v.active_item>=0 && strlen(pcalc->ctext)) { // Se evalฃa la expresiขn
     expresion=pcalc->ctext;
     calcular();
+
     if (token==p_num) {
       if (pcalc->chex) sprintf(pcalc->cresult,"0x%x",(memptrsize)tnumero);
       else if (pcalc->cint) sprintf(pcalc->cresult,"%d",(memptrsize)tnumero);
