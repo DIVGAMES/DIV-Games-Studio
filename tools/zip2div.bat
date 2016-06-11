@@ -1,18 +1,39 @@
 #!/bin/bash
 
+if [ -z $5 ]
+then
+BUILDS="JPRGLSWD"
+else
+BUILDS=$5
+fi
+
+echo $BUILDS
+
+HTMLBUILD=`expr match $BUILDS '.*J.*'`
+GCWBUILD=`expr match $BUILDS '.*G.*'`
+DROIDBUILD=`expr match $BUILDS '.*A.*'`
+PANDORABUILD=`expr match $BUILDS '.*P.*'`
+PIBUILD=`expr match $BUILDS '.*R.*'`
+WINDOWSBUILD=`expr match $BUILDS '.*W.*'`
+PSPBUILD=`expr match $BUILDS '.*S.*'`
+LINUXBUILD=`expr match $BUILDS '.*L.*'`
+
+
 rm -rf zipdiv
 mkdir zipdiv
 cd zipdiv
 echo "unzipping file"
 
-unzip -j $1 
-#2>/dev/null
+unzip -j $1 >/dev/null
 
 echo "converting files to lowercase"
 
 find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
 
+if [ -f setup.exe ]
+then
 rm setup.exe 
+fi
 
 EXE=`ls *.exe 2>/dev/null | head -1`
 
@@ -23,18 +44,14 @@ echo "Compiling PRG $PRG"
 cd -
 ./system/div-LINUX -c zipdiv/$PRG 
 cp -r system/EXEC.EXE zipdiv/EXEC.EXE
-cd - 2> /dev/null
+cd - > /dev/null
 EXE=EXEC.EXE
 fi
 
-
 echo "Found EXE: [$EXE]" 
-pwd
 cp $EXE /tmp/EXEC.EXE
 cd - >/dev/null
 mv /tmp/EXEC.EXE .
-pwd
-#exit
 
 THREE="$3"
 FOUR="$4"
@@ -47,20 +64,34 @@ if [ -z "$4" ]; then
 FOUR="$2"
 fi
 
+if [[ $HTMLBUILD -gt 0 ]]
+then
 echo "Creating html"
-./tools/makehtml.bat ./zipdiv $EXE "$2" "$THREE" "$FOUR"
+./tools/makehtml.bat ./zipdiv $EXE "$2" "$THREE" "$FOUR" 
+#> /dev/null
 #rm -rf buildhtml buildhtml2
+fi
 
+if [[ $GCWBUILD -gt 0 ]]
+then
 echo "Creating gcw opk"
 ./tools/makegcw.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
 #scp $2.opk root@192.168.0.12:/media/data/apps
 rm -rf buildgcw
+fi
 
+
+if [[ $DROIDBUILD -gt 0 ]]
+then
 echo "Creating Android apk"
 ./tools/makedroid.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
+fi
 
+if [[ $PANDORABUILD -gt 0 ]]
+then
 echo "Creating Pandora PND"
 ./tools/makepnd.bat ./zipdiv "$EXE" "$2" "$THREE" "$FOUR"
+fi
 
 
 # build packer
@@ -73,10 +104,10 @@ rm zipdiv/*.PRG 2> /dev/null
 
 rm data.div 2> /dev/null
 
-zip -9jr data.div.zip zipdiv 2> /dev/null
-zip -d data.div.zip "*.pak"
-zip -d data.div.zip "*.exe"
-zip -d data.div.zip "*.fl*"
+zip -9jr data.div.zip zipdiv > /dev/null
+zip -d data.div.zip "*.pak" > /dev/null
+zip -d data.div.zip "*.exe" > /dev/null
+zip -d data.div.zip "*.fl*" > /dev/null
 mv data.div.zip data.div
 
 VER=`dd if=EXEC.EXE bs=1 count=1 skip=2 2>/dev/null`
@@ -88,6 +119,8 @@ else
 RUNTIME=divrun
 fi
 
+if [[ $PIBUILD -gt 0 ]]
+then
 #### pi build
 PATH=$PATH:/home/mike/raspidev/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin/
 cmake . -DTARGETOS=PI
@@ -105,7 +138,11 @@ cp zipdiv/*.pak $2-PI
 rm $2-PI.tar.gz
 tar zcf $2-PI.tar.gz $2-PI
 rm -rf $2-PI
+fi
 
+
+if [[ $WINDOWSBUILD -gt 0 ]]
+then
 #### winrum build
 rm -rf CMakeFiles CMakeCache.txt
 cmake . -DTARGETOS=WINDOWS -DCPUARCH=32
@@ -119,7 +156,11 @@ zip -j9 $2-win32.zip $2.exe system/lib*.dll system/SDL*.dll system/smpeg.dll zip
 zip -d $2-win32.zip libstdc*.dll
 
 rm $2.exe 2> /dev/null
+fi
 
+
+if [[ $PSPBUILD -gt 0 ]]
+then
 ## psp build
 EBOOTDIR=$2-PSP
 rm -rf $EBOOTDIR
@@ -146,10 +187,13 @@ pack-pbp $EBOOTDIR/EBOOT.PBP_ $EBOOTDIR/PARAM.SFO NULL NULL NULL NULL NULL $EBOO
 rm ./$EBOOTDIR/EBOOT.PBP_ ./$EBOOTDIR/$RUNTIME-PSP.*
 cp zipdiv/README.md zipdiv/LICENSE/ $EBOOTDIR
 zip -9r $2-PSP.zip $EBOOTDIR
+fi
 
 
+if [[ $LINUXBUILD -gt 0 ]]
+then
 #### linux build
-cmake . -DTARGETOS=LINUX
+cmake . -DTARGETOS=LINUX -DCPUARCH=64
 make -j5 $RUNTIME-LINUX
 upx -9 ./system/$RUNTIME-LINUX
 ./pack ./system/$RUNTIME-LINUX EXEC.EXE data.div $2-BIN
@@ -163,14 +207,12 @@ cp zipdiv/*.pak $2-LINUX
 rm $2-LINUX.tar.gz
 tar zcf $2-LINUX.tar.gz $2-LINUX
 rm -rf $2-LINUX
-
-
-
+fi
 
 
 # upload files
 
-sshpass -p bitfik scp $2-win32.zip $2-*.tar.gz $2.* $2-PSP.zip android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
+scp $2-win32.zip $2-*.tar.gz $2.* $2-PSP.zip android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
 
 #delete temp files
 

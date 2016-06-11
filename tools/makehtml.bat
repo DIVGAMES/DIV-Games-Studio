@@ -4,7 +4,7 @@ echo "Setting up emscripten"
 
 source ~/emsdk_portable/emsdk_env.sh > /dev/null
 
-rm -rf obj obj_d objd1
+rm -rf obj obj_d objd1 > /dev/null
 
 #dd if="$1/$2" bs=1 count=1 skip=2
 VER=`dd if="$1/$2" bs=1 count=1 skip=2 2>/dev/null`
@@ -14,31 +14,31 @@ echo "Building $4"
 
 echo "Compressing dir $1"
 
-rm -rf buildhtml
+rm -rf buildhtml >/dev/null
 mkdir buildhtml
 cp -R "$1/"* buildhtml
-rm -rf buildhtml2
+rm -rf buildhtml2 >/dev/null
 mkdir buildhtml2
 
 if [ $1 != "1" ] 
 then
 
-rm buildhtml/$2
+rm buildhtml/$2 >/dev/null
 
 #rm data.div
 cd buildhtml
 
 find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
 
-rm *.exe
-mv *.pak ../buildhtml2
-mv *.dll.js ../buildhtml2
-rm *.prg
-rm *.dll
+rm *.exe 2> /dev/null
+mv *.pak ../buildhtml2 2> /dev/null
+mv *.dll.js ../buildhtml2 2> /dev/null
+rm *.prg 2> /dev/null
+rm *.dll 2> /dev/null
 
 echo "Creating data.div"
 zip ../buildhtml2/data.div -r -9 * > /dev/null
-cd -
+cd - >/dev/null
 
 cp "$1/$2" buildhtml2
 
