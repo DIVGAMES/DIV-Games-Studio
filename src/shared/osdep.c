@@ -331,11 +331,11 @@ while(++np<nummatch) {
 			}
 		} 
 		strcpy(findname, result->name);
-		strlwr(findname);
+//		strlwr(findname);
 
 //printf("Matching %s to %s\n",findmask,findname);
 
-	if (fnmatch(findmask, findname, FNM_PATHNAME)==0){
+	if (fnmatch(findmask, findname, FNM_PATHNAME | FNM_CASEFOLD)==0){
 		
 		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
 			//printf("free'ing np [%d] [FILE]\n",np,result->name);
