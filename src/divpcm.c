@@ -298,7 +298,7 @@ void MOD0(void) {
 void FreeMOD(void)
 {
   Mix_HaltMusic();
-
+  Mix_SetPostMix(NULL, NULL);
 /*  switch(SongType)
   {
     case XM:   judas_freexm();  break;
@@ -308,7 +308,8 @@ void FreeMOD(void)
 */
   SongType=0;
 }
-
+int songpos;
+int songline;
 int GetSongPos(void)
 {
   int pos;
@@ -323,7 +324,7 @@ int GetSongPos(void)
 
   return(pos);
   * */
-  return 0;
+  return songpos;
   
 }
 
@@ -340,7 +341,7 @@ int GetSongLine(void)
 
   return(pos);
   */
-  return 1;
+  return songline;
 }
 
 void mostrar_mod_meters(void)
@@ -904,6 +905,25 @@ debugprintf("TODO - divpcm.cpp OpenDesktopSong\n");
 
 }
 
+int songposcount=0;
+// make a passthru processor function that does nothing...
+void noEffect(void *udata, Uint8 *stream, int len)
+{
+  songposcount++;
+  if(songposcount==32) {
+    songpos++;
+    songposcount=0;
+    if(songpos==64) {
+      songpos=1;
+      songline++;
+    }
+  }
+    // you could work with stream here...
+//  if(udata!=NULL)
+//    fprintf(stdout,"%c %x %x %d\n",((char *)udata)[0],udata,stream,len);
+//  memset(stream,255,len);
+}
+
 void PlaySong(char *pathname)
 {
 	printf("TODO - divpcm.cpp PlaySong\n");
@@ -927,8 +947,11 @@ void PlaySong(char *pathname)
     free(v_texto);
 		return;
 	}
-
-	if(Mix_PlayMusic(music, -1)==-1) {
+  songposcount=0;
+  songpos=1;
+  songline=1;
+  Mix_SetPostMix(noEffect, NULL);
+	if(Mix_PlayMusic(music, 1)==-1) {
     debugprintf("Mix_PlayMusic: %s\n", Mix_GetError());
     // well, there's no music, but most games don't break without music...
   }
