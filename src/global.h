@@ -951,6 +951,9 @@ typedef struct _modinfo{
         char   name[255];
         char   pathname[256];
         int    SongCode;
+#ifdef MIXER
+        Mix_Music *music;
+#endif
 } modinfo;
 
 GLOBAL_DATA char *ExternUseBufferMap;

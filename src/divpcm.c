@@ -219,9 +219,7 @@ void MOD1(void) {
   wrectangulo(v.ptr, an, al, c0, 1, 38, an-2,       11);
   wrectangulo(v.ptr, an, al, c0, 1, 38,   21,       11);
 
-	printf("TODO - SDL Song is playing\n");
-	
-  if(/*judas_songisplaying() && */ mymodinfo->SongCode == SongCode) {
+  if(Mix_PlayingMusic() && mymodinfo->SongCode == SongCode) {
     if(ModButton && ModWindow==v.orden) wput(v.ptr, an, al, 2, 39, -214);
     else                                wput(v.ptr, an, al, 2, 39, -234);
   } else {
@@ -249,8 +247,10 @@ void MOD2(void) {
     {
       ModWindow=v.orden;
       need_refresh=1;
-      if(/*judas_songisplaying() && */mymodinfo->SongCode==SongCode) FreeMOD();
-      else {
+      if(Mix_PlayingMusic() && mymodinfo->SongCode==SongCode) {
+        FreeMOD();
+        Mix_FreeMusic(mymodinfo->music);
+      } else {
         FreeMOD();
         PlaySong(mymodinfo->pathname);
       }
@@ -267,11 +267,10 @@ void MOD2(void) {
 void MOD3(void) {
   modinfo *mymodinfo=(modinfo *)v.aux;
 
-  FreeMOD();
-
-  if(mymodinfo->SongCode!=0)
-    Mix_FreeMusic(mymodinfo->SongCode);
-
+  if(mymodinfo->SongCode == SongCode) {
+    FreeMOD();
+    Mix_FreeMusic(mymodinfo->music);
+  }
   free(v.aux);
 }
 
@@ -298,22 +297,22 @@ void MOD0(void) {
 
 void FreeMOD(void)
 {
-	printf("TODO - JUDAS FREE MOD \n");
   Mix_HaltMusic();
+
 /*  switch(SongType)
   {
     case XM:   judas_freexm();  break;
     case S3M: judas_frees3m(); break;
     case MOD: judas_freemod(); break;
   }
-  * */
+*/
   SongType=0;
 }
 
 int GetSongPos(void)
 {
   int pos;
-debugprintf("TODO - JUDAS GET SONG POS\n");
+// TODO - JUDAS GET SONG POS
 /*
   switch(SongType)
   {
@@ -331,7 +330,6 @@ debugprintf("TODO - JUDAS GET SONG POS\n");
 int GetSongLine(void)
 {
   int pos;
-debugprintf("TODO - Get Song Line\n");
 /*
   switch(SongType)
   {
@@ -342,13 +340,12 @@ debugprintf("TODO - Get Song Line\n");
 
   return(pos);
   */
-  return 0;
+  return 1;
 }
 
 void mostrar_mod_meters(void)
 {
-//	printf("TODO - MOD METERS\n");	
-	/*
+	
   modinfo *mymodinfo=(modinfo *)v.aux;
   int     an=v.an/big2, al=v.al/big2;
   int     x, y, con, canal, ancho_barra;
@@ -357,7 +354,7 @@ void mostrar_mod_meters(void)
 
   if(mymodinfo->SongCode == SongCode)
   {
-    if(judas_songisplaying())
+    if(Mix_PlayingMusic())
     {
       wbox(v.ptr, an, al, c1,  2, 10,    an-4, al-12-10);
       wbox(v.ptr, an, al, c2, 22, 39, an-4-20,        9);
@@ -380,7 +377,7 @@ void mostrar_mod_meters(void)
       for(canal=0; canal<SongChannels; canal++)
       {
         x = ancho_barra*canal;
-        y = (int)(judas_getvumeter(canal)*(float)25)*big2;
+        y = (int)rand()%25*big2;//(judas_getvumeter(canal)*(float)25)*big2;
 
         for(con=0; con<y; con++)
         {
@@ -406,7 +403,7 @@ void mostrar_mod_meters(void)
       last_mod_clean = 1;
     }
   }
-  * */
+  
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -913,16 +910,21 @@ void PlaySong(char *pathname)
 #ifdef MIXER
 	Mix_Music *music;
 	modinfo *mymodinfo=(modinfo *)v.aux;
+  SongCode++;
+  mymodinfo->SongCode=SongCode;
+  last_mod_clean=0;
 
 	printf("loadsong [%s]\n",pathname);
 
 	music=Mix_LoadMUS(pathname);
 	
-  mymodinfo->SongCode=music;
+  mymodinfo->music=music;
+
 	if(!music) {
 		printf("Song error : %s\n", Mix_GetError());
-		v_texto=(char *)Mix_GetError();//texto[46];
+		v_texto=strdup((char *)Mix_GetError());//texto[46];
 		dialogo(err0);
+    free(v_texto);
 		return;
 	}
 
@@ -931,6 +933,7 @@ void PlaySong(char *pathname)
     // well, there's no music, but most games don't break without music...
   }
 //printf("%x\n",music);
+SongChannels = 8;
 
 #ifdef NOTYET
   if(judas_channel[0].smp) judas_stopsample(0);
