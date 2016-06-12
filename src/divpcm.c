@@ -916,6 +916,9 @@ void noEffect(void *udata, Uint8 *stream, int len)
     if(songpos==64) {
       songpos=1;
       songline++;
+      // stop overflow
+      if(songline==1000)
+        songline=0;
     }
   }
     // you could work with stream here...
@@ -941,8 +944,11 @@ void PlaySong(char *pathname)
   mymodinfo->music=music;
 
 	if(!music) {
-		printf("Song error : %s\n", Mix_GetError());
 		v_texto=strdup((char *)Mix_GetError());//texto[46];
+    if(strlen(v_texto)==0) {
+      free(v_texto);
+      v_texto=strdup(texto[46]);
+    }
 		dialogo(err0);
     free(v_texto);
 		return;
@@ -955,8 +961,8 @@ void PlaySong(char *pathname)
     debugprintf("Mix_PlayMusic: %s\n", Mix_GetError());
     // well, there's no music, but most games don't break without music...
   }
-//printf("%x\n",music);
-SongChannels = 8;
+  
+  SongChannels = 8;
 
 #ifdef NOTYET
   if(judas_channel[0].smp) judas_stopsample(0);
