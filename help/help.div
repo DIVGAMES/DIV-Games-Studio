@@ -11873,7 +11873,7 @@ It is probably a typographic mistake; check the syntax.
 
 # -----------------------------------------------------------------------------
 
-{.520,expecting for [PROGRAM]}
+{.520,expecting [PROGRAM]}
 
 All the programs must start with the reserved word {PROGRAM} followed by the program name. Before this word, only can appear {#1002,comments} (explanatory texts preceded by the symbol // or between the symbols /* and */)
 or the {#1400,compilation options}.
@@ -11897,9 +11897,9 @@ END
 
 # -----------------------------------------------------------------------------
 
-{.521,expecting for the program's name.}
+{.521,expecting the program's name.}
 
-expecting for the program's name to come after the reserved word {PROGRAM}.
+expecting the program's name to come after the reserved word {PROGRAM}.
 
 {#9999,Example:}
 PROGRAM program_name;
@@ -11939,11 +11939,11 @@ END
 
 # -----------------------------------------------------------------------------
 
-{.523,expecting for [=]}
+{.523,expecting [=]}
 
 To define a table, its length is normally indicated in square brackets. If the number of elements of the table is not specified in square brackets, it is necessary to wait for it to be initialised so that the compiler can determine its length.   
 
-A table without a defined length has been found. Thus, after the square brackets ({#1079,[]}) have been closed, the compiler was expecting for the symbol {#1073,=} to precede the initialisation of the table.
+A table without a defined length has been found. Thus, after the square brackets ({#1079,[]}) have been closed, the compiler was expecting the symbol {#1073,=} to precede the initialisation of the table.
 
 Indicate the length of the table in square brackets, or assign values to the different positions of the table.
 
@@ -11954,7 +11954,7 @@ PROGRAM program's_name;
 GLOBAL
     table1[3];
     table2[]=2, 4, 6, 8;
-    table3[]; // Error: expecting for [=].
+    table3[]; // Error: expecting [=].
 BEGIN
     //...
 END
@@ -11967,9 +11967,9 @@ initialised at (0, 0, 0, 0) and table2 initialised at (2, 4, 6, 8) have been def
 
 # -----------------------------------------------------------------------------
 
-{.525,expecting for [)]}
+{.525,expecting [)]}
 
-The compiler was  expecting for a bracket previously open with the symbol {#1053,)} to be closed at the indicated position.
+The compiler was  expecting a bracket previously open with the symbol {#1053,)} to be closed at the indicated position.
 
 This error normally appears for one of the two following reasons:
 
@@ -11981,9 +11981,9 @@ This error normally appears for one of the two following reasons:
 
 # -----------------------------------------------------------------------------
 
-{.526,expecting for []]}
+{.526,expecting []]}
 
-The compiler was expecting for a square bracket previously opened, with the symbol {#1079,]} to be closed in the indicated position.
+The compiler was expecting a square bracket previously opened, with the symbol {#1079,]} to be closed in the indicated position.
 
 This error normally appears for one of the following reasons:
 
@@ -12072,7 +12072,7 @@ it interprets that it is the following value in the list of the table's initiali
 
 # -----------------------------------------------------------------------------
 
-{.529,expecting for [BEGIN]}
+{.529,expecting [BEGIN]}
 
 This error appears when an invalid declaration is made inside the {#1004,CONST}, {#1006,GLOBAL}, {#1007,LOCAL} or
 {#1008,PRIVATE} sections.
@@ -12093,7 +12093,7 @@ The error can appear under the following circumstances:
 PROGRAM my_game;
 LOCAL
     a=0;
-GLOBAL // Error: expecting for [BEGIN]
+GLOBAL // Error: expecting [BEGIN]
     b=0;
 BEGIN
     //...
@@ -12112,7 +12112,7 @@ END
 {#9999,Example:}
 PROGRAM my_game;
 GLOBAL
-    +variable=0; // Error: expecting for [BEGIN]
+    +variable=0; // Error: expecting [BEGIN]
 BEGIN
     //...
 END
@@ -12121,7 +12121,7 @@ END
   In this example, on reaching the symbol {#1056,+} the compiler determines
 that the {#1006,GLOBAL} section has already finished. Therefore, as the following element
 is not the beginning of the {#1007,LOCAL} or {#1008,PRIVATE} sections, the compiler is 
-expecting for the {#1086,BEGIN} reserved word to appear, indicating the beginning of the program code.
+expecting the {#1086,BEGIN} reserved word to appear, indicating the beginning of the program code.
 
 - At the beginning of the program or on defining a process, the word {BEGIN} has been omitted.
 
@@ -12132,7 +12132,7 @@ BEGIN
 END
 
 PROCESS my_process()
-    FRAME; // Error: expecting for [BEGIN]
+    FRAME; // Error: expecting [BEGIN]
 END
 {-}
 
@@ -12331,9 +12331,9 @@ table1[0] to table1[9]).
 
 # -----------------------------------------------------------------------------
 
-{.536,expecting for [(]}
+{.536,expecting [(]}
 
-The compiler is expecting for a bracket with the {#1053,(} symbol to be opened in the indicated position of the program.
+The compiler is expecting a bracket with the {#1053,(} symbol to be opened in the indicated position of the program.
 
 There are many cases in which the opening of a {#1053,bracket} is obligatory:
 
@@ -12467,7 +12467,7 @@ All these assignments are invalid because the result of an expression, which is 
 
 # -----------------------------------------------------------------------------
 
-{.540,expecting for [END]}
+{.540,expecting [END]}
 
 A block of statements is waited for inside the {#1086,BEGIN} and {#1091,END} reserved words, as well as inside statements such as the following ones:
   {#1020,IF} ... {#1090,ELSE} ... {#1091,END}ú
@@ -12488,22 +12488,22 @@ PROGRAM my_game;
 BEGIN
 //  REPEAT
     //...
-    UNTIL (key(_esc)); // Error: expecting for [END].
+    UNTIL (key(_esc)); // Error: expecting [END].
 END
 {-}
 
   In this example, the statements block that started with the {#1086,BEGIN}
 of the main program has finished with an {#1097,UNTIL} (because the
-{#1023,REPEAT} has been accidentally commented), and the compiler was expecting for this block to finish with an {#1091,END}.
+{#1023,REPEAT} has been accidentally commented), and the compiler was expecting this block to finish with an {#1091,END}.
 
-- That an {#1091,END} of any statement has been lost and the following {#1016,PROCESS} or the end of the program expecting for the END that has been lost is reached.
+- That an {#1091,END} of any statement has been lost and the following {#1016,PROCESS} or the end of the program expecting the END that has been lost is reached.
 
 {#9999,Example:}
 PROGRAM my_game;
 BEGIN
     IF (x<0) x++;
 END
-PROCESS my_process() // Error: expecting for [END].
+PROCESS my_process() // Error: expecting [END].
 BEGIN
     //...
 END
@@ -12511,7 +12511,7 @@ END
 
   In this case, the {#1091,END} of the {#1020,IF} has not been put, interpreting the compiler that the {#1020,IF} finishes when the following {#1091,END}
 (the one of {#1086,BEGIN}) is reached and, therefore, when the new {#1016,PROCESS} or {#1408,FUNCTION 
-comes, it goes on expecting for the {#1091,END} of the {#1086,BEGIN}.
+comes, it goes on expecting the {#1091,END} of the {#1086,BEGIN}.
 
 {/}See: {#1000,Syntax} - {#1091,END}
 
@@ -12541,7 +12541,7 @@ In the indicated position of the program there is an expression incorrectly cons
 
 # -----------------------------------------------------------------------------
 
-{.542,expecting for [UNTIL]}
+{.542,expecting [UNTIL]}
 
 A block of statements that started with the reserved word {#1023,REPEAT}
 must necessarily finish with the word {#1097,UNTIL}. In the indicated position
@@ -12556,7 +12556,7 @@ PROGRAM my_game;
 BEGIN
     REPEAT
     //...
-    END // Error: expecting for [UNTIL]
+    END // Error: expecting [UNTIL]
 END
 {-}
 
@@ -12568,7 +12568,7 @@ BEGIN
     REPEAT
         IF (x<0) x++; END
             y++;
-        END // Error: expecting for [UNTIL]
+        END // Error: expecting [UNTIL]
     UNTIL (x>=0);
 END
 {-}
@@ -12657,14 +12657,14 @@ In the indicated position of the program, the aim is either to receive a paramet
 
 # -----------------------------------------------------------------------------
 
-{.545,expecting for another parameter.}
+{.545,expecting another parameter.}
 
 In the calls to processes or functions, it is necessary to put as many values or expressions as parameters are required, all of them inside the same {#1053,bracket} and separated by {#1059,commas (,)}. This error appears when the bracket is closed after a {#1059,comma}, as in the following example:
 
 {#9999,Example:}
 PROGRAM my_game;
 BEGIN
-    signal(id, ); // Error: expecting for another parameter.
+    signal(id, ); // Error: expecting another parameter.
 END
 {-}
 
@@ -12704,7 +12704,7 @@ Therefore, if the call or definition of the process shown in the program is corr
 
 # -----------------------------------------------------------------------------
 
-{.547,expecting for [;]}
+{.547,expecting [;]}
 
 The {#1024,FOR} statement has three parts inside the brackets separated by semicolons. These parts are the following ones:
 
@@ -12724,7 +12724,7 @@ BEGIN
     FOR ( graph=10 ; graph<20 ; graph=graph+1 )
         //...
     END
-    FOR ( graph=10 ; graph<20 graph=graph+1) // Error: expecting for [;]
+    FOR ( graph=10 ; graph<20 graph=graph+1) // Error: expecting [;]
         //...
     END
 END
@@ -12817,7 +12817,7 @@ In this example, after the whole loop has been executed, {x} will be equal to {1
 
 # -----------------------------------------------------------------------------
 
-{.550,expecting for [CASE], [DEFAULT] o [END]}
+{.550,expecting [CASE], [DEFAULT] o [END]}
 
 The syntax of the {#1021,SWITCH} statement is, broadly speaking, as follows:
 
@@ -12838,7 +12838,7 @@ The syntax of the {#1021,SWITCH} statement is, broadly speaking, as follows:
     {#1091,END}
 
 The position indicated in the program is inside a {#1021,SWITCH} statement,
-but out of a {#1087,CASE} or {#1088,DEFAULT} section. For that reason, the compiler was expecting for one of the three following statements to appear in that position:
+but out of a {#1087,CASE} or {#1088,DEFAULT} section. For that reason, the compiler was expecting one of the three following statements to appear in that position:
 
 - The reserved word {#1087,CASE} starting a new section to be executed
 when the expression would coincide with the indicated value.
@@ -12855,7 +12855,7 @@ consult the syntax of the language.
 
 # -----------------------------------------------------------------------------
 
-{.551,expecting for [END]}
+{.551,expecting [END]}
 
 An {#1091,END} of the {#1087,CASE} or {#1088,DEFAULT} was waited for inside the {#1021,SWITCH} statement.
 
@@ -12876,7 +12876,7 @@ BEGIN
         CASE 0:
             //REPEAT
             //...
-            UNTIL (key(_esc)); // Error: expecting for [END]
+            UNTIL (key(_esc)); // Error: expecting [END]
         END
     END
 END
@@ -12888,7 +12888,7 @@ In this example, the section that started with {#1087,CASE} has finished with {#
 
 # -----------------------------------------------------------------------------
 
-{.552,expecting for [PROCESS]} or [FUNCTION]}
+{.552,expecting [PROCESS]} or [FUNCTION]}
 
 The compiler has interpreted that, in the indicated position of the program, the main program ({#1015,PROGRAM} ... {#1086,BEGIN} ... {#1091,END}), or the last process ({#1016,PROCESS} or function ({#1408,FUNCTION}) and have finished and then, it was expected that either a process would start or the program would finish.
 
@@ -12899,7 +12899,7 @@ PROGRAM my_game;
 BEGIN
     IF (x<0) x++; END
     END
-    FRAME; // Error: expecting for [PROCESS].
+    FRAME; // Error: expecting [PROCESS].
 END
 {-}
 
@@ -13064,7 +13064,7 @@ END
 
 # -----------------------------------------------------------------------------
 
-{.558,expecting for an element of the structure.}
+{.558,expecting an element of the structure.}
 
 In the indicated position of the program, the aim is to declare an invalid element (field) of the structure.
 
@@ -13182,7 +13182,7 @@ of a {#1004,constant}, as a constant is not an object having a size, but just a 
 
 {.562,Use: import "name.dll"}
 
-The compiler was expecting for the file name to appear in inverted commas after the reserved word {#1014,IMPORT}.
+The compiler was expecting the file name to appear in inverted commas after the reserved word {#1014,IMPORT}.
 
 To declare the use of an external library, it is necessary to put a declaration
 like that of the following example.
@@ -13258,10 +13258,10 @@ Here, the {x} variable and the constant {1} are added and then this result is as
 
 # -----------------------------------------------------------------------------
 
-{.565,expecting for [:]}
+{.565,expecting [:]}
 
 The indicated position in the program is inside a {#1021,SWITCH} statement,
-after the beginning of a section with "{#1087,CASE} value". For that reason, the compiler was expecting for the symbol{#1067, :} to appear in this position preceding the statements of that section.
+after the beginning of a section with "{#1087,CASE} value". For that reason, the compiler was expecting the symbol{#1067, :} to appear in this position preceding the statements of that section.
 
 The syntax of the {#1021,SWITCH} statement is, broadly speaking, as follows:
 
@@ -13288,9 +13288,9 @@ consult the syntax of the language.
 
 # -----------------------------------------------------------------------------
 
-{.566,expecting for [;]}
+{.566,expecting [;]}
 
-The compiler is expecting for a {#1068,semicolon (;)} in the indicated position of the program.
+The compiler is expecting a {#1068,semicolon (;)} in the indicated position of the program.
 
 In the language, the following points of the program must be indicated with semicolons:
 
@@ -13320,9 +13320,9 @@ Moreover, this symbol can be put in other specific points of the programs. For i
 
 # -----------------------------------------------------------------------------
 
-{.567,expecting for a variable.}
+{.567,expecting a variable.}
 
-The compiler was expecting for a global, local or private variable of the process in the indicated position of the program.
+The compiler was expecting a global, local or private variable of the process in the indicated position of the program.
 
 The syntax of the {#1043,FROM} loop statement is the following one:
 
@@ -13341,9 +13341,9 @@ If the aim is to use a variable of another process, a table or an element of a s
 
 # -----------------------------------------------------------------------------
 
-{.568,expecting for [=]}
+{.568,expecting [=]}
 
-The compiler was expecting for a symbol {#1073,=} (assignment) in the indicated position of the program.
+The compiler was expecting a symbol {#1073,=} (assignment) in the indicated position of the program.
 
 The syntax of the {#1043,FROM} loop statement is the following one:
 
@@ -13362,7 +13362,7 @@ GLOBAL
     id2;
 BEGIN
     //...
-    FROM id2.x=0 TO 9; // Error: expecting for [=].
+    FROM id2.x=0 TO 9; // Error: expecting [=].
         //...
     END
 END
@@ -13376,9 +13376,9 @@ If the aim is to use a variable of another process, a table or an element of a s
 
 # -----------------------------------------------------------------------------
 
-{.569,expecting for [TO]}
+{.569,expecting [TO]}
 
-The compiler was expecting for the reserved word {#1096,TO} of the {#1043,FROM} statement in the indicated position of the program.
+The compiler was expecting the reserved word {#1096,TO} of the {#1043,FROM} statement in the indicated position of the program.
 
 The syntax of the {#1043,FROM} loop statement is the following one:
 
@@ -13398,7 +13398,7 @@ GLOBAL
     id2;
 BEGIN
     //...
-    FROM id2.x=0 STEP 9; // Error: expecting for [TO].
+    FROM id2.x=0 STEP 9; // Error: expecting [TO].
         //...
     END
 END
@@ -13499,7 +13499,7 @@ Otherwise, the only option is to eliminate from the program all the processes an
 
 # -----------------------------------------------------------------------------
 
-{.610,expecting for the structure name.}
+{.610,expecting the structure name.}
 
 To define a structure of data, its name must be specified after the reserved word {#1012,STRUCT}.
 
@@ -13520,7 +13520,7 @@ This structure has been defined with the name {positions} and contains {ten reco
 
 # -----------------------------------------------------------------------------
 
-{.611,expecting for the process name.}
+{.611,expecting the process name.}
 
 To define a process, its name must be specified after the reserved word {#1016,PROCESS}.
 
@@ -13542,7 +13542,7 @@ This process has been declared with the name {my_process}.
 
 # -----------------------------------------------------------------------------
 
-{.612,expecting for the name of a process.}
+{.612,expecting the name of a process.}
 
 The name of one of the processes defined in the program must be defined after the reserved word {#1042,TYPE}.
 
@@ -13564,7 +13564,7 @@ END
 
 # -----------------------------------------------------------------------------
 
-{.613,expecting for a name.}
+{.613,expecting a name.}
 
 As a parameter, the {#1094,sizeof()} function requires the name of a variable. It can also be the name of a variable, a table or a structure of the program.
 
@@ -13704,7 +13704,7 @@ In this example, the aim was to use the name that had been previously used to id
 
 # -----------------------------------------------------------------------------
 
-{.619,expecting for [=]}
+{.619,expecting [=]}
 
 To define a constant, a symbol {#1073,=} must be put after the name of the constant.
 
@@ -13715,7 +13715,7 @@ PROGRAM my_game;
 CONST
     a=0;
     b=1;
-    c,d; // Error: expecting for [=].
+    c,d; // Error: expecting [=].
 BEGIN
     //...
 END
@@ -13889,7 +13889,7 @@ This example will provoke error, because the reserved word {#1087,CASE} is not v
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-{.625,expecting for the name of the string}
+{.625,expecting the name of the string}
 
 To define a string of text you must specify the its name after the reserved word {STRING}.
 
@@ -15300,7 +15300,7 @@ BEGIN                   // Beginning of the main code.
 
             // Starts regions, scroll, etc.
             // Creates the game processes.
-            // Loop of game's control, expecting for its end.
+            // Loop of game's control, expecting its end.
 
         END
 
