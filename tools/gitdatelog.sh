@@ -6,6 +6,15 @@
 # -a, --author       to filter by author
 # -s, --since        to select start date
 # -u, --until        to select end date
+AGO="3 months ago"
+
+if [ ! -z "$1" ] 
+then
+AGO=$1
+else
+echo "What's NEW"
+echo "----------"
+fi
 
 git-log-by-day () {
   local NEXT=$(date +%Y-%m-%d)
@@ -16,7 +25,7 @@ git-log-by-day () {
 #  local BLUE="\x1B[34m"
 #  local RESET="\x1B[0m"
 
-  local SINCE=$(date +%Y-%m-%d --date='1 month ago')
+  local SINCE=$(date +%Y-%m-%d --date="${AGO}")
   local UNTIL=$NEXT
 
   for i in "$@"
@@ -68,6 +77,4 @@ git-log-by-day () {
 
   done
 }
-echo "What's NEW"
-echo "----------"
 git-log-by-day
