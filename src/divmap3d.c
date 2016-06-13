@@ -1873,7 +1873,7 @@ void nuevo_mapa3d(void)
     }
   }
 
-  sprintf((char *)m3d->m3d_name,"Mapa 3D %d",m3d->numero);
+  sprintf((char *)m3d->m3d_name,"3D Map %d",m3d->numero);
 
   nueva_ventana(MapperVisor0);
 
