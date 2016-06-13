@@ -4,7 +4,7 @@
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 #include "global.h"
-
+#include <time.h>
 
 void _completo(void);
 void error_cursor(void);
@@ -2607,32 +2607,72 @@ void abrir_programa(void) {
     }
   }
 }
+extern char user1[128], user2[128];
 
 void programa0_nuevo(void) {
   byte *buffer;
   struct tprg * pr;
   int n;
+  FILE *f;
+  char drive[_MAX_DRIVE+1];
+  char dir[_MAX_DIR+1];
+  char fname[_MAX_FNAME+1];
+  char ext[_MAX_EXT+1];
+  struct tm * timeinfo;
+  time_t dtime;
 
   strcpy(full,tipo[v_tipo].path);
   if (full[strlen(full)-1]!='/') strcat(full,"/");
   strcat(full,input);
 
-  if (v_terminado) { n=buffer_grow;
+  if (v_terminado) { 
+    f=fopen(full,"wb");
+    // insert template
+    if(f) {
+      time(&dtime);
+      timeinfo = localtime ( &dtime );
+      _splitpath(full,drive,dir,fname,ext);
+      fprintf(f,"/*\n * %s%s by %s\n * (c) %d %s \n */\n\n",
+              fname,ext,user1,(timeinfo->tm_year)+1900,user2);
+      fprintf(f,"PROGRAM %s;\n\nBEGIN\n\n//Write your code here, make something amazing!\n\nEND\n\n",
+              fname);
+      fclose(f);
+      abrir_programa();
+    
+      for(n=0;n<10;n++) {
+        write_line();
+        avanza_lptr();
+        read_line();
+      }
+
+      return;
+    }
+    n=buffer_grow;
     if ((buffer=(byte *)malloc(n))!=NULL) {
 		memset(buffer,0,n);
-		
       if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
 		  memset(v_prg,0,sizeof(struct tprg));
           v_prg->buffer_lon=n;
           strcpy(v_prg->filename,input);
           strcpy(v_prg->path,tipo[v_tipo].path);
-        n-=buffer_grow;
+//        n-=buffer_grow;
+        n=strlen(buffer);
         v_prg->file_lon=n;
         v_prg->buffer=buffer;
         v_prg->lptr=buffer;
         pr=v.prg; v.prg=v_prg; read_line(); v.prg=pr;
         v_prg->num_lineas=1;
         nueva_ventana(programa0);
+        // Add the template
+        strcpy(buffer,"PROGRAM yourprg;");
+        read_line();
+        f_enter();
+            // Add the template
+        strcat(buffer,"BEGIN");
+         // Your code here\n\n END");
+        f_enter();
+        
+
       } else { free(buffer); v_texto=(char *)texto[45]; dialogo(err0); }
     } else { v_texto=(char *)texto[45]; dialogo(err0); }
   }
