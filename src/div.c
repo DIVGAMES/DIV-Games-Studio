@@ -4755,9 +4755,9 @@ void Load_Cfgbin() {
       Setupfile.Max_undo=1024; // Undo System
       Setupfile.Undo_memory=1024*1024+65536;
       Setupfile.tab_size=4;
-      memcpy(&Setupfile.colors_rgb[0],"\x19\x19\x20\x3f\x3f\x3f\x00\x00\x30\x00\x00\x20\x25\x25\x2b\x3f\x3f\x3f"
-                                      "\x15\x15\x28\x3f\x3f\x3f\x3f\x3f\x3f\x30\x30\x34\x25\x25\x2b\x25\x25\x2b",12*3);
-      Setupfile.editor_font=2;
+      memcpy(&Setupfile.colors_rgb[0],"\x1d\x1d\x1d\x3f\x3f\x3f\x0\x0\x20\x0\x5\x5\x36\x0\x0\x3f\x3f\x3f\x15\x15"
+                                      "\x15\x3f\x3f\x3f\x0\x33\x0\x35\x31\x31\x2a\x0\x3e\x32\x32\x0",12*3);
+      Setupfile.editor_font=3;
       Setupfile.paint_cursor=0;
       Setupfile.exploding_windows=1;
       Setupfile.auto_save_session=1;
@@ -4787,8 +4787,8 @@ void Load_Cfgbin() {
       Setupfile.Max_undo=1024; // Undo System
       Setupfile.Undo_memory=1024*1024+65536;
       Setupfile.tab_size=4;
-      memcpy(&Setupfile.colors_rgb[0],"\x19\x19\x20\x3f\x3f\x3f\x00\x00\x30\x00\x00\x20\x25\x25\x2b\x3f\x3f\x3f"
-                                      "\x15\x15\x28\x3f\x3f\x3f\x3f\x3f\x3f\x30\x30\x34\x25\x25\x2b\x25\x25\x2b",12*3);
+      memcpy(&Setupfile.colors_rgb[0],"\x1d\x1d\x1d\x3f\x3f\x3f\x0\x0\x20\x0\x5\x5\x36\x0\x0\x3f\x3f\x3f\x15\x15"
+      	                              "\x15\x3f\x3f\x3f\x0\x33\x0\x35\x31\x31\x2a\x0\x3e\x32\x32\x0",12*3);
       Setupfile.editor_font=0;
       Setupfile.paint_cursor=0;
       Setupfile.exploding_windows=1;
