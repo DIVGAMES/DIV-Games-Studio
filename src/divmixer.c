@@ -133,6 +133,11 @@ void SetCDVolume (UWORD volumen)
 
 void InitMixer(UWORD card, UWORD address, UWORD master, UWORD voc, UWORD cd)
 {
+  voc=(master<voc)?master:voc;
+  cd=(master<cd)?master:cd;
+  cd=Mix_VolumeMusic(cd*8);
+  voc=Mix_Volume(-1, voc*8);
+
 #ifdef NOTYET
     if (card > DEV_NOSOUND && card <= DEV_GUS)
     {
@@ -141,6 +146,7 @@ void InitMixer(UWORD card, UWORD address, UWORD master, UWORD voc, UWORD cd)
         CD=cd & 15;
         MASTER=master & 15;
         VOC=voc & 15;
+
         SetMasterVolume(MASTER);
         SetVocVolume(VOC);
         SetCDVolume(CD);
@@ -227,29 +233,25 @@ void MIX_SetVolume(byte reg, byte left, byte right)
 }
 
 void set_mixer(void) {
-#ifdef NOTYET
   int  fx, cd, ma;
 
-  if(judascfg_device==DEV_NOSOUND) return;
+//  if(judascfg_device==DEV_NOSOUND) return;
 
   fx=Setupfile.vol_fx; if(Setupfile.mut_fx) fx=0;
   cd=Setupfile.vol_cd; if(Setupfile.mut_cd) cd=0;
   ma=Setupfile.vol_ma; if(Setupfile.mut_ma) ma=0;
-  InitMixer(judascfg_device, judascfg_port, ma, fx, cd);
-#endif
+  InitMixer(0, 0, ma, fx, cd);
 }
 
 void set_init_mixer(void) {
-#ifdef NOTYET
-
   int  fx, cd, ma;
   byte fx_l, fx_r;
   byte cd_l, cd_r;
   byte ma_l, ma_r;
 
-  if(judascfg_device==DEV_NOSOUND) return;
+//  if(judascfg_device==DEV_NOSOUND) return;
 
-  if( judascfg_device == DEV_SBPRO ||
+/*  if( judascfg_device == DEV_SBPRO ||
       judascfg_device == DEV_SB16  )
   {
     MIX_GetVolume(MIX_VOICE_VOL,  &fx_l, &fx_r);
@@ -261,12 +263,12 @@ void set_init_mixer(void) {
     InitMixer(judascfg_device, judascfg_port, ma, fx, cd);
   }
   else
+  */
   {
     fx=Setupfile.vol_fx; if(Setupfile.mut_fx) fx=0;
     cd=Setupfile.vol_cd; if(Setupfile.mut_cd) cd=0;
     ma=Setupfile.vol_ma; if(Setupfile.mut_ma) ma=0;
-    InitMixer(judascfg_device, judascfg_port, ma, fx, cd);
+    InitMixer(0, 0, ma, fx, cd);
   }
-#endif
 }
 
