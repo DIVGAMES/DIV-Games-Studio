@@ -18,8 +18,8 @@ CC=emcc
 #EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s MAIN_MODULE=1
 #EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 
 #EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s MAIN_MODULE=1 -s ASM_JS=1 
-EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s ASM_JS=1 
-
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s ASM_JS=1 -s STB_IMAGE=1
+LINKFLAGS= --use-preload-plugins
 # -s ASYNCIFY=1 -s TOTAL_MEMORY=268435456  
 #-s ASSERTIONS=2
 # -s TOTAL_MEMORY=67108864
@@ -104,11 +104,11 @@ ${RUNNER} : $(RSRC:%.c=obj/%.c.o) obj/src
 
 ${DRUNNER} : CFLAGS = -DDIV2 -Isrc/runtime ${SCFLAGS}
 ${DRUNNER} : $(DSRC:%.c=obj_d/%.c.o) obj/src
-	$(CXX) $(CFLAGS) -Isrc/runtime  -o ${DRUNNER} $(DSRC:%.c=obj_d/%.c.o) $(LIBS) $(DEMBEDFILES) $(REMBEDFILES)
+	$(CXX) $(CFLAGS) -Isrc/runtime  -o ${DRUNNER} $(DSRC:%.c=obj_d/%.c.o) $(LIBS) $(LINKFLAGS) $(DEMBEDFILES) $(REMBEDFILES)
 
 ${DIV1RUN} : CFLAGS = -DDIV1 -Isrc/div1run ${SCFLAGS}
 ${DIV1RUN} : $(D1SRC:%.c=objd1/%.c.o) objd1/src 
-	$(CXX) $(CFLAGS) -Isrc/div1run -o ${DIV1RUN} $(D1SRC:%.c=objd1/%.c.o) $(LIBS) $(D1EMBEDFILES) $(R1EMBED)
+	$(CXX) $(CFLAGS) -Isrc/div1run -o ${DIV1RUN} $(D1SRC:%.c=objd1/%.c.o) $(LIBS) $(LINKFLAGS) $(D1EMBEDFILES) $(R1EMBED)
 
 #src/main.c.o : src/main.c
 #	$(CC)  $(CFLAGS) -c $< -o $<.o 
