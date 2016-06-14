@@ -2,7 +2,7 @@
 
 if [ -z $5 ]
 then
-BUILDS="JPRGLSWD"
+BUILDS="JGAPRWSL"
 else
 BUILDS=$5
 fi
