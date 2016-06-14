@@ -12,9 +12,13 @@ OSDEP = src/shared/osdep.c src/shared/unzip.c
 #src/shared/mikedll.c
 FMEMOPEN = src/osx/fmemopen.c 
 SOURCES=$(wildcard src/*.c) $(wildcard src/shared/lib/sdlgfx/*.c) ${OSDEP} ${FMEMOPEN}
+#*/
 SHAREDSRC=$(wildcard src/shared/run/*.c) 
-
-RUNSOURCES=$(wildcard src/runtime/*.c) ${SHAREDSRC} ${OSDEP} ${FMEMOPEN}
+#*/
+VPESRC=$(wilcard src/runtime/vpe/*.c)
+#*/
+RUNSOURCES=$(wildcard src/runtime/*.c) ${SHAREDSRC} ${VPESRC} ${OSDEP} ${FMEMOPEN}
+#*/
 RUN1SOURCES=$(wildcard src/div1run/*.c) ${SHAREDSRC} ${OSDEP} ${FMEMOPEN} 
 
 #src/runtime/debug/d.c
@@ -23,12 +27,15 @@ RUN1SOURCES=$(wildcard src/div1run/*.c) ${SHAREDSRC} ${OSDEP} ${FMEMOPEN}
 #*/
 VISOR_SOURCES=$(wildcard src/visor/*.c)
 #*/
+VPE_SOURCES=$(wildcard src/runtime/vpe/*.c)
+#*/
 #$(CSRC:%.c=obj/%.c.o) obj/src
 OBJS=$(SOURCES:%.c=divide/%.c.o) 
 RUNOBJS=$(RUNSOURCES:%.c=div2/%.c.o)
 RUN1OBJS=$(RUN1SOURCES:%.c=div1/%.c.o)
 
 VISOROBJS=$(VISOR_SOURCES:.c=.o)
+VPEOBJS=$(VPE_SOURCES:.c=.o)
 
 
 #LIBFLAGS= -lm -ldl  -lz  -lSDL_image -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -lSDL
@@ -37,7 +44,7 @@ VISOROBJS=$(VISOR_SOURCES:.c=.o)
 DROIDLIBFLAGS= -lSDL -lSDL_image -lSDL_mixer -lm -lz -ljpeg
 # -lSDL_net -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -Wl,--no-undefined -lm
 
-SCFLAGS= -g -w -fpermissive  -Isrc/shared -Isrc -funsigned-char -DMIXER -DZLIB -DDROID 
+SCFLAGS= -g -w -fpermissive  -Isrc/shared -Isrc -funsigned-char -DMIXER -DZLIB -DDROID -DMODE8
 #-DDIVDLL
 #-Isrc/div1run
 #-Isrc/runtime
@@ -49,7 +56,7 @@ all: dirs $(EXECUTABLE) $(RUNTIME) $(RUNTIME1)
 dirs: divide div1 div2
 
 divide:
-	mkdir -p divide/src/shared/
+	mkdir -p divide/src/shared/lib/sdlgfx
 	mkdir -p divide/src/osx
 	
 div1:
@@ -59,7 +66,7 @@ div1:
 
 div2: 
 	mkdir -p div2/src/shared/run
-	mkdir -p div2/src/runtime/
+	mkdir -p div2/src/runtime/vpe
 	mkdir -p div2/src/osx
 
 ${EXECUTABLE}: CFLAGS = ${SCFLAGS} -DDIV2
@@ -78,13 +85,13 @@ div2/%.c.o: %.c
 	 $(CC) -c $(CFLAGS) -Isrc $< -o div2/$<.o
 
 ${RUNTIME}: CFLAGS = -DDIV2 -Isrc/runtime ${SCFLAGS}
-$(RUNTIME): $(RUNOBJS)
-	 $(CC) $(RUNOBJS) $(DROIDLIBFLAGS) -o $@
+$(RUNTIME): $(RUNOBJS) $(VPEOBJS)
+	 $(CC) $(RUNOBJS)  $(VPEOBJS) $(DROIDLIBFLAGS) -o $@
 
 ${RUNTIME1}: CFLAGS = -DDIV1 -Isrc/div1run ${SCFLAGS}
-$(RUNTIME1): $(RUN1OBJS)
+$(RUNTIME1): $(RUN1OBJS) 
 	 $(CC) $(RUN1OBJS) $(DROIDLIBFLAGS) -o $@
 
 
 clean:
-	 rm -f   $(EXECUTABLE) $(OBJS) $(RUNOBJS) $(RUN1OBJS) $(VISOROBJS) $(RUNTIME) $(RUNTIME1)
+	 rm -f   $(EXECUTABLE) $(OBJS) $(RUNOBJS) $(RUN1OBJS) $(VISOROBJS) $(RUNTIME) $(VPEOBJS) $(RUNTIME1)
