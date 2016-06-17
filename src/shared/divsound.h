@@ -69,4 +69,15 @@ int  GetSongLine            (void);
 int  IsPlayingSong          (void);
 void EndSound               (void);
 
+// For in-memory pcm to wav conversion 
+typedef struct _HeadDC {
+  uint32_t   dwUnknow;
+  uint16_t wFormatTag;
+  uint16_t wChannels;
+  uint32_t   dwSamplePerSec;
+  uint32_t   dwAvgBytesPerSec;
+  uint16_t wBlockAlign;
+  uint16_t wBits;
+} HeadDC;
+
 #endif
