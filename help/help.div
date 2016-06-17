@@ -340,6 +340,7 @@ system ({?}).
 {#0131,load_fnt()}ú
 {#0132,load_fpg()}ú
 {#0174,load_map()}ú
+{#0134,load_ogg()}ú
 {#0133,load_pal()}ú
 {#0134,load_pcm()}ú
 {#0174,load_pcx()}ú
@@ -493,6 +494,7 @@ system ({?}).
 {#0177,unload_fnt()}ú
 {#0169,unload_fpg()}ú
 {#0176,unload_map()}ú
+{#0170,unload_ogg()}ú
 {#0170,unload_pcm()}ú
 {#0176,unload_pcx()}ú
 {#0215,unload_song()}ú
@@ -2807,11 +2809,13 @@ at any time.
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-{.134,load_pcm() / load_wav()}
+{.134,load_pcm() / load_wav() / load_ogg()}
 
 {load_pcm(}<name of the file>{,} <loop>{)}
 
 {load_wav(}<name of the file>{,} <loop>{)}
+
+{load_ogg(}<name of the file>{,} <loop>{)}
 
 {Returns:}
 
@@ -2863,7 +2867,7 @@ the {sound code} in order to know which sound we want to unload from the memory.
 {It is not necessary to unload the sound from memory} before finishing the program,
 since the system will do it automatically.
 
-{/}See: {#170,unload_pcm/wav()} - {#159,sound()} - {#102,change_sound()} - {#1104,Setup structure}
+{/}See: {#170,unload_pcm/wav/ogg()} - {#159,sound()} - {#102,change_sound()} - {#1104,Setup structure}
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -5281,7 +5285,7 @@ If the ENTER key is pressed, the sound will be stopped with the {stop_sound()} f
 
 To gradually stop a sound, turning its volume down little by little, several calls to the {#102,change_sound()} function must be made to slightly reduce the channel volume until it reaches level 0. Then, the {stop_sound()} can be called to definitively stop the sound.
 
-{/}See: {#159,sound()} - {#102,change_sound()} - {#134,load_pcm/wav()} - {#170,unload_pcm/wav()}
+{/}See: {#159,sound()} - {#102,change_sound()} - {#134,load_pcm/wav/ogg()} - {#170,unload_pcm/wav/ogg()}
 
 # -----------------------------------------------------------------------------
 
@@ -5381,23 +5385,25 @@ The graphics individually loaded with the {#174,load_map()} or {#174,load_pcx()}
 
 # -----------------------------------------------------------------------------
 
-{.170,unload_pcm() / unload_wav()}
+{.170,unload_pcm() / unload_wav() / unload_ogg()}
 
 
-{unload_pcm(}<sound code>{)}
+{unload_pcm(}<sound id>{)}
 
-{unload_wav(}<code of the sound>{)}
+{unload_wav(}<sound id>{)}
+
+{unload_ogg(}<sound id>{)}
 
 {Description:}
 
-Unloads the sound whose code is passed as a parameter from the memory.
-This <sound code> is the value returned by the {#132,load_pcm()} or {#132,load_wav()} function when a new sound effect is loaded in the memory.
+Unloads the sound with the passed id from memory.
+This <sound id> is the value returned by the {#132,load_pcm()}, {#132,load_wav()} or {#132,load_ogg()} function when a new sound effect is loaded in the memory.
 
-After having unloaded a sound effect, {much care must be taken} not to go on using in the program this effect (its code) for the {#159,sound()} or {unload_pcm()} functions. Otherwise, the program could become blocked.
+After unloading a sound effect, {much care must be taken} to not continute to use this sound id in the program for the {#159,sound()} or {unload_pcm/wav/ogg()} functions. Otherwise, the program could become blocked.
 
 {It is not necessary to unload the sound from the memory} before finishing the program, as the system will do it automatically.
 
-Therefore, a sound must be unloaded from the memory only when it is not going to be used for a while and when the aim is to free up space occupied in the computer's memory to load other resources (other graphics files, sounds, fonts, etc.), which will be logical just with sound effects of a certain length, in other words big enough so as to be worth freeing up the space they occupy.
+A sound need only be unloaded from memory when it is not going to be used for a while and when the aim is to free up space occupied in the computer's memory to load other resources (other graphics files, sounds, fonts, etc.), this is logical for large sounds or sounds only played once, for example an intro sound or music, in other words big enough so as to be worth freeing up the space they occupy.
 
 {#9999,Example program:}
 PROGRAM example_unload_pcm;
@@ -16331,11 +16337,13 @@ On invoking the debugger in this way, the program will always be interrupted jus
     {#221,is_playing_sound()}ú
     {#134,load_pcm()}ú
     {#134,load_wav()}ú
+    {#134,load_ogg()}ú
     {#159,sound()}ú
     {#167,stop_sound()}ú
     {#170,unload_pcm()}ú
     {#170,unload_wav()}ú
-
+    {#170,unload_ogg()}ú
+    
   CD music functionsú
     {#127,is_playing_cd()}ú
     {#144,play_cd()}ú
