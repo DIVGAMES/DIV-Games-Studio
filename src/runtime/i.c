@@ -568,7 +568,7 @@ init_rnd(dtime);
   }
 
   ticks=0; reloj=0; ultimo_reloj=0;
-  freloj=ireloj=100.0/24.0;
+  freloj=ireloj=1000.0/24.0;
   game_fps=dfps=24;
   max_saltos=0;
 #ifdef __EMSCRIPTEN__
@@ -1141,11 +1141,11 @@ void frame_start(void) {
 #endif
 
 	for (max=0;max<10;max++) 
-		timer(max)+=(get_reloj()-ultimo_reloj);
+		timer(max)+=(get_reloj()-ultimo_reloj)/10;
 
 	if (get_reloj()>ultimo_reloj) {
-		ffps=(ffps*9.0f+100.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
-		fps=(int)ffps;
+		ffps=(ffps*9.0f+1000.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
+		fps=(int)(ffps+0.5f);
 	}
 
 	ultimo_reloj=get_reloj();
@@ -1184,7 +1184,7 @@ void frame_start(void) {
 			SDL_Delay(((int)freloj-old_reloj)-1);
 #else
 			sched_yield();			
-			usleep(((int)freloj-old_reloj)-1); 
+//			usleep(((int)freloj-old_reloj)-1); 
 #endif			
 		} while (get_reloj()<(int)freloj); // TO keep FPS
 		}
@@ -1793,7 +1793,9 @@ void finalizacion (void) {
   for (snum=0;snum<10;snum++) {
     if(iscroll[snum]._sscr1!=0) 
       free(iscroll[snum]._sscr1);
+    if(iscroll[snum]._sscr2!=0) 
       free(iscroll[snum]._sscr2);
+    if(iscroll[snum].fast!=0) 
       free(iscroll[snum].fast);
   }
 
@@ -2053,7 +2055,7 @@ if(true) {
 
 
 	vga_an=320; vga_al=200; 
-	ireloj=100.0/24.0; // 24 fps
+	ireloj=1000.0/24.0; // 24 fps
 	max_saltos = 0; // 0 skips
 
 #ifdef __EMSCRIPTEN__
