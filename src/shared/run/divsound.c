@@ -281,14 +281,13 @@ void ResetSound(void)
 #endif
 }
 
-
 int LoadSound(char *ptr, long Len, int Loop)
 {
   HeadDC MyHeadDC;
 
 #ifdef MIXER
 	int channel;
-	Mix_Chunk *sound;
+	Mix_Chunk *sound=NULL;
 	SDL_RWops *rw;
 	byte *dst; 
   byte *dst2;
@@ -305,13 +304,15 @@ int LoadSound(char *ptr, long Len, int Loop)
 	
 	if(con==128) return(-1);
 	
-	rw = SDL_RWFromMem(ptr, Len);
-	sound = Mix_LoadWAV_RW(rw, 1);
+  // check if wav or OGG
+  if((ptr[0]=='R' && ptr[1]=='I') || (ptr[0]=='O' && ptr[1]=='g')) {
+  	rw = SDL_RWFromMem(ptr, Len);
+  	sound = Mix_LoadWAV_RW(rw, 1);
+  }
 
   // If sound cant be loaded, must be a pcm 
   if(!sound) {
-
-  	dst = (byte *)malloc((int)Len+260);
+  	dst = (byte *)malloc((int)iLen+50);
 
     if(dst==NULL)
       return(-1);
@@ -334,7 +335,7 @@ int LoadSound(char *ptr, long Len, int Loop)
     memcpy(dst+20+sizeof(HeadDC),&Len,4);
     memcpy(dst+24+sizeof(HeadDC),ptr,Len);
 
-    rw = SDL_RWFromMem((void *)dst, (int)(Len+255));
+    rw = SDL_RWFromMem((void *)dst, (int)(Len+24+sizeof(HeadDC)));
     sound = Mix_LoadWAV_RW(rw, 1);
     
     if(!sound) {
