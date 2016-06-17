@@ -1547,9 +1547,16 @@ void browser1(void) {
 int bload=0;
 int ns,chn;
 
+// For loading PCM in the browser
+
+Mix_Chunk *DIVMIX_LoadPCM(char *path);
+
+
 void browser2(void) {
   unsigned n, selected;
   unsigned pos1, pos2;
+  byte *ptr;
+
 #ifdef MIXER
   Mix_Chunk *SI = NULL;
 #endif
@@ -1727,12 +1734,13 @@ void browser2(void) {
             if(smp==NULL) 
             {
 				// try loading PCM
-//              SI = judas_loadrawsample(full, 0, 0, 0);
+                smp = DIVMIX_LoadPCM(full);
+              
             }
             if ( smp == NULL ) {
 				debugprintf("failed to load %s\n",full);
 				
-			}
+			     }
             else
             {
 //              smp=SI->sample;

@@ -3,6 +3,7 @@
 #include "divsound.h"
 #include "divmixer.hpp"
 #include "divsb.h"
+
 //#include <io.h>
 
 // HACK
@@ -426,6 +427,72 @@ typedef struct _HeadDC {
   unsigned short wBits;
 } HeadDC;
 
+Mix_Chunk *DIVMIX_LoadPCM(path) {
+  FILE *f;
+  HeadDC MyHeadDC;
+  char *riff="RIFF";
+  char *wavefmt = "WAVEfmt ";
+  char *data = "data";
+  byte *dst; 
+  byte *ptr; 
+  int32_t iLen, Len;
+  SDL_RWops *rw;
+  Mix_Chunk *smp = NULL;
+  char drive[_MAX_DRIVE+1];
+  char dir[_MAX_DIR+1];
+  char fname[_MAX_FNAME+1];
+  char ext[_MAX_EXT+1];
+
+  _splitpath(full,(char *)drive,(char *)dir,(char *)fname,(char *)ext);
+  strupr((char *)ext);
+
+  // if file isnt a pcm, reject
+  if(strcmp(ext,".PCM")) {
+    return NULL;
+  }
+
+  f=fopen(full,"r");
+  if(f) {
+    fseek(f,0,SEEK_END);
+    Len = ftell(f);
+    fseek(f,0,SEEK_SET);
+
+    dst = (byte *)malloc((int)Len+50);
+    ptr = (byte *)malloc((int)Len+50);
+
+    iLen = Len + 50;
+
+    if(dst==NULL)
+      return(-1);
+
+    memset(dst,0,(int)Len+40);
+    fread(ptr,1,Len,f);
+    fclose(f);
+
+    MyHeadDC.dwUnknow         = 16;
+    MyHeadDC.wFormatTag       = 1;
+    MyHeadDC.wChannels        = 1;
+    MyHeadDC.dwSamplePerSec   = 11025;
+    MyHeadDC.dwAvgBytesPerSec = 11025;
+    MyHeadDC.wBlockAlign      = 1;
+    MyHeadDC.wBits            = 8;
+
+    memcpy(dst,riff,4);
+    memcpy(dst+4,&iLen,4);
+    memcpy(dst+8,wavefmt,8);
+    memcpy(dst+16,&MyHeadDC,sizeof(HeadDC));
+    memcpy(dst+16+sizeof(HeadDC),data,4);
+    memcpy(dst+20+sizeof(HeadDC),&Len,4);
+    memcpy(dst+24+sizeof(HeadDC),ptr,Len);
+
+    rw = SDL_RWFromMem((void *)dst, (int)(Len+24+sizeof(HeadDC)));
+    smp = Mix_LoadWAV_RW(rw, 1);
+    free(dst);
+    free(ptr);
+  }
+  return smp;
+
+}
 void OpenSound(void) {
   pcminfo   *mypcminfo;
   Uint32 wav_length;
@@ -493,7 +560,11 @@ Mix_Chunk *SI;
 
 	SI = Mix_LoadWAV(SoundPathName);
 	
-	if(SI==NULL) {
+	if(SI==NULL) 
+    SI=DIVMIX_LoadPCM(SoundPathName);
+
+  if(SI==NULL) {
+
 //		 free(pcminfo_aux);
         //if(SI) free(SI);
         v_texto=(char *)texto[46];
@@ -551,7 +622,7 @@ Mix_Chunk *SI;
 
 void OpenSoundFile(void) // Open the file SoundPathName
 {
-	printf("TODO - divpcm.cpp OpenSoundFile\n");
+	fprintf(stdout,"TODO - divpcm.cpp OpenSoundFile\n");
 
   pcminfo   *mypcminfo;
   SoundInfo *SI=NULL;
