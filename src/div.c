@@ -4815,11 +4815,11 @@ void Load_Cfgbin() {
     }
   } else {
     fread(&Setupfile,1,sizeof(Setupfile),file);
-    for(n=0;n<36;n++) {//sizeof(Setupfile.colors_rgb);n++) {
-    	fprintf(stdout,"\\x%x",Setupfile.colors_rgb[n]);
-    }
-    fprintf(stdout,"\n");
-    n=0;
+    // for(n=0;n<36;n++) {//sizeof(Setupfile.colors_rgb);n++) {
+    // 	fprintf(stdout,"\\x%x",Setupfile.colors_rgb[n]);
+    // }
+    // fprintf(stdout,"\n");
+    // n=0;
     fclose(file);
   }
 
