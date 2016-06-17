@@ -93,7 +93,7 @@ int get_reloj(void) {
 //	reloj = SDL_GetTicks()/10;
 //		return reloj;
 		
-	n_reloj=SDL_GetTicks()/10;
+	n_reloj=SDL_GetTicks();
 	reloj+=(n_reloj-o_reloj);
 	o_reloj=n_reloj;
 
@@ -154,13 +154,14 @@ void _key(void) {
 
 char full[_MAX_PATH+1];
 
-#ifndef NOTYET
+#ifdef DEBUG
 
 FILE *__fpopen (byte *file, char *mode) {
 	
 #ifdef DEBUG
 	char fprgpath[_MAX_PATH*2];
 	FILE *f;
+
 	strcpy(fprgpath,prgpath);
 	strcat(fprgpath,"/");
 	strcat(fprgpath,full);
@@ -181,174 +182,157 @@ FILE * fpopen ( byte * file) {
 	return __fpopen(file,"rb");
 }
 
+#endif
 
-FILE * div_open_file(byte * file) {
-  FILE * f,*fe;
+FILE * open_multi(char *file, char *mode) {
+  FILE *f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
+  char remote[255];
+
+  char *ff = (char *)file;
+
+  while (*ff!=0) {
+    if(*ff =='\\') *ff='/';
+      ff++;
+  }
+
+  strcpy(full,(char*)file); // full filename
+printf("Trying to open %s\n",file);
+#ifdef DEBUG
+  if ( f = fpopen(full))
+    return f;
+#endif
+
+  if ((f=fopen(full,mode))) // "paz\fixero.est"
+    return f;
+
+    
+  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) 
+    return(NULL);
+
+  _splitpath(full,drive,dir,fname,ext);
+
+  if (strchr(ext,'.')==NULL) 
+    strcpy(full,ext); 
+  else 
+    strcpy(full,strchr(ext,'.')+1);
+    
+    if (strlen(full) && file[0]!='/') 
+    strcat(full,"/");
+
+    strcat(full,(char*)file);
+
+  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+    return f;
+
+#ifdef DEBUG  
+  if ( f = fpopen(full))
+    return f;
+#endif
+
+  strupr(full);
+
+  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+  return f;
+
+#ifdef DEBUG
+  if ( f=fpopen(full) )
+    return f;
+#endif
+    
+  strcpy(full,fname);
+  strcat(full,ext);
+
+  if ((f=fopen(full,mode))) // "fixero.est"
+    return f;
+
+#ifdef DEBUG
+  if ( f = fpopen(full))
+    return f;
+#endif
+
+  strupr(full);
+
+  if ((f=fopen(full,mode))) // "fixero.est"
+    return f;
+
+#ifdef DEBUG
+  if ( f = fpopen(full))
+    return f;
+#endif
+
+  strlwr(full);
+
+  if ((f=fopen(full,mode))) // "fixero.est"
+    return f;
+
+#ifdef DEBUG
+  if ( f = fpopen(full))
+    return f;
+#endif    
+
+  if (strchr(ext,'.')==NULL)
+    strcpy(full,ext); 
+  else 
+    strcpy(full,strchr(ext,'.')+1);
+  
+  if (strlen(full))
+    strcat(full,"/");
+
+  strcat(full,fname);
+  strcat(full,ext);
+
+  if ((f=fopen(full,mode))) // "est\fixero.est"
+    return f;
+
+#ifdef DEBUG
+  if ( f = fpopen(full))
+    return f;
+#endif
+
+  strlwr(full);
+
+  if ((f=fopen(full,mode))) // "est\fixero.est"
+    return f;
+
+#ifdef DEBUG
+  if ( f = fpopen(full))
+    return f;
+#endif
+
+#ifdef ZLIB
+      if(f=memz_open_file(file))
+        return f;
+#endif
 
 
-char remote[255];
-#ifndef DOS
+
+}
+
+FILE * div_open_file(byte * file) {
+  FILE * f,*fe;
+  char *ff = (char *)file;
+
 #ifdef DEBUG
   printf("opening file: [%s]\n",file);
 #endif
 
   if(strlen((const char *)file)<1)
-	return NULL;
+  	return NULL;
 
-printf("trying to load [%s]\n",file);
+  if(strlen((char *)file)==0) 
+    return NULL;
 
-if(strlen((char *)file)==0) return NULL;
-char *ff = (char *)file;
+  f=open_multi(file,"r");
 
-while (*ff!=0) {
-	if(*ff =='\\') *ff='/';
-	ff++;
+  if(!f)
+  	strcpy(full,"");
+  return(f);
 }
-
-#endif
-
-	strcpy(full,(char*)file); // full filename
-
-	if ((f=fopen(full,"rb"))) // "paz\fixero.est"
-		return f;
-
-	if ( f = fpopen(full))
-		return f;
-		
-	if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
-
-	_splitpath(full,drive,dir,fname,ext);
-
-	if (strchr(ext,'.')==NULL) 
-		strcpy(full,ext); 
-	else 
-		strcpy(full,strchr(ext,'.')+1);
-    
-    if (strlen(full) && file[0]!='/') 
-		strcat(full,"/");
-
-    strcat(full,(char*)file);
-
-	if ((f=fopen(full,"rb"))) // "est\paz\fixero.est"
-		return f;
-		
-	if ( f = fpopen(full))
-		return f;
-		
-	strupr(full);
-
-    if ((f=fopen(full,"rb"))) // "est\paz\fixero.est"
-		return f;
-
-	if ( f=fpopen(full) )
-		return f;
-
-		
-	strcpy(full,fname);
-	strcat(full,ext);
-
-	if ((f=fopen(full,"rb"))) // "fixero.est"
-		return f;
-
-	if ( f = fpopen(full))
-		return f;
-
-	strupr(full);
-
-	if ((f=fopen(full,"rb"))) // "fixero.est"
-		return f;
-
-	if ( f = fpopen(full))
-		return f;
-
-	strlwr(full);
-
-	if ((f=fopen(full,"rb"))) // "fixero.est"
-		return f;
-
-	if ( f = fpopen(full))
-		return f;
-		
-
-	if (strchr(ext,'.')==NULL)
-		strcpy(full,ext); 
-	else 
-		strcpy(full,strchr(ext,'.')+1);
-	
-	if (strlen(full))
-		strcat(full,"/");
-
-	strcat(full,fname);
-	strcat(full,ext);
-
-	if ((f=fopen(full,"rb"))) // "est\fixero.est"
-		return f;
-
-	if ( f = fpopen(full))
-		return f;
-		
-	strlwr(full);
-
-	if ((f=fopen(full,"rb"))) // "est\fixero.est"
-		return f;
-
-	if ( f = fpopen(full))
-		return f;
-		
-#ifdef ZLIB
-			if(f=memz_open_file(file))
-				return f;
-#endif
-	printf("failed to load %s\n",full);
-	
-	strcpy(full,"");
-    return(NULL);
-}
-
-#else
-
-FILE * div_open_file(byte * file) {
-  FILE * f;
-  char drive[_MAX_DRIVE+1];
-  char dir[_MAX_DIR+1];
-  char fname[_MAX_FNAME+1];
-  char ext[_MAX_EXT+1];
-  char *ff = (char *)file;
-
-  if(strlen((char *)file)==0) return NULL;
-
-/*  while (*ff!=0) {
-	  if(*ff =='\\') *ff='/';
-	  ff++;
-  }
-*/
-  strcpy(full,(char*)file);
-  
-  printf("opening file: %s\n",file);
-
-//  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
-//printf("hello\n");
-//  _splitpath(full,drive,dir,fname,ext);
-//  strcpy(full,fname);
-//  strcat(full,ext);
-  if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
-    if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full)) strcat(full,"/");
-    strcat(full,fname);
-    strcat(full,ext);
-    if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
-      strcpy(full,"");
-      return(NULL);
-    } else return(f);
-  } else return(f);
-}
-
-#endif
 
 //����������������������������������������������������������������������������
 //  Al guardar un archivo (save*()), lo quita del packfile (si est�)
@@ -1071,10 +1055,15 @@ void stop_scroll(void) {
 
   if(snum<0||snum>9) { e(107); return; }
 
-  if (iscroll[snum].on) free(iscroll[snum]._sscr1);
+  if (iscroll[snum].on) {
+    free(iscroll[snum]._sscr1);
+    iscroll[snum]._sscr1=0;
+  }
   if (iscroll[snum].on==2) {
     free(iscroll[snum].fast);
     free(iscroll[snum]._sscr2);
+    iscroll[snum].fast=0;
+    iscroll[snum]._sscr2=0;
   }
 
   iscroll[snum].on=0;
@@ -1852,41 +1841,8 @@ FILE * open_save_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
-  strcpy(full,(char*)file);
-  if ((f=fopen(full,"wb"))==NULL) {                     // "paz\fixero.est"
-    if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
-    _splitpath(full,drive,dir,fname,ext);
-    if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='/') strcat(full,"/");
-    strcat(full,(char*)file);
-    if ((f=fopen(full,"wb"))==NULL) {                   // "est\paz\fixero.est"
-      strcpy(full,fname);
-      strcat(full,ext);
-      if ((f=fopen(full,"rb"))!=NULL) { // Si est� ya en el raiz de div ...
-        fclose(f);
-        if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
-          strcpy(full,"");
-          return(NULL);
-        } else return(f);
-      } else {
-        if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"/");
-        strcat(full,fname);
-        strcat(full,ext);
-        if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
-          if (strchr(ext,'.')==NULL) __mkdir(ext); else __mkdir(strchr(ext,'.')+1);
-          if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
-            strcpy(full,fname);
-            strcat(full,ext);
-            if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
-              strcpy(full,"");
-              return(NULL);
-            } else return(f);
-          } else return(f);
-        } else return(f);
-      }
-    } else return(f);
-  } else return(f);
+  f = open_multi(file,"w");
+  return f;
 }
 
 void save(void) {
@@ -1916,29 +1872,14 @@ FILE * open_save_file(byte * file) {
   packfile_del((char *)file);
 
   while (*ff!=0) {
-	if(*ff =='\\') *ff='/';
-	ff++;
+	 if(*ff =='\\') *ff='/';
+    	ff++;
   }
   
   printf("Looking for save file: %s\n",file);
 
-
-  strcpy(full,(char*)file);
-  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
-  _splitpath(full,drive,dir,fname,ext);
-
-  if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-  if (strlen(full)) strcat(full,"/");
-  strcat(full,fname);
-  strcat(full,ext);
-  if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
-    strcpy(full,fname);
-    strcat(full,ext);
-    if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
-      strcpy(full,"");
-      return(NULL);
-    } else return(f);
-  } else return(f);
+  f=open_multi(file,"wb");
+  return f;
 }
 
 void save(void) {
@@ -2301,19 +2242,22 @@ void is_playing_song(void) {
 //����������������������������������������������������������������������������
 //      Set_fps(n� fps,max n� saltos)
 //����������������������������������������������������������������������������
+void mainloop(void);
 
 void set_fps(void) {
   max_saltos=pila[sp--];
-#ifdef __EMSCRIPTEN__
-if(max_saltos<2)
-	max_saltos=2;
-#endif
   if (max_saltos<0) max_saltos=0;
   if (max_saltos>10) max_saltos=10;
   if (pila[sp]<4) pila[sp]=4;
-  if (pila[sp]>100) pila[sp]=100;
+  if (pila[sp]>999) pila[sp]=999;
   dfps = pila[sp];
-  ireloj=100.0/(double)pila[sp];
+#ifdef __EMSCRIPTEN__
+//if(max_saltos<2)
+//	max_saltos=2;
+//  emscripten_cancel_main_loop();
+//  emscripten_set_main_loop(mainloop,dfps,0);
+#endif
+  ireloj=1000.0/(double)pila[sp];
 }
 
 //����������������������������������������������������������������������������
