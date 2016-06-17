@@ -774,8 +774,8 @@ void carga_pila(int id) {
     for (n=0;n<=p[1]-p[0];n++) 
     	pila[p[0]+n]=p[n+2];
 
-    //free(stack[id+_SP]);
-  //  stack[id+_SP]=0;
+//    free(stack[mem[id+_SP]]);
+    stack[mem[id+_SP]]=0;
     mem[id+_SP]=0; 
     sp=p[1];
     free(p);
