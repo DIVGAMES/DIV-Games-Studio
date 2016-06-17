@@ -4,7 +4,9 @@ uint8_t sdl2key[2048];
 void sdlkeyinit(void) {
 	printf("SDL KEY INIT\n");
 //	exit(0);
+#ifndef __EMSCRIPTEN__
 	SDL_EnableUNICODE( SDL_ENABLE );  
+#endif
 	SDL_EnableKeyRepeat( 250,  SDL_DEFAULT_REPEAT_INTERVAL);
 	
 sdl2key[SDLK_ESCAPE]=1;
