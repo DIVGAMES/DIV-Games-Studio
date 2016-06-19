@@ -486,6 +486,9 @@ function 075 int unload_map(0)                     // Descarga de memoria un map
 function 076 int unload_fnt(0)                     // Descarga de memoria un set de car cteres
 function 077 int set_volume()                      // Fija el volumen (segun setup)
 
+function 038 int unload_sound(0)                     // Descarga un sonido (id_sonido)
+function 037 int load_sound(0,0)                     // Carga un sonido ("sonido.pcm",loop) devuelve id_sonido
+
 function 038 int unload_wav(0)                     // Descarga un sonido (id_sonido)
 function 037 int load_wav(0,0)                     // Carga un sonido ("sonido.pcm",loop) devuelve id_sonido
 function 073 int load_pcx(0)                       // Carga un mapa (asignado a file 0, graph>=1000)

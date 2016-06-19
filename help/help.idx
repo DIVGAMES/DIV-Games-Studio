@@ -258,7 +258,7 @@ load,0130
 load_fnt,0131
 load_fpg,0132
 load_map,0174
-load_ogg,0134
+load_sound,0134
 load_pal,0133
 load_pcm,0134
 load_pcx,0174
@@ -421,7 +421,7 @@ unit_size,1420
 unload_fnt,0177
 unload_fpg,0169
 unload_map,0176
-unload_ogg,0170
+unload_sound,0170
 unload_pcm,0170
 unload_pcx,0176
 unload_song,0215
