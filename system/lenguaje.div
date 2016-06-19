@@ -400,9 +400,9 @@
 350 "Trash-can"
 
 351 "Select the hard disk where to install the program and press"
-355 "the button INSTALL, insert the correct path and press ENTER."
+355 "the INSTALL button, insert the correct path and press ENTER."
 352 "Copyright (c) "
-353 "GAMES\\"
+353 "GAMES/"
 354 "Installation is complete, press any key to finish."
 
 # 355 Este texto esta definido tras el numero 351
@@ -605,7 +605,7 @@
 
 514 "Generating sprites"
 
-515 "Introduce the disk number"
+515 "Insert the disk number"
 516 "and press a button to continue."
 517 "Pack files"
 518 "Code for Pentium"
@@ -633,7 +633,7 @@
 
 537 "Error messages from installer"
 
-538 "\# Messages by defect "
+538 "\# Default messags "
 
 539 "Second font"
 540 "Invalid file, shortage of graphic %d."
@@ -679,10 +679,10 @@
 570 "Merge with the actual palette"
 571 "Load the new palette"
 
-572 "Paintbrush\hl ... (System\\Brush.FPG)"
+572 "Paintbrush\hl ... (system/brush.fpg)"
 573 "Textures on the desk ..."
 
-574 "Too many sounds copied onto writing-desk"
+574 "Too many sounds copied onto desktop"
 
 575 "SB Pro or better required to record sounds"
 
