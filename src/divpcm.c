@@ -609,7 +609,7 @@ Mix_Chunk *SI;
       if(mypcminfo->SoundData!=NULL) 
 		memcpy(mypcminfo->SoundData,SI->abuf, SI->alen);
       
-      mypcminfo->SoundData = (short *)SI->abuf;
+//      mypcminfo->SoundData = (short *)SI->abuf;
       mypcminfo->SI = SI;
 //      mypcminfo->sample    = (char *)wav_buffer;    
       nueva_ventana(PCM0);
@@ -625,7 +625,7 @@ void OpenSoundFile(void) // Open the file SoundPathName
 	fprintf(stdout,"TODO - divpcm.cpp OpenSoundFile\n");
 
   pcminfo   *mypcminfo;
-  SoundInfo *SI=NULL;
+  Mix_Chunk *SI=NULL;
 
 debugprintf("SoundName %s\n",input);
 debugprintf("SOundPath %s\n",full);
@@ -644,6 +644,24 @@ debugprintf("SOundPath %s\n",full);
   }
   mypcminfo=(pcminfo *)pcminfo_aux;
 
+#ifdef MIXER
+
+  SI = Mix_LoadWAV(SoundPathName);
+  
+  if(SI==NULL) 
+    SI=DIVMIX_LoadPCM(SoundPathName);
+
+  if(SI==NULL) {
+
+//     free(pcminfo_aux);
+        //if(SI) free(SI);
+      v_texto=(char *)texto[46];
+      dialogo(err0);
+      free(mypcminfo);
+      return;        
+   }
+    
+#endif
 /*  SI = judas_loadwav(SoundPathName);
   if(judas_error == JUDAS_WRONG_FORMAT)
   {
@@ -659,17 +677,21 @@ debugprintf("SOundPath %s\n",full);
     dialogo(err0);
     return;
   }
-
+*/
   memcpy(mypcminfo->name,SoundName,14);
   memcpy(mypcminfo->pathname,SoundPathName,256);
-  mypcminfo->SoundFreq = SI->SoundFreq;
-  mypcminfo->SoundBits = SI->SoundBits;
-  mypcminfo->SoundSize = SI->SoundSize;
-  mypcminfo->SoundData = SI->SoundData;
-  mypcminfo->sample    = SI->sample;
+  mypcminfo->SoundFreq = 44100;
+  mypcminfo->SoundBits = 16;
+  mypcminfo->SoundSize = SI->alen/2;
+  mypcminfo->SoundData = (short *)malloc(SI->alen);
+  if(mypcminfo->SoundData!=NULL) 
+    memcpy(mypcminfo->SoundData,SI->abuf, SI->alen);
 
-  free(SI);
-*/
+//  mypcminfo->SoundData = (short *)SI->abuf;
+  mypcminfo->SI = SI;
+
+//  free(SI);
+
   nueva_ventana(PCM0);
 
 }
@@ -718,14 +740,19 @@ void OpenDesktopSound(FILE *f)
 void SaveSound(pcminfo *mypcminfo, char *dst)
 {
 	printf("TODO - divpcm.cpp SaveSound\n");
-#ifdef NOTYET
   FILE   *dstfile;
   HeadDC MyHeadDC;
   int    length;
   int    con;
   byte   *byte_ptr=(byte *)mypcminfo->SoundData;
   float  paso,pos;
+  char drive[_MAX_DRIVE+1];
+  char dir[_MAX_DIR+1];
+  char fname[_MAX_FNAME+1];
+  char ext[_MAX_EXT+1];
 
+  _splitpath(dst,(char *)drive,(char *)dir,(char *)fname,(char *)ext);
+  strupr((char *)ext);
   length=mypcminfo->SoundSize;
 
   if((dstfile=fopen(dst,"wb"))==NULL)
@@ -735,7 +762,7 @@ void SaveSound(pcminfo *mypcminfo, char *dst)
     return;
   }
 
-  if(!strcmp(strupr(strchr(dst,'.')),".WAV"))
+  if(!strcmp(ext,".WAV"))
   {
     if(mypcminfo->SoundBits==16) length *= 2;
     fputc('R',dstfile);
@@ -840,7 +867,6 @@ void SaveSound(pcminfo *mypcminfo, char *dst)
   if(byte_ptr != (byte *)mypcminfo->SoundData) free(byte_ptr);
   fclose(dstfile);
 
-#endif
 
 }
 
