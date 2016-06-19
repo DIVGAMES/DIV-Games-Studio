@@ -16479,7 +16479,7 @@ On invoking the debugger in this way, the program will always be interrupted jus
     {#258,free()}ú
     {#257,malloc()}ú
     {#239,memory_free()}ú
-  
+
   Network functions ú
     {#181,net_get_games()}ú
     {#180,net_join_game()}ú

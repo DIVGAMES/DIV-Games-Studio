@@ -847,6 +847,17 @@ void tabula_help(byte *si,byte *di,int lon) {
       goto ini_tabulador;
     }
 
+    if (c==0xC3 && *si==0xBA) {
+      *di++=0; 
+//      *di++=0;
+      help_lines++; 
+      ultimo_cr=1; 
+      chars=0;
+      *si++;
+      if (*si==13) si+=2;
+      goto ini_tabulador;
+    }
+
     // Comentarios
 
     if (c=='#' && ultimo_cr_real && si<end) {
