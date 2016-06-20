@@ -1,25 +1,15 @@
 #!/bin/bash
+echo "Setting up Pandora cross compiler"
+export PATH=/home/mike/pandora-dev/arm-2011.09/bin/:$PATH
 
 TARGET='/tmp/buildpandora'
-OLDPWD=`pwd`
-
-#echo "1:$1 2:$2 3:$3 4:$4"
 
 echo "Creating build dir"
+rm -rf ${TARGET}
+mkdir -p ${TARGET}
 
-rm -rf $TARGET
-mkdir -p "$TARGET"
-
-
-echo "Copying source files"
-cp -r $1/* $TARGET
-
-#echo "renaming files to owercase"
-
-#find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
-
-echo "Removing old div exe"
-rm "$TARGET/$2"
+echo "Copying source files to ${TARGET}"
+cp -r $1/* ${TARGET}
 
 echo "Removing extra exe files"
 find "$TARGET" -iname "*.exe" | xargs rm 2>/dev/null
@@ -57,9 +47,9 @@ echo "Copying new exe files"
 
 VER=`dd if="$1/$2" bs=1 count=1 skip=2 2>/dev/null`
 #echo $VER
-
-cmake . -DTARGETOS=PANDORA
-export PATH=/home/mike/pandora-dev/arm-2011.09/bin/:$PATH
+mkdir -p bpandora/system
+cd bpandora
+cmake .. -DTARGETOS=PANDORA
 
 # s= div1 j=div2
 if [ $VER = "s" ]
@@ -69,20 +59,16 @@ make div1run-PANDORA > /dev/null
 /home/mike/pandora-dev/arm-2011.09/bin/pandora-strip system/*-PANDORA
 
 cp system/div1run-PANDORA $TARGET/$3
-#cp android/div1.so android/div2-droid/lib/armeabi/libapplication.so
-#cp "$1/$2" "android/resources/run"
-
 else
 echo "DIV2 runtime"
 make divrun-PANDORA > /dev/null
 /home/mike/pandora-dev/arm-2011.09/bin/pandora-strip system/*-PANDORA
 
 cp system/divrun-PANDORA $TARGET/$3
-#cp android/div2.so android/div2-droid/lib/armeabi/libapplication.so
-#cp "$1/$2" "android/resources/EXEC.EXE"
 
 fi
 
+cd -
 
 cp "$1/$2" "$TARGET/$3.dat"
 cp tools/dx.png "$TARGET"/icon.png
