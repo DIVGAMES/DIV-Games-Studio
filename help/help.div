@@ -1249,7 +1249,12 @@ BEGIN
 
         fade_off(); // We turn off the screen
 
+        WHILE (fading)
+            FRAME;
+        END
+
         fade_on();
+
     END
 END
 {-}
@@ -1288,6 +1293,10 @@ BEGIN
             FRAME;
         END
         fade_off();
+
+        WHILE (fading)
+            FRAME;
+        END
 
         fade_on(); // The screen is faded on
 
