@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <SDL.h>
 #include "inter.h"
 #include "portrend.h"
 #include "internal.h"

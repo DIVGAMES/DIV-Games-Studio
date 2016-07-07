@@ -63,17 +63,17 @@ int nothing(SDL_Surface *surface) {
 
    if (IsFullScreen(surface)) {
         flags &= ~SDL_FULLSCREEN;
-        if ((vga = SDL_SetVideoMode(vga_an, vga_al, CDEPTH, 0)) == NULL) 
+        if ((vga = OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, 0)) == NULL) 
 			return 0;
 		
-		vga = SDL_SetVideoMode(vga_an, vga_al, CDEPTH, 0);
+		vga = OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, 0);
 		fsmode=0;
     } else {
 		
-		vga = SDL_SetVideoMode(vga_an,vga_al, CDEPTH,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga = OSDEP_SetVideoMode(vga_an,vga_al, CDEPTH,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 		if (vga == NULL) {
-			vga = SDL_SetVideoMode(vga_an,vga_al, CDEPTH, 0);
+			vga = OSDEP_SetVideoMode(vga_an,vga_al, CDEPTH, 0);
 		}
 		fsmode=1;
 	}
@@ -140,7 +140,7 @@ void set_dac(byte *_dac) {
           b+=3;
     }
 	if(vga->format->BitsPerPixel==8) {
-		if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+		if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
 			printf("Failed to set palette :(\n"); 
 	}	
 	retrazo();
@@ -191,37 +191,25 @@ SDL_setFramerate(&fpsman, 60);
   debugprintf("full screen: %d\n",fsmode);
 
 #ifdef GCW_SOFTSTRETCH
-	vga=SDL_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
+	vga=OSDEP_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
 	h_ratio = vga_al / (float)(GCW_H*1.0);
 #else
 
-#ifdef SDL2
-
-divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
-                             SDL_WINDOWPOS_UNDEFINED,
-                             SDL_WINDOWPOS_UNDEFINED,
-                             vga_an,vga_al,
-                             SDL_WINDOW_SHOWN);
-divRender = SDL_CreateRenderer(divWindow, -1, 0);
-#else
-
 	if(fsmode==0)
-		vga=SDL_SetVideoMode(vga_an, vga_al, CDEPTH, SDL_SWSURFACE | SDL_RESIZABLE);
+		vga=OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, SDL_SWSURFACE | SDL_RESIZABLE);
 
 	else
-		vga=SDL_SetVideoMode(vga_an, vga_al, CDEPTH,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga=OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
-#endif
-
 #endif
 
 //	if(copia_surface)
 //		SDL_FreeSurface(copia_surface);
 //			SDL_SetAlpha(copia_surface,SDL_SRCALPHA | SDL_RLEACCEL,128);
 
-	copia_surface = SDL_DisplayFormat( vga );
+//	copia_surface = SDL_DisplayFormat( vga );
 
 //	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
 
@@ -362,7 +350,7 @@ void svmodex(int m) {
 void rvmode(void) {
 	if(IsFullScreen(vga))
 		SDL_ToggleFS(vga);
-	SDL_FreeSurface(copia_surface);
+//	SDL_FreeSurface(copia_surface);
 	
 }
 

@@ -164,7 +164,9 @@ void PCM2(void) {
       return;
     } else {
       if(mypcminfo->SoundData) {
+#ifdef MIXER
 		  Mix_PlayChannel(0, mypcminfo->SI, 0);
+#endif
 		}
       while (mouse_b&1) read_mouse();
     }
@@ -248,6 +250,7 @@ void MOD2(void) {
     {
       ModWindow=v.orden;
       need_refresh=1;
+#ifdef MIXER
       if(Mix_PlayingMusic() && mymodinfo->SongCode==SongCode) {
         FreeMOD();
         Mix_FreeMusic(mymodinfo->music);
@@ -255,6 +258,7 @@ void MOD2(void) {
         FreeMOD();
         PlaySong(mymodinfo->pathname);
       }
+#endif
     }
   } else if(ModWindow != -1) ModWindow = -1, need_refresh=1;
 
@@ -267,11 +271,12 @@ void MOD2(void) {
 
 void MOD3(void) {
   modinfo *mymodinfo=(modinfo *)v.aux;
-
+#ifdef MIXER
   if(mymodinfo->SongCode == SongCode) {
     FreeMOD();
     Mix_FreeMusic(mymodinfo->music);
   }
+#endif
   free(v.aux);
 }
 
@@ -427,6 +432,7 @@ typedef struct _HeadDC {
   unsigned short wBits;
 } HeadDC;
 
+#ifdef MIXER
 Mix_Chunk *DIVMIX_LoadPCM(path) {
   FILE *f;
   HeadDC MyHeadDC;
@@ -493,6 +499,8 @@ Mix_Chunk *DIVMIX_LoadPCM(path) {
   return smp;
 
 }
+#endif
+
 void OpenSound(void) {
   pcminfo   *mypcminfo;
   Uint32 wav_length;
@@ -604,6 +612,7 @@ Mix_Chunk *SI;
       memcpy(mypcminfo->pathname,SoundPathName,256);
 	  mypcminfo->SoundFreq = 44100;
       mypcminfo->SoundBits = 16;
+#ifdef MIXER
       mypcminfo->SoundSize = SI->alen/2;
       mypcminfo->SoundData = (short *)malloc(SI->alen);
       if(mypcminfo->SoundData!=NULL) 
@@ -612,6 +621,7 @@ Mix_Chunk *SI;
 //      mypcminfo->SoundData = (short *)SI->abuf;
       mypcminfo->SI = SI;
 //      mypcminfo->sample    = (char *)wav_buffer;    
+#endif
       nueva_ventana(PCM0);
     }
   }
@@ -625,8 +635,9 @@ void OpenSoundFile(void) // Open the file SoundPathName
 	fprintf(stdout,"TODO - divpcm.cpp OpenSoundFile\n");
 
   pcminfo   *mypcminfo;
+#ifdef MIXER
   Mix_Chunk *SI=NULL;
-
+#endif
 debugprintf("SoundName %s\n",input);
 debugprintf("SOundPath %s\n",full);
 
@@ -682,6 +693,7 @@ debugprintf("SOundPath %s\n",full);
   memcpy(mypcminfo->pathname,SoundPathName,256);
   mypcminfo->SoundFreq = 44100;
   mypcminfo->SoundBits = 16;
+#ifdef MIXER
   mypcminfo->SoundSize = SI->alen/2;
   mypcminfo->SoundData = (short *)malloc(SI->alen);
   if(mypcminfo->SoundData!=NULL) 
@@ -691,7 +703,7 @@ debugprintf("SOundPath %s\n",full);
   mypcminfo->SI = SI;
 
 //  free(SI);
-
+#endif
   nueva_ventana(PCM0);
 
 }
@@ -1258,10 +1270,10 @@ void EditSound1(void)
   Ancho = ancho_ventana;
   Alto  = alto_ventana;
   ptr+=(4+((12+PosY)*v.an))*big2+(Alto/2)*v.an;
-
+#ifdef MIXER
   buffer=(short *)mypcminfo->SI->abuf;
   length=mypcminfo->SI->alen/2;
-
+#endif
   if (length>1)
   if (length<3*Ancho)
   {

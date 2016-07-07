@@ -806,7 +806,7 @@ void mainloop(void) {
 
 #ifndef DEBUG
   if(splashtime>0) {
-    if(SDL_GetTicks()<splashtime) {
+    if(OSDEP_GetTicks()<splashtime) {
       tecla();
       return;
     } else {
@@ -853,7 +853,7 @@ void interprete (void)
 #endif
 
 #ifdef __EMSCRIPTEN__
-  emscripten_set_main_loop(mainloop, 0, 0);
+  emscripten_set_main_loop(mainloop, 0, 1);
 #else
   while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
 	mainloop();
@@ -1181,7 +1181,7 @@ void frame_start(void) {
 
 		do {
 #ifdef WIN32
-			SDL_Delay(((int)freloj-old_reloj)-1);
+			OSDEP_Delay(((int)freloj-old_reloj)-1);
 #else
 			sched_yield();			
 //			usleep(((int)freloj-old_reloj)-1); 
@@ -1828,7 +1828,7 @@ void finalizacion (void) {
 
 	closefiles();
 
-  SDL_Quit();
+  OSDEP_Quit();
 #endif
 
 }
@@ -1979,9 +1979,6 @@ int main(int argc,char * argv[]) {
 //	freopen( "CON", "w", stderr );
 #endif
 
-#if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
-  SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
-#endif
 	copia=NULL;
 	copia2=NULL;
 
@@ -1990,10 +1987,10 @@ int main(int argc,char * argv[]) {
 #endif
 
 #ifndef EMSCRIPTEN	
-  atexit(SDL_Quit);
+  atexit(OSDEP_Quit);
 #endif
 
-  SDL_Init( SDL_INIT_EVERYTHING);
+  OSDEP_Init();
 
   remove("DEBUGSRC.TXT");
   
@@ -2339,16 +2336,16 @@ if(m) {
 #ifdef DEBUG
   printf("Looking for joysticks\n");
 #endif
-  if(SDL_NumJoysticks() > 0) { 
-		divjoy = (SDL_Joystick*)SDL_JoystickOpen(0);
+  if(OSDEP_NumJoysticks() > 0) { 
+		divjoy = (OSDEP_Joystick*)OSDEP_JoystickOpen(0);
 		joy_status=1;
 
 #ifdef DEBUG
-		printf("Joyname:    %s\n", SDL_JoystickName(0));
-		printf("NumAxes: %d: Numhats: %d : NumButtons: %d\n",SDL_JoystickNumAxes(divjoy), SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
+		printf("Joyname:    %s\n", OSDEP_JoystickName(0));
+		printf("NumAxes: %d: Numhats: %d : NumButtons: %d\n",OSDEP_JoystickNumAxes(divjoy), OSDEP_JoystickNumHats(divjoy),OSDEP_JoystickNumButtons(divjoy));
 #endif		
-	if (SDL_JoystickNumHats(divjoy)==0)  {
-		SDL_JoystickClose(divjoy);
+	if (OSDEP_JoystickNumHats(divjoy)==0)  {
+		OSDEP_JoystickClose(divjoy);
 		divjoy=NULL;
 	}
 		

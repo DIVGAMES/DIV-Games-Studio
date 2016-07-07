@@ -193,7 +193,7 @@ void set_dac (void) {
           colors[i].b=dac[b+2]*4;
           b+=3;
     }
-	if(!SDL_SetPalette(vga, SDL_LOGPAL | SDL_PHYSPAL, colors, 0, 256)) 
+	if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
 		printf("Failed to set palette :(\n"); 
 	
 	retrazo();

@@ -4,23 +4,15 @@
 // OSDEP includes
 // should be good for most SDL ports
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
+#include "osdep/osd_sdl12.h"
 
 #ifdef SDL
-#include <SDL/SDL.h>
+#include "osdep/osd_sdl12.h"
 #endif
 
-#ifdef MIXER
-#include <SDL/SDL_mixer.h>
+#ifdef SDL2
+#include "osdep/osd_sdl2.h"
 #endif
-
-#ifdef IMAGE
-#include <SDL/SDL_image.h>
-#endif
-
-#include "lib/sdlgfx/SDL_rotozoom.h"
 
 #ifdef ZLIB
 #include "unzip.h"

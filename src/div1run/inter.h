@@ -40,7 +40,7 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 
 
 
-GLOBAL SDL_Joystick *divjoy;
+GLOBAL OSDEP_Joystick *divjoy;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 // Definiciones

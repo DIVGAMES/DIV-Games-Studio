@@ -1,6 +1,5 @@
 #include "vpe.h"
 #include "gfx.h"
-#include <SDL/SDL.h>
 #include "osdep.h"
 memptrsize ScrBase;
 int ScrWidth, ScrHeight;
@@ -67,7 +66,7 @@ void SetPalette(VPEByte *pal_ptr)
           colors[i].b=pal_ptr[b+2]*4;
           b+=3;
     }
-       if(!SDL_SetPalette(vga, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256)) 
+       if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
                printf("Failed to set palette :(\n"); 
        
        retrazo();

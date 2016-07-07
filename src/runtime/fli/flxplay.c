@@ -8,7 +8,6 @@
 #include <string.h>
 /*
 */
-#include "SDL.h"
 /*
 */
 struct {

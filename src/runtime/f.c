@@ -93,7 +93,7 @@ int get_reloj(void) {
 //	reloj = SDL_GetTicks()/10;
 //		return reloj;
 		
-	n_reloj=SDL_GetTicks();
+	n_reloj=OSDEP_GetTicks();
 	reloj+=(n_reloj-o_reloj);
 	o_reloj=n_reloj;
 
@@ -2732,7 +2732,7 @@ void get_joy_button(void) {
 #ifndef DOS
 // SDL joypad
 if(divjoy && joy_status) {
-pila[sp]=SDL_JoystickGetButton(divjoy,pila[sp]);
+pila[sp]=OSDEP_JoystickGetButton(divjoy,pila[sp]);
 } else {
 pila[sp]=0;
 }
@@ -2760,7 +2760,7 @@ int joy_position(int eje)
 
 #ifndef DOS
 
-return SDL_JoystickGetAxis(divjoy,pila[sp])/100;
+return OSDEP_JoystickGetAxis(divjoy,pila[sp])/100;
 
 
 #else

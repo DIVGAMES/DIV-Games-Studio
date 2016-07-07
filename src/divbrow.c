@@ -1548,9 +1548,9 @@ int bload=0;
 int ns,chn;
 
 // For loading PCM in the browser
-
+#ifdef MIXER
 Mix_Chunk *DIVMIX_LoadPCM(char *path);
-
+#endif
 
 void browser2(void) {
   unsigned n, selected;

@@ -160,13 +160,13 @@ while(SDL_PollEvent(&event))
             {
 				printf("key pressed\n");
 #ifndef DROID
-				scan_code = sdl2key[event.key.keysym.unicode];
+				scan_code = osdep_key[event.key.keysym.unicode];
 #endif
 				kbgFlags[scan_code]=1;
 			}
 			if(event.type == SDL_KEYUP) 
 			{
-				scan_code = sdl2key[event.key.keysym.sym];
+				scan_code = osdep_key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
 				kbdFLAGS[scan_code]=0;
 				scan_code=0;

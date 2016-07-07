@@ -398,7 +398,10 @@ int main(int argc, char * argv[]) {
 	unsigned n;
 	debugprintf("Welcome to DIV\n");
 	
-	SDL_Init( SDL_INIT_EVERYTHING);
+#ifdef SDL
+	OSDEP_Init();
+	// SDL_INIT_EVERYTHING);
+#endif
 
 #if !defined( GP2X ) && !defined( PS2 ) && !defined( PSP )
 	SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
@@ -568,10 +571,10 @@ int main(int argc, char * argv[]) {
 #endif
 
 #ifndef __EMSCRIPTEN__
-	SDL_WM_SetCaption((char *)texto[34], "" );
+	OSDEP_SetCaption((char *)texto[34], "" );
 	SDL_ShowCursor( SDL_FALSE );
 #else
-	SDL_WM_SetCaption( "DIV2015 - Javascript HTML5", "" );
+	OSDEP_SetCaption( "DIV2015 - Javascript HTML5", "" );
 #endif
 
 	check_mouse();
