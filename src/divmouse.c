@@ -285,7 +285,7 @@ void checkmod(SDLMod mod) {
 	int soundstopped=0;
 	
 void read_mouse2(void) {
-	return;
+
 	scan_code  =0;
 	ascii=0;
 
