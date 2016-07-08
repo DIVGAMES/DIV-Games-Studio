@@ -111,8 +111,6 @@ extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 #ifndef __WIN32__
 char * itoa(long n, char *buf, int len);
 #endif
-void sdlkeyinit(void);
-extern uint8_t sdl2key[2048];
 
 #define ltoa itoa 
 #define stdprn stdout

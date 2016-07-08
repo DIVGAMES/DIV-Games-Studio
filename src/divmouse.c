@@ -285,6 +285,7 @@ void checkmod(SDLMod mod) {
 	int soundstopped=0;
 	
 void read_mouse2(void) {
+	return;
 	scan_code  =0;
 	ascii=0;
 
@@ -524,12 +525,13 @@ while(SDL_PollEvent(&event) )
 			if( event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL ) 
 				shift_status |=4; 
 			else // don't set scan code when lctrl pressed
-				scan_code = sdl2key[event.key.keysym.sym];
+				scan_code = OSDEP_key[event.key.keysym.sym];
 		//		ascii = scan_code;
 #ifndef DROID
 				if(event.key.keysym.unicode<0x80 && scan_code !=83 && event.key.keysym.unicode>=0)
 					ascii = event.key.keysym.unicode&0xFF;
 #endif
+				fprintf(stdout, "%x\n", scan_code);
 				key(scan_code)=1;
 #ifdef GCW
 					if(event.key.keysym.sym ==SDLK_LALT)		// B
@@ -541,8 +543,9 @@ while(SDL_PollEvent(&event) )
 				shift_status =0;
 				checkmod((SDLMod)event.key.keysym.mod);
 
-				scan_code = sdl2key[event.key.keysym.sym];
+				scan_code = OSDEP_key[event.key.keysym.sym];
 				//scan_code = event.key.keysym.scancode;
+				fprintf(stdout, "%x\n", scan_code);
 				key(scan_code)=0;
 				scan_code=0;
 #ifdef GCW

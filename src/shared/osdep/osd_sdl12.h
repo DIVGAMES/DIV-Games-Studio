@@ -17,11 +17,7 @@
 
 #include "lib/sdlgfx/SDL_rotozoom.h"
 
-typedef SDL_Joystick OSDEP_Joystick;
-typedef SDL_Color OSDEP_Color;
-typedef SDL_Surface OSDEP_Surface;
-
-#include "osd_funcs.h"
+#include "osd_sdl.h"
 
 #endif
 

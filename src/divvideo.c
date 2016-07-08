@@ -139,10 +139,10 @@ void set_dac(byte *_dac) {
           colors[i].b=_dac[b+2]*4;
           b+=3;
     }
-	if(vga->format->BitsPerPixel==8) {
+//	if(vga->format->BitsPerPixel==8) {
 		if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
 			printf("Failed to set palette :(\n"); 
-	}	
+//	}	
 	retrazo();
 }
 
@@ -442,7 +442,7 @@ return;
   SDL_UnlockSurface(vga);
   printf("changed rect: %d %d %d %d     \r",x1,y1,w1,h1);
   
- SDL_UpdateRect(vga,x1,y1,w1,h1);
+ OSDEP_UpdateRect(vga,x1,y1,w1,h1);
 	 
 //	SDL_Flip(vga);
 //	volcadosdl(p);
@@ -588,12 +588,12 @@ void volcadosdl(byte *p) {
 //printf("window zero is %d\n",v.tipo);
 #endif
 		
-	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
+	OSDEP_UpdateRect(vga,0,0,vga_an,vga_al);
 
 	if(SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
 
-	SDL_Flip(vga);
+	OSDEP_Flip(vga);
 
 //	colorkey = SDL_MapRGB( copia_surface->format, 0xFF, 0, 0xFF );
 //	SDL_FillRect(copia_surface, NULL, colorkey);

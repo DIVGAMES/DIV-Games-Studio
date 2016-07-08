@@ -28,16 +28,16 @@ void detectar_vesa(void) { // Detects available video modes
 	short *modelist;
 	int n;
 
-	SDL_Rect **modes;
+	OSDEP_VMode **modes;
 	int i;
 
 	num_modos=0;
 
 
-	modes=SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+	modes=OSDEP_ListModes();
 
 	/* Check is there are any modes available */
-	if(modes == (SDL_Rect **)0 || modes == (SDL_Rect **)-1){
+	if(modes == 0 || modes == -1){
 		// none, just list some standard ones for use in windowed mode.
 		modos[0].ancho=320; modos[0].alto=240; modos[0].modo=1;
 		modos[1].ancho=640; modos[1].alto=480; modos[1].modo=1;

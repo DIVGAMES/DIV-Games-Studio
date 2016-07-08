@@ -3,6 +3,12 @@
 
 #include "osd_sdl2.h"
 
+// key buffer
+uint8_t OSDEP_key[2048];
+SDL_Renderer* OSDEP_renderer=NULL;
+SDL_Window* OSDEP_window=NULL;
+SDL_Surface* OSDEP_buffer=NULL;
+char windowtitle[1024];
 void OSDEP_Init(void) {
 
 	SDL_Init( SDL_INIT_EVERYTHING);
@@ -20,19 +26,65 @@ uint32_t OSDEP_GetTicks(void) {
 
 // Display
 void OSDEP_SetCaption(char *title, char *icon) {
-	SDL_WM_SetCaption((const char *)title, (const char *)icon);
+	strcpy(windowtitle,title);
+	//SDL_WM_SetCaption((const char *)title, (const char *)icon);
+}
+
+OSDEP_VMode ** OSDEP_ListModes(void) {
+//	SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+	return NULL;
 }
 
 OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
+	Uint32 rmask, gmask, bmask, amask;
 
-	return SDL_SetVideoMode(width, height, bpp, flags);
+    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
+       on the endianness (byte order) of the machine */
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
 
+    if(OSDEP_window != NULL) {
+	    SDL_DestroyRenderer(OSDEP_renderer);
+    	SDL_DestroyWindow(OSDEP_window);
+    }
+
+    if (OSDEP_window == NULL) {
+    	SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &OSDEP_window, &OSDEP_renderer);
+	}
+
+	OSDEP_buffer = SDL_CreateRGBSurface(0, width, height, 32,
+//		0,0,0,0);
+	
+		rmask,
+		gmask,
+		bmask,
+		amask);
+
+	return OSDEP_buffer;
 }
 
+void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
+	fprintf(stdout, "%s\n", __FUNCTION__);
+	SDL_RenderPresent(OSDEP_renderer);	
+}
+
+void OSDEP_Flip(OSDEP_Surface *s) {
+//	fprintf(stdout, "%s\n", __FUNCTION__);
+	SDL_RenderClear(OSDEP_renderer);
+	SDL_RenderPresent(OSDEP_renderer);
+}
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
-	return SDL_SetPaletteColors(surface->format->palette, colors, 0, 256);
-
+//	return SDL_SetPaletteColors(surface->format->palette, colors, 0, 256);
 }
 
 // Joysticks
@@ -74,6 +126,118 @@ char * OSDEP_JoystickName(int n) {
 }
 
 void OSDEP_keyInit(void) {
+	
+	OSDEP_key[SDLK_ESCAPE]=1;
+	OSDEP_key[SDLK_F1-0x3FFFFD1A]=59;
+	OSDEP_key[SDLK_F2-0x3FFFFD1A]=60;
+	OSDEP_key[SDLK_F3-0x3FFFFD1A]=61;
+	OSDEP_key[SDLK_F4-0x3FFFFD1A]=62;
+	OSDEP_key[SDLK_F5-0x3FFFFD1A]=63;
+	OSDEP_key[SDLK_F6-0x3FFFFD1A]=64;
+	OSDEP_key[SDLK_F7-0x3FFFFD1A]=65;
+	OSDEP_key[SDLK_F8-0x3FFFFD1A]=66;
+	OSDEP_key[SDLK_F9-0x3FFFFD1A]=67;
+	OSDEP_key[SDLK_F10-0x3FFFFD1A]=68;
+	OSDEP_key[SDLK_F11-0x3FFFFD1A]=87;
+	OSDEP_key[SDLK_F12-0x3FFFFD1A]=88;
+	OSDEP_key[SDLK_PRINTSCREEN-0x3FFFFD1A]=55;
+	OSDEP_key[SDLK_SCROLLLOCK-0x3FFFFD1A]=70;
+
+	OSDEP_key[SDLK_BACKQUOTE]=41;
+	OSDEP_key[SDLK_UP-0x3FFFFD1A]=72;
+	OSDEP_key[SDLK_DOWN-0x3FFFFD1A]=80;
+	OSDEP_key[SDLK_LEFT-0x3FFFFD1A]=75;
+	OSDEP_key[SDLK_RIGHT-0x3FFFFD1A]=77;
+
+	OSDEP_key[SDLK_1]=2;
+	OSDEP_key[SDLK_2]=3;
+	OSDEP_key[SDLK_3]=4;
+	OSDEP_key[SDLK_4]=5;
+	OSDEP_key[SDLK_5]=6;
+	OSDEP_key[SDLK_6]=7;
+	OSDEP_key[SDLK_7]=8;
+	OSDEP_key[SDLK_8]=9;
+	OSDEP_key[SDLK_9]=10;
+	OSDEP_key[SDLK_0]=11;
+	OSDEP_key[SDLK_MINUS]=12;
+	OSDEP_key[SDLK_PLUS]=13;
+	OSDEP_key[SDLK_BACKSPACE]=14;
+
+
+	OSDEP_key[SDLK_TAB]=15;
+	OSDEP_key[SDLK_q]=16;
+	OSDEP_key[SDLK_w]=17;
+	OSDEP_key[SDLK_e]=18;
+	OSDEP_key[SDLK_r]=19;
+	OSDEP_key[SDLK_t]=20;
+	OSDEP_key[SDLK_y]=21;
+	OSDEP_key[SDLK_u]=22;
+	OSDEP_key[SDLK_i]=23;
+	OSDEP_key[SDLK_o]=24;
+	OSDEP_key[SDLK_p]=25;
+	OSDEP_key[SDLK_LEFTBRACKET]=26;
+	OSDEP_key[SDLK_RIGHTBRACKET]=27;
+	OSDEP_key[SDLK_RETURN]=28;
+
+	OSDEP_key[SDLK_CAPSLOCK-0x3FFFFD1A]=58;
+	OSDEP_key[SDLK_a]=30;
+	OSDEP_key[SDLK_s]=31;
+	OSDEP_key[SDLK_d]=32;
+	OSDEP_key[SDLK_f]=33;
+	OSDEP_key[SDLK_g]=34;
+	OSDEP_key[SDLK_h]=35;
+	OSDEP_key[SDLK_j]=36;
+	OSDEP_key[SDLK_k]=37;
+	OSDEP_key[SDLK_l]=38;
+	OSDEP_key[SDLK_SEMICOLON]=39;
+	OSDEP_key[SDLK_QUOTE]=40;
+	OSDEP_key[SDLK_BACKSLASH]=43;
+
+	OSDEP_key[SDLK_LSHIFT-0x3FFFFD1A]=42;
+	OSDEP_key[SDLK_z]=44;
+	OSDEP_key[SDLK_x]=45;
+	OSDEP_key[SDLK_c]=46;
+	OSDEP_key[SDLK_v]=47;
+	OSDEP_key[SDLK_b]=48;
+	OSDEP_key[SDLK_n]=49;
+	OSDEP_key[SDLK_m]=50;
+	OSDEP_key[SDLK_COMMA]=51;
+	OSDEP_key[SDLK_PERIOD]=51;
+	OSDEP_key[SDLK_SLASH]=51;
+	OSDEP_key[SDLK_RSHIFT-0x3FFFFD1A]=54;
+
+	OSDEP_key[SDLK_LCTRL-0x3FFFFD1A]=29;
+	OSDEP_key[SDLK_RCTRL-0x3FFFFD1A]=29;
+	OSDEP_key[SDLK_LALT-0x3FFFFD1A]=56;
+	OSDEP_key[SDLK_RALT-0x3FFFFD1A]=56;
+	OSDEP_key[SDLK_SPACE]=57;
+	OSDEP_key[SDLK_INSERT-0x3FFFFD1A]=82;
+	OSDEP_key[SDLK_HOME-0x3FFFFD1A]=71;
+	OSDEP_key[SDLK_PAGEUP-0x3FFFFD1A]=73;
+	OSDEP_key[SDLK_DELETE]=83;
+	OSDEP_key[SDLK_END-0x3FFFFD1A]=79;
+	OSDEP_key[SDLK_PAGEDOWN-0x3FFFFD1A]=81;
+
+	OSDEP_key[SDLK_NUMLOCKCLEAR-0x3FFFFD1A]=69;
+
+	OSDEP_key[SDLK_KP_DIVIDE-0x3FFFFD1A]=53;
+	OSDEP_key[SDLK_KP_MULTIPLY-0x3FFFFD1A]=53;
+	OSDEP_key[SDLK_KP_MINUS-0x3FFFFD1A]=74;
+
+	OSDEP_key[SDLK_BACKSLASH]=53;
+	OSDEP_key[SDLK_KP_ENTER-0x3FFFFD1A]=28;
+	OSDEP_key[SDLK_KP_MULTIPLY-0x3FFFFD1A]=55;
+	OSDEP_key[SDLK_KP_MINUS-0x3FFFFD1A]=74;
+	OSDEP_key[SDLK_KP_PLUS-0x3FFFFD1A]=78;
+	OSDEP_key[SDLK_KP_ENTER-0x3FFFFD1A]=28;
+
+
+//OSDEP_key[SDLK_LSHIFT-0x3FFFFD1A]=43;
+
+#ifdef NOTYET
+//const _wave=41
+	const _c_center=76
+#endif
 
 
 }

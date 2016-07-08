@@ -1,3 +1,20 @@
+#ifndef __OSD_SDL_H__
+#define __OSD_SDL_H__
+
+
+typedef SDL_Joystick OSDEP_Joystick;
+typedef SDL_Color OSDEP_Color;
+typedef SDL_Surface OSDEP_Surface;
+
+typedef struct _OSDEP_VMode {
+	int w;
+	int h;
+} OSDEP_VMode;
+
+extern uint8_t OSDEP_key[2048];
+
+// the following functions all need to be implemented in order for a port to
+// function correctly
 
 void OSDEP_Init(void);
 void OSDEP_Quit(void);
@@ -21,3 +38,6 @@ uint8_t OSDEP_JoystickGetButton(OSDEP_Joystick *joystick, int button);
 int16_t OSDEP_JoystickGetAxis(OSDEP_Joystick *joystick, int axis);
 
 char * OSDEP_JoystickName(int n);
+
+
+#endif

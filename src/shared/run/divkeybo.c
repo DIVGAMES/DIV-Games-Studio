@@ -153,7 +153,7 @@ void SetIRQVector(int n, TIRQHandler vec)
 
 void kbdInit(void)
 {
-	sdlkeyinit();
+	OSDEP_keyInit();
 	
 #ifdef DOS
     if (GetIRQVector(9) != IrqHandler) {   // If not already installed.
@@ -271,22 +271,22 @@ if(divjoy) {
 // get new positions (D-PAD)
 	hatval = SDL_JoystickGetHat(divjoy,0);
 if(hatval!=oldhatval) {
-		key(sdl2key[GCW_LEFT])=0;
-		key(sdl2key[GCW_RIGHT])=0;
-		key(sdl2key[GCW_DOWN])=0;
-		key(sdl2key[GCW_UP])=0;
+		key(OSDEP_key[GCW_LEFT])=0;
+		key(OSDEP_key[GCW_RIGHT])=0;
+		key(OSDEP_key[GCW_DOWN])=0;
+		key(OSDEP_key[GCW_UP])=0;
 
 	if(hatval & SDL_HAT_RIGHT) 
-		key(sdl2key[GCW_RIGHT])=1;
+		key(OSDEP_key[GCW_RIGHT])=1;
 
 	if(hatval & SDL_HAT_LEFT)
-		key(sdl2key[GCW_LEFT])=1;
+		key(OSDEP_key[GCW_LEFT])=1;
 	
 	if(hatval & SDL_HAT_UP)
-		key(sdl2key[GCW_UP])=1;
+		key(OSDEP_key[GCW_UP])=1;
 
 	if(hatval & SDL_HAT_DOWN)
-		key(sdl2key[GCW_DOWN])=1;
+		key(OSDEP_key[GCW_DOWN])=1;
 
 }
 oldhatval = hatval;
@@ -397,72 +397,72 @@ oldhatval = hatval;
 #ifdef GCW
 			case SDLK_LEFT:		// D-PAD LEFT
 			event.key.keysym.sym=GCW_LEFT;
-//				key(sdl2key[GCW_LEFT])=1;
+//				key(OSDEP_key[GCW_LEFT])=1;
 			break;
 			
 			case SDLK_RIGHT:	// D-PAD RIGHT
 				event.key.keysym.sym=GCW_RIGHT;
-//				key(sdl2key[GCW_RIGHT])=1;
+//				key(OSDEP_key[GCW_RIGHT])=1;
 
 			break;
 			case SDLK_UP:		// D-PAD UP
 			event.key.keysym.sym=GCW_UP;
-//				key(sdl2key[GCW_UP])=1;
+//				key(OSDEP_key[GCW_UP])=1;
 			break;
 			
 			case SDLK_DOWN:		// D-PAD DOWN
 			event.key.keysym.sym=GCW_DOWN;
-//					key(sdl2key[GCW_DOWN])=1;
+//					key(OSDEP_key[GCW_DOWN])=1;
 			break;
 			
 			case SDLK_LCTRL:	// A
 			event.key.keysym.sym=GCW_A;
-//				key(sdl2key[GCW_A])=1;
+//				key(OSDEP_key[GCW_A])=1;
 				mouse->left=1;
 			break;
 			
 			case SDLK_LALT:		// B
 			event.key.keysym.sym=GCW_B;
-//				key(sdl2key[GCW_B])=1;
+//				key(OSDEP_key[GCW_B])=1;
 				mouse->right=1;
 			break;
 			
 			case SDLK_LSHIFT:	// X
 			event.key.keysym.sym=GCW_X;
-//				key(sdl2key[GCW_X])=1;
+//				key(OSDEP_key[GCW_X])=1;
 			break;
 			
 			case SDLK_SPACE:	// Y
 			event.key.keysym.sym=GCW_Y;
-//				key(sdl2key[GCW_Y])=1;
+//				key(OSDEP_key[GCW_Y])=1;
 			break;
 
 			case SDLK_TAB:		// Left shoulder
 			event.key.keysym.sym=GCW_L;
-//				key(sdl2key[GCW_L])=1;
+//				key(OSDEP_key[GCW_L])=1;
 			break;
 
 			case SDLK_BACKSPACE:	// Right shoulder
 			event.key.keysym.sym=GCW_R;
-//				key(sdl2key[GCW_R])=1;
+//				key(OSDEP_key[GCW_R])=1;
 			break;
 			
 			case SDLK_RETURN:	// Start
-//				scan_code = sdl2key[GCW_START];
+//				scan_code = OSDEP_key[GCW_START];
 				event.key.keysym.sym=GCW_START;
-//				key(sdl2key[GCW_START])=1;
+//				key(OSDEP_key[GCW_START])=1;
 			break;
 			
 			case SDLK_ESCAPE:	// Select
 				event.key.keysym.sym=GCW_SELECT;
-//				key(sdl2key[GCW_SELECT])=1;			
-				if(key(sdl2key[GCW_X])==1)
+//				key(OSDEP_key[GCW_SELECT])=1;			
+				if(key(OSDEP_key[GCW_X])==1)
 					alt_x=1;
 			break;
 			
 			case SDLK_PAUSE:	// Lock
 			event.key.keysym.sym=GCW_LOCK;
-//				key(sdl2key[GCW_LOCK])=1;
+//				key(OSDEP_key[GCW_LOCK])=1;
 			break;
 
 			default:
@@ -493,7 +493,7 @@ oldhatval = hatval;
 		}
 
 //		if(scan_code==0)
-			scan_code = sdl2key[event.key.keysym.sym];
+			scan_code = OSDEP_key[event.key.keysym.sym];
 		
 		ascii = event.key.keysym.scancode;
 		checkmod((SDLMod) event.key.keysym.mod);
@@ -518,69 +518,69 @@ oldhatval = hatval;
 		switch(event.key.keysym.sym) {
 			case SDLK_LEFT:		// D-PAD LEFT
 				event.key.keysym.sym=GCW_LEFT;
-//				key(sdl2key[GCW_LEFT])=0;
+//				key(OSDEP_key[GCW_LEFT])=0;
 				break;
 			
 			case SDLK_RIGHT:	// D-PAD RIGHT
 				event.key.keysym.sym=GCW_RIGHT;
-//				key(sdl2key[GCW_RIGHT])=0;
+//				key(OSDEP_key[GCW_RIGHT])=0;
 				break;
 			
 			case SDLK_UP:		// D-PAD UP
 				event.key.keysym.sym=GCW_UP;
-//				key(sdl2key[GCW_UP])=0;
+//				key(OSDEP_key[GCW_UP])=0;
 				break;
 			
 			case SDLK_DOWN:		// D-PAD DOWN
 				event.key.keysym.sym=GCW_DOWN;
-	//			key(sdl2key[GCW_DOWN])=0;
+	//			key(OSDEP_key[GCW_DOWN])=0;
 				break;
 			
 			case SDLK_LCTRL:	// A
 				event.key.keysym.sym=GCW_A;
-				//key(sdl2key[GCW_A])=0;
+				//key(OSDEP_key[GCW_A])=0;
 				mouse->left=0;
 				break;
 			
 			case SDLK_LALT:		// B
 				event.key.keysym.sym=GCW_B;
-				//key(sdl2key[GCW_B])=0;
+				//key(OSDEP_key[GCW_B])=0;
 				mouse->right=0;
 				break;
 			
 			case SDLK_LSHIFT:	// X
 				event.key.keysym.sym=GCW_X;
-				//key(sdl2key[GCW_X])=0;
+				//key(OSDEP_key[GCW_X])=0;
 				break;
 			
 			case SDLK_SPACE:	// Y
 				event.key.keysym.sym=GCW_Y;
-//				key(sdl2key[GCW_Y])=0;
+//				key(OSDEP_key[GCW_Y])=0;
 				break;
 	
 			case SDLK_TAB:		// Left shoulder
 				event.key.keysym.sym=GCW_L;
-//				key(sdl2key[GCW_L])=0;
+//				key(OSDEP_key[GCW_L])=0;
 				break;
 
 			case SDLK_BACKSPACE:	// Right shoulder
 				event.key.keysym.sym=GCW_R;
-				//key(sdl2key[GCW_R])=0;
+				//key(OSDEP_key[GCW_R])=0;
 				break;
 			
 			case SDLK_RETURN:	// Start
 				event.key.keysym.sym=GCW_START;
-//				key(sdl2key[GCW_START])=0;
+//				key(OSDEP_key[GCW_START])=0;
 				break;
 			
 			case SDLK_ESCAPE:	// Select
 				event.key.keysym.sym=GCW_SELECT;
-//				key(sdl2key[GCW_SELECT])=0;			
+//				key(OSDEP_key[GCW_SELECT])=0;			
 				break;
 			
 			case SDLK_PAUSE:	// Lock
 				event.key.keysym.sym=GCW_LOCK;
-//				key(sdl2key[GCW_LOCK])=0;
+//				key(OSDEP_key[GCW_LOCK])=0;
 				break;
 			
 			default:
@@ -592,9 +592,9 @@ oldhatval = hatval;
 		shift_status=0;
 		checkmod((SDLMod) event.key.keysym.mod);
 		
-//		scan_code = sdl2key[event.key.keysym.sym];
+//		scan_code = OSDEP_key[event.key.keysym.sym];
 		//scan_code = event.key.keysym.scancode;
-		kbdFLAGS[sdl2key[event.key.keysym.sym]]=0;
+		kbdFLAGS[OSDEP_key[event.key.keysym.sym]]=0;
 	}
 	
 	if (event.type == SDL_MOUSEMOTION) {

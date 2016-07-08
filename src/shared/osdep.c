@@ -373,5 +373,3 @@ void textcolor(int attr, int fg, int bg)
 	printf("%s", command);
 }
 
-#include "keycodes.h"
-

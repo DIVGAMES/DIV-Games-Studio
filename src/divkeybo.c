@@ -106,7 +106,7 @@ void SetIRQVector(int n, TIRQHandler vec)
 void kbdInit(void)
 {
 	// call osdep keyboard init
-	sdlkeyinit();
+	OSDEP_keyInit();
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

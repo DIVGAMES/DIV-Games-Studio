@@ -502,5 +502,3 @@ void textcolor(int attr, int fg, int bg)
 	sprintf(command, "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40);
 	printf("%s", command);
 }
-
-#include "keycodes.h"
