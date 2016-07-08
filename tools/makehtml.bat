@@ -4,7 +4,7 @@ echo "Setting up emscripten"
 
 source ~/emsdk_portable/emsdk_env.sh > /dev/null
 
-rm -rf obj obj_d objd1 > /dev/null
+#rm -rf obj obj_d objd1 > /dev/null
 
 #dd if="$1/$2" bs=1 count=1 skip=2
 VER=`dd if="$1/$2" bs=1 count=1 skip=2 2>/dev/null`

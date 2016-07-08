@@ -8,7 +8,7 @@
 BUILDLVL= -O3
 #BUILDLVL= -g4
 
-SDL_CFLAGS = -DZLIB -DMIXER -DSDL -DDIVDLL -DMODE8
+SDL_CFLAGS = -DZLIB -DMIXER -DSDL2 -DDIVDLL -DMODE8
 
 SDL_LIBS = -lSDL
 
@@ -18,7 +18,9 @@ CC=emcc
 #EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s MAIN_MODULE=1
 #EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 
 #EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s MAIN_MODULE=1 -s ASM_JS=1 
-EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s ASM_JS=1 -s STB_IMAGE=1
+#EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=1 -s TOTAL_MEMORY=268435456 -s ASM_JS=1 -s STB_IMAGE=1
+EMC_OPTS= -w -s USE_ZLIB=1 -s USE_SDL=2 -s USE_OGG=1 -s USE_VORBIS=1 -s TOTAL_MEMORY=268435456 -s ASM_JS=1 -s STB_IMAGE=1
+
 LINKFLAGS= --use-preload-plugins
 # -s ASYNCIFY=1 -s TOTAL_MEMORY=268435456  
 #-s ASSERTIONS=2
@@ -46,12 +48,12 @@ LINKFLAGS= --use-preload-plugins
 #-s EXPORTED_FUNCTIONS="['_getscore','_main']"
 EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
 SCFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc/shared -Isrc -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2 
-LIBS = $(SDL_LIBS) -lm --emrun
+LIBS = $(SDL_LIBS) -lm --emrun libSDL2_mixer.a
 
 OSDEP = src/shared/osdep.c src/shared/unzip.c src/shared/mikedll.c
 
 CSRC = $(wildcard src/*.c) ${OSDEP}
-SHAREDSRC = $(wildcard src/shared/run/*.c) src/shared/osdep/osd_sdl12.c
+SHAREDSRC = $(wildcard src/shared/run/*.c) src/shared/osdep/osd_sdl2.c
 MODE8SRC = $(wildcard src/runtime/vpe/*.c) 
 RSRC = $(wildcard src/runtime/*.c)  ${OSDEP} ${SHAREDSRC} ${MODE8SRC}
 D1SRC = $(wildcard src/div1run/*.c)  ${OSDEP} ${SHAREDSRC}
@@ -75,7 +77,7 @@ obj/src/shared/run:
 obj/src/shared/osdep:
 	mkdir -p obj/src/shared/osdep
 	mkdir -p objd1/src/shared/osdep
-
+	
 obj/src/runtime/debug: 
 	mkdir -p obj/src/runtime/debug
 	mkdir -p obj/src/osdep

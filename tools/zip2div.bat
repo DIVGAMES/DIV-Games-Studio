@@ -216,7 +216,7 @@ scp $2-win32.zip $2-*.tar.gz $2.* $2-PSP.zip android/$2.* html/$2.* js.mikedx.co
 
 #delete temp files
 
-rm -rf $2-PSP.zip $EBOOTDIR buildhtml pack buildgcw zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win32.zip $2.opk $2.pnd android/$2.apk
+rm -rf $2-PSP.zip $EBOOTDIR pack buildgcw zipdiv data.div EXEC.EXE $2-PI.tar.gz $2-LINUX.tar.gz $2-win32.zip $2.opk $2.pnd android/$2.apk
 
 
 #emrun html/$2.html

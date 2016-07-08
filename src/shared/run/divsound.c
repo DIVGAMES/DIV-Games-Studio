@@ -470,7 +470,7 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 
 #ifdef MIXER
 
-#ifdef __EMSCRIPTEN__
+#if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
   loop = sonido[NumSonido].loop?-1:0;
 #endif
 
@@ -483,7 +483,7 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
     return(0);
   
   // Make sure all old callbacks are cleared
-#ifndef __EMSCRIPTEN__
+#if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
   Mix_UnregisterAllEffects(con);
 #endif
 
@@ -491,7 +491,7 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
   channels[con].vol = Volumen;
   channels[con].pos = 0;
 
-#ifndef __EMSCRIPTEN__
+#if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
   // Setup our callback to change frequency
 		Mix_RegisterEffect(con, freqEffect, NULL,NULL);
 #endif
@@ -510,7 +510,7 @@ int StopSound(int NumChannel)
 {
 #ifdef MIXER
 
-#ifndef EMSCRIPTEN
+#if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
     if(!Mix_UnregisterAllEffects(NumChannel)) {
       printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
     }
@@ -594,7 +594,7 @@ int IsPlayingSound(int NumChannel)
 #ifdef DIV2
 int LoadSong(char *ptr, int Len, int Loop)
 {
-#ifndef __EMSCRIPTEN__
+#if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
 #ifdef MIXER
   int con=0;
 
