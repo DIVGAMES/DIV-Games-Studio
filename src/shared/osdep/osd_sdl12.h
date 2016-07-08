@@ -18,6 +18,7 @@
 #include "lib/sdlgfx/SDL_rotozoom.h"
 
 #include "osd_sdl.h"
+typedef SDLMod OSDEPMod;
 
 #endif
 

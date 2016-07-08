@@ -16,6 +16,6 @@
 #endif
 
 #include "osd_sdl.h"
-
+typedef SDL_Keymod OSDEPMod;
 #endif
 

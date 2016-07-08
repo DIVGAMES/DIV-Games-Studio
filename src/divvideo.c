@@ -43,8 +43,7 @@ SDL_Renderer *divRender;
 
 int IsFullScreen(SDL_Surface *surface)
 {
-    if (surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
-    return 0; // Return false if surface is windowed
+	return OSDEP_IsFullScreen();
 }
 
 void SDL_ToggleFS(SDL_Surface *surface)
@@ -62,7 +61,6 @@ int nothing(SDL_Surface *surface) {
      Uint32 flags = surface->flags; // Get the video surface flags
 
    if (IsFullScreen(surface)) {
-        flags &= ~SDL_FULLSCREEN;
         if ((vga = OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, 0)) == NULL) 
 			return 0;
 		
@@ -70,7 +68,7 @@ int nothing(SDL_Surface *surface) {
 		fsmode=0;
     } else {
 		
-		vga = OSDEP_SetVideoMode(vga_an,vga_al, CDEPTH,SDL_FULLSCREEN);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga = OSDEP_SetVideoMode(vga_an,vga_al, CDEPTH,1);// | SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 		if (vga == NULL) {
 			vga = OSDEP_SetVideoMode(vga_an,vga_al, CDEPTH, 0);
@@ -188,7 +186,7 @@ SDL_initFramerate(&fpsman);
 SDL_setFramerate(&fpsman, 60);
 
  
-  debugprintf("full screen: %d\n",fsmode);
+  fprintf(stdout,"full screen: %d\n",fsmode);
 
 #ifdef GCW_SOFTSTRETCH
 	vga=OSDEP_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
@@ -197,10 +195,10 @@ SDL_setFramerate(&fpsman, 60);
 #else
 
 	if(fsmode==0)
-		vga=OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, SDL_SWSURFACE | SDL_RESIZABLE);
+		vga=OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, 0);
 
 	else
-		vga=OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH,  SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga=OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH,  1);
 	
 	//SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 #endif
@@ -834,7 +832,7 @@ void init_volcado(void) {
 }
 
 void volcado_parcial(int x,int y,int an,int al) {
-  int ymax,xmax,n,d1,d2,x2;
+  int ymax=0,xmax=0,n=0,d1=0,d2=0,x2=0;
 
   if (an==vga_an && al==vga_al && x==0 && y==0) { volcado_completo=1; return; }
 

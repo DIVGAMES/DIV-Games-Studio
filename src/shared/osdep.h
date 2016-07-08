@@ -4,8 +4,6 @@
 // OSDEP includes
 // should be good for most SDL ports
 
-#include "osdep/osd_sdl12.h"
-
 #ifdef SDL
 #include "osdep/osd_sdl12.h"
 #endif

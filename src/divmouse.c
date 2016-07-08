@@ -259,31 +259,100 @@ extern float w_ratio;
 extern float h_ratio;
 #endif
 
-void checkmod(SDLMod mod) {
-	if( mod == KMOD_NONE ){
-		return;
+void checkmod(OSDEPMod mod) {
+	if( mod != KMOD_NONE ){
+		if( mod & KMOD_LCTRL || mod & KMOD_CTRL  || mod & KMOD_RCTRL ) 
+			shift_status |=4; 
+
+		if( mod & KMOD_RSHIFT ) 
+			shift_status |=1;
+
+		if( mod & KMOD_LSHIFT ) 
+			shift_status |=2;
+
+		if( mod & KMOD_LALT ||  mod & KMOD_ALT  ||  mod & KMOD_RALT ) 
+			shift_status |=8;
+
+		if (mod & KMOD_CAPS) 
+			shift_status |=64;
+
+		if (mod & KMOD_NUM) 
+			shift_status |=32;
 	}
 
-	if( mod & KMOD_LCTRL || mod & KMOD_CTRL  || mod & KMOD_RCTRL ) 
-		shift_status |=4; 
-
-	if( mod & KMOD_RSHIFT ) 
-		shift_status |=1;
-
-	if( mod & KMOD_LSHIFT ) 
-		shift_status |=2;
-
-	if( mod & KMOD_LALT ||  mod & KMOD_ALT  ||  mod & KMOD_RALT ) 
-		shift_status |=8;
-
-	if (mod & KMOD_CAPS) 
-		shift_status |=64;
-
-	if (mod & KMOD_NUM) 
-		shift_status |=32;
+	fprintf(stdout, "%d\n", shift_status);
 }
-	int soundstopped=0;
-	
+
+int soundstopped=0;
+
+
+#ifdef SDL2
+#include <SDL2/SDL_events.h>
+
+void PrintEvent(const SDL_Event * event)
+{
+    if (event->type == SDL_WINDOWEVENT) {
+        switch (event->window.event) {
+        case SDL_WINDOWEVENT_SHOWN:
+            SDL_Log("Window %d shown", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_HIDDEN:
+            SDL_Log("Window %d hidden", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_EXPOSED:
+            SDL_Log("Window %d exposed", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_MOVED:
+            SDL_Log("Window %d moved to %d,%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_RESIZED:
+            SDL_Log("Window %d resized to %dx%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+            SDL_Log("Window %d size changed to %dx%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_MINIMIZED:
+            SDL_Log("Window %d minimized", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_MAXIMIZED:
+            SDL_Log("Window %d maximized", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_RESTORED:
+            SDL_Log("Window %d restored", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_ENTER:
+            SDL_Log("Mouse entered window %d",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_LEAVE:
+            SDL_Log("Mouse left window %d", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            SDL_Log("Window %d gained keyboard focus",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            SDL_Log("Window %d lost keyboard focus",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_CLOSE:
+            SDL_Log("Window %d closed", event->window.windowID);
+            break;
+        default:
+            SDL_Log("Window %d got unknown event %d",
+                    event->window.windowID, event->window.event);
+            break;
+        }
+    }
+}
+#endif
+
 void read_mouse2(void) {
 
 	scan_code  =0;
@@ -410,8 +479,13 @@ while(SDL_PollEvent(&event))
 #else
 
 while(SDL_PollEvent(&event) )
+#ifdef SDL2
+	PrintEvent(&event);
+#endif
+//	while(0)
         {
-			
+
+#ifndef SDL2
 			if (event.type == SDL_VIDEORESIZE) {
 //				printf("RESIZING\n");
 				vga_an = event.resize.w;
@@ -422,6 +496,7 @@ while(SDL_PollEvent(&event) )
 //				SDL_PauseAudio(0);
 				
             }
+#endif
 			if(event.type == SDL_JOYAXISMOTION) {			// Analog joystick movement
 				
 			switch(event.jaxis.axis)
@@ -493,7 +568,7 @@ while(SDL_PollEvent(&event) )
 				{
 					m_b |= 2;
 				}
-
+#ifndef SDL2
 				if(event.button.button == SDL_BUTTON_WHEELUP)
 				{
 					m_b |= 8;
@@ -504,7 +579,7 @@ while(SDL_PollEvent(&event) )
 					m_b |= 4;
 					break;
 				}
-
+#endif
 /*				if(event.button.button == SDL_BUTTON_RIGHT)
 				{
 					mouse->right = 1;
@@ -520,16 +595,19 @@ while(SDL_PollEvent(&event) )
 			 if (event.type == SDL_KEYDOWN)
             {
 				
-			checkmod((SDLMod)event.key.keysym.mod);
+			checkmod((OSDEPMod)event.key.keysym.mod);
 
 			if( event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL ) 
 				shift_status |=4; 
-			else // don't set scan code when lctrl pressed
-				scan_code = OSDEP_key[event.key.keysym.sym];
+			else { // don't set scan code when lctrl pressed 
+				scan_code = OSDEP_key[event.key.keysym.sym<2048?event.key.keysym.sym:event.key.keysym.sym-0x3FFFFD1A];
+			}
 		//		ascii = scan_code;
 #ifndef DROID
+#ifndef SDL2
 				if(event.key.keysym.unicode<0x80 && scan_code !=83 && event.key.keysym.unicode>=0)
 					ascii = event.key.keysym.unicode&0xFF;
+#endif
 #endif
 				fprintf(stdout, "%x\n", scan_code);
 				key(scan_code)=1;
@@ -541,9 +619,10 @@ while(SDL_PollEvent(&event) )
 			if(event.type == SDL_KEYUP) 
 			{
 				shift_status =0;
-				checkmod((SDLMod)event.key.keysym.mod);
+				checkmod((OSDEPMod)event.key.keysym.mod);
 
-				scan_code = OSDEP_key[event.key.keysym.sym];
+				scan_code = OSDEP_key[event.key.keysym.sym<2048?event.key.keysym.sym:event.key.keysym.sym-0x3FFFFD1A];
+		
 				//scan_code = event.key.keysym.scancode;
 				fprintf(stdout, "%x\n", scan_code);
 				key(scan_code)=0;
@@ -562,7 +641,7 @@ while(SDL_PollEvent(&event) )
 
 				if(event.button.button ==SDL_BUTTON_RIGHT)
 					m_b &= ~2;
-					
+#ifndef SDL2
 				if(event.button.button == SDL_BUTTON_WHEELUP)
 				{
 					m_b &= ~8;
@@ -573,7 +652,7 @@ while(SDL_PollEvent(&event) )
 					m_b &= ~4;
 
 				}
-
+#endif
 			}
 			
                 /* If the left button was pressed. */
@@ -584,8 +663,10 @@ while(SDL_PollEvent(&event) )
         }
 #endif
 	if(soundstopped==1) {
-		SDL_putenv("SDL_VIDEO_WINDOW_POS=default"); 
 
+#ifndef SDL2
+		SDL_putenv("SDL_VIDEO_WINDOW_POS=default"); 
+#endif
 		//SDL_SetVideoMode(event.resize.w, event.resize.h, 8,  SDL_HWSURFACE | SDL_RESIZABLE);
 		//				bW = buffer->w; bH = buffer->h;
 		

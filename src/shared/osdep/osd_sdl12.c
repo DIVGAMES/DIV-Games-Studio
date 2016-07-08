@@ -6,6 +6,7 @@
 
 // key buffer
 uint8_t OSDEP_key[2048];
+OSDEP_Surface *OSDEP_surface;
 
 // startup / shutdown
 
@@ -62,8 +63,25 @@ OSDEP_VMode ** OSDEP_ListModes(void) {
 	return smodes;
 }
 
-OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
-	return SDL_SetVideoMode(width, height, bpp, flags);
+void OSDEP_WarpMouse(int x, int y) {
+	SDL_WarpMouse(x, y);
+}
+
+int OSDEP_IsFullScreen(void) {
+	if (OSDEP_surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
+    return 0; // Return false if surface is windowed
+
+}
+
+OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
+	uint32_t flags;
+	if(fs) {
+		flags = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
+	} else {
+		flags = SDL_SWSURFACE | SDL_RESIZABLE;
+	}
+	OSDEP_surface = SDL_SetVideoMode(width, height, bpp, flags);
+	return OSDEP_surface;
 }
 
 

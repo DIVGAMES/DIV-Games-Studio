@@ -600,7 +600,12 @@ int LoadSong(char *ptr, int Len, int Loop)
 
   // Check we can load the file
   SDL_RWops *rw = SDL_RWFromMem(ptr, Len); 
-  Mix_Music* music = Mix_LoadMUS_RW(rw); 
+
+  Mix_Music* music = Mix_LoadMUS_RW(rw
+#ifdef SDL2
+    ,0
+#endif
+    ); 
   if(!music)
   	return(-1);
 
@@ -647,7 +652,11 @@ int LoadSong(char *ptr, int Len, int Loop)
   cancion[con].loop=Loop;
 
   rw = SDL_RWFromMem(cancion[con].ptr, Len); 
-  music = Mix_LoadMUS_RW(rw); 
+  music = Mix_LoadMUS_RW(rw
+#ifdef SDL2
+    ,0
+#endif
+    ); 
 
   cancion[con].music = music;
   cancion[con].rw = rw;

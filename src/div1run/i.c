@@ -98,7 +98,7 @@ void madewith(void);
 void mainloop(void) {
 	
   if(splashtime>0) {
-    if(SDL_GetTicks()<splashtime) {
+    if(OSDEP_GetTicks()<splashtime) {
       tecla();
       return;
     } else {
@@ -137,16 +137,10 @@ int main(int argc,char * argv[]) {
   uint32_t datstart = 0;
 	int len=0;
 	
-#ifndef GP2X
-#ifndef PSP
-  SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
-#endif
-#endif
-  atexit(SDL_Quit);
-	SDL_Init(SDL_INIT_EVERYTHING);
+	OSDEP_Init();
 
-  if(SDL_NumJoysticks() > 0) { 
-		divjoy = SDL_JoystickOpen(0);
+  if(OSDEP_NumJoysticks() > 0) { 
+		divjoy = OSDEP_JoystickOpen(0);
 		
 
 //printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));

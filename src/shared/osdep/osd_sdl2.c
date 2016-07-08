@@ -7,12 +7,20 @@
 uint8_t OSDEP_key[2048];
 SDL_Renderer* OSDEP_renderer=NULL;
 SDL_Window* OSDEP_window=NULL;
-SDL_Surface* OSDEP_buffer=NULL;
+SDL_Surface* OSDEP_buffer8=NULL;
+SDL_Surface* OSDEP_buffer32=NULL;
+SDL_Texture* OSDEP_texture=NULL;
 char windowtitle[1024];
 void OSDEP_Init(void) {
 
 	SDL_Init( SDL_INIT_EVERYTHING);
+// on windows, get printf working.
+#ifdef __WIN32
+	freopen( "CON", "w", stdout );
+	freopen( "CON", "w", stderr );
+#endif
 
+	atexit(SDL_Quit);
 }
 
 void OSDEP_Quit(void) {
@@ -26,16 +34,29 @@ uint32_t OSDEP_GetTicks(void) {
 
 // Display
 void OSDEP_SetCaption(char *title, char *icon) {
+	fprintf(stdout, "%s\n", __FUNCTION__);
 	strcpy(windowtitle,title);
 	//SDL_WM_SetCaption((const char *)title, (const char *)icon);
 }
 
 OSDEP_VMode ** OSDEP_ListModes(void) {
+fprintf(stdout, "%s\n", __FUNCTION__);
 //	SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
 	return NULL;
 }
 
-OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
+void OSDEP_WarpMouse(int x, int y) {
+	SDL_WarpMouseInWindow(OSDEP_window, x, y);
+}
+
+int OSDEP_IsFullScreen(void) {
+//	if (OSDEP_surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
+    return 0;//OSDEP_window->fullscreen; // Return false if surface is windowed
+
+}
+
+OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
+	fprintf(stdout, "%s\n", __FUNCTION__);
 	Uint32 rmask, gmask, bmask, amask;
 
     /* SDL interprets each pixel as a 32-bit number, so our masks must depend
@@ -52,43 +73,89 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, Uint32 flags)
     amask = 0xff000000;
 #endif
 
-    if(OSDEP_window != NULL) {
+/*    if(OSDEP_window != NULL) {
 	    SDL_DestroyRenderer(OSDEP_renderer);
     	SDL_DestroyWindow(OSDEP_window);
+    	SDL_DestroyTexture(OSDEP_texture);
+    	SDL_FreeSurface(OSDEP_buffer32);
+    	SDL_FreeSurface(OSDEP_buffer8); 		
     }
+  */  
+    SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &OSDEP_window, &OSDEP_renderer);
 
-    if (OSDEP_window == NULL) {
-    	SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &OSDEP_window, &OSDEP_renderer);
-	}
-
-	OSDEP_buffer = SDL_CreateRGBSurface(0, width, height, 32,
-//		0,0,0,0);
+	OSDEP_buffer8 = SDL_CreateRGBSurface(0, width, height, 8,
+		0,0,0,0);
 	
-		rmask,
-		gmask,
-		bmask,
-		amask);
+	OSDEP_buffer32 = SDL_CreateRGBSurface(0, width, height, 32,
+		0,0,0,0);
+		// rmask,
+		// gmask,
+		// bmask,
+		// amask);
 
-	return OSDEP_buffer;
+
+	OSDEP_texture = SDL_CreateTextureFromSurface(OSDEP_renderer, OSDEP_buffer32);
+
+	return OSDEP_buffer8;
 }
 
-void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
-	fprintf(stdout, "%s\n", __FUNCTION__);
-	SDL_RenderPresent(OSDEP_renderer);	
-}
 
 void OSDEP_Flip(OSDEP_Surface *s) {
 //	fprintf(stdout, "%s\n", __FUNCTION__);
-	SDL_RenderClear(OSDEP_renderer);
+
+	void *pixels; 
+  int pitch; 
+
+  /* blit the 320x200x8 Surface to a 32bit helper                */ 
+  /* Surface for pixel format conversion (8bit palettized to     */ 
+  /* 32bit). SDL2 Textures don't work with 8bit pixels formats.  */ 
+
+ /* move it to the texture */ 
+  SDL_BlitSurface(OSDEP_buffer8, NULL, OSDEP_buffer32, NULL);
+
+  // SDL_LockTexture(OSDEP_texture, NULL, &pixels, &pitch); 
+  // SDL_ConvertPixels(OSDEP_buffer32->w, OSDEP_buffer32->h, 
+  //              OSDEP_buffer32->format->format, 
+  //              OSDEP_buffer32->pixels, OSDEP_buffer32->pitch, 
+  //              SDL_PIXELFORMAT_ARGB8888, 
+  //              pixels, pitch); 
+  // SDL_UnlockTexture(OSDEP_texture); 
+
+	// int w=0;
+	// int h=0;
+
+	// for(w=0;w<OSDEP_buffer8->width;w++) {
+	// 	for(w=0;w<OSDEP_buffer8->width;w++) {
+			
+	// 	}
+
+	// }
+
+    /* Modify the texture's pixels */
+	SDL_UpdateTexture(OSDEP_texture, NULL, OSDEP_buffer32->pixels, OSDEP_buffer32->pitch);
+    
+    /* Make the modified texture visible by rendering it */
+    SDL_RenderCopy(OSDEP_renderer, OSDEP_texture, NULL, NULL);
+
 	SDL_RenderPresent(OSDEP_renderer);
 }
 
+void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
+//	fprintf(stdout, "%s\n", __FUNCTION__);
+	OSDEP_Flip(screen);
+//	SDL_RenderPresent(OSDEP_renderer);	
+}
+
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
-//	return SDL_SetPaletteColors(surface->format->palette, colors, 0, 256);
+	fprintf(stdout, "%s\n", __FUNCTION__);
+//	return 0;
+
+	return SDL_SetPaletteColors(surface->format->palette, colors, 0, 256);
 }
 
 // Joysticks
 int32_t OSDEP_NumJoysticks(void) {
+	fprintf(stdout, "%s\n", __FUNCTION__);
 	return SDL_NumJoysticks();
 }
 

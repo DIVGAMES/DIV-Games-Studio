@@ -22,7 +22,7 @@ void OSDEP_Quit(void);
 uint32_t OSDEP_GetTicks(void);
 
 void OSDEP_SetCaption(char *title, char *icon);
-OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, Uint32 flags);
+OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs);
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors);
 

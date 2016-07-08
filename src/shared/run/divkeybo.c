@@ -217,7 +217,7 @@ void tecla_bios(void) {
 }
 
 
-void checkmod(SDLMod mod) {
+void checkmod(OSDEPMod mod) {
 	
 //	shift_status = 0;
 	if( mod == KMOD_NONE ){
@@ -493,17 +493,19 @@ oldhatval = hatval;
 		}
 
 //		if(scan_code==0)
-			scan_code = OSDEP_key[event.key.keysym.sym];
+			scan_code = OSDEP_key[event.key.keysym.sym<2048?event.key.keysym.sym:event.key.keysym.sym-0x3FFFFD1A];
 		
 		ascii = event.key.keysym.scancode;
-		checkmod((SDLMod) event.key.keysym.mod);
+		checkmod((OSDEPMod) event.key.keysym.mod);
 
 // unicode not working on android
 #ifndef DROID
+#ifndef SDL2
 		if(event.key.keysym.unicode<0x80) {
 			ascii = event.key.keysym.unicode;
 			//printf("ascii val: %d\n",ascii);
 		}					
+#endif
 #endif
 //#ifndef GCW				
 		kbdFLAGS[scan_code]=1;	
@@ -590,11 +592,11 @@ oldhatval = hatval;
 #endif
 
 		shift_status=0;
-		checkmod((SDLMod) event.key.keysym.mod);
+		checkmod((OSDEPMod) event.key.keysym.mod);
 		
 //		scan_code = OSDEP_key[event.key.keysym.sym];
 		//scan_code = event.key.keysym.scancode;
-		kbdFLAGS[OSDEP_key[event.key.keysym.sym]]=0;
+		kbdFLAGS[OSDEP_key[event.key.keysym.sym<2048?event.key.keysym.sym:event.key.keysym.sym-0x3FFFFD1A]]=0;
 	}
 	
 	if (event.type == SDL_MOUSEMOTION) {

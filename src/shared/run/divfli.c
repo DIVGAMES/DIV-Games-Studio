@@ -42,8 +42,8 @@ struct {
   Uint16 ChunkType;     /* Type of chunk */
   /*
   */
-  SDL_Surface *mainscreen;
-  SDL_Color colors[256];
+  OSDEP_Surface *mainscreen;
+  OSDEP_Color colors[256];
   uint8_t *buffer;
   int offx;
   int offy;
@@ -136,7 +136,7 @@ void FlcInitFirstFrame()
   FlcReadFile(flc.FrameSize);
 } /* FlcInitFirstFrame */
 
-extern SDL_Surface *vga;
+extern OSDEP_Surface *vga;
 
 int StartFLI(char *flinombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy)
 {
@@ -232,7 +232,7 @@ void COLORS256()
       i++;
     }
 //    Palette_Update();
-    SDL_SetColors(flc.mainscreen, flc.colors, NumColorsSkip, i);
+    OSDEP_SetPalette(flc.mainscreen, flc.colors, NumColorsSkip, i);
   }
 } /* COLORS256 */
 
@@ -318,7 +318,7 @@ void DECODE_COLOR()
       i++;
     }
 //    Palette_Update();
-    SDL_SetColors(flc.mainscreen, flc.colors, NumColorsSkip, i);
+    OSDEP_SetPalette(flc.mainscreen, flc.colors, NumColorsSkip, i);
   }
 } /* DECODE_COLOR  */
 
@@ -526,7 +526,7 @@ int Nextframe()
       FlcDoOneFrame();
 //      SDLWaitFrame();
       /* TODO: Track which rectangles have really changed */
-      SDL_UpdateRect(flc.mainscreen, 0, 0, 0, 0);
+      OSDEP_UpdateRect(flc.mainscreen, 0, 0, 0, 0);
     }
 
 #ifdef NOTYET

@@ -37,7 +37,7 @@ void detectar_vesa(void) { // Detects available video modes
 	modes=OSDEP_ListModes();
 
 	/* Check is there are any modes available */
-	if(modes == 0 || modes == -1){
+	if(modes == 0 || modes == -1) {
 		// none, just list some standard ones for use in windowed mode.
 		modos[0].ancho=320; modos[0].alto=240; modos[0].modo=1;
 		modos[1].ancho=640; modos[1].alto=480; modos[1].modo=1;

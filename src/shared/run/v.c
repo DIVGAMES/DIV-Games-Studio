@@ -55,40 +55,18 @@ void crear_ghost_slow(void);
 #ifndef __EMSCRIPTEN__
 int IsFullScreen(SDL_Surface *surface)
 {
-	if ( surface == NULL)
-		return 0;
-
-    if (surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
-    return 0; // Return false if surface is windowed
+    return OSDEP_IsFullScreen(); // Return false if surface is windowed
 }
 
 int SDL_ToggleFS(SDL_Surface *surface)
 {
-    Uint32 flags = surface->flags; // Get the video surface flags
 
     if (IsFullScreen(surface))
-    {
-        // Switch to WINDOWED mode
-        flags &= ~SDL_FULLSCREEN;
-        if ((vga = SDL_SetVideoMode(vga_an,vga_al,8, 0)) == NULL) 
-			return 0;
-
-		vga = SDL_SetVideoMode(vga_an,vga_al,8, 0);
-		fsmode=0;
-    } else {
-    
-		vga = SDL_SetVideoMode(surface->w, surface->h, 8,SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
-
-		if (vga == NULL) {
-			vga = SDL_SetVideoMode(vga_an,vga_al, 8, 0);
-			set_dac();
-			fsmode=0;
-			return 0;
-		}
-		fsmode=1;
-	}
-	set_dac();
-    
+    fsmode=0;
+  else 
+    fsmode=1;
+  
+  svmode();
     return 1;
 }
 #endif
@@ -256,7 +234,7 @@ void madewith(void) {
 
 	SDL_FreeSurface(mwsurface);
 
-	SDL_Flip(vga);
+	OSDEP_Flip(vga);
 
 }
 
@@ -273,52 +251,36 @@ SDL_ShowCursor(SDL_DISABLE);
 	
 	vga=NULL;
 #ifdef __EMSCRIPTEN__
-#ifdef SDL2
-
-divWindow = SDL_CreateWindow("DIV GAMES STUDIO",
-                             SDL_WINDOWPOS_UNDEFINED,
-                             SDL_WINDOWPOS_UNDEFINED,
-                             vga_an,vga_al,
-                             SDL_WINDOW_SHOWN);
-divRender = SDL_CreateRenderer(divWindow, -1, 0);
-
-divTexture = SDL_CreateTexture(divRender,
-                               SDL_PIXELFORMAT_ARGB8888,
-                               SDL_TEXTUREACCESS_STREAMING,
-                               vga_an,vga_al);
-#else
-
 	
 	if(!vga)	
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);
-#endif
+		vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 0);
 #else
 
 #ifdef PANDORA
-		vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
 #else
 
 #ifdef PSP
 	fsmode=1;
 //		if(!vga)
-			vga=SDL_SetVideoMode(480, 272, 8, 0);
+			vga=OSDEP_SetVideoMode(480, 272, 8, 0);
 			//SDL_SWSURFACE | SDL_FULLSCREEN);
 #else
 
 		if(fsmode==1)
-			vga=SDL_SetVideoMode(vga_an, vga_al, 8, SDL_SWSURFACE | SDL_FULLSCREEN);
+			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
 #endif
 
 		if(!vga || fsmode==0)
-			vga=SDL_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
 #ifdef GCW
     
   if(vga_an>640 || vga_al>480) {
     
-    vga=SDL_SetVideoMode(640,480, 8, 0);
+    vga=OSDEP_SetVideoMode(640,480, 8, 0);
     if(!vga) 
-      vga=SDL_SetVideoMode(320,240, 8, 0);
+      vga=OSDEP_SetVideoMode(320,240, 8, 0);
 
     if(vga) {
 //    vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
@@ -346,7 +308,7 @@ divTexture = SDL_CreateTexture(divRender,
 #ifdef STDOUTLOG
 	printf("SET VIDEO MODE %x\n",vga);
 #endif
-	SDL_WM_SetCaption( "DIVDX 3.01", "" );
+	OSDEP_SetCaption( "DIVDX 3.01", "" );
 
 	modovesa=1;
 #ifdef DOS
@@ -544,7 +506,7 @@ SDL_RenderPresent(divRender);
 #ifdef GCW 
 	if(vga_an>640 || vga_al>480) {
 		volcadogcw(p);
-		SDL_Flip(vga);
+		OSDEP_Flip(vga);
 		return;
 	}
 #endif
@@ -565,7 +527,7 @@ SDL_RenderPresent(divRender);
 		SDL_UnlockSurface(vga);
 
 //	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
-	SDL_Flip(vga);
+	OSDEP_Flip(vga);
 }
 
 long lasttick = 0;

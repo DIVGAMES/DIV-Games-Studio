@@ -403,17 +403,6 @@ int main(int argc, char * argv[]) {
 	// SDL_INIT_EVERYTHING);
 #endif
 
-#if !defined( GP2X ) && !defined( PS2 ) && !defined( PSP )
-	SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
-#endif
-
-// on windows, get printf working.
-#ifdef __WIN32
-	freopen( "CON", "w", stdout );
-	freopen( "CON", "w", stderr );
-#endif
-
-	atexit(SDL_Quit);
 	atexit(free_resources);
   
 	system_clock = &mclock;
@@ -1785,11 +1774,11 @@ void shell(void) {
 	} else {
 		
 		EndSound();
-
+#ifndef SDL2
 #if !defined ( GP2X ) && !defined (PS2) && !defined (PSP)
 		SDL_putenv("PROMPT=[DIV] $P$G");
 #endif
-
+#endif
 
 		chdir(tipo[0].path);
 
@@ -3847,7 +3836,9 @@ fclose(f);
 
   crea_barratitulo();
   
-  svmode(); set_dac(dac); read_mouse();
+  svmode(); 
+  set_dac(dac); 
+  //read_mouse();
   preparar_tapiz();
   volcado_completo=1;
   volcado(copia);
