@@ -10,6 +10,10 @@ extern int num_fpg_aux;
 struct ZF_Flag *flags[1000];
 int num_flags;
 extern int error_vpe;
+
+#ifdef DEBUG
+extern
+#endif
 char combo_error[128]; // para componer mensajes de error compuestos.
 
 int *tex_pointer;

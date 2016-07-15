@@ -13,6 +13,7 @@ extern "C" {
 static EXPORTENTRY *pool=NULL;
 
 // allow different extensions for different platforms
+void (*COM_export)(char *name,void *dir,int nparms);
 
 char *dll_ext =
 #ifdef EMSCRIPTEN

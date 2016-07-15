@@ -89,7 +89,7 @@ void load_wld(void)
     buffer=packptr; size=m;
   } else {
     wldfuera:
-    if ((fichero=div_open_file((byte*)&mem[text_offset+nombre]))==NULL) {
+    if ((fichero=div_open_file((char*)&mem[text_offset+nombre]))==NULL) {
       e(159); vpe_inicializada=0; return;
     } else {
       fseek(fichero,0,SEEK_END); size=ftell(fichero);

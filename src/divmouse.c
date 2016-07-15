@@ -280,7 +280,7 @@ void checkmod(OSDEPMod mod) {
 			shift_status |=32;
 	}
 
-	fprintf(stdout, "%d\n", shift_status);
+//	fprintf(stdout, "%d\n", shift_status);
 }
 
 int soundstopped=0;
@@ -497,6 +497,26 @@ while(SDL_PollEvent(&event) )
 				
             }
 #endif
+
+#ifdef SDL2
+    		m_b &=~4;
+    		m_b &=~8;
+
+            // Fix editor input for SDL2
+            if(event.type == SDL_TEXTINPUT) {
+            	scan_code = event.text.text[0];
+            	ascii = scan_code;
+            }
+            if(event.type == SDL_MOUSEWHEEL) {
+            		
+            	if(event.wheel.y>0) {
+					m_b |= 8;
+	        	} else {
+					m_b |= 4;
+        		}
+            }
+#endif
+
 			if(event.type == SDL_JOYAXISMOTION) {			// Analog joystick movement
 				
 			switch(event.jaxis.axis)
@@ -609,7 +629,20 @@ while(SDL_PollEvent(&event) )
 					ascii = event.key.keysym.unicode&0xFF;
 #endif
 #endif
-				fprintf(stdout, "%x\n", scan_code);
+
+
+#ifdef SDL2
+				// fix backspace in editor
+				if(scan_code==14)
+					ascii = 8;
+				// fix return in editor
+				if(scan_code=='\x1c')
+					ascii=13;
+
+				if(scan_code==15)
+					ascii=9;
+#endif
+//				fprintf(stdout, "ascii: %d scancode: %d 0x%x\n", ascii, scan_code,scan_code);
 				key(scan_code)=1;
 #ifdef GCW
 					if(event.key.keysym.sym ==SDLK_LALT)		// B
@@ -624,7 +657,6 @@ while(SDL_PollEvent(&event) )
 				scan_code = OSDEP_key[event.key.keysym.sym<2048?event.key.keysym.sym:event.key.keysym.sym-0x3FFFFD1A];
 		
 				//scan_code = event.key.keysym.scancode;
-				fprintf(stdout, "%x\n", scan_code);
 				key(scan_code)=0;
 				scan_code=0;
 #ifdef GCW

@@ -2,6 +2,7 @@
 #define __OSD_SDL2__
 
 #include <SDL2/SDL.h>
+#include <string.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>

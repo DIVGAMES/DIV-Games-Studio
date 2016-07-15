@@ -29,6 +29,10 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 
 #include "SDL_framerate.h"
 
+#ifndef WIN32
+#include <sched.h>
+#include <unistd.h>
+#endif
 /*!
 \brief Internal wrapper to SDL_GetTicks that ensures a non-zero return value.
 

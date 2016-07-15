@@ -5,10 +5,6 @@
 #ifndef __NETLIB_H
 #define __NETLIB_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 //-----------------------------------------------------------------------------
 // Definicion de tipos
 //-----------------------------------------------------------------------------
@@ -53,20 +49,17 @@ extern int inicializacion_red;
 //-----------------------------------------------------------------------------
 
 // Finaliza la comunicacion
-void net_end();
+void net_end(void);
 
 // Devuelve las partidas activas en la red
 int _net_get_games(int game_id);
-void net_get_games();
+void net_get_games(void);
 
 // Si la partida no existe la crea en caso contrario se une a ella
-int _net_join_game(int game_id,char *nombre,void *datos, int longitud);
-void net_join_game();
+int _net_join_game(int game_id,char *nombre,byte *datos, int longitud);
+void net_join_game(void);
 
 // Chequea la red (manda y recibe paquetes)
 void _net_loop();
 
-#ifdef __cplusplus
-}
-#endif
 #endif

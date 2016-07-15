@@ -64,7 +64,6 @@ void  DIV_export(char *name,void *obj);
 void *DIV_import(char *name);
 
 
-void (*COM_export)(char *name,void *dir,int nparms);
 
 
 #ifdef __cplusplus

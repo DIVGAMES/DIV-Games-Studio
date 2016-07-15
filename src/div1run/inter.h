@@ -39,7 +39,6 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 #include "divfli.h"
 
 
-
 GLOBAL OSDEP_Joystick *divjoy;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

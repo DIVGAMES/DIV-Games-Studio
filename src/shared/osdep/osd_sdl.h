@@ -23,6 +23,8 @@ void OSDEP_WarpMouse(int x, int y);
 void OSDEP_Flip(OSDEP_Surface *s);
 uint32_t OSDEP_GetTicks(void);
 void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h);
+int OSDEP_IsFullScreen(void);
+OSDEP_VMode ** OSDEP_ListModes(void);
 
 void OSDEP_SetCaption(char *title, char *icon);
 OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs);

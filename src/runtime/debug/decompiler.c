@@ -5,7 +5,7 @@
 
 #define STACK_SIZE 128
 
-int stack[STACK_SIZE];
+extern int stack[STACK_SIZE];
 byte stp[STACK_SIZE];
 char cstack[STACK_SIZE][512];
 

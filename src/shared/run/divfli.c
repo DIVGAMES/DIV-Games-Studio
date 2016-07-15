@@ -79,14 +79,14 @@ void FlcReadFile(Uint32 size)
 #ifdef DIV1
 extern FILE * open_file(byte * file);
 #else
-extern FILE * div_open_file(byte * file);
+extern FILE * div_open_file(char * file);
 #endif
 
 int FlcCheckHeader(char *filename) {
 #ifdef DIV1
  if((flc.file=open_file((byte *)filename))==NULL) 
 #else
- if((flc.file=div_open_file((byte *)filename))==NULL) 
+ if((flc.file=div_open_file((char *)filename))==NULL) 
 #endif
 
     return(1);

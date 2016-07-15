@@ -36,6 +36,9 @@ extern int net_players[16];
 extern net_game partida_red;
 extern int quien_soy;
 
+void net_get_games(void);
+void net_join_game(void);
+
 int _net_get_games(int game_id);
 int _net_join_game(int game_id,char *nombre,byte *datos, int longitud);
 

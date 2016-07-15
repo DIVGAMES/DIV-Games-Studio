@@ -12,7 +12,6 @@ unsigned short dmacount ( void ) { return 0; }
 unsigned char *aligned[2];
 // END HACK
 
-
 int    FilePos=0;
   
 void FreeMOD                (void);
@@ -433,7 +432,7 @@ typedef struct _HeadDC {
 } HeadDC;
 
 #ifdef MIXER
-Mix_Chunk *DIVMIX_LoadPCM(path) {
+Mix_Chunk *DIVMIX_LoadPCM(char *path) {
   FILE *f;
   HeadDC MyHeadDC;
   char *riff="RIFF";
@@ -707,8 +706,8 @@ debugprintf("SOundPath %s\n",full);
   nueva_ventana(PCM0);
 
 }
-
-void nueva_ventana_carga(int init_handler,int nx,int ny);
+int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny);
+//void nueva_ventana_carga(int init_handler,int nx,int ny);
 extern struct tventana ventana_aux;
 
 void OpenDesktopSound(FILE *f)
@@ -745,7 +744,7 @@ void OpenDesktopSound(FILE *f)
   judas_ipcorrect(smp);
 */
 
-  nueva_ventana_carga((memptrsize)PCM0,ventana_aux.x,ventana_aux.y);
+  nueva_ventana_carga(PCM0,ventana_aux.x,ventana_aux.y);
 
 }
 

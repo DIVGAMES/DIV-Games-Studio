@@ -31,18 +31,22 @@ extern int reloj;
 //=============================================================================
 
 int net_init(int game_id);
-void net_end();
-void net_exit_game();
+int _net_join_game(int game_id,char *nombre,byte *datos, int longitud);
+int join_game(int num_games);
+void net_end(void);
+void net_exit_game(void);
 int net_init_ipx(int game_id);
 int net_init_internet(int game_id);
 
 int net_init_serial(int game_id);
-void net_send();
+void net_send(void);
 void net_recv(void);
 void net_get_games(void);
 
 int net_create_game(int game_id,char *nombre, int num_jugadores);
 int old_net_reloj;
+
+extern void arse(void);
 
 //=============================================================================
 // Inicializa la comunicaci¢n
@@ -51,6 +55,7 @@ int old_net_reloj;
 int net_init(int game_id)
 {
   old_net_reloj=reloj;
+  fprintf(stdout,"Starting NETPLAY\n");
   
   return(net_init_internet(game_id));
   
@@ -222,9 +227,9 @@ int dial=0;//????????? FERNANDO ?????
 
 #endif
 
-void _net_loop()
+void _net_loop(void)
 {
-  static con_reloj=0;
+  static int con_reloj=0;
 
   //---------------------------------------------------------------------------
   // Compruebo si se inici¢ la comunicacion, en caso contrario retorna
@@ -387,16 +392,16 @@ int net_create_game(int game_id,char *nombre, int num_jugadores)
   partida_red.servidor=1;
   net->servidor=1;
   partida_red.max_players=num_jugadores;
-  
+  fprintf(stdout,"Starting server\n");
 if(SDLNet_ResolveHost(&ipaddr,NULL,9999)==-1) {
     printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-    exit(1);
+    return 0;
 }
 
 tcpsock=SDLNet_TCP_Open(&ipaddr);
 if(!tcpsock) {
     printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-    exit(2);
+    return -1;
 }
 
 //  if (partida_red.dispositivo==IPX)
@@ -405,7 +410,7 @@ if(!tcpsock) {
   //---------------------------------------------------------------------------
   // Inicializaci¢n correcta
   //---------------------------------------------------------------------------
-  return(0);
+  return 1;
 }
 
 //=============================================================================
@@ -471,7 +476,7 @@ int _net_get_games(int game_id)
 	tcpsock=SDLNet_TCP_Open(&ipaddr);
 
 	if(!tcpsock) {
-		printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+		fprintf(stdout,"SDLNet_TCP_Open: %s\n", SDLNet_GetError());
 		return 0;
 	}
   fprintf(stdout,"connected to %x\n",tcpsock);
@@ -487,7 +492,8 @@ int _net_join_game(int game_id,char *nombre,byte *datos, int longitud)
 {
 int num_games,i;
 int valor_retorno;
-
+fprintf(stdout,"Net Join Game\n");
+int server=0;
   //---------------------------------------------------------------------------
   // Comprueba el numero de jugadores
   //---------------------------------------------------------------------------
@@ -531,7 +537,12 @@ int valor_retorno;
 
   partida_red.datos=datos;
   partida_red.longitud_datos=longitud;
-  if(_net_get_games(game_id)>0) {
+server = net_create_game(game_id,nombre,net->num_players);
+
+if(server==1)
+return 0;
+
+if(_net_get_games(game_id)>0) {
 	return(join_game(num_games));
 }
   //---------------------------------------------------------------------------
@@ -549,7 +560,7 @@ int valor_retorno;
       }
     }
   }
-  return(net_create_game(game_id,nombre,net->num_players));
+//  return(net_create_game(game_id,nombre,net->num_players));
 }
 
 
@@ -561,7 +572,7 @@ int                 net_game_id;
 //  Inicializacion del identificador de juego
 //-----------------------------------------------------------------------------
 
-void net_create_game_id()
+void net_create_game_id(void)
 {
   int i;
   net_game_id=0;
@@ -579,7 +590,7 @@ void net_create_game_id()
 //  Entra en una de las partidas activas
 //-----------------------------------------------------------------------------
 
-void net_join_game()
+void net_join_game(void)
 {
 int game_id;
 int c;
@@ -606,10 +617,9 @@ int nombre  =pila[sp];
 //  Entra en una de las partidas activas
 //-----------------------------------------------------------------------------
 
-void net_get_games()
+void net_get_games(void)
 {
 int c;
-
   c=_net_get_games(net_game_id);
   pila[++sp]=c;
 }

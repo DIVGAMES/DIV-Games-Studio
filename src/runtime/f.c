@@ -13,6 +13,11 @@ void readmouse(void);
 #include "divmixer.hpp"
 #include "divsound.h"
 
+#ifdef NETPLAY
+#include "net.h"
+#include "netlib.h"
+#endif
+
 #ifdef __EMSCRIPTEN__
 extern void es_fps(byte);
 #endif
@@ -69,7 +74,7 @@ void path_line(void);
 void path_free(void);
 
 void signal_tree(int p, int s);
-FILE * div_open_file(byte * file);
+FILE * div_open_file(char * file);
 void fade_on(void);
 void fade_off(void);
 void stop_scroll(void);
@@ -313,7 +318,7 @@ printf("Trying to open %s\n",file);
 
 }
 
-FILE * div_open_file(byte * file) {
+FILE * div_open_file(char * file) {
   FILE * f,*fe;
   char *ff = (char *)file;
 

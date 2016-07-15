@@ -46,10 +46,10 @@ void InitSound(void)
   if(initted)
     return;
 
-  int audio_rate = 44100;
+  int audio_rate = 44800;//44100;
   Uint16 audio_format = AUDIO_S16SYS;
   int audio_channels = 2;
-  int audio_buffers = 1024;
+  int audio_buffers = 512;
 #ifndef GP2X
 #ifndef PS2
 #ifndef PSP
@@ -68,7 +68,7 @@ void InitSound(void)
 
   SDL_Init( SDL_INIT_AUDIO );
 
-
+fprintf(stdout, "Opening Audio Device \n");
   if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
   	fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
 //	exit(1);
@@ -76,6 +76,19 @@ void InitSound(void)
 
 
   print_init_flags(initted);
+#ifndef __EMSCRIPTEN__
+SDL_version compile_version;
+const SDL_version *link_version=Mix_Linked_Version();
+SDL_MIXER_VERSION(&compile_version);
+fprintf(stdout,"compiled with SDL_mixer version: %d.%d.%d\n", 
+        compile_version.major,
+        compile_version.minor,
+        compile_version.patch);
+fprintf(stdout,"running with SDL_mixer version: %d.%d.%d\n", 
+        link_version->major,
+        link_version->minor,
+        link_version->patch);
+#endif
 
   initted = 1;
 #endif
@@ -404,6 +417,9 @@ int UnloadSound(int NumSonido)
 #ifdef MIXER
 
 void doneEffect(int chan, void *data) {
+  fprintf(stdout,"Callback finished\n");
+//  if(Mix_Playing(chan))
+//    StopSound(chan);
 	return;
 }
  	
@@ -413,7 +429,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
   float x=0;
 	tSonido *s = &sonido[channels[chan].num];
 	int pos = channels[chan].pos;
-	
+//fprintf(stdout, "freqEffect %d %d\n", chan, len);	
   if(!Mix_Playing(chan))
     return;
 
@@ -423,29 +439,41 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	float ratio = channels[chan].freq/256.0f;//(22050 +10000) / 22050.0f;
 
 	short* samples = (short*)stream;
+  memset(stream,0,len);
 	uint16_t *input = (uint16_t *)(s->sound->abuf)+pos;
 	int i = 0;
 	float j = 0;
-	for(x = 0; i < len/2-1 && pos+x<s->sound->alen/2; x += ratio) {
-		samples[i++] = input[(int)x];
-		if(pos+x>=s->sound->alen/2) {
+	for(x = 0; i < len/2 && pos+x<s->sound->alen/2; x += ratio) {
+//    fprintf(stdout, "%d\n", i);
+		if(pos+(int)x>=s->sound->alen/2) {
 			if(s->loop==1) {
 				x=0;
 				j=0;
 				pos=0;
-				input = (uint16_t*)(s->sound->abuf)+pos;
+				input = (uint16_t*)(s->sound->abuf);
 			} else {
+        fprintf(stdout, "Sound ended\n");
+          while(i<len/2-1) {
+            samples[i++]=0;
+            x+=ratio;            
+            j+=ratio;
+          }
 		  		i=len/2;
+          pos = len/2+s->sound->alen/2;
+          break;
+  //        StopSound(chan);
 			}
 		}
+    samples[i++] = input[(int)x];
 		j+=ratio;
 	}
   pos+=(int)j;
-
+fprintf(stdout,"%d %d\n",pos,s->sound->alen/2);
   if(pos>=s->sound->alen/2) {
   	if(s->loop==1)
   		pos=0;
   	else {
+
       for(; i < len/2; i++) {
         samples[i] = 0;
       }
@@ -462,25 +490,30 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	}
 }
 #endif
+void channelDone(int channel) {
+    fprintf(stdout,"channel %d finished playback.\n",channel);
+}
 
 int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 {
   int con=0;
   int loop=-1;
-
+//Mix_HaltChannel(-1);
 #ifdef MIXER
 
-#if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
+#if defined( __EMSCRIPTEN__ ) && !defined (SDL2)
   loop = sonido[NumSonido].loop?-1:0;
 #endif
-
   // always play as loop, let the freqEffect manage stop_sound when loop is zero
   // this permits slow playing sound to run for the correct length.
 	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
 
+
   // if unable to play, return 
   if(con==-1)
     return(0);
+
+//  fprintf(stdout, "Playing Sound %d to Channel %d\n", NumSonido,con);
   
   // Make sure all old callbacks are cleared
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
@@ -493,7 +526,9 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
   // Setup our callback to change frequency
-		Mix_RegisterEffect(con, freqEffect, NULL,NULL);
+		Mix_RegisterEffect(con, freqEffect, doneEffect,NULL);
+    Mix_ChannelFinished(channelDone);
+//  Mix_SetPostMix(freq)
 #endif
 	
 	Mix_Volume(con,Volumen/2);
@@ -509,17 +544,19 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 int StopSound(int NumChannel)
 {
 #ifdef MIXER
-
+int x=99;
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
-    if(!Mix_UnregisterAllEffects(NumChannel)) {
-      printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
-    }
+  // fprintf(stdout,"Unregistering effects\n");
+  //   if(!Mix_UnregisterAllEffects(NumChannel)) {
+  //     printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
+  //   }
 #endif
-
-  if(Mix_Playing(NumChannel)) {
+ if(Mix_Playing(NumChannel)) {
+    fprintf(stdout, "Halting Sound %d\n", NumChannel);
     Mix_HaltChannel(NumChannel);
   }
-
+  while(x-->0 && Mix_Playing(NumChannel))
+    Mix_HaltChannel(NumChannel);
 #ifdef DOS
   judas_stopsample(NumChannel);
 #endif

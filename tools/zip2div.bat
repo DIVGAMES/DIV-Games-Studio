@@ -212,7 +212,7 @@ fi
 
 # upload files
 
-scp $2-win32.zip $2-*.tar.gz $2.* $2-PSP.zip android/$2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
+scp $2-win32.zip $2-*.tar.gz $2.* $2-PSP.zip android/$2.* html/$2-sdl2.* html/$2.* js.mikedx.co.uk:/var/www/mikedx/js
 
 #delete temp files
 

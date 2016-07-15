@@ -20,7 +20,7 @@ void OSDEP_Init(void) {
 	freopen( "CON", "w", stderr );
 #endif
 
-	atexit(SDL_Quit);
+	//atexit(SDL_Quit);
 }
 
 void OSDEP_Quit(void) {
@@ -147,10 +147,11 @@ void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 
 }
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
-	fprintf(stdout, "%s\n", __FUNCTION__);
+//	fprintf(stdout, "%s\n", __FUNCTION__);
 //	return 0;
 
-	return SDL_SetPaletteColors(surface->format->palette, colors, 0, 256);
+	SDL_SetPaletteColors(surface->format->palette, colors, 0, 256);
+	return 1;
 }
 
 // Joysticks

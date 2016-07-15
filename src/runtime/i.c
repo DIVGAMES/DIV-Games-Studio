@@ -22,6 +22,7 @@
 #include "divmixer.hpp"
 #include "netlib.h"
 #include <time.h>
+#include <sched.h>
 
 #ifdef NETPLAY
 extern int inicializacion_red;
@@ -1753,7 +1754,7 @@ void finalizacion (void) {
 		set_dac();
 	}
 
-#ifdef NET
+#ifdef NETPLAY
 	if (inicializacion_red)
 		net_end();
 #endif
@@ -1870,7 +1871,7 @@ void exer(int e) {
 
   //printf("*** Error de ejecuci�n:\n\n\tn� actual de procesos = %u\n\tn� m�ximo de procesos = %u",
   //procesos,(id_end-id_start)/iloc_len+1);
-#ifdef NET
+#ifdef NETPLAY
 	if (inicializacion_red)
 		net_end();
 #endif
@@ -1922,7 +1923,7 @@ void e(int texto) {
 	} else {
 		printf("Error %d %s\n\n",texto,text[texto]);
 	}
-#ifdef NET
+#ifdef NETPLAY
 	if (inicializacion_red)
 		net_end();
 #endif
@@ -2121,7 +2122,7 @@ if(argc>1 && exesize==0) {
   
   fsf = fopen("system/exec.path","rb");
   if(fsf) {
-	fgets(&prgpath, _MAX_PATH,fsf);
+	fgets(prgpath, _MAX_PATH,fsf);
 	fclose(fsf);
 }
   inicializa_textos((byte *)"system/lenguaje.int");
