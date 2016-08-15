@@ -346,7 +346,7 @@ ADD_DEFINITIONS( ${BUILD_LEVEL} -fpermissive -fno-omit-frame-pointer -funsigned-
 
 IF(APPLE)
 ADD_DEFINITIONS( -ferror-limit=1 -D__WORDSIZE=64 )
-SET( CMAKE_EXE_LINKER_FLAGS  "-lSDLmain -framework SDL -framework Cocoa" )
+SET( CMAKE_EXE_LINKER_FLAGS  "-lSDLmain -framework Cocoa" )
 ELSE()
 ADD_DEFINITIONS( -Wfatal-errors )
 ENDIF()
