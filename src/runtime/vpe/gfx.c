@@ -90,9 +90,9 @@ Func:	void DrawBuffer(struct View *V)
 Params:	V - pointer to view to blit
 Info:	Blits view buffer to the output device. Called from inside VPE
 *****************************************************************************/
-void draw_buffer(VPEDword src, VPEDword dest, VPEDword w, VPEDword h, VPEDword delta);
+void draw_buffer(VPEByte *src, VPEByte *dest, VPEDword w, VPEDword h, VPEDword delta);
 
-void draw_buffer(VPEDword src, VPEDword dest, VPEDword w, VPEDword h, VPEDword delta) {
+void draw_buffer(VPEByte *src, VPEByte *dest, VPEDword w, VPEDword h, VPEDword delta) {
 
 //printf("draw_buffer\n");
 
@@ -103,10 +103,10 @@ void draw_buffer(VPEDword src, VPEDword dest, VPEDword w, VPEDword h, VPEDword d
 
 void DrawBuffer(struct View *v)
 {
-	VPEDword Dest;
+	VPEByte *Dest;
 
-	Dest=ScrBase+v->ScrX+v->ScrY*ScrWidth;
-	draw_buffer((VPEDword)v->Buffer,Dest,(VPEDword)v->Width>>2,(VPEDword)v->Height,
+	Dest=(VPEByte *)ScrBase+v->ScrX+v->ScrY*ScrWidth;
+	draw_buffer(v->Buffer,Dest,(VPEDword)v->Width>>2,(VPEDword)v->Height,
 		(VPEDword)(ScrWidth-v->Width));
 }
 

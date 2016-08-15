@@ -31,14 +31,14 @@ void *MemRealloc(int *pointer, int *old_size, int size)
   int i;
 
   if (pointer==NULL)
-    pointer=MemAlloc(size);
+    pointer=(int *)MemAlloc(size);
   else if (size<*old_size)
     return(pointer);
   else {
     for (i=0;i<num_blocks;i++) {
       if (mem_blocks[i]==pointer) {
         free(pointer);
-        pointer=MemAlloc(size);
+        pointer=(int *)MemAlloc(size);
         mem_blocks[i]=pointer;
         *old_size=size;
         return(pointer);

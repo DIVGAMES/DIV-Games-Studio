@@ -74,7 +74,7 @@ void *CacheAlloc(VPELong size)
 
   if (size<=0)
     FatalError(ER_CACHE0,NULL);
-  ptr=MemZAlloc(size);
+  ptr=(VPEByte *)MemZAlloc(size);
   if (ptr==NULL) {
     FatalError(ER_MEMORY,NULL);
   }
@@ -91,7 +91,7 @@ void *AddEntry(struct Table *t)
   char *ptr;
 
   if (t->Number>=t->Allocated) {    // Additional allocation
-    ptr=CacheAlloc(RES_INC*t->Size);
+    ptr=(char *)CacheAlloc(RES_INC*t->Size);
     t->Allocated+=RES_INC;
     Blocks[NumBlocks]=ptr;
     NumBlocks++;

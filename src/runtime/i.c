@@ -409,7 +409,7 @@ extern int find_status;
 
 #include "sysdac.h"
 time_t dtime;
-memptrsize stack[65535];
+memptrsize *stack[65535];
 
 void inicializacion (void) {
 //  FILE * f=NULL;
@@ -768,7 +768,7 @@ void guarda_pila(int id, int sp1, int sp2) {
 
 void carga_pila(int id) {
   int n;
-  int32_t * p;
+  memptrsize * p;
   if (mem[id+_SP]) {
     p=stack[mem[id+_SP]];
     
@@ -784,7 +784,7 @@ void carga_pila(int id) {
 }
 
 void actualiza_pila(int id, int valor) {
-  int32_t * p;
+  memptrsize * p;
   if (mem[id+_SP]) {
     p=stack[mem[id+_SP]];
     p[p[1]-p[0]+2]=valor;
@@ -2334,6 +2334,7 @@ if(m) {
         }
 
         kbdInit();
+#ifdef JOYSTICKS
 #ifdef DEBUG
   printf("Looking for joysticks\n");
 #endif
@@ -2353,7 +2354,7 @@ if(m) {
 	} else {
 		joy_status = 0;
 	}
-
+#endif
 
         interprete();        
 #ifndef __EMSCRIPTEN__

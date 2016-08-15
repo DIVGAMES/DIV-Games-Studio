@@ -86,14 +86,15 @@ void load_wld(void)
     if (m==-1) goto wldfuera;
     if (m==-2) { pila[sp]=0; e(100); return; }
     if (m<=0) { pila[sp]=0; e(200); return; }
-    buffer=packptr; size=m;
+    buffer=(char *)packptr; 
+    size=m;
   } else {
     wldfuera:
     if ((fichero=div_open_file((char*)&mem[text_offset+nombre]))==NULL) {
       e(159); vpe_inicializada=0; return;
     } else {
       fseek(fichero,0,SEEK_END); size=ftell(fichero);
-      if ((buffer=(byte *)malloc(size))!=NULL) {
+      if ((buffer=(char *)malloc(size))!=NULL) {
         fseek(fichero,0,SEEK_SET);
         fread(buffer,1,size,fichero);
         fclose(fichero);
@@ -258,7 +259,7 @@ void loop_mode8(void)
       ancho=my_region->x1-my_region->x0;
       alto=my_region->y1-my_region->y0;
       InitGraph((char *)(copia+my_region->y0*vga_an+my_region->x0),ancho,alto);    // Init gfx system
-      SetActiveView(m8[i].height,mem[m8[i].camera+_M8_Object],ancho,alto,(char *)(copia+my_region->y0*vga_an+my_region->x0),vga_an);
+      SetActiveView(m8[i].height,mem[m8[i].camera+_M8_Object],ancho,alto,(unsigned char *)(copia+my_region->y0*vga_an+my_region->x0),vga_an);
       if (m8[i].angle>128)
         m8[i].angle=128;
       if (m8[i].angle<-128)

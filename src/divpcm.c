@@ -368,15 +368,15 @@ void mostrar_mod_meters(void)
 //      wbox(v.ptr, an, al, c1, 22, 39, 6, 9);
 //      wbox(v.ptr, an, al, c1, 44, 39, 6, 9);
 
-      wwrite(v.ptr, an, al, 29, 40, 2, "L ", c1);
-      wwrite(v.ptr, an, al, 28, 40, 2, "L ", c4);
+      wwrite(v.ptr, an, al, 29, 40, 2, (uint8_t *)"L ", c1);
+      wwrite(v.ptr, an, al, 28, 40, 2, (uint8_t *)"L ", c4);
       sprintf(cwork,"%03d",GetSongLine());
-      wwrite(v.ptr, an, al, 42, 40, 2, cwork, c3);
+      wwrite(v.ptr, an, al, 42, 40, 2, (uint8_t *)cwork, c3);
 
-      wwrite(v.ptr, an, al, 52, 40, 2, "P ", c1);
-      wwrite(v.ptr, an, al, 51, 40, 2, "P ", c4);
+      wwrite(v.ptr, an, al, 52, 40, 2, (uint8_t *)"P ", c1);
+      wwrite(v.ptr, an, al, 51, 40, 2, (uint8_t *)"P ", c4);
       sprintf(cwork,"%03d",GetSongPos());
-      wwrite(v.ptr, an, al, 64, 40, 2, cwork, c3);
+      wwrite(v.ptr, an, al, 64, 40, 2, (uint8_t *)cwork, c3);
 
       ancho_barra = (v.an-4*big2)/SongChannels;
 
@@ -468,7 +468,7 @@ Mix_Chunk *DIVMIX_LoadPCM(char *path) {
     iLen = Len + 50;
 
     if(dst==NULL)
-      return(-1);
+      return((Mix_Chunk*)-1);
 
     memset(dst,0,(int)Len+40);
     fread(ptr,1,Len,f);
@@ -1055,7 +1055,7 @@ void PlaySong(char *pathname)
 		v_texto=strdup((char *)Mix_GetError());//texto[46];
     if(strlen(v_texto)==0) {
       free(v_texto);
-      v_texto=strdup(texto[46]);
+      v_texto=strdup((char *)texto[46]);
     }
 		dialogo(err0);
     free(v_texto);

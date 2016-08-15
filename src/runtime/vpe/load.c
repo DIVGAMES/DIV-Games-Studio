@@ -112,11 +112,11 @@ void LoadZone(char *Buffer)
   for(n=0;n<Header->NumRegions;n++)
   {
     new_region=(struct Region *)Regions.ptr[n];
-    t1=(int)new_region->Above;
-    t2=(int)new_region->Below;
-    if (t1<0) new_region->Above=NULL;
+//    t1=(int32_t)new_region->Above;
+//    t2=(int32_t)new_region->Below;
+    if (new_region->Above<0) new_region->Above=NULL;
     else new_region->Above=(struct Region *)Regions.ptr[t1];
-    if (t2<0) new_region->Below=NULL;
+    if (new_region->Below<0) new_region->Below=NULL;
     else new_region->Below=(struct Region *)Regions.ptr[t2];
   }
 
@@ -350,7 +350,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
     if( piccode<1000 && piccode>0 )
     {
       sprintf(combo_error,"%s %d %s %d",text[177], piccode, text[178], num_fpg);
-      text[176]=combo_error;
+      text[176]=(unsigned char *)combo_error;
       error_vpe=176;
       return(NULL);
     }
@@ -427,15 +427,15 @@ void LoadPic(struct PicInfo *pic)
         default:  e(158);
                   pic->Width=pic->Height=2;
                   pic->Width2=1;
-                  pic->Raw=CacheAlloc(4);
+                  pic->Raw=(VPEByte *)CacheAlloc(4);
                   find_color(0,0,0);
                   memset(pic->Raw,find_col,4);
                   pic->Used++;
                   return;
       }
       size=pic->Width*pic->Height;
-      pic->Raw=(char *)(fpg_grf[i]+16+n);
-      ptr=pic->Raw;
+      pic->Raw=(unsigned char *)(fpg_grf[i]+16+n);
+      ptr=(char *)pic->Raw;
       if (*(fpg_grf[i]+1)!=-1) {
         //---------------------------------------------------------------------
         // Roto la textura 90 grados para uso interno de las VPE
@@ -558,7 +558,7 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
       if( piccode<1000 && piccode>0 )
       {
         sprintf(combo_error,"%s %d %s %d",text[177], piccode, text[178], num_fpg);
-        text[176]=combo_error;
+        text[176]=(unsigned char *)combo_error;
         error_vpe=176;
         return(NULL);
       }
@@ -614,7 +614,8 @@ void LoadPic2(struct PicInfo *pic)
       //-----------------------------------------------------------------------
       // Roto la textura 90 grados para uso interno de las VPE
       //-----------------------------------------------------------------------
-      ptr=pic->Raw=(char *)MemRealloc(tex_pointer,&tex_size,size);
+      pic->Raw=(unsigned char *)MemRealloc(tex_pointer,&tex_size,size);
+      ptr=(char *)pic->Raw;
       ancho=pic->Width;
       alto=pic->Height;
       for (i=0;i<ancho;i++) {
@@ -629,7 +630,7 @@ void LoadPic2(struct PicInfo *pic)
     else {
       pic->Width=pic->Height=2;
       pic->Width2=1;
-      pic->Raw=CacheAlloc(4);
+      pic->Raw=(VPEByte *)CacheAlloc(4);
       find_color(0,0,0);
       memset(pic->Raw,find_col,4);
     }

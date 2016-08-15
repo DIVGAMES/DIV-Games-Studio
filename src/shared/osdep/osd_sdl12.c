@@ -47,7 +47,7 @@ OSDEP_VMode ** OSDEP_ListModes(void) {
 	}
 
 	if(modes == (SDL_Rect **)-1) {
-		return -1;
+		return (OSDEP_VMode **)-1;
 	}
 
 	for(i=0;modes[i];++i) {
@@ -98,20 +98,21 @@ int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor
 }
 
 // Joysticks
+#ifdef JOYSTICK
 int32_t OSDEP_NumJoysticks(void) {
 	return SDL_NumJoysticks();
 }
 
 int OSDEP_JoystickNumButtons(int n) {
-	return SDL_JoystickNumButtons(n);
+	return SDL_JoystickNumButtons((SDL_Joystick *)n);
 }
 
 int OSDEP_JoystickNumHats(int n) {
-	return SDL_JoystickNumHats(n);
+	return SDL_JoystickNumHats((SDL_Joystick *)n);
 }
 
 int OSDEP_JoystickNumAxes(int n) {
-	return SDL_JoystickNumAxes(n);
+	return SDL_JoystickNumAxes((SDL_Joystick *)n);
 }
 
 uint8_t OSDEP_JoystickGetButton(OSDEP_Joystick *joystick, int button) {
@@ -131,9 +132,11 @@ void OSDEP_JoystickClose(OSDEP_Joystick *joy) {
 	return;
 }
 
-char * OSDEP_JoystickName(int n) {
+char * OSDEP_JoystickName(OSDEP_Joystick *n) {
 	return SDL_JoystickName(n);
 }
+
+#endif
 
 void OSDEP_keyInit(void) {
 

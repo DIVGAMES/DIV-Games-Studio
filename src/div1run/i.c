@@ -139,9 +139,9 @@ int main(int argc,char * argv[]) {
 	
 	OSDEP_Init();
 
+#ifdef JOYSTICK
   if(OSDEP_NumJoysticks() > 0) { 
 		divjoy = OSDEP_JoystickOpen(0);
-		
 
 //printf("NUmhats: %d\nNumButtons: %d",SDL_JoystickNumHats(divjoy),SDL_JoystickNumButtons(divjoy));
 
@@ -151,6 +151,7 @@ int main(int argc,char * argv[]) {
 	}
 		
 	}
+#endif
 
   #ifndef DEBUG
   if(1) {

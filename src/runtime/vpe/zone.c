@@ -32,7 +32,7 @@ struct Point *DelPoint(struct Point *pp)
   if (i<0) return(pp);
 
 // Delete
-  return(DelEntry(&Points,i));
+  return((Point *)DelEntry(&Points,i));
 }
 
 
@@ -44,7 +44,7 @@ struct Object *AddObject(void)
   return(po);
 }
 
-int DelObject(struct Object *po)
+struct Object * DelObject(struct Object *po)
 {
   int i;
 
@@ -53,14 +53,14 @@ int DelObject(struct Object *po)
     if (Objects.ptr[i]==po) break;
   }
 
-  if (i<0) return((int)po);
+  if (i<0) return(po);
 
 // Remove object from region's list
   ClearObjRegion(po);
 // Update, delete etc
 //  return(DelEntry(&Objects,i));
   DelEntry(&Objects,i);
-  return(i);
+  return((Object *)i);
 }
 
 void SetObjRegion(struct Object *pObject, struct Region *pRegion)

@@ -247,7 +247,7 @@ void  TexAlloc2(struct TexCon *,int, int num_fpg); // Allocate/load a texture
 // VPE resource management
 //=========================
 struct Object  *AddObject(void);    // Add a new object
-int             DelObject(struct Object *); // Delete an object
+struct Object  *DelObject(struct Object *); // Delete an object
 struct Point   *AddPoint(void);     // Add a new point
 struct Point   *DelPoint(struct Point *); // Delete a point
 struct Region  *FindRegion(VPEFixed,VPEFixed,VPEFixed,int);// Find region from coords

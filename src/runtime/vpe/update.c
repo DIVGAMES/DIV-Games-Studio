@@ -13,7 +13,7 @@ void UpdateZone(void)
   // Actualiza los objetos
   //---------------------------------------------------------------------------
   for (i=0;i<Objects.Number;i++)
-    DoObjectUpdate(Objects.ptr[i]);
+    DoObjectUpdate((struct Object *)Objects.ptr[i]);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

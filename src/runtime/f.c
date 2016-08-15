@@ -208,7 +208,7 @@ FILE * open_multi(char *file, char *mode) {
   strcpy(full,(char*)file); // full filename
 printf("Trying to open %s\n",file);
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 #endif
 
@@ -235,7 +235,7 @@ printf("Trying to open %s\n",file);
     return f;
 
 #ifdef DEBUG  
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 #endif
 
@@ -245,7 +245,7 @@ printf("Trying to open %s\n",file);
   return f;
 
 #ifdef DEBUG
-  if ( f=fpopen(full) )
+  if ( f=fpopen((byte *)full) )
     return f;
 #endif
     
@@ -256,7 +256,7 @@ printf("Trying to open %s\n",file);
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 #endif
 
@@ -266,7 +266,7 @@ printf("Trying to open %s\n",file);
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 #endif
 
@@ -276,7 +276,7 @@ printf("Trying to open %s\n",file);
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 #endif    
 
@@ -295,7 +295,7 @@ printf("Trying to open %s\n",file);
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 #endif
 
@@ -305,12 +305,12 @@ printf("Trying to open %s\n",file);
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 #endif
 
 #ifdef ZLIB
-      if(f=memz_open_file(file))
+      if(f=memz_open_file((byte *)file))
         return f;
 #endif
 
@@ -470,7 +470,7 @@ void load_pal(void) {
     free(packptr);
   } else {
     palfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(102); return;
     } else {
       fread(pal,1,1352,es); fclose(es);
@@ -494,7 +494,7 @@ void load_pal(void) {
               free(packptr);
             } else {
               palfuera2:
-              if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+              if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
                 pila[sp]=0; e(102); return;
               } else {
                 fseek(es,-768,SEEK_END);
@@ -687,7 +687,7 @@ void load_map(void) {
     ptr=packptr; file_len=m;
   } else {
     mapfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(143); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -842,7 +842,7 @@ void load_fpg(void) {
 #ifdef STDOUTLOG
     printf("fpg wanted is [%s]\n",&mem[pila[sp]]);
 #endif
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(105); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1223,7 +1223,7 @@ void load_fnt(void) {
     fonts[ifonts]=ptr;
   } else {
     fntfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(114); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1296,7 +1296,7 @@ void checkpal_font(int ifonts) {
         free(packptr);
       } else {
         fntfuera:
-        if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) return; else {
+        if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) return; else {
           fseek(es,0,SEEK_END); file_len=ftell(es);
           if (file_len!=f_i[ifonts].len) return;
           fseek(es,0,SEEK_SET);
@@ -1846,7 +1846,7 @@ FILE * open_save_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
-  f = open_multi(file,"w");
+  f = open_multi((char *)file,"w");
   return f;
 }
 
@@ -1883,7 +1883,7 @@ FILE * open_save_file(byte * file) {
   
   printf("Looking for save file: %s\n",file);
 
-  f=open_multi(file,"wb");
+  f=open_multi((char *)file,"wb");
   return f;
 }
 
@@ -1920,7 +1920,7 @@ void load(void) {
   if (!capar(offset)) { pila[sp]=0; e(125); return; }
   printf("loading data from: %s\n",(byte*)&mem[pila[sp]]);
   
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) { 
+  if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) { 
 	  printf("not found\n");
 	  pila[sp]=0; 
 #ifdef DEBUG
@@ -2041,7 +2041,7 @@ void load_pcm(void) {
     ptr=(char *)packptr; file_len=m;
   } else {
     pcmfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(128); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2160,7 +2160,7 @@ void load_song(void) {
     ptr=(char *)packptr; file_len=m;
   } else {
     songfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(167); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2274,7 +2274,7 @@ void start_fli(void) {
   y=pila[sp--]; x=pila[sp--];
 
 #ifdef USE_FLI
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+  if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
     pila[sp]=0; e(147);
   } else {
     fclose(es);
@@ -2736,11 +2736,13 @@ void get_real_point(void) {
 void get_joy_button(void) {
 #ifndef DOS
 // SDL joypad
-if(divjoy && joy_status) {
-pila[sp]=OSDEP_JoystickGetButton(divjoy,pila[sp]);
-} else {
-pila[sp]=0;
-}
+#ifdef JOYSTICK
+if(divjoy && joy_status) 
+  pila[sp]=OSDEP_JoystickGetButton(divjoy,pila[sp]);
+else 
+#endif
+  pila[sp]=0;
+
 
 #else
    if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(134); return; }
@@ -2756,17 +2758,23 @@ int ej[4]={-1,-1,-1,-1};
 
 void get_joy_position(void) {
    if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(134); return; }
-   
+#ifdef JOYSTICK
    pila[sp]=joy_position(pila[sp]);
+#else
+   pila[sp]=0;
+#endif
+
 }
 
 int joy_position(int eje)
 {
 
 #ifndef DOS
-
+#ifdef JOYSTICK
 return OSDEP_JoystickGetAxis(divjoy,pila[sp])/100;
-
+#else
+return 0;
+#endif
 
 #else
 
@@ -3238,7 +3246,7 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
 
 #ifdef DEBUG
 // check for file in prg dir
-	f=__fpopen(full,modo);
+	f=__fpopen((byte *)full,modo);
 #endif
 
   if(f==NULL) {
