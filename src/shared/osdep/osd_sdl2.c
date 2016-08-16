@@ -154,6 +154,7 @@ int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor
 	return 1;
 }
 
+#ifdef JOYSTICK
 // Joysticks
 int32_t OSDEP_NumJoysticks(void) {
 	fprintf(stdout, "%s\n", __FUNCTION__);
@@ -192,6 +193,8 @@ void OSDEP_JoystickClose(OSDEP_Joystick *joy) {
 char * OSDEP_JoystickName(int n) {
 	return SDL_JoystickName(n);
 }
+
+#endif
 
 void OSDEP_keyInit(void) {
 	

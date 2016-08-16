@@ -2334,7 +2334,7 @@ if(m) {
         }
 
         kbdInit();
-#ifdef JOYSTICKS
+#ifdef JOYSTICK
 #ifdef DEBUG
   printf("Looking for joysticks\n");
 #endif
