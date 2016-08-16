@@ -150,10 +150,10 @@ void put_bw(int x,int y,int n) { // Puts a contrasting graphic (mouse edition )
 
 void memxchg(byte *d, byte *s, int n) {
   int m,x;
-
-  if (m=n/4) do {
+  int si = sizeof(int);
+  if (m=n/si) do {
     x=*(int*)s; *(int*)s=*(int*)d; *(int*)d=x;
-    d+=4; s+=4;
+    d+=si; s+=si;
   } while (--m);
 
   if (n&=3) do {
