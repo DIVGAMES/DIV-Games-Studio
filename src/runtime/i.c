@@ -1182,7 +1182,7 @@ void frame_start(void) {
 
 		do {
 #ifdef WIN32
-			OSDEP_Delay(((int)freloj-old_reloj)-1);
+			SDL_Delay(((int)freloj-old_reloj)-1);
 #else
 			sched_yield();			
 //			usleep(((int)freloj-old_reloj)-1); 
