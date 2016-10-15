@@ -249,6 +249,7 @@ void menu_programas2(void) {
           source_len=ventana[n].prg->file_lon;
           v_ventana=n;
           ejecutar_programa=0;
+          strcpy(tipo[8].path,ventana[n].prg->path);
           compilar_programa();
           if(numero_error!=-1) {
             goto_error();
@@ -270,6 +271,7 @@ void menu_programas2(void) {
           source_len=ventana[n].prg->file_lon;
           v_ventana=n;
           if (v.estado==7) ejecutar_programa=1; else ejecutar_programa=3;
+          strcpy(tipo[8].path,ventana[n].prg->path);
           compilar_programa();
           if(numero_error!=-1) {
             goto_error();
@@ -288,6 +290,7 @@ void menu_programas2(void) {
           v_ventana=n;
           ejecutar_programa=2;
           DaniDel("system/exec.ins");
+          strcpy(tipo[8].path,ventana[n].prg->path);
           compilar_programa();
           if(numero_error!=-1) {
             goto_error();

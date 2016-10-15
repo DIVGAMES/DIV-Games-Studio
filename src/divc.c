@@ -1866,7 +1866,12 @@ void lexico(void) {
       n=(strlen((char *)ivnom.b)+ptr4)/4;
       memcpy(&mem_ory[itxt],ivnom.b,strlen((char *)ivnom.b)+1);
 
+//      fprintf(stdout,"FILE: %s\n",(char *)ivnom.b);
+//	      fprintf(stdout,"LOOKING FOR FILE: %s [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+
       if ((f=div_open_file((char *)ivnom.b))!=NULL) {
+//	      fprintf(stdout,"FOUND FILE: %s [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+
         empaquetable=0;
 
         // Determinar si el archivo es empaquetable ...
@@ -1874,11 +1879,11 @@ void lexico(void) {
         _splitpath(full,(char *)drive,(char *)dir,(char *)fname,(char *)ext);
         strupr((char *)ext);
 
-        if (!strcmp((char *)ext,".MOD") || !strcmp((char *)ext,".S3M") || !strcmp((char *)ext,".XM")) {
+        if (!stricmp((char *)ext,".MOD") || !stricmp((char *)ext,".S3M") || !stricmp((char *)ext,".XM")) {
           empaquetable=1;
-        } else if (!strcmp((char *)ext,".PCM")) {
+        } else if (!stricmp((char *)ext,".PCM")) {
           empaquetable=1;
-        } else if (!strcmp((char *)ext,".PCX")) {
+        } else if (!stricmp((char *)ext,".PCX")) {
           if (fread(cwork,1,66,f)>0) {
             if(cwork[2]==1 && cwork[3]==8 && cwork[65]==1) empaquetable=1;
           }
@@ -1893,10 +1898,14 @@ void lexico(void) {
 
         fclose(f);
 
-        if (IsWAV((char *)ivnom.b)) empaquetable=1;
+        if (IsWAV(full)) empaquetable=1;
+
+        // ???
+		empaquetable=1;
 
         if (!empaquetable || en_fopen) fwrite("+",1,1,lins);
         fwrite(full,1,strlen(full)+1,lins);
+        fflush(lins);
       }
 
       pieza_num=itxt; itxt+=n; break;
@@ -7414,51 +7423,156 @@ void l_ensamblador (void) {
 //  Funcion para localizar y abrir un fichero (pal,fpg,fnt,...)
 //  Esta funciขn debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+FILE *__fpopen (byte *file, char *mode) {
+	
+	char fprgpath[_MAX_PATH*2];
+	FILE *f;
 
-FILE * div_open_file(char * file) {
-  FILE * f;
+	strcpy(fprgpath,&tipo[8]);
+	strcat(fprgpath,"/");
+	strcat(fprgpath,full);
+	
+	if ((f=fopen(fprgpath,mode))) { // prgpath/file
+		strcpy(full, fprgpath);
+		printf("Found %s in prg dir [%s]\n",file, prgpath);
+		return f;
+	}
+
+	return NULL;
+	
+}
+
+
+FILE * fpopen ( byte * file) {
+	return __fpopen(file,"rb");
+}
+
+FILE * open_multi(char *file, char *mode) {
+  FILE *f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
-  
-  char *ff = file;
 
-if(strlen(file)>_MAX_PATH+1) 
-	return NULL;
-	
-//printf("input string: %s %d %d\n",file,strlen(file),_MAX_PATH+1);
+  char remote[255];
 
-  while (*ff!=0 ) {
-	  if(*ff =='\\') *ff='/';
-	  ff++;
+  char *ff = (char *)file;
+
+  while (*ff!=0) {
+    if(*ff =='\\') *ff='/';
+      ff++;
   }
+
+  strcpy(full,(char*)file); // full filename
+//fprintf(stdout,"Trying to open %s\n",file);
+  if ( f = fpopen(full))
+    return f;
+
+  if ((f=fopen(full,mode))) // "paz\fixero.est"
+    return f;
+
+    
+  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) 
+    return(NULL);
+
+  _splitpath(full,drive,dir,fname,ext);
+
+  if (strchr(ext,'.')==NULL) 
+    strcpy(full,ext); 
+  else 
+    strcpy(full,strchr(ext,'.')+1);
+    
+    if (strlen(full) && file[0]!='/') 
+    strcat(full,"/");
+
+    strcat(full,(char*)file);
+
+  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+    return f;
+
+  if ( f = fpopen(full))
+    return f;
+
+  strupr(full);
+
+  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+  return f;
+
+  if ( f=fpopen(full) )
+    return f;
+    
+  strcpy(full,fname);
+  strcat(full,ext);
+
+  if ((f=fopen(full,mode))) // "fixero.est"
+    return f;
+
+  if ( f = fpopen(full))
+    return f;
+
+  strupr(full);
+
+  if ((f=fopen(full,mode))) // "fixero.est"
+    return f;
+
+  if ( f = fpopen(full))
+    return f;
+
+  strlwr(full);
+
+  if ((f=fopen(full,mode))) // "fixero.est"
+    return f;
+
+  if ( f = fpopen(full))
+    return f;
+
+  if (strchr(ext,'.')==NULL)
+    strcpy(full,ext); 
+  else 
+    strcpy(full,strchr(ext,'.')+1);
   
-  strcpy((char *)full,file);  
+  if (strlen(full))
+    strcat(full,"/");
 
-//printf("full: %s\n",full);
+  strcat(full,fname);
+  strcat(full,ext);
 
-  if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
-    if (_fullpath(full,(char *)file,_MAX_PATH)==NULL) return(NULL);
-    _splitpath(full,drive,dir,fname,ext);
-    if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-    if (strlen(full) && file[0]!='/') strcat(full,"/");
-    strcat(full,file);
-    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
-      strcpy(full,fname);
-      strcat(full,ext);
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
-        if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-        if (strlen(full)) strcat(full,"/");
-        strcat(full,fname);
-        strcat(full,ext);
-        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
-          strcpy(full,"");
-          return(NULL);
-        } else return(f);
-      } else return(f);
-    } else return(f);
-  } else return(f);
+  if ((f=fopen(full,mode))) // "est\fixero.est"
+    return f;
+
+  if ( f = fpopen(full))
+    return f;
+
+  strlwr(full);
+
+  if ((f=fopen(full,mode))) // "est\fixero.est"
+    return f;
+
+  if ( f = fpopen(full))
+    return f;
+
+
+}
+
+FILE * div_open_file(char * file) {
+  FILE * f,*fe;
+  char *ff = (char *)file;
+
+#ifdef DEBUG
+  printf("opening file: [%s]\n",file);
+#endif
+
+  if(strlen((const char *)file)<1)
+  	return NULL;
+
+  if(strlen((char *)file)==0) 
+    return NULL;
+
+  f=open_multi(file,"r");
+
+  if(!f)
+  	strcpy(full,"");
+  return(f);
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ

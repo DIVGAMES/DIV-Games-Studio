@@ -19,14 +19,17 @@
 void Setup0();
 void Setupm0();
 void Setupe0();
-void crear_imagen_install(char * file, int errores);
+void create_install_image(char * file, int errores);
 int is_point(int * ptr, int n);
 int comprimir_fichero(FILE * fin, FILE * fout, unsigned long len);
-int copiar_fichero(FILE * fin, FILE * fout, unsigned long len, int patch);
+int copy_file(FILE * fin, FILE * fout, unsigned long len, int patch);
 int FileCopyICE(char *org,char *dest,int vols,int _texto);
 
+// for packfiles
 
+int pack(char *runtime, char *exefile, char *datafile, char *outfile);
 
+#include "shared/lib/zip/src/zzip.h"
 
 char AppName[128];
 char Copy_Right[128];
@@ -190,7 +193,7 @@ void Setup2() {
             v_texto=(char *)texto[46]; dialogo(err0);
           } else {
             ptrimg=imagen_install;
-            crear_imagen_install(full,1);
+            create_install_image(full,1);
             if (imagen_install!=NULL) {
               free(ptrimg);
               strcpy(ifile1,full);
@@ -331,7 +334,9 @@ strcpy(tbuf,"                    2015 ");
     strcat(dirhead.pack,".PAK");
   }
 
+#ifdef WIN32
   strcat(ExeGen,".EXE");
+#endif
 
   if ((f=fopen("install/INS_TEXT.ASC","rb"))!=NULL) {
     fread(MsgExe,1,128,f);
@@ -397,7 +402,7 @@ strcpy(tbuf,"                    2015 ");
 // Crea el thumbnail del instalador de 142x87 (*big2)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void crear_imagen_install(char * file, int errores) {
+void create_install_image(char * file, int errores) {
   FILE * es;
   byte * p, *fpg;
   int * ptr;
@@ -647,6 +652,34 @@ int GetFileLen(FILE *file) {
   return(d);
 }
 
+void create_zip(char *dWork) {
+
+  char out[1024];
+
+  strcpy(out, dWork);
+  strcat(out, "/");
+  strcat(out, ExeGen);
+
+  struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 0);
+
+  if(dirhead.nfiles>0) {
+    zip_entry_open(zip, "packfile.pak");
+    zip_entry_fwrite(zip, "install/PACKFILE.DAT");
+    zip_entry_close(zip);
+  } 
+
+  zip_close(zip);
+
+  fprintf(stdout, "Writing to: %s\n",out);
+
+  pack("system/"RUNTIME,"system/EXEC.EXE","foo.zip",out);
+
+  DaniDel("foo.zip");
+
+
+}
+
+
 void crear_instalacion(void) {
 
   FILE *fin,*fout;
@@ -665,7 +698,7 @@ void crear_instalacion(void) {
   char ext[_MAX_EXT+1];
 
   if (imagen_install==NULL) {
-//    crear_imagen_install(ifile1,0);
+//    create_install_image(ifile1,0);
   }
 
   dialogo(Setup0); if(!v_aceptar) return;
@@ -723,13 +756,24 @@ strcpy(cWork,full);
 
   fin=fopen("system/exec.ins","rb"); fseek(fin,0,SEEK_END); n=ftell(fin); fclose(fin);
 
-  fin=fopen("install/setup.ins","rb"); fseek(fin,0,SEEK_END); x=ftell(fin);
+  fin=fopen("install/setup.ins","rb"); 
+  if(fin) {
+    fseek(fin,0,SEEK_END); 
+    x=ftell(fin);
+  }
+
   if (!include_setup) x=0;
   if ((__ins=_ins=ins=(char *) malloc(n+x+32))==NULL) {
     v_texto=(char *)texto[357]; dialogo(err0);
     fclose(fin); return;
-  } fseek(fin,0,SEEK_SET); x=fread(_ins,1,x,fin); fclose(fin);
+  } 
 
+  if(fin) {
+    fseek(fin,0,SEEK_SET); 
+    x=fread(_ins,1,x,fin); 
+    fclose(fin);
+
+  }
   fin=fopen("system/exec.ins","rb"); n=fread(_ins+x,1,n,fin)+x; fclose(fin);
 
   nfiles=2; if (include_setup) nfiles++;
@@ -755,7 +799,7 @@ strcpy(cWork,full);
       _splitpath(ins,drive,dir,fname,ext);
       strcpy(MiHeaderSetup[x].name,fname);
       strcat(MiHeaderSetup[x].name,ext);
-      strupr(MiHeaderSetup[x].name);
+//      strupr(MiHeaderSetup[x].name);
       for (n=0;n<x;n++) {
         if (!strcmp(MiHeaderSetup[n].name,MiHeaderSetup[x].name)) break;
       }
@@ -785,7 +829,7 @@ strcpy(cWork,full);
       } else {
         ins+=strlen(ins)+1;
         strcpy((char *)__ins,(char *)chr);
-        strupr(__ins);
+        //strupr(__ins);
         __ins+=strlen(__ins)+1;
         if (topack) dirhead.nfiles++;
       }
@@ -794,7 +838,12 @@ strcpy(cWork,full);
 
   free(MiHeaderSetup); ins=_ins;
 
+// ALWAYS pack files
+
+#if 0
   if (!empaquetar) dirhead.nfiles=0; // Cuando no deba generarse el PACKFILE
+#endif
+
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -864,7 +913,6 @@ strcpy(cWork,full);
     ins=__ins=_ins;
 
     for(n=0;n<dirhead.nfiles;n++) {
-
       Progress(cWork,n,dirhead.nfiles);
 
       while (*ins=='+') {
@@ -872,6 +920,7 @@ strcpy(cWork,full);
         strcpy(__ins,(char *)chr); __ins+=strlen(__ins)+1;
       }
 
+      fprintf(stdout,"PACKING FILE: %s\n",ins);
       if ((fin=fopen(ins,"rb"))==NULL) {
         v_texto=(char *)texto[231]; dialogo(err0);
         free(hdir); fclose(fout); free(_ins); return;
@@ -926,6 +975,12 @@ strcpy(cWork,full);
 
   }
 
+  create_zip(full);
+
+
+// the rest is old BS
+
+#if 0
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
    // Crea el INSTALL\DIV32RUN.DLL a partir de (INSTALL\DIV32RUN.INS/386 + SYSTEM\LENGUAJE.INT)
@@ -947,7 +1002,7 @@ strcpy(cWork,full);
   x=ftell(fin);
   fseek(fin,0,SEEK_SET);
 
-  if (copiar_fichero(fin,fout,(unsigned long)x,0)==-1) {
+  if (copy_file(fin,fout,(unsigned long)x,0)==-1) {
     v_texto=(char *)texto[358]; dialogo(err0);
     fclose(fout); fclose(fin); free(_ins); return;
   }
@@ -963,7 +1018,7 @@ strcpy(cWork,full);
   x=ftell(fin);
   fseek(fin,0,SEEK_SET);
 
-  if (copiar_fichero(fin,fout,(unsigned long)x,0)==-1) {
+  if (copy_file(fin,fout,(unsigned long)x,0)==-1) {
     v_texto=(char *)texto[358]; dialogo(err0);
     fclose(fout); fclose(fin); free(_ins); return;
   }
@@ -1041,7 +1096,7 @@ strcpy(cWork,full);
     if (topack) {
       MiHeaderSetup[x].len1=comprimir_fichero(fin,fout,(unsigned long)MiHeaderSetup[x].len2);
     } else {
-      MiHeaderSetup[x].len1=copiar_fichero(fin,fout,(unsigned long)MiHeaderSetup[x].len2,((!x)&&(!pentium)));
+      MiHeaderSetup[x].len1=copy_file(fin,fout,(unsigned long)MiHeaderSetup[x].len2,((!x)&&(!pentium)));
     }
 
     if (MiHeaderSetup[x].len1==-1) {
@@ -1062,6 +1117,8 @@ strcpy(cWork,full);
   TotLen+=PackSize;
   fseek(fout,0,SEEK_END);
   fclose(fout);
+
+
   free(MiHeaderSetup);
 
   Progress((char *)texto[219],nfiles*100,nfiles*100); // INSTALL.DIV ya creado
@@ -1198,6 +1255,8 @@ strcpy(cWork,full);
 
   DaniDel(cWork);              // Borra el INSTALL.DIV
 
+#endif
+
   v_titulo=(char *)texto[359];        // Di logo indicando el final de la instalaciขn
   strcpy(cWork,(char *)texto[360]);
   strupr(full);
@@ -1240,7 +1299,7 @@ int comprimir_fichero(FILE * fin, FILE * fout, unsigned long len) {
   return(final_len);
 }
 
-int copiar_fichero(FILE * fin, FILE * fout, unsigned long len, int patch) {
+int copy_file(FILE * fin, FILE * fout, unsigned long len, int patch) {
   unsigned char * pin;
 
   if ((pin=(unsigned char*)malloc(len))==NULL) return(-1);
