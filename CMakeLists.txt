@@ -6,6 +6,16 @@ PROJECT(div2015)
 # setup some defaults
 INCLUDE ( ${CMAKE_CURRENT_LIST_DIR}/tools/defaults.cmake )
 
+exec_program(
+    "git"
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ARGS "log -1 --format=%h"
+    OUTPUT_VARIABLE VERSION )
+
+#string( REGEX MATCH "-g.*$" VERSION_SHA1 ${VERSION} )
+#string( REGEX REPLACE "[-g]" "" VERSION_SHA1 ${VERSION_SHA1} )
+
+add_definitions( -DGIT_SHA1="${VERSION}" )
 
 SET(CLANG "C")
 
@@ -138,7 +148,6 @@ IF(HAS_SDL EQUAL 1)
 ENDIF()
 
 IF(HAS_SDL EQUAL 2)
-	MESSAGE(STATUS "Adding SDL2 Library")
 	FIND_PACKAGE(SDL2 REQUIRED sdl2) 
 	include_directories(${SDL2_INCLUDE_DIRS})
 	string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)

@@ -2422,6 +2422,23 @@ void actualiza_caja(int x, int y, int an, int al) {
   int _x=0,_y=0,_an=0,_al=0;
   int salta_x=0,salta_y=0;
 
+
+  char *div_version;
+
+//#define NIGHTLY_VERSION "DIVDX BUILD 01234abcdef"
+
+#ifdef GIT_SHA1
+
+char divver[255];
+strcpy(divver,"DIVDX BUILD ");
+strcat(divver, GIT_SHA1);
+div_version = divver;
+
+#else
+div_version=texto[safe];
+#endif
+
+
   if (x<0) { an+=x; x=0; }
   if (y<0) { al+=y; y=0; }
   if (x+an>vga_an) an=vga_an-x;
@@ -2430,9 +2447,9 @@ void actualiza_caja(int x, int y, int an, int al) {
 
   restaura_tapiz(x,y,an,al);
 
-  if (y<vga_al && y+al>vga_al-8*big2 && x<vga_an && x+an>=vga_an-(text_len(texto[safe])+2)*big2) {
-    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-1-x,vga_al-1-y,18,texto[safe],c0);
-    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-2-x,vga_al-1-y,18,texto[safe],c2);
+  if (y<vga_al && y+al>vga_al-8*big2 && x<vga_an && x+an>=vga_an-(text_len(div_version)+2)*big2) {
+    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-1-x,vga_al-1-y,18,div_version,c0);
+    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-2-x,vga_al-1-y,18,div_version,c2);
   }
 
   for (n=max_windows-1;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al)) {
