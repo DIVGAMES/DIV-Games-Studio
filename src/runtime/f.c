@@ -170,6 +170,8 @@ FILE *__fpopen (byte *file, char *mode) {
 	strcpy(fprgpath,prgpath);
 	strcat(fprgpath,"/");
 	strcat(fprgpath,full);
+
+fprintf(stdout,"Trying to open %s\n",fprgpath);
 	
 	if ((f=fopen(fprgpath,mode))) { // prgpath/file
 		printf("Found %s in prg dir [%s]\n",file, prgpath);
@@ -206,11 +208,13 @@ FILE * open_multi(char *file, char *mode) {
   }
 
   strcpy(full,(char*)file); // full filename
-printf("Trying to open %s\n",file);
+fprintf(stdout,"Trying to open %s\n",file);
 #ifdef DEBUG
   if ( f = fpopen(full))
     return f;
 #endif
+
+fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "paz\fixero.est"
     return f;
@@ -231,6 +235,8 @@ printf("Trying to open %s\n",file);
 
     strcat(full,(char*)file);
 
+fprintf(stdout,"Trying to open %s\n",full);
+
   if ((f=fopen(full,mode))) // "est\paz\fixero.est"
     return f;
 
@@ -240,6 +246,8 @@ printf("Trying to open %s\n",file);
 #endif
 
   strupr(full);
+
+fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "est\paz\fixero.est"
   return f;
@@ -252,6 +260,8 @@ printf("Trying to open %s\n",file);
   strcpy(full,fname);
   strcat(full,ext);
 
+fprintf(stdout,"Trying to open %s\n",full);
+
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
 
@@ -262,6 +272,8 @@ printf("Trying to open %s\n",file);
 
   strupr(full);
 
+fprintf(stdout,"Trying to open %s\n",full);
+
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
 
@@ -271,6 +283,8 @@ printf("Trying to open %s\n",file);
 #endif
 
   strlwr(full);
+
+fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
@@ -310,6 +324,8 @@ printf("Trying to open %s\n",file);
 #endif
 
 #ifdef ZLIB
+  fprintf(stdout,"Trying to open from zip %s\n",file);
+
       if(f=memz_open_file(file))
         return f;
 #endif
@@ -391,7 +407,7 @@ int read_packfile(byte * file) {
   char * ptr;
   int n;
   unsigned long len_desc;
-//printf("trying to read %s from %d files\n",file,npackfiles);
+  fprintf(stdout,"trying to read %s from %d files\n",file,npackfiles);
 
   if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(-1);
 char *ff = (char *)file;
@@ -418,7 +434,14 @@ while (*ff!=0) {
     len_desc=packdir[n].len_desc;
     if ((packptr=(byte *)malloc(len_desc))!=NULL) {
       if ((ptr=(char *)malloc(packdir[n].len))!=NULL) {
-        if ((f=fopen(packfile,"rb"))!=NULL) {
+        if ((f=fopen(packfile,"rb"))==NULL) {
+#ifndef DEBUG
+#ifdef ZLIB
+          f=memz_open_file(packfile);
+#endif
+#endif
+        }
+        if(f!=NULL) {
           fseek(f,packdir[n].offset,SEEK_SET);
           fread(ptr,1,packdir[n].len,f);
           fclose(f);
@@ -1918,10 +1941,21 @@ void load(void) {
 
   offset=pila[sp--];
   if (!capar(offset)) { pila[sp]=0; e(125); return; }
-  printf("loading data from: %s\n",(byte*)&mem[pila[sp]]);
+  fprintf(stdout, "loading data from: %s\n",(byte*)&mem[pila[sp]]);
+
+  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
   
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) { 
-	  printf("not found\n");
+    // if not found, check pak
+    // this way files override paks
+    lon=read_packfile((byte*)&mem[pila[sp]]);
+
+    if(lon>0) {
+      if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
+      memcpy(&mem[offset],packptr,lon);
+      max_reloj+=get_reloj()-old_reloj;
+      return;
+    }
+
 	  pila[sp]=0; 
 #ifdef DEBUG
 		e(126); 
@@ -1929,7 +1963,7 @@ void load(void) {
 	   return; 
   }
 
-//  printf("file len: %d\n",ftell(es));
+  printf("file len: %d\n",ftell(es));
   
   fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }

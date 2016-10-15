@@ -2378,19 +2378,60 @@ return 0;
 
 }
 
+int is_pak(FILE *f, char *name) {
+
+  char head[8];
+  int n,nfiles;
+  int prg_id=0;
+  int id[3];
+  char buf[255];
+
+  fread(head,1,8,f);
+  fread(id,4,3,f);
+  fread(&nfiles,4,1,f);
+
+  if (!strcmp(head,"dat\x1a\x0d\x0a") && nfiles>0) {
+    if (prg_id==id[0] || prg_id==id[1] || prg_id==id[2]) {
+      packdir=(struct _packdir* )malloc(nfiles*sizeof(struct _packdir));
+      //printf("packdir: %x %d\n",packdir,nfiles);
+      if (packdir!=NULL) {
+        if (fread(packdir,sizeof(struct _packdir),nfiles,f)==nfiles) {
+          for (n=0;n<nfiles;n++) {
+            strcpy(buf,packdir[n].filename);
+          }
+    
+          strcpy(packfile,name);
+          npackfiles=nfiles;
+        }
+      }
+
+      return 1;
+    }
+  } 
+
+  return 0;
+
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //  Search the packfile (for installed games)
 //////////////////////////////////////////////////////////////////////////////
 
 void busca_packfile(void) {
-  int prg_id=0;
-  char head[8];
-  int id[3];
+#ifdef ZLIB
+  #ifndef UNZ_MAXFILENAMEINZIP
+    #define UNZ_MAXFILENAMEINZIP (256)
+  #endif
+
+  unzFile *zip=NULL;
+  unz_file_info fileInfo;
+  char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
+#endif
+
   FILE * f;
-  int n,m,nfiles;
+  int n,m;
   struct find_t fileinfo;
-  char buf[255];
+  int prg_id=0;
 
   for (n=0;n<9;n++) { prg_id<<=1; prg_id^=mem[n]; }
 
@@ -2398,29 +2439,41 @@ void busca_packfile(void) {
   while (m==0) {
     f=fopen(fileinfo.name,"rb");
     if (f!=NULL) {
-      fread(head,1,8,f);
-      fread(id,4,3,f);
-      fread(&nfiles,4,1,f);
-      if (!strcmp(head,"dat\x1a\x0d\x0a") && nfiles>0) {
-        if (prg_id==id[0] || prg_id==id[1] || prg_id==id[2]) {
-          packdir=(struct _packdir* )malloc(nfiles*sizeof(struct _packdir));
-          //printf("packdir: %x %d\n",packdir,nfiles);
-          if (packdir!=NULL) {
-            if (fread(packdir,sizeof(struct _packdir),nfiles,f)==nfiles) {
-              for (n=0;n<nfiles;n++) {
-				  strcpy(buf,packdir[n].filename);
-		      }
-              strcpy(packfile,fileinfo.name);
-              npackfiles=nfiles;
-            }
-          }
-          fclose(f);
-          break;
-        }
-      } fclose(f);
+
+      if(is_pak(f,fileinfo.name)) {
+        fclose(f);
+        break;
+      }
+      fclose(f);
     }
     m=_dos_findnext(&fileinfo);
   }
+
+#ifdef ZLIB
+  // look for paks in embedded zip
+  if(datastartpos>0) {
+    zip = unzOpen(exebin);
+    fprintf(stdout,"%x\n",zip);
+    // found zip. search for .pak files
+    if(unzGoToFirstFile(zip)==UNZ_OK) {
+      do {
+        if (unzGetCurrentFileInfo(zip, &fileInfo, szCurrentFileName, sizeof(szCurrentFileName)-1, NULL, 0, NULL, 0) == UNZ_OK) {
+          fprintf(stdout,"found file: %s\n",szCurrentFileName);
+          f = memz_open_file(szCurrentFileName);
+          fprintf(stdout,"TESTING %s\n",szCurrentFileName);
+          if(f) {
+            if(is_pak(f,szCurrentFileName)) {
+              fprintf(stdout,"FOUND PAK IN ZIP %s\n",packfile);
+
+            }
+            fclose(f);
+          }
+        }
+      } while(unzGoToNextFile(zip)!=UNZ_END_OF_LIST_OF_FILE);
+    }
+    unzClose(zip);    
+  }
+#endif
 
 }
 
