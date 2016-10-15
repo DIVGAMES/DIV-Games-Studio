@@ -58,7 +58,11 @@ static int mkpath(const char *path) {
 
     for (p = path; *p && len < MAX_PATH; p++) {
         if (ISSLASH(*p) && len > 0) {
+#ifdef WIN32
+if(mkdir(npath) == -1)
+#else
             if (mkdir(npath, mode) == -1)
+#endif
                 if (errno != EEXIST)  return -1;
         }
         npath[len++] = *p;
