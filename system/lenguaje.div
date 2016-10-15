@@ -457,8 +457,8 @@
 399 "Version 3.01 for evaluation of ..."
 
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-        DIV PROFESIONAL - NUEVOS TEXTOS
-        (Tambien hay textos modificados de los anteriores)
+        PROFESSIONAL DIV - NEW TEXTS
+        (There are also modified texts of the above)
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 400 "Search map"
@@ -646,7 +646,7 @@
 
 545 "Error while reading the animation file"
 
-# Reservado para el mapa de busqueda
+# Reserved for map search
 546 ""
 
 548 "The sound system is deactivated."
@@ -690,12 +690,12 @@
 577 "New"
 
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-        TEXTOS PARA LOS DIFERENTES MENUS DE OPCIONES
+        TEXT FOR DIFFERENT MENU OPTIONS
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-# Los men£s pueden tener hasta 25 opciones, el primero comienza en el texto
-# 750 y los dem s consecutivamente cada 25, los textos que se definen para
-# cada men£, son: nombre_icono.mnu, barra de t¡tulo, opci¢n 1, opcion 2, ...
+# The menus can have up to 25 options, the first start in the text
+# 750 and the others consecutively every 25 s, the texts that are defined for
+# Each menu are: nombre_icono.mnu, title bar, option 1, option 2, ...
 
 750     # Main MENU
 
