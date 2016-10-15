@@ -57,6 +57,8 @@ IF(HAS_DLL)
 	SET(DLLSRC "src/shared/mikedll.c")
 ENDIF()
 
+SET(ZIP_SOURCES "src/shared/lib/zip/src/zip.c")
+
 FILE(GLOB SHARED_RUN "src/shared/run/*.c")
 
 SET(SHARED_RUN ${SHARED_RUN} "src/shared/unzip.c")
@@ -377,6 +379,7 @@ ADD_EXECUTABLE(
 	${VISOR_SOURCES}
 	${DIV_SOURCES} 
 	${JUDAS_SOURCES}
+	${ZIP_SOURCES}
 	${OSDEP}
 	${DLLSRC}
 )
