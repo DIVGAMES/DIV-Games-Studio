@@ -616,14 +616,14 @@ void PE_Free(PE *p)
 	free(p);
 }
 
-FILE * open_file(char * file);
+FILE * div_open_file(char * file);
 
 PE *PE_ReadFN(char *filename)
 {
 FILE *in;
 PE *p;
 
-	if((in=open_file(filename))==NULL)
+	if((in=div_open_file(filename))==NULL)
 	{
 		dll_error="error opening file";
 		return NULL;

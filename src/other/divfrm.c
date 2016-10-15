@@ -501,7 +501,7 @@ int hacer_strfix;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-FILE * open_file(char * file);
+FILE * div_open_file(char * file);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
@@ -1612,7 +1612,7 @@ void lexico(void) {
       n=(strlen(ivnom.b)+4)/4;
       memcpy(&mem_ory[itxt],ivnom.b,strlen(ivnom.b)+1);
 
-      if ((f=open_file(ivnom.b))!=NULL) {
+      if ((f=div_open_file(ivnom.b))!=NULL) {
         empaquetable=0;
 
         // Determine if the file is packable
@@ -6488,7 +6488,7 @@ void linea_ensamblador (void) {
 //  Esta funciขn debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-FILE * open_file(char * file) {
+FILE * div_open_file(char * file) {
   FILE * f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];

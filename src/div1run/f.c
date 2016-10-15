@@ -280,7 +280,7 @@ void _key(void) {
 
 char full[_MAX_PATH+1];
 
-FILE * open_file(byte * file) {
+FILE * div_open_file(byte * file) {
   FILE * f;
   char drive[_MAX_DRIVE+1];
   char dir[_MAX_DIR+1];
@@ -397,7 +397,7 @@ void load_pal(void) {
   byte pal[1352];
   int m,offs=8;
 
-  if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
+  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e102);
   } else {
     fread(pal,1,1352,es); fclose(es);
@@ -468,7 +468,7 @@ void load_map(void) {
   byte * ptr;
   int old_reloj=get_reloj();
 
-  if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
+  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e143);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -556,7 +556,7 @@ void load_fpg(void) {
   } else lst=g[0].grf;
   memset(lst,0,sizeof(int*)*1000);
 
-  if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
+  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e105);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -594,7 +594,7 @@ file_len=1352; // just palette
 
 #ifdef __EMSCRIPTEN__
 // do something different
-es=open_file((byte*)&mem[itxt+pila[sp]]);
+es=div_open_file((byte*)&mem[itxt+pila[sp]]);
 //printf("File pointer: %x\n",es);
 fseek(es,0,SEEK_END); file_len=ftell(es);
 //printf("File len: %d\n",file_len);
@@ -874,7 +874,7 @@ void load_fnt(void) {
 //printf("load font %s\n",(byte*)&mem[itxt+pila[sp]]);
   for (ifonts=1;ifonts<max_fonts;ifonts++) if (!fonts[ifonts]) break;
   if (ifonts==max_fonts) { pila[sp]=0; e(e113); return; }
-  if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
+  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e114);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1432,7 +1432,7 @@ void load(void) {
 
   offset=pila[sp--];
   if (offset<long_header) { pila[sp]=0; e(e125); return; }
-  if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) { pila[sp]=0; e(e126); return; }
+  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) { pila[sp]=0; e(e126); return; }
   fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
   if (offset+lon>imem_max) { pila[sp]=0; e(e125); return; }
   if (fread(&mem[offset],4,lon,es)!=lon) e(e127); fclose(es);
@@ -1506,7 +1506,7 @@ void load_pcm(void) {
   int old_reloj=get_reloj();
 
   loop=pila[sp--];
-  if ((f=open_file((byte*)&mem[itxt+pila[sp]]))!=NULL) {
+  if ((f=div_open_file((byte*)&mem[itxt+pila[sp]]))!=NULL) {
       fseek(f,0,SEEK_END); file_len=ftell(f);
       if ((ptr=(char *)malloc(file_len))!=NULL) {
         fseek(f,0,SEEK_SET);
@@ -1588,7 +1588,7 @@ void start_fli(void) {
 	y=pila[sp--]; x=pila[sp--];
 #ifdef USE_FLI
 
-  if ((es=open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
+  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
     pila[sp]=0; e(e147);
   } else {
     fclose(es);
