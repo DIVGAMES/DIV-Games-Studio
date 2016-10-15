@@ -5,7 +5,7 @@
 #define GLOBALS
 #include "div.h"
 
-// This is the picture of the screen, compressed with RLE (like on PCX's)
+// This is the picture of the screen, compressed with RLE (like on PCXs)
 
 char _hboy[]={
 0,197,2,197,31,30,29,207,28,30,31,195,0,31,30,206,28,194,25,24,28,194,25,24,28,194,25,24,255,28,255,28,
@@ -511,10 +511,12 @@ void buffer_to_video() {
   }
 }
 
-void process_sound(char *sound,int sound_lenght) {
+void process_sound(char *sound,int sound_length) {
   int x,y;
 
-  for(x=0;x<sound_lenght-6;x+=6) for(y=x;y<x+6;y++) sound[y]=sound[x];
+  for(x=0;x<sound_length-6;x+=6) 
+  	for(y=x;y<x+6;y++) 
+  		sound[y]=sound[x];
 }
 
 void post_process() {
