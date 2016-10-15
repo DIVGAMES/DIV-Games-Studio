@@ -417,7 +417,6 @@ int UnloadSound(int NumSonido)
 #ifdef MIXER
 
 void doneEffect(int chan, void *data) {
-  fprintf(stdout,"Callback finished\n");
 //  if(Mix_Playing(chan))
 //    StopSound(chan);
 	return;
@@ -429,7 +428,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
   float x=0;
 	tSonido *s = &sonido[channels[chan].num];
 	int pos = channels[chan].pos;
-//fprintf(stdout, "freqEffect %d %d\n", chan, len);	
+
   if(!Mix_Playing(chan))
     return;
 
@@ -444,7 +443,6 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 	int i = 0;
 	float j = 0;
 	for(x = 0; i < len/2 && pos+x<s->sound->alen/2; x += ratio) {
-//    fprintf(stdout, "%d\n", i);
 		if(pos+(int)x>=s->sound->alen/2) {
 			if(s->loop==1) {
 				x=0;
@@ -468,7 +466,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 		j+=ratio;
 	}
   pos+=(int)j;
-fprintf(stdout,"%d %d\n",pos,s->sound->alen/2);
+
   if(pos>=s->sound->alen/2) {
   	if(s->loop==1)
   		pos=0;
@@ -491,7 +489,7 @@ fprintf(stdout,"%d %d\n",pos,s->sound->alen/2);
 }
 #endif
 void channelDone(int channel) {
-    fprintf(stdout,"channel %d finished playback.\n",channel);
+  // Done!
 }
 
 int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
@@ -512,8 +510,6 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
   // if unable to play, return 
   if(con==-1)
     return(0);
-
-//  fprintf(stdout, "Playing Sound %d to Channel %d\n", NumSonido,con);
   
   // Make sure all old callbacks are cleared
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
@@ -546,13 +542,11 @@ int StopSound(int NumChannel)
 #ifdef MIXER
 int x=99;
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
-  // fprintf(stdout,"Unregistering effects\n");
   //   if(!Mix_UnregisterAllEffects(NumChannel)) {
   //     printf("Mix_UnregisterAllEffects: %s\n", Mix_GetError());
   //   }
 #endif
  if(Mix_Playing(NumChannel)) {
-    fprintf(stdout, "Halting Sound %d\n", NumChannel);
     Mix_HaltChannel(NumChannel);
   }
   while(x-->0 && Mix_Playing(NumChannel))
