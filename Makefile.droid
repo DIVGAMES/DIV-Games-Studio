@@ -8,10 +8,10 @@ EXECUTABLE=div2-ide
 RUNTIME=div2-run
 RUNTIME1=div1-run
 
-OSDEP = src/shared/osdep.c src/shared/unzip.c 
+OSDEP = src/shared/osdep.c src/shared/unzip.c src/shared/osdep/osd_sdl12.c 
 #src/shared/mikedll.c
 FMEMOPEN = src/osx/fmemopen.c 
-SOURCES=$(wildcard src/*.c) $(wildcard src/shared/lib/sdlgfx/*.c) ${OSDEP} ${FMEMOPEN}
+SOURCES=$(wildcard src/*.c) $(wildcard src/shared/lib/sdlgfx/*.c) ${OSDEP} ${FMEMOPEN} src/shared/lib/zip/src/zip.c
 #*/
 SHAREDSRC=$(wildcard src/shared/run/*.c) 
 #*/
@@ -43,8 +43,7 @@ VPEOBJS=$(VPE_SOURCES:.c=.o)
 
 DROIDLIBFLAGS= -lSDL -lSDL_image -lSDL_mixer -lm -lz -ljpeg
 # -lSDL_net -ltiff -ljpeg -lpng -lz -lSDL_ttf -lfreetype -lSDL_mixer -lvorbisfile -lvorbis -logg -lstdc++ -Wl,--no-undefined -lm
-
-SCFLAGS= -g -w -fpermissive  -Isrc/shared -Isrc -funsigned-char -DMIXER -DZLIB -DDROID -DMODE8
+SCFLAGS= -g -w -fpermissive  -Isrc/shared -Isrc -funsigned-char -DMIXER -DZLIB -DDROID -DMODE8 -DSDL -DRUNTIME=\"divrun\"
 #-DDIVDLL
 #-Isrc/div1run
 #-Isrc/runtime
@@ -57,16 +56,20 @@ dirs: divide div1 div2
 
 divide:
 	mkdir -p divide/src/shared/lib/sdlgfx
+	mkdir -p divide/src/shared/lib/zip/src
+	mkdir -p divide/src/shared/osdep
 	mkdir -p divide/src/osx
 	
 div1:
 	mkdir -p div1/src/shared/run
 	mkdir -p div1/src/div1run
+	mkdir -p div1/src/shared/osdep
 	mkdir -p div1/src/osx
 
 div2: 
 	mkdir -p div2/src/shared/run
 	mkdir -p div2/src/runtime/vpe
+	mkdir -p div2/src/shared/osdep
 	mkdir -p div2/src/osx
 
 ${EXECUTABLE}: CFLAGS = ${SCFLAGS} -DDIV2
