@@ -171,10 +171,10 @@ FILE *__fpopen (byte *file, char *mode) {
 	strcat(fprgpath,"/");
 	strcat(fprgpath,full);
 
-fprintf(stdout,"Trying to open %s\n",fprgpath);
+//fprintf(stdout,"Trying to open %s\n",fprgpath);
 	
 	if ((f=fopen(fprgpath,mode))) { // prgpath/file
-		printf("Found %s in prg dir [%s]\n",file, prgpath);
+	//	printf("Found %s in prg dir [%s]\n",file, prgpath);
 		return f;
 	}
 
@@ -208,13 +208,13 @@ FILE * open_multi(char *file, char *mode) {
   }
 
   strcpy(full,(char*)file); // full filename
-fprintf(stdout,"Trying to open %s\n",file);
+//fprintf(stdout,"Trying to open %s\n",file);
 #ifdef DEBUG
   if ( f = fpopen(full))
     return f;
 #endif
 
-fprintf(stdout,"Trying to open %s\n",full);
+//fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "paz\fixero.est"
     return f;
@@ -235,7 +235,7 @@ fprintf(stdout,"Trying to open %s\n",full);
 
     strcat(full,(char*)file);
 
-fprintf(stdout,"Trying to open %s\n",full);
+//fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "est\paz\fixero.est"
     return f;
@@ -247,7 +247,7 @@ fprintf(stdout,"Trying to open %s\n",full);
 
   strupr(full);
 
-fprintf(stdout,"Trying to open %s\n",full);
+//fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "est\paz\fixero.est"
   return f;
@@ -260,7 +260,7 @@ fprintf(stdout,"Trying to open %s\n",full);
   strcpy(full,fname);
   strcat(full,ext);
 
-fprintf(stdout,"Trying to open %s\n",full);
+//fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
@@ -272,7 +272,7 @@ fprintf(stdout,"Trying to open %s\n",full);
 
   strupr(full);
 
-fprintf(stdout,"Trying to open %s\n",full);
+//fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
@@ -284,7 +284,7 @@ fprintf(stdout,"Trying to open %s\n",full);
 
   strlwr(full);
 
-fprintf(stdout,"Trying to open %s\n",full);
+//fprintf(stdout,"Trying to open %s\n",full);
 
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
@@ -324,7 +324,7 @@ fprintf(stdout,"Trying to open %s\n",full);
 #endif
 
 #ifdef ZLIB
-  fprintf(stdout,"Trying to open from zip %s\n",file);
+//  fprintf(stdout,"Trying to open from zip %s\n",file);
 
       if(f=memz_open_file(file))
         return f;
@@ -2033,12 +2033,17 @@ vvga_al = vga_al;
   if((copia_debug=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia_debug,0,vga_an*vga_al);
   #endif
+  vwidth = vga_an;
+  vheight = vga_al;
 
   if (set_video_mode!=NULL) {
     set_video_mode();
   } else {
     svmode();
   }
+#ifdef SDL2
+  OSDEP_SetWindowSize(vga_an, vga_al);
+#endif
 
   dacout_speed=0; set_dac();
 

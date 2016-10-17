@@ -24,12 +24,6 @@ int32_t datsize=0;
 FILE *f=NULL;
 FILE *out = NULL;
 
-// system/div-LINUX +
-// system/EXEC.EXE +
-// system/data.div +
-// sizeof(EXEC.EXE) +
-// sizeof(data.div) +
-// "DX"
 
 printf("argc: %d\n",argc);
 

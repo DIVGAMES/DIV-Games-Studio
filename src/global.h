@@ -500,6 +500,8 @@ GLOBAL_DATA byte * error_window;
 
 GLOBAL_DATA int map_an, map_al; // Dimensiones del mapa editado
 GLOBAL_DATA int vga_an,vga_al; // Modo de video (id vga_an*1000+vga_al, ej.320200)
+GLOBAL_DATA int vwidth,vheight; // Window Screen Size
+
 GLOBAL_DATA int Codigo;              //Codigo del mapa
 GLOBAL_DATA char Descripcion[32];    //Descripcion del mapa
 
@@ -1121,4 +1123,4 @@ void DebugData  (int Val);
 
 //////////////////////////////////////////////////////////////////////////////
 
-#endif // __GLOBAL_Hs
+#endif // __GLOBAL_H

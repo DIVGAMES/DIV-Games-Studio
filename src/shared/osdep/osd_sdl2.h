@@ -20,3 +20,4 @@
 typedef SDL_Keymod OSDEPMod;
 #endif
 
+void OSDEP_SetWindowSize(int w, int h);

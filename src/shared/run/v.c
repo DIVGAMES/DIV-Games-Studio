@@ -247,9 +247,8 @@ printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 
 //hide the mouse
 SDL_ShowCursor(SDL_DISABLE);
-	if(vga)
-		SDL_FreeSurface(vga);
-	
+//	if(vga)
+//		SDL_FreeSurface(vga);	
 	vga=NULL;
 #ifdef __EMSCRIPTEN__
 	
