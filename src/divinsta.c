@@ -325,7 +325,7 @@ strcpy(tbuf,"                    2015 ");
 #endif
     strcat(Copy_Right,&tbuf[20]);
     if (strlen(user2)+strlen(Copy_Right)<=127) strcat(Copy_Right,user2);
-    strcpy(Unid,"/tmp/");// :/TMP");
+    strcpy(Unid,(char *)&tipo[8]);//"/tmp/");// :/TMP");
     //Unid[0]=toupper(tipo[1].path[0]);
     strcpy(DefDir,(char *)texto[353]);
     strcat(DefDir,ExeGen);
