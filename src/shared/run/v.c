@@ -232,10 +232,9 @@ void madewith(void) {
 	mwsurface = SDL_LoadBMP_RW(rwops,1);
 
 	SDL_BlitSurface(mwsurface,NULL,vga,NULL);
+	OSDEP_Flip(mwsurface);
+  SDL_FreeSurface(mwsurface);
 
-	SDL_FreeSurface(mwsurface);
-
-	OSDEP_Flip(vga);
 
 }
 
