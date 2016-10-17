@@ -2033,6 +2033,7 @@ vvga_al = vga_al;
   if((copia_debug=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia_debug,0,vga_an*vga_al);
   #endif
+  tecla();
   vwidth = vga_an;
   vheight = vga_al;
 
