@@ -1884,6 +1884,7 @@ void dread_mouse(void) {
   regs.w.ax=3;
   int386(0x33,&regs,&regs);
 
+
   old_mouse_b=mouse_b;
   mouse_b=regs.w.bx;
 
@@ -1900,13 +1901,19 @@ void dread_mouse(void) {
   m_x+=(float)ix/(1.0+((float)mouse->speed/3.0));
   m_y+=(float)iy/(1.0+((float)mouse->speed/3.0));
 #endif
+
+
   mouse_x=(int)mouse->x;
   mouse_y=(int)mouse->y;
+
 
   if (mouse_x<0) { mouse_x=0; n++; }
   else if (mouse_x>=vga_an) { mouse_x=vga_an-1; n++; }
   if (mouse_y<0) { mouse_y=0; n++; }
   else if (mouse_y>=vga_al) { mouse_y=vga_al-1; n++; }
+
+  fprintf(stdout, "%d %d %d %d\n",mouse_x, vga_an, mouse_y, vga_al);
+
 
   if (n) set_mouse(mouse_x,mouse_y);
 

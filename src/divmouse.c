@@ -48,7 +48,12 @@ void read_mouse(void) {
 	int s,shift=0;
 
 	old_mouse_b=mouse_b;
-
+#ifdef SDL2
+	if(vwidth == 0 && vheight == 0 ) {
+		vwidth = vga_an;
+		vheight = vga_al;
+	}
+#endif
 	read_mouse2();
 
 #ifdef GCW
@@ -61,6 +66,7 @@ void read_mouse(void) {
 
 	real_mouse_x=(int)m_x; 
 	real_mouse_y=(int)m_y;
+	
 
 	if (mouse_x!=(int)m_x || mouse_y!=(int)m_y || mouse_b!=m_b) {
 
@@ -80,6 +86,16 @@ void read_mouse(void) {
 			}
 			* */
 		}
+#ifdef SDL2
+	if(vga_an != vwidth || vga_al != vheight) {
+		// mouse_x *= (vga_an / vwidth);
+		// mouse_y *= (vga_al / vheight);
+		mouse_x = (int)(m_x*(float)((float)vga_an / (float)vwidth));// / (float)vga_an);
+		mouse_y = (int)(m_y*(float)((float)vga_al / (float)vheight));// / (float)vga_al);
+
+	}
+#endif
+
 
 	} else if (modo<100 && hotkey && !help_paint_active) { // Las teclas est n solo activas en edici¢n
 
@@ -311,6 +327,14 @@ void PrintEvent(const SDL_Event * event)
             SDL_Log("Window %d resized to %dx%d",
                     event->window.windowID, event->window.data1,
                     event->window.data2);
+            vga_an = event->window.data1;
+			vga_al = event->window.data2;
+			vwidth = vga_an;
+			vheight = vga_al;
+			EndSound();
+			soundstopped = 1;
+		    //vwidth = event->window.data1;
+            //vheight = event->window.data2;
             break;
         case SDL_WINDOWEVENT_SIZE_CHANGED:
             SDL_Log("Window %d size changed to %dx%d",
@@ -735,6 +759,9 @@ while(SDL_PollEvent(&event) )
 		copia=(byte*)malloc(vga_an*vga_al+6)+6;
 		svmode();
 		preparar_tapiz();
+	
+		if(strcmp(v.titulo, (char *)texto[35])) {
+
 		for(n=max_windows;n>=0;n--) {
 			if(ventana[n].tipo) {
 
@@ -760,6 +787,7 @@ while(SDL_PollEvent(&event) )
 			}
 		}	
 			
+		}
 		actualiza_caja(0,0,vga_an,vga_al);
 //		volcado_completo=1;
 		volcado(copia);

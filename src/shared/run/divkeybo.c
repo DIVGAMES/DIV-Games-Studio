@@ -48,7 +48,6 @@
 #define JOY_DEADZONE 500
 int joymx = 0, joymy=0;
 
-
 #ifdef DEBUG
 extern int mouse_b;//, mouse_y;
 #endif
@@ -254,6 +253,81 @@ void checkmod(OSDEPMod mod) {
         * */
 }
 
+#ifdef SDL2
+#include <SDL2/SDL_events.h>
+
+void PrintEvent(const SDL_Event * event)
+{
+    if (event->type == SDL_WINDOWEVENT) {
+        switch (event->window.event) {
+        case SDL_WINDOWEVENT_SHOWN:
+            SDL_Log("Window %d shown", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_HIDDEN:
+            SDL_Log("Window %d hidden", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_EXPOSED:
+            SDL_Log("Window %d exposed", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_MOVED:
+            SDL_Log("Window %d moved to %d,%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_RESIZED:
+            SDL_Log("Window %d resized to %dx%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+//            vga_an = event->window.data1;
+//			vga_al = event->window.data2;
+			vwidth = event->window.data1;
+			vheight = event->window.data2;
+			// EndSound();
+			// soundstopped = 1;
+		    //vwidth = event->window.data1;
+            //vheight = event->window.data2;
+            break;
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+            SDL_Log("Window %d size changed to %dx%d",
+                    event->window.windowID, event->window.data1,
+                    event->window.data2);
+            break;
+        case SDL_WINDOWEVENT_MINIMIZED:
+            SDL_Log("Window %d minimized", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_MAXIMIZED:
+            SDL_Log("Window %d maximized", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_RESTORED:
+            SDL_Log("Window %d restored", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_ENTER:
+            SDL_Log("Mouse entered window %d",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_LEAVE:
+            SDL_Log("Mouse left window %d", event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            SDL_Log("Window %d gained keyboard focus",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            SDL_Log("Window %d lost keyboard focus",
+                    event->window.windowID);
+            break;
+        case SDL_WINDOWEVENT_CLOSE:
+            SDL_Log("Window %d closed", event->window.windowID);
+            break;
+        default:
+            SDL_Log("Window %d got unknown event %d",
+                    event->window.windowID, event->window.event);
+            break;
+        }
+    }
+}
+#endif
+
 
 int8_t hx=0,hy=0; // hat xy positions
 
@@ -262,6 +336,10 @@ void tecla(void) {
 //printf("tecla\n");
 //ascii=0; scan_code=0;
 SDL_Event event;
+if(vwidth == 0 && vheight == 0) {
+	vwidth = vga_an;
+	vheight = vga_al;
+}
 #ifdef GCW
 if(divjoy) {
 	byte hatval;
@@ -298,6 +376,24 @@ oldhatval = hatval;
 	while(SDL_PollEvent(&event)) {	
 //		printf("event: %d\n",event.type);
 		// check keys
+#ifdef SDL2
+	PrintEvent(&event);
+#endif
+
+#ifdef SDL
+		if (event.type == SDL_VIDEORESIZE) {
+//				printf("RESIZING\n");
+			vwidth = event.resize.w;
+			vheight = event.resize.h;
+//			EndSound();
+//			soundstopped=1;
+//				volcado_parcial(0,0,vga_an-1,vga_al-1);
+//				SDL_PauseAudio(0);
+			
+        }
+
+#endif
+
 #ifdef GCW
 		if(event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP)  {
 			
@@ -602,6 +698,14 @@ oldhatval = hatval;
 	if (event.type == SDL_MOUSEMOTION) {
 		mouse->x = event.motion.x;
 		mouse->y = event.motion.y;
+
+		if(vga_an != vwidth || vga_al != vheight) {
+			mouse->x = (int)(event.motion.x*(float)((float)vga_an / (float)vwidth));// / (float)vga_an);
+			mouse->y = (int)(event.motion.y*(float)((float)vga_al / (float)vheight));// / (float)vga_al);
+#ifdef SDL2
+			SDL_Log("Mouse: VX: %d VY: %d x: %d y: %d\n",mouse->x, mouse->y, event.motion.x,event.motion.y);
+#endif
+		}
 
 //				m_x+=event.motion.xrel;
 //				m_y+=event.motion.yrel;

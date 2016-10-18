@@ -11,6 +11,10 @@ SDL_Surface* OSDEP_buffer8=NULL;
 SDL_Surface* OSDEP_buffer32=NULL;
 SDL_Texture* OSDEP_texture=NULL;
 char windowtitle[1024];
+
+extern int vwidth;
+extern int vheight;
+
 void OSDEP_Init(void) {
 
 	SDL_Init( SDL_INIT_EVERYTHING);
@@ -51,7 +55,42 @@ void OSDEP_WarpMouse(int x, int y) {
 
 int OSDEP_IsFullScreen(void) {
 //	if (OSDEP_surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
-    return 0;//OSDEP_window->fullscreen; // Return false if surface is windowed
+//    return 0;//OSDEP_window->fullscreen; // Return false if surface is windowed
+    if(OSDEP_window != NULL) {
+	    SDL_DestroyWindow(OSDEP_window);
+    	OSDEP_window = NULL;
+    }
+    if(OSDEP_renderer !=NULL) {
+    	SDL_DestroyRenderer(OSDEP_renderer);
+    	OSDEP_renderer = NULL;
+    }
+
+    if(OSDEP_texture !=NULL) {
+	    SDL_DestroyTexture(OSDEP_texture);
+	    OSDEP_texture = NULL;
+    }
+    if(OSDEP_buffer32 !=NULL) {
+    	SDL_FreeSurface(OSDEP_buffer32);
+    	OSDEP_buffer32 = NULL;
+    }
+    if(OSDEP_buffer8 !=NULL) {
+    	SDL_FreeSurface(OSDEP_buffer8);
+    	OSDEP_buffer8 = NULL;
+    }
+
+    SDL_Quit();
+    return 0;
+
+}
+
+void OSDEP_SetWindowSize(int w, int h) {
+	SDL_SetWindowSize(OSDEP_window, w, h);
+	SDL_RenderPresent(OSDEP_renderer);
+
+	SDL_GetRendererOutputSize(OSDEP_renderer,
+                       &vwidth, &vheight);
+
+SDL_Log("VW: %d VH: %d W: %d H: %d\n",vwidth, vheight, w,h);
 
 }
 
@@ -59,6 +98,8 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 	fprintf(stdout, "%s\n", __FUNCTION__);
 	Uint32 rmask, gmask, bmask, amask;
 
+
+	SDL_Log("Setting Videomode to %d x %d\n", width, height);
     /* SDL interprets each pixel as a 32-bit number, so our masks must depend
        on the endianness (byte order) of the machine */
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -73,15 +114,32 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
     amask = 0xff000000;
 #endif
 
-/*    if(OSDEP_window != NULL) {
-	    SDL_DestroyRenderer(OSDEP_renderer);
-    	SDL_DestroyWindow(OSDEP_window);
-    	SDL_DestroyTexture(OSDEP_texture);
-    	SDL_FreeSurface(OSDEP_buffer32);
-    	SDL_FreeSurface(OSDEP_buffer8); 		
+    if(OSDEP_window != NULL) {
+//	    SDL_DestroyRenderer(OSDEP_renderer);
+//    	SDL_DestroyWindow(OSDEP_window);
+    	// if window smaller that vibile allowed, resize
+    	// SDL_SetWindowSize(OSDEP_window,
+     //                   width, height);
+
+    } else {
+    	SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &OSDEP_window, &OSDEP_renderer);
+    	// hide mouse cursor
+		SDL_ShowCursor(SDL_DISABLE);
+
+	}
+    if(OSDEP_texture !=NULL) {
+	    SDL_DestroyTexture(OSDEP_texture);
+	    OSDEP_texture = NULL;
     }
-  */  
-    SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &OSDEP_window, &OSDEP_renderer);
+    if(OSDEP_buffer32 !=NULL) {
+    	SDL_FreeSurface(OSDEP_buffer32);
+    	OSDEP_buffer32 = NULL;
+    }
+    if(OSDEP_buffer8 !=NULL) {
+    	SDL_FreeSurface(OSDEP_buffer8);
+    	OSDEP_buffer8 = NULL;
+    }
+
 
 	OSDEP_buffer8 = SDL_CreateRGBSurface(0, width, height, 8,
 		0,0,0,0);

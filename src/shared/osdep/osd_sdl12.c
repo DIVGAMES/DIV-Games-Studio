@@ -6,7 +6,17 @@
 
 // key buffer
 uint8_t OSDEP_key[2048];
-OSDEP_Surface *OSDEP_surface;
+OSDEP_Surface *OSDEP_surface = NULL;
+OSDEP_Surface *OSDEP_screen = NULL;
+OSDEP_Surface *OSDEP_zoomsurface = NULL;
+OSDEP_Color OSDEP_pal[256];
+
+extern int vwidth, vheight;
+extern int vga_an, vga_al;
+
+int sw, sh;
+int fullscreen = 0;
+uint32_t flags;
 
 // startup / shutdown
 
@@ -21,6 +31,12 @@ void OSDEP_Init(void) {
 }
 
 void OSDEP_Quit(void) {
+	if(OSDEP_screen != NULL)
+		SDL_FreeSurface(OSDEP_screen);
+
+	if(OSDEP_surface != NULL)
+		SDL_FreeSurface(OSDEP_surface);
+	
 	SDL_Quit();
 }
 
@@ -68,19 +84,34 @@ void OSDEP_WarpMouse(int x, int y) {
 }
 
 int OSDEP_IsFullScreen(void) {
-	if (OSDEP_surface->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
+	if (OSDEP_screen->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
     return 0; // Return false if surface is windowed
 
 }
 
 OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
-	uint32_t flags;
+	fprintf(stdout,"%s %d %d\n",__FUNCTION__,width, height);
+
 	if(fs) {
 		flags = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
 	} else {
 		flags = SDL_SWSURFACE | SDL_RESIZABLE;
 	}
-	OSDEP_surface = SDL_SetVideoMode(width, height, bpp, flags);
+
+	fullscreen = fs;
+	vwidth = width;
+	vheight = height;
+	
+	if(OSDEP_surface !=NULL) {
+		SDL_FreeSurface(OSDEP_surface);
+	}
+
+	OSDEP_screen = SDL_SetVideoMode(width, height, bpp, flags);
+	OSDEP_surface = SDL_CreateRGBSurface(0, width, height, 8,
+		0,0,0,0);
+
+	sw = width;
+	sh = height;	
 	return OSDEP_surface;
 }
 
@@ -90,10 +121,35 @@ void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 
 }
 
 void OSDEP_Flip(OSDEP_Surface *s) {
-	SDL_Flip(s);
+
+	if((vwidth == vga_an && vheight == vga_al) || (vwidth == 0 && vheight == 0)) {
+		SDL_BlitSurface(s, NULL, OSDEP_screen, NULL);
+	} else {
+		OSDEP_zoomsurface = zoomSurface(s, (float)vwidth/vga_an, (float)vheight/vga_al, 1);
+		// Clear screen
+		SDL_FillRect(OSDEP_screen, NULL, 0);
+		SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, NULL);
+		SDL_FreeSurface(OSDEP_zoomsurface);
+
+		if(sw !=vwidth || sh !=vheight) {
+			SDL_FreeSurface(OSDEP_screen);
+			SDL_putenv("SDL_VIDEO_WINDOW_POS=default"); 
+		
+			//OSDEP_screen = OSDEP_SetVideoMode(width, height, 8, fullscreen); 
+			fprintf(stdout,"%s %d %d\n",__FUNCTION__, vwidth, vheight);
+			SDL_SetVideoMode(vwidth,vheight,8, flags);
+			OSDEP_SetPalette(OSDEP_screen, OSDEP_pal, 0, 256);
+			sw = vwidth;
+			sh = vheight;
+		}
+	}
+	SDL_Flip(OSDEP_screen);
 }
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
+
+	memcpy(OSDEP_pal, colors, 256*sizeof(OSDEP_Color));
+	SDL_SetPalette(OSDEP_screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0,256);
 	return SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
 }
 

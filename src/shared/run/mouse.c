@@ -74,7 +74,9 @@ void check_mouse(void) {
 void set_mouse(int x,int y) {
   m_x=(float)x;
   m_y=(float)y;
+#ifndef SDL2
   OSDEP_WarpMouse(x,y);
+#endif
 }
 
 float vx=0.0,vy=0.0,vmax;

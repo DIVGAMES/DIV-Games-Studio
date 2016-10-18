@@ -54,6 +54,7 @@ void SDL_ToggleFS(SDL_Surface *surface)
 		fsmode=1;
 	
 	svmode();
+	set_dac(dac);
 }
 
 int nothing(SDL_Surface *surface) {

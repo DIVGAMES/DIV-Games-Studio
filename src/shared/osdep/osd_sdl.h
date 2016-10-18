@@ -1,7 +1,6 @@
 #ifndef __OSD_SDL_H__
 #define __OSD_SDL_H__
 
-
 typedef SDL_Joystick OSDEP_Joystick;
 typedef SDL_Color OSDEP_Color;
 typedef SDL_Surface OSDEP_Surface;
