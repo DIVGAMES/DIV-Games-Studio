@@ -655,10 +655,14 @@ int GetFileLen(FILE *file) {
 void create_zip(char *dWork) {
 
   char out[1024];
+  char zipout[1024];
+
+  char readme[]="Made with DIV GAMES STUDIO\n\nhttp://div-arena.co.uk/\n\n";
 
   strcpy(out, dWork);
   strcat(out, "/");
   strcat(out, ExeGen);
+  strcat(out, ".exe");
 
   struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 0);
 
@@ -676,6 +680,36 @@ void create_zip(char *dWork) {
 
   DaniDel("foo.zip");
 
+#ifdef WIN32
+
+  strcpy(zipout, out);
+  zipout[strlen(zipout)-3]=0;
+  strcat(zipout,"zip");
+  zip = zip_open(zipout, ZIP_DEFAULT_COMPRESSION_LEVEL, 0);
+  
+  zip_entry_open(zip, ExeGen);
+  zip_entry_fwrite(zip, out);
+  zip_entry_close(zip);
+
+  zip_entry_open(zip, "SDL.dll");
+  zip_entry_fwrite(zip, "system/SDL.dll");
+  zip_entry_close(zip);
+
+  zip_entry_open(zip, "SDL_mixer.dll");
+  zip_entry_fwrite(zip, "system/SDL_mixer.dll");
+  zip_entry_close(zip);
+
+  zip_entry_open(zip, "libmikmod-2.dll");
+  zip_entry_fwrite(zip, "system/libmikmod-2.dll");
+  zip_entry_close(zip);
+
+  zip_entry_open(zip, "readme.txt");
+  zip_entry_write(zip, readme, strlen(readme));
+  zip_entry_close(zip);
+
+  zip_close(zip);
+
+#endif
 
 }
 
