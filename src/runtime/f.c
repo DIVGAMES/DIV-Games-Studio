@@ -1,6 +1,6 @@
 
 //����������������������������������������������������������������������������
-// C�digo de las funciones internas
+// Internal functions code
 //����������������������������������������������������������������������������
 
 #include "inter.h"
@@ -175,6 +175,7 @@ FILE *__fpopen (byte *file, char *mode) {
 	
 	if ((f=fopen(fprgpath,mode))) { // prgpath/file
 	//	printf("Found %s in prg dir [%s]\n",file, prgpath);
+    strcpy(full, fprgpath);
 		return f;
 	}
 
@@ -185,8 +186,8 @@ FILE *__fpopen (byte *file, char *mode) {
 	
 }
 
-FILE * fpopen ( byte * file) {
-	return __fpopen(file,"rb");
+FILE * fpopen ( byte * file, char *mode) {
+	return __fpopen(file,mode);
 }
 
 #endif
@@ -210,7 +211,7 @@ FILE * open_multi(char *file, char *mode) {
   strcpy(full,(char*)file); // full filename
 //fprintf(stdout,"Trying to open %s\n",file);
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen(full, mode))
     return f;
 #endif
 
@@ -241,7 +242,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG  
-  if ( f = fpopen(full))
+  if ( f = fpopen(full, mode))
     return f;
 #endif
 
@@ -253,7 +254,7 @@ FILE * open_multi(char *file, char *mode) {
   return f;
 
 #ifdef DEBUG
-  if ( f=fpopen(full) )
+  if ( f=fpopen(full, mode) )
     return f;
 #endif
     
@@ -266,7 +267,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen(full, mode))
     return f;
 #endif
 
@@ -278,7 +279,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen(full, mode))
     return f;
 #endif
 
@@ -290,7 +291,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen(full, mode))
     return f;
 #endif    
 
@@ -309,7 +310,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen(full, mode))
     return f;
 #endif
 
@@ -319,18 +320,18 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full))
+  if ( f = fpopen(full, mode))
     return f;
 #endif
 
 #ifdef ZLIB
 //  fprintf(stdout,"Trying to open from zip %s\n",file);
-
+    if(mode[0]!='w')
       if(f=memz_open_file(file))
         return f;
 #endif
 
-
+      return NULL;
 
 }
 
@@ -407,7 +408,7 @@ int read_packfile(byte * file) {
   char * ptr;
   int n;
   unsigned long len_desc;
-  fprintf(stdout,"trying to read %s from %d files\n",file,npackfiles);
+  //fprintf(stdout,"trying to read %s from %d files\n",file,npackfiles);
 
   if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(-1);
 char *ff = (char *)file;
@@ -1873,20 +1874,6 @@ FILE * open_save_file(byte * file) {
   return f;
 }
 
-void save(void) {
-  int offset,lon;
-
-  if (unit_size<1) unit_size=1;
-
-  lon=pila[sp--]; offset=pila[sp--];
-  if (!capar(offset) || !capar(offset+lon)) { pila[sp]=0; e(122); return; }
-  es=open_save_file((byte*)&mem[pila[sp]]);
-  if (es==NULL) { pila[sp]=0; e(123); return; }
-  if (fwrite(&mem[offset],unit_size,lon,es)!=lon) e(124);
-  fclose(es);
-  max_reloj+=get_reloj()-old_reloj;
-}
-
 #else         // Versi�n instalaciones.
 
 FILE * open_save_file(byte * file) {
@@ -1910,8 +1897,38 @@ FILE * open_save_file(byte * file) {
   return f;
 }
 
+#endif
+
 void save(void) {
+
   int offset,lon;
+  int llon;
+
+  if (unit_size<1) unit_size=1;
+
+  lon=pila[sp--]; 
+  offset=pila[sp--];
+  lon=lon*unit_size;
+
+  if (!capar(offset) || !capar(offset+lon)) { pila[sp]=0; e(122); return; }
+  es=open_save_file((byte*)&mem[pila[sp]]);
+  if (es==NULL) { pila[sp]=0; e(123); return; }
+
+  //fprintf(stdout, "File saved: %s\n", full);
+
+  llon = (int)fwrite(&mem[offset],1,lon,es);
+
+  fclose(es);
+
+  if(lon!=llon)//*unit_size) 
+    e(124);
+
+  max_reloj+=get_reloj()-old_reloj;
+}
+
+void _save(void) {
+  int offset,lon;
+  int llon;
 
   if (unit_size<1) unit_size=1;
   lon=pila[sp--]; offset=pila[sp--];
@@ -1923,12 +1940,14 @@ void save(void) {
     return;
   }
 //  if (fwrite(&mem[offset],unit_size,lon,es)!=lon) e(124);
-  fwrite(&mem[offset],unit_size,lon,es);
+  llon = fwrite(&mem[offset],unit_size,lon,es);
   fclose(es);
+
+  if(llon !=lon)
+    e(124);
   max_reloj+=get_reloj()-old_reloj;
 }
 
-#endif
 
 //����������������������������������������������������������������������������
 //      Load(fichero,offset)
@@ -1941,7 +1960,7 @@ void load(void) {
 
   offset=pila[sp--];
   if (!capar(offset)) { pila[sp]=0; e(125); return; }
-  fprintf(stdout, "loading data from: %s\n",(byte*)&mem[pila[sp]]);
+  //fprintf(stdout, "loading data from: %s\n",(byte*)&mem[pila[sp]]);
 
   if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
   
@@ -1963,12 +1982,17 @@ void load(void) {
 	   return; 
   }
 
+  //fprintf(stdout, "File loaded: %s\n", full);
+
   printf("file len: %d\n",ftell(es));
   
   fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
   lon=(lon*4)/unit_size;
-  if (fread(&mem[offset],unit_size,lon,es)!=lon) e(127); fclose(es);
+  if (fread(&mem[offset],unit_size,lon,es)!=lon) 
+    e(127); 
+  
+  fclose(es);
   max_reloj+=get_reloj()-old_reloj;
 }
 
@@ -2033,9 +2057,6 @@ vvga_al = vga_al;
   if((copia_debug=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
   memset(copia_debug,0,vga_an*vga_al);
   #endif
-  tecla();
-  vwidth = vga_an;
-  vheight = vga_al;
 
   if (set_video_mode!=NULL) {
     set_video_mode();
@@ -2061,6 +2082,12 @@ vvga_al = vga_al;
   #endif
 
   fade_on(); sp--;
+
+  if(vwidth<vga_an || vheight < vga_al) {
+    vwidth = vga_an;
+    vheight = vga_al;
+  }
+
 }
 
 //����������������������������������������������������������������������������

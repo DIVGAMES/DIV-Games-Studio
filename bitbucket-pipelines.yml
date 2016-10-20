@@ -13,4 +13,3 @@ pipelines:
           - apt install -y cmake libsdl1.2-dev libsdl-net1.2-dev libsdl-mixer1.2-dev
           - cmake .
           - make
-          - make

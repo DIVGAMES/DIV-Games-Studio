@@ -1869,8 +1869,8 @@ void lexico(void) {
 //      fprintf(stdout,"FILE: %s\n",(char *)ivnom.b);
 //	      fprintf(stdout,"LOOKING FOR FILE: %s [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
 
-      if ((f=div_open_file((char *)ivnom.b))!=NULL) {
-//	      fprintf(stdout,"FOUND FILE: %s [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+      if ((!ivnom.b[0]!='.' && ivnom.b[1]!=0) && (ivnom.b[0]!='/' && ivnom.b[1]!=0) && strcmp("/",(char *)ivnom.b) && (f=div_open_file((char *)ivnom.b))!=NULL) {
+	      fprintf(stdout,"FOUND FILE: [%s] [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
 
         empaquetable=0;
 
@@ -7428,7 +7428,7 @@ FILE *__fpopen (byte *file, char *mode) {
 	char fprgpath[_MAX_PATH*2];
 	FILE *f;
 
-	strcpy(fprgpath,&tipo[8]);
+	strcpy(fprgpath,(char *)&tipo[8]);
 	strcat(fprgpath,"/");
 	strcat(fprgpath,full);
 	
