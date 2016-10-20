@@ -16,7 +16,7 @@ extern int vga_an, vga_al;
 
 int sw, sh;
 int fullscreen = 0;
-uint32_t flags;
+static uint32_t flags;
 
 // startup / shutdown
 
@@ -31,11 +31,15 @@ void OSDEP_Init(void) {
 }
 
 void OSDEP_Quit(void) {
-	if(OSDEP_screen != NULL)
+	if(OSDEP_screen != NULL) {
 		SDL_FreeSurface(OSDEP_screen);
+		OSDEP_screen = NULL;
+	}
 
-	if(OSDEP_surface != NULL)
+	if(OSDEP_surface != NULL) {
 		SDL_FreeSurface(OSDEP_surface);
+		OSDEP_surface = NULL;
+	}
 	
 	SDL_Quit();
 }
@@ -90,7 +94,14 @@ int OSDEP_IsFullScreen(void) {
 }
 
 OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
-	fprintf(stdout,"%s %d %d\n",__FUNCTION__,width, height);
+//	fprintf(stdout,"%s %d %d\n",__FUNCTION__,width, height);
+	// clear event queue
+
+	SDL_Event event;
+
+	while(SDL_PollEvent(&event)) {
+		fs=fs;
+	}
 
 	if(fs) {
 		flags = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
@@ -99,8 +110,8 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 	}
 
 	fullscreen = fs;
-	vwidth = width;
-	vheight = height;
+	// vwidth = width;
+	// vheight = height;
 	
 	if(OSDEP_surface !=NULL) {
 		SDL_FreeSurface(OSDEP_surface);
@@ -134,10 +145,13 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 		if(sw !=vwidth || sh !=vheight) {
 			SDL_FreeSurface(OSDEP_screen);
 			SDL_putenv("SDL_VIDEO_WINDOW_POS=default"); 
-		
+			if(OSDEP_screen!=NULL) {
+				SDL_FreeSurface(OSDEP_screen);
+				OSDEP_screen = NULL;
+			}
 			//OSDEP_screen = OSDEP_SetVideoMode(width, height, 8, fullscreen); 
 			fprintf(stdout,"%s %d %d\n",__FUNCTION__, vwidth, vheight);
-			SDL_SetVideoMode(vwidth,vheight,8, flags);
+			OSDEP_screen = SDL_SetVideoMode(vwidth,vheight,8, flags);
 			OSDEP_SetPalette(OSDEP_screen, OSDEP_pal, 0, 256);
 			sw = vwidth;
 			sh = vheight;
