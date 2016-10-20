@@ -7428,7 +7428,7 @@ FILE *__fpopen (byte *file, char *mode) {
 	char fprgpath[_MAX_PATH*2];
 	FILE *f;
 
-	strcpy(fprgpath,&tipo[8]);
+	strcpy(fprgpath,(char *)&tipo[8]);
 	strcat(fprgpath,"/");
 	strcat(fprgpath,full);
 	
