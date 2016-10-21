@@ -105,7 +105,6 @@ void init_ghost(void) {
   create_dac4();
 
   for (n=0;n<512;n++) {
-	  memset(&vcubos[n],0,sizeof(tpuntos));	
 	  vcubos[n]=NULL;
   }
   
