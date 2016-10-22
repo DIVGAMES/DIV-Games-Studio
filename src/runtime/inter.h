@@ -426,6 +426,9 @@ GLOBAL struct _video_modes * video_modes;
 
 #define timer(x) mem[end_struct+x]
 
+GLOBAL int mtimer[10];
+GLOBAL int otimer[10];
+
 // text_z = -256
 #define text_z mem[end_struct+10]
 

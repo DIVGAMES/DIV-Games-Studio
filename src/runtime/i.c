@@ -1141,8 +1141,15 @@ void frame_start(void) {
 	oreloj=get_ticks();
 #endif
 
-	for (max=0;max<10;max++) 
-		timer(max)+=(get_reloj()-ultimo_reloj)/10;
+	for (max=0;max<10;max++) {
+    if(otimer[max]!=timer(max)) {
+      mtimer[max]=0;
+    }
+		mtimer[max]+=(get_reloj()-ultimo_reloj);
+    timer(max)=mtimer[max]/10;
+    otimer[max]=timer(max);
+  }
+
 
 	if (get_reloj()>ultimo_reloj) {
 		ffps=(ffps*9.0f+1000.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
