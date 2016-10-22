@@ -662,7 +662,6 @@ void create_zip(char *dWork) {
   strcpy(out, dWork);
   strcat(out, "/");
   strcat(out, ExeGen);
-  strcat(out, ".exe");
 
   struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 0);
 

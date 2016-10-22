@@ -383,8 +383,12 @@ oldhatval = hatval;
 #ifdef SDL
 		if (event.type == SDL_VIDEORESIZE) {
 //				printf("RESIZING\n");
-			vwidth = event.resize.w;
-			vheight = event.resize.h;
+			if(event.resize.w!=320 && event.resize.h!=200) {
+				vwidth = event.resize.w;
+				vheight = event.resize.h;
+			} else {
+				svmode();
+			}
 //			EndSound();
 //			soundstopped=1;
 //				volcado_parcial(0,0,vga_an-1,vga_al-1);

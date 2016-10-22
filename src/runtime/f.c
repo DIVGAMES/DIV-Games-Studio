@@ -2147,7 +2147,7 @@ void _sound(void) {
   if (fre<8) fre=8;
   if (fre) { 
 #ifdef MIXER
-	pila[sp]=DivPlaySound(pila[sp],vol,fre);
+	pila[sp]=DivPlaySound(pila[sp],vol,fre)+1;
 //	printf("New sound on channel %d\n",pila[sp]);
 #else
 pila[sp]=0;
@@ -2178,7 +2178,7 @@ void stop_sound(void) {
 //    for(x=0; x<CHANNELS; x++) StopSound(x);
 //  } else {
 
-    StopSound(pila[sp]);
+    StopSound(pila[sp]-1);
 //  }
 #endif
   pila[sp]=0;
@@ -2193,7 +2193,7 @@ void change_sound(void) {
   fre=pila[sp--]; vol=pila[sp--];
   if (vol<0) vol=0; else if (vol>511) vol=511;
   if (fre<8) fre=8;
-  ChangeSound(pila[sp],vol,fre);
+  ChangeSound(pila[sp]-1,vol,fre);
 }
 
 //����������������������������������������������������������������������������
@@ -2205,7 +2205,7 @@ void change_channel(void) {
   pan=pila[sp--]; vol=pila[sp--];
   if (vol<0) vol=0; else if (vol>511) vol=511;
   if (pan<0) pan=0; else if (pan>255) pan=255;
-  ChangeChannel(pila[sp],vol,pan);
+  ChangeChannel(pila[sp]-1,vol,pan);
 }
 
 //����������������������������������������������������������������������������
@@ -2300,7 +2300,7 @@ void get_song_line(void) {
 //����������������������������������������������������������������������������
 
 void is_playing_sound(void) {
-  pila[sp]=IsPlayingSound(pila[sp]);
+  pila[sp]=IsPlayingSound(pila[sp]-1);
 }
 
 //����������������������������������������������������������������������������
