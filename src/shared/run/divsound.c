@@ -584,11 +584,13 @@ int ChangeSound(int NumChannel,int Volumen,int Frec)
 int ChangeChannel(int NumChannel,int Volumen,int Panning)
 {
   // Set the volume
+#ifdef MIXER
   Mix_Volume(NumChannel,Volumen/2);
 
   // set the balance
   Mix_SetPanning(NumChannel, 255-Panning, Panning);
-
+#endif
+  
 #ifdef DOS
   CHANNEL *chptr;
 
