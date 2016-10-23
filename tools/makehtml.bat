@@ -147,21 +147,21 @@ then
 echo "USING DIV1 RUNTIME"
 make -j3 -f Makefile.html dirs R1EMBED="--preload-file ./buildhtml2@" D1HTML_EXE="$2" DIV1RUN="html/$3.js" html/$3.js > /dev/null
 echo "Building for SDL1"
-htmlfile $1 $2 $3 $4
+htmlfile "$1" "$2" "$3" "$4" "$5"
 echo "Building for SDL2"
 rm -rf obj obj_d objd1 > /dev/null
 make -j3 -f Makefile.html2 dirs R1EMBED="--preload-file ./buildhtml2@" D1HTML_EXE="$2" DIV1RUN="html/$3-sdl2.js" html/$3-sdl2.js > /dev/null
-htmlfile $1 $2 "$3-sdl2" $4
+htmlfile "$1" "$2" "$3-sdl2" "$4" "$5"
 DIVVER="DIV1"
 else
 echo "USING DIV2 RUNTIME"	
 echo "Building for SDL1"
 make -j3 -f Makefile.html dirs DEMBEDFILES="--preload-file ./buildhtml2@" HTML_EXE="$2" RUNNER="html/$3.js" html/$3.js > /dev/null
-htmlfile $1 $2 $3 $4
+htmlfile "$1" "$2" "$3" "$4" "$5"
 echo "Building for SDL2"
 rm -rf obj obj_d objd1 > /dev/null
 make -j3 -f Makefile.html2 dirs DEMBEDFILES="--preload-file ./buildhtml2@" HTML_EXE="$2" RUNNER="html/$3-sdl2.js" html/$3-sdl2.js 
-htmlfile $1 $2 "$3-sdl2" $4
+htmlfile "$1" "$2" "$3-sdl2" "$4" "$5"
 DIVVER="DIV2"
 fi
 
