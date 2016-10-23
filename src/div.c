@@ -30,6 +30,8 @@
 #include <emscripten.h>
 #endif
 
+extern int div_started;
+
 void mainloop(void);
 void heap_dump(void );
 void DebugFile(char *Cadena,char *Nombre);
@@ -517,7 +519,7 @@ int main(int argc, char * argv[]) {
 			fseek(f,0,SEEK_END);
 			source_len = ftell(f);
 			fseek(f,0,SEEK_SET);
-			prgbuf = (byte *)malloc(source_len+10);
+			prgbuf = (byte *)malloc(source_len*5);
 			if(prgbuf) {
 				fprintf(stdout,"Loaded %zu bytes\n",fread(prgbuf,1,source_len,f));
 				source_ptr=prgbuf;
@@ -1720,7 +1722,7 @@ void mainloop(void) {
 }
 
 void entorno(void) {
-
+	div_started = 1;
 	int n,m,oldn=max_windows;
 
 	int llamar;

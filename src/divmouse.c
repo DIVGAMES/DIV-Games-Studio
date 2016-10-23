@@ -15,6 +15,7 @@ void libera_drag(void);
 int colisiona_con(int a, int x, int y, int an, int al);
 void InitSound(void);
 void EndSound(void);
+int div_started = 0;
 
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -514,8 +515,10 @@ while(SDL_PollEvent(&event) )
 //				printf("RESIZING\n");
 				vga_an = event.resize.w;
 				vga_al = event.resize.h;
-				EndSound();
-				soundstopped=1;
+				if(div_started) {
+					soundstopped=1;
+					EndSound();
+				}
 //				volcado_parcial(0,0,vga_an-1,vga_al-1);
 //				SDL_PauseAudio(0);
 				
