@@ -117,12 +117,21 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 		SDL_FreeSurface(OSDEP_surface);
 	}
 
+	if(OSDEP_screen !=NULL) {
+		SDL_FreeSurface(OSDEP_screen);
+	}
+
+
 	OSDEP_screen = SDL_SetVideoMode(width, height, bpp, flags);
+#ifndef __EMSCRIPTEN__
 	OSDEP_surface = SDL_CreateRGBSurface(0, width, height, 8,
 		0,0,0,0);
-
+#endif
 	sw = width;
 	sh = height;	
+#ifdef __EMSCRIPTEN__
+	return OSDEP_screen;
+#endif
 	return OSDEP_surface;
 }
 
@@ -132,6 +141,11 @@ void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 
 }
 
 void OSDEP_Flip(OSDEP_Surface *s) {
+
+#ifdef __EMSCRIPTEN__
+		SDL_Flip(OSDEP_screen);
+		return;
+#endif	
 
 	if((vwidth == vga_an && vheight == vga_al) || (vwidth == 0 && vheight == 0)) {
 		SDL_BlitSurface(s, NULL, OSDEP_screen, NULL);
@@ -151,6 +165,9 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 			}
 			//OSDEP_screen = OSDEP_SetVideoMode(width, height, 8, fullscreen); 
 			fprintf(stdout,"%s %d %d\n",__FUNCTION__, vwidth, vheight);
+			if(OSDEP_screen!=NULL) {
+				SDL_FreeSurface(OSDEP_screen);
+			}
 			OSDEP_screen = SDL_SetVideoMode(vwidth,vheight,8, flags);
 			OSDEP_SetPalette(OSDEP_screen, OSDEP_pal, 0, 256);
 			sw = vwidth;
