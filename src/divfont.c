@@ -45,10 +45,10 @@ char Load_FontPathName[256];
 char Load_FontName[14];
 
 char FontPathName[256];
-char FontName[14];
+char FontName[1024];
 
 char FacePathName[256];
-char FaceName[14];
+char FaceName[1024];
 
 int FntAlto,FntAncho;
 char cFntAlto[5],cFntAncho[5];
