@@ -124,6 +124,7 @@ extern byte * index_end;
 ///////////////////////////////////////////////////////////////////////////////
 
 int primera_vez=0;  // Marks first time DIV runs
+extern int div_started;
 
 #ifdef SHARE
 int mostrar_demo=1;  // La primera vez no saldr  el mensaje de la demo
@@ -1720,7 +1721,7 @@ void mainloop(void) {
 }
 
 void entorno(void) {
-
+	div_started = 1;
 	int n,m,oldn=max_windows;
 
 	int llamar;
