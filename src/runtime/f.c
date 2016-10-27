@@ -349,7 +349,7 @@ FILE * div_open_file(char * file) {
   if(strlen((char *)file)==0) 
     return NULL;
 
-  f=open_multi(file,"r");
+  f=open_multi(file,"rb");
 
   if(!f)
   	strcpy(full,"");
@@ -501,13 +501,13 @@ void load_pal(void) {
     }
   }
 
-  if (strcmp((char *)pal,"pal\x1a\x0d\x0a"))
-    if (strcmp((char *)pal,"fpg\x1a\x0d\x0a"))
-      if (strcmp((char *)pal,"fnt\x1a\x0d\x0a"))
+  if (strcmp((char *)pal,"pal\x1a\x0d\x0a")) // not a pal file
+    if (strcmp((char *)pal,"fpg\x1a\x0d\x0a")) // not an fpg
+      if (strcmp((char *)pal,"fnt\x1a\x0d\x0a")) // not a fnt file
 
-        if (strcmp((char *)pal,"map\x1a\x0d\x0a")) {
+        if (strcmp((char *)pal,"map\x1a\x0d\x0a")) { // not a map file
 
-          if (es_PCX((byte*)pal)) { // Saca la paleta de un PCX
+          if (es_PCX((byte*)pal)) { // Take the PCX palette
 
             if (npackfiles) {
               m=read_packfile((byte*)&mem[pila[sp]]);
@@ -1870,7 +1870,7 @@ FILE * open_save_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
-  f = open_multi(file,"w");
+  f = open_multi(file,"wb");
   return f;
 }
 
@@ -1954,7 +1954,8 @@ void _save(void) {
 //����������������������������������������������������������������������������
 
 void load(void) {
-  int offset,lon;
+  int offset=0,lon=0;
+  int fbytes=0;
 
   if (unit_size<1) unit_size=1;
 
@@ -1984,14 +1985,16 @@ void load(void) {
 
   //fprintf(stdout, "File loaded: %s\n", full);
 
+  fseek(es,0,SEEK_END); lon=ftell(es);///4; 
   printf("file len: %d\n",ftell(es));
-  
-  fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
+  fseek(es,0,SEEK_SET);
   if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
-  lon=(lon*4)/unit_size;
-  if (fread(&mem[offset],unit_size,lon,es)!=lon) 
+  lon=lon/unit_size;
+  fbytes = fread(&mem[offset],unit_size,lon,es);
+  if(fbytes !=lon) { 
+    //fprintf(stdout,"Bytes read: %d bytes wanted: %d len: %d unit_size: %d\n",fbytes, lon*unit_size, lon, unit_size);
     e(127); 
-  
+  }
   fclose(es);
   max_reloj+=get_reloj()-old_reloj;
 }
