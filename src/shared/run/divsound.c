@@ -539,6 +539,9 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
 
 int StopSound(int NumChannel)
 {
+  if(NumChannel == -2)
+    NumChannel = -1;
+  
 #ifdef MIXER
 int x=99;
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
