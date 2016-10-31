@@ -17,7 +17,7 @@ exec_program(
 
 add_definitions( -DGIT_SHA1="${VERSION}" )
 
-SET(CLANG "C")
+SET(CLANG "CXX")
 
 # Check which target we want
 IF(NOT TARGETOS) 
@@ -101,8 +101,8 @@ MESSAGE(STATUS "CMAKE_SYSTEM_INCLUDE_PATH: "  ${CMAKE_SYSTEM_INCLUDE_PATH} )
 IF(HAS_SDL EQUAL 1)
 	MESSAGE(STATUS "Adding SDL Library")
 	Include(FindSDL)
-	include_directories(${SDL_INCLUDE_DIR})
-	set(EXTRA_LIBS ${EXTRA_LIBS} ${SDL_LIBRARY})
+#	include_directories(${SDL_INCLUDE_DIR})
+	set(EXTRA_LIBS ${EXTRA_LIBS} SDL)#${SDL_LIBRARY})
 
 	ADD_DEFINITIONS( -DSDL=${HAS_SDL})
 	
@@ -121,8 +121,8 @@ IF(HAS_SDL EQUAL 1)
 
 		Include(FindSDL_mixer)
 
-		include_directories(${SDL_MIXER_INCLUDE_DIRS})
-		set(EXTRA_LIBS ${EXTRA_LIBS} ${SDL_MIXER_LIBRARIES} )
+#		include_directories(${SDL_MIXER_INCLUDE_DIRS})
+		set(EXTRA_LIBS ${EXTRA_LIBS} SDL_mixer)#${SDL_MIXER_LIBRARIES} )
 		ADD_DEFINITIONS( -DMIXER )
 
 	ENDIF()

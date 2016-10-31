@@ -3443,7 +3443,24 @@ void sintactico (void) {
 		old_source=source;
 		nombre_include=(byte*)&mem[pieza_num];
 
-
+		fprintf(stdout,"Including file: %s\n",nombre_include);
+		{
+			FILE *fpi = div_open_file(nombre_include);
+			if(fpi) {
+				char *prgbufi;
+				int prgleni;
+				fprintf(stdout,"Found file: %x %s\n",fpi,full);
+				fseek(fpi,0,SEEK_END);
+				prgleni = ftell(fpi);
+				fseek(fpi,0,SEEK_SET);
+				prgbufi = (char *)malloc(prgleni+1);
+				fread(prgbufi,1,prgleni,fpi);
+				strcat(source_ptr,prgbufi);
+				fclose(fpi);
+				free(prgbufi);
+				fprintf(stdout, "INCLUDE LEN: %d\n",prgleni);
+			}
+		}
 	//
 		
 		source=old_source; lexico();
@@ -7568,7 +7585,7 @@ FILE * div_open_file(char * file) {
   if(strlen((char *)file)==0) 
     return NULL;
 
-  f=open_multi(file,"r");
+  f=open_multi(file,"rb");
 
   if(!f)
   	strcpy(full,"");

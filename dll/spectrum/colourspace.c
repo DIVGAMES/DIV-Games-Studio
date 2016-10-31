@@ -22,6 +22,8 @@ void yuvtorgb(const yuv_t yuv, rgb_t rgb)
 
 double yuvdist(const yuv_t pal, const yuv_t dat)
 {
+	return (double)	abs(pal[0]-dat[0])+abs(pal[1]-dat[1])+abs(pal[2]-dat[2]);
+
 	return(fabs(pal[0]-dat[0])+fabs(pal[1]-dat[1])+fabs(pal[2]-dat[2]));
 }
 

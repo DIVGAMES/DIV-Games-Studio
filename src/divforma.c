@@ -128,9 +128,9 @@ void descomprime_MAP (byte * buffer, byte * mapa, int vent) {
 
 int graba_MAP (byte * mapa, FILE * f) {
 
-	word x,npuntos=0;
-	int y;
-	int i;
+	int16_t x,npuntos=0;
+	int32_t y;
+	int32_t i;
 
 	fwrite("map\x1a\x0d\x0a\x00\x00",8,1,f);      // +000 Cabecera y version
 	x=map_an; fwrite(&x,2,1,f);                   // +008 Ancho
@@ -197,7 +197,7 @@ struct pcx_struct {
 	unsigned char far *cimage;
 	unsigned char palette[3*256];
 	unsigned char far *image;
-	int clength;
+	int32_t clength;
 };
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 //      Functions
@@ -471,12 +471,12 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
 
 int graba_PCX(byte *mapa,FILE *f) {
   byte p[768];
-  int x;
+  int32_t x;
   byte *cbuffer;
   struct pcx_struct pcx;
-  int ptr=0;
-  int cptr=0;
-  int Desborde=0;
+  int32_t ptr=0;
+  int32_t cptr=0;
+  int32_t Desborde=0;
   char ActPixel;
   char cntPixel=0;
   char Paletilla=12;
@@ -582,27 +582,27 @@ byte * descomprime_rle(byte * buffer,unsigned int bytes_line,unsigned int last_b
 
 typedef struct tagBITMAPFILEHEADER
 {
-        unsigned short  bfType;         //2
-        unsigned int    bfSize;         //4
-        unsigned short  bfReserved1;    //2
-        unsigned short  bfReserved2;    //2
-        unsigned int    bfOffBits;      //4
+        uint16_t  bfType;         //2
+        uint32_t  bfSize;         //4
+        uint16_t  bfReserved1;    //2
+        uint16_t  bfReserved2;    //2
+        uint32_t  bfOffBits;      //4
                                         //14
 } BITMAPFILEHEADER;
 
 typedef struct tagBITMAPINFOHEADER
 {
-        unsigned int   biSize;                   // 4
-        unsigned int   biWidth;                  // 4
-        unsigned int   biHeight;                 // 4
-        unsigned short biPlanes;                 // 2
-        unsigned short biBitCount;               // 2
-        unsigned int   biCompression;            // 4
-        unsigned int   biSizeImage;              // 4
-        unsigned int   biXPelsPerMeter;          // 4
-        unsigned int   biYPelsPerMeter;          // 4
-        unsigned int   biClrUsed;                // 4
-        unsigned int   biClrImportant;           // 4
+        uint32_t   biSize;                   // 4
+        uint32_t   biWidth;                  // 4
+        uint32_t   biHeight;                 // 4
+        uint16_t   biPlanes;                 // 2
+        uint16_t   biBitCount;               // 2
+        uint32_t   biCompression;            // 4
+        uint32_t   biSizeImage;              // 4
+        uint32_t   biXPelsPerMeter;          // 4
+        uint32_t   biYPelsPerMeter;          // 4
+        uint32_t   biClrUsed;                // 4
+        uint32_t   biClrImportant;           // 4
                                                  // 40
 
 } BITMAPINFOHEADER;
@@ -1227,7 +1227,7 @@ int cargadac_MAP(char *name)
   FILE *file;
   char par[16];
   byte * buffer, * temp;
-  int n,mal,man;
+  int32_t n,mal,man;
 
   file=fopen(name,"rb");
   if(file==NULL)
@@ -1244,8 +1244,8 @@ int cargadac_MAP(char *name)
   }
 
   if (cargar_paleta) {
-    man=*(word*)(par+8);
-    mal=*(word*)(par+10);
+    man=*(int16_t*)(par+8);
+    mal=*(int16_t*)(par+10);
     fseek(file,0,SEEK_END);
     n=ftell(file);
     if ((buffer=(byte *)malloc(n))==NULL) {

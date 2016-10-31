@@ -66,7 +66,7 @@ void InitSound(void)
 #endif
 #endif
 
-  SDL_Init( SDL_INIT_AUDIO );
+//  SDL_Init( SDL_INIT_AUDIO );
 
 fprintf(stdout, "Opening Audio Device \n");
   if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
@@ -437,7 +437,7 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 
 	float ratio = channels[chan].freq/256.0f;//(22050 +10000) / 22050.0f;
 
-	short* samples = (short*)stream;
+	unsigned short* samples = (short*)stream;
   memset(stream,0,len);
 	uint16_t *input = (uint16_t *)(s->sound->abuf)+pos;
 	int i = 0;
@@ -462,7 +462,21 @@ void freqEffect(int chan, void *stream, int len, void *udata)
   //        StopSound(chan);
 			}
 		}
-    samples[i++] = input[(int)x];
+    samples[i] = input[(int)x];
+
+    // handle panning
+/*    if(channels[chan].pan!=127) {
+      int pos = channels[chan].pan;
+      if(i&1) {// left
+//        pos = pos & 127;
+      } else {
+ //       pos = pos - 127;
+          pos = 255-pos;
+      }
+      samples[i]=(unsigned short)(((int)samples[i]*pos)/255);
+    }
+ */
+    i++;
 		j+=ratio;
 	}
   pos+=(int)j;
@@ -490,6 +504,10 @@ void freqEffect(int chan, void *stream, int len, void *udata)
 #endif
 void channelDone(int channel) {
   // Done!
+    //   if(!Mix_UnregisterAllEffects(channel)) {
+    //    fprintf(stdout,"Mix_UnregisterAllEffects: %s\n", Mix_GetError());
+    //  }
+
 }
 
 int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
@@ -519,7 +537,7 @@ int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
   channels[con].freq = Frec;
   channels[con].vol = Volumen;
   channels[con].pos = 0;
-
+  channels[con].pan = 127;
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
   // Setup our callback to change frequency
 		Mix_RegisterEffect(con, freqEffect, doneEffect,NULL);
@@ -541,7 +559,7 @@ int StopSound(int NumChannel)
 {
   if(NumChannel == -2)
     NumChannel = -1;
-  
+
 #ifdef MIXER
 int x=99;
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
@@ -565,6 +583,9 @@ int x=99;
 int ChangeSound(int NumChannel,int Volumen,int Frec)
 {
 #ifdef MIXER
+  if(!Mix_Playing(NumChannel))
+    return 0;
+
 	channels[NumChannel].freq=Frec;
 	Mix_Volume(NumChannel,Volumen/2);
 #endif
@@ -588,16 +609,26 @@ int ChangeChannel(int NumChannel,int Volumen,int Panning)
 {
   // Set the volume
 #ifdef MIXER
+  if(!Mix_Playing(NumChannel))
+    return 0;
+
   Mix_Volume(NumChannel,Volumen/2);
 
+  channels[NumChannel].pan = Panning;
+
   // set the balance
-  Mix_SetPanning(NumChannel, 255-Panning, Panning);
+  // if(!Mix_SetPanning(NumChannel, 255-Panning, Panning)) {
+  //   printf("Mix_SetPanning: %s\n", Mix_GetError());
+  //   // no panning, is it ok?
+  // }
+  
 #endif
   
 #ifdef DOS
   CHANNEL *chptr;
 
-  if(NumChannel >= CHANNELS || NumChannel < MusicChannels) return(-1);
+  if(NumChannel >= CHANNELS || NumChannel < MusicChannels) 
+    return(-1);
 
   chptr = &judas_channel[NumChannel];
 

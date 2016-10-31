@@ -4,12 +4,14 @@
 #    *) install cross compiler: `sudo apt-get install mingw-w64 g++-mingw-w64`
 #    *) cd build
 #    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-Ubuntu-mingw64.cmake ..
+LIST(APPEND CMAKE_PROGRAM_PATH  "/opt/gcw0-toolchain/usr/bin" )
+
 
 set(CMAKE_SYSTEM_NAME Linux)
 SET(GCW=1)
 SET(PLATFORM "GCW")
 
-SET(HAS_SDL 2)
+SET(HAS_SDL 1)
 SET(HAS_SDLTTF 0)
 SET(HAS_SDLIMAGE 0)
 SET(HAS_ZLIB 1)

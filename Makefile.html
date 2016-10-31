@@ -47,7 +47,8 @@ LINKFLAGS= --use-preload-plugins
 #-s EXPORTED_FUNCTIONS="['_getscore','_main']"
 EXTRA_FLAGS= -Wno-deprecated -Qunused-arguments -Wno-logical-op-parentheses 
 SCFLAGS = ${BUILDLVL} ${EMC_OPTS} -Isrc/shared -Isrc -Wall $(SDL_CFLAGS) -funsigned-char -fpermissive -ferror-limit=2 
-LIBS = $(SDL_LIBS) -lm  libSDL_net.a
+LIBS = $(SDL_LIBS) -lm  
+#libSDL_net.a
 
 OSDEP = src/shared/osdep.c src/shared/unzip.c src/shared/mikedll.c
 

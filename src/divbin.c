@@ -1,5 +1,5 @@
 #include "global.h"
-#include "fpgfile.hpp"
+#include "fpgfile.h"
 
 
 // TRASHCAN Handler
@@ -7,8 +7,8 @@
 extern HeadFPG HeadFPGArrastre;
 void FPG2();
 
-void FPG_pinta_listboxbr      (struct t_listboxbr * l);
-void FPG_actualiza_listboxbr  (struct t_listboxbr * l);
+void FPG_pinta_listboxbr      (t_listboxbr * l);
+void FPG_actualiza_listboxbr  (t_listboxbr * l);
 
 
 
@@ -30,7 +30,7 @@ void Bin1(void)
 void Bin2(void)
 {
 	FPG *MiMemoFPG;
-	struct tventana MiVentana;
+	tventana MiVentana;
 
 	if(arrastrar==4) {
 		

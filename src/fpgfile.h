@@ -21,7 +21,7 @@ typedef struct _FPG{
         uint8_t    CodDes[1000][40];
         int     OffsGrf[1000];
         byte    NombreFpg[13];
-        struct  t_listboxbr lInfoFPG;
+        t_listboxbr lInfoFPG;
         int     FPGInfo;
         int     thumb_on;
         t_thumb thumb[1000];
@@ -42,10 +42,10 @@ typedef struct _FPG{
         int RemapAllFileToPal(FPG *Fpg);
 
         void FPG_crear_thumbs         (void);
-        void FPG_muestra_thumb        (struct t_listboxbr * l, int num);
-        void FPG_pinta_listboxbr      (struct t_listboxbr * l);
-        void FPG_pinta_sliderbr       (struct t_listboxbr * l);
-        void FPG_crear_listboxbr      (struct t_listboxbr * l);
-        void FPG_actualiza_listboxbr  (struct t_listboxbr * l);
-        void crear_un_thumb_FPG       (struct t_listboxbr * l);
+        void FPG_muestra_thumb        (t_listboxbr * l, int num);
+        void FPG_pinta_listboxbr      (t_listboxbr * l);
+        void FPG_pinta_sliderbr       (t_listboxbr * l);
+        void FPG_crear_listboxbr      (t_listboxbr * l);
+        void FPG_actualiza_listboxbr  (t_listboxbr * l);
+        void crear_un_thumb_FPG       (t_listboxbr * l);
 

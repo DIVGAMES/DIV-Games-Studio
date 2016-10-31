@@ -1,0 +1,54 @@
+CREDITS
+-------
+
+DIV DX Would not be possible without the help of the following people in no particular order.
+
+Daniel Navarro for the original DIV code, and his continuing support.
+Jon Silvera for too many things to mention, including introducing DIV to the UK market back in 2000
+Fransesco Armato for helping to port the mode8 assembly to C.
+EvilDragon for the generous donation of the pandora console, making the pandora port possible.
+Freark van der Berg for additional coding and support
+
+Special thanks to the following people
+Dom Cook
+Peter Van Dalen
+Jeremy Wood
+Roland Kunz
+
+
+
+The modern ports of DIV are possible thanks to the following libraries and tools:
+
+GCC - Gnu Compiler Collection
+- https://gcc.gnu.org/
+
+SDL - Cross platform IO library
+- https://www.libsdl.org/
+
+SDL Mixer - SDL Audio library
+- https://www.libsdl.org/projects/SDL_mixer/
+
+ZLIB - Compression library
+- http://www.zlib.net/
+
+Emscripten - Javascript compiler for web ports
+- https://github.com/kripken/emscripten
+
+CLANG - C compiler for LLVM
+- http://clang.llvm.org/
+
+ZIP - Tiny zip creation library 
+- https://github.com/kuba--/zip.git
+
+VPE - Virtual Presence engine (Mode8 3D engine)
+- http://www.ii.uib.no/~alexey/vpe/
+
+SDLGFX - SDL Graphics drawing primitives and handy helper functions
+- http://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx/
+
+MIKMOD - Music module player
+- http://mikmod.sourceforge.net/
+
+LIBOGG - Ogg player library
+- https://www.xiph.org/ogg/
+

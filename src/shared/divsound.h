@@ -25,6 +25,7 @@ typedef struct _channels {
   int con;
   int num;
   int pos;
+  int pan;
 } tChannels;	
 
 typedef struct _sonido {

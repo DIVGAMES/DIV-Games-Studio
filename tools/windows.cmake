@@ -27,15 +27,23 @@ SET(HAS_GIT 0)
 IF(CPUARCH STREQUAL "64")
 	MESSAGE(STATUS "Buiding Windows 64bit")
 	SET(OS_DEFINITIONS " -mwindows -Dmain=SDL_main ")
-	SET(OS_LIBS mingw32 SDLmain gdi32)
+#	SET(OS_LIBS mingw32 SDLmain gdi32)
 	set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 ELSE() # Default 32 bits
 	MESSAGE(STATUS "Buiding Windows 32bit")
 	SET(OS_DEFINITIONS " -m32 -mwindows -Dmain=SDL_main ")
-	SET(OS_LIBS mingw32 SDLmain m dinput8 dxguid dxerr8 user32 gdi32 winmm imm32 ole32 oleaut32 shell32 version uuid)
+#	SET(OS_LIBS mingw32 SDLmain m dinput8 dxguid dxerr8 user32 gdi32 winmm imm32 ole32 oleaut32 shell32 version uuid)
 #gdi32  ole32 oleaut32 imm32 winmm )
 	set(TOOLCHAIN_PREFIX i686-w64-mingw32)
 ENDIF()
+
+IF(HAS_SDL EQUAL 2)
+    SET(OS_LIBS mingw32 SDL2main dinput8 dxguid dxerr8 user32 gdi32 winmm imm32 ole32 oleaut32 shell32 version uuid)
+    SET(OS_LINK_FLAGS " -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -lFLAC -lvorbisfile -lvorbis -logg -lpthread") 
+ELSE()
+    SET(OS_LIBS mingw32 SDLmain )
+ENDIF()
+
 
 # cross compilers to use for C and C++
 set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)

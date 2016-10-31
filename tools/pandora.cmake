@@ -11,7 +11,7 @@ SET(PLATFORM "PANDORA")
 
 SET(HAS_SDL 1)
 SET(HAS_SDLTTF 0)
-SET(HAS_SDLIMAGE 1)
+SET(HAS_SDLIMAGE 0)
 SET(HAS_ZLIB 1)
 SET(HAS_SDLMIXER 1)
 SET(HAS_DLL 1)
@@ -32,7 +32,7 @@ set(CMAKE_RC_COMPILER ${TOOLCHAIN_PREFIX}-windres)
 
 # target environment on the build host system
 #   set 1st to dir with the cross compiler's C/C++ headers/libs
-set(CMAKE_FIND_ROOT_PATH /home/mike/pandora-dev/arm-2011.09/)
+set(CMAKE_FIND_ROOT_PATH /rpxc/pandora-dev/arm-2011.09/)
 
 # modify default behavior of FIND_XXX() commands to
 # search for headers/libs in the target environment and
@@ -41,10 +41,10 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-#TARGET_LINK_LIBRARIES ("mingw32 SDLmain  SDL SDL_Mixer")
+#TARGET_LINK_LIBRARIES ("SDLmain  SDL ")
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -mwindows")
-set ( OS_LINK_FLAGS "-L${CMAKE_FIND_ROOT_PATH}usr/lib/ -Wl,-rpath,${CMAKE_FIND_ROOT_PATH}usr/lib" )
+set ( CMAKE_EXE_LINKER_FLAGS "-L${CMAKE_FIND_ROOT_PATH}usr/lib/ -Wl,-rpath,${CMAKE_FIND_ROOT_PATH}usr/lib" )
 
 SET (OS_DEFINITIONS "-mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -I${CMAKE_FIND_ROOT_PATH}/usr/include" )
 

@@ -1,7 +1,7 @@
 
-// **** OJO **** La funci¢n que genera el texto es void CreateText()
-// **** ShowFont? es la ventana de font (el font se carga en memoria), GetText es el d¡alogo con el "input text"
-// El v.aux de ShowFont apunta a la siguiente informaci¢n al llamar a CreateText()
+// **** OJO **** La funciï¿½n que genera el texto es void CreateText()
+// **** ShowFont? es la ventana de font (el font se carga en memoria), GetText es el dï¿½alogo con el "input text"
+// El v.aux de ShowFont apunta a la siguiente informaciï¿½n al llamar a CreateText()
 // v.aux -> filename, v.aux+14 -> path, v.aux+RES_FOR_NAME -> fichero FNT
 // No se hace FntAux=v.aux+RES_FOR_NAME; antes de llamar a CreateText, es decir, FntAux apunta al fichero
 // El string se pasa a CreateText en cCharsToPrint[128]
@@ -19,7 +19,7 @@ void crear_texto_prueba(char * s, char flags);
 
 char fontsizes[8*8]="8x8\0    10x10\0  12x12\0  14x14\0  16x16\0  32x32\0  64x64\0  128x128";
 int fontTamanos[8]={8,10,12,14,16,32,64,128};
-struct t_listbox lfontsizes={116,12,fontsizes,8,4,41};
+t_listbox lfontsizes={116,12,fontsizes,8,4,41};
 void Preview();
 void Preview20();
 void GetFont();
@@ -687,10 +687,10 @@ int an=v.an/big2,al=v.al/big2;
         }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define max_archivos 512 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Listbox de archivos
-extern struct t_listboxbr larchivosbr;
+#define max_archivos 512 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Listbox de archivos
+extern t_listboxbr larchivosbr;
 extern t_thumb thumb[max_archivos];
 extern int num_taggeds;
 
@@ -743,7 +743,7 @@ int  num;
         }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 byte OldColor;
 byte PrevColor;
@@ -826,7 +826,7 @@ void Selcolor3(void)
 
 void Selcolor0(void)
 {
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diï¿½logo
         v.an=131;
         v.al=157;
         v.titulo=texto[78];
@@ -933,7 +933,7 @@ void Preview0()
                         TamaY=fal;
         }
 */
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diï¿½logo
         if(big) { TX=TamaX/2; TY=TamaY/2; } else { TX=TamaX; TY=TamaY; }
         v.an=TX+6;
         if(v.an<60)
@@ -1074,7 +1074,7 @@ int GenCode=0;
 }
 void GenFont0(void)
 {
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diï¿½logo
         v.an=169-26;
         v.al=103;
         v.titulo=texto[852];
@@ -1188,7 +1188,7 @@ void Preview20()
                         TamaY=fal;
         }
 */
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diï¿½logo
 
         if(big) { TX=TamaX/2; TY=TamaY/2; } else { TX=TamaX; TY=TamaY; }
         v.an=TX+6;
@@ -1208,7 +1208,7 @@ void Preview20()
 }
 /////////////////////////////////////////////////////////////////////////////
 
-char pletras[5*8+1]="01234567ABCDEFGHabcdefgh!?$*/+()¥¤‡ ‚¡¢£";
+char pletras[5*8+1]="01234567ABCDEFGHabcdefgh!?$*/+()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
 
 void crear_texto_prueba(char * s, char flags) {
   int numbits=0;
@@ -1310,7 +1310,7 @@ void ShowFont1(void)
 
   if (TamaX>ancho_w*big2 || TamaY>alto_w*big2)
   {
-    // Crea la reducci¢n del thumbnail
+    // Crea la reducciï¿½n del thumbnail
     coefredx = TamaX/((float)ancho_w*(float)big2);
     coefredy = TamaY/((float)alto_w*(float)big2);
     if(coefredx>coefredy) coefredy=coefredx;
@@ -1429,7 +1429,7 @@ int Length;
 //        _button(122 ,v.an-8,v.al-14,2);
 }
 
-void ReloadFont(int vn, struct tventana *vntn)
+void ReloadFont(int vn, tventana *vntn)
 {
 FILE *file;
 int Length;
@@ -1461,8 +1461,8 @@ int Length;
         fclose(file);
 }
 
-#define max_archivos 512 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Listbox de archivos
-extern struct t_listboxbr larchivosbr;
+#define max_archivos 512 // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Listbox de archivos
+extern t_listboxbr larchivosbr;
 extern t_thumb thumb[max_archivos];
 extern int num_taggeds;
 
@@ -1598,7 +1598,7 @@ int n,y,x,TamaX=0,TamaY=0,fan,_fal=0,fal,init,cnt;
                         TamaY=fal;
         } if (TamaY==0) TamaY=_fal;
 
-        // 3 - Crea un mapa de ese tama¤o
+        // 3 - Crea un mapa de ese tamaï¿½o
 
         map_an=TamaX;
         map_al=TamaY;
@@ -1635,7 +1635,7 @@ int n,y,x,TamaX=0,TamaY=0,fan,_fal=0,fal,init,cnt;
         v.mapa->zoom_x=x;
         v.mapa->zoom_y=y;
 
-        // 6 - Inicializa los puntos de control y el c¢digo
+        // 6 - Inicializa los puntos de control y el cï¿½digo
 
         for (n=0;n<512;n++)
                 v.mapa->puntos[n]=-1;

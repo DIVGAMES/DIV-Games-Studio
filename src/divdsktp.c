@@ -1,5 +1,5 @@
 #include "global.h"
-#include "fpgfile.hpp"
+#include "fpgfile.h"
 
 #include <time.h>
 #include <sys/stat.h>
@@ -43,17 +43,17 @@ extern struct _calc * pcalc;
 extern struct _calc * readcalc;
 void calc0(void);
 
-extern int helpidx[4096];              // Por cada t‚rmino {inicio,longitud}
-extern int help_item;                  // Indica sobre que t‚rmino se pide ayuda
+extern int helpidx[4096];              // Por cada tï¿½rmino {inicio,longitud}
+extern int help_item;                  // Indica sobre que tï¿½rmino se pide ayuda
 extern int help_len;                   // Longitud del help_buffer
 extern int help_an,help_al;            // Ancho y alto de la ventana de ayuda
-extern int help_l,help_lines;          // L¡nea actual, y lineas totales
-extern byte help_title[128];           // T¡tulo del t‚rmino
+extern int help_l,help_lines;          // Lï¿½nea actual, y lineas totales
+extern byte help_title[128];           // Tï¿½tulo del tï¿½rmino
 extern byte *help_buffer,*h_buffer;    // Buffer para contener la ayuda, auxiliar
-extern byte *help_line;                // Puntero a la l¡nea actual
+extern byte *help_line;                // Puntero a la lï¿½nea actual
 extern byte *help_end;                 // Final de help_buffer;
-extern int loaded[64],n_loaded;        // Im genes cargadas, hasta un m ximo de 32
-extern int backto[64];      // Cola circular para almacenar los topicos consultados {n,l¡nea}
+extern int loaded[64],n_loaded;        // Imï¿½genes cargadas, hasta un mï¿½ximo de 32
+extern int backto[64];      // Cola circular para almacenar los topicos consultados {n,lï¿½nea}
 extern int i_back,a_back,f_back; // Inicio y final de la cola circular (ambos 0,2,..62)
 
 void Fonts1(void); void Fonts2(void); void Fonts3(void);
@@ -79,9 +79,9 @@ void New_DownLoad_Desktop() {
   int man,mal;
   pcminfo *mypcminfo;
 
-  DaniDel("desk\\window.000"); // Borra la sesi¢n anterior
+  DaniDel("desk\\window.000"); // Borra la sesiï¿½n anterior
 
-  // Graba window.000 con la informaci¢n general de la sesi¢n
+  // Graba window.000 con la informaciï¿½n general de la sesiï¿½n
 
   if ((desktop=fopen("desk\\window.000","wb"))==NULL) return;
   n=fwrite(&n,1,4,desktop);
@@ -198,13 +198,13 @@ modinfo *mymodinfo;
   fprintf(lst,"vid_mode=%d,vid_modebig=%d\n",Setupfile.Vid_mode,Setupfile.Vid_modeBig);
 fflush(lst);
 #endif
-        // Pone una cabecera de identificaci¢n
+        // Pone una cabecera de identificaciï¿½n
         desktop=fopen("system/session.dtf","wb");
         n=fwrite("dtf\x1a\x0d\x0a\x0",8,1,desktop);
 #ifdef SLST
         fprintf(lst,"header %d elementos escritos <<<\n",n);
 #endif
-        // guarda la antigua resoluci¢n
+        // guarda la antigua resoluciï¿½n
         iWork=Setupfile.Vid_modeAlto+Setupfile.Vid_modeAncho*10000+(Setupfile.Vid_modeBig<<31);
         n=fwrite(&iWork,1,4,desktop);
 #ifdef SLST        
@@ -231,7 +231,7 @@ fflush(lst);
                 if(ventana[x].tipo!=0 && ventana[x].titulo)
                 {
                         numvent++;
-                        n=fwrite(&ventana[x],1,sizeof(struct tventana),desktop);
+                        n=fwrite(&ventana[x],1,sizeof(tventana),desktop);
 #ifdef SLST
                         fprintf(lst,"v %d elementos escritos <<<\n",n);
 						if(ventana[x].tipo < 107)
@@ -305,7 +305,7 @@ fflush(lst);
                                         // estructura tmapa
                                         man=ventana[x].mapa->map_an;
                                         mal=ventana[x].mapa->map_al;
-                                        n=fwrite(ventana[x].mapa,1,sizeof(struct tmapa),desktop);
+                                        n=fwrite(ventana[x].mapa,1,sizeof(tmapa),desktop);
 
                                         // fprintf(lst,"tmapa %d elementos escritos <<<\n",n);
                                         // Grafico
@@ -325,7 +325,7 @@ fflush(lst);
                                                 iWork=0;
                                                 n=fwrite(&iWork,1,4,desktop);
                                                 // fprintf(lst,"tipoprg %d elementos escritos <<<\n",n);
-                                                n=fwrite(ventana[x].prg,1,sizeof(struct tprg),desktop);
+                                                n=fwrite(ventana[x].prg,1,sizeof(tprg),desktop);
                                                 // fprintf(lst,"tprg %d elementos escritos <<<\n",n);
                                                 n=fwrite(ventana[x].prg->buffer,1,ventana[x].prg->buffer_lon,desktop);
                                                 // fprintf(lst,"buffer %d elementos escritos <<<\n",n);
@@ -450,10 +450,10 @@ int iWork;
 return(1);
 }
 
-struct tventana ventana_aux;
-struct tmapa    maux;
+tventana ventana_aux;
+tmapa    maux;
 FPG             faux;
-struct tprg     paux;
+tprg     paux;
 char *          baux;
 
 int UpLoad_Desktop()
@@ -476,7 +476,7 @@ int UpLoad_Desktop()
         for(x=0;x<numvent;x++)
         {
                 // Window struct data
-                fread(&ventana_aux,1,sizeof(struct tventana),desktop);
+                fread(&ventana_aux,1,sizeof(tventana),desktop);
                 switch(ventana_aux.tipo)
                 {
                         case    2: //menu
@@ -552,7 +552,7 @@ int UpLoad_Desktop()
                                 break;
                         case    100: //map
                                 // estructura tmapa
-                                fread(&maux,1,sizeof(struct tmapa),desktop);
+                                fread(&maux,1,sizeof(tmapa),desktop);
                                 baux=(char *)malloc(maux.map_an*maux.map_al);
                                 if (baux==NULL) {
                                   fseek(desktop,maux.map_an*maux.map_al,SEEK_CUR);
@@ -607,9 +607,9 @@ int UpLoad_Desktop()
                                fread(&iWork,1,4,desktop);
                                 if(iWork==0)
                                 {
-                                        if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL)
+                                        if ((v_prg=(tprg*)malloc(sizeof(tprg)))!=NULL)
                                         {
-                                                fread(v_prg,1,sizeof(struct tprg),desktop);
+                                                fread(v_prg,1,sizeof(tprg),desktop);
                                                 v_prg->buffer=(byte *)malloc(v_prg->buffer_lon);
                                                 fread(v_prg->buffer,1,v_prg->buffer_lon,desktop);
 
@@ -739,9 +739,9 @@ return(1);
 }
 
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //      Load new window (1 on Error)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 {
@@ -763,9 +763,9 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 */
     addwindow();
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     // Los siguientes valores los debe definir init_handler, valores por defecto:
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     v.orden=siguiente_orden++;
     v.tipo=0;
@@ -794,12 +794,12 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 
     an=v.an; al=v.al;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     // Algoritmo de emplazamiento de ventanas ...
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 /*
     if (v.tipo==1)
-    { // Los di logos se colocan en el centro
+    { // Los diï¿½logos se colocan en el centro
         x=vga_an/2-an/2;
         y=vga_al/2-al/2;
     }
@@ -810,9 +810,9 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 
     v.x=x; v.y=y;
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     // Comprueba que si se trata de un mapa no haya otro activado
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     if(VidModeChanged) {
       if (v.tipo>=100 && ventana_aux.primer_plano!=2) {
@@ -833,9 +833,9 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
       }
     }
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // Comprueba que si se trata de un men£ no este ya generado
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // Comprueba que si se trata de un menï¿½ no este ya generado
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 /*
     n=0; if (v.tipo==2 || v.tipo==3 || v.tipo==4) {
       for (m=1;m<max_windows;m++)
@@ -847,12 +847,12 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 */
     if ((ptr=(byte *)malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
 
-      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       // Pasa a segundo plano las ventanas que corresponda
-      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 /*
-      if (v.tipo==1) { // Los di logos cierran todas las ventanas
-        if (ventana[1].tipo==1) { // Di logo sobre di logo
+      if (v.tipo==1) { // Los diï¿½logos cierran todas las ventanas
+        if (ventana[1].tipo==1) { // Diï¿½logo sobre diï¿½logo
           ventana[1].primer_plano=0; vuelca_ventana(1);
         } else for (n=1;n<max_windows;n++)
           if (ventana[n].tipo && ventana[n].primer_plano==1) {
@@ -888,9 +888,9 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
       }
 */
 
-      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       // Inicializa la ventana
-      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
       v.ptr=ptr;
 
@@ -965,9 +965,9 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
         volcado_parcial(v.x,v.y,v.an,v.al);
       }
 
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-    // No se pudo abrir la ventana, (no hay memoria o men£ duplicado)
-    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // No se pudo abrir la ventana, (no hay memoria o menï¿½ duplicado)
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     } else { divdelete(0); return(1); }
 
@@ -978,22 +978,22 @@ int nueva_ventana_carga(voidReturnType init_handler,int nx,int ny)
 }
 
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //      Carga un mapa nuevo (1 si Error)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 int nuevo_mapa_carga(int nx,int ny,char *nombre,byte *mapilla)
 {
   int n;
 
-  //1§ Pide memoria para un struct tmapa
-  if ((v_mapa=(struct tmapa *)malloc(sizeof(struct tmapa)))!=NULL) {
-	memset(v_mapa,0,sizeof(struct tmapa));
+  //1ï¿½ Pide memoria para un struct tmapa
+  if ((v_mapa=(tmapa *)malloc(sizeof(tmapa)))!=NULL) {
+	memset(v_mapa,0,sizeof(tmapa));
 	
-    // 2§ Pide memoria para el mapa
+    // 2ï¿½ Pide memoria para el mapa
     v_mapa->map=mapilla;
 
-    //4§ Fija el resto de variables
+    //4ï¿½ Fija el resto de variables
     memcpy((char *)v_mapa->filename,(char *)nombre,255);
     *v_mapa->path='\0';
     v_mapa->map_an=map_an;
@@ -1066,7 +1066,7 @@ void carga_programa0(void)
   v.al=(12+16)*big2+editor_font_al*v_prg->al;
 
   if (v.an>vga_an) {
-    v.prg->an=(vga_an-12*big2)/editor_font_an; // Calcula tama¤o (en chr) maximizada
+    v.prg->an=(vga_an-12*big2)/editor_font_an; // Calcula tamaï¿½o (en chr) maximizada
     v.an=(4+8)*big2+editor_font_an*v.prg->an;
     ventana_aux.an=v.an;
   }
@@ -1095,7 +1095,7 @@ void carga_programa0(void)
   test_cursor();
 }
 
-extern struct t_listbox lfontsizes;
+extern t_listbox lfontsizes;
 
 void carga_Fonts0(void)
 {

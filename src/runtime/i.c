@@ -595,7 +595,9 @@ init_rnd(dtime);
 
   #ifdef DEBUG
   #ifndef __EMSCRIPTEN__
-  init_debug(); new_palette=0; new_mode=0;
+  init_debug(); 
+	new_palette=0; 
+	new_mode=0;
   #endif
   #endif
 
@@ -1770,17 +1772,6 @@ void finalizacion (void) {
 	rvmode();
 
 	kbdReset();
-
-#ifdef DEBUG
-	if(text_font!=NULL) {
-//		printf("text_font = %x\n",text_font);
-		free(text_font);
-	}
-	if(graf_ptr!=NULL) {
-//		printf("graf_ptr = %x\n",text_font);
-		free(graf_ptr);
-	}
-#endif
 
 // free any new_map ptrs if any
   for(newmapcount = 1000; newmapcount<2000; newmapcount++) {

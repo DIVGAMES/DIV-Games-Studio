@@ -1,7 +1,7 @@
 
 
 #include "global.h"
-#include "fpgfile.hpp"
+#include "fpgfile.h"
 
 void InitGetCode(void);
 extern int RetValue;
@@ -322,7 +322,7 @@ return 1;
 
 int RemapAllFileToPal(FPG *Fpg)
 {
-struct tipo_regla CopiaReglas[16];
+tipo_regla CopiaReglas[16];
 HeadFPG MiOtraHeadFPG;
 char ActualPath[_MAX_PATH+14];
 char *OtraImagen;
@@ -476,9 +476,9 @@ char *Buffer;
         free(Buffer);
 }
 
-int Borrar_FPG(FPG *Fpg,int COD) // Papelera, machacar uno existente y al cambiar el c¢digo a uno
+int Borrar_FPG(FPG *Fpg,int COD) // Papelera, machacar uno existente y al cambiar el cï¿½digo a uno
 {
-struct tipo_regla CopiaReglas[16];
+tipo_regla CopiaReglas[16];
 HeadFPG MiOtraHeadFPG;
 char ActualPath[_MAX_PATH+14];
 char *OtraImagen;
@@ -595,7 +595,7 @@ debugprintf("found COD at index: %d\n",n);
 
 int Borrar_muchos_FPG(FPG *Fpg,int taggeds,int *array_del) {
 
-  struct tipo_regla CopiaReglas[16];
+  tipo_regla CopiaReglas[16];
   HeadFPG MiOtraHeadFPG;
   char ActualPath[_MAX_PATH+14];
   char *OtraImagen;
