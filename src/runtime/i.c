@@ -1143,7 +1143,7 @@ void frame_start(void) {
 
 	for (max=0;max<10;max++) {
     if(otimer[max]!=timer(max)) {
-      mtimer[max]=0;
+      mtimer[max]=timer(max)*10;
     }
 		mtimer[max]+=(get_reloj()-ultimo_reloj);
     timer(max)=mtimer[max]/10;
