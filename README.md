@@ -2,7 +2,9 @@
 
 DIV Games Studio 2, ported, translated and upgraded. 
 
-cross platform IDE, compiler and runtime for
+homepage: http://div-arena.co.uk (binary downloads, demos, examples, community)
+
+Cross platform IDE, compiler and runtime for
 
 * DOS
 * Windows (32 and 64bit cpu)
