@@ -1,0 +1,6 @@
+{
+  "name": "Div-games-studio",
+  "tagline": "Complete cross platform games development package, originally for DOS but now available on modern platforms. ",
+  "body": "# README #\r\n\r\nDIV Games Studio 2, ported, translated and upgraded. \r\n\r\nhomepage: http://div-arena.co.uk (binary downloads, demos, examples, community)\r\n\r\nCross platform IDE, compiler and runtime for\r\n\r\n* DOS\r\n* Windows (32 and 64bit cpu)\r\n* OSX\r\n* Android \r\n* Amazon Fire TV Stick (WIP)\r\n* Amazon Kindle (WIP)\r\n* Ouya Console (WIP)\r\n* Linux (X86 / X84)\r\n* HTML / Javascript (emscripten - runtime export only)\r\n* Raspberry Pi (B+, 2, zero)\r\n* GCW-Zero\r\n* Pandora Console\r\n* GP2X Console\r\n* PSP\r\n\r\nFuture Possible Platforms:\r\n\r\n* Nintendo DS\r\n* Nintendo Wii\r\n* XBOX (XNA)\r\n* IOS (iPhone / iPad)\r\n* Windows Mobile\r\n* PS2\r\n* Dreamcast\r\n* Pyra Handheld\r\n\r\n\r\n100% compatible with existing DIV1 and DIV2 code including plugin dlls - EVEN MODE8 3D! \r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
