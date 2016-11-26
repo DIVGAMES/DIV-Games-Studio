@@ -1,5 +1,10 @@
 language: c
 
+before_install:
+  - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
+  - sudo apt-get update -qq
+  - sudo apt-get install --only-upgrade cmake
+  
 before_script:
     - sudo apt-get update -qq
     - sudo apt-get install libsdl1.2-dev libsdl-mixer1.2-dev 
