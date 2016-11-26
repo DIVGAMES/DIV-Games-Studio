@@ -2,6 +2,8 @@
 
 DIV Games Studio 2, ported, translated and upgraded. 
 
+[![Build Status](https://travis-ci.org/DIVGAMES/DIV-Games-Studio.svg?branch=travis-ci)](https://travis-ci.org/DIVGAMES/DIV-Games-Studio)
+
 homepage: http://div-arena.co.uk (binary downloads, demos, examples, community)
 
 Cross platform IDE, compiler and runtime for
