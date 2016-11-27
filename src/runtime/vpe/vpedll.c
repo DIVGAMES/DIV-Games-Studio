@@ -679,7 +679,7 @@ void get_point_m8(void)
 
 void set_sector_texture(void)
 {
-  int fade =( 15-pila[sp--] )%16;
+  int fade=pila[sp--];
   int techo=pila[sp--];
   int suelo=pila[sp--];
   int num_region=pila[sp];
@@ -689,9 +689,11 @@ void set_sector_texture(void)
 
   if (!vpe_inicializada) return;
 
+  if (fade < -1 || fade > 15) return;
+
   new_region=(struct Region *)Regions.ptr[num_region];
 
-  if( fade !=-1 ) new_region->Fade=fade;
+  if( fade !=-1 ) new_region->Fade= 15 - fade;
   if( suelo!=-1 ) TexAlloc(&new_region->FloorTC,suelo,num_fpg_aux);
   if( techo!=-1 ) TexAlloc(&new_region->CeilTC,techo,num_fpg_aux);
 }
