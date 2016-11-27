@@ -691,6 +691,8 @@ void set_sector_texture(void)
 
   if (fade < -1 || fade > 15) return;
 
+  fade = 15 - fade;
+
   new_region=(struct Region *)Regions.ptr[num_region];
 
   if( fade !=-1 ) new_region->Fade=fade;
