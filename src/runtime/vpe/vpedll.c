@@ -691,11 +691,9 @@ void set_sector_texture(void)
 
   if (fade < -1 || fade > 15) return;
 
-  fade = 15 - fade;
-
   new_region=(struct Region *)Regions.ptr[num_region];
 
-  if( fade !=-1 ) new_region->Fade=fade;
+  if( fade !=-1 ) new_region->Fade= 15 - fade;
   if( suelo!=-1 ) TexAlloc(&new_region->FloorTC,suelo,num_fpg_aux);
   if( techo!=-1 ) TexAlloc(&new_region->CeilTC,techo,num_fpg_aux);
 }
