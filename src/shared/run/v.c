@@ -30,7 +30,7 @@ float h_ratio=1.0;
 byte * vga = (byte *) 0xA0000; // Physical screen 
                                // TODO - (change this to SDL surface pixels)
 #else
-SDL_Surface *vga=NULL;
+OSDEP_Surface *vga=NULL;
 #ifdef SDL2
 SDL_Window *divWindow=NULL;
 SDL_Renderer *divRender=NULL;
@@ -53,12 +53,12 @@ void crear_ghost_slow(void);
 // Check if SDL is already loaded
 
 #ifndef __EMSCRIPTEN__
-int IsFullScreen(SDL_Surface *surface)
+int IsFullScreen(OSDEP_Surface *surface)
 {
     return OSDEP_IsFullScreen(); // Return false if surface is windowed
 }
 
-int SDL_ToggleFS(SDL_Surface *surface)
+int SDL_ToggleFS(OSDEP_Surface *surface)
 {
 
     if (IsFullScreen(surface))
@@ -162,7 +162,7 @@ void set_dac (void) {
 		return;
 #ifndef DOS
 
-	SDL_Color colors[512];
+	OSDEP_Color colors[512];
 
 	int i;
 	int b=0;
@@ -224,7 +224,7 @@ extern float m_x,m_y;
 
 extern int oldticks;
 void madewith(void) {
-
+#ifdef SDL
 	SDL_RWops *rwops = NULL;
 	SDL_Surface *mwsurface, *image;
 
@@ -232,8 +232,13 @@ void madewith(void) {
 	mwsurface = SDL_LoadBMP_RW(rwops,1);
 
 	SDL_BlitSurface(mwsurface,NULL,vga,NULL);
+
 	OSDEP_Flip(mwsurface);
-  SDL_FreeSurface(mwsurface);
+	SDL_FreeSurface(mwsurface);
+
+#else
+	// TODO - Handle non SDL madewith splash
+#endif
 
 
 }
@@ -245,7 +250,10 @@ printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 //#endif
 
 //hide the mouse
+#ifdef SDL
 SDL_ShowCursor(SDL_DISABLE);
+#endif
+
 //	if(vga)
 //		SDL_FreeSurface(vga);	
 	vga=NULL;
@@ -543,6 +551,7 @@ extern int alt_x;
 void volcado(byte *p) {
 //printf("%d %d %d\n",game_fps,freloj,ireloj);//,reloj);
 #ifndef __EMSCRIPTEN__
+#ifndef N3DS
 if ((shift_status&4) && (shift_status&8) && key(_0)) {
 	recording = 1;
 }
@@ -584,6 +593,8 @@ if ((shift_status&4) && (shift_status&8) && key(_9)) {
   
   
 #endif
+#endif
+
   if (fli_palette_update) retrazo();
 
 volcadosdl(p);

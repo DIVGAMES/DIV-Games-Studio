@@ -52,12 +52,20 @@ Params:	pal_ptr - pointer to the pal data
 Info:	Sets current palette to pal_ptr. It's called from inside of VPE.
 *****************************************************************************/
 
+#ifdef SDL
 extern SDL_Surface *vga;
+#else
+extern OSDEP_Buffer *vga;
+#endif
 
 void SetPalette(VPEByte *pal_ptr)
 {
 #ifndef DOS
+#ifdef SDL
        SDL_Color colors[256];
+#else
+		OSDEP_Color colors[256];
+#endif
        int i;
        int b=0;
        for(i=0;i<256;i++){

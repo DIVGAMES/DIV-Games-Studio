@@ -33,9 +33,12 @@ long schop(float);
         value [eax]
 */
 
+#ifndef N3DS
 void *lf_malloc(int size);
 void lf_free(void *puntero);
 void lf_free_all();
+#endif
+
 
 extern char ERRORSTR[256];
 

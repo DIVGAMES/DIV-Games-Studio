@@ -21,6 +21,13 @@
 #endif
 
 
+#ifdef N3DS
+#ifndef SDL
+#include "osdep/n3ds.h"
+#endif
+#endif
+
+
 #ifndef PS2
 #include <stdint.h>
 #else
@@ -107,7 +114,9 @@ extern char * strlwr(char *string);
 
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 #ifndef __WIN32__
+#ifndef N3DS
 char * itoa(long n, char *buf, int len);
+#endif
 #endif
 
 #define ltoa itoa 

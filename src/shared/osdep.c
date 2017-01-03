@@ -94,6 +94,7 @@ void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
 
 
 
+#ifndef N3DS
 char * itoa(long n, char *buf, int len)
 {
 //    int len = n==0 ? 1 : floor(log10l(abs(n)))+1;
@@ -103,6 +104,7 @@ char * itoa(long n, char *buf, int len)
     snprintf(buf, len+1, "%ld", n);
     return   buf;
 }
+#endif
 
 void call(const voidReturnType func) {	
 	func();
@@ -291,8 +293,10 @@ if(namelist!=NULL) {
 	free(namelist);
 	namelist=NULL;
 }
-
+#ifndef N3DS
     nummatch = scandir(".", &namelist, 0, alphasort); 
+#endif
+
 np=-1;
 type = attr;
 
@@ -334,7 +338,7 @@ while(++np<nummatch) {
 //		strlwr(findname);
 
 //printf("Matching %s to %s\n",findmask,findname);
-
+#ifndef N3DS
 	if (fnmatch(findmask, findname, FNM_PATHNAME | FNM_CASEFOLD)==0){
 		
 		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
@@ -344,6 +348,8 @@ while(++np<nummatch) {
 			return 0;
 		} 
 	}
+#endif
+
 }
 //printf("free'ing np [%d] *not matched* %s\n",np, namelist[np]->d_name);
 if(np<nummatch)

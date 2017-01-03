@@ -213,7 +213,7 @@ IF(HAS_ZLIB)
 
 	MESSAGE(STATUS "Adding ZLIB")
 #	include_directories(${ZLIB_INCLUDE_DIRS})
-	set(EXTRA_LIBS ${EXTRA_LIBS} "z" )
+	set(EXTRA_LIBS ${EXTRA_LIBS} "z -lm" )
 	ADD_DEFINITIONS( -DZLIB )
 
 ENDIF()
@@ -299,9 +299,9 @@ SET(RUNNER_SOURCES "src/runner/r.c")
 FILE(GLOB DIV_SOURCES "src/*.c")
 
 
-FILE(GLOB SDLGFX_SOURCES "src/shared/lib/sdlgfx/SDL_framerate.c")
 
 IF(HAS_SDL EQUAL 1) 
+	FILE(GLOB SDLGFX_SOURCES "src/shared/lib/sdlgfx/SDL_framerate.c")
 	SET(SDLGFX_SOURCES ${SDLGFX_SOURCES} "src/shared/lib/sdlgfx/SDL_rotozoom.c")
 ENDIF()
 

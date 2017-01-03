@@ -21,25 +21,25 @@ int fli_palette_update=0;
 
 struct {
   FILE *file;
-  Uint8 *pMembuf;
-  Uint32 membufSize;
-  Uint8 *pFrame;
-  Uint8 *pChunk;
-  Uint16 FrameCount;    /* Frame Counter */
+  uint8_t *pMembuf;
+  uint32_t membufSize;
+  uint8_t *pFrame;
+  uint8_t *pChunk;
+  uint16_t FrameCount;    /* Frame Counter */
   /*
   */
-  Uint32 HeaderSize;    /* Fli file size */
-  Uint16 HeaderCheck;   /* Fli header check */
-  Uint16 HeaderFrames;  /* Number of frames in flic */
-  Uint16 HeaderWidth;   /* Fli width */
-  Uint16 HeaderHeight;  /* Fli heigth */
-  Uint16 HeaderDepth;   /* Color depth */
-  Uint16 HeaderSpeed;   /* Number of video ticks between frame */
-  Uint32 FrameSize;     /* Frame size in bytes */
-  Uint16 FrameCheck;    /* Frame check */
-  Uint16 FrameChunks;   /* Number of chunks in frame */
-  Uint32 ChunkSize;     /* Size of chunk */
-  Uint16 ChunkType;     /* Type of chunk */
+  uint32_t HeaderSize;    /* Fli file size */
+  uint16_t HeaderCheck;   /* Fli header check */
+  uint16_t HeaderFrames;  /* Number of frames in flic */
+  uint16_t HeaderWidth;   /* Fli width */
+  uint16_t HeaderHeight;  /* Fli heigth */
+  uint16_t HeaderDepth;   /* Color depth */
+  uint16_t HeaderSpeed;   /* Number of video ticks between frame */
+  uint32_t FrameSize;     /* Frame size in bytes */
+  uint16_t FrameCheck;    /* Frame check */
+  uint16_t FrameChunks;   /* Number of chunks in frame */
+  uint32_t ChunkSize;     /* Size of chunk */
+  uint16_t ChunkType;     /* Type of chunk */
   /*
   */
   OSDEP_Surface *mainscreen;
@@ -55,14 +55,14 @@ struct {
 } flc;
 
 void ReadU16(uint16_t *tmp1, uint8_t *tmp2) {
-	*tmp1= ((Uint8)*(tmp2+1)<<8)+(Uint8)*(tmp2);
+	*tmp1= ((uint8_t)*(tmp2+1)<<8)+(uint8_t)*(tmp2);
 }
 
 void ReadU32(uint32_t *tmp1, uint8_t *tmp2) {
-	*tmp1= (((((((Uint8)*(tmp2+3)<<8)+((Uint8)*(tmp2+2)))<<8)+((Uint8)*(tmp2+1)))<<8)+(Uint8)*(tmp2));
+	*tmp1= (((((((uint8_t)*(tmp2+3)<<8)+((uint8_t)*(tmp2+2)))<<8)+((uint8_t)*(tmp2+1)))<<8)+(uint8_t)*(tmp2));
 }
 
-void FlcReadFile(Uint32 size)
+void FlcReadFile(uint32_t size)
 { if(size>flc.membufSize) {
     if(!(flc.pMembuf=(byte *)realloc(flc.pMembuf, size+1))) {
       printf("Realloc failed: %d\n", size);
@@ -70,7 +70,7 @@ void FlcReadFile(Uint32 size)
     }
   }
 
-  if(fread(flc.pMembuf, sizeof(Uint8), size, flc.file)==0) {
+  if(fread(flc.pMembuf, sizeof(uint8_t), size, flc.file)==0) {
     printf("Can't read flx file");
     exit(1);
   }
@@ -210,10 +210,10 @@ static void Palette_Update() {
 #endif
 
 void COLORS256()
-{ Uint8 *pSrc;
-  Uint16 NumColorPackets;
-  Uint16 NumColors;
-  Uint8 NumColorsSkip;
+{ uint8_t *pSrc;
+  uint16_t NumColorPackets;
+  uint16_t NumColors;
+  uint8_t NumColorsSkip;
   int i;
 
   pSrc=flc.pChunk+6;
@@ -237,10 +237,10 @@ void COLORS256()
 } /* COLORS256 */
 
 void SS2()
-{ Uint8 *pSrc, *pDst, *pTmpDst;
-  Sint8 CountData;
-  Uint8 ColumSkip, Fill1, Fill2;
-  Uint16 Lines, Count;
+{ uint8_t *pSrc, *pDst, *pTmpDst;
+  int8_t CountData;
+  uint8_t ColumSkip, Fill1, Fill2;
+  uint16_t Lines, Count;
 
   pSrc=flc.pChunk+6;
   pDst=flc.buffer;//mainscreen;//->pixels;
@@ -297,9 +297,9 @@ void SS2()
 } /* SS2 */
 
 void DECODE_COLOR()
-{ Uint8 *pSrc;
-  Uint16 NumColors, NumColorPackets;
-  Uint8 NumColorsSkip;
+{ uint8_t *pSrc;
+  uint16_t NumColors, NumColorPackets;
+  uint8_t NumColorsSkip;
   int i;
 
   pSrc=flc.pChunk+6;
@@ -324,7 +324,7 @@ void DECODE_COLOR()
 
 
 void DECODE_COPY()
-{ Uint8 *pSrc, *pDst;
+{ uint8_t *pSrc, *pDst;
   int Lines = flc.screen_h;
   pSrc=flc.pChunk+6;
   pDst=flc.buffer;//mainscreen;/->pixels;
@@ -336,7 +336,7 @@ void DECODE_COPY()
 } /* DECODE_COPY */
 
 void _BLACK()
-{ Uint8 *pDst;
+{ uint8_t *pDst;
   int Lines = flc.screen_h;
   pDst=flc.buffer;//mainscreen->pixels;
   while(Lines-- > 0) {
@@ -346,8 +346,8 @@ void _BLACK()
 } /* BLACK */
 
 void DECODE_BRUN()
-{ Uint8 *pSrc, *pDst, *pTmpDst, Fill;
-  Sint8 CountData;
+{ uint8_t *pSrc, *pDst, *pTmpDst, Fill;
+  int8_t CountData;
   int HeightCount, PacketsCount;
 
   HeightCount=flc.HeaderHeight;
@@ -378,11 +378,11 @@ void DECODE_BRUN()
 
 
 void DECODE_LC() 
-{ Uint8 *pSrc, *pDst, *pTmpDst;
-  Sint8 CountData;
-  Uint8 CountSkip;
-  Uint8 Fill;
-  Uint16 Lines, tmp;
+{ uint8_t *pSrc, *pDst, *pTmpDst;
+  int8_t CountData;
+  uint8_t CountSkip;
+  uint8_t Fill;
+  uint16_t Lines, tmp;
   int PacketsCount;
 
   pSrc=flc.pChunk+6;
@@ -451,7 +451,7 @@ int FlcCheckFrame()
 } /* FlcCheckFrame */
 
 
-extern SDL_Surface *vga;
+extern OSDEP_Surface *vga;
 
 void FlcDoOneFrame()
 { int ChunkCount; 

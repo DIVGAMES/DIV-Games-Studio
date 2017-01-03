@@ -215,7 +215,7 @@ void tecla_bios(void) {
 #endif
 }
 
-
+#ifdef SDL
 void checkmod(OSDEPMod mod) {
 	
 //	shift_status = 0;
@@ -252,6 +252,8 @@ void checkmod(OSDEPMod mod) {
         printf("\n");
         * */
 }
+
+#endif
 
 #ifdef SDL2
 #include <SDL2/SDL_events.h>
@@ -335,7 +337,11 @@ byte oldhatval;
 void tecla(void) {
 //printf("tecla\n");
 //ascii=0; scan_code=0;
+
+#ifdef SDL
 SDL_Event event;
+#endif
+
 if(vwidth == 0 && vheight == 0) {
 	vwidth = vga_an;
 	vheight = vga_al;
@@ -372,7 +378,7 @@ oldhatval = hatval;
 }
 #endif
 	
-
+#ifdef SDL
 	while(SDL_PollEvent(&event)) {	
 //		printf("event: %d\n",event.type);
 		// check keys
@@ -764,6 +770,8 @@ oldhatval = hatval;
 		alt_x=1; 
 
 	} // end while
+
+#endif // HAS SDL
 
 
 #ifdef DOS

@@ -1191,7 +1191,9 @@ void frame_start(void) {
 #ifdef WIN32
 			SDL_Delay(((int)freloj-old_reloj)-1);
 #else
+#ifndef N3DS
 			sched_yield();			
+#endif
 //			usleep(((int)freloj-old_reloj)-1); 
 #endif			
 		} while (get_reloj()<(int)freloj); // TO keep FPS
