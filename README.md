@@ -21,7 +21,8 @@ Cross platform IDE, compiler and runtime for
 * GCW-Zero
 * Pandora Console
 * GP2X Console
-* PSP
+* PSP (Broken / Needs testing)
+* Nintendo 3DS (WIP - runtime only)
 
 Future Possible Platforms:
 
