@@ -80,7 +80,7 @@ int i,j;
   }
 }
 
-void *lf_malloc(int size)
+void *lf_malloc(int32_t size)
 {
   void *puntero;
 
