@@ -2044,6 +2044,7 @@ if(true) {
 #ifndef DEBUG
 #ifndef __EMSCRIPTEN__
 #ifndef DROID
+#ifndef N3DS
   if (argc<2 && exesize==0) {
     printf("DIV2015 Run time library - version 2.02a - http://div-arena.co.uk\n");
     printf("Error: Needs a DIV executable to load.\n");
@@ -2053,6 +2054,7 @@ if(true) {
 
     exit(26);
   }
+#endif
 #endif
 #endif
 #endif
