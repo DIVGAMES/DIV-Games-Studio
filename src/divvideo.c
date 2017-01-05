@@ -115,7 +115,9 @@ FPSmanager fpsman;
 void retrazo(void) {
 
 //printf("retrazo (vsync)\n");
+#ifndef N3DS
 SDL_framerateDelay(&fpsman);
+#endif
 
 #ifdef NOTYET
   while (inp(0x3da)&8);
@@ -183,8 +185,10 @@ void svmode(void) {
  Uint32 colorkey=0;
  int vn=0;
 
+#ifndef N3DS
 SDL_initFramerate(&fpsman);
 SDL_setFramerate(&fpsman, 60);
+#endif
 
  
   fprintf(stdout,"full screen: %d\n",fsmode);
