@@ -8,6 +8,7 @@
 #
 # git clone https://github.com/nop90/SDL-3DS
 # cd SDL-3DS/SDL
+# # Remove -fno-short-enums from Makefile
 # make
 # make install
 # cd -
@@ -26,9 +27,9 @@
 # cp -R 3ds-vgmstream/libs/vorbis/lib/*.a $DEVKITPRO/portlibs/armv6k/lib
 # cp -R 3ds-vgmstream/libs/vorbis/include/vorbis/ $DEVKITPRO/portlibs/armv6k/include/
 # cd SDL-3DS/SDL_mixer
+# # Remove -fno-short-enums from Makefile
 # make
 # make install
-# cp /home/mike/devkitPro/devkitARM/arm-none-eabi/lib/armv6k/fpu/3dsx_crt0.o Div-Games-Studio
 
 
 
@@ -71,7 +72,6 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(CFLAGS "-march=armv6k -mtune=mpcore -mfloat-abi=hard")
 #set(CFLAGS "${CFLAGS} -mword-relocations -fno-short-enums -fomit-frame-pointer -ffast-math -fno-pic" )
-set(CFLAGS "${CFLAGS} -fno-short-enums")
 set(CFLAGS "${CFLAGS} -DARM11 -D_3DS")
 
 
