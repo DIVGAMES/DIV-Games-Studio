@@ -56,6 +56,9 @@ void OSDEP_SetCaption(char *title, char *icon) {
 }
 
 OSDEP_VMode ** OSDEP_ListModes(void) {
+#ifdef N3DS
+	return NULL;
+#endif
 	SDL_Rect **modes;
 	int i;
 	OSDEP_VMode *smodes[1024];
@@ -84,7 +87,10 @@ OSDEP_VMode ** OSDEP_ListModes(void) {
 }
 
 void OSDEP_WarpMouse(int x, int y) {
+#ifndef N3DS
 	SDL_WarpMouse(x, y);
+#endif
+
 }
 
 int OSDEP_IsFullScreen(void) {
@@ -137,12 +143,15 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 
 
 void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
+#ifndef N3DS
 	SDL_UpdateRect(screen, x, y, w, h);
+#endif
+
 }
 
 void OSDEP_Flip(OSDEP_Surface *s) {
 
-#ifdef __EMSCRIPTEN__
+#if defined ( __EMSCRIPTEN__ ) || defined ( N3DS )
 		SDL_Flip(OSDEP_screen);
 		return;
 #endif	
@@ -180,8 +189,10 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
 
 	memcpy(OSDEP_pal, colors, 256*sizeof(OSDEP_Color));
-	SDL_SetPalette(OSDEP_screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0,256);
+#ifndef N3DS
 	return SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
+#endif
+	return 0;
 }
 
 // Joysticks
@@ -194,11 +205,15 @@ int OSDEP_JoystickNumButtons(int n) {
 }
 
 int OSDEP_JoystickNumHats(int n) {
+#ifndef N3DS
 	return SDL_JoystickNumHats(n);
+#endif
 }
 
 int OSDEP_JoystickNumAxes(int n) {
+#ifndef N3DS
 	return SDL_JoystickNumAxes(n);
+#endif
 }
 
 uint8_t OSDEP_JoystickGetButton(OSDEP_Joystick *joystick, int button) {
@@ -206,7 +221,9 @@ uint8_t OSDEP_JoystickGetButton(OSDEP_Joystick *joystick, int button) {
 }
 
 int16_t OSDEP_JoystickGetAxis(OSDEP_Joystick *joystick, int axis) {
+#ifndef N3DS
 	return SDL_JoystickGetAxis(joystick, axis);
+#endif
 
 }
 OSDEP_Joystick * OSDEP_JoystickOpen(int n) {
@@ -219,7 +236,12 @@ void OSDEP_JoystickClose(OSDEP_Joystick *joy) {
 }
 
 char * OSDEP_JoystickName(int n) {
+#ifndef N3DS
 	return SDL_JoystickName(n);
+#else
+	return ("Nintendo 3DS Controller");
+#endif
+
 }
 
 void OSDEP_keyInit(void) {
@@ -227,9 +249,14 @@ void OSDEP_keyInit(void) {
 	printf("SDL KEY INIT\n");
 //	exit(0);
 #ifndef __EMSCRIPTEN__
+#ifndef N3DS
 	SDL_EnableUNICODE( SDL_ENABLE );  
 #endif
+#endif
+
+#ifndef N3DS
 	SDL_EnableKeyRepeat( 250,  SDL_DEFAULT_REPEAT_INTERVAL);
+#endif
 	
 	OSDEP_key[SDLK_ESCAPE]=1;
 	OSDEP_key[SDLK_F1]=59;

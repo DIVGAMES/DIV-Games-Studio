@@ -304,7 +304,7 @@ IF(HAS_SDL EQUAL 1)
 	IF(NOT TARGETOS STREQUAL "3DS")
 		FILE(GLOB SDLGFX_SOURCES "src/shared/lib/sdlgfx/SDL_framerate.c")
 	ENDIF()
-	SET(SDLGFX_SOURCES ${SDLGFX_SOURCES} "src/shared/lib/sdlgfx/SDL_rotozoom.c")
+	#SET(SDLGFX_SOURCES ${SDLGFX_SOURCES} "src/shared/lib/sdlgfx/SDL_rotozoom.c")
 ENDIF()
 
 SET(DIV_SOURCES ${DIV_SOURCES} ${SDLGFX_SOURCES} )

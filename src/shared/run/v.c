@@ -224,6 +224,7 @@ extern float m_x,m_y;
 
 extern int oldticks;
 void madewith(void) {
+#ifndef N3DS
 #ifdef SDL
 	SDL_RWops *rwops = NULL;
 	SDL_Surface *mwsurface, *image;
@@ -239,6 +240,9 @@ void madewith(void) {
 #else
 	// TODO - Handle non SDL madewith splash
 #endif
+
+#endif
+
 
 
 }
@@ -390,9 +394,12 @@ SDL_ShowCursor(SDL_DISABLE);
   } else texto[max_textos].font=0;
 
 #ifndef DEBUG
+#ifndef N3DS
 if(splashtime>0)
   madewith();
 #endif
+#endif
+
 }
 
 
