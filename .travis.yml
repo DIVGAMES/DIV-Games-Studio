@@ -10,3 +10,6 @@ before_script:
     - sudo apt-get install libsdl1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev
 
 script: cmake . && make
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
