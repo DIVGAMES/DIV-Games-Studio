@@ -7,7 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include "SDL_net.h"
+#if SDL == 1
+#include <SDL/SDL_net.h>
+#else
+#include <SDL2/SDL2_net.h>
+#endif
 #include "inter.h"
 #include "net.h"
 

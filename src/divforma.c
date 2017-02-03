@@ -38,6 +38,7 @@ static jmp_buf jmp_error_ptr;
 //      Estructuras
 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
+#ifndef WIN32
 typedef struct tagRGBQUAD
 {
         unsigned char   rgbBlue;
@@ -45,6 +46,7 @@ typedef struct tagRGBQUAD
         unsigned char   rgbRed;
         unsigned char   rgbReserved;
 } RGBQUAD;
+#endif
 
 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 // For adding graphics formats follow these steps
@@ -580,6 +582,7 @@ byte * descomprime_rle(byte * buffer,unsigned int bytes_line,unsigned int last_b
 //      Formato BMP
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
+#ifndef WIN32
 typedef struct tagBITMAPFILEHEADER
 {
         unsigned short  bfType;         //2
@@ -606,6 +609,7 @@ typedef struct tagBITMAPINFOHEADER
                                                  // 40
 
 } BITMAPINFOHEADER;
+#endif
 
 int es_BMP(byte *buffer)
 {
