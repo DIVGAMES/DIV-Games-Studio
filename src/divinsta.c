@@ -1,7 +1,7 @@
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Mขdulo que contiene el cขdigo del creador de instalaciones
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//  Mรณdulo que contiene el cรณdigo del creador de instalaciones
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #include "global.h"
 #ifdef ZLIB
@@ -12,9 +12,9 @@
 
 
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Prototipos y variables del mขdulo
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//  Prototipos y variables del mรณdulo
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void Setup0();
 void Setupm0();
@@ -56,7 +56,7 @@ char ifile1[256]="install/INSTALL.FPG",ifile1name[16]="INSTALL.FPG";
 char ifile2[256]="install/INST_SMA.FNT",ifile2name[16]="INST_SMA.FNT";
 char ifile3[256]="install/INST_BIG.FNT",ifile3name[16]="INST_BIG.FNT";
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 int include_setup=0;
 int create_dir=0;
@@ -64,7 +64,7 @@ int empaquetar=1;
 int pentium=1;
 int segundo_font=1;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 typedef struct _HeaderSetup{
   char name[16];          // Nombre del archivo (en asciiz, sin path)
@@ -84,13 +84,13 @@ char *__ins,*_ins,*ins; // Punteros a EXEC.INS
 extern char user1[];
 extern char user2[];
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 struct _dirhead {
   char pack[16];        // Nombre del propio packfile (no va en el archivo)
   char head[8];         // Cabecera inicial del packfile (dat<-\n00)
   int crc1,crc2,crc3;   // CRC's de hasta tres programas que lo utilicen
-  int nfiles;           // Nฃmero de archivos contenidos
+  int nfiles;           // Nรบmero de archivos contenidos
 } dirhead;
 
 struct tdir {
@@ -106,9 +106,9 @@ int memcrc[9];          // Para obtener el CRC de los programas
 
 byte * imagen_install=NULL;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Ventana de Custom setup
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void Setup1() {
   byte * ptr=v.ptr;
@@ -398,9 +398,9 @@ strcpy(tbuf,"                    2015 ");
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Crea el thumbnail del instalador de 142x87 (*big2)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void create_install_image(char * file, int errores) {
   FILE * es;
@@ -539,9 +539,9 @@ int is_point(int * ptr, int n) {
   } else return(0);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Mensajes de informaciขn del instalador
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//  Mensajes de informaciรณn del instalador
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void Setupm1() {
   byte * ptr=v.ptr;
@@ -586,9 +586,9 @@ void Setupm0() {
   _button(538,7,v.al-14,0);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Mensajes de error del instalador
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void Setupe1() {
   _show_items();
@@ -639,9 +639,9 @@ void Setupe0() {
 }
 
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Funcion invocada para crear una instalacion desde el menฃ programas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//  Funcion invocada para crear una instalacion desde el menรบ programas
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 int GetFileLen(FILE *file) {
   int d;
@@ -757,7 +757,7 @@ void crear_instalacion(void) {
   }
 #endif
 
-  if (_drive<=2) { strcpy(dir,"/"); is_disk=_drive; } // En un disquete no crear  directorios
+  if (_drive<=2) { strcpy(dir,"/"); is_disk=_drive; } // En un disquete no crearรก directorios
 
   for(x=1;x<strlen(dir);x++) if(dir[x]=='/') { // Crea directorios ...
 //    strcpy(cWork,drive);
@@ -785,7 +785,7 @@ strcpy(cWork,full);
 
   strupr(DefDir);
 
-  // *** Ficheros de la instalaciขn (los de exec y los de setup)
+  // *** Ficheros de la instalaciรณn (los de exec y los de setup)
 
   fin=fopen("system/exec.ins","rb"); fseek(fin,0,SEEK_END); n=ftell(fin); fclose(fin);
 
@@ -838,7 +838,7 @@ strcpy(cWork,full);
       }
       if (n<x || !strcmp(MiHeaderSetup[n].name,"SOUND.CFG")) {
 
-        // Si el fichero llevaba '+', pone un '+' a su apariciขn anterior
+        // Si el fichero llevaba '+', pone un '+' a su apariciรณn anterior
 
         ins+=strlen(ins)+1;
 
@@ -878,26 +878,26 @@ strcpy(cWork,full);
 #endif
 
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-  // Aquก se crear  el "PACKFILE.DAT" con los archivos pertinentes
-  // *** OJO *** Cuando el usuario seleccione la opciขn "Instalaciขn protegida"
-  // nfiles es el nฃmero de ficheros totales (EXE + OVL [+ SETUP] + char * ins)
+  // Aquรญ se crearรก el "PACKFILE.DAT" con los archivos pertinentes
+  // *** OJO *** Cuando el usuario seleccione la opciรณn "Instalaciรณn protegida"
+  // nfiles es el nรบmero de ficheros totales (EXE + OVL [+ SETUP] + char * ins)
   // Crea el directorio en hdir[].name/offset/len1/len2
   // y su cabecera en dirhead.packname/head/crc1/crc2/crc3/nfiles
 
   if (dirhead.nfiles) {
 
-    // 0ง Define los valores b sicos de la cabecera del packfile
+    // 0ยบ Define los valores bรกsicos de la cabecera del packfile
 
     strcpy(cWork,(char *)texto[498]);
     strcat(cWork,dirhead.pack);
 
     memcpy(dirhead.head,"dat\x1a\x0d\x0a\x00\x00",8);
 
-    // dirhead.nfiles ya est  precalculado antes
+    // dirhead.nfiles ya estรก precalculado antes
 
-    // 1ง Obtiene los CRC del system\exec.exe y install\setup.ovl (si include_setup)
+    // 1ยบ Obtiene los CRC del system\exec.exe y install\setup.ovl (si include_setup)
 
     dirhead.crc1=0;
     dirhead.crc2=0;
@@ -919,29 +919,29 @@ strcpy(cWork,full);
       fclose(fin);
     }
 
-    // 2ง Abre el fichero ("INSTALL/PACKFILE.DAT","wb")
+    // 2ยบ Abre el fichero ("INSTALL/PACKFILE.DAT","wb")
 
     if ((fout=fopen("install/PACKFILE.DAT","wb"))==NULL) {
       v_texto=(char *)texto[358]; dialogo(err0);
       free(_ins); return;
     }
 
-    // 3ง Graba la cabecera (&dirhead.head)
+    // 3ยบ Graba la cabecera (&dirhead.head)
 
     fwrite(&dirhead.head,1,8+3*4+4,fout);
 
-    // 4ง Pide memoria para el directorio (hdir[])
+    // 4ยบ Pide memoria para el directorio (hdir[])
 
     if ((hdir=(struct tdir *)malloc(dirhead.nfiles*sizeof(struct tdir)))==NULL) {
       v_texto=(char *)texto[357]; dialogo(err0);
       fclose(fout); free(_ins); return;
     }
 
-    // 5ง Graba el directorio (con basura, inicialmente)
+    // 5ยบ Graba el directorio (con basura, inicialmente)
 
     fwrite(hdir,sizeof(struct tdir),dirhead.nfiles,fout);
 
-    // 6ง Graba todos los archivos a continuacion (rellenando hdir[])
+    // 6ยบ Graba todos los archivos a continuacion (rellenando hdir[])
 
     ins=__ins=_ins;
 
@@ -984,7 +984,7 @@ strcpy(cWork,full);
       ins+=strlen(ins)+1;
     }
 
-    // 7ง Actualiza la lista de ficheros a incluir (_ins), con el PACKFILE
+    // 7ยบ Actualiza la lista de ficheros a incluir (_ins), con el PACKFILE
 
     nfiles=nfiles-dirhead.nfiles+1;
 
@@ -993,9 +993,9 @@ strcpy(cWork,full);
       strcpy(__ins,(char *)chr); __ins+=strlen(__ins)+1;
     }
 
-    strcpy(__ins,"install/PACKFILE.DAT"); // aคade el PACKFILE como el ฃltimo fichero
+    strcpy(__ins,"install/PACKFILE.DAT"); // aรฑade el PACKFILE como el รบltimo fichero
 
-    // 8ง Reescribe el hdir[] y cierra el fichero
+    // 8ยบ Reescribe el hdir[] y cierra el fichero
 
     fseek(fout,8+3*4+4,SEEK_SET);
     fwrite(hdir,sizeof(struct tdir),dirhead.nfiles,fout);
@@ -1014,7 +1014,7 @@ strcpy(cWork,full);
 // the rest is old BS
 
 #if 0
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
    // Crea el INSTALL\DIV32RUN.DLL a partir de (INSTALL\DIV32RUN.INS/386 + SYSTEM\LENGUAJE.INT)
 
@@ -1065,7 +1065,7 @@ strcpy(cWork,full);
 
   fclose(fout);
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   // *** Crea install.div (fichero empaquetado original)
 
@@ -1081,7 +1081,7 @@ strcpy(cWork,full);
     fclose(fout); free(_ins); return;
   } fwrite(MiHeaderSetup,sizeof(HeaderSetup),nfiles,fout);
 
-  // Copia al INSTALL.DIV todos los ficheros de la instalaciขn
+  // Copia al INSTALL.DIV todos los ficheros de la instalaciรณn
 
   ins=_ins;
 
@@ -1290,7 +1290,7 @@ strcpy(cWork,full);
 
 #endif
 
-  v_titulo=(char *)texto[359];        // Di logo indicando el final de la instalaciขn
+  v_titulo=(char *)texto[359];        // Diรกlogo indicando el final de la instalaciรณn
   strcpy(cWork,(char *)texto[360]);
   strupr(full);
   strcat(cWork,full);
@@ -1301,9 +1301,9 @@ strcpy(cWork,full);
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Compresses a file to another , using zlib (returns -1 if error)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 int comprimir_fichero(FILE * fin, FILE * fout, unsigned long len) {
   unsigned char * pin, * pout;
@@ -1348,9 +1348,9 @@ int copy_file(FILE * fin, FILE * fout, unsigned long len, int patch) {
   return(len);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Copy the installation destination disk
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 unsigned int GetFreeUnid(char unidad) {
 #ifdef NOTYET
@@ -1443,7 +1443,7 @@ int FileCopyICE(char *org,char *dest,int vols,int _texto) { // Returns 0 -Error 
         len=0;
       }
 
-    } else { // Digo yo que ser  esto ...
+    } else { // Digo yo que serรก esto ...
       if (len<=totfree) { // Da igual, coge de todas formas
         fread(buffer,1,len,fin);
         if (fwrite(buffer,1,len,fout)!=len) { retval=0; break; }

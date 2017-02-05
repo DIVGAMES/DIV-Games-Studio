@@ -1,7 +1,7 @@
 
-// **** OJO **** La funciขn que genera el texto es void CreateText()
-// **** ShowFont? es la ventana de font (el font se carga en memoria), GetText es el dกalogo con el "input text"
-// El v.aux de ShowFont apunta a la siguiente informaciขn al llamar a CreateText()
+// **** OJO **** La funciรณn que genera el texto es void CreateText()
+// **** ShowFont? es la ventana de font (el font se carga en memoria), GetText es el dรญalogo con el "input text"
+// El v.aux de ShowFont apunta a la siguiente informaciรณn al llamar a CreateText()
 // v.aux -> filename, v.aux+14 -> path, v.aux+RES_FOR_NAME -> fichero FNT
 // No se hace FntAux=v.aux+RES_FOR_NAME; antes de llamar a CreateText, es decir, FntAux apunta al fichero
 // El string se pasa a CreateText en cCharsToPrint[128]
@@ -687,9 +687,9 @@ int an=v.an/big2,al=v.al/big2;
         }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-#define max_archivos 512 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ Listbox de archivos
+#define max_archivos 512 // โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€ Listbox de archivos
 extern struct t_listboxbr larchivosbr;
 extern t_thumb thumb[max_archivos];
 extern int num_taggeds;
@@ -743,7 +743,7 @@ int  num;
         }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 byte OldColor;
 byte PrevColor;
@@ -826,7 +826,7 @@ void Selcolor3(void)
 
 void Selcolor0(void)
 {
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diรกlogo
         v.an=131;
         v.al=157;
         v.titulo=texto[78];
@@ -933,7 +933,7 @@ void Preview0()
                         TamaY=fal;
         }
 */
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diรกlogo
         if(big) { TX=TamaX/2; TY=TamaY/2; } else { TX=TamaX; TY=TamaY; }
         v.an=TX+6;
         if(v.an<60)
@@ -1074,7 +1074,7 @@ int GenCode=0;
 }
 void GenFont0(void)
 {
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diรกlogo
         v.an=169-26;
         v.al=103;
         v.titulo=texto[852];
@@ -1188,7 +1188,7 @@ void Preview20()
                         TamaY=fal;
         }
 */
-        v.tipo=1; // Di logo
+        v.tipo=1; // Diรกlogo
 
         if(big) { TX=TamaX/2; TY=TamaY/2; } else { TX=TamaX; TY=TamaY; }
         v.an=TX+6;
@@ -1208,7 +1208,7 @@ void Preview20()
 }
 /////////////////////////////////////////////////////////////////////////////
 
-char pletras[5*8+1]="01234567ABCDEFGHabcdefgh!?$*/+()ฅค กขฃ";
+char pletras[5*8+1]="01234567ABCDEFGHabcdefgh!?$*/+()ร‘รฑรงรกรฉรญรณรบ";
 
 void crear_texto_prueba(char * s, char flags) {
   int numbits=0;
@@ -1310,7 +1310,7 @@ void ShowFont1(void)
 
   if (TamaX>ancho_w*big2 || TamaY>alto_w*big2)
   {
-    // Crea la reducciขn del thumbnail
+    // Crea la reducciรณn del thumbnail
     coefredx = TamaX/((float)ancho_w*(float)big2);
     coefredy = TamaY/((float)alto_w*(float)big2);
     if(coefredx>coefredy) coefredy=coefredx;
@@ -1461,7 +1461,7 @@ int Length;
         fclose(file);
 }
 
-#define max_archivos 512 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ Listbox de archivos
+#define max_archivos 512 // โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€ Listbox de archivos
 extern struct t_listboxbr larchivosbr;
 extern t_thumb thumb[max_archivos];
 extern int num_taggeds;
@@ -1598,7 +1598,7 @@ int n,y,x,TamaX=0,TamaY=0,fan,_fal=0,fal,init,cnt;
                         TamaY=fal;
         } if (TamaY==0) TamaY=_fal;
 
-        // 3 - Crea un mapa de ese tamaคo
+        // 3 - Crea un mapa de ese tamaรฑo
 
         map_an=TamaX;
         map_al=TamaY;
@@ -1635,7 +1635,7 @@ int n,y,x,TamaX=0,TamaY=0,fan,_fal=0,fal,init,cnt;
         v.mapa->zoom_x=x;
         v.mapa->zoom_y=y;
 
-        // 6 - Inicializa los puntos de control y el cขdigo
+        // 6 - Inicializa los puntos de control y el cรณdigo
 
         for (n=0;n<512;n++)
                 v.mapa->puntos[n]=-1;

@@ -1,5 +1,5 @@
 
-// Versi¢n de las Judas para DIV 2 (para el entorno, que no el int‚rprete).
+// VersiÃ³n de las Judas para DIV 2 (para el entorno, que no el intÃ©rprete).
 
 // Estan tocados JUDAS/RAW/WAV para que carguen los sonidos incluso si
 // judas_device es DEV_SOUND (ya que se tienen que seguir pudiendo editar).
@@ -208,7 +208,7 @@ unsigned judas_bufferlength;
 unsigned judas_buffermask;
 unsigned judas_bpmcount;
 int *judas_clipbuffer;
-int *judas_zladdbuffer; /* Alustukset, „„li”! *** */
+int *judas_zladdbuffer; /* Alustukset, ï¿½ï¿½liï¿½! *** */
 int judas_zerolevell = 0;
 int judas_zerolevelr = 0;
 short *judas_cliptable;
