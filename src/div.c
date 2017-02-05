@@ -110,7 +110,7 @@ int no_volcar_ventanas=0;
 byte lower[256]=
   "                                   #$           0123456789      "
   " abcdefghijklmnopqrstuvwxyz    _ abcdefghijklmnopqrstuvwxyz     "
-  "çueaaaaçeeeiiiaaeææooouuyouø£Ø×ƒaiouññªº                        "
+  "�ueaaaa�eeeiiiaae��ooouuyou�����aiou����                        "
   "                                                              ";
 
 int show_items_called=0;
