@@ -2,7 +2,7 @@
 #define __CD_ROM_
 
 void Init_CD();
-void Play_CD(int pista,int modo);
+void Play_CD(int track, int mode);
 void Stop_CD();
 int IsPaying_CD();
 
