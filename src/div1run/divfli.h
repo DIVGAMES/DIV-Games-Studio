@@ -1,47 +1,34 @@
-#ifndef __DIVFLI_H
-#define __DIVFLI_H
+#pragma once
 
 /*************************************************************************/
-/* Inicializa el engine de Fli.                                          */
+/* Initializes the Fli engine.                                           */
 /*************************************************************************/
-/* Entradas: nombre del fli/flc                                          */
-/*           Buffer donde se muestra el fli                              */
-/*           Buffer_anc ancho del buffer donde se muestra el fli         */
-/*           Buffer_alt alto del buffer donde se muestra el fli          */
-/*           cx coordenada x del buffer donde se muestra el fli          */
-/*           cy coordenada y del buffer donde se muestra el fli          */
+/* Inputs:   name   - name of the fli/flc                                */
+/*           Buffer - where the fli will be shown                        */
+/*           width  - buffer width                                       */
+/*           height - buffer height                                      */
+/*           cx     - buffer x coordinate                                */
+/*           cy     - buffer y coordinate                                */
 /*************************************************************************/
-/* Salidas: numero de frames de la animacion                             */
-/*          0 si sucedio algo muy malo.                                  */
+/* Output:  number of frames in the animation                            */
+/*          0 if something really bad happened.                          */
 /*************************************************************************/
-int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy);
+int StartFLI(char *name, char *Buffer, int width, int height, int cx, int cy);
 
 /*************************************************************************/
-/* Visualiza el siguiente frame.                                         */
+/* Visualizes the next frame.                                            */
 /*************************************************************************/
-/* Entradas: Nada                                                        */
-/*************************************************************************/
-/* Salidas: 1 si el fli continua                                         */
-/*          0 si se va a repetir.                                        */
+/* Output:  1 if the fli continues                                       */
+/*          0 if it's going to repeat.                                   */
 /*************************************************************************/
 int Nextframe();
 
 /*************************************************************************/
-/* Termina y libera un fli.                                              */
-/*************************************************************************/
-/* Entradas: Nada                                                        */
-/*************************************************************************/
-/* Salidas:  Nada                                                        */
+/* Ends and frees an fli.                                                */
 /*************************************************************************/
 void EndFli();
 
 /*************************************************************************/
-/* Reinicializa un fli.                                                  */
-/*************************************************************************/
-/* Entradas: Nada                                                        */
-/*************************************************************************/
-/* Salidas:  Nada                                                        */
+/* Reinitializes an fli.                                                 */
 /*************************************************************************/
 void ResetFli();
-
-#endif
