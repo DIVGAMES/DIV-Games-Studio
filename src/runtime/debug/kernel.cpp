@@ -1,7 +1,7 @@
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Nucleo de la ejecuciขn de los programas en DIV
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Nucleo de la ejecuciรณn de los programas en DIV
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 case lnop: break;
 case lcar: pila[++sp]=mem[ip++]; break;
@@ -104,7 +104,7 @@ if((id_start+((procesos-2)*iloc_len)) == id_end)
   mem[id+_Id]=id;
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
   mem[id2+_Son]=id; mem[id+_Father]=mem[id+_Caller]=id2;
-  if (mem[ip+2]==lnop) mem[id+_FCount]=mem[id2+_FCount]+1; // Funciขn
+  if (mem[ip+2]==lnop) mem[id+_FCount]=mem[id2+_FCount]+1; // Funciรณn
   #ifdef DEBUG
   else process_level++;
   #endif
@@ -218,7 +218,7 @@ case lrtf:
   bp=id; id=mem[id+_Caller];
   elimina_proceso(bp);
   if (!(id&1)) {
-    if (id) actualiza_pila(id-1,pila[sp]); // Un return de funciขn (tras frame)
+    if (id) actualiza_pila(id-1,pila[sp]); // Un return de funciรณn (tras frame)
     goto next_process1;
   }
   ip=mem[id+_IP];
@@ -289,7 +289,7 @@ case ldbg:
     if (debug_active) {
       for (ibreakpoint=0;ibreakpoint<max_breakpoint;ibreakpoint++)
         if (breakpoint[ibreakpoint].line>-1 && abs(breakpoint[ibreakpoint].offset)==ip-1) break;
-      if (ibreakpoint<max_breakpoint) { // Se llegข a un breakpoint
+      if (ibreakpoint<max_breakpoint) { // Se llegรณ a un breakpoint
         mem[--ip]=breakpoint[ibreakpoint].code;
         breakpoint[ibreakpoint].line=-1;
         call_to_debug=1; process_stoped=id;
@@ -484,14 +484,14 @@ case lstradd: // Strcat "en el aire" (ojo, el aire tiene tambien 0xDAD00402)
   nstring=((nstring+1)&3);
   break;
 
-case lstrdec: // cambio de tamaคo "en el aire" (no da error, hace lo que puede)
+case lstrdec: // cambio de tamaรฑo "en el aire" (no da error, hace lo que puede)
   oo=strlen((char*)&mem[pila[sp-1]]);
   if (oo<1028) {
     strcpy((char*)&mem[nullstring[nstring]],(char*)&mem[pila[sp-1]]);
     if (pila[sp]>0) { // Quitar caracteres
       if (pila[sp]>=oo) memb[nullstring[nstring]*4]=0;
       else memb[nullstring[nstring]*4+oo-pila[sp]]=0;
-    } else if (pila[sp]<0) { // Aคadir (?) caracteres (por homogeneidad)
+    } else if (pila[sp]<0) { // Aรฑadir (?) caracteres (por homogeneidad)
       pila[sp]=oo-pila[sp]; // Nueva longitud
       if (pila[sp]>1025) pila[sp]=1025;
       for (;oo<pila[sp];oo++) {
@@ -503,7 +503,7 @@ case lstrdec: // cambio de tamaคo "en el aire" (no da error, hace lo que puede)
   nstring=((nstring+1)&3);
   break;
 
-case lstrsub: // cambio de tamaคo a un string
+case lstrsub: // cambio de tamaรฑo a un string
   oo=strlen((char*)&mem[pila[sp-1]]);
   #ifdef DEBUG
     if ((mem[pila[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
@@ -520,7 +520,7 @@ case lstrsub: // cambio de tamaคo a un string
   if (pila[sp]>0) { // Quitar caracteres
     if (pila[sp]>=oo) memb[pila[sp-1]*4]=0;
     else memb[pila[sp-1]*4+oo-pila[sp]]=0;
-  } else if (pila[sp]<0) { // Aคadir (?) caracteres (por homogeneidad)
+  } else if (pila[sp]<0) { // Aรฑadir (?) caracteres (por homogeneidad)
     pila[sp]=oo-pila[sp]; // Nueva longitud
     for (;oo<pila[sp];oo++) {
       memb[pila[sp-1]*4+oo]=' ';
@@ -719,9 +719,9 @@ case lnul:
   #endif
   break;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Cases no utilizados (hasta el 255)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 case 127: case 128: case 129:
 case 130: case 131: case 132: case 133: case 134: case 135: case 136: case 137: case 138: case 139:
