@@ -1643,7 +1643,6 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
   byte *temp, *temp2;
   float coefredy, coefredx, a, b;
   int x, y, num_tex=0;
-  FILE *FPG_F;
 
   if(tex_cod == -1) // Textura desde browser
   {
@@ -1677,14 +1676,14 @@ void CrearMapperThumb(int tex_cod, int an_thumb, int al_thumb)
 
   if((temp=(byte *)malloc(man*mal))==NULL)
   {
-    fclose(FPG_F);
     Tex[TipoTex].cod=0;
     v_texto=(char *)texto[45];
     dialogo(err0);
     return;
   }
 
-  if((FPG_F=fopen((char *)m3d_edit.fpg_path,"rb"))==NULL)
+  FILE *FPG_F = fopen((char *)m3d_edit.fpg_path,"rb");
+  if(!FPG_F)
   {
     v_texto=(char *)texto[43];
     dialogo(err0);
