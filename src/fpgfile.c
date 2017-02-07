@@ -476,7 +476,7 @@ char *Buffer;
         free(Buffer);
 }
 
-int Borrar_FPG(FPG *Fpg,int COD) // Papelera, machacar uno existente y al cambiar el c¢digo a uno
+int Borrar_FPG(FPG *Fpg,int COD) // Papelera, machacar uno existente y al cambiar el c√≥digo a uno
 {
 struct tipo_regla CopiaReglas[16];
 HeadFPG MiOtraHeadFPG;
