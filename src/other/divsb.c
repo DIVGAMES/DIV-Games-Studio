@@ -84,7 +84,7 @@ void sbmalloc ( void )
   for(con=0; con<2; con++)
   {
   	memset(&r, 0, sizeof(r));
-  	r.w.ax = 0x0100;				  // Funci¢n Reservar Bloque Mem. DOS
+  	r.w.ax = 0x0100;				  // FunciÃ³n Reservar Bloque Mem. DOS
   	r.w.bx = (Tam + 15) >> 4; // Parrafos a reservar
   	int386 (0x31, &r, &r);
     if (r.x.cflag)
