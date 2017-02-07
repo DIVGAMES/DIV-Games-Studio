@@ -1,7 +1,7 @@
 
-//═════════════════════════════════════════════════════════════════════════════
-//      Módulo que contiene el código de lectura/escritura de formatos gráficos
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+//      MÃ³dulo que contiene el cÃ³digo de lectura/escritura de formatos grÃ¡ficos
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 #include "global.h"
 
@@ -21,9 +21,9 @@ static jmp_buf jmp_error_ptr;
 }
 #endif
 
-// ────────────────────────────────────────────────────────────────────────────
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      Constantes
-// ────────────────────────────────────────────────────────────────────────────
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 #define BI_RGB      0
 #define BI_RLE8     1
@@ -34,21 +34,20 @@ static jmp_buf jmp_error_ptr;
 #define RGBA_RED    2
 #define RGBA_ALPHA  3
 
-// ────────────────────────────────────────────────────────────────────────────
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      Estructuras
-// ────────────────────────────────────────────────────────────────────────────
-
-typedef struct tagRGBQUAD
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+typedef struct _rgb_quad
 {
         unsigned char   rgbBlue;
         unsigned char   rgbGreen;
         unsigned char   rgbRed;
         unsigned char   rgbReserved;
-} RGBQUAD;
+}rgb_quad;
 
-// ────────────────────────────────────────────────────────────────────────────
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // For adding graphics formats follow these steps
-// ────────────────────────────────────────────────────────────────────────────
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 // - Add the extension in div.cpp chain ".MAP ... * * *."
 
@@ -59,7 +58,7 @@ typedef struct tagRGBQUAD
 // returns the width / height of the bitmap in the variables map_an / p
 
 // PROT: void decompresses_XYZ (byte * buffer, byte * map vent int);
-// DESC: The function ó n receives the loaded file in buffer and another buffer
+// DESC: The function Ã³ n receives the loaded file in buffer and another buffer
 // Map_an * map_al + map_an bytes (map), you have to unpack this
 // latest.
 // "Vent" indicates whether to charge the additional information window
@@ -93,9 +92,9 @@ typedef struct tagRGBQUAD
 // New prototypes Global.cpp (where n is the above) 
 // Tambi n have to be put in divsetup.cpp and divpalet.cpp (preparing Skin)
 
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      MAP Format
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 int es_MAP (byte * buffer) {
 	if (!strcmp((char *)buffer,"map\x1a\x0d\x0a")) {
@@ -135,7 +134,7 @@ int graba_MAP (byte * mapa, FILE * f) {
 	fwrite("map\x1a\x0d\x0a\x00\x00",8,1,f);      // +000 Cabecera y version
 	x=map_an; fwrite(&x,2,1,f);                   // +008 Ancho
 	x=map_al; fwrite(&x,2,1,f);                   // +010 Alto
-	y=ventana[v_ventana].mapa->Codigo; fwrite(&y,4,1,f);// +012 Código
+	y=ventana[v_ventana].mapa->Codigo; fwrite(&y,4,1,f);// +012 CÃ³digo
 
 	fwrite(ventana[v_ventana].mapa->descripcion,32,1,f);// +016 Descripcion
 	fwrite(dac,768,1,f);                          // +048 Paleta
@@ -165,13 +164,13 @@ int graba_MAP (byte * mapa, FILE * f) {
 	return 0;
 }
 
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      Formato PCX
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      Structs
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 typedef struct _pcx_header {
 	char manufacturer;
@@ -199,9 +198,9 @@ struct pcx_struct {
 	unsigned char far *image;
 	int clength;
 };
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      Functions
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 int es_PCX(byte *buffer)
 {
@@ -243,7 +242,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
   byte rgb_blue, rgb_green, rgb_red;
   byte color16;
   int  con16;
-  RGBQUAD Pcxdac[256];
+  rgb_quad Pcxdac[256];
   byte *old_muestra;
 
   memcpy((byte *)&header,buffer,sizeof(pcx_header));
@@ -290,7 +289,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
     do {
       ch=*buffer++;                               // Copia uno por defecto.
       if((ch&192)==192) {                         // Si RLE entonces
-        rep=(ch&63);                              // rep = nº de veces a copiar.
+        rep=(ch&63);                              // rep = nÂº de veces a copiar.
         ch=*buffer++;
       } else rep=1;
       pixel+=rep;                                 // Controla que no nos salgamos.
@@ -308,7 +307,7 @@ void descomprime_PCX(byte *buffer, byte *mapa, int vent)
     do {
       ch=*buffer++;                               // Copia uno por defecto.
       if((ch&192)==192) {                         // Si RLE entonces
-        rep=(ch&63);                              // rep = nº de veces a copiar.
+        rep=(ch&63);                              // rep = nÂº de veces a copiar.
         ch=*buffer++;
       } else rep=1;
       pixel+=rep;                                 // Controla que no nos salgamos.
@@ -543,9 +542,9 @@ int graba_PCX(byte *mapa,FILE *f) {
         return(0);
 }
 
-//═════════════════════════════════════════════════════════════════════════════
-//  Rutina de descompresión de RLE optimizada
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+//  Rutina de descompresiÃ³n de RLE optimizada
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 byte * descomprime_rle(byte * buffer,unsigned int bytes_line,unsigned int last_byte,byte * pDest) {
 
@@ -556,7 +555,7 @@ byte * descomprime_rle(byte * buffer,unsigned int bytes_line,unsigned int last_b
   do {
     ch=*buffer++;                               // Copia uno por defecto.
     if((ch&192)==192) {                         // Si RLE entonces
-      rep=(ch&63);                              // rep = nº de veces a copiar.
+      rep=(ch&63);                              // rep = nÂº de veces a copiar.
       ch=*buffer++;
     } else rep=1;
     pixel+=rep;                                 // Controla que no nos salgamos.
@@ -576,11 +575,11 @@ byte * descomprime_rle(byte * buffer,unsigned int bytes_line,unsigned int last_b
   return(buffer);
 }
 
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      Formato BMP
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
-typedef struct tagBITMAPFILEHEADER
+typedef struct _bmpfile_header
 {
         unsigned short  bfType;         //2
         unsigned int    bfSize;         //4
@@ -588,9 +587,9 @@ typedef struct tagBITMAPFILEHEADER
         unsigned short  bfReserved2;    //2
         unsigned int    bfOffBits;      //4
                                         //14
-} BITMAPFILEHEADER;
+}bmpfile_header;
 
-typedef struct tagBITMAPINFOHEADER
+typedef struct _bmpinfo_header
 {
         unsigned int   biSize;                   // 4
         unsigned int   biWidth;                  // 4
@@ -605,13 +604,13 @@ typedef struct tagBITMAPINFOHEADER
         unsigned int   biClrImportant;           // 4
                                                  // 40
 
-} BITMAPINFOHEADER;
+} bmpinfo_header;
 
 int es_BMP(byte *buffer)
 {
-  BITMAPFILEHEADER FileHeader;
-  BITMAPINFOHEADER InfoHeader;
-  byte             *CopiaBuffer;
+  bmpfile_header FileHeader;
+  bmpinfo_header InfoHeader;
+  byte           *CopiaBuffer;
 
   FileHeader.bfType=*((unsigned short*)buffer);
   FileHeader.bfSize=*((unsigned int*)(buffer+2));
@@ -635,9 +634,9 @@ int es_BMP(byte *buffer)
 
 void descomprime_BMP(byte *buffer, byte *mapa, int vent)
 {
-  BITMAPFILEHEADER FileHeader;
-  BITMAPINFOHEADER InfoHeader;
-  RGBQUAD          Bmpdac[256];
+  bmpfile_header FileHeader;
+  bmpinfo_header InfoHeader;
+  rgb_quad       Bmpdac[256];
   byte bEOL;    // 1 if end of line reached.
   byte bEOF=0;  // 1 if end of file reached.
   byte *pSrc, *pSrcLine, *pDest;
@@ -852,9 +851,9 @@ void descomprime_BMP(byte *buffer, byte *mapa, int vent)
         pSrc  = pSrcLine;
         for (x=0; x<map_an; x++)
         { // For each pixel...
-          rgb_red   = ((RGBQUAD *)pSrc)->rgbRed;
-          rgb_green = ((RGBQUAD *)pSrc)->rgbGreen;
-          rgb_blue  = ((RGBQUAD *)pSrc)->rgbBlue;
+          rgb_red   = ((rgb_quad *)pSrc)->rgbRed;
+          rgb_green = ((rgb_quad *)pSrc)->rgbGreen;
+          rgb_blue  = ((rgb_quad *)pSrc)->rgbBlue;
           *pDest = (rgb_red&0xE0) | ((rgb_green&0xE0)>>3) | ((rgb_blue&0xC0)>>6);
           pDest ++;
           pSrc += 3;
@@ -884,9 +883,9 @@ void descomprime_BMP(byte *buffer, byte *mapa, int vent)
         pSrc  = pSrcLine;
         for (x=0; x<map_an; x++)
         { // For each pixel...
-          rgb_red   = ((RGBQUAD *)pSrc)->rgbRed;
-          rgb_green = ((RGBQUAD *)pSrc)->rgbGreen;
-          rgb_blue  = ((RGBQUAD *)pSrc)->rgbBlue;
+          rgb_red   = ((rgb_quad *)pSrc)->rgbRed;
+          rgb_green = ((rgb_quad *)pSrc)->rgbGreen;
+          rgb_blue  = ((rgb_quad *)pSrc)->rgbBlue;
           muestra[((rgb_red&0xF8)<<7) | ((rgb_green&0xF8)<<2) | ((rgb_blue&0xF8)>>3)]=1;
           pSrc += 3;
         }
@@ -904,9 +903,9 @@ void descomprime_BMP(byte *buffer, byte *mapa, int vent)
         pSrc  = pSrcLine;
         for (x=0; x<map_an; x++)
         { // For each pixel...
-          rgb_red   = ((RGBQUAD *)pSrc)->rgbRed;
-          rgb_green = ((RGBQUAD *)pSrc)->rgbGreen;
-          rgb_blue  = ((RGBQUAD *)pSrc)->rgbBlue;
+          rgb_red   = ((rgb_quad *)pSrc)->rgbRed;
+          rgb_green = ((rgb_quad *)pSrc)->rgbGreen;
+          rgb_blue  = ((rgb_quad *)pSrc)->rgbBlue;
           *pDest = muestra[((rgb_red&0xF8)<<7) | ((rgb_green&0xF8)<<2) | ((rgb_blue&0xF8)>>3)];
           pDest ++;
           pSrc += 3;
@@ -930,15 +929,15 @@ void descomprime_BMP(byte *buffer, byte *mapa, int vent)
 
 int graba_BMP(byte *mapa,FILE *f)
 {
-BITMAPFILEHEADER     FileHeader;
-BITMAPINFOHEADER     InfoHeader;
-RGBQUAD              Bmpdac[256];
+bmpfile_header     FileHeader;
+bmpinfo_header     InfoHeader;
+rgb_quad           Bmpdac[256];
 int x,y=0;
 
 byte pad[4]={0,0,0,0};
 int pad_an = map_an + 4-(map_an%4);
 
-//BITMAPFILEHEADER
+//BITMAPFILE_HEADER
         FileHeader.bfType=0x4D42;
         FileHeader.bfSize=1078+pad_an*map_al;
         FileHeader.bfReserved1=0;
@@ -949,7 +948,7 @@ int pad_an = map_an + 4-(map_an%4);
         fwrite(&FileHeader.bfReserved1,2,1,f);
         fwrite(&FileHeader.bfReserved2,2,1,f);
         fwrite(&FileHeader.bfOffBits,4,1,f);
-//BITMAPINFOHEADER
+//BITMAPINF_OHEADER
         InfoHeader.biSize=40;
         InfoHeader.biWidth=map_an;
         InfoHeader.biHeight=map_al;
@@ -988,9 +987,9 @@ int pad_an = map_an + 4-(map_an%4);
 return(1);
 }
 
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      Formato JPG
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 int es_JPG(byte *buffer, int img_filesize)
 {
@@ -1111,9 +1110,9 @@ return (0);
 #endif
 }
 
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //  Funciones para cargar la paleta de un archivo
-//═════════════════════════════════════════════════════════════════════════════
+//âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 // Quita de dac4 los colores no usados en el mapa
 // OJO, quien llame a esta funcion debe guardar y restaurar "paleta_original"
@@ -1376,10 +1375,10 @@ int cargadac_PCX(char *name)
 int cargadac_BMP(char *name)
 {
   FILE *file;
-  BITMAPFILEHEADER        FileHeader;
-  BITMAPINFOHEADER        InfoHeader;
-  RGBQUAD                 Bmpdac[256];
-  byte *                  CopiaBuffer,*buffer;
+  bmpfile_header        FileHeader;
+  bmpinfo_header        InfoHeader;
+  rgb_quad              Bmpdac[256];
+  byte *                CopiaBuffer,*buffer;
   int x,y;
   int n,man,mal;
   byte * temp;
