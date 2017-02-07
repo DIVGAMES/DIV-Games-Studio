@@ -169,7 +169,7 @@ float aux,aux_x,aux_y,aux_z;
   for (i=0;i<obj->nVertex;i++) {
     vertice=&obj->Vertices[i];
     vertice->estado=0;
-    // Roto en funci¢n de la matriz de giro del objeto
+    // Roto en funciÃ³n de la matriz de giro del objeto
     aux_x = vertice->rx*wmat._00+
             vertice->ry*wmat._10+
             vertice->rz*wmat._20+wmat._30;
@@ -180,13 +180,13 @@ float aux,aux_x,aux_y,aux_z;
             vertice->ry*wmat._12+
             vertice->rz*wmat._22+wmat._32;
 
-    // Traslado en funci¢n de la c mara
+    // Traslado en funciÃ³n de la cÃ¡mara
     aux=-obj->Shadow*aux_y/2;
     aux_x=aux_x-hlrender_struct->ccamera->cx+aux;
     aux_y=-hlrender_struct->ccamera->cy;
     aux_z=aux_z-hlrender_struct->ccamera->cz+aux;
 
-    // Roto en funci¢n de la matriz de giro de la camara
+    // Roto en funciÃ³n de la matriz de giro de la camara
     vertice->sx = aux_x*wmat2._00+
                   aux_y*wmat2._10+
                   aux_z*wmat2._20+wmat2._30;

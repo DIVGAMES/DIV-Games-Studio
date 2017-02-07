@@ -49,7 +49,7 @@ int old_net_reloj;
 extern void arse(void);
 
 //=============================================================================
-// Inicializa la comunicaci¢n
+// Inicializa la comunicaci√≥n
 //=============================================================================
 
 int net_init(int game_id)
@@ -85,7 +85,7 @@ int net_init_internet(int game_id) {
 
 
 //=============================================================================
-// Inicializa la comunicaci¢n a traves de ipx
+// Inicializa la comunicaci√≥n a traves de ipx
 //=============================================================================
 
 #ifdef NOTYET
@@ -94,7 +94,7 @@ int net_init_ipx(int game_id)
   int socket=27350;
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inici¢ la comunicacion, en caso afirmativo se finaliza
+  // Compruebo si se inici√≥ la comunicacion, en caso afirmativo se finaliza
   //---------------------------------------------------------------------------
   if (inicializacion_red)
     net_end();
@@ -114,7 +114,7 @@ int net_init_ipx(int game_id)
   partida_red.dispositivo=IPX;
 
   //---------------------------------------------------------------------------
-  // Inicializaci¢n correcta
+  // Inicializaci√≥n correcta
   //---------------------------------------------------------------------------
   inicializacion_red=1;
   partida_red.game_id=game_id;
@@ -125,13 +125,13 @@ int net_init_ipx(int game_id)
 }
 
 //=============================================================================
-// Inicializa la comunicaci¢n a traves de cable serie
+// Inicializa la comunicaci√≥n a traves de cable serie
 //=============================================================================
 
 int net_init_serial(int game_id)
 {
   //---------------------------------------------------------------------------
-  // Compruebo si se inici¢ la comunicacion, en caso afirmativo se finaliza
+  // Compruebo si se inici√≥ la comunicacion, en caso afirmativo se finaliza
   //---------------------------------------------------------------------------
   if (inicializacion_red)
     net_end();
@@ -151,7 +151,7 @@ int net_init_serial(int game_id)
   partida_red.dispositivo=SERIAL;
 
   //---------------------------------------------------------------------------
-  // Inicializaci¢n correcta
+  // Inicializaci√≥n correcta
   //---------------------------------------------------------------------------
   inicializacion_red=1;
   partida_red.game_id=game_id;
@@ -162,7 +162,7 @@ int net_init_serial(int game_id)
 }
 
 //=============================================================================
-// Inicializa la comunicaci¢n a traves de modem
+// Inicializa la comunicaci√≥n a traves de modem
 //=============================================================================
 
 int net_init_modem(int timeout)
@@ -183,7 +183,7 @@ int dial=0;//????????? FERNANDO ?????
 //  strcat(data_aux,net->telefono);
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inici¢ la comunicacion, en caso afirmativo se finaliza
+  // Compruebo si se inici√≥ la comunicacion, en caso afirmativo se finaliza
   //---------------------------------------------------------------------------
   if (inicializacion_red)
     net_end();
@@ -215,7 +215,7 @@ int dial=0;//????????? FERNANDO ?????
   partida_red.dispositivo=MODEM;
 
   //---------------------------------------------------------------------------
-  // Inicializaci¢n correcta
+  // Inicializaci√≥n correcta
   //---------------------------------------------------------------------------
   inicializacion_red=1;
   return(partida_red.servidor);
@@ -232,7 +232,7 @@ void _net_loop(void)
   static int con_reloj=0;
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inici¢ la comunicacion, en caso contrario retorna
+  // Compruebo si se inici√≥ la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
   if (!inicializacion_red)
     return;
@@ -277,7 +277,7 @@ void _net_loop(void)
 #endif
   net->act_players=partida_red.num_players;
   //---------------------------------------------------------------------------
-  // Si la partida ya est† completa retorna
+  // Si la partida ya est√° completa retorna
   //---------------------------------------------------------------------------
   if (partida_red.num_players==partida_red.max_players) {
     return;
@@ -360,7 +360,7 @@ int net_create_game(int game_id,char *nombre, int num_jugadores)
 	fprintf(stdout,"NET_CREATE_GAME %d %s %d\n",game_id,nombre, num_jugadores);
 	
   //---------------------------------------------------------------------------
-  // Compruebo si se inici¢ la comunicacion, en caso contrario retorna
+  // Compruebo si se inici√≥ la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
   if (!inicializacion_red)
     net_init(game_id);
@@ -375,7 +375,7 @@ int net_create_game(int game_id,char *nombre, int num_jugadores)
     return(NET_BADNUMPLAYERS);
 
   //---------------------------------------------------------------------------
-  // Compruebo si el n£mero de jugadores es correcto, en caso contrario retorna
+  // Compruebo si el n√∫mero de jugadores es correcto, en caso contrario retorna
   //---------------------------------------------------------------------------
 #ifdef NOTYET
   if (partida_red.dispositivo==IPX) {
@@ -408,7 +408,7 @@ if(!tcpsock) {
 //    InsertIn(&IPX_MyAddress,0);
 
   //---------------------------------------------------------------------------
-  // Inicializaci¢n correcta
+  // Inicializaci√≥n correcta
   //---------------------------------------------------------------------------
   return 1;
 }
@@ -420,7 +420,7 @@ if(!tcpsock) {
 void net_exit_game()
 {
   //---------------------------------------------------------------------------
-  // Compruebo si se inici¢ la comunicacion, en caso contrario retorna
+  // Compruebo si se inici√≥ la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
   if (!inicializacion_red)
     return;
@@ -524,7 +524,7 @@ int server=0;
   }
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inici¢ la comunicacion, en caso contrario retorna
+  // Compruebo si se inici√≥ la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
   if (!inicializacion_red) {
     if ((valor_retorno=net_init(game_id))<0)

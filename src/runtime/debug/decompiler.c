@@ -393,7 +393,7 @@ local struct reserved[0]
         process_type   // Tipo de proceso
         type_scan      // Para scanear procesos por tipo
         status         // Estado actual de este proceso
-        param_offset   // Puntero a los par metros pasados
+        param_offset   // Puntero a los par┬ámetros pasados
         program_index  // Contador de programa para este proceso
         is_executed    // Indica si el proceso ya ha sido ejecutado
         is_painted     // Indica si el proceso ya ha sido pintado
@@ -402,28 +402,28 @@ local struct reserved[0]
         frame_percent  // Porcentaje de frame recorrido
         box_x0         // Caja ocupada por el sprite cada
         box_y0         // vez que se pinta para realizar
-        box_x1         // volcado y restauraci¢n de fondo
+        box_x1         // volcado y restauraci┬ón de fondo
         box_y1         // parcial (dump_type==partial_dump)
 end
 
 local father=0          // Identificador del padre
-local son=0             // Identificador del £ltimo hijo
+local son=0             // Identificador del ┬último hijo
 local smallbro=0        // Identificador del hermano menor
 local bigbro=0          // Identificador del hermano mayor
 local priority=0        // Prioridad de proceso (a mayor se procesa antes)
 local ctype=0           // Tipo de coordenada
 local x=0               // Coordenada X
 local y=0               // Coordenada Y
-local z=0               // Prioridad de impresi¢n del gr fico
-local graph=0           // C¢digo del gr fico para este proceso
-local flags=0           // +1 iversi¢n horiz., +2 inversion vert., +4 Ghost
-local size=100          // Tama¤o del proceso (en tanto por ciento)
+local z=0               // Prioridad de impresi┬ón del gr┬áfico
+local graph=0           // C┬ódigo del gr┬áfico para este proceso
+local flags=0           // +1 iversi┬ón horiz., +2 inversion vert., +4 Ghost
+local size=100          // Tama┬ño del proceso (en tanto por ciento)
 local angle=0           // Angulo del proceso
-local region=0          // Regi¢n de clipping para este proceso
-local file=0            // Fichero del que tomar los gr ficos
-local xgraph=0          // Puntero a tabla: n§graficos, graf_angulo_0, ...
+local region=0          // Regi┬ón de clipping para este proceso
+local file=0            // Fichero del que tomar los gr┬áficos
+local xgraph=0          // Puntero a tabla: n┬ºgraficos, graf_angulo_0, ...
 local height=1          // Altura de los procesos en el modo-7 (pix/4)
-local cnumber=0         // N§ de scroll o m7 en el que est  (0 en todos, o bien: +1 en el 0, +2 en el 1, +4 en el 2, ...)
+local cnumber=0         // N┬º de scroll o m7 en el que est┬á (0 en todos, o bien: +1 en el 0, +2 en el 1, +4 en el 2, ...)
 local resolution=0 
 
 */

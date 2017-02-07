@@ -11,11 +11,11 @@ typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 
 
-//#define DEBUG // Para compilar la versiขn con debugger
+//#define DEBUG // Para compilar la versiรณn con debugger
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Includes
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #include "osdep.h"
 //#include <i86.h>
@@ -41,9 +41,9 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 
 GLOBAL OSDEP_Joystick *divjoy;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Definiciones
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #pragma off (check_stack);
 
@@ -59,17 +59,17 @@ GLOBAL OSDEP_Joystick *divjoy;
 #define pi 180000
 #define radian 57295.77951
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Prototipos
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-// I-ntrprete
+// I-ntรฉrprete
 
 void error(word);
 void exer(int);
 void mouse_window(void);
 
-// V-กdeo
+// V-รญdeo
 
 void set_paleta (void);
 void set_dac(void);
@@ -127,55 +127,55 @@ void debug(void);
 void memcpyb(byte * di, byte * si, int n);
 //void call(int);
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Constantes
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-#define max_exp 512	  // M ximo nฃmero de elementos en una expresiขn
-#define long_pila 2048	  // Longitud de la pila en ejecuciขn
-#define imem_max 256*1024 // Memoria principal de la m quina destino
+#define max_exp 512	  // Mรกximo nรบmero de elementos en una expresiรณn
+#define long_pila 2048	  // Longitud de la pila en ejecuciรณn
+#define imem_max 256*1024 // Memoria principal de la mรกquina destino
 
 #define swap(a,b) {a^=b;b^=a;a^=b;}
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Mnemขnico/Cขdigo/Operandos (Generaciขn de cขdigo EML, "*" ๐ "aฃn no usado")
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Mnemรณnico/Cรณdigo/Operandos (Generaciรณn de cรณdigo EML, "*" ยญ "aรบn no usado")
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-#define lnop  0 // *            No operaciขn
+#define lnop  0 // *            No operaciรณn
 #define lcar  1 // valor        Carga una constante en pila
 #define lasi  2 //              Saca valor, offset y mete el valor en [offset]
-#define lori  3 //              Or lขgico
+#define lori  3 //              Or lรณgico
 #define lxor  4 //              Xor, or exclusivo
-#define land  5 //              And lขgico, operador sobre condiciones
-#define ligu  6 //              Igual, operador logico de comparaciขn
+#define land  5 //              And lรณgico, operador sobre condiciones
+#define ligu  6 //              Igual, operador logico de comparaciรณn
 #define ldis  7 //              Distinto, true si los 2 valores son diferentes
-#define lmay  8 //              Mayor, comparaciขn con signo
+#define lmay  8 //              Mayor, comparaciรณn con signo
 #define lmen  9 //              Menor, idem
 #define lmei 10 //              Menor o igual
 #define lmai 11 //              Mayor o igual
 #define ladd 12 //              Suma dos constantes
-#define lsub 13 //              Resta, operaciขn binaria
-#define lmul 14 //              Multiplicaciขn
-#define ldiv 15 //              Divisiขn de enteros
-#define lmod 16 //              Mขdulo, resto de la divisiขn
-#define lneg 17 //              Negaciขn, cambia de signo una constante
+#define lsub 13 //              Resta, operaciรณn binaria
+#define lmul 14 //              Multiplicaciรณn
+#define ldiv 15 //              Divisiรณn de enteros
+#define lmod 16 //              Mรณdulo, resto de la divisiรณn
+#define lneg 17 //              Negaciรณn, cambia de signo una constante
 #define lptr 18 //              Pointer, saca offset y mete [offset]
-#define lnot 19 //              Negaciขn binaria, bit a bit
+#define lnot 19 //              Negaciรณn binaria, bit a bit
 #define laid 20 //              Suma id a la constante de la pila
 #define lcid 21 //              Carga id en la pila
-#define lrng 22 // offset, len  Realiza una comparaciขn de rango
-#define ljmp 23 // offset       Salta a una direcciขn de mem[]
-#define ljpf 24 // offset       Salta si un valor es falso a una direcciขn
-#define lfun 25 // cขdigo       Llamada a un proceso interno, ej. signal()
+#define lrng 22 // offset, len  Realiza una comparaciรณn de rango
+#define ljmp 23 // offset       Salta a una direcciรณn de mem[]
+#define ljpf 24 // offset       Salta si un valor es falso a una direcciรณn
+#define lfun 25 // cรณdigo       Llamada a un proceso interno, ej. signal()
 #define lcal 26 // offset       Crea un nuevo proceso en el programa
-#define lret 27 // num_par      Auto-eliminaciขn del proceso
+#define lret 27 // num_par      Auto-eliminaciรณn del proceso
 #define lasp 28 //              Desecha un valor apilado
-#define lfrm 29 // num_par      Detiene por este frame la ejecuciขn del proceso
-#define lcbp 30 // num_par      Inicializa el puntero a los par metros locales
-#define lcpa 31 //              Saca offset, lee par metro [offset] y bp++
+#define lfrm 29 // num_par      Detiene por este frame la ejecuciรณn del proceso
+#define lcbp 30 // num_par      Inicializa el puntero a los parรกmetros locales
+#define lcpa 31 //              Saca offset, lee parรกmetro [offset] y bp++
 #define ltyp 32 // bloque       Define el tipo de proceso actual (colisiones)
-#define lpri 33 // offset       Salta a la direcciขn, y carga var. privadas
-#define lcse 34 // offset       Si switch <> expresiขn, salta al offfset
+#define lpri 33 // offset       Salta a la direcciรณn, y carga var. privadas
+#define lcse 34 // offset       Si switch <> expresiรณn, salta al offfset
 #define lcsr 35 // offset       Si switch no esta en el rango, salta al offset
 #define lshr 36 //              Shift right (binario)
 #define lshl 37 //              Shift left (binario)
@@ -183,28 +183,28 @@ void memcpyb(byte * di, byte * si, int n);
 #define lpti 39 //              Pointer e incremento
 #define ldpt 40 //              Decremento y pointer
 #define lptd 41 //              Pointer y decremento
-#define lada 42 //              Add-asignaciขn
-#define lsua 43 //              Sub-asignaciขn
-#define lmua 44 //              Mul-asignaciขn
-#define ldia 45 //              Div-asignaciขn
-#define lmoa 46 //              Mod-asignaciขn
-#define lana 47 //              And-asignaciขn
-#define lora 48 //              Or-asignaciขn
-#define lxoa 49 //              Xor-asignaciขn
-#define lsra 50 //              Shr-asignaciขn
-#define lsla 51 //              Shl-asignaciขn
-#define lpar 52 // num_par_pri  Define el nฃmero de par metros privados
-#define lrtf 53 // num_par      Auto-eliminaciขn del proceso, devuelve un valor
+#define lada 42 //              Add-asignaciรณn
+#define lsua 43 //              Sub-asignaciรณn
+#define lmua 44 //              Mul-asignaciรณn
+#define ldia 45 //              Div-asignaciรณn
+#define lmoa 46 //              Mod-asignaciรณn
+#define lana 47 //              And-asignaciรณn
+#define lora 48 //              Or-asignaciรณn
+#define lxoa 49 //              Xor-asignaciรณn
+#define lsra 50 //              Shr-asignaciรณn
+#define lsla 51 //              Shl-asignaciรณn
+#define lpar 52 // num_par_pri  Define el nรบmero de parรกmetros privados
+#define lrtf 53 // num_par      Auto-eliminaciรณn del proceso, devuelve un valor
 #define lclo 54 // offset       Crea un clon del proceso actual
 #define lfrf 55 // num_par      Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
 #define limp 56 // offset text  Importa una DLL externa
-#define lext 57 // cขdigo       Llama a una funciขn externa
+#define lext 57 // cรณdigo       Llama a una funciรณn externa
 #define lchk 58 //              Comprueba la validez de un identificador
 #define ldbg 59 //              Invoca al debugger
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Variables globales de los programas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #define long_header 36    // Longitud de la cabecera al inicio de los programas
 
@@ -240,7 +240,7 @@ struct _setup { // x1
 
 GLOBAL struct _setup * setup;
 
-// *** OJO *** Indicar adem s de aquก en la inicializaciขn de i.cpp y el div.h ***
+// *** OJO *** Indicar ademรกs de aquรญ en la inicializaciรณn de i.cpp y el div.h ***
 
 #define end_struct long_header+12+10*10+10*7+8+8
 
@@ -261,49 +261,49 @@ GLOBAL int joy_timeout;
 
 void read_joy(void);
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables locales del sistema de sprites (las # no son pฃblicas)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Variables locales del sistema de sprites (las # no son pรบblicas)
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #define _Id         0  //Para comprobar validez de accesos externos
 #define _IdScan     1  //Recorrido del resto de los procesos (p.ej.colisiones)
 #define _Bloque     2  //Identificador del tipo de proceso (para colisiones)
-#define _BlScan     3  //Ultimo tipo de proceso scaneado en el ฃltimo recorrido
+#define _BlScan     3  //Ultimo tipo de proceso scaneado en el รบltimo recorrido
 #define _Status     4  //Estado (0 dead, 1 killed, 2 alive, 3 sleept, 4 freezed)
-#define _Param      5  //Puntero a los par metros pasados al proceso (en pila)
-#define _IP         6  //Puntero de ejecuciขn (la siguiente al frame anterior)
-#define _Executed   7  //Indica para cada frame si el proceso ya se ejecutข
+#define _Param      5  //Puntero a los parรกmetros pasados al proceso (en pila)
+#define _IP         6  //Puntero de ejecuciรณn (la siguiente al frame anterior)
+#define _Executed   7  //Indica para cada frame si el proceso ya se ejecutรณ
 #define _Painted    8  //Indica si el proceso ya ha sido pintado
 #define _Dist1	    9  //Distancia 1 del proceso (reservado modo 7)
 #define _Dist2	    10 //Distancia 2 del proceso (idem)
 #define _Frame      11 //Cuanto frame lleva el proceso (frame(n))
 #define _x0         12 //Caja ocupada por el sprite cada
 #define _y0         13 //vez que se pinta para realizar
-#define _x1         14 //volcado y restauraciขn de fondo
+#define _x1         14 //volcado y restauraciรณn de fondo
 #define _y1         15 //parcial (dump_type==0 y restore_background==0)
 #define _Father     16 //Id del padre del proceso (0 si no existe)
-#define _Son        17 //Id del ฃltimo hijo que ha creado (0 sne)
+#define _Son        17 //Id del รบltimo hijo que ha creado (0 sne)
 #define _SmallBro   18 //Id del hermano menor del proceso (0 sne)
-#define _BigBro     19 //Id del hermanos mayor (m s viejo) del proceso (0 sne)
+#define _BigBro     19 //Id del hermanos mayor (mรกs viejo) del proceso (0 sne)
 #define _Priority   20 //Prioridad de proceso (positivo o negativo)
 #define _Ctype      21 //Indica si es relativo a pantalla, parallax o mode 7
-#define _X          22 //Coordenada x (del centro gravitatorio del gr fico)
+#define _X          22 //Coordenada x (del centro gravitatorio del grรกfico)
 #define _Y          23 //Coordenada y (idem)
-#define _Z          24 //Coordenada z (Prioridad para la impresiขn)
-#define _Graph      25 //Cขdigo del gr fico (se corresponde con los ficheros)
+#define _Z          24 //Coordenada z (Prioridad para la impresiรณn)
+#define _Graph      25 //Cรณdigo del grรกfico (se corresponde con los ficheros)
 #define _Flags      26 //Define espejados horizontales y verticales
-#define _Size       27 //Tamaคo (%) del gr fico
-#define _Angle      28 //Angulo de rotaciขn del gr fico (0 gr fico normal)
-#define _Region     29 //Regiขn con la que hacer el clipping del gr fico
-#define _File       30 //FPG que contiene los gr ficos del proceso
-#define _XGraph     31 //Puntero a tabla: nงgraficos,graf_angulo_0,...
+#define _Size       27 //Tamaรฑo (%) del grรกfico
+#define _Angle      28 //Angulo de rotaciรณn del grรกfico (0 grรกfico normal)
+#define _Region     29 //Regiรณn con la que hacer el clipping del grรกfico
+#define _File       30 //FPG que contiene los grรกficos del proceso
+#define _XGraph     31 //Puntero a tabla: nยบgraficos,graf_angulo_0,...
 #define _Height     32 //Altura de los procesos en el modo 7 (pix/4)
-#define _Cnumber    33 //Indica en que scroll o m7 se ver  el gr fico
-#define _Resolution 34 //Resoluciขn de las coordenadas x,y para este proceso
+#define _Cnumber    33 //Indica en que scroll o m7 se verรก el grรกfico
+#define _Resolution 34 //Resoluciรณn de las coordenadas x,y para este proceso
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Memoria de la m quina destino
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//  Memoria de la mรกquina destino
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 GLOBAL int demo;
 
@@ -312,15 +312,15 @@ GLOBAL byte * ghost_inicial;
 GLOBAL int game_fps;
 
 
-GLOBAL int pila[long_pila+max_exp+64]; // c lculo de expresiones (compilaciขn y ejecuciขn)
+GLOBAL int pila[long_pila+max_exp+64]; // cรกlculo de expresiones (compilaciรณn y ejecuciรณn)
 
 GLOBAL int * mem, imem, iloc, iloc_pub_len, iloc_len, itxt;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables globales para la interpretaciขn - VARIABLES DE PROCESO
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Variables globales para la interpretaciรณn - VARIABLES DE PROCESO
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-GLOBAL int inicio_privadas; // Inicio de variables privadas (proceso en ejecuciขn)
+GLOBAL int inicio_privadas; // Inicio de variables privadas (proceso en ejecuciรณn)
 
 GLOBAL int ip;          // Puntero de programa
 
@@ -332,23 +332,23 @@ GLOBAL int id_init;     // Inicio del proceso init (padre de todos)
 
 GLOBAL int id_start;    // Inicio del primer proceso (sus locales y privadas)
 
-GLOBAL int id_end;      // Inicio del ฃltimo proceso hasta el momento
+GLOBAL int id_end;      // Inicio del รบltimo proceso hasta el momento
 
-GLOBAL int id_old;      // Para saber por donde se est  procesando
+GLOBAL int id_old;      // Para saber por donde se estรก procesando
 
-GLOBAL int procesos;    // Nฃmero de procesos vivos en el programa
+GLOBAL int procesos;    // Nรบmero de procesos vivos en el programa
 
 GLOBAL int ide,id;      // Proceso en proceso
 
 GLOBAL int id2;         // Identificador extra para las llamadas a procesos (cal)
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables globales para la interpretaciขn - VARIABLES GRAFICAS
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Variables globales para la interpretaciรณn - VARIABLES GRAFICAS
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla fกsica
+GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla fรญsica
 GLOBAL int vwidth, vheight; // Screen window dimensions
-GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla fกsica
+GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla fรญsica
 GLOBAL byte fsmode;
 
 GLOBAL byte *copia;     // Copia virtual de pantalla
@@ -367,7 +367,7 @@ GLOBAL byte dac4[768];  // Paleta multiplicada por 4
 
 GLOBAL int dacout_r,dacout_g,dacout_b,dacout_speed; // Fade, que restar y a que veloc.
 
-GLOBAL int now_dacout_r,now_dacout_g,now_dacout_b; // Situaciขn actual de dac[]
+GLOBAL int now_dacout_r,now_dacout_g,now_dacout_b; // Situaciรณn actual de dac[]
 
 GLOBAL int paleta_cargada; // Indica si ya se ha cargado alguna paleta
 
@@ -375,43 +375,43 @@ GLOBAL int activar_paleta; // Indica si ya se ha cargado alguna paleta
 
 GLOBAL byte * cuad;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Ficheros de gr ficos (*.FPG de DIV)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Ficheros de grรกficos (*.FPG de DIV)
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 GLOBAL struct t_g { // Estructura para un fpg
   int * * fpg; // Fichero cargado en memoria
-  int * * grf; // Punteros a los gr ficos (g[n].grf[000..999])
+  int * * grf; // Punteros a los grรกficos (g[n].grf[000..999])
 } _t_g;
 
-// El primer fpg puede contener hasta 2000 gr ficos, a partir de 1000 son los
-// gr ficos cargados con load_map (sus cขdigos 1000..1999)
+// El primer fpg puede contener hasta 2000 grรกficos, a partir de 1000 son los
+// grรกficos cargados con load_map (sus cรณdigos 1000..1999)
 
 GLOBAL int next_map_code,max_grf;
 
-#define max_fpgs 64     // Numero m ximo de fpgs cargados
+#define max_fpgs 64     // Numero mรกximo de fpgs cargados
 
 GLOBAL struct t_g g[max_fpgs]; // Array de los fpg
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables genricas usadas por varias funciones
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Variables genรฉricas usadas por varias funciones
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-GLOBAL FILE * es;       // Lectura de ficheros en la interpretaciขn (fpg, voc, ...)
+GLOBAL FILE * es;       // Lectura de ficheros en la interpretaciรณn (fpg, voc, ...)
 
-GLOBAL int file_len;    // Lectura de ficheros en la interpretaciขn
+GLOBAL int file_len;    // Lectura de ficheros en la interpretaciรณn
 
-GLOBAL word * ptr;      // Puntero general para un malloc en ejecuciขn
+GLOBAL word * ptr;      // Puntero general para un malloc en ejecuciรณn
 
-GLOBAL int x,y;         // Coordenadas genricas para su uso en funciones internas
+GLOBAL int x,y;         // Coordenadas genรฉricas para su uso en funciones internas
 
-GLOBAL float angulo;    // Angulo genrico para su uso en funciones internas
+GLOBAL float angulo;    // Angulo genรฉrico para su uso en funciones internas
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Sistema de regiones de visualizaciขn
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Sistema de regiones de visualizaciรณn
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-#define max_region 32   // Nฃmero m ximo de regiones definidas
+#define max_region 32   // Nรบmero mรกximo de regiones definidas
 
 GLOBAL struct t_region { // Zonas de clipping, referidas a pantalla
   int x0,x1;
@@ -420,11 +420,11 @@ GLOBAL struct t_region { // Zonas de clipping, referidas a pantalla
 
 GLOBAL struct t_region region[max_region]; // Array de regiones
 
-GLOBAL int clipx0,clipx1,clipy0,clipy1; // Regiขn de clipping
+GLOBAL int clipx0,clipx1,clipy0,clipy1; // Regiรณn de clipping
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Sistema de font (*.FNT generados con DIV)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 typedef struct _TABLAFNT{
     int ancho;
@@ -436,23 +436,23 @@ typedef struct _TABLAFNT{
 typedef struct _fnt_info{
   int ancho;            // Ancho medio del font
   int espacio;          // Longitud en pixels del espacio en blanco
-  int espaciado;        // Espaciado entre car cteres (adem s del propio ancho)
-  int alto;             // Altura m xima del font
+  int espaciado;        // Espaciado entre carรกcteres (ademรกs del propio ancho)
+  int alto;             // Altura mรกxima del font
 } fnt_info;
 
-#define max_fonts 32    // Nฃmero m ximo de fonts en ejecuciขn
+#define max_fonts 32    // Nรบmero mรกximo de fonts en ejecuciรณn
 
-GLOBAL byte * fonts[max_fonts]; // Fonts cargados en ejecuciขn (0-no cargado)
+GLOBAL byte * fonts[max_fonts]; // Fonts cargados en ejecuciรณn (0-no cargado)
 
 GLOBAL TABLAFNT * fnt;
 
 GLOBAL fnt_info f_i[max_fonts];
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Sistema de impresiขn de textos
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Sistema de impresiรณn de textos
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-#define max_textos 256  // Nฃmero m ximo de textos en ejecuciขn
+#define max_textos 256  // Nรบmero mรกximo de textos en ejecuciรณn
 
 GLOBAL struct t_texto {
   int tipo;     // Tipo de texto 0-normal, 1-&variable
@@ -460,16 +460,16 @@ GLOBAL struct t_texto {
   int x,y;      // Coordenadas del texto
   int ptr;      // Texto
   int centro;   // Tipo de centrado 0-normal (decha), 1-centrado horiz, ...
-  int region;   // Regiขn de clipping
+  int region;   // Regiรณn de clipping
   int x0,y0;    // Region ocupada por el texto
   int an,al;    // para los volcados parciales
 } _t_texto;
 
 GLOBAL struct t_texto texto[max_textos];
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Sistema de volcados parciales (juegos sin scroll) - Aฃn no implementado
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Sistema de volcados parciales (juegos sin scroll) - Aรบn no implementado
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 GLOBAL int volcado_completo; // Indica si se ha modificado toda la copia de vga
                              // Por ahora se mantiene siempre a 1
@@ -477,9 +477,9 @@ GLOBAL int volcado_completo; // Indica si se ha modificado toda la copia de vga
 // Ya se ha implementado, la variable que controla ahora el tipo de
 // volcado es la global dump_type, accesible por los programas
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Sistema de modo 7 - Struct interno
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 struct _im7 {
   int on,painted;
@@ -491,14 +491,14 @@ struct _im7 {
 
 GLOBAL struct _im7 im7[10];
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Sistema de scroll parallax - Struct interno
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #define max_inc 32
 
 typedef struct _tfast { // Tabla de incrementos para el primer plano
-  int nt;               // 0..max_inc-1 Nง de tramos, >=max_inc Desbordamiento
+  int nt;               // 0..max_inc-1 Nยบ de tramos, >=max_inc Desbordamiento
   short inc[max_inc];   // Salto,datos,salto,datos,...
 } tfast;                // Hasta 1024x768
 
@@ -528,49 +528,49 @@ GLOBAL struct _iscroll iscroll[10];
 GLOBAL int snum; // Variable para indicar sobre que scroll se trata
 
 //GLOBAL int scroll_on;     // 0-Sin scroll, 1-Un plano, 2-Dos planos
-//GLOBAL int scr_x,scr_y;   // Posiciขn en copia de la ventana de scroll (regiขn)
+//GLOBAL int scr_x,scr_y;   // Posiciรณn en copia de la ventana de scroll (regiรณn)
 //GLOBAL int scr_an,scr_al; // Dimensiones de la ventana de scroll
 //GLOBAL byte *_scr1,*scr1; // Primer plano de scroll, buffer circular
 //GLOBAL byte *_scr2,*scr2; // Segundo plano de scroll, buffer circular
 //GLOBAL byte *map1,*map2;  // Mapas, primer y segundo plano
 //GLOBAL int map1_an,map1_al,map2_an,map2_al; // Dimensiones de los mapas
-//GLOBAL int map_flags;     // Indica si los planos son cกclicos, y en que ejes
-//GLOBAL int map1_x,map1_y,map2_x,map2_y; // Posiciขn del scroll (esq. sup. izda.)
-//GLOBAL int block1,block2; // Nง de scanes de la primera porciขn de los buffers
+//GLOBAL int map_flags;     // Indica si los planos son cรญclicos, y en que ejes
+//GLOBAL int map1_x,map1_y,map2_x,map2_y; // Posiciรณn del scroll (esq. sup. izda.)
+//GLOBAL int block1,block2; // Nยบ de scanes de la primera porciรณn de los buffers
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables relativas a c lculos de la paleta
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Variables relativas a cรกlculos de la paleta
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 GLOBAL byte * ghost; // Tabla de ghost layering
 
-GLOBAL byte _r,_g,_b,find_col; // C lculos sobre la paleta (tabla ghost)
+GLOBAL byte _r,_g,_b,find_col; // Cรกlculos sobre la paleta (tabla ghost)
 GLOBAL int find_min;
 
 GLOBAL byte last_c1;    // Ultimo color del font del sistema (en paleta cargada)
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Control de nง m ximo de frames
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Control de nยบ mรกximo de frames
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-GLOBAL int reloj; // Lกmite de velocidad
+GLOBAL int reloj; // Lรญmite de velocidad
 GLOBAL int ultimo_reloj;
 GLOBAL double freloj,ireloj;
 
-GLOBAL int max_saltos;                  // M ximo nง de volcados saltados
+GLOBAL int max_saltos;                  // Mรกximo nยบ de volcados saltados
 GLOBAL int dfps;
 GLOBAL int saltar_volcado,volcados_saltados;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Buffer de detecciขn de colisiones
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Buffer de detecciรณn de colisiones
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 GLOBAL byte * buffer;                   // Buffer de colisiones
 GLOBAL int buffer_an,buffer_al;         // Ancho y alto del buffer
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Formato de los ficheros gr ficos fpg
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Formato de los ficheros grรกficos fpg
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 // char     8   cabezera "fpg\x1a\x0d\x0a\x00\x00"
 // char   768   dac
@@ -582,20 +582,20 @@ GLOBAL int buffer_an,buffer_al;         // Ancho y alto del buffer
 // char    12   nombre del fichero desde el que se creo
 // int      1   ancho
 // int      1   alto
-// int      1   n - nฃmero de puntos
+// int      1   n - nรบmero de puntos
 // short  2*n   puntos {x,y}
 // char an*al   grafico
 // --------------------- N ---------------------------
 
 #ifdef DEBUG
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Include con prototipos y variables relacionadas con el debugger
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #define v ventana[0]
-#define max_items 24    // Nง m ximo de objetos en una ventana
-#define max_windows 8   // Nง m ximo de ventanas
+#define max_items 24    // Nยบ mรกximo de objetos en una ventana
+#define max_windows 8   // Nยบ mรกximo de ventanas
 
 GLOBAL int big,big2; // big(0,1), big2(1,2)
 GLOBAL int mouse_graf;
@@ -604,17 +604,17 @@ GLOBAL byte c0,c1,c2,c3,c4,text_color; // Colores del entorno
 GLOBAL byte c01,c12,c23,c34; // Colores intermedios
 GLOBAL byte c_r,c_g,c_b,c_r_low,c_g_low,c_b_low;
 
-GLOBAL byte * fondo_raton; // Buffer para guardar el fondo del ratขn
+GLOBAL byte * fondo_raton; // Buffer para guardar el fondo del ratรณn
 
-GLOBAL byte * graf_ptr, * graf[256];    // Gr ficos del entorno
-GLOBAL byte * text_font; // Font est ndar, 7 puntos de alto, ancho proporcional
+GLOBAL byte * graf_ptr, * graf[256];    // Grรกficos del entorno
+GLOBAL byte * text_font; // Font estรกndar, 7 puntos de alto, ancho proporcional
 
-GLOBAL int wmouse_x,wmouse_y; // Ratขn dentro de una ventana
+GLOBAL int wmouse_x,wmouse_y; // Ratรณn dentro de una ventana
 GLOBAL int old_mouse_b;
 
 GLOBAL struct t_item {
   int tipo;             // 0-ninguno,1-boton,2-get,3-switch
-  int estado;           // Estado del item (raton sobre l, pulsado o no ...)
+  int estado;           // Estado del item (raton sobre รฉl, pulsado o no ...)
   union {
     struct {
       byte * texto;
@@ -635,37 +635,37 @@ GLOBAL struct t_item {
 };
 
 GLOBAL struct tventana {
-  int tipo;                             // 0-n/a, 1-di logo
+  int tipo;                             // 0-n/a, 1-diรกlogo
   int primer_plano;                     // 1-si 0-no (oscurecida)
-  byte * titulo;                        // Nombre en la barra de tกtulo
+  byte * titulo;                        // Nombre en la barra de tรญtulo
   int paint_handler,click_handler,close_handler;
-  int x,y,an,al;                        // Posiciขn y dimensiones de la ventana
+  int x,y,an,al;                        // Posiciรณn y dimensiones de la ventana
   byte * ptr;                           // Buffer de la ventana
   int estado;
   int volcar;                           // Indica si se debe volcar la ventana
   struct t_item item[max_items];        // Botones, gets, switches, etc...
-  int items;                            // Nง de objetos definidos
-  int active_item;                      // Cuando algฃn item produce un efecto
+  int items;                            // Nยบ de objetos definidos
+  int active_item;                      // Cuando algรบn item produce un efecto
   int selected_item;                    // El item seleccionado (para teclado)
 };
 
 GLOBAL struct tventana ventana[max_windows];
 
 struct t_listbox{
-  int x,y;              // Posiciขn del listbox en la ventana
+  int x,y;              // Posiciรณn del listbox en la ventana
   char * lista;         // El puntero a la lista
-  int lista_an;         // Nง de car cteres de cada registro
-  int lista_al;         // Nง de registros visualizados de una vez
+  int lista_an;         // Nยบ de carรกcteres de cada registro
+  int lista_al;         // Nยบ de registros visualizados de una vez
   int an,al;            // Ancho en pixels de la zona de texto
   int inicial;          // Registro inicial visualizado (desde 0)
-  int maximo;           // Nง total de registros existentes (0 n/a)
-  int s0,s1,slide;      // Posiciขn inicial, final y actual de la "slide bar"
+  int maximo;           // Nยบ total de registros existentes (0 n/a)
+  int s0,s1,slide;      // Posiciรณn inicial, final y actual de la "slide bar"
   int zona;             // Zona seleccionada
-  int botones;          // Indica si esta pulsado el botขn up(1) o down(2)
-  int creada;           // Indica si ya est  creada la lista en pantalla
+  int botones;          // Indica si esta pulsado el botรณn up(1) o down(2)
+  int creada;           // Indica si ya estรก creada la lista en pantalla
 };
 
-GLOBAL char * v_titulo;                 // Tกtulo de la ventana
+GLOBAL char * v_titulo;                 // Tรญtulo de la ventana
 GLOBAL char * v_texto;                  // Texto de la ventana
 GLOBAL int v_aceptar;                   // Acceptar / Cancelar
 
@@ -673,18 +673,18 @@ GLOBAL int fin_dialogo;
 
 GLOBAL int debugger_step,call_to_debug,process_stoped;
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Funciones de debug
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void init_debug(void);
 void debug(void);
 void init_colors(void);
 void init_big(void);
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Breakpoints en el debugger
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #define max_breakpoint 32
 
@@ -702,21 +702,21 @@ GLOBAL int new_palette,new_mode;
 
 #endif
 
-GLOBAL int v_function;                  // Funciขn en ejecuciขn actualmente
+GLOBAL int v_function;                  // Funciรณn en ejecuciรณn actualmente
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void frame_start(void);
 void frame_end(void);
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 //void find_color(int r,int g,int b);
 byte media(byte a,byte b);
 
 GLOBAL int dr,dg,db;
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 GLOBAL byte kbdFLAGS[128];
 
@@ -727,11 +727,11 @@ void kbdReset(void);
 void tecla(void);
 void vacia_buffer(void);
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-GLOBAL int x0s,x1s,y0s,y1s;    // Regiขn ocupada por un sprite al ser pintado
+GLOBAL int x0s,x1s,y0s,y1s;    // Regiรณn ocupada por un sprite al ser pintado
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 struct _callback_data {
     unsigned short mouse_action;
@@ -749,9 +749,9 @@ void set_mouse(int,int);
 
 extern int _mouse_x,_mouse_y;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Funciones a implementar en DLL
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 // DLL_2
 
@@ -789,9 +789,9 @@ GLOBAL int ss_time_counter;
 GLOBAL int ss_status;
 GLOBAL int ss_exit;
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Mensajes de error en ejecuciขn
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//      Mensajes de error en ejecuciรณn
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void e(char * texto);
 
@@ -800,61 +800,61 @@ void e(int texto);
 #endif
 
 #define e100 "No hay memoria suficiente para ejecutar el juego."
-#define e101 "Llamada a key() con un cขdigo de tecla inexistente."
+#define e101 "Llamada a key() con un cรณdigo de tecla inexistente."
 #define e102 "No se pudo cargar la paleta, archivo no encontrado."
-#define e103 "Se intentข cargar un archivo de paleta inv lido."
+#define e103 "Se intentรณ cargar un archivo de paleta invรกlido."
 #define e104 "Demasiados ficheros FPG abiertos a la vez."
 #define e105 "No se pudo cargar el fichero, archivo no encontrado."
-#define e106 "Se intentข cargar un fichero FPG no v lido."
-#define e107 "Nฃmero de scroll inv lido (debe estar entre 0 y 9)."
-#define e108 "Nฃmero de regiขn inv lido (fuera de rango)."
-#define e109 "Cขdigo de fichero inv lido."
-#define e110 "Cขdigo de gr fico inv lido."
-#define e111 "Se intentข usar un fichero FPG antes de cargarlo."
-#define e112 "Se necesita un cขdigo de gr fico para el scroll."
+#define e106 "Se intentรณ cargar un fichero FPG no vรกlido."
+#define e107 "Nรบmero de scroll invรกlido (debe estar entre 0 y 9)."
+#define e108 "Nรบmero de regiรณn invรกlido (fuera de rango)."
+#define e109 "Cรณdigo de fichero invรกlido."
+#define e110 "Cรณdigo de grรกfico invรกlido."
+#define e111 "Se intentรณ usar un fichero FPG antes de cargarlo."
+#define e112 "Se necesita un cรณdigo de grรกfico para el scroll."
 #define e113 "Se han cargado demasiados fuentes de letras."
 #define e114 "No se pudo cargar el fuente, archivo no encontrado."
-#define e115 "Se intentข cargar un archivo de fuente no v lido."
-#define e116 "Cขdigo identificador de fuente de letras inv lido."
-#define e117 "Cขdigo de centrado de texto inv lido."
+#define e115 "Se intentรณ cargar un archivo de fuente no vรกlido."
+#define e116 "Cรณdigo identificador de fuente de letras invรกlido."
+#define e117 "Cรณdigo de centrado de texto invรกlido."
 #define e118 "Hay demasiados textos activos en el programa."
-#define e119 "Indentificador de texto no v lido."
-#define e120 "Regiขn de pantalla definida incorrectamente."
-#define e121 "Se intentข utilizar un gr fico que no existe."
-#define e122 "Se intentข escribir un bloque fuera de la memoria."
+#define e119 "Indentificador de texto no vรกlido."
+#define e120 "Regiรณn de pantalla definida incorrectamente."
+#define e121 "Se intentรณ utilizar un grรกfico que no existe."
+#define e122 "Se intentรณ escribir un bloque fuera de la memoria."
 #define e123 "No se pudo abrir el archivo para escritura."
-#define e124 "No se pudo escribir el archivo, จse llenข el disco?."
-#define e125 "Se intentข leer fuera de la memoria."
+#define e124 "No se pudo escribir el archivo, ยฟse llenรณ el disco?."
+#define e125 "Se intentรณ leer fuera de la memoria."
 #define e126 "No se pudo abrir el archivo para lectura."
 #define e127 "No se pudo leer el archivo."
 #define e128 "No se pudo cargar el efecto de sonido."
 #define e129 "No se pudo tocar el efecto de sonido solicitado."
-#define e130 "No se pudo iniciar la animaciขn solicitada."
-#define e131 "Nฃmero de modo 7 inv lido (debe estar entre 0 y 9)."
-#define e132 "Se necesita un cขdigo de gr fico para el modo 7."
-#define e133 "Nฃmero de punto de control inv lido."
-#define e134 "Nฃmero de botขn incorrecto (debe estar entre 0 y 3)."
-#define e135 "Nฃmero de eje incorrecto (debe estar entre 0 y 3)."
-#define e136 "Direcciขn de la tabla de paleta fuera de la memoria."
-#define e137 "No se pueden comprobar regiones en gr ficos de m-7."
-#define e138 "Cขdigo de informaciขn gr fica incorrecto."
-#define e139 "No se pueden comprobar colisiones en gr ficos de m-7."
+#define e130 "No se pudo iniciar la animaciรณn solicitada."
+#define e131 "Nรบmero de modo 7 invรกlido (debe estar entre 0 y 9)."
+#define e132 "Se necesita un cรณdigo de grรกfico para el modo 7."
+#define e133 "Nรบmero de punto de control invรกlido."
+#define e134 "Nรบmero de botรณn incorrecto (debe estar entre 0 y 3)."
+#define e135 "Nรบmero de eje incorrecto (debe estar entre 0 y 3)."
+#define e136 "Direcciรณn de la tabla de paleta fuera de la memoria."
+#define e137 "No se pueden comprobar regiones en grรกficos de m-7."
+#define e138 "Cรณdigo de informaciรณn grรกfica incorrecto."
+#define e139 "No se pueden comprobar colisiones en grรกficos de m-7."
 #define e140 "Acceso fuera de rango."
-#define e141 "Se intentข acceder a un proceso inv lido."
+#define e141 "Se intentรณ acceder a un proceso invรกlido."
 #define e142 "El proceso parece bloqueado, esperando FRAME."
 #define e143 "No se pudo cargar el mapa, archivo no encontrado."
-#define e144 "Se intentข cargar un archivo de mapa inv lido."
-#define e145 "Se ha intentado hacer una divisiขn entre cero."
-#define e146 "El tamaคo de la regiขn es incorrecto."
+#define e144 "Se intentรณ cargar un archivo de mapa invรกlido."
+#define e145 "Se ha intentado hacer una divisiรณn entre cero."
+#define e146 "El tamaรฑo de la regiรณn es incorrecto."
 #define e147 "No se pudo cargar FLI/FLC, archivo no encontrado."
 #define e148 "Valor de timeout incorrecto (debe ser entre 1 y 60)."
-#define e149 "Nฃmero de jugadores incorrecto (debe ser entre 2 y 8)."
-#define e150 "Sขlo se pueden enviar datos globales."
-#define e151 "Tamaคo de casilla inv lido (debe ser entre 1 y 256)."
-#define e152 "Mapa de bฃsqueda no v lido (desde 1x1 hasta 128x128)."
-#define e153 "Tamaคo de mapa incorrecto (de 1x1 a 32768x32768)."
-#define e154 "Nฃmero de color incorrecto (debe ser de 0 a 255)."
-#define e155 "El centro est  fuera de los lกmites del gr fico."
+#define e149 "Nรบmero de jugadores incorrecto (debe ser entre 2 y 8)."
+#define e150 "Sรณlo se pueden enviar datos globales."
+#define e151 "Tamaรฑo de casilla invรกlido (debe ser entre 1 y 256)."
+#define e152 "Mapa de bรบsqueda no vรกlido (desde 1x1 hasta 128x128)."
+#define e153 "Tamaรฑo de mapa incorrecto (de 1x1 a 32768x32768)."
+#define e154 "Nรบmero de color incorrecto (debe ser de 0 a 255)."
+#define e155 "El centro estรก fuera de los lรญmites del grรกfico."
 /*
 #define e100 "Not enought memory to run this game."
 #define e101 "Call to Key() with invalid scan code."

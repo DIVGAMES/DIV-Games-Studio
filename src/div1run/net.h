@@ -49,17 +49,17 @@ extern void (*NOD_Packet)(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
 // Definicion de procedimientos propios
 //-----------------------------------------------------------------------------
 
-// Inicializa el protocolo ipx (devuelve error o n£mero de nodo)
+// Inicializa el protocolo ipx (devuelve error o n√∫mero de nodo)
 int net_init_ipx(int socket,int num_jugadores, int timeout);
 // socket=identificador de partida(int), 2..8, segundos (1..60)
 
-// ojo con el key(esc) de aborci¢n
+// ojo con el key(esc) de aborci√≥n
 
-// Inicializa el modem (devuelve error o n£mero de nodo)
+// Inicializa el modem (devuelve error o n√∫mero de nodo)
 int net_init_modem(int puerto, int velocidad, int dial, char *cadena_inicio,
                    char *cadena_llamada, char *telefono, int timeout);
 
-// Inicializa el cable serie (devuelve error o n£mero de nodo)
+// Inicializa el cable serie (devuelve error o n√∫mero de nodo)
 int net_init_serial(int puerto, int velocidad, int timeout);
 
 // Manda un paquete
