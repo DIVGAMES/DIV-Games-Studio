@@ -58,7 +58,7 @@ void OSDEP_SetCaption(char *title, char *icon) {
 OSDEP_VMode ** OSDEP_ListModes(void) {
 	SDL_Rect **modes;
 	int i;
-	OSDEP_VMode *smodes[1024];
+	static OSDEP_VMode *smodes[1024];
 	modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
 	
 
