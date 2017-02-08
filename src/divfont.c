@@ -555,6 +555,11 @@ int CreateFont(int GenCode)
 int x;
 byte _c0;
 FILE *file;
+
+        strcpy(FacePathName,tipo[6].path);
+        strcat(FacePathName,"/");
+        strcat(FacePathName,FaceName);
+
         file=fopen(FacePathName,"rb");
         if(file==NULL)
         {
@@ -1842,11 +1847,11 @@ int x,y;
         fread(&Mosaico2,1,4,file);
         fread(&Mosaico3,1,4,file);
 
-        fread(FontName,14,1,file);
-        fread(FontPathName,256,1,file);
+        fread(FontName,1,14,file);
+        fread(FontPathName,1,256,file);
 
-        fread(FaceName,14,1,file);
-        fread(FacePathName,256,1,file);
+        fread(FaceName,1,14,file);
+        fread(FacePathName,1,256,file);
 
         sprintf(cFntAlto,"%d",FntAlto);
         sprintf(cFntAncho,"%d",FntAncho);
