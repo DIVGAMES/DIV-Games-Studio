@@ -2873,7 +2873,7 @@ void mover(byte * sp, int an, int al) {
       xg=ang*57.295779761; if (xg<0) xg+=360;
       wbox(barra,vga_an/big2,19,c2,barra_an-23,2,21,15);
       p=copia; copia=barra; text_color=c3;
-      num[4]=0; num[3]='º'; num[2]=xg%10+48; num[1]=(xg/10)%10+48;
+      num[4]=0; num[3]='\xa7'/*'º'*/; num[2]=xg%10+48; num[1]=(xg/10)%10+48;
       num[0]=(xg/100)%10+48; writetxt(barra_an-21,6,0,num); copia=p;
     }
 
