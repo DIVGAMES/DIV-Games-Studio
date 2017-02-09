@@ -121,6 +121,7 @@ void DrawBackCol(int Col, int Top, int Bot)
 
   TexCheck2(&Gen.BackTC);
   pic=Gen.BackTC.pPic;
+  if(pic==NULL) return;
 
   if (Col!=BackNextCol)
     BackTexCol+=FixMul(INT_FIX(Col-BackNextCol),CurView->dBackX);
