@@ -328,7 +328,7 @@ void init_debug(void) {
     if (o[n].tipo==tcglo || o[n].tipo==tcloc) visor[n]=2;
     if (o[n].tipo==tcons && o[n].v1==1) visor[n]=2;
     if ((o[n].tipo==tvloc || o[n].tipo==tvglo || o[n].tipo==tcons) &&
-       (vnom[o[n].nombre]=='a' || vnom[o[n].nombre]=='á') &&
+       (vnom[o[n].nombre]=='a' || vnom[o[n].nombre]=='\xa0' /*á*/) &&
        vnom[o[n].nombre+1]=='n' && vnom[o[n].nombre+2]=='g') visor[n]=4;
     if (o[n].tipo==tcons && !strcmp(vnom+o[n].nombre,"pi")) visor[n]=4;
     if ((o[n].tipo==tvloc || o[n].tipo==tvglo) &&
