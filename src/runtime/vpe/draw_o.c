@@ -7,43 +7,35 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b)) // max: Choose greater of two scalars.
 
 void DrawObject(struct VDraw *pVDraw) {
-	struct Object *pObject;
-	struct TexCon *ptc;
-	struct PicInfo *pic;
-	struct VLine *clip;
-	struct WLine *pw;
-	VPEByte *PalPtr;
-	VPEFixed TS, BS, Hor, dHor, dVer;
-	VPEFixed t, t1;
-	int Top, Bot, i, DrawnFlag, Trans;
-	int pp;
 
-	pObject = (struct Object *)pVDraw->ptr; // Object to draw
-	ptc = &pObject->TC;                     // Its texture
+	struct Object *pObject = (struct Object *)pVDraw->ptr; // Object to draw
+	struct TexCon *ptc = &pObject->TC;                     // Its texture
 	TexCheck2(ptc);
-	pic = ptc->pPic; // Picture
+	struct PicInfo *pic = ptc->pPic; // Picture
 	if (pic == NULL) return;
-	DrawnFlag = FALSE;
-	Trans = ((pObject->Type & O_TRANS) != 0);
+	int DrawnFlag = FALSE;
+	int Trans = ((pObject->Type & O_TRANS) != 0);
 
-	t = FixDiv(CurView->ConstVDist, pVDraw->px1);
-	t1 = CurView->H - (pObject->RH + INT_FIX(pic->InsX));
-	BS = INT_FIX(CurView->Horizon) + FixMul(t, t1 + INT_FIX(pic->Width));
+	VPEFixed t = FixDiv(CurView->ConstVDist, pVDraw->px1);
+	VPEFixed t1 = CurView->H - (pObject->RH + INT_FIX(pic->InsX));
+	VPEFixed BS = INT_FIX(CurView->Horizon) + FixMul(t, t1 + INT_FIX(pic->Width));
 	if (BS <= 0) return; // obj is too high
-	TS = INT_FIX(CurView->Horizon) + FixMul(t, t1);
+	
+	VPEFixed TS = INT_FIX(CurView->Horizon) + FixMul(t, t1);
 	if (TS >= INT_FIX(CurView->Height)) return; // too low
 
 	t1 = INT_FIX(pic->Width);
-	dVer = FixDiv(t1, BS - TS); // dVer
-	Hor = pVDraw->LD;           // Hor
-	dHor = pVDraw->dLD;         // dHor
+	VPEFixed dVer = FixDiv(t1, BS - TS); // dVer
+	VPEFixed Hor = pVDraw->LD;           // Hor
+	VPEFixed dHor = pVDraw->dLD;         // dHor
 
+	VPEByte *PalPtr;
 	if (Trans) {
 		PalPtr = Pal.Trans;
 	} else {
 		t = pObject->Fade;
 		if (VPE_fog) {
-			pp = FIX_INT(FixDiv(pVDraw->px1, CurView->FLen) - CurView->FIni);
+			int pp = FIX_INT(FixDiv(pVDraw->px1, CurView->FLen) - CurView->FIni);
 			if (pp > 0) t += pp;
 		}
 		if (t >= Pal.PH.NumShades)
@@ -52,12 +44,12 @@ void DrawObject(struct VDraw *pVDraw) {
 			t = 0;
 		PalPtr = Pal.Tables[CurView->Table] + (t << 8);
 	}
-	pw = &MLines[NumMLines];
-	clip = &CurLevel->Clip[pVDraw->LeftCol];
-	for (i = pVDraw->LeftCol; i < pVDraw->RightCol; i++, clip++) {
+	struct WLine *pw = &MLines[NumMLines];
+	struct VLine *clip = &CurLevel->Clip[pVDraw->LeftCol];
+	for (int i = pVDraw->LeftCol; i < pVDraw->RightCol; i++, clip++) {
 
-		Top = max(clip->Top, FIX_INT(TS)); // Clip top
-		Bot = min(clip->Bot, FIX_INT(BS)); // Clip bot
+		int Top = max(clip->Top, FIX_INT(TS)); // Clip top
+		int Bot = min(clip->Bot, FIX_INT(BS)); // Clip bot
 
 		pw->Count = Bot - Top;
 		if (pw->Count > 0) { // Anything to draw?
@@ -107,14 +99,11 @@ int BackNextCol;
 //═════════════════════════════════════════════════════════════════════════════
 
 void DrawBackCol(int Col, int Top, int Bot) {
-	struct PicInfo *pic;
-	VPEFixed t;
-
 	BackLine.Count = Bot - Top;
 	if (BackLine.Count <= 0) return;
 
 	TexCheck2(&Gen.BackTC);
-	pic = Gen.BackTC.pPic;
+	struct PicInfo *pic = Gen.BackTC.pPic;
 	if (pic == NULL) return;
 
 	if (Col != BackNextCol) BackTexCol += FixMul(INT_FIX(Col - BackNextCol), CurView->dBackX);
@@ -126,7 +115,7 @@ void DrawBackCol(int Col, int Top, int Bot) {
 
 	BackLine.RawPtr = pic->Raw + FIX_INT(BackTexCol) * (VPEDword)pic->Width;
 
-	t = INT_FIX(Top - CurView->Horizon) + CurView->BackH;
+	VPEFixed t = INT_FIX(Top - CurView->Horizon) + CurView->BackH;
 	BackLine.Coord = FixMul(t, BackLine.Delta);
 	BackLine.PixPtr = CurView->BufScan[Top] + Col;
 	DrawOSpan(&BackLine);
