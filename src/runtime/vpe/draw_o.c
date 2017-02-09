@@ -1,7 +1,7 @@
 #include "internal.h"
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Pinta un objeto
+//  Draw an object
 //═════════════════════════════════════════════════════════════════════════════
 #define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
 #define max(a,b)             (((a) > (b)) ? (a) : (b)) // max: Choose greater of two scalars.
@@ -108,7 +108,7 @@ VPEFixed BackTexCol;
 int   BackNextCol;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Pinta la columna situada detras de un objeto
+//  Draws the column situated behind an object
 //═════════════════════════════════════════════════════════════════════════════
 
 void DrawBackCol(int Col, int Top, int Bot)
