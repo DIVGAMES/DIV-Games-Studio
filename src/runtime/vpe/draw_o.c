@@ -46,7 +46,8 @@ void DrawObject(struct VDraw *pVDraw) {
 	}
 	struct WLine *pw = &MLines[NumMLines];
 	struct VLine *clip = &CurLevel->Clip[pVDraw->LeftCol];
-	for (int i = pVDraw->LeftCol; i < pVDraw->RightCol; i++, clip++) {
+	int i;
+	for (i = pVDraw->LeftCol; i < pVDraw->RightCol; i++, clip++) {
 
 		int Top = max(clip->Top, FIX_INT(TS)); // Clip top
 		int Bot = min(clip->Bot, FIX_INT(BS)); // Clip bot
