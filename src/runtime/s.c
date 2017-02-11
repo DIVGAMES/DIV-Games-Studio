@@ -39,20 +39,19 @@ void pinta_sprite_m7(int n, int ide, int x, int y, int size, int ang);
 // Constant definitions
 //════════════════════════════════════════════════════════════════════════════
 
-#define grados_0 0
-#define grados_30 320
-#define grados_45 512
-#define grados_90 1024
-#define grados_180 2048
-#define grados_270 3072
-#define grados_360 4096
-#define grados_giro 16
+#define angle_0 0
+#define angle_30 320
+#define angle_45 512
+#define angle_90 1024
+#define angle_180 2048
+#define angle_270 3072
+#define angle_360 4096
 
 //════════════════════════════════════════════════════════════════════════════
 // Module variables
 //════════════════════════════════════════════════════════════════════════════
 
-int seno[grados_360 + 1], coseno[grados_360 + 1]; //m7
+int seno[angle_360 + 1], coseno[angle_360 + 1]; //m7
 
 //════════════════════════════════════════════════════════════════════════════
 // Fast scroll parallax table
@@ -3243,26 +3242,26 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 void init_sin_cos() {
 	int i;
 
-	for (i = 0; i < grados_90; i++) { // Generate sine and cosine tables
+	for (i = 0; i < angle_90; i++) { // Generate sine and cosine tables
 		seno[i] = 256 * sin((float)i * 1131 / 737280) * 65536;
-		seno[grados_180 - i] = seno[i];
-		seno[grados_180 + i] = -seno[i];
-		seno[grados_360 - i] = -seno[i];
-		coseno[grados_90 - i] = seno[i];
-		coseno[grados_90 + i] = -seno[i];
-		coseno[grados_270 - i] = -seno[i];
-		coseno[grados_270 + i] = seno[i];
+		seno[angle_180 - i] = seno[i];
+		seno[angle_180 + i] = -seno[i];
+		seno[angle_360 - i] = -seno[i];
+		coseno[angle_90 - i] = seno[i];
+		coseno[angle_90 + i] = -seno[i];
+		coseno[angle_270 - i] = -seno[i];
+		coseno[angle_270 + i] = seno[i];
 	}
-	seno[grados_0] = 0;
-	seno[grados_90] = 256 * 65536;
-	seno[grados_180] = 0;
-	seno[grados_270] = -256 * 65536;
-	seno[grados_360] = 0;
-	coseno[grados_0] = 256 * 65536;
-	coseno[grados_90] = 0;
-	coseno[grados_180] = -256 * 65536;
-	coseno[grados_270] = 0;
-	coseno[grados_360] = 256 * 65536;
+	seno[angle_0] = 0;
+	seno[angle_90] = 256 * 65536;
+	seno[angle_180] = 0;
+	seno[angle_270] = -256 * 65536;
+	seno[angle_360] = 0;
+	coseno[angle_0] = 256 * 65536;
+	coseno[angle_90] = 0;
+	coseno[angle_180] = -256 * 65536;
+	coseno[angle_270] = 0;
+	coseno[angle_360] = 256 * 65536;
 }
 
 //════════════════════════════════════════════════════════════════════════════
