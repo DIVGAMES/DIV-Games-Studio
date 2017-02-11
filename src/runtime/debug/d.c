@@ -1,15 +1,15 @@
 
 //════════════════════════════════════════════════════════════════════════════
-//      Funciones del debugger y diálogos de error
-//      *** OJO *** La funcion trace_process() está en i.cpp
+//      Functions for the debugger and error dialogs
+//      *** BEWARE *** The trace_process() function is in i.cpp
 //════════════════════════════════════════════════════════════════════════════
 
 #include "../inter.h"
 
 //══════════════════════════════════════════════════════════════════════════
 
-int debug_active=1;             // Si esta variable se pone a 0, no se podrá
-                                // invocar nunca al debugger, ni a sus ventanas
+int debug_active=1;             // If this variable is set to 0, the debugger
+                                // and its windows can't be invoked
 
 //══════════════════════════════════════════════════════════════════════════
 
@@ -100,18 +100,11 @@ void pinta_segmento_procesos(void);
 void pinta_segmento_profile(void);
 
 
-
-
-
-
-
-
-
 #define max_procesos 2048
 
-char combo_error[128]; // para componer mensajes de error compuestos.
+char combo_error[128]; // To compose error messages
 
-extern int process_level; // Para contabilizar los cal/ret (step)
+extern int process_level; // Callstack depth, cal/ret count (step)
 
 extern float m_x,m_y;
 extern float ffps2;
@@ -121,20 +114,20 @@ int no_volcar_nada=0;
 int profiler_x,profiler_y;
 
 int show_items_called=0;
-int get_pos=0,get_cursor=0;     // Clock y posición del cursor en los get
+int get_pos=0,get_cursor=0;     // Clock, cursor position in gets
 int superget=0;
 
 //══════════════════════════════════════════════════════════════════════════
 
-int linea0;     // Número de línea inicial de la ventana del debugger
-byte * plinea0; // Puntero a la primera línea de la ventana del debugger
+int linea0;     // First line nunmber in the debugger window
+byte * plinea0; // Pointer to first line in debugger window
 
-int mem1,mem2; // Límites de la sentencia actual en el vector mem[]
-int linea1,columna1,linea2,columna2; // Límites de la sentencia actual
+int mem1,mem2; // Current sentence span in mem[] vector
+int linea1,columna1,linea2,columna2; // Current sentence span
 
-int linea_sel; // Nº de línea seleccionada
+int linea_sel; // Selected line number
 
-int x_inicio=54; // x inicial en la ventana de código fuente
+int x_inicio=54; // Initial x in source code window
 
 //══════════════════════════════════════════════════════════════════════════
 
@@ -163,16 +156,16 @@ static int * line=NULL;
 int num_sentencias;
 
 //════════════════════════════════════════════════════════════════════════════
-//      Variables del debugger
+//     Debugger variables 
 //════════════════════════════════════════════════════════════════════════════
 
-clock_t system_clock;// = clock();//(void*) 0x46c; // Reloj del sistema
+clock_t system_clock;// = clock();//(void*) 0x46c;
 
 char get[256];
 
-char * vnom=NULL; // Vector de nombres
+char * vnom=NULL; // Names vector
 
-#define tnone   0       // Tipos de objetos en obj[]
+#define tnone   0       // Object types in obj[]
 #define tcons   1
 #define tvglo   2
 #define ttglo   3
@@ -184,15 +177,15 @@ char * vnom=NULL; // Vector de nombres
 #define tfunc   9
 #define tsglo   10
 #define tsloc   11
-#define tfext   12      // Función de una librería externa
+#define tfext   12      // External library function
 
-#define tbglo   13      // Byte global
+#define tbglo   13      // Global byte
 #define twglo   14
 #define tbloc   15
 #define twloc   16
 
-#define tpigl   17      // Puntero a ints global (un ttglo direccionable)
-#define tpilo   18      // Puntero a ints local (idem)
+#define tpigl   17      // Global pointer to ints (an addressable ttglo)
+#define tpilo   18      // Local pointer to ints (idem)
 
 #define tpwgl   19      // Punteros a word
 #define tpwlo   20
