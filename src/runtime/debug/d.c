@@ -187,14 +187,14 @@ char * vnom=NULL; // Names vector
 #define tpigl   17      // Global pointer to ints (an addressable ttglo)
 #define tpilo   18      // Local pointer to ints (idem)
 
-#define tpwgl   19      // Punteros a word
+#define tpwgl   19      // Pointers to word
 #define tpwlo   20
-#define tpbgl   21      // Punteros a byte
+#define tpbgl   21      // Pointers to byte
 #define tpblo   22
 
-#define tpcgl   23      // Punteros a string
+#define tpcgl   23      // Pointers to string
 #define tpclo   24
-#define tpsgl   25      // Punteros a struct
+#define tpsgl   25      // Pointers to struct
 #define tpslo   26
 
 struct objeto {
@@ -205,62 +205,64 @@ struct objeto {
   int v0,v1,v2,v3,v4,v5;
 } * o=NULL;
 
-int num_obj=0;  // Número de objetos de la tabla de objetos
+int num_obj=0;  // Object count in objects list
 
 int num_obj_predefinidos;
 
-int * usado;    // Para indicar que objetos han sido incluidos en var[]
-int * visor;    // Para indicar que tipo de visor utilizan los objetos
+int * usado;    // To indicate which objects have been included in var[]
+int * visor;    // To indicate which type of viewer each object uses
 
 struct variables {
-  int objeto;   // Objeto de o[]
-  int tab;      // Tabulacion (0-no member,1,2,...)
-  int miembro;  // Miembro de ..., como índice de var[]
-  int indice;   // Para las tablas o struct, elemento visualizado
+  int objeto;   // Object index in o[]
+  int tab;      // Tabulation (0-no member,1,2,...)
+  int miembro;  // Member of ..., as index into var[]
+  int indice;   // For tables or structs, element in view
 } * var=NULL;
 
-int num_var=0;  // Número de variables incluidas en var[]
+int num_var=0;  // Number of variables in var[]
 
-int var_ini;    // La primera variable que se visualiza en la ventana
-int var_select; // La variable seleccionada
+int var_ini;    // First variable displayed in window
+int var_select; // Selected variable
 
 int show_const=0,show_global=0,show_local=1,show_private=1;
 
 int pre_defined=0,user_defined=1;
 
-int bloque_actual; // Proceso sobre el que se hace el inspect
+int bloque_actual; // Process we're inspecting
 
 //════════════════════════════════════════════════════════════════════════════
 
-int iids,*ids;  // Identificadores de los procesos, por orden de ejecución
-int ids_ini;    // El primer proceso que se visualiza en la ventana
-int ids_select; // El proceso sobre el que se visualiza informacion 'Hi-lite'
-int ids_next;   // El siguiente proceso dentro del orden de ejecución '>'
+int iids,*ids;  // Process IDs, by execution order
+int ids_ini;    // First process displayed in window
+int ids_select; // Process for which 'Hi-lite' information is displayed
+int ids_next;   // Next process in execution order '>'
 
 //════════════════════════════════════════════════════════════════════════════
 
-int lp1[512];     // Numero de línea en el que están los procesos
-char * lp2[512];  // Punteros a las líneas de los procesos
-int lp_num;       // Número de procesos en la lista
-int lp_ini;       // La primera variable que se visualiza en la ventana
-int lp_select;    // La variable seleccionada
-int lp_sort=0;    // Flag que indica si se ordena la lista
+int lp1[512];     // Line number in which processes are
+char * lp2[512];  // Pointers to lines in which processes are defined
+int lp_num;       // Number of processes in the list
+int lp_ini;       // First variable displayed in window
+int lp_select;    // Selected variable
+int lp_sort=0;    // Flag for whether the list is ordered
 
 //════════════════════════════════════════════════════════════════════════════
-//      Variables del profiler
+//      Profiler variables
 //════════════════════════════════════════════════════════════════════════════
 
 byte c_r_low0,c_g_low0,c_b_low0;
 
-int obj_start; // Inicio del primer objeto (&obj[0])
-int obj_size;  // Longitud de cada objeto (struct objeto)
+int obj_start; // Start of first object (&obj[0])
+int obj_size;  // Length of each object (struct objeto)
 
-// El bloque de un ID es: (mem[ID+_Bloque]-obj_start)/obj_size;
+// The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;
 
-unsigned f_time[256]; // Tiempo consumido por las diferentes funciones
-unsigned frame_time[256]; // Tiempo consumido por las diferentes funciones
+unsigned f_time[256]; // Time used by each function
+unsigned frame_time[256]; // Time used by each function
 
-//════════════════════════════════════════════════════════════════════════════ //      Inicialización del debug //════════════════════════════════════════════════════════════════════════════
+//════════════════════════════════════════════════════════════════════════════ 
+//      Debug initialization
+//════════════════════════════════════════════════════════════════════════════
 
 void init_debug(void) {
   FILE *f;
@@ -314,7 +316,7 @@ void init_debug(void) {
   if ((usado=(int *)malloc(sizeof(int)*num_obj))==NULL) exer(1);
   if ((visor=(int *)malloc(sizeof(int)*num_obj))==NULL) exer(1);
 
-  // Establece los filtros para bjetos
+  // Sets object filters
 
   memset(visor,0,sizeof(int)*num_obj);
   for (n=0;n<num_obj;n++) {
@@ -346,7 +348,7 @@ void init_debug(void) {
         o[n-13].tipo==tsglo && !strcmp(vnom+o[n-13].nombre,"fileinfo")) visor[n]=6;
   }
 
-  // Inicializa los tiempos de los bloques de procesos
+  // Initializes timing of process blocks
 
   for (n=0;n<num_obj;n++) {
     if (o[n].tipo==tproc) {
@@ -370,7 +372,7 @@ void end_debug(void) {
   free(line);
 }
 //═════════════════════════════════════════════════════════════════════════════
-//  Inicializa el font
+//  Initializes the font
 //═════════════════════════════════════════════════════════════════════════════
 
 int old_big=-1;
@@ -422,7 +424,7 @@ void init_big(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Inicializa los colores (tras cambiar la paleta)
+//  Initializes colors (after switching palette)
 //═════════════════════════════════════════════════════════════════════════════
 
 void init_colors(void) {
@@ -442,7 +444,7 @@ void init_colors(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Crea un cuadro de diálogo (debe retornar al llamante tal cual)
+//      Creates a dialog box (must return to caller as-is)
 //═════════════════════════════════════════════════════════════════════════════
 
 void dummy_handler(void) {}
@@ -458,7 +460,7 @@ void dialogo(voidReturnType init_handler) {
     memmove(&ventana[1].tipo,&v.tipo,sizeof(tventana)*(max_windows-1));
 
     //───────────────────────────────────────────────────────────────────────────
-    // Los siguientes valores los debe definir init_handler, valores por defecto:
+	// The following values must be defined by init_handler. Default values:
     //───────────────────────────────────────────────────────────────────────────
 
     v.tipo=1;
@@ -490,10 +492,10 @@ void dialogo(voidReturnType init_handler) {
 
     v.x=x; v.y=y;
 
-    if ((ptr=(byte *)malloc(an*al))!=NULL) { // Ventana, free en cierra_ventana
+    if ((ptr=(byte *)malloc(an*al))!=NULL) { // Window, free in cierra_ventana
 
       //───────────────────────────────────────────────────────────────────────────
-      // Pasa a segundo plano las ventanas que corresponda
+	  // Move windows to background if needed
       //───────────────────────────────────────────────────────────────────────────
 
       vtipo=v.tipo; v.tipo=0;
@@ -505,7 +507,7 @@ void dialogo(voidReturnType init_handler) {
       v.tipo=vtipo;
 
       //───────────────────────────────────────────────────────────────────────────
-      // Inicializa la ventana
+      // Initializes window
       //───────────────────────────────────────────────────────────────────────────
 
       v.ptr=ptr;
@@ -538,7 +540,7 @@ void dialogo(voidReturnType init_handler) {
       entorno_dialogo();
 
     //───────────────────────────────────────────────────────────────────────────
-    // No se pudo abrir el diálogo, (no hay memoria)
+	// Dialog could not be opened (out of memory)
     //───────────────────────────────────────────────────────────────────────────
 
     } else {
@@ -549,7 +551,7 @@ void dialogo(voidReturnType init_handler) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Repinta una ventana (incluyendo barra e iconos)
+//      Redraws a window (including tile bar and icons)
 //═════════════════════════════════════════════════════════════════════════════
 
 void repinta_ventana(void) {
@@ -571,7 +573,7 @@ void repinta_ventana(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Gestión de un cuadro de diálogo - Debugger
+//		Dialog box management - Debugger
 //═════════════════════════════════════════════════════════════════════════════
 
 void entorno_dialogo(void) {
@@ -587,17 +589,17 @@ void entorno_dialogo(void) {
     dialogo_invocado=0;
 
     //─────────────────────────────────────────────────────────────────────────
-    // Busca la ventana sobre la que estamos (n) n=max_windows si no hay
+	// Finds window we're hovering (n) n=max_windows if none
     //─────────────────────────────────────────────────────────────────────────
 
     if (mouse_in(v.x,v.y,v.x+v.an-1,v.y+v.al-1)) n=0; else n=max_windows;
 
     //─────────────────────────────────────────────────────────────────────────
-    // Si antes estábamos en una ventana en la que hemos dejado de estar
-    // debemos repintar esta última (para borrar posibles "hi-lite")
+	// If we were over another window before, we must repaint it to clear
+	// possible "hi-lite"s
     //─────────────────────────────────────────────────────────────────────────
 
-    if (n==0) // Si ahora estamos en la barra, también se repinta la ventana
+    if (n==0) // If we're over the bar, the window is repainted too
       if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) n--;
 
     if (n!=oldn && oldn==0) if (v.primer_plano==1) {
@@ -609,7 +611,7 @@ void entorno_dialogo(void) {
     } oldn=max_windows; if (n<0) n++;
 
     //─────────────────────────────────────────────────────────────────────────
-    // Determina la forma del cursor
+    // Determines cursor shape
     //─────────────────────────────────────────────────────────────────────────
 
     if (n==max_windows) mouse_graf=1;
@@ -619,7 +621,7 @@ void entorno_dialogo(void) {
     else mouse_graf=1;
 
     //─────────────────────────────────────────────────────────────────────────
-    // Si estamos dentro del contenido de una ventana ...
+	// If we're hovering the window contents
     //─────────────────────────────────────────────────────────────────────────
 
     if (n==0) if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
@@ -632,7 +634,7 @@ void entorno_dialogo(void) {
       oldn=0;
       salir_del_dialogo=0;
 
-    } else { // Si estamos en la barra de control de la ventana ...
+    } else { // If we're over the window control bar...
 
       if (mouse_graf==2 && (mouse_b&1)) mueve_ventana();
 
@@ -642,7 +644,7 @@ void entorno_dialogo(void) {
     }
 
     //─────────────────────────────────────────────────────────────────────────
-    //  Los diálogos se deben invocar siempre
+	//  Dialogs must always be invoked
     //─────────────────────────────────────────────────────────────────────────
 
     if (!dialogo_invocado && !salir_del_dialogo) {
@@ -658,7 +660,7 @@ void entorno_dialogo(void) {
     }
 
     //─────────────────────────────────────────────────────────────────────────
-    // Control de teclado
+    // Keyboard control
     //─────────────────────────────────────────────────────────────────────────
 
     if (key(_ESC) && !key(_L_CTRL)) {
@@ -668,7 +670,7 @@ void entorno_dialogo(void) {
     }
 
     //─────────────────────────────────────────────────────────────────────────
-    // Finaliza el bucle central
+    // End main loop
     //─────────────────────────────────────────────────────────────────────────
 
     if (!no_volcar_nada) {
@@ -683,7 +685,7 @@ void entorno_dialogo(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Pinta un cuadro de dialogo
+//      Draw a dialog box
 //════════════════════════════════════════════════════════════════════════════
 
 void refrescadialogo(void) {
@@ -708,7 +710,7 @@ void refrescadialogo(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cierra la ventana activa (la número 0)
+//		Close active window (index 0)
 //═════════════════════════════════════════════════════════════════════════════
 
 void cierra_ventana(void) {
@@ -727,7 +729,7 @@ void cierra_ventana(void) {
   memmove(&v.tipo,&ventana[1].tipo,sizeof(tventana)*(max_windows-1));
   actualiza_caja(x,y,an,al);
 
-  if (v.tipo==1) { // Diálogo sobre diálogo solo abre el último
+  if (v.tipo==1) { // Dialog on top of dialog, only last one is opened
     v.primer_plano=1; vuelca_ventana(0);
   }
 
@@ -737,7 +739,7 @@ void cierra_ventana(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Mueve una ventana
+//      Move a window
 //═════════════════════════════════════════════════════════════════════════════
 
 void mueve_ventana(void) {
@@ -764,7 +766,7 @@ void mueve_ventana(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Vuelca una ventana, normal u oscurecida según este o no en primer plano
+//	Blit a window, normal or darkened depending on whether it's in foreground or not
 //═════════════════════════════════════════════════════════════════════════════
 
 void vuelca_ventana(int m) {
@@ -804,7 +806,7 @@ void vuelca_ventana(int m) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Volcado de una ventana
+//      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
 void wvolcado(byte*copia,int an_copia,int al_copia,
@@ -832,7 +834,7 @@ void wvolcado(byte*copia,int an_copia,int al_copia,
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Volcado de una ventana
+//      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
 void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
@@ -871,7 +873,7 @@ void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una caja en pantalla
+//      Draw a box onscreen
 //═════════════════════════════════════════════════════════════════════════════
 
 void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
@@ -902,7 +904,7 @@ void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,i
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja un rectángulo
+//      Draw a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
 void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
@@ -913,7 +915,7 @@ void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pone un gráfico
+//      Put a graphic
 //═════════════════════════════════════════════════════════════════════════════
 
 void put(int x,int y,int n) {
@@ -1047,7 +1049,7 @@ void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,i
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones de impresión de un texto
+//      Text drawing functions
 //═════════════════════════════════════════════════════════════════════════════
 
 int char_len(char c) {
@@ -1242,7 +1244,7 @@ void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Explode de una nueva ventana
+//      Explode a new window
 //═════════════════════════════════════════════════════════════════════════════
 
 void explode(int x,int y,int an,int al) {
@@ -1299,7 +1301,7 @@ void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Actualiza una caja de la pantalla
+//      Updates a box on screen
 //═════════════════════════════════════════════════════════════════════════════
 
 void actualiza_caja(int x, int y, int an, int al) {
@@ -1339,7 +1341,7 @@ void actualiza_caja(int x, int y, int an, int al) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Comprueba si dos ventanas colisionan
+//	Check if two windows overlap
 //═════════════════════════════════════════════════════════════════════════════
 
 int colisionan(int a,int b) {
@@ -1361,7 +1363,7 @@ int colisiona_con(int a, int x, int y, int an, int al) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Void restaura tapiz *** OJO *** aquí se debe actualizar el fondo
+//      restore desktop *** BEWARE *** here background must be updated
 //════════════════════════════════════════════════════════════════════════════
 
 void restaura_tapiz(int x,int y,int an,int al) {
@@ -1403,7 +1405,7 @@ void restaura_tapiz(int x,int y,int an,int al) {
 }*/
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Definición de items
+//      Item definitions
 //═════════════════════════════════════════════════════════════════════════════
 
 void _button(byte *t,int x,int y,int c) {
@@ -1443,7 +1445,7 @@ void _flag(byte *t,int x,int y,int *valor) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Impresión de items
+//      Items drawing
 //═════════════════════════════════════════════════════════════════════════════
 
 void _show_items(void) {
@@ -1561,7 +1563,7 @@ void select_button(t_item * i,int activo) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Proceso de items
+//      Items processing
 //═════════════════════════════════════════════════════════════════════════════
 
 void _process_items(void) {
@@ -1758,7 +1760,7 @@ void process_flag(int n,int e) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Rutina de input
+//      Input function
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_input(int n) {
@@ -1786,8 +1788,8 @@ void get_input(int n) {
             get_pos++;
             break;                  // cursor right
           case 75: get_pos--; break;                  // cursor left
-          case 71: get_pos=0; break;                  // inicio
-          case 79: get_pos=strlen(get); break;        // fin
+          case 71: get_pos=0; break;                  // Start
+          case 79: get_pos=strlen(get); break;        // End
           case 83:
             get[strlen(get)+1]=0;
             strcpy(&get[get_pos],&get[get_pos+1]);
@@ -1862,7 +1864,7 @@ int button_status(int n) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Read mouse adaptado al intérprete
+//      Read mouse adapted to the interpreter
 //════════════════════════════════════════════════════════════════════════════
 void readmouse(void);
 
@@ -1914,7 +1916,7 @@ void dread_mouse(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Volcado de la copia virtual de pantalla a la real (pantalla principal)
+//		Blitting of the virtual screen copy to the real one (main screen)
 //═════════════════════════════════════════════════════════════════════════════
 
 void volcado_copia(void) {
@@ -1936,7 +1938,7 @@ void volcado_copia(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Guarda (flag=0) o recupera (flag=1) una caja virtual de copia
+//      Save (flag=0) or recover (flag=1) a virtual box from copia
 //═════════════════════════════════════════════════════════════════════════════
 
 void salvaguarda(byte * p, int x, int y, int n, int flag) {
@@ -1976,7 +1978,7 @@ void salvaguarda(byte * p, int x, int y, int n, int flag) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Comprueba si el ratón está en una caja
+//      Check if mouse is inside a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
 int mouse_in(int x, int y, int x2, int y2) {
@@ -1989,7 +1991,7 @@ int wmouse_in(int x, int y, int an, int al) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cuadro de diálogo ERROR
+//      ERROR dialog box
 //═════════════════════════════════════════════════════════════════════════════
 
 void err1(void) {
@@ -2012,7 +2014,7 @@ void err0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cuadro de diálogo ERROR dentro de una función del lenguaje
+//      ERROR dialog box inside a language function
 //═════════════════════════════════════════════════════════════════════════════
 
 char * te;
@@ -2077,7 +2079,7 @@ void _err0(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Mensajes de error - Versión con debugger
+//      Error messages - Version with debugger
 //════════════════════════════════════════════════════════════════════════════
 
 extern int ignore_errors;
@@ -2092,7 +2094,7 @@ void e(int texto) {
   int ticks_e=ticks;
   int dr=dacout_r,dg=dacout_g,db=dacout_b;
 
-  if (v_function==-1) return; // Algún error que es mejor que sea ignorado...
+  if (v_function==-1) return; // Some errors are better ignored...
 
   num_error=texto;
   te=(char *)text[texto]; n=0;
