@@ -61,28 +61,9 @@ int seno[grados_360+1], coseno[grados_360+1]; //m7
 
 tfast * fast;
 
-#ifdef DOS
-
 //════════════════════════════════════════════════════════════════════════════
 // Multiplies 2 numbers in 8.24 format
 //════════════════════════════════════════════════════════════════════════════
-extern int mul_24(int, int);
-#pragma aux mul_24 =    \
-        "imul edx"      \
-        "shrd eax,edx,24" \
-        parm caller [EDX] [EAX] value [EAX]
-//════════════════════════════════════════════════════════════════════════════
-//  Multiplies 2 numbers in 16.16 format
-//════════════════════════════════════════════════════════════════════════════
-extern int mul_16(int, int);
-#pragma aux mul_16 =    \
-        "imul edx"      \
-        "shrd eax,edx,16" \
-        parm caller [EDX] [EAX] value [EAX]
-
-#endif
-
-
 static int mul_24(int a, int b)
 {
 	uint64_t c = (uint64_t)a*(uint64_t)b;
@@ -97,7 +78,6 @@ static unsigned int mul_16(long a, long b)
 	uint64_t c = (uint64_t)a*(uint64_t)b;
 	return c>>16;
 }
-
 
 //════════════════════════════════════════════════════════════════════════════
 // Function to draw 2 sprites of a scroll, sorted by Z
