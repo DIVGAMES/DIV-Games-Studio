@@ -105,7 +105,7 @@ static void draw_process_segment(void);
 static void draw_profile_segment(void);
 
 
-#define max_procesos 2048
+#define max_processes 2048
 
 char combo_error[128]; // To compose error messages
 
@@ -115,7 +115,7 @@ extern float m_x, m_y;
 extern float ffps2;
 extern double game_ticks, game_frames;
 
-static int no_volcar_nada = 0;
+static int dont_blit_anything = 0;
 static int profiler_x, profiler_y;
 
 static int show_items_called = 0;
@@ -124,22 +124,22 @@ static int superget = 0;
 
 //══════════════════════════════════════════════════════════════════════════
 
-static int linea0;    // First line nunmber in the debugger window
-static byte *plinea0; // Pointer to first line in debugger window
+static int line0;    // First line nunmber in the debugger window
+static byte *pline0; // Pointer to first line in debugger window
 
 static int mem1, mem2;                         // Current sentence span in mem[] vector
-static int linea1, columna1, linea2, columna2; // Current sentence span
+static int line1, column1, line2, column2; // Current sentence span
 
-static int linea_sel; // Selected line number
+static int line_sel; // Selected line number
 
-static int x_inicio = 54; // Initial x in source code window
+static int x_start = 54; // Initial x in source code window
 
 //══════════════════════════════════════════════════════════════════════════
 
 static int smouse_x, smouse_y;
 int mouse_x = 0, mouse_y = 0, mouse_b;
 
-static int reloj_debug;
+static int clock_debug;
 static int ticks_debug;
 
 //#define mouse_x (cbd.mouse_cx>>1)
@@ -334,7 +334,7 @@ void init_debug(void) {
 		}
 
 	if ((var = (struct variables *)malloc(sizeof(struct variables) * num_obj)) == NULL) exer(1);
-	if ((ids = (int *)malloc(sizeof(int) * max_procesos)) == NULL) exer(1);
+	if ((ids = (int *)malloc(sizeof(int) * max_processes)) == NULL) exer(1);
 	if ((usado = (int *)malloc(sizeof(int) * num_obj)) == NULL) exer(1);
 	if ((visor = (int *)malloc(sizeof(int) * num_obj)) == NULL) exer(1);
 
@@ -545,7 +545,7 @@ static void dialogo(voidReturnType init_handler) {
 		an = v.an;
 		al = v.al;
 
-		if (no_volcar_nada) {
+		if (dont_blit_anything) {
 			x = profiler_x;
 			y = profiler_y;
 		} else {
@@ -789,7 +789,7 @@ static void dialog_environment(void) {
 		// End main loop
 		//─────────────────────────────────────────────────────────────────────────
 
-		if (!no_volcar_nada) { blit_copy(); }
+		if (!dont_blit_anything) { blit_copy(); }
 
 	} while (!salir_del_dialogo);
 	fin_dialogo = 0;
@@ -844,7 +844,7 @@ static void close_window(void) {
 		wput(v.ptr, v.an, v.al, v.an - 9, 2, -45);
 	blit_window(0);
 	volcado_parcial(v.x, v.y, v.an, v.al);
-	if (!no_volcar_nada) { blit_copy(); }
+	if (!dont_blit_anything) { blit_copy(); }
 	free(v.ptr);
 
 	x = v.x;
@@ -889,7 +889,7 @@ static void move_window(void) {
 		update_box(x, y, an, al);
 		v.tipo = 1;
 		blit_window(0);
-		if (!no_volcar_nada) { blit_copy(); }
+		if (!dont_blit_anything) { blit_copy(); }
 	} while (mouse_b & 1);
 
 	wrectangle(v.ptr, an / big2, al / big2, c2, 0, 0, an / big2, al / big2);
@@ -1613,7 +1613,7 @@ wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia, byte *p, int x
 static void explode(int x, int y, int an, int al) {
 	int n = 0, tipo = v.tipo, b = big;
 	int xx, yy, aan, aal;
-	if (no_volcar_nada) return;
+	if (dont_blit_anything) return;
 	v.tipo = 0;
 	big = 0;
 	update_box(x, y, an, al);
@@ -1638,7 +1638,7 @@ static void explode(int x, int y, int an, int al) {
 static void implode(int x, int y, int an, int al) {
 	int n = 9, b = big;
 	int xx, yy, aan, aal;
-	if (no_volcar_nada) return;
+	if (dont_blit_anything) return;
 	big = 0;
 	do {
 		aan = (an * n) / 10;
@@ -1659,7 +1659,7 @@ static void implode(int x, int y, int an, int al) {
 static void extrude(int x, int y, int an, int al, int x2, int y2, int an2, int al2) {
 	int n = 9, tipo = v.tipo, b = big;
 	int xx, yy, aan, aal;
-	if (no_volcar_nada) return;
+	if (dont_blit_anything) return;
 	v.tipo = 0;
 	big = 0;
 	update_box(x, y, an, al);
@@ -2861,7 +2861,7 @@ static void determina_ids(void) {
 		} while (id != id_old);
 		if (ide) {
 			mem[ide + _Painted] = 1;
-			if (iids < max_procesos) ids[iids++] = ide;
+			if (iids < max_processes) ids[iids++] = ide;
 		}
 	} while (ide);
 
@@ -2870,7 +2870,7 @@ static void determina_ids(void) {
 	if (process_stoped) {
 		mem[process_stoped + _Painted] = 1;
 		if (ids_next == -1) ids_next = iids;
-		if (iids < max_procesos) ids[iids++] = process_stoped;
+		if (iids < max_processes) ids[iids++] = process_stoped;
 	}
 
 	// Then adds the processes yet to run
@@ -2892,7 +2892,7 @@ static void determina_ids(void) {
 		if (ide) {
 			mem[ide + _Painted] = 1;
 			if (ids_next == -1) ids_next = iids;
-			if (iids < max_procesos) ids[iids++] = ide;
+			if (iids < max_processes) ids[iids++] = ide;
 		}
 	} while (ide);
 
@@ -2914,7 +2914,7 @@ static void determina_ids(void) {
 		} while (id != id_old);
 		if (ide) {
 			mem[ide + _Painted] = 1;
-			if (iids < max_procesos) ids[iids++] = ide;
+			if (iids < max_processes) ids[iids++] = ide;
 		}
 	} while (ide);
 }
@@ -3189,7 +3189,7 @@ void debug(void) {
 	smouse_y = mouse->y;
 	set_mouse(mouse_x, mouse_y);
 
-	reloj_debug = reloj;
+	clock_debug = reloj;
 	ticks_debug = ticks;
 
 	dr = dacout_r;
@@ -3211,7 +3211,7 @@ void debug(void) {
 	dacout_g = dg;
 	dacout_b = db;
 
-	reloj = reloj_debug;
+	reloj = clock_debug;
 	ticks = ticks_debug;
 
 	set_mouse(smouse_x, smouse_y);
@@ -4624,7 +4624,7 @@ static void debug2(void) {
 
 	_process_items();
 
-	if (no_volcar_nada) goto next_frame;
+	if (dont_blit_anything) goto next_frame;
 
 	if (!(shift_status & 15) && ascii == 0) {
 
@@ -4775,8 +4775,8 @@ static void debug2(void) {
 	}
 
 	if ((mouse_b & 1) && wmouse_in(48 + 5, 147 - 16 - 32, an - 52 - 5, 41 + 16 + 32)) {
-		linea_sel = linea0 + (wmouse_y - (147 - 16 - 32)) / 8;
-		if (linea_sel == linea0 + 11) linea_sel = linea0 + 10;
+		line_sel = line0 + (wmouse_y - (147 - 16 - 32)) / 8;
+		if (line_sel == line0 + 11) line_sel = line0 + 10;
 		draw_id();
 		v.volcar = 1;
 	}
@@ -4815,7 +4815,7 @@ static void debug2(void) {
 				break;
 			}
 			if (procesos) {
-				reloj = reloj_debug;
+				reloj = clock_debug;
 				ticks = ticks_debug;
 				set_mouse(smouse_x, smouse_y);
 				volcados_saltados = 0;
@@ -4827,7 +4827,7 @@ static void debug2(void) {
 				frame_end();
 				frame_start();
 				debugger_step = 0;
-				reloj_debug = reloj;
+				clock_debug = reloj;
 				ticks_debug = ticks;
 				smouse_x = mouse->x;
 				smouse_y = mouse->y;
@@ -4852,29 +4852,29 @@ static void debug2(void) {
 				_process_items();
 				v.volcar = 1;
 				volcado_completo = 1;
-				if (no_volcar_nada) dialogo(profile0);
+				if (dont_blit_anything) dialogo(profile0);
 			} else
 				fin_dialogo = 1;
 			break;
 		case 1: // Goto
 		goto_proc:
 			dialogo(process_list0);
-			//int linea0;     // First line number in debugger window
-			//byte * plinea0; // Pointer to first line in debugger window
-			//int linea_sel; // Selected line number
+			//int line0;     // First line number in debugger window
+			//byte * pline0; // Pointer to first line in debugger window
+			//int line_sel; // Selected line number
 			if (v_aceptar) {
-				x_inicio = 54;
-				while (linea0 > lp1[lp_select]) {
-					linea0--;
-					plinea0--;
-					do { plinea0--; } while (*plinea0);
-					plinea0++;
+				x_start = 54;
+				while (line0 > lp1[lp_select]) {
+					line0--;
+					pline0--;
+					do { pline0--; } while (*pline0);
+					pline0++;
 				}
-				while (linea0 < lp1[lp_select]) {
-					linea0++;
-					plinea0 += strlen((char *)plinea0) + 1;
+				while (line0 < lp1[lp_select]) {
+					line0++;
+					pline0 += strlen((char *)pline0) + 1;
 				}
-				linea_sel = linea0;
+				line_sel = line0;
 				draw_id();
 				vacia_buffer();
 				v.volcar = 1;
@@ -4883,7 +4883,7 @@ static void debug2(void) {
 		case 2: // Breakpoint
 		set_break:
 			for (n = 0; n < max_breakpoint; n++)
-				if (breakpoint[n].line == linea_sel) break;
+				if (breakpoint[n].line == line_sel) break;
 			if (n < max_breakpoint) { // A breakpoint is disabled
 				breakpoint[n].line = -1;
 				mem[abs(breakpoint[n].offset)] = breakpoint[n].code;
@@ -4893,8 +4893,8 @@ static void debug2(void) {
 				for (n = 0; n < max_breakpoint; n++)
 					if (breakpoint[n].line == -1) break;
 				if (n < max_breakpoint) {
-					if ((m = get_ip(linea_sel)) >= 0) {
-						breakpoint[n].line = linea_sel;
+					if ((m = get_ip(line_sel)) >= 0) {
+						breakpoint[n].line = line_sel;
 						breakpoint[n].offset = m;
 						breakpoint[n].code = mem[m];
 						mem[m] = ldbg;
@@ -4912,8 +4912,8 @@ static void debug2(void) {
 			for (n = 0; n < max_breakpoint; n++)
 				if (breakpoint[n].line == -1) break;
 			if (n < max_breakpoint) {
-				if ((m = get_ip(linea_sel)) >= 0) {
-					breakpoint[n].code = linea_sel;
+				if ((m = get_ip(line_sel)) >= 0) {
+					breakpoint[n].code = line_sel;
 					do {
 						trace_process();
 						if (new_mode) ptr = change_mode();
@@ -4967,7 +4967,7 @@ static void debug2(void) {
 			}
 			if (procesos) {
 				if (procesos_ejecutados()) {
-					reloj = reloj_debug;
+					reloj = clock_debug;
 					ticks = ticks_debug;
 					set_mouse(smouse_x, smouse_y);
 					volcados_saltados = 0;
@@ -4979,7 +4979,7 @@ static void debug2(void) {
 					frame_end();
 					frame_start();
 					debugger_step = 0;
-					reloj_debug = reloj;
+					clock_debug = reloj;
 					ticks_debug = ticks;
 					smouse_x = mouse->x;
 					smouse_y = mouse->y;
@@ -5048,7 +5048,7 @@ static void debug2(void) {
 			}
 			if (procesos) {
 				if (procesos_ejecutados()) {
-					reloj = reloj_debug;
+					reloj = clock_debug;
 					ticks = ticks_debug;
 					set_mouse(smouse_x, smouse_y);
 					volcados_saltados = 0;
@@ -5060,7 +5060,7 @@ static void debug2(void) {
 					frame_end();
 					frame_start();
 					debugger_step = 0;
-					reloj_debug = reloj;
+					clock_debug = reloj;
 					ticks_debug = ticks;
 					smouse_x = mouse->x;
 					smouse_y = mouse->y;
@@ -5112,7 +5112,7 @@ static void debug2(void) {
 			}
 			if (procesos) {
 				if (procesos_ejecutados()) {
-					reloj = reloj_debug;
+					reloj = clock_debug;
 					ticks = ticks_debug;
 					set_mouse(smouse_x, smouse_y);
 					volcados_saltados = 0;
@@ -5124,7 +5124,7 @@ static void debug2(void) {
 					frame_end();
 					frame_start();
 					debugger_step = 0;
-					reloj_debug = reloj;
+					clock_debug = reloj;
 					ticks_debug = ticks;
 					smouse_x = mouse->x;
 					smouse_y = mouse->y;
@@ -5200,17 +5200,17 @@ static void get_line(int n) { // Get line number from IP (instruction pointer) a
 	if (x < num_sentencias) {
 		mem1 = line[x * 6];
 		mem2 = line[x * 6 + 1];
-		linea1 = line[x * 6 + 2] - 1;
-		columna1 = line[x * 6 + 3];
-		linea2 = line[x * 6 + 4] - 1;
-		columna2 = line[x * 6 + 5];
+		line1 = line[x * 6 + 2] - 1;
+		column1 = line[x * 6 + 3];
+		line2 = line[x * 6 + 4] - 1;
+		column2 = line[x * 6 + 5];
 	} else {
 		mem1 = line[0];
 		mem2 = line[1];
-		linea1 = line[2] - 1;
-		columna1 = line[3];
-		linea2 = line[4] - 1;
-		columna2 = line[5];
+		line1 = line[2] - 1;
+		column1 = line[3];
+		line2 = line[4] - 1;
+		column2 = line[5];
 	}
 }
 
@@ -5243,22 +5243,22 @@ static void determine_id(void) { // Determines what must be displayed for "ids_n
 	else
 		get_line(mem[ids[ids_next] + _IP]); // Obtains line/column/mem 1/2
 
-	l = linea0 = linea1 - 3;
-	if (l < 0) l = linea0 = 0;
+	l = line0 = line1 - 3;
+	if (l < 0) l = line0 = 0;
 
-	//if (linea1) l=linea0=linea1-1; else l=linea0=0;
+	//if (linea1) l=line0=linea1-1; else l=linea0=0;
 
-	plinea0 = source + 1;
-	while (l--) plinea0 += strlen((char *)plinea0) + 1;
+	pline0 = source + 1;
+	while (l--) pline0 += strlen((char *)pline0) + 1;
 
-	linea_sel = linea1;
+	line_sel = line1;
 
 	draw_id();
 }
 
 static void draw_id(void) { // Draws the ID
-	byte *p = plinea0, c;
-	int n, x, l = linea0;
+	byte *p = pline0, c;
+	int n, x, l = line0;
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 
@@ -5272,65 +5272,65 @@ static void draw_id(void) { // Draws the ID
 
 	for (n = 0; n < 11; n++, l++) {
 		if (p >= end_source) break;
-		if (l == linea_sel) wbox(ptr, an, al, c0, 48 + 5, 147 - 16 - 32 + (linea_sel - linea0) * 8, an - 52 - 5, 9);
+		if (l == line_sel) wbox(ptr, an, al, c0, 48 + 5, 147 - 16 - 32 + (line_sel - line0) * 8, an - 52 - 5, 9);
 		for (x = 0; x < max_breakpoint; x++)
 			if (breakpoint[x].line == l)
-				wbox(ptr, an, al, c_r_low, 48 + 5, 148 - 16 - 32 + (l - linea0) * 8, an - 52 - 5, 7);
-		if (l == linea1) {
+				wbox(ptr, an, al, c_r_low, 48 + 5, 148 - 16 - 32 + (l - line0) * 8, an - 52 - 5, 7);
+		if (l == line1) {
 			wput(ptr, an, al, 48, 148 - 16 - 32 + n * 8, 36);
-			c = *(p + columna1);
-			*(p + columna1) = 0;
-			x = x_inicio - 54;
+			c = *(p + column1);
+			*(p + column1) = 0;
+			x = x_start - 54;
 			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p, c3);
 			if (text_len(p)) x += text_len(p) + 1;
-			*(p + columna1) = c;
-			if (l == linea2) {
-				c = *(p + columna2 + 1);
-				*(p + columna2 + 1) = 0;
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p + columna1, c0);
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + columna1, c4);
-				x += text_len(p + columna1) + 1;
-				*(p + columna2 + 1) = c;
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + columna2 + 1, c3);
+			*(p + column1) = c;
+			if (l == line2) {
+				c = *(p + column2 + 1);
+				*(p + column2 + 1) = 0;
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p + column1, c0);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column1, c4);
+				x += text_len(p + column1) + 1;
+				*(p + column2 + 1) = c;
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column2 + 1, c3);
 			} else {
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p + columna1, c0);
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + columna1, c4);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p + column1, c0);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column1, c4);
 			}
-		} else if (l == linea2) {
-			c = *(p + columna2 + 1);
-			*(p + columna2 + 1) = 0;
-			x = x_inicio - 54;
+		} else if (l == line2) {
+			c = *(p + column2 + 1);
+			*(p + column2 + 1) = 0;
+			x = x_start - 54;
 			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p, c0);
 			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p, c4);
 			x += text_len(p) + 1;
-			*(p + columna2 + 1) = c;
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + columna2 + 1, c3);
-		} else if (l > linea1 && l < linea2) {
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_inicio - 54 + 1, 148 - 16 - 32 + n * 8, 0, p, c0);
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_inicio - 54, 148 - 16 - 32 + n * 8, 0, p, c4);
+			*(p + column2 + 1) = c;
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column2 + 1, c3);
+		} else if (l > line1 && l < line2) {
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_start - 54 + 1, 148 - 16 - 32 + n * 8, 0, p, c0);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_start - 54, 148 - 16 - 32 + n * 8, 0, p, c4);
 		} else {
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_inicio - 54, 148 - 16 - 32 + n * 8, 0, p, c3);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_start - 54, 148 - 16 - 32 + n * 8, 0, p, c3);
 		}
 		p += strlen((char *)p) + 1;
 	}
 }
 
-static void f_home(void) { x_inicio = 54; }
+static void f_home(void) { x_start = 54; }
 
-static void f_right(void) { x_inicio -= 6; }
+static void f_right(void) { x_start -= 6; }
 
 static void f_left(void) {
-	if (x_inicio < 54) x_inicio += 6;
+	if (x_start < 54) x_start += 6;
 }
 
 static void f_up(void) {
-	if (linea_sel) {
-		linea_sel--;
-		if (linea_sel < linea0) {
-			linea0--;
-			plinea0--;
-			do { plinea0--; } while (*plinea0);
-			plinea0++;
+	if (line_sel) {
+		line_sel--;
+		if (line_sel < line0) {
+			line0--;
+			pline0--;
+			do { pline0--; } while (*pline0);
+			pline0++;
 		}
 	}
 }
@@ -5339,14 +5339,14 @@ static void f_down(void) {
 	byte *p;
 	int n;
 
-	n = linea_sel - linea0 + 1;
-	p = (byte *)plinea0;
+	n = line_sel - line0 + 1;
+	p = (byte *)pline0;
 	while (n-- && p < end_source) p += strlen((char *)p) + 1;
 	if (p < end_source) {
-		linea_sel++;
-		if (linea_sel == linea0 + 11) {
-			linea0++;
-			plinea0 += strlen((char *)plinea0) + 1;
+		line_sel++;
+		if (line_sel == line0 + 11) {
+			line0++;
+			pline0 += strlen((char *)pline0) + 1;
 		}
 	}
 }
@@ -5360,7 +5360,7 @@ extern byte strlower[256];
 static void crear_lista_procesos(void) {
 	byte *p, *q;
 	char cwork[512];
-	int linea = 0, n;
+	int line = 0, n;
 
 	p = source + 1;
 	lp_num = 0;
@@ -5370,7 +5370,7 @@ static void crear_lista_procesos(void) {
 	do {
 		while (*p && p < end_source) p++;
 		p++;
-		linea++;
+		line++;
 		if (p < end_source) {
 			while (*p == ' ' && p < end_source) p++;
 			if (p + 9 < end_source) {
@@ -5400,14 +5400,14 @@ static void crear_lista_procesos(void) {
 							if (n < lp_num) {
 								memmove(&lp1[n + 1], &lp1[n], 4 * (511 - n));
 								memmove(&lp2[n + 1], &lp2[n], 4 * (511 - n));
-								lp1[n] = linea;
+								lp1[n] = line;
 								lp2[n] = (char *)p;
 							} else {
-								lp1[lp_num] = linea;
+								lp1[lp_num] = line;
 								lp2[lp_num] = (char *)p;
 							}
 						} else {
-							lp1[lp_num] = linea;
+							lp1[lp_num] = line;
 							lp2[lp_num] = (char *)p;
 						}
 						if (++lp_num == 512) break;
@@ -6083,8 +6083,8 @@ static void profile2(void) {
 
 	_process_items();
 
-	if (no_volcar_nada) {
-		no_volcar_nada = 0;
+	if (dont_blit_anything) {
+		dont_blit_anything = 0;
 		return;
 	}
 
@@ -6235,7 +6235,7 @@ static void profile2(void) {
 	switch (v.active_item) {
 		case 0:
 		profiler_next_frame:
-			no_volcar_nada = 1;
+			dont_blit_anything = 1;
 			profiler_x = v.x;
 			profiler_y = v.y;
 			fin_dialogo = 1;
