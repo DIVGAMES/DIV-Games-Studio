@@ -14,12 +14,12 @@ int debug_active = 1; // If this variable is set to 0, the debugger
 //══════════════════════════════════════════════════════════════════════════
 
 static void err0(void);
-static void lista_procesos0(void);
+static void process_list0(void);
 static void profile0(void);
 static byte *get_offset_byte(int m);
 static word *get_offset_word(int m);
-static void vuelca_ventana(int m);
-static void wrectangulo(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al);
+static void blit_window(int m);
+static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al);
 static void wput(byte *copia, int an_copia, int al_copia, int x, int y, int n);
 static void wbox(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al);
 static int text_len(byte *ptr);
@@ -37,18 +37,18 @@ static void wwrite(byte *copia, int an_copia, int al_copia, int x, int y, int ce
 
 static void dread_mouse(void);
 static void explode(int x, int y, int an, int al);
-static void wvolcado(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta);
+static void wblit(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta);
 
-static void entorno_dialogo(void);
+static void dialog_environment(void);
 static int mouse_in(int x, int y, int x2, int y2);
-static void mueve_ventana(void);
-static void cierra_ventana(void);
-static void volcado_copia(void);
-static void actualiza_caja(int x, int y, int an, int al);
+static void move_window(void);
+static void close_window(void);
+static void blit_copy(void);
+static void update_box(int x, int y, int an, int al);
 static void implode(int x, int y, int an, int al);
-static int colisiona_con(int a, int x, int y, int an, int al);
+static int collides_with(int a, int x, int y, int an, int al);
 
-static void wvolcado_oscuro(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta);
+static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta);
 
 static void
 wbox_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al);
@@ -59,7 +59,7 @@ static void
 wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia, byte *p, int x, int y, byte an, int al, byte c);
 
 static void wtexn(byte *copia, int an_real_copia, byte *p, int x, int y, byte an, int al, byte c);
-static void restaura_tapiz(int x, int y, int an, int al);
+static void restore_desktop(int x, int y, int an, int al);
 
 static void show_button(t_item *i);
 static void show_get(t_item *i);
@@ -81,28 +81,28 @@ static void process_flag(int n, int e);
 static int wmouse_in(int x, int y, int an, int al);
 static void get_input(int n);
 
-static void salvaguarda(byte *p, int x, int y, int n, int flag);
+static void save_restore(byte *p, int x, int y, int n, int flag);
 static void process_graph(int id, byte *q, int van, int an, int al);
 
-static void pinta_segmento(void);
-static void incluye_miembros(int padre, int nivel, int index);
-static void pinta_lista_var(void);
-static void pinta_segmento2(void);
+static void draw_segment(void);
+static void include_members(int padre, int nivel, int index);
+static void draw_var_list(void);
+static void draw_segment2(void);
 static int get_offset(int m);
 static int memo(int dir);
-static void visualiza(int valor, int objeto, char *str);
+static void display(int valor, int objeto, char *str);
 static int _get_offset(int m);
-static void determina_codigo(void);
-static void f_abajo(void);
-static void pinta_codigo(void);
-static void f_arriba(void);
-static void f_inicio(void);
-static void f_derecha(void);
-static void f_izquierda(void);
+static void determine_id(void);
+static void f_down(void);
+static void draw_id(void);
+static void f_up(void);
+static void f_home(void);
+static void f_right(void);
+static void f_left(void);
 static int get_ip(int n);
 static void get_line(int n);
-static void pinta_segmento_procesos(void);
-static void pinta_segmento_profile(void);
+static void draw_process_segment(void);
+static void draw_profile_segment(void);
 
 
 #define max_procesos 2048
@@ -556,7 +556,7 @@ static void dialogo(voidReturnType init_handler) {
 		v.x = x;
 		v.y = y;
 
-		if ((ptr = (byte *)malloc(an * al)) != NULL) { // Window, free in cierra_ventana
+		if ((ptr = (byte *)malloc(an * al)) != NULL) { // Window, free in close_window
 
 			//───────────────────────────────────────────────────────────────────────────
 			// Move windows to background if needed
@@ -567,7 +567,7 @@ static void dialogo(voidReturnType init_handler) {
 
 			if (ventana[1].tipo == 1) { // Diálogo sobre diálogo
 				ventana[1].primer_plano = 0;
-				vuelca_ventana(1);
+				blit_window(1);
 			}
 
 			v.tipo = vtipo;
@@ -583,7 +583,7 @@ static void dialogo(voidReturnType init_handler) {
 				an /= 2;
 				al /= 2;
 			}
-			wrectangulo(ptr, an, al, c2, 0, 0, an, al);
+			wrectangle(ptr, an, al, c2, 0, 0, an, al);
 			wput(ptr, an, al, an - 9, 2, 35);
 			if (!strcmp((char *)v.titulo, (char *)text[1]) || !strcmp((char *)v.titulo, (char *)text[2]))
 				wbox(ptr, an, al, c_r_low, 2, 2, an - 12, 7);
@@ -608,10 +608,10 @@ static void dialogo(voidReturnType init_handler) {
 
 			explode(x, y, an, al);
 
-			wvolcado(copia, vga_an, vga_al, ptr, x, y, an, al, 0);
+			wblit(copia, vga_an, vga_al, ptr, x, y, an, al, 0);
 			volcado_parcial(x, y, an, al);
 			do { dread_mouse(); } while (mouse_b & 1);
-			entorno_dialogo();
+			dialog_environment();
 
 			//───────────────────────────────────────────────────────────────────────────
 			// Dialog could not be opened (out of memory)
@@ -636,8 +636,8 @@ static void repinta_ventana(void) {
 	}
 
 	wbox(v.ptr, an, al, c0, 1, 1, an - 2, 9);
-	wrectangulo(v.ptr, an, al, c0, 1, 1, an - 2, al - 2);
-	wrectangulo(v.ptr, an, al, c2, 0, 0, an, al);
+	wrectangle(v.ptr, an, al, c0, 1, 1, an - 2, al - 2);
+	wrectangle(v.ptr, an, al, c2, 0, 0, an, al);
 	wput(v.ptr, an, al, an - 9, 2, 35);
 	wbox(v.ptr, an, al, c_b_low, 2, 2, an - 12, 7);
 	if (text_len(v.titulo) + 3 > an - 20) {
@@ -653,7 +653,7 @@ static void repinta_ventana(void) {
 //		Dialog box management - Debugger
 //═════════════════════════════════════════════════════════════════════════════
 
-static void entorno_dialogo(void) {
+static void dialog_environment(void) {
 
 	int n, m, oldn = max_windows;
 	int dialogo_invocado;
@@ -693,7 +693,7 @@ static void entorno_dialogo(void) {
 				call(v.click_handler);
 				mouse_b = m;
 				if (v.volcar) {
-					vuelca_ventana(0);
+					blit_window(0);
 					v.volcar = 0;
 				}
 				salir_del_dialogo = 0;
@@ -731,7 +731,7 @@ static void entorno_dialogo(void) {
 				}
 				call(v.click_handler);
 				if (v.volcar) {
-					vuelca_ventana(0);
+					blit_window(0);
 					v.volcar = 0;
 				}
 				oldn = 0;
@@ -739,10 +739,10 @@ static void entorno_dialogo(void) {
 
 			} else { // If we're over the window control bar...
 
-				if (mouse_graf == 2 && (mouse_b & 1)) mueve_ventana();
+				if (mouse_graf == 2 && (mouse_b & 1)) move_window();
 
 				if (mouse_graf == 5 && (mouse_b & 1)) {
-					cierra_ventana();
+					close_window();
 					salir_del_dialogo = 1;
 				}
 				oldn = -1;
@@ -761,14 +761,14 @@ static void entorno_dialogo(void) {
 			call(v.click_handler);
 			mouse_b = m;
 			if (v.volcar) {
-				vuelca_ventana(0);
+				blit_window(0);
 				v.volcar = 0;
 			}
 			salir_del_dialogo = 0;
 		}
 
 		if (fin_dialogo && !salir_del_dialogo) {
-			cierra_ventana();
+			close_window();
 			salir_del_dialogo = 1;
 		}
 
@@ -780,7 +780,7 @@ static void entorno_dialogo(void) {
 			for (n = 0; n < v.items; n++)
 				if (v.item[n].tipo == 2 && (v.item[n].estado & 2)) break;
 			if (n == v.items) {
-				cierra_ventana();
+				close_window();
 				salir_del_dialogo = 1;
 			}
 		}
@@ -789,7 +789,7 @@ static void entorno_dialogo(void) {
 		// End main loop
 		//─────────────────────────────────────────────────────────────────────────
 
-		if (!no_volcar_nada) { volcado_copia(); }
+		if (!no_volcar_nada) { blit_copy(); }
 
 	} while (!salir_del_dialogo);
 	fin_dialogo = 0;
@@ -813,7 +813,7 @@ static void refrescadialogo(void) {
 		an /= 2;
 		al /= 2;
 	}
-	wrectangulo(ptr, an, al, c2, 0, 0, an, al);
+	wrectangle(ptr, an, al, c2, 0, 0, an, al);
 	wput(ptr, an, al, an - 9, 2, 35);
 	if (!strcmp((char *)v.titulo, (char *)text[1]))
 		wbox(ptr, an, al, c_r_low, 2, 2, an - 12, 7);
@@ -834,7 +834,7 @@ static void refrescadialogo(void) {
 //		Close active window (index 0)
 //═════════════════════════════════════════════════════════════════════════════
 
-static void cierra_ventana(void) {
+static void close_window(void) {
 	int x, y, an, al;
 
 	call(v.close_handler);
@@ -842,9 +842,9 @@ static void cierra_ventana(void) {
 		wput(v.ptr, v.an / 2, v.al / 2, v.an / 2 - 9, 2, -45);
 	else
 		wput(v.ptr, v.an, v.al, v.an - 9, 2, -45);
-	vuelca_ventana(0);
+	blit_window(0);
 	volcado_parcial(v.x, v.y, v.an, v.al);
-	if (!no_volcar_nada) { volcado_copia(); }
+	if (!no_volcar_nada) { blit_copy(); }
 	free(v.ptr);
 
 	x = v.x;
@@ -852,11 +852,11 @@ static void cierra_ventana(void) {
 	an = v.an;
 	al = v.al;
 	memmove(&v.tipo, &ventana[1].tipo, sizeof(tventana) * (max_windows - 1));
-	actualiza_caja(x, y, an, al);
+	update_box(x, y, an, al);
 
 	if (v.tipo == 1) { // Dialog on top of dialog, only last one is opened
 		v.primer_plano = 1;
-		vuelca_ventana(0);
+		blit_window(0);
 	}
 
 	do { dread_mouse(); } while ((mouse_b & 1) || key(_ESC));
@@ -868,7 +868,7 @@ static void cierra_ventana(void) {
 //      Move a window
 //═════════════════════════════════════════════════════════════════════════════
 
-static void mueve_ventana(void) {
+static void move_window(void) {
 	int ix, iy;
 	int x, y, an, al;
 
@@ -878,7 +878,7 @@ static void mueve_ventana(void) {
 	ix = mouse_x - v.x;
 	iy = mouse_y - v.y;
 
-	wrectangulo(v.ptr, an / big2, al / big2, c4, 0, 0, an / big2, al / big2);
+	wrectangle(v.ptr, an / big2, al / big2, c4, 0, 0, an / big2, al / big2);
 
 	do {
 		x = v.x;
@@ -886,13 +886,13 @@ static void mueve_ventana(void) {
 		v.x = mouse_x - ix;
 		v.y = mouse_y - iy;
 		v.tipo = 0;
-		actualiza_caja(x, y, an, al);
+		update_box(x, y, an, al);
 		v.tipo = 1;
-		vuelca_ventana(0);
-		if (!no_volcar_nada) { volcado_copia(); }
+		blit_window(0);
+		if (!no_volcar_nada) { blit_copy(); }
 	} while (mouse_b & 1);
 
-	wrectangulo(v.ptr, an / big2, al / big2, c2, 0, 0, an / big2, al / big2);
+	wrectangle(v.ptr, an / big2, al / big2, c2, 0, 0, an / big2, al / big2);
 	v.volcar = 1;
 }
 
@@ -900,7 +900,7 @@ static void mueve_ventana(void) {
 //	Blit a window, normal or darkened depending on whether it's in foreground or not
 //═════════════════════════════════════════════════════════════════════════════
 
-static void vuelca_ventana(int m) {
+static void blit_window(int m) {
 
 	int x, y, an, al, n;
 	byte *_ptr;
@@ -925,7 +925,7 @@ static void vuelca_ventana(int m) {
 
 	for (n = m; n >= 0; n--)
 		if (ventana[n].tipo)
-			if (colisiona_con(n, x, y, an, al)) {
+			if (collides_with(n, x, y, an, al)) {
 
 				_ptr = ventana[n].ptr;
 				salta_x = 0;
@@ -958,9 +958,9 @@ static void vuelca_ventana(int m) {
 
 				if (_an > 0 && _al > 0)
 					if (ventana[n].primer_plano == 1)
-						wvolcado(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
 					else
-						wvolcado_oscuro(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit_dark(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
 			}
 
 	volcado_parcial(x, y, an, al);
@@ -970,7 +970,7 @@ static void vuelca_ventana(int m) {
 //      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
-static void wvolcado(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta) {
+static void wblit(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta) {
 
 	byte *q;
 	int salta_x, long_x, resto_x;
@@ -1013,7 +1013,7 @@ static void wvolcado(byte *copia, int an_copia, int al_copia, byte *p, int x, in
 //      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
-static void wvolcado_oscuro(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta) {
+static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta) {
 
 	byte *q, *_ghost;
 	int salta_x, long_x, resto_x;
@@ -1110,7 +1110,7 @@ wbox_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, byte c, 
 //      Draw a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
-static void wrectangulo(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al) {
+static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al) {
 	wbox(copia, an_copia, al_copia, c, x, y, an, 1);
 	wbox(copia, an_copia, al_copia, c, x, y + al - 1, an, 1);
 	wbox(copia, an_copia, al_copia, c, x, y + 1, 1, al - 2);
@@ -1451,20 +1451,20 @@ static void wwrite_in_box(byte *copia,
 	if (boton)
 		if (c != c0) {
 			wbox(copia, an_real_copia, al_copia, c2, x - 2, y - 2, an + 4, al + 4);
-			wrectangulo(copia, an_real_copia, al_copia, c0, x - 3, y - 3, an + 6, al + 6);
-			wrectangulo(copia, an_real_copia, al_copia, c3, x - 2, y - 2, an + 3, 1);
-			wrectangulo(copia, an_real_copia, al_copia, c3, x - 2, y - 2, 1, al + 3);
-			wrectangulo(copia, an_real_copia, al_copia, c4, x - 2, y - 2, 1, 1);
-			wrectangulo(copia, an_real_copia, al_copia, c1, x - 1, y + al + 1, an + 3, 1);
-			wrectangulo(copia, an_real_copia, al_copia, c1, x + an + 1, y - 1, 1, al + 3);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 3, y - 3, an + 6, al + 6);
+			wrectangle(copia, an_real_copia, al_copia, c3, x - 2, y - 2, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c3, x - 2, y - 2, 1, al + 3);
+			wrectangle(copia, an_real_copia, al_copia, c4, x - 2, y - 2, 1, 1);
+			wrectangle(copia, an_real_copia, al_copia, c1, x - 1, y + al + 1, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c1, x + an + 1, y - 1, 1, al + 3);
 		} else {
 			wbox(copia, an_real_copia, al_copia, c1, x - 2, y - 2, an + 4, al + 4);
-			wrectangulo(copia, an_real_copia, al_copia, c0, x - 3, y - 3, an + 6, al + 6);
-			wrectangulo(copia, an_real_copia, al_copia, c0, x - 2, y - 2, an + 3, 1);
-			wrectangulo(copia, an_real_copia, al_copia, c0, x - 2, y - 2, 1, al + 3);
-			wrectangulo(copia, an_real_copia, al_copia, c2, x - 1, y + al + 1, an + 3, 1);
-			wrectangulo(copia, an_real_copia, al_copia, c2, x + an + 1, y - 1, 1, al + 3);
-			wrectangulo(copia, an_real_copia, al_copia, c3, x + an + 1, y + al + 1, 1, 1);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 3, y - 3, an + 6, al + 6);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 2, y - 2, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 2, y - 2, 1, al + 3);
+			wrectangle(copia, an_real_copia, al_copia, c2, x - 1, y + al + 1, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c2, x + an + 1, y - 1, 1, al + 3);
+			wrectangle(copia, an_real_copia, al_copia, c3, x + an + 1, y + al + 1, 1, 1);
 		}
 
 	if (centro_org & 0xFF00) {
@@ -1616,20 +1616,20 @@ static void explode(int x, int y, int an, int al) {
 	if (no_volcar_nada) return;
 	v.tipo = 0;
 	big = 0;
-	actualiza_caja(x, y, an, al);
+	update_box(x, y, an, al);
 	while (++n < 10) {
 		aan = (an * n) / 10;
 		aal = (al * n) / 10;
 		xx = x + an / 2 - aan / 2;
 		yy = y + al / 2 - aal / 2;
-		wrectangulo(copia, vga_an, vga_al, c4, xx, yy, aan, aal);
+		wrectangle(copia, vga_an, vga_al, c4, xx, yy, aan, aal);
 		volcado_parcial(xx, yy, aan, aal);
 		retrazo();
-		volcado_copia();
-		actualiza_caja(xx, yy, aan, 1);
-		actualiza_caja(xx, yy, 1, aal);
-		actualiza_caja(xx + aan - 1, yy, 1, aal);
-		actualiza_caja(xx, yy + aal - 1, aan, 1);
+		blit_copy();
+		update_box(xx, yy, aan, 1);
+		update_box(xx, yy, 1, aal);
+		update_box(xx + aan - 1, yy, 1, aal);
+		update_box(xx, yy + aal - 1, aan, 1);
 	}
 	v.tipo = tipo;
 	big = b;
@@ -1647,10 +1647,10 @@ static void implode(int x, int y, int an, int al) {
 		if (!aal) aal = 1;
 		xx = x + an / 2 - aan / 2;
 		yy = y + al / 2 - aal / 2;
-		wrectangulo(copia, vga_an, vga_al, c4, xx, yy, aan, aal);
+		wrectangle(copia, vga_an, vga_al, c4, xx, yy, aan, aal);
 		volcado_parcial(xx, yy, aan, aal);
-		volcado_copia();
-		actualiza_caja(xx, yy, aan, aal);
+		blit_copy();
+		update_box(xx, yy, aan, aal);
 		retrazo();
 	} while (--n);
 	big = b;
@@ -1662,16 +1662,16 @@ static void extrude(int x, int y, int an, int al, int x2, int y2, int an2, int a
 	if (no_volcar_nada) return;
 	v.tipo = 0;
 	big = 0;
-	actualiza_caja(x, y, an, al);
+	update_box(x, y, an, al);
 	do {
 		aan = (an * n + an2 * (10 - n)) / 10;
 		aal = (al * n + al2 * (10 - n)) / 10;
 		xx = (x * n + x2 * (10 - n)) / 10;
 		yy = (y * n + y2 * (10 - n)) / 10;
-		wrectangulo(copia, vga_an, vga_al, c4, xx, yy, aan, aal);
+		wrectangle(copia, vga_an, vga_al, c4, xx, yy, aan, aal);
 		volcado_parcial(xx, yy, aan, aal);
-		volcado_copia();
-		actualiza_caja(xx, yy, aan, aal);
+		blit_copy();
+		update_box(xx, yy, aan, aal);
 		retrazo();
 	} while (--n);
 	big = b;
@@ -1682,7 +1682,7 @@ static void extrude(int x, int y, int an, int al, int x2, int y2, int an2, int a
 //      Updates a box on screen
 //═════════════════════════════════════════════════════════════════════════════
 
-static void actualiza_caja(int x, int y, int an, int al) {
+static void update_box(int x, int y, int an, int al) {
 
 	int n;
 	byte *_ptr;
@@ -1701,11 +1701,11 @@ static void actualiza_caja(int x, int y, int an, int al) {
 	if (y + al > vga_al) al = vga_al - y;
 	if (an <= 0 || al <= 0) return;
 
-	restaura_tapiz(x, y, an, al);
+	restore_desktop(x, y, an, al);
 
 	for (n = max_windows - 1; n >= 0; n--)
 		if (ventana[n].tipo)
-			if (colisiona_con(n, x, y, an, al)) {
+			if (collides_with(n, x, y, an, al)) {
 
 				_ptr = ventana[n].ptr;
 				salta_x = 0;
@@ -1738,9 +1738,9 @@ static void actualiza_caja(int x, int y, int an, int al) {
 
 				if (_an > 0 && _al > 0)
 					if (ventana[n].primer_plano == 1)
-						wvolcado(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
 					else
-						wvolcado_oscuro(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit_dark(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
 			}
 
 	volcado_parcial(x, y, an, al);
@@ -1759,7 +1759,7 @@ static int colisionan(int a, int b) {
 		return (0);
 }
 
-static int colisiona_con(int a, int x, int y, int an, int al) {
+static int collides_with(int a, int x, int y, int an, int al) {
 
 	if (y < ventana[a].y + ventana[a].al && y + al > ventana[a].y && x < ventana[a].x + ventana[a].an &&
 	    x + an > ventana[a].x)
@@ -1772,7 +1772,7 @@ static int colisiona_con(int a, int x, int y, int an, int al) {
 //      restore desktop *** BEWARE *** here background must be updated
 //════════════════════════════════════════════════════════════════════════════
 
-static void restaura_tapiz(int x, int y, int an, int al) {
+static void restore_desktop(int x, int y, int an, int al) {
 
 	byte *p;
 	byte *t;
@@ -1802,7 +1802,7 @@ static void restaura_tapiz(int x, int y, int an, int al) {
 }
 
 /*
-void restaura_tapiz(int x,int y,int an,int al) {
+void restore_desktop(int x,int y,int an,int al) {
   int n;
 
   if (an>0 && al>0) {
@@ -1909,7 +1909,7 @@ static void show_get(t_item *i) {
 static void select_get(t_item *i, int activo, int ocultar_error) {
 	int n;
 	if (activo) {
-		wrectangulo(v.ptr, v.an / big2, v.al / big2, c12, i->get.x - 1, i->get.y + 7, i->get.an + 2, 11);
+		wrectangle(v.ptr, v.an / big2, v.al / big2, c12, i->get.x - 1, i->get.y + 7, i->get.an + 2, 11);
 		if (i->estado & 2) {
 			strcpy(get, (char *)i->get.buffer);
 			get_pos = strlen(get);
@@ -1944,7 +1944,7 @@ static void select_get(t_item *i, int activo, int ocultar_error) {
 			              0,
 			              i->get.buffer,
 			              c3);
-			wrectangulo(v.ptr, v.an / big2, v.al / big2, c2, i->get.x - 1, i->get.y + 7, i->get.an + 2, 11);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c2, i->get.x - 1, i->get.y + 7, i->get.an + 2, 11);
 		}
 
 		for (n = 0; n < max_items; n++)
@@ -1997,15 +1997,15 @@ static void select_button(t_item *i, int activo) {
 	}
 	if (v.ptr[(x - 4) * big2 - 1 + (y - 5) * big2 * v.an] == c12) {
 		if (activo) {
-			wrectangulo(v.ptr, v.an / big2, v.al / big2, c1, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c1, x - 4, y - 4, an + 8, al + 8);
 		} else {
-			wrectangulo(v.ptr, v.an / big2, v.al / big2, c12, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c12, x - 4, y - 4, an + 8, al + 8);
 		}
 	} else {
 		if (activo) {
-			wrectangulo(v.ptr, v.an / big2, v.al / big2, c12, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c12, x - 4, y - 4, an + 8, al + 8);
 		} else {
-			wrectangulo(v.ptr, v.an / big2, v.al / big2, c2, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c2, x - 4, y - 4, an + 8, al + 8);
 		}
 	}
 }
@@ -2494,13 +2494,13 @@ static void dread_mouse(void) {
 //		Blitting of the virtual screen copy to the real one (main screen)
 //═════════════════════════════════════════════════════════════════════════════
 
-static void volcado_copia(void) {
+static void blit_copy(void) {
 
 	dread_mouse();
-	salvaguarda(fondo_raton, mouse_x, mouse_y, mouse_graf, 0);
+	save_restore(fondo_raton, mouse_x, mouse_y, mouse_graf, 0);
 	put(mouse_x, mouse_y, mouse_graf);
 	volcado(copia);
-	salvaguarda(fondo_raton, mouse_x, mouse_y, mouse_graf, 1);
+	save_restore(fondo_raton, mouse_x, mouse_y, mouse_graf, 1);
 
 	// **************************************************
 
@@ -2520,7 +2520,7 @@ static void volcado_copia(void) {
 //      Save (flag=0) or recover (flag=1) a virtual box from copia
 //═════════════════════════════════════════════════════════════════════════════
 
-static void salvaguarda(byte *p, int x, int y, int n, int flag) {
+static void save_restore(byte *p, int x, int y, int n, int flag) {
 	byte *q;
 	int an, al;
 	int salta_x, long_x, resto_x;
@@ -2967,8 +2967,8 @@ static void pinta_lista_proc(void) {
 		if (m == ids_next) wput(ptr, an, al, 4, 21 + (m - ids_ini) * 8, 36);
 	}
 
-	wrectangulo(ptr, an, al, c0, 91, 19, 1, 128 - 5 - 16 - 32);
-	wrectangulo(ptr, an, al, c0, 91 + 8, 19, 1, 128 - 5 - 16 - 32);
+	wrectangle(ptr, an, al, c0, 91, 19, 1, 128 - 5 - 16 - 32);
+	wrectangle(ptr, an, al, c0, 91 + 8, 19, 1, 128 - 5 - 16 - 32);
 
 	wbox(ptr, an, al, c12, 133, 11, 119 + 304 - 256, 7); // Process ID
 	strcpy(msg, (char *)text[19]);
@@ -3034,7 +3034,7 @@ static void pinta_lista_proc(void) {
 	wbox(ptr, an, al, c1, 134, 32, 46, 46); // Process graphic
 	process_graph(ids[ids_select], ptr + 32 * big2 * v.an + 134 * big2, v.an, 46 * big2, 46 * big2);
 
-	pinta_segmento();
+	draw_segment();
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -3302,11 +3302,11 @@ static void crear_lista_variables(void) {
 
 			if (o[nuevo].tipo == tsglo || o[nuevo].tipo == tsloc) {
 				member = nuevo + 1;
-				incluye_miembros(num_var, 1, var[num_var - 1].indice);
+				include_members(num_var, 1, var[num_var - 1].indice);
 			}
 			if (o[nuevo].tipo == tpsgl || o[nuevo].tipo == tpslo) {
 				member = o[nuevo].v1 + 1;
-				incluye_miembros(num_var, 1, var[num_var - 1].indice);
+				include_members(num_var, 1, var[num_var - 1].indice);
 			}
 		}
 	} while (nuevo);
@@ -3341,7 +3341,7 @@ static void excluye_miembros(int padre, int nivel, int index) {
 	}
 }
 
-static void incluye_miembros(int padre, int nivel, int index) {
+static void include_members(int padre, int nivel, int index) {
 	int m;
 
 	m = o[member].miembro;
@@ -3373,7 +3373,7 @@ static void incluye_miembros(int padre, int nivel, int index) {
 
 		if (o[member].tipo == tsglo || o[member].tipo == tsloc) {
 			member++;
-			incluye_miembros(num_var, nivel + 1, index);
+			include_members(num_var, nivel + 1, index);
 		} else
 			member++;
 	}
@@ -3394,9 +3394,9 @@ static void inspect1(void) {
 	_show_items();
 	wwrite(ptr, an, al, 4, al - 14, 0, text[38], c3);
 
-	wrectangulo(ptr, an, al, c0, 3, 19, 128 + 32 + 64, 83); // Processes listbox limits
-	wrectangulo(ptr, an, al, c0, 122 + 32 + 64, 19, 9, 83);
-	wrectangulo(ptr, an, al, c0, 122 + 32 + 64, 27, 9, 83 - 16);
+	wrectangle(ptr, an, al, c0, 3, 19, 128 + 32 + 64, 83); // Processes listbox limits
+	wrectangle(ptr, an, al, c0, 122 + 32 + 64, 19, 9, 83);
+	wrectangle(ptr, an, al, c0, 122 + 32 + 64, 27, 9, 83 - 16);
 
 	wput(ptr, an, al, 123 + 32 + 64, 20, -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, 123 + 32 + 64, 134 - 40, -40);
@@ -3418,12 +3418,12 @@ static void inspect1(void) {
 		var_select = 0;
 	}
 
-	pinta_lista_var();
+	draw_var_list();
 
-	pinta_segmento2();
+	draw_segment2();
 }
 
-static void pinta_segmento2(void) {
+static void draw_segment2(void) {
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = 27, max = 89, n;
@@ -3438,7 +3438,7 @@ static void pinta_segmento2(void) {
 		n = min * (1 - x) + max * x;
 	}
 
-	wrectangulo(ptr, an, al, c0, 122 + 32 + 64, n, 9, 5);
+	wrectangle(ptr, an, al, c0, 122 + 32 + 64, n, 9, 5);
 	wput(ptr, an, al, 123 + 32 + 64, n + 1, -43);
 }
 
@@ -3451,13 +3451,13 @@ static void inspect2(void) {
 	_process_items();
 	if (scan_code == 80 && var_select + 1 < num_var) {
 		if (var_ini + 10 == ++var_select) var_ini++;
-		pinta_lista_var();
+		draw_var_list();
 		vacia_buffer();
 		v.volcar = 1;
 	}
 	if (scan_code == 72 && var_select) {
 		if (var_ini == var_select--) var_ini--;
-		pinta_lista_var();
+		draw_var_list();
 		vacia_buffer();
 		v.volcar = 1;
 	}
@@ -3466,7 +3466,7 @@ static void inspect2(void) {
 			if (var_select + 1 < num_var) {
 				if (var_ini + 10 == ++var_select) var_ini++;
 			}
-		pinta_lista_var();
+		draw_var_list();
 		vacia_buffer();
 		v.volcar = 1;
 	}
@@ -3475,7 +3475,7 @@ static void inspect2(void) {
 			if (var_select) {
 				if (var_ini == var_select--) var_ini--;
 			}
-		pinta_lista_var();
+		draw_var_list();
 		vacia_buffer();
 		v.volcar = 1;
 	}
@@ -3484,7 +3484,7 @@ static void inspect2(void) {
 		n = var_ini + (wmouse_y - 21) / 8;
 		if (n < num_var) {
 			var_select = n;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 		}
 	}
@@ -3496,7 +3496,7 @@ static void inspect2(void) {
 				boton = 1;
 				if (var_select) {
 					if (var_ini == var_select--) var_ini--;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 				}
 			}
@@ -3519,7 +3519,7 @@ static void inspect2(void) {
 			var_select = x * (num_var - 1);
 			if (var_select < var_ini) var_ini = var_select;
 			if (var_select >= var_ini + 10) var_ini = var_select - 9;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 		}
 	}
@@ -3531,7 +3531,7 @@ static void inspect2(void) {
 				boton = 2;
 				if (var_select + 1 < num_var) {
 					if (var_ini + 10 == ++var_select) var_ini++;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 				}
 			}
@@ -3565,7 +3565,7 @@ static void inspect2(void) {
 				case tpcgl:
 				case tpclo:
 					var[var_select].indice = -1;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 					break;
 				case tpsgl:
@@ -3577,16 +3577,16 @@ static void inspect2(void) {
 							excluye_miembros(var_select + 1, 1, var[var_select].indice);
 							if (var_ini + 10 > num_var && var_ini) var_ini = num_var - 10;
 							if (var_ini < 0) var_ini = 0;
-							pinta_segmento2();
+							draw_segment2();
 						}
-						pinta_lista_var();
-						pinta_segmento2();
+						draw_var_list();
+						draw_segment2();
 						v.volcar = 1;
 					}
 					break;
 				default:
 					var[var_select].indice = 0;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 					break;
 			}
@@ -3643,9 +3643,9 @@ static void inspect2(void) {
 						if (!var[var_select].miembro) {
 							member = o[var[var_select].objeto].v1 + 1;
 							excluye_miembros(var_select + 1, 1, var[var_select].indice);
-							pinta_segmento2();
+							draw_segment2();
 						}
-						pinta_lista_var();
+						draw_var_list();
 						break;
 					}
 					if (o[var[var_select].objeto].v3 == -1)
@@ -3655,14 +3655,14 @@ static void inspect2(void) {
 					if (!var[var_select].miembro) {
 						member = o[var[var_select].objeto].v1 + 1;
 						excluye_miembros(var_select + 1, 1, var[var_select].indice);
-						pinta_segmento2();
+						draw_segment2();
 					}
-					pinta_lista_var();
+					draw_var_list();
 					break;
 				case tsglo:
 				case tsloc: var[var_select].indice = o[var[var_select].objeto].v2 - 1; break;
 			}
-		pinta_lista_var();
+		draw_var_list();
 		v.volcar = 1;
 	}
 
@@ -3679,11 +3679,11 @@ static void inspect2(void) {
 					dialogo(err0);
 				} else if (o[var[var_select].objeto].tipo == tcglo || o[var[var_select].objeto].tipo == tcloc) {
 					dialogo(changestring0);
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 				} else {
 					dialogo(change0);
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 				}
 			} else {
@@ -3703,7 +3703,7 @@ static void inspect2(void) {
 				case twglo:
 				case twloc:
 					if (var[var_select].indice > 0) var[var_select].indice--;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 					break;
 				case tpigl:
@@ -3715,7 +3715,7 @@ static void inspect2(void) {
 				case tpcgl:
 				case tpclo:
 					if (var[var_select].indice > -1) var[var_select].indice--;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 					break;
 				case tpsgl:
@@ -3725,9 +3725,9 @@ static void inspect2(void) {
 						if (!var[var_select].miembro) {
 							member = o[var[var_select].objeto].v1 + 1;
 							excluye_miembros(var_select + 1, 1, var[var_select].indice);
-							pinta_segmento2();
+							draw_segment2();
 						}
-						pinta_lista_var();
+						draw_var_list();
 						v.volcar = 1;
 					}
 					break;
@@ -3764,7 +3764,7 @@ static void inspect2(void) {
 					}
 					if (o[var[var_select].objeto].v2 == -1) {
 						var[var_select].indice++;
-						pinta_lista_var();
+						draw_var_list();
 						v.volcar = 1;
 						break;
 					}
@@ -3778,7 +3778,7 @@ static void inspect2(void) {
 					if (o[var[var_select].objeto].v3 > -1) n *= o[var[var_select].objeto].v3 + 1;
 					if (o[var[var_select].objeto].v4 > -1) n *= o[var[var_select].objeto].v4 + 1;
 					if (var[var_select].indice < n - 1) var[var_select].indice++;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 					break;
 				case tpsgl:
@@ -3793,15 +3793,15 @@ static void inspect2(void) {
 					if (!var[var_select].miembro) {
 						member = o[var[var_select].objeto].v1 + 1;
 						excluye_miembros(var_select + 1, 1, var[var_select].indice);
-						pinta_segmento2();
+						draw_segment2();
 					}
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 					break;
 				case tsglo:
 				case tsloc:
 					if (var[var_select].indice < o[var[var_select].objeto].v2 - 1) var[var_select].indice++;
-					pinta_lista_var();
+					draw_var_list();
 					v.volcar = 1;
 					break;
 			}
@@ -3811,7 +3811,7 @@ static void inspect2(void) {
 				visor[var[var_select].objeto] = 0;
 			else
 				visor[var[var_select].objeto] = 4;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 4: // View as process
@@ -3819,7 +3819,7 @@ static void inspect2(void) {
 				visor[var[var_select].objeto] = 0;
 			else
 				visor[var[var_select].objeto] = 3;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 5: // View as text
@@ -3827,7 +3827,7 @@ static void inspect2(void) {
 				visor[var[var_select].objeto] = 0;
 			else
 				visor[var[var_select].objeto] = 2;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 6: // View as boolean
@@ -3835,7 +3835,7 @@ static void inspect2(void) {
 				visor[var[var_select].objeto] = 0;
 			else
 				visor[var[var_select].objeto] = 1;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 7: // View as Hex
@@ -3843,7 +3843,7 @@ static void inspect2(void) {
 				visor[var[var_select].objeto] = 0;
 			else
 				visor[var[var_select].objeto] = 5;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 8: // View as Bin
@@ -3851,7 +3851,7 @@ static void inspect2(void) {
 				visor[var[var_select].objeto] = 0;
 			else
 				visor[var[var_select].objeto] = 6;
-			pinta_lista_var();
+			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 9:
@@ -3863,8 +3863,8 @@ static void inspect2(void) {
 			crear_lista_variables();
 			var_ini = 0;
 			var_select = 0;
-			pinta_lista_var();
-			pinta_segmento2();
+			draw_var_list();
+			draw_segment2();
 			v.volcar = 1;
 			break;
 	}
@@ -3953,7 +3953,7 @@ static word *capar_word(word *dir) {
 
 static int memo(int dir) { return (mem[capar(dir)]); }
 
-static void pinta_lista_var(void) {
+static void draw_var_list(void) {
 	char msg[512];
 	byte *ptr = v.ptr, x;
 	int an = v.an / big2, al = v.al / big2;
@@ -4010,19 +4010,19 @@ static void pinta_lista_var(void) {
 				case tcons:
 					strcpy(msg, "CONST ");
 					strcat(msg, vnom + o[var[m].objeto].nombre);
-					visualiza(o[var[m].objeto].v0, var[m].objeto, msg);
+					display(o[var[m].objeto].v0, var[m].objeto, msg);
 					break;
 				case tvglo:
 				case tvloc:
 					strcpy(msg, "INT ");
 					strcat(msg, vnom + o[var[m].objeto].nombre);
-					visualiza(memo(get_offset(m)), var[m].objeto, msg);
+					display(memo(get_offset(m)), var[m].objeto, msg);
 					break;
 				case tcglo:
 				case tcloc:
 					strcpy(msg, "STRING ");
 					strcat(msg, vnom + o[var[m].objeto].nombre);
-					visualiza(get_offset(m), var[m].objeto, msg);
+					display(get_offset(m), var[m].objeto, msg);
 					break;
 				case tbglo:
 				case tbloc:
@@ -4129,19 +4129,19 @@ static void pinta_lista_var(void) {
 						if (!memo(get_offset(m)))
 							strcat(msg, " = NULL");
 						else
-							visualiza(memo(get_offset(m)), var[m].objeto, msg);
+							display(memo(get_offset(m)), var[m].objeto, msg);
 						o[var[m].objeto].tipo = tipo;
 					} else if (o[var[m].objeto].tipo == ttglo || o[var[m].objeto].tipo == ttloc ||
 					           o[var[m].objeto].tipo == tpigl || o[var[m].objeto].tipo == tpilo) {
-						visualiza(memo(get_offset(m)), var[m].objeto, msg);
+						display(memo(get_offset(m)), var[m].objeto, msg);
 					} else if (o[var[m].objeto].tipo == twglo || o[var[m].objeto].tipo == twloc ||
 					           o[var[m].objeto].tipo == tpwgl || o[var[m].objeto].tipo == tpwlo) {
-						visualiza(*get_offset_word(m), var[m].objeto, msg);
+						display(*get_offset_word(m), var[m].objeto, msg);
 					} else if (o[var[m].objeto].tipo == tbglo || o[var[m].objeto].tipo == tbloc ||
 					           o[var[m].objeto].tipo == tpbgl || o[var[m].objeto].tipo == tpblo) {
-						visualiza(*get_offset_byte(m), var[m].objeto, msg);
+						display(*get_offset_byte(m), var[m].objeto, msg);
 					} else if (o[var[m].objeto].tipo == tpcgl || o[var[m].objeto].tipo == tpclo) {
-						visualiza(*get_offset_byte(m), var[m].objeto, msg);
+						display(*get_offset_byte(m), var[m].objeto, msg);
 					}
 					break;
 				case tsglo:
@@ -4174,14 +4174,14 @@ static void pinta_lista_var(void) {
 		wwrite_in_box(ptr, an, 144 + 9 + 64, al, 10 + var[m].tab * 8, 21 + (m - var_ini) * 8, 0, (byte *)msg, x);
 	}
 
-	pinta_segmento2();
+	draw_segment2();
 }
 
 //════════════════════════════════════════════════════════════════════════════
 //  Visualizes an object according to its visor[]
 //════════════════════════════════════════════════════════════════════════════
 
-static void visualiza(int valor, int objeto, char *str) {
+static void display(int valor, int objeto, char *str) {
 	int n;
 	strcat(str, " = ");
 	switch (visor[objeto]) {
@@ -4542,13 +4542,13 @@ static void debug1(void) {
 	wwrite(ptr, an, al, 4, 11, 0, (byte *)msg, c1);
 	wwrite(ptr, an, al, 3, 11, 0, (byte *)msg, c3);
 
-	wrectangulo(ptr, an, al, c0, 3, 19, 128, 128 - 5 - 16 - 32); // Limits of processes listbox
-	wrectangulo(ptr, an, al, c0, 122, 19, 9, 128 - 5 - 16 - 32);
-	wrectangulo(ptr, an, al, c0, 122, 27, 9, 112 - 5 - 16 - 32);
+	wrectangle(ptr, an, al, c0, 3, 19, 128, 128 - 5 - 16 - 32); // Limits of processes listbox
+	wrectangle(ptr, an, al, c0, 122, 19, 9, 128 - 5 - 16 - 32);
+	wrectangle(ptr, an, al, c0, 122, 27, 9, 112 - 5 - 16 - 32);
 
-	wrectangulo(ptr, an, al, c0, 133, 19, 120 + 304 - 256, 11); // Process name box
+	wrectangle(ptr, an, al, c0, 133, 19, 120 + 304 - 256, 11); // Process name box
 
-	wrectangulo(ptr, an, al, c0, 133, 31, 48, 48); // Graphic box
+	wrectangle(ptr, an, al, c0, 133, 31, 48, 48); // Graphic box
 
 	wput(ptr, an, al, 123, 20, -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, 123, 139 - 5 - 16 - 32, -40);
@@ -4574,13 +4574,13 @@ static void debug1(void) {
 	}
 
 	pinta_lista_proc();
-	determina_codigo();
+	determine_id();
 
 	wbox(ptr, an, al, c0, 1, 144 - 16 - 32, an - 2, 1);
-	wrectangulo(ptr, an, al, c0, 47, 146 - 16 - 32, an - 50, 43 + 16 + 32);
+	wrectangle(ptr, an, al, c0, 47, 146 - 16 - 32, an - 50, 43 + 16 + 32);
 }
 
-static void pinta_segmento(void) {
+static void draw_segment(void) {
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = 27, max = 129 - 16 - 32, n;
@@ -4595,7 +4595,7 @@ static void pinta_segmento(void) {
 		n = min * (1 - x) + max * x;
 	}
 
-	wrectangulo(ptr, an, al, c0, 122, n, 9, 5);
+	wrectangle(ptr, an, al, c0, 122, n, 9, 5);
 	wput(ptr, an, al, 123, n + 1, -43);
 }
 
@@ -4629,44 +4629,44 @@ static void debug2(void) {
 	if (!(shift_status & 15) && ascii == 0) {
 
 		if (scan_code == 80) {
-			f_abajo();
-			pinta_codigo();
+			f_down();
+			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
 		if (scan_code == 72) {
-			f_arriba();
-			pinta_codigo();
+			f_up();
+			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
 		if (scan_code == 81) {
-			for (n = 0; n < 11; n++) f_abajo();
-			pinta_codigo();
+			for (n = 0; n < 11; n++) f_down();
+			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
 		if (scan_code == 73) {
-			for (n = 0; n < 11; n++) f_arriba();
-			pinta_codigo();
+			for (n = 0; n < 11; n++) f_up();
+			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
 		if (scan_code == 71) {
-			f_inicio();
-			pinta_codigo();
+			f_home();
+			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
 		if (scan_code == 77) {
-			f_derecha();
-			pinta_codigo();
+			f_right();
+			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
 		if (scan_code == 75) {
-			f_izquierda();
-			pinta_codigo();
+			f_left();
+			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
@@ -4777,7 +4777,7 @@ static void debug2(void) {
 	if ((mouse_b & 1) && wmouse_in(48 + 5, 147 - 16 - 32, an - 52 - 5, 41 + 16 + 32)) {
 		linea_sel = linea0 + (wmouse_y - (147 - 16 - 32)) / 8;
 		if (linea_sel == linea0 + 11) linea_sel = linea0 + 10;
-		pinta_codigo();
+		draw_id();
 		v.volcar = 1;
 	}
 
@@ -4842,7 +4842,7 @@ static void debug2(void) {
 					if (ids_ini && ids_ini + 13 > iids) ids_ini = iids - 13;
 					if (ids_ini < 0) ids_ini = 0;
 					pinta_lista_proc();
-					determina_codigo();
+					determine_id();
 				}
 				if (new_palette) {
 					new_palette = 0;
@@ -4858,7 +4858,7 @@ static void debug2(void) {
 			break;
 		case 1: // Goto
 		goto_proc:
-			dialogo(lista_procesos0);
+			dialogo(process_list0);
 			//int linea0;     // First line number in debugger window
 			//byte * plinea0; // Pointer to first line in debugger window
 			//int linea_sel; // Selected line number
@@ -4875,7 +4875,7 @@ static void debug2(void) {
 					plinea0 += strlen((char *)plinea0) + 1;
 				}
 				linea_sel = linea0;
-				pinta_codigo();
+				draw_id();
 				vacia_buffer();
 				v.volcar = 1;
 			}
@@ -4887,7 +4887,7 @@ static void debug2(void) {
 			if (n < max_breakpoint) { // A breakpoint is disabled
 				breakpoint[n].line = -1;
 				mem[abs(breakpoint[n].offset)] = breakpoint[n].code;
-				pinta_codigo();
+				draw_id();
 				v.volcar = 1;
 			} else {
 				for (n = 0; n < max_breakpoint; n++)
@@ -4898,7 +4898,7 @@ static void debug2(void) {
 						breakpoint[n].offset = m;
 						breakpoint[n].code = mem[m];
 						mem[m] = ldbg;
-						pinta_codigo();
+						draw_id();
 						v.volcar = 1;
 					}
 				} else {
@@ -5225,7 +5225,7 @@ static int get_ip(int n) { // Get IP address from line number
 		return (-1);
 }
 
-static void determina_codigo(void) { // Determines what must be displayed for "ids_next"
+static void determine_id(void) { // Determines what must be displayed for "ids_next"
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2, l;
 	char msg[256];
@@ -5233,7 +5233,7 @@ static void determina_codigo(void) { // Determines what must be displayed for "i
 	if (line == NULL) return;
 
 	wbox(ptr, an, al, c1, 4, 147 - 16 - 32, 41, 8); // Clears space to display the ID
-	wrectangulo(ptr, an, al, c0, 3, 146 - 16 - 32, 43, 10);
+	wrectangle(ptr, an, al, c0, 3, 146 - 16 - 32, 43, 10);
 	itoa(ids[ids_next], msg, 10);
 	wwrite_in_box(ptr, an, 46, al, 24, 148 - 16 - 32, 1, (byte *)msg, c0);
 	wwrite_in_box(ptr, an, 46, al, 23, 148 - 16 - 32, 1, (byte *)msg, c34);
@@ -5253,10 +5253,10 @@ static void determina_codigo(void) { // Determines what must be displayed for "i
 
 	linea_sel = linea1;
 
-	pinta_codigo();
+	draw_id();
 }
 
-static void pinta_codigo(void) { // Draws the ID
+static void draw_id(void) { // Draws the ID
 	byte *p = plinea0, c;
 	int n, x, l = linea0;
 	byte *ptr = v.ptr;
@@ -5268,7 +5268,7 @@ static void pinta_codigo(void) { // Draws the ID
 
 	wbox(ptr, an, al, c12, 48, 147 - 16 - 32, 5, 41 + 16 + 32);
 
-	wrectangulo(ptr, an, al, c0, 47 + 5, 146 - 16 - 32, 1, 43 + 16 + 32);
+	wrectangle(ptr, an, al, c0, 47 + 5, 146 - 16 - 32, 1, 43 + 16 + 32);
 
 	for (n = 0; n < 11; n++, l++) {
 		if (p >= end_source) break;
@@ -5315,15 +5315,15 @@ static void pinta_codigo(void) { // Draws the ID
 	}
 }
 
-static void f_inicio(void) { x_inicio = 54; }
+static void f_home(void) { x_inicio = 54; }
 
-static void f_derecha(void) { x_inicio -= 6; }
+static void f_right(void) { x_inicio -= 6; }
 
-static void f_izquierda(void) {
+static void f_left(void) {
 	if (x_inicio < 54) x_inicio += 6;
 }
 
-static void f_arriba(void) {
+static void f_up(void) {
 	if (linea_sel) {
 		linea_sel--;
 		if (linea_sel < linea0) {
@@ -5335,7 +5335,7 @@ static void f_arriba(void) {
 	}
 }
 
-static void f_abajo(void) {
+static void f_down(void) {
 	byte *p;
 	int n;
 
@@ -5444,10 +5444,10 @@ static void pintar_lista_procesos(void) {
 		cwork[n] = 0;
 		wwrite_in_box(ptr, an, 153, al, 5, 21 + (m - lp_ini) * 8, 0, (byte *)cwork, x);
 	}
-	pinta_segmento_procesos();
+	draw_process_segment();
 }
 
-static void pinta_segmento_procesos(void) {
+static void draw_process_segment(void) {
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = 27, max = 129, n;
@@ -5462,7 +5462,7 @@ static void pinta_segmento_procesos(void) {
 		n = min * (1 - x) + max * x;
 	}
 
-	wrectangulo(ptr, an, al, c0, 122 + 32, n, 9, 5);
+	wrectangle(ptr, an, al, c0, 122 + 32, n, 9, 5);
 	wput(ptr, an, al, 123 + 32, n + 1, -43);
 }
 
@@ -5474,9 +5474,9 @@ static void lista_procesos1(void) {
 	wwrite(ptr, an, al, 5, 11, 0, text[74], c1);
 	wwrite(ptr, an, al, 4, 11, 0, text[74], c3);
 
-	wrectangulo(ptr, an, al, c0, 3, 19, 128 + 32, 123); // Listbox process limits
-	wrectangulo(ptr, an, al, c0, 122 + 32, 19, 9, 123);
-	wrectangulo(ptr, an, al, c0, 122 + 32, 27, 9, 123 - 16);
+	wrectangle(ptr, an, al, c0, 3, 19, 128 + 32, 123); // Listbox process limits
+	wrectangle(ptr, an, al, c0, 122 + 32, 19, 9, 123);
+	wrectangle(ptr, an, al, c0, 122 + 32, 27, 9, 123 - 16);
 
 	wput(ptr, an, al, 123 + 32, 20, -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, 123 + 32, 174 - 40, -40);
@@ -5613,7 +5613,7 @@ static void lista_procesos2(void) {
 	}
 }
 
-static void lista_procesos0(void) {
+static void process_list0(void) {
 	v.tipo = 1;
 	v.titulo = text[75];
 
@@ -5791,7 +5791,7 @@ static void pintar_lista_profile(void) {
 			x = c4;
 		} else
 			x = c3;
-		wrectangulo(ptr, an, al, c0, an - 12 - 130, lpy - 1 + (m - lp_ini) * lpal, 66, lpal + 1); // Bars limits
+		wrectangle(ptr, an, al, c0, an - 12 - 130, lpy - 1 + (m - lp_ini) * lpal, 66, lpal + 1); // Bars limits
 
 		wbox(ptr, an, al, c_g_low0, an - 11 - 130, lpy + (m - lp_ini) * lpal, 64, lpal - 1); // Execution
 
@@ -5842,7 +5842,7 @@ static void pintar_lista_profile(void) {
 			x = c4;
 		} else
 			x = c3;
-		wrectangulo(
+		wrectangle(
 		    ptr, an, al, c0, an - lp2esp - 12 - 65, lp2y - 1 + (m - lp2_ini) * lp2al, 1, lp2al + 1); // Bars limits
 
 		wbox(ptr, an, al, c_g_low0, an - lp2esp - 11 - 65, lp2y + (m - lp2_ini) * lp2al, 64, lp2al - 1); // Execution
@@ -5879,7 +5879,7 @@ static void pintar_lista_profile(void) {
 		wbox(ptr, an, al, c0, 4, lp2y + (m - lp2_ini) * lp2al + lp2al - 1, an - lp2esp - 16, 1);
 	}
 
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 2, lp2al * 0 + lp2y - 1, lp2esp - 1, lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 0 + lp2y - 1, lp2esp - 1, lp2al + 1);
 	wbox(ptr, an, al, c_g_low0, an - lp2esp - 1, lp2al * 0 + lp2y, lp2esp - 3, lp2al - 1);
 	porcen = (unsigned)(((double)f_time[255] * (double)10000.0) / (double)f_time_total);
 	porcen2 = (unsigned)(((double)f_time[255] * (double)10000.0) / (double)f_max);
@@ -5893,7 +5893,7 @@ static void pintar_lista_profile(void) {
 	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 0, 1, (byte *)cwork, c_g_low0);
 	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 0, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 2, lp2al * 1 + lp2y - 1, lp2esp - 1, lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 1 + lp2y - 1, lp2esp - 1, lp2al + 1);
 	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 1 + lp2y, lp2esp - 3, lp2al - 1);
 	porcen = (unsigned)(((double)f_time[254] * (double)10000.0) / (double)f_time_total);
 	porcen2 = (unsigned)(((double)f_time[254] * (double)10000.0) / (double)f_max);
@@ -5907,7 +5907,7 @@ static void pintar_lista_profile(void) {
 	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 1, 1, (byte *)cwork, c_r_low0);
 	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 1, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 2, lp2al * 2 + lp2y - 1, lp2esp - 1, lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 2 + lp2y - 1, lp2esp - 1, lp2al + 1);
 	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 2 + lp2y, lp2esp - 3, lp2al - 1);
 	porcen = (unsigned)(((double)f_time[253] * (double)10000.0) / (double)f_time_total);
 	porcen2 = (unsigned)(((double)f_time[253] * (double)10000.0) / (double)f_max);
@@ -5921,7 +5921,7 @@ static void pintar_lista_profile(void) {
 	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 2, 1, (byte *)cwork, c_r_low0);
 	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 2, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 2, lp2al * 3 + lp2y - 1, lp2esp - 1, lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 3 + lp2y - 1, lp2esp - 1, lp2al + 1);
 	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 3 + lp2y, lp2esp - 3, lp2al - 1);
 	porcen = (unsigned)(((double)f_time[252] * (double)10000.0) / (double)f_time_total);
 	porcen2 = (unsigned)(((double)f_time[252] * (double)10000.0) / (double)f_max);
@@ -5935,7 +5935,7 @@ static void pintar_lista_profile(void) {
 	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 3, 1, (byte *)cwork, c_r_low0);
 	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 3, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 2, lp2al * 4 + lp2y - 1, lp2esp - 1, lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 4 + lp2y - 1, lp2esp - 1, lp2al + 1);
 	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 4 + lp2y, lp2esp - 3, lp2al - 1);
 	porcen = (unsigned)(((double)f_time[251] * (double)10000.0) / (double)f_time_total);
 	porcen2 = (unsigned)(((double)f_time[251] * (double)10000.0) / (double)f_max);
@@ -5949,7 +5949,7 @@ static void pintar_lista_profile(void) {
 	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 4, 1, (byte *)cwork, c_r_low0);
 	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 4, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 2, lp2al * 5 + lp2y - 1, lp2esp - 1, lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 5 + lp2y - 1, lp2esp - 1, lp2al + 1);
 	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 5 + lp2y, lp2esp - 3, lp2al - 1);
 	porcen = (unsigned)(((double)f_time[250] * (double)10000.0) / (double)f_time_total);
 	porcen2 = (unsigned)(((double)f_time[250] * (double)10000.0) / (double)f_max);
@@ -5963,10 +5963,10 @@ static void pintar_lista_profile(void) {
 	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 5, 1, (byte *)cwork, c_r_low0);
 	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 5, 1, (byte *)cwork, c34);
 
-	pinta_segmento_profile();
+	draw_profile_segment();
 }
 
-static void pinta_segmento_profile(void) {
+static void draw_profile_segment(void) {
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = lpy + 7, max = lpy + lpnum * lpal - 13, n;
@@ -5979,7 +5979,7 @@ static void pinta_segmento_profile(void) {
 		x = (float)lp_select / (float)(lp_num - 1);
 		n = min * (1 - x) + max * x;
 	}
-	wrectangulo(ptr, an, al, c0, an - 12, n, 9, 5);
+	wrectangle(ptr, an, al, c0, an - 12, n, 9, 5);
 	wput(ptr, an, al, an - 11, n + 1, -43);
 
 	min = lp2y + 7;
@@ -5992,7 +5992,7 @@ static void pinta_segmento_profile(void) {
 		x = (float)lp2_select / (float)(lp2_num - 1);
 		n = min * (1 - x) + max * x;
 	}
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 12, n, 9, 5);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 12, n, 9, 5);
 	wput(ptr, an, al, an - lp2esp - 11, n + 1, -43);
 }
 
@@ -6007,7 +6007,7 @@ static void profile1(void) {
 
 	crear_lista_profile();
 
-	wrectangulo(ptr, an, al, c0, 3, 12, an - 6, 11); // Overall speed %
+	wrectangle(ptr, an, al, c0, 3, 12, an - 6, 11); // Overall speed %
 	wbox(ptr, an, al, c_b_low0, 4, 13, an - 8, 9);
 	x = (unsigned)(ffps2 * 100.0);
 	if (x > 10000) x = 10000;
@@ -6030,7 +6030,7 @@ static void profile1(void) {
 	wwrite(ptr, an, al, an / 2, 14, 1, (byte *)cwork, c_b_low0);
 	wwrite(ptr, an, al, an / 2, 14, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, 3, 11 + 14, an / 2 - 4, 11); // Execution %
+	wrectangle(ptr, an, al, c0, 3, 11 + 14, an / 2 - 4, 11); // Execution %
 	wbox(ptr, an, al, c_g_low0, 4, 12 + 14, an / 2 - 6, 9);
 	x = (unsigned)(((double)f_exec_total * (double)10000.0) / (double)f_time_total);
 	wbox(ptr, an, al, c_g_low, 4, 12 + 14, ((an / 2 - 6) * x) / 10000, 9);
@@ -6043,7 +6043,7 @@ static void profile1(void) {
 	wwrite(ptr, an, al, 4 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c_g_low0);
 	wwrite(ptr, an, al, 3 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, an / 2 + 1, 11 + 14, an / 2 - 4, 11); // Drawing %
+	wrectangle(ptr, an, al, c0, an / 2 + 1, 11 + 14, an / 2 - 4, 11); // Drawing %
 	wbox(ptr, an, al, c_r_low0, an / 2 + 2, 12 + 14, an / 2 - 6, 9);
 	x = (unsigned)(((double)f_paint_total * (double)10000.0) / (double)f_time_total);
 	wbox(ptr, an, al, c_r_low, an / 2 + 2, 12 + 14, ((an / 2 - 6) * x) / 10000, 9);
@@ -6056,17 +6056,17 @@ static void profile1(void) {
 	wwrite(ptr, an, al, an / 2 + 3 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c_r_low0);
 	wwrite(ptr, an, al, an / 2 + 2 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c34);
 
-	wrectangulo(ptr, an, al, c0, 3, lpy - 1, an - 6, lpal + 1); // Process listbox limits
-	wrectangulo(ptr, an, al, c0, 3, lpy - 1, an - 6, lpnum * lpal + 1);
-	wrectangulo(ptr, an, al, c0, an - 12, lpy - 1, 9, lpnum * lpal + 1);
-	wrectangulo(ptr, an, al, c0, an - 12, lpy + 7, 9, lpnum * lpal + 1 - 16);
+	wrectangle(ptr, an, al, c0, 3, lpy - 1, an - 6, lpal + 1); // Process listbox limits
+	wrectangle(ptr, an, al, c0, 3, lpy - 1, an - 6, lpnum * lpal + 1);
+	wrectangle(ptr, an, al, c0, an - 12, lpy - 1, 9, lpnum * lpal + 1);
+	wrectangle(ptr, an, al, c0, an - 12, lpy + 7, 9, lpnum * lpal + 1 - 16);
 	wput(ptr, an, al, an - 11, lpy, -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, an - 11, lpy + lpnum * lpal - 8, -40);
 
-	wrectangulo(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6, lp2al + 1); // Process listbox limits
-	wrectangulo(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6, lp2num * lp2al + 1);
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 12, lp2y - 1, 9, lp2num * lp2al + 1);
-	wrectangulo(ptr, an, al, c0, an - lp2esp - 12, lp2y + 7, 9, lp2num * lp2al + 1 - 16);
+	wrectangle(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6, lp2al + 1); // Process listbox limits
+	wrectangle(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6, lp2num * lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 12, lp2y - 1, 9, lp2num * lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 12, lp2y + 7, 9, lp2num * lp2al + 1 - 16);
 	wput(ptr, an, al, an - lp2esp - 11, lp2y, -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, an - lp2esp - 11, lp2y + lp2num * lp2al - 8, -40);
 
