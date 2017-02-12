@@ -13,91 +13,91 @@ int debug_active=1;             // If this variable is set to 0, the debugger
 
 //══════════════════════════════════════════════════════════════════════════
 
-void err0(void);
-void lista_procesos0(void);
-void profile0(void);
-byte * get_offset_byte(int m);
-word * get_offset_word(int m);
-void vuelca_ventana(int m);
-void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al);
-void wput(byte*copia,int an_copia,int al_copia,int x,int y,int n);
-void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al);
-int text_len(byte * ptr);
-void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
+static void err0(void);
+static void lista_procesos0(void);
+static void profile0(void);
+static byte * get_offset_byte(int m);
+static word * get_offset_word(int m);
+static void vuelca_ventana(int m);
+static void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al);
+static void wput(byte*copia,int an_copia,int al_copia,int x,int y,int n);
+static void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al);
+static int text_len(byte * ptr);
+static void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
             int x_org,int y_org,int centro_org,byte * ptr,byte c);
 
-void wwrite(byte*copia,int an_copia,int al_copia,
+static void wwrite(byte*copia,int an_copia,int al_copia,
             int x,int y,int centro,byte * ptr,byte c);
 
-void dread_mouse(void);
-void explode(int x,int y,int an,int al);
-void wvolcado(byte*copia,int an_copia,int al_copia,
+static void dread_mouse(void);
+static void explode(int x,int y,int an,int al);
+static void wvolcado(byte*copia,int an_copia,int al_copia,
               byte *p,int x,int y,int an,int al,int salta);
               
-void entorno_dialogo(void);
-int mouse_in(int x, int y, int x2, int y2);   
-void mueve_ventana(void);
-void cierra_ventana(void);
-void volcado_copia(void);
-void actualiza_caja(int x, int y, int an, int al);
-void implode(int x,int y,int an,int al);
-int colisiona_con(int a, int x, int y, int an, int al);
+static void entorno_dialogo(void);
+static int mouse_in(int x, int y, int x2, int y2);   
+static void mueve_ventana(void);
+static void cierra_ventana(void);
+static void volcado_copia(void);
+static void actualiza_caja(int x, int y, int an, int al);
+static void implode(int x,int y,int an,int al);
+static int colisiona_con(int a, int x, int y, int an, int al);
 
-void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
+static void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
               byte *p,int x,int y,int an,int al,int salta) ;
 
-void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) ;
-void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n);
-void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n);
+static void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) ;
+static void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n);
+static void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n);
 
-void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
+static void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
            byte*p,int x,int y,byte an,int al,byte c);
            
-void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c);
-void restaura_tapiz(int x,int y,int an,int al) ;
+static void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c);
+static void restaura_tapiz(int x,int y,int an,int al) ;
 
-void show_button(t_item * i);
-void show_get(t_item * i);
-void show_flag(t_item * i);
-void select_button(t_item * i,int activo);
+static void show_button(t_item * i);
+static void show_get(t_item * i);
+static void show_flag(t_item * i);
+static void select_button(t_item * i,int activo);
 
-void select_get(t_item * i,int activo,int ocultar_error);
-void _select_new_item(int i);
-int button_status(int n);
+static void select_get(t_item * i,int activo,int ocultar_error);
+static void _select_new_item(int i);
+static int button_status(int n);
 
-void process_button(int n,int e);
+static void process_button(int n,int e);
 
-int get_status(int n);
-void process_get(int n,int e);
+static int get_status(int n);
+static void process_get(int n,int e);
 
-int flag_status(int n);
+static int flag_status(int n);
 
-void process_flag(int n,int e);
-int wmouse_in(int x, int y, int an, int al);
-void get_input(int n);
+static void process_flag(int n,int e);
+static int wmouse_in(int x, int y, int an, int al);
+static void get_input(int n);
 
-void salvaguarda(byte * p, int x, int y, int n, int flag);
-void process_graph(int id,byte *q,int van,int an,int al);
+static void salvaguarda(byte * p, int x, int y, int n, int flag);
+static void process_graph(int id,byte *q,int van,int an,int al);
 
-void pinta_segmento(void);
-void incluye_miembros(int padre,int nivel,int index);
-void pinta_lista_var(void);
-void pinta_segmento2(void);
-int get_offset(int m);
-int memo(int dir);
-void visualiza(int valor, int objeto, char * str);
-int _get_offset(int m) ;
-void determina_codigo(void);
-void f_abajo(void);
-void pinta_codigo(void) ;
-void f_arriba(void);
-void f_inicio(void);
-void f_derecha(void) ;
-void f_izquierda(void);
-int get_ip(int n) ;
-void get_line(int n);
-void pinta_segmento_procesos(void);
-void pinta_segmento_profile(void);
+static void pinta_segmento(void);
+static void incluye_miembros(int padre,int nivel,int index);
+static void pinta_lista_var(void);
+static void pinta_segmento2(void);
+static int get_offset(int m);
+static int memo(int dir);
+static void visualiza(int valor, int objeto, char * str);
+static int _get_offset(int m) ;
+static void determina_codigo(void);
+static void f_abajo(void);
+static void pinta_codigo(void) ;
+static void f_arriba(void);
+static void f_inicio(void);
+static void f_derecha(void) ;
+static void f_izquierda(void);
+static int get_ip(int n) ;
+static void get_line(int n);
+static void pinta_segmento_procesos(void);
+static void pinta_segmento_profile(void);
 
 
 #define max_procesos 2048
@@ -146,10 +146,10 @@ static int ticks_debug;
 static int boton=0;
 int ids_old=0,ids_inc;
 
-void exec_process(void);
-void trace_process(void);
-void inspect0(void);
-void debug0(void);
+extern void exec_process(void);
+extern void trace_process(void);
+static void inspect0(void);
+static void debug0(void);
 
 static byte * source=NULL, * end_source=NULL;
 
@@ -448,9 +448,9 @@ void init_colors(void) {
 //      Creates a dialog box (must return to caller as-is)
 //═════════════════════════════════════════════════════════════════════════════
 
-void dummy_handler(void) {}
+static void dummy_handler(void) {}
 
-void dialogo(voidReturnType init_handler) {
+static void dialogo(voidReturnType init_handler) {
 
   byte * ptr;
   int x,y,an,al;
@@ -555,7 +555,7 @@ void dialogo(voidReturnType init_handler) {
 //      Redraws a window (including tile bar and icons)
 //═════════════════════════════════════════════════════════════════════════════
 
-void repinta_ventana(void) {
+static void repinta_ventana(void) {
   int an=v.an,al=v.al;
   if (big) { an/=2; al/=2; }
 
@@ -577,7 +577,7 @@ void repinta_ventana(void) {
 //		Dialog box management - Debugger
 //═════════════════════════════════════════════════════════════════════════════
 
-void entorno_dialogo(void) {
+static void entorno_dialogo(void) {
 
   int n,m,oldn=max_windows;
   int dialogo_invocado;
@@ -689,7 +689,7 @@ void entorno_dialogo(void) {
 //      Draw a dialog box
 //════════════════════════════════════════════════════════════════════════════
 
-void refrescadialogo(void) {
+static void refrescadialogo(void) {
 
   byte * ptr=v.ptr;
   int an=v.an,al=v.al;
@@ -714,7 +714,7 @@ void refrescadialogo(void) {
 //		Close active window (index 0)
 //═════════════════════════════════════════════════════════════════════════════
 
-void cierra_ventana(void) {
+static void cierra_ventana(void) {
   int x,y,an,al;
 
   call(v.close_handler);
@@ -743,7 +743,7 @@ void cierra_ventana(void) {
 //      Move a window
 //═════════════════════════════════════════════════════════════════════════════
 
-void mueve_ventana(void) {
+static void mueve_ventana(void) {
   int ix,iy;
   int x,y,an,al;
 
@@ -770,7 +770,7 @@ void mueve_ventana(void) {
 //	Blit a window, normal or darkened depending on whether it's in foreground or not
 //═════════════════════════════════════════════════════════════════════════════
 
-void vuelca_ventana(int m) {
+static void vuelca_ventana(int m) {
 
   int x,y,an,al,n;
   byte * _ptr;
@@ -810,7 +810,7 @@ void vuelca_ventana(int m) {
 //      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
-void wvolcado(byte*copia,int an_copia,int al_copia,
+static void wvolcado(byte*copia,int an_copia,int al_copia,
               byte *p,int x,int y,int an,int al,int salta) {
 
   byte *q;
@@ -838,7 +838,7 @@ void wvolcado(byte*copia,int an_copia,int al_copia,
 //      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
-void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
+static void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
               byte *p,int x,int y,int an,int al,int salta) {
 
   byte *q,*_ghost;
@@ -877,11 +877,11 @@ void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
 //      Draw a box onscreen
 //═════════════════════════════════════════════════════════════════════════════
 
-void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
+static void wbox(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
   wbox_in_box(copia,an_copia,an_copia,al_copia,c,x,y,an,al);
 }
 
-void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
+static void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
   byte *p;
 
   if (big) {
@@ -908,7 +908,7 @@ void wbox_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,byte c,i
 //      Draw a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
-void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
+static void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,int al) {
   wbox(copia,an_copia,al_copia,c,x,y,an,1);
   wbox(copia,an_copia,al_copia,c,x,y+al-1,an,1);
   wbox(copia,an_copia,al_copia,c,x,y+1,1,al-2);
@@ -919,15 +919,15 @@ void wrectangulo(byte*copia,int an_copia,int al_copia,byte c,int x,int y,int an,
 //      Put a graphic
 //═════════════════════════════════════════════════════════════════════════════
 
-void put(int x,int y,int n) {
+static void put(int x,int y,int n) {
   wput_in_box(copia,vga_an,vga_an,vga_al,x,y,n);
 }
 
-void wput(byte*copia,int an_copia,int al_copia,int x,int y,int n) {
+static void wput(byte*copia,int an_copia,int al_copia,int x,int y,int n) {
   wput_in_box(copia,an_copia,an_copia,al_copia,x,y,n);
 }
 
-void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n) {
+static void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n) {
 
   int al,an;
   int block;
@@ -987,7 +987,7 @@ void wput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,in
   } while (--long_y);
 }
 
-void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n) {
+static void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n) {
 
   int al,an;
   int block;
@@ -1053,12 +1053,12 @@ void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,i
 //      Text drawing functions
 //═════════════════════════════════════════════════════════════════════════════
 
-int char_len(char c) {
+static int char_len(char c) {
   struct _car { byte an; word dir; } * car;
   car=(struct _car*)(text_font+1); return(car[c].an);
 }
 
-int text_len(byte * ptr) {
+static int text_len(byte * ptr) {
 
   int an;
 
@@ -1076,7 +1076,7 @@ int text_len(byte * ptr) {
 
 }
 
-int text_len2(byte * ptr) {
+static int text_len2(byte * ptr) {
 
   int an;
 
@@ -1094,12 +1094,12 @@ int text_len2(byte * ptr) {
 
 }
 
-void wwrite(byte*copia,int an_copia,int al_copia,
+static void wwrite(byte*copia,int an_copia,int al_copia,
             int x,int y,int centro,byte * ptr,byte c) {
   wwrite_in_box(copia,an_copia,an_copia,al_copia,x,y,centro,ptr,c);
 }
 
-void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
+static void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
             int x_org,int y_org,int centro_org,byte * ptr,byte c) {
 
   int an,al,boton,multi;
@@ -1206,7 +1206,7 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
   }
 }
 
-void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c) {
+static void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c) {
 
   byte *q=copia+y*an_real_copia+x;
   int ancho=an;
@@ -1219,7 +1219,7 @@ void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c
   } while (--al);
 }
 
-void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
+static void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
            byte*p,int x,int y,byte an,int al,byte c) {
 
   byte *q=copia+y*an_real_copia+x;
@@ -1248,7 +1248,7 @@ void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
 //      Explode a new window
 //═════════════════════════════════════════════════════════════════════════════
 
-void explode(int x,int y,int an,int al) {
+static void explode(int x,int y,int an,int al) {
   int n=0,tipo=v.tipo,b=big;
   int xx,yy,aan,aal;
   if (no_volcar_nada) return;
@@ -1266,7 +1266,7 @@ void explode(int x,int y,int an,int al) {
   } v.tipo=tipo; big=b;
 }
 
-void implode(int x,int y,int an,int al) {
+static void implode(int x,int y,int an,int al) {
   int n=9,b=big;
   int xx,yy,aan,aal;
   if (no_volcar_nada) return;
@@ -1282,7 +1282,7 @@ void implode(int x,int y,int an,int al) {
   } while (--n); big=b;
 }
 
-void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
+static void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
   int n=9,tipo=v.tipo,b=big;
   int xx,yy,aan,aal;
   if (no_volcar_nada) return;
@@ -1305,7 +1305,7 @@ void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
 //      Updates a box on screen
 //═════════════════════════════════════════════════════════════════════════════
 
-void actualiza_caja(int x, int y, int an, int al) {
+static void actualiza_caja(int x, int y, int an, int al) {
 
   int n;
   byte * _ptr;
@@ -1345,7 +1345,7 @@ void actualiza_caja(int x, int y, int an, int al) {
 //	Check if two windows overlap
 //═════════════════════════════════════════════════════════════════════════════
 
-int colisionan(int a,int b) {
+static int colisionan(int a,int b) {
 
   if (ventana[b].y<ventana[a].y+ventana[a].al &&
       ventana[b].y+ventana[b].al>ventana[a].y &&
@@ -1354,7 +1354,7 @@ int colisionan(int a,int b) {
     return(1); else return(0);
 }
 
-int colisiona_con(int a, int x, int y, int an, int al) {
+static int colisiona_con(int a, int x, int y, int an, int al) {
 
   if (y<ventana[a].y+ventana[a].al &&
       y+al>ventana[a].y &&
@@ -1367,7 +1367,7 @@ int colisiona_con(int a, int x, int y, int an, int al) {
 //      restore desktop *** BEWARE *** here background must be updated
 //════════════════════════════════════════════════════════════════════════════
 
-void restaura_tapiz(int x,int y,int an,int al) {
+static void restaura_tapiz(int x,int y,int an,int al) {
 
   byte *p;
   byte *t;
@@ -1409,7 +1409,7 @@ void restaura_tapiz(int x,int y,int an,int al) {
 //      Item definitions
 //═════════════════════════════════════════════════════════════════════════════
 
-void _button(byte *t,int x,int y,int c) {
+static void _button(byte *t,int x,int y,int c) {
   v.item[v.items].tipo=1;
   v.item[v.items].estado=0;
   v.item[v.items].button.texto=t;
@@ -1420,7 +1420,7 @@ void _button(byte *t,int x,int y,int c) {
   v.items++;
 }
 
-void _get(byte *t,int x,int y,int an,byte *buffer,int lon_buffer,int r0,int r1) {
+static void _get(byte *t,int x,int y,int an,byte *buffer,int lon_buffer,int r0,int r1) {
   v.item[v.items].tipo=2;
   v.item[v.items].estado=0;
   v.item[v.items].get.texto=t;
@@ -1435,7 +1435,7 @@ void _get(byte *t,int x,int y,int an,byte *buffer,int lon_buffer,int r0,int r1) 
   v.items++;
 }
 
-void _flag(byte *t,int x,int y,int *valor) {
+static void _flag(byte *t,int x,int y,int *valor) {
   v.item[v.items].tipo=3;
   v.item[v.items].estado=0;
   v.item[v.items].flag.texto=t;
@@ -1449,7 +1449,7 @@ void _flag(byte *t,int x,int y,int *valor) {
 //      Items drawing
 //═════════════════════════════════════════════════════════════════════════════
 
-void _show_items(void) {
+static void _show_items(void) {
   int n=0;
   show_items_called=1;
   wbox(v.ptr,v.an/big2,v.al/big2,c2,2,10,v.an/big2-4,v.al/big2-12);
@@ -1463,7 +1463,7 @@ void _show_items(void) {
   show_items_called=0;
 }
 
-void _show_items2(void) {
+static void _show_items2(void) {
   int n=0;
   show_items_called=1;
   while (n<v.items) {
@@ -1476,12 +1476,12 @@ void _show_items2(void) {
   show_items_called=0;
 }
 
-void show_button(t_item * i) {
+static void show_button(t_item * i) {
   wwrite(v.ptr,v.an/big2,v.al/big2,i->button.x,i->button.y,i->button.center,i->button.texto,c3);
   if (&v.item[v.selected_item]==i) select_button(i,1);
 }
 
-void show_get(t_item * i) {
+static void show_get(t_item * i) {
   wbox(v.ptr,v.an/big2,v.al/big2,c1,i->get.x,i->get.y+8,i->get.an,9);
   wwrite_in_box(v.ptr,v.an/big2,i->get.an-1+i->get.x,v.al/big2,i->get.x+1,i->get.y+9,0,i->get.buffer,c3);
   wwrite(v.ptr,v.an/big2,v.al/big2,i->get.x+1,i->get.y,0,i->get.texto,c12);
@@ -1492,7 +1492,7 @@ void show_get(t_item * i) {
   }
 }
 
-void select_get(t_item * i,int activo,int ocultar_error) {
+static void select_get(t_item * i,int activo,int ocultar_error) {
   int n;
   if (activo) {
     wrectangulo(v.ptr,v.an/big2,v.al/big2,c12,i->get.x-1,i->get.y+7,i->get.an+2,11);
@@ -1520,7 +1520,7 @@ void select_get(t_item * i,int activo,int ocultar_error) {
   }
 }
 
-void show_flag(t_item * i) {
+static void show_flag(t_item * i) {
   if (*i->flag.valor)
     wput(v.ptr,v.an/big2,v.al/big2,i->flag.x,i->flag.y,-59);
   else wput(v.ptr,v.an/big2,v.al/big2,i->flag.x,i->flag.y,58);
@@ -1528,7 +1528,7 @@ void show_flag(t_item * i) {
   wwrite(v.ptr,v.an/big2,v.al/big2,i->flag.x+8,i->flag.y,0,i->flag.texto,c3);
 }
 
-void select_button(t_item * i,int activo) {
+static void select_button(t_item * i,int activo) {
   int x=i->button.x,y=i->button.y;
   int an,al;
 
@@ -1567,7 +1567,7 @@ void select_button(t_item * i,int activo) {
 //      Items processing
 //═════════════════════════════════════════════════════════════════════════════
 
-void _process_items(void) {
+static void _process_items(void) {
   int n=0,estado;
   int asc,kesc,est;
 
@@ -1631,7 +1631,7 @@ void _process_items(void) {
   }
 }
 
-void _select_new_item(int i) {
+static void _select_new_item(int i) {
   if (v.selected_item==i) return;
   switch(abs(v.item[v.selected_item].tipo)) {
     case 1: select_button(&v.item[v.selected_item],0); break;
@@ -1648,7 +1648,7 @@ void _select_new_item(int i) {
   } v.volcar=1;
 }
 
-void _reselect_item(void) {
+static void _reselect_item(void) {
   switch(v.item[v.selected_item].tipo) {
     case 1: select_button(&v.item[v.selected_item],0); break;
     case 2: select_get(&v.item[v.selected_item],0,0); break;
@@ -1659,7 +1659,7 @@ void _reselect_item(void) {
   } v.volcar=1;
 }
 
-void process_button(int n,int e) {
+static void process_button(int n,int e) {
   if (v.item[n].estado==3 && e!=3) { v.active_item=n; kbdFLAGS[28]=0; ascii=0; }
   switch(e) {
     case 0:
@@ -1679,7 +1679,7 @@ void process_button(int n,int e) {
   } v.item[n].estado=e; v.volcar=1;
 }
 
-int get_status(int n) {
+static int get_status(int n) {
   int x=v.item[n].estado;
   if (strcmp((char *)v.item[n].get.texto,"")) {
     if (wmouse_in(v.item[n].get.x,v.item[n].get.y, // bit 0 "hilite"
@@ -1703,7 +1703,7 @@ int get_status(int n) {
   return(x);
 }
 
-void process_get(int n,int e) {
+static void process_get(int n,int e) {
   int old_e;
 
   old_e=v.item[n].estado;
@@ -1733,7 +1733,7 @@ void process_get(int n,int e) {
   if (old_e!=v.item[n].estado) v.volcar=1;
 }
 
-int flag_status(int n) {
+static int flag_status(int n) {
   int x=0;
   if (wmouse_in(v.item[n].flag.x,v.item[n].flag.y,
     text_len(v.item[n].flag.texto)+10,8)) x=1;
@@ -1741,7 +1741,7 @@ int flag_status(int n) {
   return(x);
 }
 
-void process_flag(int n,int e) {
+static void process_flag(int n,int e) {
 
   if (v.item[n].estado==3 && e!=3) v.active_item=n;
   switch(e) {
@@ -1764,7 +1764,7 @@ void process_flag(int n,int e) {
 //      Input function
 //═════════════════════════════════════════════════════════════════════════════
 
-void get_input(int n) {
+static void get_input(int n) {
   char cwork[512];
   int x,l,scroll;
 
@@ -1838,7 +1838,7 @@ void get_input(int n) {
 
 }
 
-int button_status(int n) {
+static int button_status(int n) {
   int x=v.item[n].button.x,y=v.item[n].button.y;
   int an,al,e=0;
 
@@ -1867,9 +1867,8 @@ int button_status(int n) {
 //════════════════════════════════════════════════════════════════════════════
 //      Read mouse adapted to the interpreter
 //════════════════════════════════════════════════════════════════════════════
-void readmouse(void);
 
-void dread_mouse(void) {
+static void dread_mouse(void) {
 	tecla();
   short ix,iy;
   int n=0;
@@ -1920,7 +1919,7 @@ void dread_mouse(void) {
 //		Blitting of the virtual screen copy to the real one (main screen)
 //═════════════════════════════════════════════════════════════════════════════
 
-void volcado_copia(void) {
+static void volcado_copia(void) {
 
   dread_mouse();
   salvaguarda(fondo_raton,mouse_x,mouse_y,mouse_graf,0);
@@ -1942,7 +1941,7 @@ void volcado_copia(void) {
 //      Save (flag=0) or recover (flag=1) a virtual box from copia
 //═════════════════════════════════════════════════════════════════════════════
 
-void salvaguarda(byte * p, int x, int y, int n, int flag) {
+static void salvaguarda(byte * p, int x, int y, int n, int flag) {
   byte *q;
   int an,al;
   int salta_x, long_x, resto_x;
@@ -1982,11 +1981,11 @@ void salvaguarda(byte * p, int x, int y, int n, int flag) {
 //      Check if mouse is inside a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
-int mouse_in(int x, int y, int x2, int y2) {
+static int mouse_in(int x, int y, int x2, int y2) {
   return(mouse_x>=x && mouse_x<=x2 && mouse_y>=y && mouse_y<=y2);
 }
 
-int wmouse_in(int x, int y, int an, int al) {
+static int wmouse_in(int x, int y, int an, int al) {
   return(wmouse_x>=x && wmouse_x<=x+an-1 &&
          wmouse_y>=y && wmouse_y<=y+al-1);
 }
@@ -1995,18 +1994,18 @@ int wmouse_in(int x, int y, int an, int al) {
 //      ERROR dialog box
 //═════════════════════════════════════════════════════════════════════════════
 
-void err1(void) {
+static void err1(void) {
   int an=v.an/big2,al=v.al/big2;
   _show_items();
   wwrite(v.ptr,an,al,4,12,0,(byte *)v_texto,c3);
 }
 
-void err2(void) {
+static void err2(void) {
   _process_items();
   if (v.active_item==0) fin_dialogo=1;
 }
 
-void err0(void) {
+static void err0(void) {
   v.tipo=1; v.titulo=text[1];
   v.an=text_len((byte *)v_texto)+8; v.al=38;
   v.paint_handler=err1;
@@ -2020,7 +2019,7 @@ void err0(void) {
 
 static char * te;
 
-void _err1(void) {
+static void _err1(void) {
   int an=v.an/big2,al=v.al/big2,n;
   char cwork[256];
   _show_items();
@@ -2043,7 +2042,7 @@ void _err1(void) {
   wwrite(v.ptr,an,al,4,12+24,0,(byte *)v_texto,c3);
 }
 
-void _err2(void) {
+static void _err2(void) {
   int n;
   _process_items();
   if (v.active_item==0) fin_dialogo=1;
@@ -2064,7 +2063,7 @@ void _err2(void) {
   if (v.active_item==3) exer(0);
 }
 
-void _err0(void) {
+static void _err0(void) {
   v.tipo=1; v.titulo=text[1];
   v.an=text_len((byte *)v_texto)+8;
   if (v.an<218+16) v.an=218+16;
@@ -2124,7 +2123,7 @@ void e(int texto) {
 //      DEBUG sentence dialog box
 //═════════════════════════════════════════════════════════════════════════════
 
-void deb1(void) {
+static void deb1(void) {
   int an=v.an/big2,al=v.al/big2,n;
   _show_items();
   wwrite(v.ptr,an,al,4,12,0,text[8],c4);
@@ -2137,7 +2136,7 @@ void deb1(void) {
   } else wwrite(v.ptr,an,al,46,12,0,text[9],c3);
 }
 
-void deb2(void) {
+static void deb2(void) {
   _process_items();
   if (v.active_item==2) {
     mem[ip-1]=0; // Changes the DEBUG into a NOP
@@ -2153,7 +2152,7 @@ void deb2(void) {
   if (v.active_item==1) exer(0);
 }
 
-void deb0(void) {
+static void deb0(void) {
   v.tipo=1; v.titulo=text[15];
   v.an=190; v.al=38;
   v.paint_handler=deb1;
@@ -2186,7 +2185,7 @@ void deb(void) {
 //	  Determines whether all processes have been executed
 //════════════════════════════════════════════════════════════════════════════
 
-int procesos_ejecutados(void) {
+static int procesos_ejecutados(void) {
   int max=0x80000000,ide=0;
   if (process_stoped) return(0);
   id=id_old; do {
@@ -2201,7 +2200,7 @@ int procesos_ejecutados(void) {
 //		Determins ids[] (process list, by execution order)
 //════════════════════════════════════════════════════════════════════════════
 
-void determina_ids(void) {
+static void determina_ids(void) {
   int max,ide,id;
 
   iids=0; // Number of processes
@@ -2272,7 +2271,7 @@ void determina_ids(void) {
 //      Draw the process list and info on selected one
 //════════════════════════════════════════════════════════════════════════════
 
-void pinta_lista_proc(void) {
+static void pinta_lista_proc(void) {
   char msg[512];
   byte * ptr=v.ptr;
   int n,m,x;
@@ -2380,7 +2379,7 @@ void pinta_lista_proc(void) {
 //		Draws the graphic for a process in the debugger
 //════════════════════════════════════════════════════════════════════════════
 
-void process_graph(int id,byte *q,int van,int an,int al) {
+static void process_graph(int id,byte *q,int van,int an,int al) {
 
   int file,graph,angle;
   int x,y,n,m;
@@ -2512,7 +2511,7 @@ void debug(void) {
 
 static int member;
 
-void crear_lista_variables(void) {
+static void crear_lista_variables(void) {
   int n,nuevo,incluir;
 
   memset(usado,0,sizeof(int)*num_obj);
@@ -2580,7 +2579,7 @@ void crear_lista_variables(void) {
   } while(nuevo);
 }
 
-void excluye_miembros(int padre,int nivel,int index) {
+static void excluye_miembros(int padre,int nivel,int index) {
   int m;
   m=o[member].miembro;
   while (m==o[member].miembro) {
@@ -2598,7 +2597,7 @@ void excluye_miembros(int padre,int nivel,int index) {
   }
 }
 
-void incluye_miembros(int padre,int nivel,int index) {
+static void incluye_miembros(int padre,int nivel,int index) {
   int m;
 
   m=o[member].miembro;
@@ -2633,10 +2632,10 @@ void incluye_miembros(int padre,int nivel,int index) {
 
 static int _var_ini=-1,_var_select=-1;
 
-void change0(void);
-void changestring0(void);
+static void change0(void);
+static void changestring0(void);
 
-void inspect1(void) {
+static void inspect1(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   _show_items();
@@ -2667,7 +2666,7 @@ void inspect1(void) {
   pinta_segmento2();
 }
 
-void pinta_segmento2(void) {
+static void pinta_segmento2(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   int min=27,max=89,n;
@@ -2684,7 +2683,7 @@ void pinta_segmento2(void) {
   wput(ptr,an,al,123+32+64,n+1,-43);
 }
 
-void inspect2(void) {
+static void inspect2(void) {
   int n,tipo;
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
@@ -2992,13 +2991,13 @@ void inspect2(void) {
   }
 }
 
-void inspect3(void) {
+static void inspect3(void) {
   _var_ini=var_ini; _var_select=var_select;
 }
 
 static char titulo[256];
 
-void inspect0(void) {
+static void inspect0(void) {
   int n,x=50;
 
   v.tipo=1; v.titulo=(byte *)titulo;
@@ -3046,23 +3045,23 @@ void inspect0(void) {
 
 // Functions to avoid page faults
 
-byte * capar_byte(byte * dir) {
+static byte * capar_byte(byte * dir) {
   memptrsize offset;
   offset=((memptrsize)dir-(memptrsize)mem)/4;
   if (capar(offset)) return(dir); else return((byte*)mem);
 }
 
-word * capar_word(word * dir) {
+static word * capar_word(word * dir) {
   memptrsize offset;
   offset=((memptrsize)dir-(memptrsize)mem)/4;
   if (capar(offset)) return(dir); else return((word*)mem);
 }
 
-int memo(int dir) {
+static int memo(int dir) {
   return(mem[capar(dir)]);
 }
 
-void pinta_lista_var(void) {
+static void pinta_lista_var(void) {
   char msg[512];
   byte * ptr=v.ptr,x;
   int an=v.an/big2,al=v.al/big2;
@@ -3222,7 +3221,7 @@ void pinta_lista_var(void) {
 //  Visualizes an object according to its visor[]
 //════════════════════════════════════════════════════════════════════════════
 
-void visualiza(int valor, int objeto, char * str) {
+static void visualiza(int valor, int objeto, char * str) {
   int n;
   strcat(str," = ");
   switch(visor[objeto]) {
@@ -3290,11 +3289,11 @@ void visualiza(int valor, int objeto, char * str) {
 //	Gets the offset into mem of a variable in the list
 //════════════════════════════════════════════════════════════════════════════
 
-int get_offset(int m) {
+static int get_offset(int m) {
   return(capar(_get_offset(m)));
 }
 
-int _get_offset(int m) {
+static int _get_offset(int m) {
   if (var[m].miembro==0) switch(o[var[m].objeto].tipo) {
     case tvglo:
       return(o[var[m].objeto].v0);
@@ -3358,7 +3357,7 @@ int _get_offset(int m) {
   } return(0);
 }
 
-byte * _get_offset_byte(int m) {
+static byte * _get_offset_byte(int m) {
   if (var[m].miembro==0) switch(o[var[m].objeto].tipo) {
     case tbglo:
       return(&memb[o[var[m].objeto].v0*4+var[m].indice]);
@@ -3382,11 +3381,11 @@ byte * _get_offset_byte(int m) {
   } return(0);
 }
 
-byte * get_offset_byte(int m) {
+static byte * get_offset_byte(int m) {
   return(capar_byte(_get_offset_byte(m)));
 }
 
-word * _get_offset_word(int m) {
+static word * _get_offset_word(int m) {
   if (var[m].miembro==0) switch(o[var[m].objeto].tipo) {
     case twglo:
       return((word*)&memb[o[var[m].objeto].v0*4+var[m].indice*2]);
@@ -3409,7 +3408,7 @@ word * _get_offset_word(int m) {
   } return(0);
 }
 
-word * get_offset_word(int m) {
+static word * get_offset_word(int m) {
   return(capar_word(_get_offset_word(m)));
 }
 
@@ -3421,9 +3420,9 @@ word * get_offset_word(int m) {
 static char buscar[32];
 static int valor;
 
-void change1(void) { _show_items(); }
+static void change1(void) { _show_items(); }
 
-void change2(void) {
+static void change2(void) {
   _process_items();
   switch(v.active_item) {
     case 1:
@@ -3450,7 +3449,7 @@ void change2(void) {
   }
 }
 
-void change0(void) {
+static void change0(void) {
   v.tipo=1; v.titulo=text[56];
   v.an=126; v.al=14+y_bt;
   v.paint_handler=change1;
@@ -3476,9 +3475,9 @@ void change0(void) {
 
 static char enterstring[256];
 
-void changestring1(void) { _show_items(); }
+static void changestring1(void) { _show_items(); }
 
-void changestring2(void) {
+static void changestring2(void) {
   _process_items();
   switch(v.active_item) {
     case 1:
@@ -3493,7 +3492,7 @@ void changestring2(void) {
   }
 }
 
-void changestring0(void) {
+static void changestring0(void) {
   v.tipo=1; v.titulo=text[60];
   v.an=226; v.al=14+y_bt;
   v.paint_handler=changestring1;
@@ -3510,7 +3509,7 @@ void changestring0(void) {
 //  Main debugging window
 //════════════════════════════════════════════════════════════════════════════
 
-void debug1(void) {
+static void debug1(void) {
   char msg[256];
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2,n;
@@ -3559,7 +3558,7 @@ void debug1(void) {
   wrectangulo(ptr,an,al,c0,47,146-16-32,an-50,43+16+32);
 }
 
-void pinta_segmento(void) {
+static void pinta_segmento(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   int min=27,max=129-16-32,n;
@@ -3576,7 +3575,7 @@ void pinta_segmento(void) {
   wput(ptr,an,al,123,n+1,-43);
 }
 
-byte * change_mode(void) {
+static byte * change_mode(void) {
   new_mode=0; free(v.ptr);
   v.an=304*big2; v.al=(146+46)*big2;
   if ((v.ptr=(byte*)malloc(v.an*v.al))==NULL) exer(1);
@@ -3588,7 +3587,7 @@ byte * change_mode(void) {
   return(v.ptr);
 }
 
-void debug2(void) {
+static void debug2(void) {
   int n,m,iip; //,id;
   float x;
   byte * ptr=v.ptr;
@@ -3961,11 +3960,11 @@ void debug2(void) {
   }*/
 }
 
-void debug3(void) {
+static void debug3(void) {
   ids_old=ids[ids_select]; ids_inc=ids_select-ids_ini;
 }
 
-void debug0(void) {
+static void debug0(void) {
   v.tipo=1; v.titulo=text[64];
   v.an=304; v.al=146+46; // BEWARE Set this too in change mode
   v.paint_handler=debug1;
@@ -3987,7 +3986,7 @@ void debug0(void) {
 //  Functions that draw source code in the debugger window
 //════════════════════════════════════════════════════════════════════════════
 
-void get_line(int n) { // Get line number from IP (instruction pointer) address
+static void get_line(int n) { // Get line number from IP (instruction pointer) address
   int x=0;
   if (line==NULL) return;
   for (x=0;x<num_sentencias;x++) if (n>=line[x*6] && n<=line[x*6+1]) break;
@@ -4002,14 +4001,14 @@ void get_line(int n) { // Get line number from IP (instruction pointer) address
   }
 }
 
-int get_ip(int n) { // Get IP address from line number
+static int get_ip(int n) { // Get IP address from line number
   int x=0;
   if (line==NULL) return(0);
   for (x=0;x<num_sentencias;x++) if (n==line[x*6+2]-1) break;
   if (x<num_sentencias) return(line[x*6]); else return(-1);
 }
 
-void determina_codigo(void) { // Determines what must be displayed for "ids_next"
+static void determina_codigo(void) { // Determines what must be displayed for "ids_next"
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2,l;
   char msg[256];
@@ -4038,7 +4037,7 @@ void determina_codigo(void) { // Determines what must be displayed for "ids_next
 
 }
 
-void pinta_codigo(void) { // Draws the ID
+static void pinta_codigo(void) { // Draws the ID
   byte * p=plinea0,c;
   int n,x,l=linea0;
   byte * ptr=v.ptr;
@@ -4089,19 +4088,19 @@ void pinta_codigo(void) { // Draws the ID
   }
 }
 
-void f_inicio(void) {
+static void f_inicio(void) {
   x_inicio=54;
 }
 
-void f_derecha(void) {
+static void f_derecha(void) {
   x_inicio-=6;
 }
 
-void f_izquierda(void) {
+static void f_izquierda(void) {
   if (x_inicio<54) x_inicio+=6;
 }
 
-void f_arriba(void) {
+static void f_arriba(void) {
   if (linea_sel) {
     linea_sel--;
     if (linea_sel<linea0) {
@@ -4110,7 +4109,7 @@ void f_arriba(void) {
   }
 }
 
-void f_abajo(void) {
+static void f_abajo(void) {
   byte * p;
   int n;
 
@@ -4130,7 +4129,7 @@ void f_abajo(void) {
 
 extern byte strlower[256];
 
-void crear_lista_procesos(void) {
+static void crear_lista_procesos(void) {
   byte *p,*q;
   char cwork[512];
   int linea=0,n;
@@ -4180,7 +4179,7 @@ void crear_lista_procesos(void) {
 
 }
 
-void pintar_lista_procesos(void) {
+static void pintar_lista_procesos(void) {
   byte * ptr=v.ptr,*p;
   char cwork[512];
   int an=v.an/big2,al=v.al/big2;
@@ -4199,7 +4198,7 @@ void pintar_lista_procesos(void) {
   pinta_segmento_procesos();
 }
 
-void pinta_segmento_procesos(void) {
+static void pinta_segmento_procesos(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   int min=27,max=129,n;
@@ -4216,7 +4215,7 @@ void pinta_segmento_procesos(void) {
   wput(ptr,an,al,123+32,n+1,-43);
 }
 
-void lista_procesos1(void) {
+static void lista_procesos1(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   _show_items();
@@ -4237,7 +4236,7 @@ void lista_procesos1(void) {
 
 static int lp_boton;
 
-void lista_procesos2(void) {
+static void lista_procesos2(void) {
   int n;
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
@@ -4323,7 +4322,7 @@ void lista_procesos2(void) {
   }
 }
 
-void lista_procesos0(void) {
+static void lista_procesos0(void) {
   v.tipo=1; v.titulo=text[75];
 
   v.an=166; v.al=161;
@@ -4363,7 +4362,7 @@ static int lp2_select; //???
 
 //extern int cpu_type;
 
-unsigned int get_tick(void);
+static unsigned int get_tick(void);
 
 #pragma aux get_tick= \
  "mov ecx,10h"        \
@@ -4374,7 +4373,7 @@ unsigned int get_tick(void);
 // "mov cl,4"
 // "shrd eax,edx,cl"
 
-void reset_tick(void);
+static void reset_tick(void);
 
 #pragma aux reset_tick= \
  "mov ecx,10h"          \
@@ -4431,7 +4430,7 @@ void process_paint(int id,int n) { // ID, cicles
 
 static int absolut=0;
 
-void crear_lista_profile(void) {
+static void crear_lista_profile(void) {
   int n;
 
   lp_num=0; lp_ini=0; lp_select=0; // Procesos
@@ -4486,7 +4485,7 @@ void crear_lista_profile(void) {
   }
 }
 
-void pintar_lista_profile(void) {
+static void pintar_lista_profile(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   int m,x,porcen,porcen2;
@@ -4630,7 +4629,7 @@ void pintar_lista_profile(void) {
   pinta_segmento_profile();
 }
 
-void pinta_segmento_profile(void) {
+static void pinta_segmento_profile(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   int min=lpy+7,max=lpy+lpnum*lpal-13,n;
@@ -4655,7 +4654,7 @@ void pinta_segmento_profile(void) {
   wput(ptr,an,al,an-lp2esp-11,n+1,-43);
 }
 
-void profile1(void) {
+static void profile1(void) {
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
   char cwork[256];
@@ -4723,7 +4722,7 @@ void profile1(void) {
 
 static int lp2_boton;
 
-void profile2(void) {
+static void profile2(void) {
   int n;
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2;
@@ -4861,7 +4860,7 @@ void profile2(void) {
   }
 }
 
-void profile0(void) {
+static void profile0(void) {
   v.tipo=1; v.titulo=text[86];
 
   v.an=256; v.al=165+15;
