@@ -110,31 +110,32 @@ extern float m_x,m_y;
 extern float ffps2;
 extern double game_ticks,game_frames;
 
-int no_volcar_nada=0;
-int profiler_x,profiler_y;
+static int no_volcar_nada=0;
+static int profiler_x,profiler_y;
 
-int show_items_called=0;
-int get_pos=0,get_cursor=0;     // Clock, cursor position in gets
-int superget=0;
-
-//══════════════════════════════════════════════════════════════════════════
-
-int linea0;     // First line nunmber in the debugger window
-byte * plinea0; // Pointer to first line in debugger window
-
-int mem1,mem2; // Current sentence span in mem[] vector
-int linea1,columna1,linea2,columna2; // Current sentence span
-
-int linea_sel; // Selected line number
-
-int x_inicio=54; // Initial x in source code window
+static int show_items_called=0;
+static int get_pos=0,get_cursor=0;     // Clock, cursor position in gets
+static int superget=0;
 
 //══════════════════════════════════════════════════════════════════════════
 
-int smouse_x,smouse_y,mouse_x=0,mouse_y=0,mouse_b;
+static int linea0;     // First line nunmber in the debugger window
+static byte * plinea0; // Pointer to first line in debugger window
 
-int reloj_debug;
-int ticks_debug;
+static int mem1,mem2; // Current sentence span in mem[] vector
+static int linea1,columna1,linea2,columna2; // Current sentence span
+
+static int linea_sel; // Selected line number
+
+static int x_inicio=54; // Initial x in source code window
+
+//══════════════════════════════════════════════════════════════════════════
+
+static int smouse_x,smouse_y;
+int mouse_x=0,mouse_y=0,mouse_b;
+
+static int reloj_debug;
+static int ticks_debug;
 
 //#define mouse_x (cbd.mouse_cx>>1)
 //#define mouse_y (cbd.mouse_dx)
@@ -142,7 +143,7 @@ int ticks_debug;
 
 //════════════════════════════════════════════════════════════════════════════
 
-int boton=0;
+static int boton=0;
 int ids_old=0,ids_inc;
 
 void exec_process(void);
@@ -150,20 +151,20 @@ void trace_process(void);
 void inspect0(void);
 void debug0(void);
 
-byte * source=NULL, * end_source=NULL;
+static byte * source=NULL, * end_source=NULL;
 
 static int * line=NULL;
-int num_sentencias;
+static int num_sentencias;
 
 //════════════════════════════════════════════════════════════════════════════
 //     Debugger variables 
 //════════════════════════════════════════════════════════════════════════════
 
-clock_t system_clock;// = clock();//(void*) 0x46c;
+static clock_t system_clock;// = clock();//(void*) 0x46c;
 
-char get[256];
+static char get[256];
 
-char * vnom=NULL; // Names vector
+static char * vnom=NULL; // Names vector
 
 #define tnone   0       // Object types in obj[]
 #define tcons   1
@@ -197,7 +198,7 @@ char * vnom=NULL; // Names vector
 #define tpsgl   25      // Pointers to struct
 #define tpslo   26
 
-struct objeto {
+static struct objeto {
   int tipo;
   int nombre;
   int bloque;
@@ -205,60 +206,60 @@ struct objeto {
   int v0,v1,v2,v3,v4,v5;
 } * o=NULL;
 
-int num_obj=0;  // Object count in objects list
+static int num_obj=0;  // Object count in objects list
 
-int num_obj_predefinidos;
+static int num_obj_predefinidos;
 
-int * usado;    // To indicate which objects have been included in var[]
-int * visor;    // To indicate which type of viewer each object uses
+static int * usado;    // To indicate which objects have been included in var[]
+static int * visor;    // To indicate which type of viewer each object uses
 
-struct variables {
+static struct variables {
   int objeto;   // Object index in o[]
   int tab;      // Tabulation (0-no member,1,2,...)
   int miembro;  // Member of ..., as index into var[]
   int indice;   // For tables or structs, element in view
 } * var=NULL;
 
-int num_var=0;  // Number of variables in var[]
+static int num_var=0;  // Number of variables in var[]
 
-int var_ini;    // First variable displayed in window
-int var_select; // Selected variable
+static int var_ini;    // First variable displayed in window
+static int var_select; // Selected variable
 
-int show_const=0,show_global=0,show_local=1,show_private=1;
+static int show_const=0,show_global=0,show_local=1,show_private=1;
 
-int pre_defined=0,user_defined=1;
+static int pre_defined=0,user_defined=1;
 
-int bloque_actual; // Process we're inspecting
-
-//════════════════════════════════════════════════════════════════════════════
-
-int iids,*ids;  // Process IDs, by execution order
-int ids_ini;    // First process displayed in window
-int ids_select; // Process for which 'Hi-lite' information is displayed
-int ids_next;   // Next process in execution order '>'
+static int bloque_actual; // Process we're inspecting
 
 //════════════════════════════════════════════════════════════════════════════
 
-int lp1[512];     // Line number in which processes are
-char * lp2[512];  // Pointers to lines in which processes are defined
-int lp_num;       // Number of processes in the list
-int lp_ini;       // First variable displayed in window
-int lp_select;    // Selected variable
-int lp_sort=0;    // Flag for whether the list is ordered
+static int iids,*ids;  // Process IDs, by execution order
+static int ids_ini;    // First process displayed in window
+static int ids_select; // Process for which 'Hi-lite' information is displayed
+static int ids_next;   // Next process in execution order '>'
+
+//════════════════════════════════════════════════════════════════════════════
+
+static int lp1[512];     // Line number in which processes are
+static char * lp2[512];  // Pointers to lines in which processes are defined
+static int lp_num;       // Number of processes in the list
+static int lp_ini;       // First variable displayed in window
+static int lp_select;    // Selected variable
+static int lp_sort=0;    // Flag for whether the list is ordered
 
 //════════════════════════════════════════════════════════════════════════════
 //      Profiler variables
 //════════════════════════════════════════════════════════════════════════════
 
-byte c_r_low0,c_g_low0,c_b_low0;
+static byte c_r_low0,c_g_low0,c_b_low0;
 
-int obj_start; // Start of first object (&obj[0])
-int obj_size;  // Length of each object (struct objeto)
+static int obj_start; // Start of first object (&obj[0])
+static int obj_size;  // Length of each object (struct objeto)
 
 // The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;
 
-unsigned f_time[256]; // Time used by each function
-unsigned frame_time[256]; // Time used by each function
+static unsigned f_time[256]; // Time used by each function
+static unsigned frame_time[256]; // Time used by each function
 
 //════════════════════════════════════════════════════════════════════════════ 
 //      Debug initialization
@@ -375,7 +376,7 @@ void end_debug(void) {
 //  Initializes the font
 //═════════════════════════════════════════════════════════════════════════════
 
-int old_big=-1;
+static int old_big=-1;
 
 void init_big(void) {
   FILE *f;
@@ -2017,7 +2018,7 @@ void err0(void) {
 //      ERROR dialog box inside a language function
 //═════════════════════════════════════════════════════════════════════════════
 
-char * te;
+static char * te;
 
 void _err1(void) {
   int an=v.an/big2,al=v.al/big2,n;
@@ -2509,7 +2510,7 @@ void debug(void) {
 //  Generate the variables list using the current filter
 //════════════════════════════════════════════════════════════════════════════
 
-int member;
+static int member;
 
 void crear_lista_variables(void) {
   int n,nuevo,incluir;
@@ -2630,7 +2631,7 @@ void incluye_miembros(int padre,int nivel,int index) {
 //  Inspect window
 //════════════════════════════════════════════════════════════════════════════
 
-int _var_ini=-1,_var_select=-1;
+static int _var_ini=-1,_var_select=-1;
 
 void change0(void);
 void changestring0(void);
@@ -2995,7 +2996,7 @@ void inspect3(void) {
   _var_ini=var_ini; _var_select=var_select;
 }
 
-char titulo[256];
+static char titulo[256];
 
 void inspect0(void) {
   int n,x=50;
@@ -3417,8 +3418,8 @@ word * get_offset_word(int m) {
 //═════════════════════════════════════════════════════════════════════════════
 
 #define y_bt 34
-char buscar[32];
-int valor;
+static char buscar[32];
+static int valor;
 
 void change1(void) { _show_items(); }
 
@@ -3473,7 +3474,7 @@ void change0(void) {
 //		Changes the value of a string (in Inspect)
 //═════════════════════════════════════════════════════════════════════════════
 
-char enterstring[256];
+static char enterstring[256];
 
 void changestring1(void) { _show_items(); }
 
@@ -4234,7 +4235,7 @@ void lista_procesos1(void) {
   pintar_lista_procesos();
 }
 
-int lp_boton;
+static int lp_boton;
 
 void lista_procesos2(void) {
   int n;
@@ -4349,14 +4350,14 @@ void lista_procesos0(void) {
 //(The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;)
 
 //unsigned f_time[256]; // Time taken by each function
-  unsigned f_time_total;
-  unsigned f_exec_total;
-  unsigned f_paint_total;
-  unsigned f_max;
+static unsigned f_time_total;
+static unsigned f_exec_total;
+static unsigned f_paint_total;
+static unsigned f_max;
 
-int lp2_num;
-int lp2_ini;
-int lp2_select; //???
+static int lp2_num;
+static int lp2_ini;
+static int lp2_select; //???
 
 //════════════════════════════════════════════════════════════════════════════
 
@@ -4428,7 +4429,7 @@ void process_paint(int id,int n) { // ID, cicles
 #define lp2al  10
 #define lp2esp 98
 
-int absolut=0;
+static int absolut=0;
 
 void crear_lista_profile(void) {
   int n;
@@ -4720,7 +4721,7 @@ void profile1(void) {
   pintar_lista_profile();
 }
 
-int lp2_boton;
+static int lp2_boton;
 
 void profile2(void) {
   int n;
