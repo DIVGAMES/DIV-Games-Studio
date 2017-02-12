@@ -116,6 +116,7 @@ void restore(byte *,byte *);
 void init_ghost(void);
 void crear_ghost(void);
 void find_color(byte,byte,byte);
+byte ffind_color(byte,byte,byte);
 
 // Sprites (s.cpp)
 
