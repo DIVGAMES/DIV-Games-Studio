@@ -2120,7 +2120,7 @@ void e(int texto) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cuadro de diálogo cuando llega una sentencia DEBUG
+//      DEBUG sentence dialog box
 //═════════════════════════════════════════════════════════════════════════════
 
 void deb1(void) {
@@ -2139,7 +2139,7 @@ void deb1(void) {
 void deb2(void) {
   _process_items();
   if (v.active_item==2) {
-    mem[ip-1]=0; // 'Nopea' el debug
+    mem[ip-1]=0; // Changes the DEBUG into a NOP
     fin_dialogo=1;
   }
   if (v.active_item==0) {
@@ -2182,7 +2182,7 @@ void deb(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//    Determina si ya se han ejecutado todos los procesos
+//	  Determines whether all processes have been executed
 //════════════════════════════════════════════════════════════════════════════
 
 int procesos_ejecutados(void) {
@@ -2197,20 +2197,20 @@ int procesos_ejecutados(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Determina ids[] (lista de procesos, por orden de ejecución)
+//		Determins ids[] (process list, by execution order)
 //════════════════════════════════════════════════════════════════════════════
 
 void determina_ids(void) {
   int max,ide,id;
 
-  iids=0; // Nº de procesos
+  iids=0; // Number of processes
   ids_next=-1;
 
-  // Marca todos los procesos para que no estén en la lista
+  // Clears all processes from the list
 
   for (ide=id_start; ide<=id_end; ide+=iloc_len) mem[ide+_Painted]=0;
 
-  // Primero añade a la lista los procesos ya ejecutados
+  // First adds to the list the processes that have already run
 
   id_old=id_start;
 
@@ -2227,7 +2227,7 @@ void determina_ids(void) {
     }
   } while (ide);
 
-  // Después el proceso detenido, en caso de que haya alguno
+  // Then the stopped process, if there's any
 
   if (process_stoped) {
     mem[process_stoped+_Painted]=1;
@@ -2235,7 +2235,7 @@ void determina_ids(void) {
     if (iids<max_procesos) ids[iids++]=process_stoped;
   }
 
-  // Después añade los procesos por ejecutar
+  // Then adds the processes yet to run
 
   do {
     ide=0; max=0x80000000;
@@ -2251,7 +2251,7 @@ void determina_ids(void) {
     }
   } while (ide);
 
-  // Después añade el resto de procesos (cualquier estado)
+  // Then adds all other processes (any state)
 
   do {
     ide=0; max=0x80000000;
@@ -2268,7 +2268,7 @@ void determina_ids(void) {
 
 
 //════════════════════════════════════════════════════════════════════════════
-//      Pinta la lista de procesos y la información relativa al seleccionado
+//      Draw the process list and info on selected one
 //════════════════════════════════════════════════════════════════════════════
 
 void pinta_lista_proc(void) {
@@ -2277,11 +2277,11 @@ void pinta_lista_proc(void) {
   int n,m,x;
   int an=v.an/big2,al=v.al/big2;
 
-  wbox(ptr,an,al,c1,4,20,118,126-5-16-32); // Relleno listbox procesos
+  wbox(ptr,an,al,c1,4,20,118,126-5-16-32); // Fill process listbox
 
   for (m=ids_ini;m<ids_ini+9 && m<iids;m++) {
     if (m==ids_select) { x=c4;
-      wbox(ptr,an,al,c01,4,20+(m-ids_ini)*8,118,9); // Relleno listbox procesos
+      wbox(ptr,an,al,c01,4,20+(m-ids_ini)*8,118,9); // Fill process listbox
     } else x=c3;
     for (n=0;n<num_obj;n++)
       if (o[n].tipo==tproc && o[n].v0==mem[ids[m]+_Bloque]) break;
@@ -2311,7 +2311,7 @@ void pinta_lista_proc(void) {
   wrectangulo(ptr,an,al,c0,91,19,1,128-5-16-32);
   wrectangulo(ptr,an,al,c0,91+8,19,1,128-5-16-32);
 
-  wbox(ptr,an,al,c12,133,11,119+304-256,7); // Identificador del proceso
+  wbox(ptr,an,al,c12,133,11,119+304-256,7); // Process ID
   strcpy(msg,(char *)text[19]);
   itoa(ids[ids_select],msg+strlen(msg),10);
   switch(mem[ids[ids_select]+_Status]) {
@@ -2330,10 +2330,10 @@ void pinta_lista_proc(void) {
      strcpy(msg,vnom+o[n].nombre);
   else strcpy(msg,(char *)text[9]);
 
-  wbox(ptr,an,al,c1,134,20,118+304-256,9); // Caja nombre proceso
+  wbox(ptr,an,al,c1,134,20,118+304-256,9); // Process name box
   wwrite_in_box(ptr,an,252,al,135,21,0,(byte *)msg,c3);
 
-  wbox(ptr,an,al,c12,200-16+304-256-4,47,54+16+4,32); // Variables principales del proceso
+  wbox(ptr,an,al,c12,200-16+304-256-4,47,54+16+4,32); // Process main variables
 
   if (mem[ids[ids_select]+_Resolution])
        sprintf(msg,"x=%f",(float)mem[ids[ids_select]+_X]/(float)mem[ids[ids_select]+_Resolution]);
@@ -2369,14 +2369,14 @@ void pinta_lista_proc(void) {
   wwrite_in_box(ptr,an,an-2,al,an-39,48+24,1,(byte *)msg,c1);
   wwrite_in_box(ptr,an,an-2,al,an-40,48+24,1,(byte *)msg,c3);
 
-  wbox(ptr,an,al,c1,134,32,46,46); // Gráfico del proceso
+  wbox(ptr,an,al,c1,134,32,46,46); // Process graphic
   process_graph(ids[ids_select],ptr+32*big2*v.an+134*big2,v.an,46*big2,46*big2);
 
   pinta_segmento();
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Pinta el gráfico de un proceso para el debugger
+//		Draws the graphic for a process in the debugger
 //════════════════════════════════════════════════════════════════════════════
 
 void process_graph(int id,byte *q,int van,int an,int al) {
@@ -2430,15 +2430,15 @@ void process_graph(int id,byte *q,int van,int an,int al) {
   if ((buffer=(byte *)malloc(buffer_an*buffer_al))==NULL) return;
   memset(buffer,0,buffer_an*buffer_al);
 
-  // Ahora se tiene que pintar el sprite en el buffer(clip...)
+  // Now paint the sprite in the buffer(clip...)
 
   put_collision(buffer,ptr,x,y,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
 
-  // ventana q, van, de anxal
+  // ventana q, van, de an*al
 
-  wbox(v.ptr,v.an/big2,v.al/big2,c0,134,32,an/big2,al/big2); // Pone el fondo negro
+  wbox(v.ptr,v.an/big2,v.al/big2,c0,134,32,an/big2,al/big2); // Draws black background
 
-  if (buffer_an<=an && buffer_al<=al) { // Si coge en la ventana, sale centrado
+  if (buffer_an<=an && buffer_al<=al) { // If it fits in window, center it
 
     q+=(an-buffer_an)/2+((al-buffer_al)/2)*van;
     p=buffer; old_an=buffer_an; do {
@@ -2446,7 +2446,7 @@ void process_graph(int id,byte *q,int van,int an,int al) {
       q+=van-(buffer_an=old_an);
     } while (--buffer_al);
 
-  } else { // Si no coge en la ventana realiza un escalado
+  } else { // If it doesn't fit in window, scale it
 
     ixr=(float)(buffer_an*256)/(float)an;
     iyr=(float)(buffer_al*256)/(float)al;
@@ -2474,7 +2474,7 @@ void process_graph(int id,byte *q,int van,int an,int al) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Función invocada como debug (al pulsar F12 durante la ejecución)
+//      Function invoked as debug (when pressing F12 during execution)
 //════════════════════════════════════════════════════════════════════════════
 
 void debug(void) {
@@ -2506,7 +2506,7 @@ void debug(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//  Crea la lista de variables aplicando el filtro actual
+//  Generate the variables list using the current filter
 //════════════════════════════════════════════════════════════════════════════
 
 int member;
@@ -2518,11 +2518,11 @@ void crear_lista_variables(void) {
 
   num_var=0;
 
-  // Añade las variables por orden alfabético a la lista var[num_var]
+  // Add variables to var[num_var] list in alphabetical order
 
   do {
     nuevo=0;
-    for (n=0;n<num_obj;n++) { // Busca la menor alfabéticamente
+    for (n=0;n<num_obj;n++) { // Searches first one alphabetically
 
       if (!pre_defined && n<num_obj_predefinidos) continue;
       if (!user_defined && n>=num_obj_predefinidos) continue;
@@ -2627,7 +2627,7 @@ void incluye_miembros(int padre,int nivel,int index) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//  Ventana Inspect
+//  Inspect window
 //════════════════════════════════════════════════════════════════════════════
 
 int _var_ini=-1,_var_select=-1;
@@ -2641,11 +2641,11 @@ void inspect1(void) {
   _show_items();
   wwrite(ptr,an,al,4,al-14,0,text[38],c3);
 
-  wrectangulo(ptr,an,al,c0,3,19,128+32+64,83); // Límites listbox procesos
+  wrectangulo(ptr,an,al,c0,3,19,128+32+64,83); // Processes listbox limits
   wrectangulo(ptr,an,al,c0,122+32+64,19,9,83);
   wrectangulo(ptr,an,al,c0,122+32+64,27,9,83-16);
 
-  wput(ptr,an,al,123+32+64,20,-39); // Boton arriba / abajo (pulsados 41,42)
+  wput(ptr,an,al,123+32+64,20,-39); // Up/down buttons (pressed 41,42)
   wput(ptr,an,al,123+32+64,134-40,-40);
 
   crear_lista_variables();
@@ -2672,7 +2672,7 @@ void pinta_segmento2(void) {
   int min=27,max=89,n;
   float x;
 
-  wbox(ptr,an,al,c2,123+32+64,28,7,65); // Borra la barra del slider
+  wbox(ptr,an,al,c2,123+32+64,28,7,65); // Clears the slider bar
 
   if (num_var<=1) n=min; else {
     x=(float)var_select/(float)(num_var-1);
@@ -2775,7 +2775,7 @@ void inspect2(void) {
     }
   }
 
-  if (scan_code==71) { // Inicio
+  if (scan_code==71) { // Home key
     if (var[var_select].objeto>0)
     switch(o[var[var_select].objeto].tipo) {
       case tpigl: case tpilo: case tpwgl: case tpwlo:
@@ -2804,7 +2804,7 @@ void inspect2(void) {
     }
   }
 
-  if (scan_code==79) { // Fin
+  if (scan_code==79) { // End key
     if (var[var_select].objeto>0)
     switch(o[var[var_select].objeto].tipo) {
       case tpigl: case tpilo: case tpwgl: case tpwlo:
@@ -2817,7 +2817,7 @@ void inspect2(void) {
             case tpilo: case tpwlo: case tpblo: case tpclo: case tpslo:
               o[var[var_select].objeto].tipo=tvloc; break;
           } n=memo(get_offset(var_select)); o[var[var_select].objeto].tipo=tipo;
-          if (!n) break; // No si el puntero es NULL
+          if (!n) break; // Not if pointer is null
         }
         if (o[var[var_select].objeto].v2==-1) {
           var[var_select].indice=0;
@@ -2833,7 +2833,7 @@ void inspect2(void) {
         break;
       case tpsgl: case tpslo:
         if (var[var_select].indice==-1) {
-          if (memo(get_offset(var_select))==0) break; // No deja ver la estructrura si el puntero es NULL
+          if (memo(get_offset(var_select))==0) break; // Doesn't show the struct if pointer is null
           var[var_select].indice=0;
           if (!var[var_select].miembro) {
             member=o[var[var_select].objeto].v1+1;
@@ -2933,7 +2933,7 @@ void inspect2(void) {
           break;
         case tpsgl: case tpslo:
           if (var[var_select].indice==-1) {
-            if (memo(get_offset(var_select))==0) break; // No deja ver la estructrura si el puntero es NULL
+            if (memo(get_offset(var_select))==0) break; // Doesn't show the structure if pointer is null
           }
           if (o[var[var_select].objeto].v3==-1) var[var_select].indice++;
           else if (var[var_select].indice<o[var[var_select].objeto].v2-1) var[var_select].indice++;
@@ -3040,10 +3040,10 @@ void inspect0(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//  Pinta la lista de variables dentro de listbox
+//  Draws variables list in listbox
 //════════════════════════════════════════════════════════════════════════════
 
-// Funciones para evitar los page fault
+// Functions to avoid page faults
 
 byte * capar_byte(byte * dir) {
   memptrsize offset;
@@ -3067,13 +3067,13 @@ void pinta_lista_var(void) {
   int an=v.an/big2,al=v.al/big2;
   int m,tipo,fin;
 
-  wbox(ptr,an,al,c1,4,20,150+64,81); // Relleno listbox procesos
+  wbox(ptr,an,al,c1,4,20,150+64,81); // Fill processes listbox
 
   scan_code=0; ascii=0; fin=var_ini+10;
 
   for (m=var_ini;m<fin && m<num_var;m++) {
     if (m==var_select) {
-      wbox(ptr,an,al,c01,4,20+(m-var_ini)*8,150+64,9); // Relleno listbox procesos
+      wbox(ptr,an,al,c01,4,20+(m-var_ini)*8,150+64,9); // Fill processes listbox
       x=c4;
     } else x=c3;
     if (var[m].objeto<0) {
@@ -3154,13 +3154,13 @@ void pinta_lista_var(void) {
         else goto show_tabla;
       show_tabla:
         strcat(msg,"[");
-        if (o[var[m].objeto].v3==-1) { // Tabla de 1 dimensión
+        if (o[var[m].objeto].v3==-1) { // 1D table
           itoa(var[m].indice,msg+strlen(msg),10);
-        } else if (o[var[m].objeto].v4==-1) { // Tabla de 2 dimensiones
+        } else if (o[var[m].objeto].v4==-1) { // 2D table
           itoa(var[m].indice%(o[var[m].objeto].v2+1),msg+strlen(msg),10);
           strcat(msg,",");
           itoa(var[m].indice/(o[var[m].objeto].v2+1),msg+strlen(msg),10);
-        } else { // Tabla de 3 dimensiones
+        } else { // 3D table
           itoa(var[m].indice%(o[var[m].objeto].v2+1),msg+strlen(msg),10);
           strcat(msg,",");
           itoa((var[m].indice/(o[var[m].objeto].v2+1))%(o[var[m].objeto].v3+1),msg+strlen(msg),10);
@@ -3195,13 +3195,13 @@ void pinta_lista_var(void) {
         if (o[var[m].objeto].v4==-1 && o[var[m].objeto].v3==0) break;
       show_indice:
         strcat(msg,"[");
-        if (o[var[m].objeto].v4==-1) { // Struct de 1 dimensión
+        if (o[var[m].objeto].v4==-1) { // 1D struct
           itoa(var[m].indice,msg+strlen(msg),10);
-        } else if (o[var[m].objeto].v5==-1) { // Struct de 2 dimensiones
+        } else if (o[var[m].objeto].v5==-1) { // 2D struct
           itoa(var[m].indice%(o[var[m].objeto].v3+1),msg+strlen(msg),10);
           strcat(msg,",");
           itoa(var[m].indice/(o[var[m].objeto].v3+1),msg+strlen(msg),10);
-        } else { // Struct de 3 dimensiones
+        } else { // 3D struct
           itoa(var[m].indice%(o[var[m].objeto].v3+1),msg+strlen(msg),10);
           strcat(msg,",");
           itoa((var[m].indice/(o[var[m].objeto].v3+1))%(o[var[m].objeto].v4+1),msg+strlen(msg),10);
@@ -3218,7 +3218,7 @@ void pinta_lista_var(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//  Visualiza un objeto según su visor[]
+//  Visualizes an object according to its visor[]
 //════════════════════════════════════════════════════════════════════════════
 
 void visualiza(int valor, int objeto, char * str) {
@@ -3286,7 +3286,7 @@ void visualiza(int valor, int objeto, char * str) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//  Obtiene el offset dentro de mem de una de las variables de la lista
+//	Gets the offset into mem of a variable in the list
 //════════════════════════════════════════════════════════════════════════════
 
 int get_offset(int m) {
@@ -3413,7 +3413,7 @@ word * get_offset_word(int m) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cambia el valor de una variable (en Inspect)
+//		Changes a variable's value (in Inspect)
 //═════════════════════════════════════════════════════════════════════════════
 
 #define y_bt 34
@@ -3470,7 +3470,7 @@ void change0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cambia el valor de un string (en Inspect)
+//		Changes the value of a string (in Inspect)
 //═════════════════════════════════════════════════════════════════════════════
 
 char enterstring[256];
@@ -3506,7 +3506,7 @@ void changestring0(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//	Ventana principal de debugging
+//  Main debugging window
 //════════════════════════════════════════════════════════════════════════════
 
 void debug1(void) {
@@ -3526,21 +3526,21 @@ void debug1(void) {
   wwrite(ptr,an,al,4,11,0,(byte *)msg,c1);
   wwrite(ptr,an,al,3,11,0,(byte *)msg,c3);
 
-  wrectangulo(ptr,an,al,c0,3,19,128,128-5-16-32); // Límites listbox procesos
+  wrectangulo(ptr,an,al,c0,3,19,128,128-5-16-32); // Limits of processes listbox
   wrectangulo(ptr,an,al,c0,122,19,9,128-5-16-32);
   wrectangulo(ptr,an,al,c0,122,27,9,112-5-16-32);
 
-  wrectangulo(ptr,an,al,c0,133,19,120+304-256,11); // Caja nombre proceso
+  wrectangulo(ptr,an,al,c0,133,19,120+304-256,11); // Process name box
 
-  wrectangulo(ptr,an,al,c0,133,31,48,48); // Caja gráfico
+  wrectangulo(ptr,an,al,c0,133,31,48,48); // Graphic box
 
-  wput(ptr,an,al,123,20,-39); // Boton arriba / abajo (pulsados 41,42)
+  wput(ptr,an,al,123,20,-39); // Up/down buttons (pressed 41,42)
   wput(ptr,an,al,123,139-5-16-32,-40);
 
   determina_ids();
 
   for (n=0;n<iids;n++) if (ids[n]==ids_old) break;
-  if (n<iids) { // Si el proceso seleccionado antes sigue en la lista ...
+  if (n<iids) { // If previously-selected process is still in the list...
     ids_select=n; ids_ini=ids_select-ids_inc;
     if (ids_ini && ids_ini+13>iids) ids_ini=iids-13;
     if (ids_ini<0) ids_ini=0;
@@ -3564,7 +3564,7 @@ void pinta_segmento(void) {
   int min=27,max=129-16-32,n;
   float x;
 
-  wbox(ptr,an,al,c2,123,28,7,105-16-32); // Borra la barra del slider
+  wbox(ptr,an,al,c2,123,28,7,105-16-32); // Clear the slider bar
 
   if (iids==1) n=min; else {
     x=(float)ids_select/(float)(iids-1);
@@ -3745,7 +3745,7 @@ void debug2(void) {
         memcpy(copia_debug,copia,vga_an*vga_al);
         call(v.paint_handler);
         for (n=0;n<iids;n++) if (ids[n]==ids_old) break;
-        if (n<iids) { // Si el proceso seleccionado antes sigue en la lista ...
+        if (n<iids) { // If previously-selected process is still in the list...
           ids_select=n; ids_ini=ids_select-ids_inc;
           if (ids_ini && ids_ini+13>iids) ids_ini=iids-13;
           if (ids_ini<0) ids_ini=0;
@@ -3760,9 +3760,9 @@ void debug2(void) {
     case 1: // Goto
       goto_proc:
       dialogo(lista_procesos0);
-      //int linea0;     // Número de línea inicial de la ventana del debugger
-      //byte * plinea0; // Puntero a la primera línea de la ventana del debugger
-      //int linea_sel; // Nº de línea seleccionada
+      //int linea0;     // First line number in debugger window
+      //byte * plinea0; // Pointer to first line in debugger window
+      //int linea_sel; // Selected line number
       if (v_aceptar) {
         x_inicio=54;
         while (linea0>lp1[lp_select]) {
@@ -3777,7 +3777,7 @@ void debug2(void) {
     case 2: // Breakpoint
       set_break:
       for (n=0;n<max_breakpoint;n++) if (breakpoint[n].line==linea_sel) break;
-      if (n<max_breakpoint) { // Se desactiva un breakpoint
+      if (n<max_breakpoint) { // A breakpoint is disabled
         breakpoint[n].line=-1; mem[abs(breakpoint[n].offset)]=breakpoint[n].code;
         pinta_codigo(); v.volcar=1;
       } else {
@@ -3849,13 +3849,13 @@ void debug2(void) {
     case 5: // Step
       step_proc:
 
-      // Si se llama a una "function", se hace un Go Here! al final
+	  // When calling a function, a "Go Here!" is performed at the end
 
       for (iip=mem1;iip<mem2;iip++) {
 
-        // ¡OJO!, para saber si la sentencia siguiente llama a una función,
-        // se busca un call. Esto es algo impreciso, ya que un cal es un
-        // "26", y puede haber un dato constante con ese valor.
+		// BEWARE! To know if next sentence calls a function, we search for a "call"
+		// This is a tad imprecise, as a 'cal' is a 26, and there could be constant
+		// data with that same value
 
         if (mem[iip]==lcal) if (memo(mem[iip+1])==ltyp && memo(mem[iip+1]+2)==lnop) {
           for (n=0;n<max_breakpoint;n++) if (breakpoint[n].line==-1) break;
@@ -3869,7 +3869,7 @@ void debug2(void) {
             fin_dialogo=1; break;
           }
         }
-      } // Si no quedan breakpoints, se hará un Trace.
+      } // If no breakpoints left, a Trace will be performed
 
       process_level=0;
       do { trace_process();
@@ -3966,7 +3966,7 @@ void debug3(void) {
 
 void debug0(void) {
   v.tipo=1; v.titulo=text[64];
-  v.an=304; v.al=146+46; // OJO Ponerlo también en change mode
+  v.an=304; v.al=146+46; // BEWARE Set this too in change mode
   v.paint_handler=debug1;
   v.click_handler=debug2;
   v.close_handler=debug3;
@@ -3983,10 +3983,10 @@ void debug0(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//  Funciones que pintan el código fuente en la ventana del debugger
+//  Functions that draw source code in the debugger window
 //════════════════════════════════════════════════════════════════════════════
 
-void get_line(int n) { // A partir de una dirección IP, obtiene la pos. de la sentencia
+void get_line(int n) { // Get line number from IP address
   int x=0;
   if (line==NULL) return;
   for (x=0;x<num_sentencias;x++) if (n>=line[x*6] && n<=line[x*6+1]) break;
@@ -4001,7 +4001,7 @@ void get_line(int n) { // A partir de una dirección IP, obtiene la pos. de la s
   }
 }
 
-int get_ip(int n) { // A partir de una línea, obtiene la dirección IP de la sentencia
+int get_ip(int n) { // Get IP address from line number
   int x=0;
   if (line==NULL) return(0);
   for (x=0;x<num_sentencias;x++) if (n==line[x*6+2]-1) break;
