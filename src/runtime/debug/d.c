@@ -90,7 +90,7 @@ static void draw_var_list(void);
 static void draw_segment2(void);
 static int get_offset(int m);
 static int memo(int dir);
-static void display(int valor, int objeto, char *str);
+static void display(int valor, int object, char *str);
 static int _get_offset(int m);
 static void determine_id(void);
 static void f_down(void);
@@ -148,7 +148,7 @@ static int ticks_debug;
 
 //════════════════════════════════════════════════════════════════════════════
 
-static int boton = 0;
+static int button = 0;
 int ids_old = 0, ids_inc;
 
 extern void exec_process(void);
@@ -159,7 +159,7 @@ static void debug0(void);
 static byte *source = NULL, *end_source = NULL;
 
 static int *line = NULL;
-static int num_sentencias;
+static int num_sentences;
 
 //════════════════════════════════════════════════════════════════════════════
 //     Debugger variables
@@ -169,7 +169,7 @@ static clock_t system_clock; // = clock();//(void*) 0x46c;
 
 static char get[256];
 
-static char *vnom = NULL; // Names vector
+static char *vnames = NULL; // Names vector
 
 #define tnone 0 // Object types in obj[]
 #define tcons 1
@@ -203,8 +203,8 @@ static char *vnom = NULL; // Names vector
 #define tpsgl 25 // Pointers to struct
 #define tpslo 26
 
-static struct objeto {
-	int tipo;
+static struct object {
+	int type;
 	int nombre;
 	int bloque;
 	int miembro;
@@ -219,7 +219,7 @@ static int *usado; // To indicate which objects have been included in var[]
 static int *visor; // To indicate which type of viewer each object uses
 
 static struct variables {
-	int objeto;  // Object index in o[]
+	int object;  // Object index in o[]
 	int tab;     // Tabulation (0-no member,1,2,...)
 	int miembro; // Member of ..., as index into var[]
 	int indice;  // For tables or structs, element in view
@@ -259,7 +259,7 @@ static int lp_sort = 0; // Flag for whether the list is ordered
 static byte c_r_low0, c_g_low0, c_b_low0;
 
 static int obj_start; // Start of first object (&obj[0])
-static int obj_size;  // Length of each object (struct objeto)
+static int obj_size;  // Length of each object (struct object)
 
 // The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;
 
@@ -281,7 +281,7 @@ void init_debug(void) {
 	if ((f = fopen("system/exec.dbg", "rb")) != NULL) {
 		fseek(f, 0, SEEK_END);
 		n = ftell(f) - 4;
-		if ((o = (struct objeto *)malloc(n)) != NULL) {
+		if ((o = (struct object *)malloc(n)) != NULL) {
 			fseek(f, 0, SEEK_SET);
 			fread(&num_obj, 4, 1, f);
 			fread(&num_obj_predefinidos, 4, 1, f);
@@ -289,7 +289,7 @@ void init_debug(void) {
 			fread(&obj_size, 4, 1, f);
 			fread(o, 1, n, f);
 			fclose(f);
-			vnom = (char *)o + num_obj * sizeof(struct objeto) + 4;
+			vnames = (char *)o + num_obj * sizeof(struct object) + 4;
 		} else {
 			fclose(f);
 			exer(1);
@@ -307,7 +307,7 @@ void init_debug(void) {
 			fseek(f, 0, SEEK_SET);
 			fread(line, 1, n, f);
 			fclose(f);
-			num_sentencias = n / (6 * 4);
+			num_sentences = n / (6 * 4);
 		} else {
 			fclose(f);
 			exer(1);
@@ -342,42 +342,42 @@ void init_debug(void) {
 
 	memset(visor, 0, sizeof(int) * num_obj);
 	for (n = 0; n < num_obj; n++) {
-		if (o[n].tipo == tcglo || o[n].tipo == tcloc) visor[n] = 2;
-		if (o[n].tipo == tcons && o[n].v1 == 1) visor[n] = 2;
-		if ((o[n].tipo == tvloc || o[n].tipo == tvglo || o[n].tipo == tcons) &&
-		    (vnom[o[n].nombre] == 'a' || vnom[o[n].nombre] == '\xa0' /*á*/) && vnom[o[n].nombre + 1] == 'n' &&
-		    vnom[o[n].nombre + 2] == 'g')
+		if (o[n].type == tcglo || o[n].type == tcloc) visor[n] = 2;
+		if (o[n].type == tcons && o[n].v1 == 1) visor[n] = 2;
+		if ((o[n].type == tvloc || o[n].type == tvglo || o[n].type == tcons) &&
+		    (vnames[o[n].nombre] == 'a' || vnames[o[n].nombre] == '\xa0' /*á*/) && vnames[o[n].nombre + 1] == 'n' &&
+		    vnames[o[n].nombre + 2] == 'g')
 			visor[n] = 4;
-		if (o[n].tipo == tcons && !strcmp(vnom + o[n].nombre, "pi")) visor[n] = 4;
-		if ((o[n].tipo == tvloc || o[n].tipo == tvglo) &&
-		    (vnom[o[n].nombre + 2] == 'e' || (vnom[o[n].nombre + 2] >= '0' && vnom[o[n].nombre + 2] <= '9')) &&
-		    vnom[o[n].nombre] == 'i' && vnom[o[n].nombre + 1] == 'd')
+		if (o[n].type == tcons && !strcmp(vnames + o[n].nombre, "pi")) visor[n] = 4;
+		if ((o[n].type == tvloc || o[n].type == tvglo) &&
+		    (vnames[o[n].nombre + 2] == 'e' || (vnames[o[n].nombre + 2] >= '0' && vnames[o[n].nombre + 2] <= '9')) &&
+		    vnames[o[n].nombre] == 'i' && vnames[o[n].nombre + 1] == 'd')
 			visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "caller_id")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "father")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "bigbro")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "smallbro")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "son")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "process_id")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "id_scan")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "type_scan")) visor[n] = 3;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "is_executed")) visor[n] = 1;
-		if (o[n].tipo == tvloc && !strcmp(vnom + o[n].nombre, "is_painted")) visor[n] = 1;
-		if (o[n].tipo == tvglo && !strcmp(vnom + o[n].nombre, "fading")) visor[n] = 1;
-		if (o[n].tipo == ttglo && !strcmp(vnom + o[n].nombre, "argv")) visor[n] = 2;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "caller_id")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "father")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "bigbro")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "smallbro")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "son")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "process_id")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "id_scan")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "type_scan")) visor[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "is_executed")) visor[n] = 1;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].nombre, "is_painted")) visor[n] = 1;
+		if (o[n].type == tvglo && !strcmp(vnames + o[n].nombre, "fading")) visor[n] = 1;
+		if (o[n].type == ttglo && !strcmp(vnames + o[n].nombre, "argv")) visor[n] = 2;
 
-		if (o[n].tipo == ttglo && !strcmp(vnom + o[n].nombre, "name") && o[n - 2].tipo == tsglo &&
-		    !strcmp(vnom + o[n - 2].nombre, "dirinfo"))
+		if (o[n].type == ttglo && !strcmp(vnames + o[n].nombre, "name") && o[n - 2].type == tsglo &&
+		    !strcmp(vnames + o[n - 2].nombre, "dirinfo"))
 			visor[n] = 2;
-		if (o[n].tipo == tvglo && !strcmp(vnom + o[n].nombre, "attrib") && o[n - 13].tipo == tsglo &&
-		    !strcmp(vnom + o[n - 13].nombre, "fileinfo"))
+		if (o[n].type == tvglo && !strcmp(vnames + o[n].nombre, "attrib") && o[n - 13].type == tsglo &&
+		    !strcmp(vnames + o[n - 13].nombre, "fileinfo"))
 			visor[n] = 6;
 	}
 
 	// Initializes timing of process blocks
 
 	for (n = 0; n < num_obj; n++) {
-		if (o[n].tipo == tproc) {
+		if (o[n].type == tproc) {
 			o[n].v4 = 0; // Time_exec
 			o[n].v5 = 0; // Time_paint
 		}
@@ -1375,7 +1375,7 @@ static void wwrite_in_box(byte *copia,
                           byte *ptr,
                           byte c) {
 
-	int an, al, boton, multi;
+	int an, al, button, multi;
 	int centro = centro_org, x = x_org, y = y_org;
 
 	struct _car {
@@ -1399,10 +1399,10 @@ static void wwrite_in_box(byte *copia,
 		multi = 0;
 
 	if (*ptr == '\xd') {
-		boton = 1;
+		button = 1;
 		ptr++;
 	} else
-		boton = 0;
+		button = 0;
 
 	car = (struct _car *)(text_font + 1);
 
@@ -1448,7 +1448,7 @@ static void wwrite_in_box(byte *copia,
 			break;
 	}
 
-	if (boton)
+	if (button)
 		if (c != c0) {
 			wbox(copia, an_real_copia, al_copia, c2, x - 2, y - 2, an + 4, al + 4);
 			wrectangle(copia, an_real_copia, al_copia, c0, x - 3, y - 3, an + 6, al + 6);
@@ -1611,7 +1611,7 @@ wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia, byte *p, int x
 //═════════════════════════════════════════════════════════════════════════════
 
 static void explode(int x, int y, int an, int al) {
-	int n = 0, tipo = v.tipo, b = big;
+	int n = 0, type = v.tipo, b = big;
 	int xx, yy, aan, aal;
 	if (dont_blit_anything) return;
 	v.tipo = 0;
@@ -1631,7 +1631,7 @@ static void explode(int x, int y, int an, int al) {
 		update_box(xx + aan - 1, yy, 1, aal);
 		update_box(xx, yy + aal - 1, aan, 1);
 	}
-	v.tipo = tipo;
+	v.tipo = type;
 	big = b;
 }
 
@@ -1657,7 +1657,7 @@ static void implode(int x, int y, int an, int al) {
 }
 
 static void extrude(int x, int y, int an, int al, int x2, int y2, int an2, int al2) {
-	int n = 9, tipo = v.tipo, b = big;
+	int n = 9, type = v.tipo, b = big;
 	int xx, yy, aan, aal;
 	if (dont_blit_anything) return;
 	v.tipo = 0;
@@ -1675,7 +1675,7 @@ static void extrude(int x, int y, int an, int al, int x2, int y2, int an2, int a
 		retrazo();
 	} while (--n);
 	big = b;
-	v.tipo = tipo;
+	v.tipo = type;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -2626,9 +2626,9 @@ static void _err1(void) {
 	wwrite(v.ptr, an, al, 4, 12, 0, text[8], c4);
 	if (num_obj) {
 		for (n = 0; n < num_obj; n++)
-			if (o[n].tipo == tproc && o[n].v0 == mem[id + _Bloque]) break;
+			if (o[n].type == tproc && o[n].v0 == mem[id + _Bloque]) break;
 		if (n < num_obj)
-			wwrite(v.ptr, an, al, 46, 12, 0, (byte *)vnom + o[n].nombre, c3);
+			wwrite(v.ptr, an, al, 46, 12, 0, (byte *)vnames + o[n].nombre, c3);
 		else
 			wwrite(v.ptr, an, al, 46, 12, 0, text[9], c3);
 	} else
@@ -2743,9 +2743,9 @@ static void deb1(void) {
 	wwrite(v.ptr, an, al, 4, 12, 0, text[8], c4);
 	if (num_obj) {
 		for (n = 0; n < num_obj; n++)
-			if (o[n].tipo == tproc && o[n].v0 == mem[id + _Bloque]) break;
+			if (o[n].type == tproc && o[n].v0 == mem[id + _Bloque]) break;
 		if (n < num_obj)
-			wwrite(v.ptr, an, al, 46, 12, 0, (byte *)vnom + o[n].nombre, c3);
+			wwrite(v.ptr, an, al, 46, 12, 0, (byte *)vnames + o[n].nombre, c3);
 		else
 			wwrite(v.ptr, an, al, 46, 12, 0, text[9], c3);
 	} else
@@ -2939,9 +2939,9 @@ static void pinta_lista_proc(void) {
 		} else
 			x = c3;
 		for (n = 0; n < num_obj; n++)
-			if (o[n].tipo == tproc && o[n].v0 == mem[ids[m] + _Bloque]) break;
+			if (o[n].type == tproc && o[n].v0 == mem[ids[m] + _Bloque]) break;
 		if (n < num_obj)
-			strcpy(msg, (char *)vnom + o[n].nombre);
+			strcpy(msg, (char *)vnames + o[n].nombre);
 		else
 			strcpy(msg, (char *)text[9]);
 		strcat(msg, "(");
@@ -2984,9 +2984,9 @@ static void pinta_lista_proc(void) {
 	wwrite(ptr, an, al, 133, 11, 0, (byte *)msg, c3);
 
 	for (n = 0; n < num_obj; n++)
-		if (o[n].tipo == tproc && o[n].v0 == mem[ids[ids_select] + _Bloque]) break;
+		if (o[n].type == tproc && o[n].v0 == mem[ids[ids_select] + _Bloque]) break;
 	if (n < num_obj)
-		strcpy(msg, vnom + o[n].nombre);
+		strcpy(msg, vnames + o[n].nombre);
 	else
 		strcpy(msg, (char *)text[9]);
 
@@ -3241,7 +3241,7 @@ static void crear_lista_variables(void) {
 			if (usado[n]) continue;
 			if (o[n].miembro) continue;
 
-			switch (o[n].tipo) {
+			switch (o[n].type) {
 				case tcons: incluir = show_const; break;
 				case tcglo:
 				case tvglo:
@@ -3276,16 +3276,16 @@ static void crear_lista_variables(void) {
 				default: incluir = 0; break;
 			}
 			if (incluir) {
-				if (!nuevo || (nuevo && strcmp(vnom + o[n].nombre, vnom + o[nuevo].nombre) == -1)) { nuevo = n; }
+				if (!nuevo || (nuevo && strcmp(vnames + o[n].nombre, vnames + o[nuevo].nombre) == -1)) { nuevo = n; }
 			}
 		}
 		if (nuevo) {
-			var[num_var].objeto = nuevo;
+			var[num_var].object = nuevo;
 			var[num_var].tab = 0;
 			var[num_var].miembro = 0;
 			usado[nuevo] = 1;
 
-			switch (o[nuevo].tipo) {
+			switch (o[nuevo].type) {
 				case tpigl:
 				case tpwgl:
 				case tpbgl:
@@ -3300,11 +3300,11 @@ static void crear_lista_variables(void) {
 			}
 			num_var++;
 
-			if (o[nuevo].tipo == tsglo || o[nuevo].tipo == tsloc) {
+			if (o[nuevo].type == tsglo || o[nuevo].type == tsloc) {
 				member = nuevo + 1;
 				include_members(num_var, 1, var[num_var - 1].indice);
 			}
-			if (o[nuevo].tipo == tpsgl || o[nuevo].tipo == tpslo) {
+			if (o[nuevo].type == tpsgl || o[nuevo].type == tpslo) {
 				member = o[nuevo].v1 + 1;
 				include_members(num_var, 1, var[num_var - 1].indice);
 			}
@@ -3317,10 +3317,10 @@ static void excluye_miembros(int padre, int nivel, int index) {
 	m = o[member].miembro;
 	while (m == o[member].miembro) {
 		if (index == -1)
-			var[padre].objeto = -member;
+			var[padre].object = -member;
 		else
-			var[padre].objeto = member;
-		switch (o[member].tipo) {
+			var[padre].object = member;
+		switch (o[member].type) {
 			case tpigl:
 			case tpwgl:
 			case tpbgl:
@@ -3333,7 +3333,7 @@ static void excluye_miembros(int padre, int nivel, int index) {
 			case tpslo: var[padre].indice = -1; break;
 		}
 		padre++;
-		if (o[member].tipo == tsglo || o[member].tipo == tsloc) {
+		if (o[member].type == tsglo || o[member].type == tsloc) {
 			member++;
 			excluye_miembros(padre, nivel + 1, index);
 		} else
@@ -3349,14 +3349,14 @@ static void include_members(int padre, int nivel, int index) {
 	while (m == o[member].miembro) {
 
 		if (index == -1)
-			var[num_var].objeto = -member;
+			var[num_var].object = -member;
 		else
-			var[num_var].objeto = member;
+			var[num_var].object = member;
 		var[num_var].tab = nivel;
 		var[num_var].miembro = padre;
 		usado[member] = 1;
 
-		switch (o[member].tipo) {
+		switch (o[member].type) {
 			case tpigl:
 			case tpwgl:
 			case tpbgl:
@@ -3371,7 +3371,7 @@ static void include_members(int padre, int nivel, int index) {
 		}
 		num_var++;
 
-		if (o[member].tipo == tsglo || o[member].tipo == tsloc) {
+		if (o[member].type == tsglo || o[member].type == tsloc) {
 			member++;
 			include_members(num_var, nivel + 1, index);
 		} else
@@ -3443,7 +3443,7 @@ static void draw_segment2(void) {
 }
 
 static void inspect2(void) {
-	int n, tipo;
+	int n, type;
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	float x;
@@ -3491,24 +3491,24 @@ static void inspect2(void) {
 
 	if (wmouse_in(122 + 32 + 64, 19, 9, 9)) {
 		if (mouse_b & 1) {
-			if (boton == 0) {
+			if (button == 0) {
 				wput(ptr, an, al, 123 + 32 + 64, 20, -41);
-				boton = 1;
+				button = 1;
 				if (var_select) {
 					if (var_ini == var_select--) var_ini--;
 					draw_var_list();
 					v.volcar = 1;
 				}
 			}
-		} else if (boton == 1) {
+		} else if (button == 1) {
 			wput(ptr, an, al, 123 + 32 + 64, 20, -39);
-			boton = 0;
+			button = 0;
 			v.volcar = 1;
 		}
 		mouse_graf = 7;
-	} else if (boton == 1) {
+	} else if (button == 1) {
 		wput(ptr, an, al, 123 + 32 + 64, 20, -39);
-		boton = 0;
+		button = 0;
 		v.volcar = 1;
 	}
 
@@ -3526,36 +3526,36 @@ static void inspect2(void) {
 
 	if (wmouse_in(122 + 32 + 64, 93, 9, 9)) {
 		if (mouse_b & 1) {
-			if (boton == 0) {
+			if (button == 0) {
 				wput(ptr, an, al, 123 + 32 + 64, 94, -42);
-				boton = 2;
+				button = 2;
 				if (var_select + 1 < num_var) {
 					if (var_ini + 10 == ++var_select) var_ini++;
 					draw_var_list();
 					v.volcar = 1;
 				}
 			}
-		} else if (boton == 2) {
+		} else if (button == 2) {
 			wput(ptr, an, al, 123 + 32 + 64, 94, -40);
-			boton = 0;
+			button = 0;
 			v.volcar = 1;
 		}
 		mouse_graf = 9;
-	} else if (boton == 2) {
+	} else if (button == 2) {
 		wput(ptr, an, al, 123 + 32 + 64, 94, -40);
-		boton = 0;
+		button = 0;
 		v.volcar = 1;
 	}
 
 	if (num_var) {
-		if (var[var_select].objeto > 0) {
+		if (var[var_select].object > 0) {
 			if (scan_code == 75) goto dec_index;
 			if (scan_code == 77) goto inc_index;
 		}
 	}
 
 	if (scan_code == 71) { // Home key
-		if (var[var_select].objeto > 0) switch (o[var[var_select].objeto].tipo) {
+		if (var[var_select].object > 0) switch (o[var[var_select].object].type) {
 				case tpigl:
 				case tpilo:
 				case tpwgl:
@@ -3573,7 +3573,7 @@ static void inspect2(void) {
 					if (var[var_select].indice > -1) {
 						var[var_select].indice = -1;
 						if (!var[var_select].miembro) {
-							member = o[var[var_select].objeto].v1 + 1;
+							member = o[var[var_select].object].v1 + 1;
 							excluye_miembros(var_select + 1, 1, var[var_select].indice);
 							if (var_ini + 10 > num_var && var_ini) var_ini = num_var - 10;
 							if (var_ini < 0) var_ini = 0;
@@ -3593,7 +3593,7 @@ static void inspect2(void) {
 	}
 
 	if (scan_code == 79) { // End key
-		if (var[var_select].objeto > 0) switch (o[var[var_select].objeto].tipo) {
+		if (var[var_select].object > 0) switch (o[var[var_select].object].type) {
 				case tpigl:
 				case tpilo:
 				case tpwgl:
@@ -3603,24 +3603,24 @@ static void inspect2(void) {
 				case tpcgl:
 				case tpclo:
 					if (var[var_select].indice == -1) {
-						tipo = o[var[var_select].objeto].tipo;
-						switch (o[var[var_select].objeto].tipo) {
+						type = o[var[var_select].object].type;
+						switch (o[var[var_select].object].type) {
 							case tpigl:
 							case tpwgl:
 							case tpbgl:
 							case tpcgl:
-							case tpsgl: o[var[var_select].objeto].tipo = tvglo; break;
+							case tpsgl: o[var[var_select].object].type = tvglo; break;
 							case tpilo:
 							case tpwlo:
 							case tpblo:
 							case tpclo:
-							case tpslo: o[var[var_select].objeto].tipo = tvloc; break;
+							case tpslo: o[var[var_select].object].type = tvloc; break;
 						}
 						n = memo(get_offset(var_select));
-						o[var[var_select].objeto].tipo = tipo;
+						o[var[var_select].object].type = type;
 						if (!n) break; // Not if pointer is null
 					}
-					if (o[var[var_select].objeto].v2 == -1) {
+					if (o[var[var_select].object].v2 == -1) {
 						var[var_select].indice = 0;
 						break;
 					}
@@ -3630,9 +3630,9 @@ static void inspect2(void) {
 				case tbloc:
 				case twglo:
 				case twloc:
-					var[var_select].indice = o[var[var_select].objeto].v2 + 1;
-					if (o[var[var_select].objeto].v3 > -1) var[var_select].indice *= o[var[var_select].objeto].v3 + 1;
-					if (o[var[var_select].objeto].v4 > -1) var[var_select].indice *= o[var[var_select].objeto].v4 + 1;
+					var[var_select].indice = o[var[var_select].object].v2 + 1;
+					if (o[var[var_select].object].v3 > -1) var[var_select].indice *= o[var[var_select].object].v3 + 1;
+					if (o[var[var_select].object].v4 > -1) var[var_select].indice *= o[var[var_select].object].v4 + 1;
 					var[var_select].indice--;
 					break;
 				case tpsgl:
@@ -3641,43 +3641,43 @@ static void inspect2(void) {
 						if (memo(get_offset(var_select)) == 0) break; // Doesn't show the struct if pointer is null
 						var[var_select].indice = 0;
 						if (!var[var_select].miembro) {
-							member = o[var[var_select].objeto].v1 + 1;
+							member = o[var[var_select].object].v1 + 1;
 							excluye_miembros(var_select + 1, 1, var[var_select].indice);
 							draw_segment2();
 						}
 						draw_var_list();
 						break;
 					}
-					if (o[var[var_select].objeto].v3 == -1)
+					if (o[var[var_select].object].v3 == -1)
 						var[var_select].indice = 0;
 					else
-						var[var_select].indice = o[var[var_select].objeto].v2 - 1;
+						var[var_select].indice = o[var[var_select].object].v2 - 1;
 					if (!var[var_select].miembro) {
-						member = o[var[var_select].objeto].v1 + 1;
+						member = o[var[var_select].object].v1 + 1;
 						excluye_miembros(var_select + 1, 1, var[var_select].indice);
 						draw_segment2();
 					}
 					draw_var_list();
 					break;
 				case tsglo:
-				case tsloc: var[var_select].indice = o[var[var_select].objeto].v2 - 1; break;
+				case tsloc: var[var_select].indice = o[var[var_select].object].v2 - 1; break;
 			}
 		draw_var_list();
 		v.volcar = 1;
 	}
 
 	if (num_var == 0 && v.active_item < 9) v.active_item = -1;
-	if (var[var_select].objeto < 0 && v.active_item < 9) v.active_item = -1;
+	if (var[var_select].object < 0 && v.active_item < 9) v.active_item = -1;
 
 	switch (v.active_item) {
 		case 0: // Change
-			if (o[var[var_select].objeto].tipo != tcons) {
-				if (o[var[var_select].objeto].tipo == tsglo || o[var[var_select].objeto].tipo == tsloc ||
-				    ((o[var[var_select].objeto].tipo == tpsgl || o[var[var_select].objeto].tipo == tpslo) &&
+			if (o[var[var_select].object].type != tcons) {
+				if (o[var[var_select].object].type == tsglo || o[var[var_select].object].type == tsloc ||
+				    ((o[var[var_select].object].type == tpsgl || o[var[var_select].object].type == tpslo) &&
 				     var[var_select].indice >= 0)) {
 					v_texto = (char *)text[39];
 					dialogo(err0);
-				} else if (o[var[var_select].objeto].tipo == tcglo || o[var[var_select].objeto].tipo == tcloc) {
+				} else if (o[var[var_select].object].type == tcglo || o[var[var_select].object].type == tcloc) {
 					dialogo(changestring0);
 					draw_var_list();
 					v.volcar = 1;
@@ -3693,7 +3693,7 @@ static void inspect2(void) {
 			break;
 		case 1: // Index--
 		dec_index:
-			switch (o[var[var_select].objeto].tipo) {
+			switch (o[var[var_select].object].type) {
 				case ttglo:
 				case ttloc:
 				case tsglo:
@@ -3723,7 +3723,7 @@ static void inspect2(void) {
 					if (var[var_select].indice > -1) {
 						var[var_select].indice--;
 						if (!var[var_select].miembro) {
-							member = o[var[var_select].objeto].v1 + 1;
+							member = o[var[var_select].object].v1 + 1;
 							excluye_miembros(var_select + 1, 1, var[var_select].indice);
 							draw_segment2();
 						}
@@ -3735,7 +3735,7 @@ static void inspect2(void) {
 			break;
 		case 2: // Index++
 		inc_index:
-			switch (o[var[var_select].objeto].tipo) {
+			switch (o[var[var_select].object].type) {
 				case tpigl:
 				case tpilo:
 				case tpwgl:
@@ -3745,24 +3745,24 @@ static void inspect2(void) {
 				case tpcgl:
 				case tpclo:
 					if (var[var_select].indice == -1) {
-						tipo = o[var[var_select].objeto].tipo;
-						switch (o[var[var_select].objeto].tipo) {
+						type = o[var[var_select].object].type;
+						switch (o[var[var_select].object].type) {
 							case tpigl:
 							case tpwgl:
 							case tpbgl:
 							case tpcgl:
-							case tpsgl: o[var[var_select].objeto].tipo = tvglo; break;
+							case tpsgl: o[var[var_select].object].type = tvglo; break;
 							case tpilo:
 							case tpwlo:
 							case tpblo:
 							case tpclo:
-							case tpslo: o[var[var_select].objeto].tipo = tvloc; break;
+							case tpslo: o[var[var_select].object].type = tvloc; break;
 						}
 						n = memo(get_offset(var_select));
-						o[var[var_select].objeto].tipo = tipo;
+						o[var[var_select].object].type = type;
 						if (!n) break; // No si el puntero es NULL
 					}
-					if (o[var[var_select].objeto].v2 == -1) {
+					if (o[var[var_select].object].v2 == -1) {
 						var[var_select].indice++;
 						draw_var_list();
 						v.volcar = 1;
@@ -3774,9 +3774,9 @@ static void inspect2(void) {
 				case tbloc:
 				case twglo:
 				case twloc:
-					n = o[var[var_select].objeto].v2 + 1;
-					if (o[var[var_select].objeto].v3 > -1) n *= o[var[var_select].objeto].v3 + 1;
-					if (o[var[var_select].objeto].v4 > -1) n *= o[var[var_select].objeto].v4 + 1;
+					n = o[var[var_select].object].v2 + 1;
+					if (o[var[var_select].object].v3 > -1) n *= o[var[var_select].object].v3 + 1;
+					if (o[var[var_select].object].v4 > -1) n *= o[var[var_select].object].v4 + 1;
 					if (var[var_select].indice < n - 1) var[var_select].indice++;
 					draw_var_list();
 					v.volcar = 1;
@@ -3786,12 +3786,12 @@ static void inspect2(void) {
 					if (var[var_select].indice == -1) {
 						if (memo(get_offset(var_select)) == 0) break; // Doesn't show the structure if pointer is null
 					}
-					if (o[var[var_select].objeto].v3 == -1)
+					if (o[var[var_select].object].v3 == -1)
 						var[var_select].indice++;
-					else if (var[var_select].indice < o[var[var_select].objeto].v2 - 1)
+					else if (var[var_select].indice < o[var[var_select].object].v2 - 1)
 						var[var_select].indice++;
 					if (!var[var_select].miembro) {
-						member = o[var[var_select].objeto].v1 + 1;
+						member = o[var[var_select].object].v1 + 1;
 						excluye_miembros(var_select + 1, 1, var[var_select].indice);
 						draw_segment2();
 					}
@@ -3800,57 +3800,57 @@ static void inspect2(void) {
 					break;
 				case tsglo:
 				case tsloc:
-					if (var[var_select].indice < o[var[var_select].objeto].v2 - 1) var[var_select].indice++;
+					if (var[var_select].indice < o[var[var_select].object].v2 - 1) var[var_select].indice++;
 					draw_var_list();
 					v.volcar = 1;
 					break;
 			}
 			break;
 		case 3: // View as angle
-			if (visor[var[var_select].objeto] == 4)
-				visor[var[var_select].objeto] = 0;
+			if (visor[var[var_select].object] == 4)
+				visor[var[var_select].object] = 0;
 			else
-				visor[var[var_select].objeto] = 4;
+				visor[var[var_select].object] = 4;
 			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 4: // View as process
-			if (visor[var[var_select].objeto] == 3)
-				visor[var[var_select].objeto] = 0;
+			if (visor[var[var_select].object] == 3)
+				visor[var[var_select].object] = 0;
 			else
-				visor[var[var_select].objeto] = 3;
+				visor[var[var_select].object] = 3;
 			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 5: // View as text
-			if (visor[var[var_select].objeto] == 2)
-				visor[var[var_select].objeto] = 0;
+			if (visor[var[var_select].object] == 2)
+				visor[var[var_select].object] = 0;
 			else
-				visor[var[var_select].objeto] = 2;
+				visor[var[var_select].object] = 2;
 			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 6: // View as boolean
-			if (visor[var[var_select].objeto] == 1)
-				visor[var[var_select].objeto] = 0;
+			if (visor[var[var_select].object] == 1)
+				visor[var[var_select].object] = 0;
 			else
-				visor[var[var_select].objeto] = 1;
+				visor[var[var_select].object] = 1;
 			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 7: // View as Hex
-			if (visor[var[var_select].objeto] == 5)
-				visor[var[var_select].objeto] = 0;
+			if (visor[var[var_select].object] == 5)
+				visor[var[var_select].object] = 0;
 			else
-				visor[var[var_select].objeto] = 5;
+				visor[var[var_select].object] = 5;
 			draw_var_list();
 			v.volcar = 1;
 			break;
 		case 8: // View as Bin
-			if (visor[var[var_select].objeto] == 6)
-				visor[var[var_select].objeto] = 0;
+			if (visor[var[var_select].object] == 6)
+				visor[var[var_select].object] = 0;
 			else
-				visor[var[var_select].objeto] = 6;
+				visor[var[var_select].object] = 6;
 			draw_var_list();
 			v.volcar = 1;
 			break;
@@ -3885,9 +3885,9 @@ static void inspect0(void) {
 	strcpy(titulo, (char *)text[41]);
 
 	for (n = 0; n < num_obj; n++)
-		if (o[n].tipo == tproc && o[n].v0 == mem[ids[ids_select] + _Bloque]) break;
+		if (o[n].type == tproc && o[n].v0 == mem[ids[ids_select] + _Bloque]) break;
 	if (n < num_obj)
-		strcat(titulo, vnom + o[n].nombre);
+		strcat(titulo, vnames + o[n].nombre);
 	else
 		strcat(titulo, (char *)text[9]);
 
@@ -3957,7 +3957,7 @@ static void draw_var_list(void) {
 	char msg[512];
 	byte *ptr = v.ptr, x;
 	int an = v.an / big2, al = v.al / big2;
-	int m, tipo, fin;
+	int m, type, fin;
 
 	wbox(ptr, an, al, c1, 4, 20, 150 + 64, 81); // Fill processes listbox
 
@@ -3971,8 +3971,8 @@ static void draw_var_list(void) {
 			x = c4;
 		} else
 			x = c3;
-		if (var[m].objeto < 0) {
-			switch (o[abs(var[m].objeto)].tipo) {
+		if (var[m].object < 0) {
+			switch (o[abs(var[m].object)].type) {
 				case tcons: strcpy(msg, "CONST "); break;
 				case tvglo:
 				case tvloc: strcpy(msg, "INT "); break;
@@ -3993,8 +3993,8 @@ static void draw_var_list(void) {
 				case tpsgl:
 				case tpslo:
 					strcpy(msg, "STRUCT POINTER ");
-					strcat(msg, vnom + o[o[abs(var[m].objeto)].v1].nombre);
-					strcat(msg, vnom + o[o[abs(var[m].objeto)].v1].nombre);
+					strcat(msg, vnames + o[o[abs(var[m].object)].v1].nombre);
+					strcat(msg, vnames + o[o[abs(var[m].object)].v1].nombre);
 					strupr(msg);
 					strcat(msg, " ");
 					break;
@@ -4003,55 +4003,55 @@ static void draw_var_list(void) {
 				case tsglo:
 				case tsloc: strcpy(msg, "STRUCT "); break;
 			}
-			strcat(msg, vnom + o[abs(var[m].objeto)].nombre);
+			strcat(msg, vnames + o[abs(var[m].object)].nombre);
 			x = c2;
 		} else
-			switch (o[var[m].objeto].tipo) {
+			switch (o[var[m].object].type) {
 				case tcons:
 					strcpy(msg, "CONST ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
-					display(o[var[m].objeto].v0, var[m].objeto, msg);
+					strcat(msg, vnames + o[var[m].object].nombre);
+					display(o[var[m].object].v0, var[m].object, msg);
 					break;
 				case tvglo:
 				case tvloc:
 					strcpy(msg, "INT ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
-					display(memo(get_offset(m)), var[m].objeto, msg);
+					strcat(msg, vnames + o[var[m].object].nombre);
+					display(memo(get_offset(m)), var[m].object, msg);
 					break;
 				case tcglo:
 				case tcloc:
 					strcpy(msg, "STRING ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
-					display(get_offset(m), var[m].objeto, msg);
+					strcat(msg, vnames + o[var[m].object].nombre);
+					display(get_offset(m), var[m].object, msg);
 					break;
 				case tbglo:
 				case tbloc:
 					strcpy(msg, "BYTE ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
-					if (o[var[m].objeto].v3 == -1 && o[var[m].objeto].v2 == 0)
+					strcat(msg, vnames + o[var[m].object].nombre);
+					if (o[var[m].object].v3 == -1 && o[var[m].object].v2 == 0)
 						goto show_variable;
 					else
 						goto show_tabla;
 				case twglo:
 				case twloc:
 					strcpy(msg, "WORD ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
-					if (o[var[m].objeto].v3 == -1 && o[var[m].objeto].v2 == 0)
+					strcat(msg, vnames + o[var[m].object].nombre);
+					if (o[var[m].object].v3 == -1 && o[var[m].object].v2 == 0)
 						goto show_variable;
 					else
 						goto show_tabla;
 				case ttglo:
 				case ttloc:
 					strcpy(msg, "INT ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
-					if (o[var[m].objeto].v3 == -1 && o[var[m].objeto].v2 == 0)
+					strcat(msg, vnames + o[var[m].object].nombre);
+					if (o[var[m].object].v3 == -1 && o[var[m].object].v2 == 0)
 						goto show_variable;
 					else
 						goto show_tabla;
 				case tpigl:
 				case tpilo:
 					strcpy(msg, "INT POINTER ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
+					strcat(msg, vnames + o[var[m].object].nombre);
 					if (var[m].indice == -1)
 						goto show_variable;
 					else
@@ -4059,7 +4059,7 @@ static void draw_var_list(void) {
 				case tpwgl:
 				case tpwlo:
 					strcpy(msg, "WORD POINTER ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
+					strcat(msg, vnames + o[var[m].object].nombre);
 					if (var[m].indice == -1)
 						goto show_variable;
 					else
@@ -4067,7 +4067,7 @@ static void draw_var_list(void) {
 				case tpbgl:
 				case tpblo:
 					strcpy(msg, "BYTE POINTER ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
+					strcat(msg, vnames + o[var[m].object].nombre);
 					if (var[m].indice == -1)
 						goto show_variable;
 					else
@@ -4075,10 +4075,10 @@ static void draw_var_list(void) {
 				case tpsgl:
 				case tpslo:
 					strcpy(msg, "STRUCT POINTER ");
-					strcat(msg, vnom + o[o[var[m].objeto].v1].nombre);
+					strcat(msg, vnames + o[o[var[m].object].v1].nombre);
 					strupr(msg);
 					strcat(msg, " ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
+					strcat(msg, vnames + o[var[m].object].nombre);
 					if (var[m].indice == -1)
 						goto show_variable;
 					else
@@ -4086,85 +4086,85 @@ static void draw_var_list(void) {
 				case tpcgl:
 				case tpclo:
 					strcpy(msg, "STRING POINTER ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
+					strcat(msg, vnames + o[var[m].object].nombre);
 					if (var[m].indice == -1)
 						goto show_variable;
 					else
 						goto show_tabla;
 				show_tabla:
 					strcat(msg, "[");
-					if (o[var[m].objeto].v3 == -1) { // 1D table
+					if (o[var[m].object].v3 == -1) { // 1D table
 						itoa(var[m].indice, msg + strlen(msg), 10);
-					} else if (o[var[m].objeto].v4 == -1) { // 2D table
-						itoa(var[m].indice % (o[var[m].objeto].v2 + 1), msg + strlen(msg), 10);
+					} else if (o[var[m].object].v4 == -1) { // 2D table
+						itoa(var[m].indice % (o[var[m].object].v2 + 1), msg + strlen(msg), 10);
 						strcat(msg, ",");
-						itoa(var[m].indice / (o[var[m].objeto].v2 + 1), msg + strlen(msg), 10);
+						itoa(var[m].indice / (o[var[m].object].v2 + 1), msg + strlen(msg), 10);
 					} else { // 3D table
-						itoa(var[m].indice % (o[var[m].objeto].v2 + 1), msg + strlen(msg), 10);
+						itoa(var[m].indice % (o[var[m].object].v2 + 1), msg + strlen(msg), 10);
 						strcat(msg, ",");
-						itoa((var[m].indice / (o[var[m].objeto].v2 + 1)) % (o[var[m].objeto].v3 + 1),
+						itoa((var[m].indice / (o[var[m].object].v2 + 1)) % (o[var[m].object].v3 + 1),
 						     msg + strlen(msg),
 						     10);
 						strcat(msg, ",");
-						itoa((var[m].indice / (o[var[m].objeto].v2 + 1)) / (o[var[m].objeto].v3 + 1),
+						itoa((var[m].indice / (o[var[m].object].v2 + 1)) / (o[var[m].object].v3 + 1),
 						     msg + strlen(msg),
 						     10);
 					}
 					strcat(msg, "]");
 				show_variable:
 					if (var[m].indice == -1) {
-						tipo = o[var[m].objeto].tipo;
-						switch (o[var[m].objeto].tipo) {
+						type = o[var[m].object].type;
+						switch (o[var[m].object].type) {
 							case tpigl:
 							case tpwgl:
 							case tpbgl:
 							case tpcgl:
-							case tpsgl: o[var[m].objeto].tipo = tvglo; break;
+							case tpsgl: o[var[m].object].type = tvglo; break;
 							case tpilo:
 							case tpwlo:
 							case tpblo:
 							case tpclo:
-							case tpslo: o[var[m].objeto].tipo = tvloc; break;
+							case tpslo: o[var[m].object].type = tvloc; break;
 						}
 						if (!memo(get_offset(m)))
 							strcat(msg, " = NULL");
 						else
-							display(memo(get_offset(m)), var[m].objeto, msg);
-						o[var[m].objeto].tipo = tipo;
-					} else if (o[var[m].objeto].tipo == ttglo || o[var[m].objeto].tipo == ttloc ||
-					           o[var[m].objeto].tipo == tpigl || o[var[m].objeto].tipo == tpilo) {
-						display(memo(get_offset(m)), var[m].objeto, msg);
-					} else if (o[var[m].objeto].tipo == twglo || o[var[m].objeto].tipo == twloc ||
-					           o[var[m].objeto].tipo == tpwgl || o[var[m].objeto].tipo == tpwlo) {
-						display(*get_offset_word(m), var[m].objeto, msg);
-					} else if (o[var[m].objeto].tipo == tbglo || o[var[m].objeto].tipo == tbloc ||
-					           o[var[m].objeto].tipo == tpbgl || o[var[m].objeto].tipo == tpblo) {
-						display(*get_offset_byte(m), var[m].objeto, msg);
-					} else if (o[var[m].objeto].tipo == tpcgl || o[var[m].objeto].tipo == tpclo) {
-						display(*get_offset_byte(m), var[m].objeto, msg);
+							display(memo(get_offset(m)), var[m].object, msg);
+						o[var[m].object].type = type;
+					} else if (o[var[m].object].type == ttglo || o[var[m].object].type == ttloc ||
+					           o[var[m].object].type == tpigl || o[var[m].object].type == tpilo) {
+						display(memo(get_offset(m)), var[m].object, msg);
+					} else if (o[var[m].object].type == twglo || o[var[m].object].type == twloc ||
+					           o[var[m].object].type == tpwgl || o[var[m].object].type == tpwlo) {
+						display(*get_offset_word(m), var[m].object, msg);
+					} else if (o[var[m].object].type == tbglo || o[var[m].object].type == tbloc ||
+					           o[var[m].object].type == tpbgl || o[var[m].object].type == tpblo) {
+						display(*get_offset_byte(m), var[m].object, msg);
+					} else if (o[var[m].object].type == tpcgl || o[var[m].object].type == tpclo) {
+						display(*get_offset_byte(m), var[m].object, msg);
 					}
 					break;
 				case tsglo:
 				case tsloc:
 					strcpy(msg, "STRUCT ");
-					strcat(msg, vnom + o[var[m].objeto].nombre);
-					if (o[var[m].objeto].v4 == -1 && o[var[m].objeto].v3 == 0) break;
+					strcat(msg, vnames + o[var[m].object].nombre);
+					if (o[var[m].object].v4 == -1 && o[var[m].object].v3 == 0) break;
 				show_indice:
 					strcat(msg, "[");
-					if (o[var[m].objeto].v4 == -1) { // 1D struct
+					if (o[var[m].object].v4 == -1) { // 1D struct
 						itoa(var[m].indice, msg + strlen(msg), 10);
-					} else if (o[var[m].objeto].v5 == -1) { // 2D struct
-						itoa(var[m].indice % (o[var[m].objeto].v3 + 1), msg + strlen(msg), 10);
+					} else if (o[var[m].object].v5 == -1) { // 2D struct
+						itoa(var[m].indice % (o[var[m].object].v3 + 1), msg + strlen(msg), 10);
 						strcat(msg, ",");
-						itoa(var[m].indice / (o[var[m].objeto].v3 + 1), msg + strlen(msg), 10);
+						itoa(var[m].indice / (o[var[m].object].v3 + 1), msg + strlen(msg), 10);
 					} else { // 3D struct
-						itoa(var[m].indice % (o[var[m].objeto].v3 + 1), msg + strlen(msg), 10);
+						itoa(var[m].indice % (o[var[m].object].v3 + 1), msg + strlen(msg), 10);
 						strcat(msg, ",");
-						itoa((var[m].indice / (o[var[m].objeto].v3 + 1)) % (o[var[m].objeto].v4 + 1),
+						itoa((var[m].indice / (o[var[m].object].v3 + 1)) % (o[var[m].object].v4 + 1),
 						     msg + strlen(msg),
 						     10);
 						strcat(msg, ",");
-						itoa((var[m].indice / (o[var[m].objeto].v3 + 1)) / (o[var[m].objeto].v4 + 1),
+						itoa((var[m].indice / (o[var[m].object].v3 + 1)) / (o[var[m].object].v4 + 1),
 						     msg + strlen(msg),
 						     10);
 					}
@@ -4181,10 +4181,10 @@ static void draw_var_list(void) {
 //  Visualizes an object according to its visor[]
 //════════════════════════════════════════════════════════════════════════════
 
-static void display(int valor, int objeto, char *str) {
+static void display(int valor, int object, char *str) {
 	int n;
 	strcat(str, " = ");
-	switch (visor[objeto]) {
+	switch (visor[object]) {
 		case 0: // Integer
 			itoa(valor, str + strlen(str), 10);
 			break;
@@ -4220,9 +4220,9 @@ static void display(int valor, int objeto, char *str) {
 					if (ids[n] == valor) break;
 				if (n < iids) {
 					for (n = 0; n < num_obj; n++)
-						if (o[n].tipo == tproc && o[n].v0 == mem[valor + _Bloque]) break;
+						if (o[n].type == tproc && o[n].v0 == mem[valor + _Bloque]) break;
 					if (n < num_obj) {
-						strcat(str, (char *)vnom + o[n].nombre);
+						strcat(str, (char *)vnames + o[n].nombre);
 						strcat(str, "(");
 						n = 1;
 					} else
@@ -4271,16 +4271,16 @@ static void display(int valor, int objeto, char *str) {
 static int get_offset(int m) { return (capar(_get_offset(m))); }
 
 static int _get_offset(int m) {
-	if (var[m].miembro == 0) switch (o[var[m].objeto].tipo) {
-			case tvglo: return (o[var[m].objeto].v0);
-			case tcglo: return (o[var[m].objeto].v0);
+	if (var[m].miembro == 0) switch (o[var[m].object].type) {
+			case tvglo: return (o[var[m].object].v0);
+			case tcglo: return (o[var[m].object].v0);
 			case ttglo:
-				if (var[m].indice >= 0) return (o[var[m].objeto].v0 + var[m].indice);
+				if (var[m].indice >= 0) return (o[var[m].object].v0 + var[m].indice);
 			case tpigl:
 				if (var[m].indice >= 0)
-					return (memo(o[var[m].objeto].v0) + var[m].indice);
+					return (memo(o[var[m].object].v0) + var[m].indice);
 				else
-					return (o[var[m].objeto].v0);
+					return (o[var[m].object].v0);
 			case tbglo:
 			case tbloc:
 			case tpbgl:
@@ -4291,41 +4291,41 @@ static int _get_offset(int m) {
 			case twloc:
 			case tpwgl:
 			case tpwlo: return (2);
-			case tsglo: return (o[var[m].objeto].v0 + var[m].indice * o[var[m].objeto].v1);
+			case tsglo: return (o[var[m].object].v0 + var[m].indice * o[var[m].object].v1);
 			case tpsgl:
 				if (var[m].indice >= 0)
-					return (memo(o[var[m].objeto].v0) + var[m].indice * o[o[var[m].objeto].v1].v1);
+					return (memo(o[var[m].object].v0) + var[m].indice * o[o[var[m].object].v1].v1);
 				else
-					return (o[var[m].objeto].v0);
-			case tvloc: return (o[var[m].objeto].v0 + ids[ids_select]);
-			case tcloc: return (o[var[m].objeto].v0 + ids[ids_select]);
-			case ttloc: return (o[var[m].objeto].v0 + ids[ids_select] + var[m].indice);
+					return (o[var[m].object].v0);
+			case tvloc: return (o[var[m].object].v0 + ids[ids_select]);
+			case tcloc: return (o[var[m].object].v0 + ids[ids_select]);
+			case ttloc: return (o[var[m].object].v0 + ids[ids_select] + var[m].indice);
 			case tpilo:
 				if (var[m].indice >= 0)
-					return (memo(o[var[m].objeto].v0 + ids[ids_select]) + var[m].indice);
+					return (memo(o[var[m].object].v0 + ids[ids_select]) + var[m].indice);
 				else
-					return (o[var[m].objeto].v0 + ids[ids_select]);
-			case tsloc: return (o[var[m].objeto].v0 + var[m].indice * o[var[m].objeto].v1 + ids[ids_select]);
+					return (o[var[m].object].v0 + ids[ids_select]);
+			case tsloc: return (o[var[m].object].v0 + var[m].indice * o[var[m].object].v1 + ids[ids_select]);
 			case tpslo:
 				if (var[m].indice >= 0)
-					return (memo(o[var[m].objeto].v0 + ids[ids_select]) + var[m].indice * o[o[var[m].objeto].v1].v1);
+					return (memo(o[var[m].object].v0 + ids[ids_select]) + var[m].indice * o[o[var[m].object].v1].v1);
 				else
-					return (o[var[m].objeto].v0 + ids[ids_select]);
+					return (o[var[m].object].v0 + ids[ids_select]);
 		}
 	else {
-		switch (o[var[m].objeto].tipo) {
+		switch (o[var[m].object].type) {
 			case tvglo:
-			case tvloc: return (o[var[m].objeto].v0 + get_offset(var[m].miembro - 1));
+			case tvloc: return (o[var[m].object].v0 + get_offset(var[m].miembro - 1));
 			case tcglo:
-			case tcloc: return (o[var[m].objeto].v0 + get_offset(var[m].miembro - 1));
+			case tcloc: return (o[var[m].object].v0 + get_offset(var[m].miembro - 1));
 			case ttglo:
-			case ttloc: return (o[var[m].objeto].v0 + get_offset(var[m].miembro - 1) + var[m].indice);
+			case ttloc: return (o[var[m].object].v0 + get_offset(var[m].miembro - 1) + var[m].indice);
 			case tpigl:
 			case tpilo:
 				if (var[m].indice >= 0)
-					return (memo(o[var[m].objeto].v0 + get_offset(var[m].miembro - 1)) + var[m].indice);
+					return (memo(o[var[m].object].v0 + get_offset(var[m].miembro - 1)) + var[m].indice);
 				else
-					return (o[var[m].objeto].v0 + get_offset(var[m].miembro - 1));
+					return (o[var[m].object].v0 + get_offset(var[m].miembro - 1));
 			case tbglo:
 			case tbloc:
 			case tpbgl:
@@ -4338,48 +4338,48 @@ static int _get_offset(int m) {
 			case tpwlo: return (2);
 			case tsglo:
 			case tsloc:
-				return (o[var[m].objeto].v0 + var[m].indice * o[var[m].objeto].v1 + get_offset(var[m].miembro - 1));
+				return (o[var[m].object].v0 + var[m].indice * o[var[m].object].v1 + get_offset(var[m].miembro - 1));
 			case tpsgl:
 			case tpslo:
 				if (var[m].indice >= 0)
-					return (memo(o[var[m].objeto].v0 + get_offset(var[m].miembro - 1)) +
-					        var[m].indice * o[o[var[m].objeto].v1].v1);
+					return (memo(o[var[m].object].v0 + get_offset(var[m].miembro - 1)) +
+					        var[m].indice * o[o[var[m].object].v1].v1);
 				else
-					return (o[var[m].objeto].v0 + get_offset(var[m].miembro - 1));
+					return (o[var[m].object].v0 + get_offset(var[m].miembro - 1));
 		}
 	}
 	return (0);
 }
 
 static byte *_get_offset_byte(int m) {
-	if (var[m].miembro == 0) switch (o[var[m].objeto].tipo) {
-			case tbglo: return (&memb[o[var[m].objeto].v0 * 4 + var[m].indice]);
-			case tbloc: return (&memb[o[var[m].objeto].v0 * 4 + var[m].indice + ids[ids_select] * 4]);
+	if (var[m].miembro == 0) switch (o[var[m].object].type) {
+			case tbglo: return (&memb[o[var[m].object].v0 * 4 + var[m].indice]);
+			case tbloc: return (&memb[o[var[m].object].v0 * 4 + var[m].indice + ids[ids_select] * 4]);
 			case tpbgl:
 			case tpcgl:
 				if (var[m].indice >= 0)
-					return (&memb[memo(o[var[m].objeto].v0) * 4 + var[m].indice]);
+					return (&memb[memo(o[var[m].object].v0) * 4 + var[m].indice]);
 				else
-					return (&memb[o[var[m].objeto].v0 * 4]);
+					return (&memb[o[var[m].object].v0 * 4]);
 			case tpblo:
 			case tpclo:
 				if (var[m].indice >= 0)
-					return (&memb[memo(o[var[m].objeto].v0 + ids[ids_select]) * 4 + var[m].indice]);
+					return (&memb[memo(o[var[m].object].v0 + ids[ids_select]) * 4 + var[m].indice]);
 				else
-					return (&memb[o[var[m].objeto].v0 * 4 + ids[ids_select] * 4]);
+					return (&memb[o[var[m].object].v0 * 4 + ids[ids_select] * 4]);
 		}
 	else
-		switch (o[var[m].objeto].tipo) {
+		switch (o[var[m].object].type) {
 			case tbglo:
 			case tbloc:
 			case tpcgl:
-			case tpclo: return (&memb[o[var[m].objeto].v0 * 4 + var[m].indice + get_offset(var[m].miembro - 1) * 4]);
+			case tpclo: return (&memb[o[var[m].object].v0 * 4 + var[m].indice + get_offset(var[m].miembro - 1) * 4]);
 			case tpbgl:
 			case tpblo:
 				if (var[m].indice >= 0)
-					return (&memb[memo(o[var[m].objeto].v0 + get_offset(var[m].miembro - 1)) * 4 + var[m].indice]);
+					return (&memb[memo(o[var[m].object].v0 + get_offset(var[m].miembro - 1)) * 4 + var[m].indice]);
 				else
-					return (&memb[o[var[m].objeto].v0 * 4 + get_offset(var[m].miembro - 1) * 4]);
+					return (&memb[o[var[m].object].v0 * 4 + get_offset(var[m].miembro - 1) * 4]);
 		}
 	return (0);
 }
@@ -4387,33 +4387,33 @@ static byte *_get_offset_byte(int m) {
 static byte *get_offset_byte(int m) { return (capar_byte(_get_offset_byte(m))); }
 
 static word *_get_offset_word(int m) {
-	if (var[m].miembro == 0) switch (o[var[m].objeto].tipo) {
-			case twglo: return ((word *)&memb[o[var[m].objeto].v0 * 4 + var[m].indice * 2]);
-			case twloc: return ((word *)&memb[o[var[m].objeto].v0 * 4 + var[m].indice * 2 + ids[ids_select] * 4]);
+	if (var[m].miembro == 0) switch (o[var[m].object].type) {
+			case twglo: return ((word *)&memb[o[var[m].object].v0 * 4 + var[m].indice * 2]);
+			case twloc: return ((word *)&memb[o[var[m].object].v0 * 4 + var[m].indice * 2 + ids[ids_select] * 4]);
 			case tpwgl:
 				if (var[m].indice >= 0)
-					return ((word *)&memb[memo(o[var[m].objeto].v0) * 4 + var[m].indice * 2]);
+					return ((word *)&memb[memo(o[var[m].object].v0) * 4 + var[m].indice * 2]);
 				else
-					return ((word *)&memb[o[var[m].objeto].v0 * 4]);
+					return ((word *)&memb[o[var[m].object].v0 * 4]);
 			case tpwlo:
 				if (var[m].indice >= 0)
-					return ((word *)&memb[memo(o[var[m].objeto].v0 + ids[ids_select]) * 4 + var[m].indice * 2]);
+					return ((word *)&memb[memo(o[var[m].object].v0 + ids[ids_select]) * 4 + var[m].indice * 2]);
 				else
-					return ((word *)&memb[o[var[m].objeto].v0 * 4 + ids[ids_select] * 4]);
+					return ((word *)&memb[o[var[m].object].v0 * 4 + ids[ids_select] * 4]);
 		}
 	else
-		switch (o[var[m].objeto].tipo) {
+		switch (o[var[m].object].type) {
 			case twglo:
 			case twloc:
 				return (
-				    (word *)&memb[o[var[m].objeto].v0 * 4 + var[m].indice * 2 + get_offset(var[m].miembro - 1) * 4]);
+				    (word *)&memb[o[var[m].object].v0 * 4 + var[m].indice * 2 + get_offset(var[m].miembro - 1) * 4]);
 			case tpwgl:
 			case tpwlo:
 				if (var[m].indice >= 0)
-					return ((word *)&memb[memo(o[var[m].objeto].v0 + get_offset(var[m].miembro - 1)) * 4 +
+					return ((word *)&memb[memo(o[var[m].object].v0 + get_offset(var[m].miembro - 1)) * 4 +
 					                      var[m].indice * 2]);
 				else
-					return ((word *)&memb[o[var[m].objeto].v0 * 4 + get_offset(var[m].miembro - 1) * 4]);
+					return ((word *)&memb[o[var[m].object].v0 * 4 + get_offset(var[m].miembro - 1) * 4]);
 		}
 	return (0);
 }
@@ -4493,7 +4493,7 @@ static void changestring2(void) {
 	_process_items();
 	switch (v.active_item) {
 		case 1:
-			if (strlen(enterstring) <= o[var[var_select].objeto].v1 + 1)
+			if (strlen(enterstring) <= o[var[var_select].object].v1 + 1)
 				strcpy((char *)&mem[get_offset(var_select)], enterstring);
 			else {
 				v_texto = (char *)text[59];
@@ -4718,24 +4718,24 @@ static void debug2(void) {
 
 	if (wmouse_in(122, 19, 9, 9)) {
 		if (mouse_b & 1) {
-			if (boton == 0) {
+			if (button == 0) {
 				wput(ptr, an, al, 123, 20, -41);
-				boton = 1;
+				button = 1;
 				if (ids_select) {
 					if (ids_ini == ids_select--) ids_ini--;
 					pinta_lista_proc();
 					v.volcar = 1;
 				}
 			}
-		} else if (boton == 1) {
+		} else if (button == 1) {
 			wput(ptr, an, al, 123, 20, -39);
-			boton = 0;
+			button = 0;
 			v.volcar = 1;
 		}
 		mouse_graf = 7;
-	} else if (boton == 1) {
+	} else if (button == 1) {
 		wput(ptr, an, al, 123, 20, -39);
-		boton = 0;
+		button = 0;
 		v.volcar = 1;
 	}
 
@@ -4753,24 +4753,24 @@ static void debug2(void) {
 
 	if (wmouse_in(122, 133 - 16 - 32, 9, 9)) {
 		if (mouse_b & 1) {
-			if (boton == 0) {
+			if (button == 0) {
 				wput(ptr, an, al, 123, 134 - 16 - 32, -42);
-				boton = 2;
+				button = 2;
 				if (ids_select + 1 < iids) {
 					if (ids_ini + 9 == ++ids_select) ids_ini++;
 					pinta_lista_proc();
 					v.volcar = 1;
 				}
 			}
-		} else if (boton == 2) {
+		} else if (button == 2) {
 			wput(ptr, an, al, 123, 134 - 16 - 32, -40);
-			boton = 0;
+			button = 0;
 			v.volcar = 1;
 		}
 		mouse_graf = 9;
-	} else if (boton == 2) {
+	} else if (button == 2) {
 		wput(ptr, an, al, 123, 134 - 16 - 32, -40);
-		boton = 0;
+		button = 0;
 		v.volcar = 1;
 	}
 
@@ -5195,9 +5195,9 @@ static void debug0(void) {
 static void get_line(int n) { // Get line number from IP (instruction pointer) address
 	int x = 0;
 	if (line == NULL) return;
-	for (x = 0; x < num_sentencias; x++)
+	for (x = 0; x < num_sentences; x++)
 		if (n >= line[x * 6] && n <= line[x * 6 + 1]) break;
-	if (x < num_sentencias) {
+	if (x < num_sentences) {
 		mem1 = line[x * 6];
 		mem2 = line[x * 6 + 1];
 		line1 = line[x * 6 + 2] - 1;
@@ -5217,9 +5217,9 @@ static void get_line(int n) { // Get line number from IP (instruction pointer) a
 static int get_ip(int n) { // Get IP address from line number
 	int x = 0;
 	if (line == NULL) return (0);
-	for (x = 0; x < num_sentencias; x++)
+	for (x = 0; x < num_sentences; x++)
 		if (n == line[x * 6 + 2] - 1) break;
-	if (x < num_sentencias)
+	if (x < num_sentences)
 		return (line[x * 6]);
 	else
 		return (-1);
@@ -5638,7 +5638,7 @@ static void process_list0(void) {
 //int lp_select;    // Selected process block
 
 //int obj_start; // Start of first object (&obj[0])
-//int obj_size;  // Length of each object (struct objeto)
+//int obj_size;  // Length of each object (struct object)
 //(The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;)
 
 //unsigned f_time[256]; // Time taken by each function
@@ -5734,7 +5734,7 @@ static void crear_lista_profile(void) {
 	f_max = 0;
 
 	for (n = 0; n < num_obj; n++) {
-		if (o[n].tipo == tproc) {
+		if (o[n].type == tproc) {
 			f_exec_total += o[n].v4;
 			f_paint_total += o[n].v5;
 			if (o[n].v4 > f_max) f_max = o[n].v4;
@@ -5768,7 +5768,7 @@ static void crear_lista_profile(void) {
 	}
 
 	for (n = 0; n < num_obj; n++) {
-		if (o[n].tipo == tproc && (o[n].v4 > f_time_total / 10000 || o[n].v5 > f_time_total / 10000)) {
+		if (o[n].type == tproc && (o[n].v4 > f_time_total / 10000 || o[n].v5 > f_time_total / 10000)) {
 			lp1[lp_num++] = n;
 		}
 	}
@@ -5824,7 +5824,7 @@ static void pintar_lista_profile(void) {
 		wwrite(ptr, an, al, an - 11 - 65 + 32, lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork, c34);
 
 		wwrite_in_box(
-		    ptr, an, an - 13 - 131, al, 5, lpy + 1 + (m - lp_ini) * lpal, 0, (byte *)vnom + o[lp1[m]].nombre, x);
+		    ptr, an, an - 13 - 131, al, 5, lpy + 1 + (m - lp_ini) * lpal, 0, (byte *)vnames + o[lp1[m]].nombre, x);
 		wbox(ptr, an, al, c0, 4, lpy + (m - lp_ini) * lpal + lpal - 1, an - 16, 1);
 	}
 
@@ -6242,7 +6242,7 @@ static void profile2(void) {
 			break;
 		case 1:
 			for (n = 0; n < num_obj; n++) {
-				if (o[n].tipo == tproc) {
+				if (o[n].type == tproc) {
 					o[n].v4 = 0; // Time_exec
 					o[n].v5 = 0; // Time_paint
 				}
