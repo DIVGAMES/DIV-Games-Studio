@@ -480,10 +480,8 @@ void init_big(void) {
 //═════════════════════════════════════════════════════════════════════════════
 
 void init_colors(void) {
-	find_color(0, 0, 0);
-	c0 = find_col;
-	find_color(63, 63, 63);
-	c4 = find_col;
+	c0 = ffind_color(0, 0, 0);
+	c4 = ffind_color(63, 63, 63);
 	c2 = media(c0, c4);
 	c1 = media(c0, c2);
 	c3 = media(c2, c4);
@@ -491,24 +489,15 @@ void init_colors(void) {
 	c12 = media(c1, c2);
 	c23 = media(c2, c3);
 	c34 = media(c3, c4);
-	find_color(63, 0, 0);
-	c_r = find_col;
-	find_color(0, 63, 0);
-	c_g = find_col;
-	find_color(0, 0, 63);
-	c_b = find_col;
-	find_color(32, 0, 0);
-	c_r_low = find_col;
-	find_color(0, 32, 0);
-	c_g_low = find_col;
-	find_color(0, 0, 32);
-	c_b_low = find_col;
-	find_color(16, 0, 0);
-	c_r_low0 = find_col;
-	find_color(0, 16, 0);
-	c_g_low0 = find_col;
-	find_color(0, 0, 16);
-	c_b_low0 = find_col;
+	c_r = ffind_color(63, 0, 0);
+	c_g = ffind_color(0, 63, 0);
+	c_b = ffind_color(0, 0, 63);
+	c_r_low = ffind_color(32, 0, 0);
+	c_g_low = ffind_color(0, 32, 0);
+	c_b_low = ffind_color(0, 0, 32);
+	c_r_low0 = ffind_color(16, 0, 0);
+	c_g_low0 = ffind_color(0, 16, 0);
+	c_b_low0 = ffind_color(0, 0, 16);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
