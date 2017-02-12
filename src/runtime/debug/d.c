@@ -3986,7 +3986,7 @@ void debug0(void) {
 //  Functions that draw source code in the debugger window
 //════════════════════════════════════════════════════════════════════════════
 
-void get_line(int n) { // Get line number from IP address
+void get_line(int n) { // Get line number from IP (instruction pointer) address
   int x=0;
   if (line==NULL) return;
   for (x=0;x<num_sentencias;x++) if (n>=line[x*6] && n<=line[x*6+1]) break;
@@ -4008,21 +4008,21 @@ int get_ip(int n) { // Get IP address from line number
   if (x<num_sentencias) return(line[x*6]); else return(-1);
 }
 
-void determina_codigo(void) { // Determina lo que se debe ver para "ids_next"
+void determina_codigo(void) { // Determines what must be displayed for "ids_next"
   byte * ptr=v.ptr;
   int an=v.an/big2,al=v.al/big2,l;
   char msg[256];
 
   if (line==NULL) return;
 
-  wbox(ptr,an,al,c1,4,147-16-32,41,8); // Borra el espacio para escribir el ID
+  wbox(ptr,an,al,c1,4,147-16-32,41,8); // Clears space to display the ID
   wrectangulo(ptr,an,al,c0,3,146-16-32,43,10);
   itoa(ids[ids_next],msg,10);
   wwrite_in_box(ptr,an,46,al,24,148-16-32,1,(byte *)msg,c0);
   wwrite_in_box(ptr,an,46,al,23,148-16-32,1,(byte *)msg,c34);
 
   if (process_stoped) get_line(ip);
-  else get_line(mem[ids[ids_next]+_IP]); // Obtiene linea/columna/mem 1/2
+  else get_line(mem[ids[ids_next]+_IP]); // Obtains line/column/mem 1/2
 
   l=linea0=linea1-3;
   if (l<0) l=linea0=0;
@@ -4037,7 +4037,7 @@ void determina_codigo(void) { // Determina lo que se debe ver para "ids_next"
 
 }
 
-void pinta_codigo(void) { // Pinta el código
+void pinta_codigo(void) { // Draws the ID
   byte * p=plinea0,c;
   int n,x,l=linea0;
   byte * ptr=v.ptr;
@@ -4045,7 +4045,7 @@ void pinta_codigo(void) { // Pinta el código
 
   if (line==NULL) return;
 
-  wbox(ptr,an,al,c1,48+5,147-16-32,an-52-5,41+16+32); // Borra la ventana
+  wbox(ptr,an,al,c1,48+5,147-16-32,an-52-5,41+16+32); // Clear the window
 
   wbox(ptr,an,al,c12,48,147-16-32,5,41+16+32);
 
@@ -4124,7 +4124,7 @@ void f_abajo(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Dialogo lista de procesos
+// Process list dialog
 //═════════════════════════════════════════════════════════════════════════════
 
 extern byte strlower[256];
@@ -4185,11 +4185,11 @@ void pintar_lista_procesos(void) {
   int an=v.an/big2,al=v.al/big2;
   int n,m,x;
 
-  wbox(ptr,an,al,c1,4,20,128+32-10,121); // Límites listbox procesos
+  wbox(ptr,an,al,c1,4,20,128+32-10,121); // Process listbox limits
 
   for (m=lp_ini;m<lp_ini+15 && m<lp_num;m++) {
     if (m==lp_select) {
-      wbox(ptr,an,al,c01,4,20+(m-lp_ini)*8,150,9); // Relleno listbox procesos
+      wbox(ptr,an,al,c01,4,20+(m-lp_ini)*8,150,9); // Process listbox fill
       x=c4;
     } else x=c3;
     p=(byte *)lp2[m]; n=0; while (*p && p<end_source) { cwork[n++]=*p; p++; } cwork[n]=0;
@@ -4204,7 +4204,7 @@ void pinta_segmento_procesos(void) {
   int min=27,max=129,n;
   float x;
 
-  wbox(ptr,an,al,c2,123+32,28,7,max-min+3); // Borra la barra del slider
+  wbox(ptr,an,al,c2,123+32,28,7,max-min+3); // Clear the slider bar
 
   if (lp_num<=1) n=min; else {
     x=(float)lp_select/(float)(lp_num-1);
@@ -4223,11 +4223,11 @@ void lista_procesos1(void) {
   wwrite(ptr,an,al,5,11,0,text[74],c1);
   wwrite(ptr,an,al,4,11,0,text[74],c3);
 
-  wrectangulo(ptr,an,al,c0,3,19,128+32,123); // Límites listbox procesos
+  wrectangulo(ptr,an,al,c0,3,19,128+32,123); // Listbox process limits
   wrectangulo(ptr,an,al,c0,122+32,19,9,123);
   wrectangulo(ptr,an,al,c0,122+32,27,9,123-16);
 
-  wput(ptr,an,al,123+32,20,-39); // Boton arriba / abajo (pulsados 41,42)
+  wput(ptr,an,al,123+32,20,-39); // Up/down buttons (pressed 41,42)
   wput(ptr,an,al,123+32,174-40,-40);
 
   crear_lista_procesos();
@@ -4336,19 +4336,19 @@ void lista_procesos0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Profile - Perfiles de tiempo de ejecución
+// Profile - Execution time profiles
 //═════════════════════════════════════════════════════════════════════════════
 
-//int lp1[512];     // Numero de objeto correspondiente a los procesos
-//int lp_num;       // Número de bloques de procesos en la lista
-//int lp_ini;       // El primer bloque que se visualiza en la ventana
-//int lp_select;    // El bloque de proceso seleccionado
+//int lp1[512];     // Object ID corresponding to each process
+//int lp_num;       // Number of process blocks in the list
+//int lp_ini;       // First block displayed in window
+//int lp_select;    // Selected process block
 
-//int obj_start; // Inicio del primer objeto (&obj[0])
-//int obj_size;  // Longitud de cada objeto (struct objeto)
-//(El bloque de un ID es: (mem[ID+_Bloque]-obj_start)/obj_size;)
+//int obj_start; // Start of first object (&obj[0])
+//int obj_size;  // Length of each object (struct objeto)
+//(The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;)
 
-//unsigned f_time[256]; // Tiempo consumido por las diferentes funciones
+//unsigned f_time[256]; // Time taken by each function
   unsigned f_time_total;
   unsigned f_exec_total;
   unsigned f_paint_total;
@@ -4403,27 +4403,27 @@ return (unsigned int)clock();
 #endif
 }
 
-void function_exec(int id,int n) { // Nº, ciclos
+void function_exec(int id,int n) { // ID, cicles
   if (n>0) f_time[id]+=n;
 }
 
-void process_exec(int id,int n) { // Id, ciclos
+void process_exec(int id,int n) { // ID, cicles
   if (!debug_active) return;
   if (n>0) o[(mem[id+_Bloque]-obj_start)/obj_size].v4+=n;
 }
 
-void process_paint(int id,int n) { // Id, ciclos
+void process_paint(int id,int n) { // ID, cicles
   if (!debug_active) return;
   if (n>0) o[(mem[id+_Bloque]-obj_start)/obj_size].v5+=n;
 }
 
 //════════════════════════════════════════════════════════════════════════════
 
-#define lpy   (24+15)  // Listbox con los perfiles de los procesos
+#define lpy   (24+15)  // Listbox with process profiles
 #define lpnum 6
 #define lpal  10
 
-#define lp2y   (86+15) // Listbox con los perfiles de los procesos
+#define lp2y   (86+15) // Listbox with process profiles
 #define lp2num 6
 #define lp2al  10
 #define lp2esp 98
@@ -4491,15 +4491,15 @@ void pintar_lista_profile(void) {
   int m,x,porcen,porcen2;
   char cwork[256];
 
-  wbox(ptr,an,al,c1,4,lpy,an-16,lpnum*lpal-1); // Límites listbox procesos
+  wbox(ptr,an,al,c1,4,lpy,an-16,lpnum*lpal-1); // Process listbox limits
   for (m=lp_ini;m<lp_ini+lpnum && m<lp_num;m++) {
     if (m==lp_select) {
-      wbox(ptr,an,al,c01,4,lpy+(m-lp_ini)*lpal,an-16-130,lpal-1); // Relleno listbox procesos
+      wbox(ptr,an,al,c01,4,lpy+(m-lp_ini)*lpal,an-16-130,lpal-1); // Process listbox fill
       x=c4;
     } else x=c3;
-    wrectangulo(ptr,an,al,c0,an-12-130,lpy-1+(m-lp_ini)*lpal,66,lpal+1); // Límites barras
+    wrectangulo(ptr,an,al,c0,an-12-130,lpy-1+(m-lp_ini)*lpal,66,lpal+1); // Bars limits
 
-    wbox(ptr,an,al,c_g_low0,an-11-130,lpy+(m-lp_ini)*lpal,64,lpal-1); // Ejecucion
+    wbox(ptr,an,al,c_g_low0,an-11-130,lpy+(m-lp_ini)*lpal,64,lpal-1); // Execution
 
     porcen=(unsigned)(((double)o[lp1[m]].v4*(double)10000.0)/(double)f_time_total);
     porcen2=(unsigned)(((double)o[lp1[m]].v4*(double)10000.0)/(double)f_max);
@@ -4529,15 +4529,15 @@ void pintar_lista_profile(void) {
     wbox(ptr,an,al,c0,4,lpy+(m-lp_ini)*lpal+lpal-1,an-16,1);
   }
 
-  wbox(ptr,an,al,c1,4,lp2y,an-lp2esp-16,lp2num*lp2al-1); // Límites listbox procesos
+  wbox(ptr,an,al,c1,4,lp2y,an-lp2esp-16,lp2num*lp2al-1); // Process listbox limits
   for (m=lp2_ini;m<lp2_ini+lp2num && m<lp2_num;m++) {
     if (m==lp2_select) {
-      wbox(ptr,an,al,c01,4,lp2y+(m-lp2_ini)*lp2al,an-lp2esp-16-65,lp2al-1); // Relleno listbox procesos
+      wbox(ptr,an,al,c01,4,lp2y+(m-lp2_ini)*lp2al,an-lp2esp-16-65,lp2al-1); // Process listbox fill
       x=c4;
     } else x=c3;
-    wrectangulo(ptr,an,al,c0,an-lp2esp-12-65,lp2y-1+(m-lp2_ini)*lp2al,1,lp2al+1); // Límites barras
+    wrectangulo(ptr,an,al,c0,an-lp2esp-12-65,lp2y-1+(m-lp2_ini)*lp2al,1,lp2al+1); // Bars limits
 
-    wbox(ptr,an,al,c_g_low0,an-lp2esp-11-65,lp2y+(m-lp2_ini)*lp2al,64,lp2al-1); // Ejecucion
+    wbox(ptr,an,al,c_g_low0,an-lp2esp-11-65,lp2y+(m-lp2_ini)*lp2al,64,lp2al-1); // Execution
 
     porcen=(unsigned)(((double)f_time[(memptrsize)lp2[m]]*(double)10000.0)/(double)f_time_total);
     porcen2=(unsigned)(((double)f_time[(memptrsize)lp2[m]]*(double)10000.0)/(double)f_max);
@@ -4635,7 +4635,7 @@ void pinta_segmento_profile(void) {
   int min=lpy+7,max=lpy+lpnum*lpal-13,n;
   float x;
 
-  wbox(ptr,an,al,c2,an-11,lpy+8,7,max-min+3); // Borra la barra del slider
+  wbox(ptr,an,al,c2,an-11,lpy+8,7,max-min+3); // Clear the slider bar
   if (lp_num<=1) n=min; else {
     x=(float)lp_select/(float)(lp_num-1);
     n=min*(1-x)+max*x;
@@ -4645,7 +4645,7 @@ void pinta_segmento_profile(void) {
 
   min=lp2y+7; max=lp2y+lp2num*lp2al-13,n;
 
-  wbox(ptr,an,al,c2,an-lp2esp-11,lp2y+8,7,max-min+3); // Borra la barra del slider
+  wbox(ptr,an,al,c2,an-lp2esp-11,lp2y+8,7,max-min+3); // Clear the slider bar
   if (lp2_num<=1) n=min; else {
     x=(float)lp2_select/(float)(lp2_num-1);
     n=min*(1-x)+max*x;
@@ -4681,7 +4681,7 @@ void profile1(void) {
   wwrite(ptr,an,al,an/2,14,1,(byte *)cwork,c_b_low0);
   wwrite(ptr,an,al,an/2,14,1,(byte *)cwork,c34);
 
-  wrectangulo(ptr,an,al,c0,3,11+14,an/2-4,11); // Ejecucion %
+  wrectangulo(ptr,an,al,c0,3,11+14,an/2-4,11); // Execution %
   wbox(ptr,an,al,c_g_low0,4,12+14,an/2-6,9);
   x=(unsigned)(((double)f_exec_total*(double)10000.0)/(double)f_time_total);
   wbox(ptr,an,al,c_g_low,4,12+14,((an/2-6)*x)/10000,9);
@@ -4692,7 +4692,7 @@ void profile1(void) {
   wwrite(ptr,an,al,4+(an/2-4)/2,13+14,1,(byte *)cwork,c_g_low0);
   wwrite(ptr,an,al,3+(an/2-4)/2,13+14,1,(byte *)cwork,c34);
 
-  wrectangulo(ptr,an,al,c0,an/2+1,11+14,an/2-4,11); // Pintado %
+  wrectangulo(ptr,an,al,c0,an/2+1,11+14,an/2-4,11); // Drawing %
   wbox(ptr,an,al,c_r_low0,an/2+2,12+14,an/2-6,9);
   x=(unsigned)(((double)f_paint_total*(double)10000.0)/(double)f_time_total);
   wbox(ptr,an,al,c_r_low,an/2+2,12+14,((an/2-6)*x)/10000,9);
@@ -4703,18 +4703,18 @@ void profile1(void) {
   wwrite(ptr,an,al,an/2+3+(an/2-4)/2,13+14,1,(byte *)cwork,c_r_low0);
   wwrite(ptr,an,al,an/2+2+(an/2-4)/2,13+14,1,(byte *)cwork,c34);
 
-  wrectangulo(ptr,an,al,c0,3,lpy-1,an-6,lpal+1); // Límites listbox procesos
+  wrectangulo(ptr,an,al,c0,3,lpy-1,an-6,lpal+1); // Process listbox limits
   wrectangulo(ptr,an,al,c0,3,lpy-1,an-6,lpnum*lpal+1);
   wrectangulo(ptr,an,al,c0,an-12,lpy-1,9,lpnum*lpal+1);
   wrectangulo(ptr,an,al,c0,an-12,lpy+7,9,lpnum*lpal+1-16);
-  wput(ptr,an,al,an-11,lpy,-39); // Boton arriba / abajo (pulsados 41,42)
+  wput(ptr,an,al,an-11,lpy,-39); // Up/down buttons (pressed 41,42)
   wput(ptr,an,al,an-11,lpy+lpnum*lpal-8,-40);
 
-  wrectangulo(ptr,an,al,c0,3,lp2y-1,an-lp2esp-6,lp2al+1); // Límites listbox procesos
+  wrectangulo(ptr,an,al,c0,3,lp2y-1,an-lp2esp-6,lp2al+1); // Process listbox limits
   wrectangulo(ptr,an,al,c0,3,lp2y-1,an-lp2esp-6,lp2num*lp2al+1);
   wrectangulo(ptr,an,al,c0,an-lp2esp-12,lp2y-1,9,lp2num*lp2al+1);
   wrectangulo(ptr,an,al,c0,an-lp2esp-12,lp2y+7,9,lp2num*lp2al+1-16);
-  wput(ptr,an,al,an-lp2esp-11,lp2y,-39); // Boton arriba / abajo (pulsados 41,42)
+  wput(ptr,an,al,an-lp2esp-11,lp2y,-39); // Up/down buttons (pressed 41,42)
   wput(ptr,an,al,an-lp2esp-11,lp2y+lp2num*lp2al-8,-40);
 
   pintar_lista_profile();
@@ -4782,7 +4782,7 @@ void profile2(void) {
     mouse_graf=9;
   } else if (lp_boton==2) { wput(ptr,an,al,an-11,lpy+lpnum*lpal-8,-40); lp_boton=0; v.volcar=1; }
 
-  // Listbox funciones
+  // Functions listbox
 
   if (wmouse_in(3,lp2y,an-lp2esp-15,lp2num*lp2al) && (mouse_b&1)) {
     n=lp2_ini+(wmouse_y-lp2y)/lp2al;
