@@ -1166,20 +1166,26 @@ void crear_ghost_slow (void) {
   find_col=(color-dac4)/3;
 }
 
-void find_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
 
-  int dmin,dif;
-  byte *pal,*endpal,*color;
+byte ffind_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
 
-  pal=paleta+3; endpal=paleta+768; dmin=65536;
+  byte *color;
+
+  byte* pal=paleta+3; 
+  byte* endpal=paleta+768; 
+  int dmin=65536;
   do {
     if (((pal-paleta)/3)==last_c1) pal+=3;
-    dif=(int)(r-*pal)*(int)(r-*pal); pal++;
+    int dif=(int)(r-*pal)*(int)(r-*pal); pal++;
     dif+=(int)(g-*pal)*(int)(g-*pal); pal++;
     dif+=(int)(b-*pal)*(int)(b-*pal); pal++;
     if (dif<dmin) { dmin=dif; color=pal-3; }
   } while (pal<endpal);
-  find_col=(color-paleta)/3;
+  return (color-paleta)/3;
+}
+
+void find_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
+	find_col = ffind_color(r,g,b);
 }
 
 byte media(byte a,byte b) {
