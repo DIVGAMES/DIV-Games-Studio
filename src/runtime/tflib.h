@@ -1,4 +1,4 @@
-/**************************************************************************
+﻿/**************************************************************************
 *  This file is part of TopFLC library v1.0
 *  Copyright 1996 Johannes Lehtinen
 *  All rights reserved
@@ -38,5 +38,4 @@ void TFError_Report(char *msg);
 #endif
 
 #endif
-
 

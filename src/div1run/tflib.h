@@ -5,21 +5,18 @@
 *
 *  The license in file license.txt applies to this file.
 **************************************************************************/
-
 #ifndef __TFLIB_H__
 #define __TFLIB_H__
 
 /**************************************************************************
 *  #includes
 **************************************************************************/
-
 #include <stdio.h>
 #include "topflc.h"
 
 /**************************************************************************
 *  Function prototypes
 **************************************************************************/
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,7 +27,6 @@ extern "C" {
 *  This function is used by other library functions to report possible
 *  error situations.
 **************************************************************************/
-
 void TFError_Report(char *msg);
 
 #ifdef __cplusplus
@@ -38,5 +34,4 @@ void TFError_Report(char *msg);
 #endif
 
 #endif
-
 

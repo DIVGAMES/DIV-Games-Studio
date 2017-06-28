@@ -1,4 +1,4 @@
-//=============================================================================
+ï»¿//=============================================================================
 // Modulo net.h
 //=============================================================================
 
@@ -11,15 +11,16 @@
 typedef unsigned short WORD;
 typedef unsigned char  BYTE;
 
-typedef struct { int dispositivo;         // IPX, SERIAL ¢ MODEM
-                 int com;                 // 0-3
-                 int velocidad;           // Velocidad del puerto
-                 char telefono[32];
-                 char cadena_inicio[16];  // Defecto: ATZ
-                 int tonos;               // 1-tonos, 0-pulsos
-                 int servidor;            //
-                 int num_players;         // Maximo 16
-               } net_struct;
+typedef struct _net_struct {
+	int  dispositivo;       // IPX, SERIAL Â¢ MODEM
+	int  com;               // 0-3
+	int  velocidad;         // Velocidad del puerto
+	char telefono[32];
+	char cadena_inicio[16]; // Defecto: ATZ
+	int  tonos;             // 1-tonos, 0-pulsos
+	int  servidor;          //
+	int  num_players;       // Maximo 16
+} t_net_struct;
 
 //-----------------------------------------------------------------------------
 // Definicion de Dispositivos
@@ -41,7 +42,7 @@ typedef struct { int dispositivo;         // IPX, SERIAL ¢ MODEM
 //-----------------------------------------------------------------------------
 extern char net_games[10][32];
 extern int net_players[16];
-extern net_struct *net_lib;
+extern t_net_struct *net_lib;
 extern int inicializacion_red;
 
 //-----------------------------------------------------------------------------
@@ -52,14 +53,15 @@ extern int inicializacion_red;
 void net_end(void);
 
 // Devuelve las partidas activas en la red
-int _net_get_games(int game_id);
-void net_get_games(void);
+int  net_get_games(int game_id);
 
 // Si la partida no existe la crea en caso contrario se une a ella
-int _net_join_game(int game_id,char *nombre,byte *datos, int longitud);
-void net_join_game(void);
+int  net_join_game(int game_id, char *nombre, byte *datos, int longitud);
 
 // Chequea la red (manda y recibe paquetes)
-void _net_loop();
+void net_loop();
+
+void DIV_net_get_games(void);
+void DIV_net_join_game(void);
 
 #endif

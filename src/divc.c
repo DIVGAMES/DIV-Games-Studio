@@ -1,4 +1,4 @@
-
+﻿
 // Strings, nuevo: p_string, cglo, cloc, p_*char, l*chr, ...
 // 00 - optimizacion de código intermedio
 // 00 - tablas y estructuras de hasta 3 dimensiones
@@ -530,148 +530,148 @@ void add_code(int dir, int param, int op);
 
 //─Mnemónico─Códg.─Operandos (Generación de código EML, "*" ­ "aún no usado")
 
-#define lnop  0 // *            No operación
-#define lcar  1 // valor        Carga una constante en pila
-#define lasi  2 //              Saca valor, offset y mete el valor en [offset]
-#define lori  3 //              Or lógico
-#define lxor  4 //              Xor, or exclusivo
-#define land  5 //              And lógico, operador sobre condiciones
-#define ligu  6 //              Igual, operador logico de comparación
-#define ldis  7 //              Distinto, true si los 2 valores son diferentes
-#define lmay  8 //              Mayor, comparación con signo
-#define lmen  9 //              Menor, idem
-#define lmei 10 //              Menor o igual
-#define lmai 11 //              Mayor o igual
-#define ladd 12 //              Suma dos constantes
-#define lsub 13 //              Resta, operación binaria
-#define lmul 14 //              Multiplicación
-#define ldiv 15 //              División de enteros
-#define lmod 16 //              Módulo, resto de la división
-#define lneg 17 //              Negación, cambia de signo una constante
-#define lptr 18 //              Pointer, saca offset y mete [offset]
-#define lnot 19 //              Negación binaria, bit a bit
-#define laid 20 //              Suma id a la constante de la pila
-#define lcid 21 //              Carga id en la pila
-#define lrng 22 // rango        Realiza una comparación de rango
-#define ljmp 23 // offset       Salta a una dirección de mem[]
-#define ljpf 24 // offset       Salta si un valor es falso a una dirección
-#define lfun 25 // código       Llamada a un proceso interno, ej. signal()
-#define lcal 26 // offset       Crea un nuevo proceso en el programa
-#define lret 27 //              Auto-eliminación del proceso
-#define lasp 28 //              Desecha un valor apilado
-#define lfrm 29 //              Detiene por este frame la ejecución del proceso
-#define lcbp 30 // num_par      Inicializa el puntero a los parámetros locales
-#define lcpa 31 //              Saca offset, lee parámetro [offset] y bp++
-#define ltyp 32 // bloque       Define el tipo de proceso actual (colisiones)
-#define lpri 33 // offset       Salta a la dirección, y carga var. privadas
-#define lcse 34 // offset       Si switch <> expresión, salta al offset
-#define lcsr 35 // offset       Si switch no esta en el rango, salta al offset
-#define lshr 36 //              Rotacion a la derecha (modo C, >>)
-#define lshl 37 //              Rotacion a la izquierda (modo C, <<)
-#define lipt 38 //              Incremento y pointer
-#define lpti 39 //              Pointer e incremento
-#define ldpt 40 //              Decremento y pointer
-#define lptd 41 //              Pointer y decremento
-#define lada 42 //              Add-asignación
-#define lsua 43 //              Sub-asignación
-#define lmua 44 //              Mul-asignación
-#define ldia 45 //              Div-asignación
-#define lmoa 46 //              Mod-asignación
-#define lana 47 //              And-asignación
-#define lora 48 //              Or-asignación
-#define lxoa 49 //              Xor-asignación
-#define lsra 50 //              Shr-asignación
-#define lsla 51 //              Shl-asignación
-#define lpar 52 // num_par_pri  Define el número de parámetros privados
-#define lrtf 53 //              Auto-eliminación del proceso, devuelve un valor
-#define lclo 54 // offset       Crea un clon del proceso actual
-#define lfrf 55 //              Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
-#define limp 56 // offset text  Importa una DLL externa
-#define lext 57 // código       Llama a una función externa
-#define lchk 58 //              Comprueba la validez de un identificador
-#define ldbg 59 //              Invoca al debugger
+#define DIVBC_nop  0 // *            No operación
+#define DIVBC_car  1 // valor        Carga una constante en pila
+#define DIVBC_asi  2 //              Saca valor, offset y mete el valor en [offset]
+#define DIVBC_ori  3 //              Or lógico
+#define DIVBC_xor  4 //              Xor, or exclusivo
+#define DIVBC_and  5 //              And lógico, operador sobre condiciones
+#define DIVBC_igu  6 //              Igual, operador logico de comparación
+#define DIVBC_dis  7 //              Distinto, true si los 2 valores son diferentes
+#define DIVBC_may  8 //              Mayor, comparación con signo
+#define DIVBC_men  9 //              Menor, idem
+#define DIVBC_mei 10 //              Menor o igual
+#define DIVBC_mai 11 //              Mayor o igual
+#define DIVBC_add 12 //              Suma dos constantes
+#define DIVBC_sub 13 //              Resta, operación binaria
+#define DIVBC_mul 14 //              Multiplicación
+#define DIVBC_div 15 //              División de enteros
+#define DIVBC_mod 16 //              Módulo, resto de la división
+#define DIVBC_neg 17 //              Negación, cambia de signo una constante
+#define DIVBC_ptr 18 //              Pointer, saca offset y mete [offset]
+#define DIVBC_not 19 //              Negación binaria, bit a bit
+#define DIVBC_aid 20 //              Suma id a la constante de la pila
+#define DIVBC_cid 21 //              Carga id en la pila
+#define DIVBC_rng 22 // rango        Realiza una comparación de rango
+#define DIVBC_jmp 23 // offset       Salta a una dirección de mem[]
+#define DIVBC_jpf 24 // offset       Salta si un valor es falso a una dirección
+#define DIVBC_fun 25 // código       Llamada a un proceso interno, ej. signal()
+#define DIVBC_cal 26 // offset       Crea un nuevo proceso en el programa
+#define DIVBC_ret 27 //              Auto-eliminación del proceso
+#define DIVBC_asp 28 //              Desecha un valor apilado
+#define DIVBC_frm 29 //              Detiene por este frame la ejecución del proceso
+#define DIVBC_cbp 30 // num_par      Inicializa el puntero a los parámetros locales
+#define DIVBC_cpa 31 //              Saca offset, lee parámetro [offset] y bp++
+#define DIVBC_typ 32 // bloque       Define el tipo de proceso actual (colisiones)
+#define DIVBC_pri 33 // offset       Salta a la dirección, y carga var. privadas
+#define DIVBC_cse 34 // offset       Si switch <> expresión, salta al offset
+#define DIVBC_csr 35 // offset       Si switch no esta en el rango, salta al offset
+#define DIVBC_shr 36 //              Rotacion a la derecha (modo C, >>)
+#define DIVBC_shl 37 //              Rotacion a la izquierda (modo C, <<)
+#define DIVBC_ipt 38 //              Incremento y pointer
+#define DIVBC_pti 39 //              Pointer e incremento
+#define DIVBC_dpt 40 //              Decremento y pointer
+#define DIVBC_ptd 41 //              Pointer y decremento
+#define DIVBC_ada 42 //              Add-asignación
+#define DIVBC_sua 43 //              Sub-asignación
+#define DIVBC_mua 44 //              Mul-asignación
+#define DIVBC_dia 45 //              Div-asignación
+#define DIVBC_moa 46 //              Mod-asignación
+#define DIVBC_ana 47 //              And-asignación
+#define DIVBC_ora 48 //              Or-asignación
+#define DIVBC_xoa 49 //              Xor-asignación
+#define DIVBC_sra 50 //              Shr-asignación
+#define DIVBC_sla 51 //              Shl-asignación
+#define DIVBC_par 52 // num_par_pri  Define el número de parámetros privados
+#define DIVBC_rtf 53 //              Auto-eliminación del proceso, devuelve un valor
+#define DIVBC_clo 54 // offset       Crea un clon del proceso actual
+#define DIVBC_frf 55 //              Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
+#define DIVBC_imp 56 // offset text  Importa una DLL externa
+#define DIVBC_ext 57 // código       Llama a una función externa
+#define DIVBC_chk 58 //              Comprueba la validez de un identificador
+#define DIVBC_dbg 59 //              Invoca al debugger
 
 // Instrucciones añadidas para la optimización (DIV 2.0)
 
-#define lcar2 60
-#define lcar3 61
-#define lcar4 62
-#define lasiasp 63
-#define lcaraid 64
-#define lcarptr 65
-#define laidptr 66
-#define lcaraidptr 67
-#define lcaraidcpa 68
-#define laddptr 69
-#define lfunasp 70
-#define lcaradd 71
-#define lcaraddptr 72
-#define lcarmul 73
-#define lcarmuladd 74
-#define lcarasiasp 75
-#define lcarsub 76
-#define lcardiv 77
+#define DIVBC_car2 60
+#define DIVBC_car3 61
+#define DIVBC_car4 62
+#define DIVBC_asiasp 63
+#define DIVBC_caraid 64
+#define DIVBC_carptr 65
+#define DIVBC_aidptr 66
+#define DIVBC_caraidptr 67
+#define DIVBC_caraidcpa 68
+#define DIVBC_addptr 69
+#define DIVBC_funasp 70
+#define DIVBC_caradd 71
+#define DIVBC_caraddptr 72
+#define DIVBC_carmul 73
+#define DIVBC_carmuladd 74
+#define DIVBC_carasiasp 75
+#define DIVBC_carsub 76
+#define DIVBC_cardiv 77
 
 // Instrucciones añadidas para el manejo de caracteres
 
-#define lptrchr 78  // Pointer, saca (index, offset) y mete [offset+byte index]
-#define lasichr 79  // Saca (valor, index, offset) y mete el valor en [offset+byte index]
-#define liptchr 80  // Incremento y pointer
-#define lptichr 81  // Pointer e incremento
-#define ldptchr 82  // Decremento y pointer
-#define lptdchr 83  // Pointer y decremento
-#define ladachr 84  // Add-asignación
-#define lsuachr 85  // Sub-asignación
-#define lmuachr 86  // Mul-asignación
-#define ldiachr 87  // Div-asignación
-#define lmoachr 88  // Mod-asignación
-#define lanachr 89  // And-asignación
-#define lorachr 90  // Or-asignación
-#define lxoachr 91  // Xor-asignación
-#define lsrachr 92  // Shr-asignación
-#define lslachr 93  // Shl-asignación
-#define lcpachr 94  // Saca offset, lee parámetro [offset] y bp++
+#define DIVBC_ptrchr 78  // Pointer, saca (index, offset) y mete [offset+byte index]
+#define DIVBC_asichr 79  // Saca (valor, index, offset) y mete el valor en [offset+byte index]
+#define DIVBC_iptchr 80  // Incremento y pointer
+#define DIVBC_ptichr 81  // Pointer e incremento
+#define DIVBC_dptchr 82  // Decremento y pointer
+#define DIVBC_ptdchr 83  // Pointer y decremento
+#define DIVBC_adachr 84  // Add-asignación
+#define DIVBC_suachr 85  // Sub-asignación
+#define DIVBC_muachr 86  // Mul-asignación
+#define DIVBC_diachr 87  // Div-asignación
+#define DIVBC_moachr 88  // Mod-asignación
+#define DIVBC_anachr 89  // And-asignación
+#define DIVBC_orachr 90  // Or-asignación
+#define DIVBC_xoachr 91  // Xor-asignación
+#define DIVBC_srachr 92  // Shr-asignación
+#define DIVBC_slachr 93  // Shl-asignación
+#define DIVBC_cpachr 94  // Saca offset, lee parámetro [offset] y bp++
 
 // Instrucciones añadidas para el manejo de cadenas
 
-#define lstrcpy 95  // Saca si, di, y hace strcpy(mem[di],[si]) (deja di en pila)
-#define lstrfix 96  // Amplia una cadena antes de meter un char en ella
-#define lstrcat 97  // Concatena dos cadenas (opera como strcpy)
-#define lstradd 98  // Suma dos strings "en el aire" y deja en pila el puntero al aire
-#define lstrdec 99  // Añade o quita caracteres a una cadena
-#define lstrsub 100 // Quita caracteres a una cadena (-=)
-#define lstrlen 101 // Sustituye una cadena por su longitud
-#define lstrigu 102 // Comparacion de igualdad de dos cadenas
-#define lstrdis 103 // Cadenas distintas
-#define lstrmay 104 // Cadena mayor
-#define lstrmen 105 // Cadena menor
-#define lstrmei 106 // Cadena mayor o igual
-#define lstrmai 107 // Cadena menor o igual
-#define lcpastr 108 // Carga un parámetro en una cadena
+#define DIVBC_strcpy 95  // Saca si, di, y hace strcpy(mem[di],[si]) (deja di en pila)
+#define DIVBC_strfix 96  // Amplia una cadena antes de meter un char en ella
+#define DIVBC_strcat 97  // Concatena dos cadenas (opera como strcpy)
+#define DIVBC_stradd 98  // Suma dos strings "en el aire" y deja en pila el puntero al aire
+#define DIVBC_strdec 99  // Añade o quita caracteres a una cadena
+#define DIVBC_strsub 100 // Quita caracteres a una cadena (-=)
+#define DIVBC_strlen 101 // Sustituye una cadena por su longitud
+#define DIVBC_strigu 102 // Comparacion de igualdad de dos cadenas
+#define DIVBC_strdis 103 // Cadenas distintas
+#define DIVBC_strmay 104 // Cadena mayor
+#define DIVBC_strmen 105 // Cadena menor
+#define DIVBC_strmei 106 // Cadena mayor o igual
+#define DIVBC_strmai 107 // Cadena menor o igual
+#define DIVBC_cpastr 108 // Carga un parámetro en una cadena
 
 // Instrucciones añadidas para el manejo de Words
 
-#define lptrwor 109 // Pointer, saca (index, offset) y mete [offset+byte index]
-#define lasiwor 110 // Saca (valor, index, offset) y mete el valor en [offset+byte index]
-#define liptwor 111 // Incremento y pointer
-#define lptiwor 112 // Pointer e incremento
-#define ldptwor 113 // Decremento y pointer
-#define lptdwor 114 // Pointer y decremento
-#define ladawor 115 // Add-asignación
-#define lsuawor 116 // Sub-asignación
-#define lmuawor 117 // Mul-asignación
-#define ldiawor 118 // Div-asignación
-#define lmoawor 119 // Mod-asignación
-#define lanawor 120 // And-asignación
-#define lorawor 121 // Or-asignación
-#define lxoawor 122 // Xor-asignación
-#define lsrawor 123 // Shr-asignación
-#define lslawor 124 // Shl-asignación
-#define lcpawor 125 // Saca offset, lee parámetro [offset] y bp++
+#define DIVBC_ptrwor 109 // Pointer, saca (index, offset) y mete [offset+byte index]
+#define DIVBC_asiwor 110 // Saca (valor, index, offset) y mete el valor en [offset+byte index]
+#define DIVBC_iptwor 111 // Incremento y pointer
+#define DIVBC_ptiwor 112 // Pointer e incremento
+#define DIVBC_dptwor 113 // Decremento y pointer
+#define DIVBC_ptdwor 114 // Pointer y decremento
+#define DIVBC_adawor 115 // Add-asignación
+#define DIVBC_suawor 116 // Sub-asignación
+#define DIVBC_muawor 117 // Mul-asignación
+#define DIVBC_diawor 118 // Div-asignación
+#define DIVBC_moawor 119 // Mod-asignación
+#define DIVBC_anawor 120 // And-asignación
+#define DIVBC_orawor 121 // Or-asignación
+#define DIVBC_xoawor 122 // Xor-asignación
+#define DIVBC_srawor 123 // Shr-asignación
+#define DIVBC_slawor 124 // Shl-asignación
+#define DIVBC_cpawor 125 // Saca offset, lee parámetro [offset] y bp++
 
 // Miscelánea
 
-#define lnul    126 // Comprueba que un puntero no sea NULL
+#define DIVBC_nul    126 // Comprueba que un puntero no sea NULL
 
 //═════════════════════════════════════════════════════════════════════════════
 //      Prototipos
@@ -1285,7 +1285,7 @@ void c_error(word tipo, word e) {
   // _case_sensitive
   memcpy(lower+129,"ueaaaaçeeeiiiaaeææooouuyouø£Ø×ƒaiou",35);
   memcpy(lower+'A',"abcdefghijklmnopqrstuvwxyz",26);
-  lower['Ñ']='ñ';
+  lower['\xa5' /*'Ñ'*/]='\xa4' /*'ñ'*/;
 
   comp_exit();
 }
@@ -1900,8 +1900,8 @@ void lexico(void) {
 
         if (IsWAV(full)) empaquetable=1;
 
-        // ???
-		empaquetable=1;
+        /*// ???
+		empaquetable=1;*/
 
         if (!empaquetable || en_fopen) fwrite("+",1,1,lins);
         fwrite(full,1,strlen(full)+1,lins);
@@ -3298,7 +3298,7 @@ void sintactico (void) {
             lexico();
             memcpy(lower+129,"üéâäàåçêëèïîìäåéææôöòûùÿöüø£Ø×ƒáíóú",35);
             memcpy(lower+'A',"ABCDEFGHIJKLMNOPQRSTUVWXYZ",26);
-            lower['Ñ']='Ñ';
+            lower['\xa5' /*'Ñ'*/]='\xa4' /*'ñ'*/;
             break;
           case 4: // _ignore_errors
             lexico();
@@ -4199,8 +4199,8 @@ void sintactico (void) {
 
   mem[0]=program_type; mem[1]=imem; iloc_len=iloc;
 
-  g2(ltyp,(memptrsize)bloque_actual);
-  g2(lcbp,0);
+  g2(DIVBC_typ,(memptrsize)bloque_actual);
+  g2(DIVBC_cbp,0);
 #ifdef DIVDLL
   linea1=dlls[0].linea1;
   columna1=dlls[0].columna1;
@@ -4215,7 +4215,7 @@ void sintactico (void) {
 
   for (n=1;n<idlls;n++) {
     inicio=imem; final=imem+1;
-    g2(limp,dlls[n].filename);
+    g2(DIVBC_imp,dlls[n].filename);
     linea1=dlls[n].linea1;
     columna1=dlls[n].columna1;
     linea2=dlls[n].linea2;
@@ -4236,7 +4236,7 @@ void sintactico (void) {
   if (iloc>iloc_len) iloc_len=iloc; iloc=n;
   parametros=0;
 
-  g1(lfrm);
+  g1(DIVBC_frm);
 
   if (pieza!=p_begin) c_error(0,29);
   inicio_sentencia(); inicio=final;
@@ -4245,7 +4245,7 @@ void sintactico (void) {
   sentencia();
 
   if (pieza!=p_end) c_error(0,40); inicio_sentencia();
-  g1(lret);
+  g1(DIVBC_ret);
   pasa_ptocoma(); final_sentencia(); grabar_sentencia();
 
   //───────────────────────────────────────────────────────────────────────────
@@ -4268,9 +4268,9 @@ void sintactico (void) {
     } else c_error(2,118);
     (*ob).proc.offset=imem; (*ob).proc.num_par=0;
 
-    g2(ltyp,(memptrsize)bloque_actual);
-    if (n==p_function) g1(lnop);
-    g2(lcbp,0); _imem=imem-1;
+    g2(DIVBC_typ,(memptrsize)bloque_actual);
+    if (n==p_function) g1(DIVBC_nop);
+    g2(DIVBC_cbp,0); _imem=imem-1;
     if (pieza!=p_abrir) c_error(3,36);
 
     parametros=1; n=iloc; lexico();
@@ -4285,7 +4285,7 @@ void sintactico (void) {
     pasa_ptocoma(); final_sentencia();
 
     if (parametros>1) {
-      g2(lpar,parametros-1);
+      g2(DIVBC_par,parametros-1);
     }
 
     parametros=-1; // Para que los parámetros se puedan repetir como PRIVATE
@@ -4300,7 +4300,7 @@ void sintactico (void) {
     final=imem-1; grabar_sentencia();
     sentencia();
     if (pieza!=p_end) c_error(0,40); inicio_sentencia();
-    g1(lret);
+    g1(DIVBC_ret);
     pasa_ptocoma(); final_sentencia(); grabar_sentencia();
 
     save_error(0);
@@ -4326,7 +4326,7 @@ void analiza_private(void) {
   if (pieza==p_private) {
     pasa_ptocoma();
 
-    g2(lpri,0); _imem_old=imem-1;
+    g2(DIVBC_pri,0); _imem_old=imem-1;
 
     while (pieza==p_id || pieza==p_int || pieza==p_pointer || pieza==p_struct || pieza==p_string || pieza==p_byte || pieza==p_word) {
 
@@ -5042,12 +5042,12 @@ void sentencia() {
         lexico(); if (pieza==p_abrir) {
           lexico(); if (pieza!=p_cerrar) {
             expresion(); if (pieza!=p_cerrar) c_error(3,25);
-            g1(lrtf);
+            g1(DIVBC_rtf);
             } else {
-            g1(lret);
+            g1(DIVBC_ret);
             } lexico();
           } else {
-          g1(lret);
+          g1(DIVBC_ret);
         }
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
@@ -5060,13 +5060,13 @@ void sentencia() {
         condicion();
         if (!free_sintax) if (pieza!=p_cerrar) c_error(3,25);
         if (pieza==p_cerrar) lexico();
-        g2(ljpf,0); im1=imem-1;
+        g2(DIVBC_jpf,0); im1=imem-1;
         final_sentencia(); grabar_sentencia();
         sentencia();
         if (pieza==p_else) {
           inicio_sentencia();
           lexico();
-          g2(ljmp,0); mem[im1]=imem; im1=imem-1;
+          g2(DIVBC_jmp,0); mem[im1]=imem; im1=imem-1;
           final_sentencia(); grabar_sentencia();
           sentencia();
           }
@@ -5078,7 +5078,7 @@ void sentencia() {
         im1=imem; sentencia();
         if (pieza!=p_end) c_error(0,40);
         inicio_sentencia(); lexico();
-        g2(ljmp,im1);
+        g2(DIVBC_jmp,im1);
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im1;
         final_sentencia(); grabar_sentencia();
@@ -5092,12 +5092,12 @@ void sentencia() {
         condicion();
         if (!free_sintax) if (pieza!=p_cerrar) c_error(3,25);
         if (pieza==p_cerrar) lexico();
-        g2(ljpf,0); im2=imem-1;
+        g2(DIVBC_jpf,0); im2=imem-1;
         final_sentencia(); grabar_sentencia();
         sentencia();
         if (pieza!=p_end) c_error(0,40); inicio_sentencia();
         lexico();
-        g2(ljmp,im1); mem[im2]=imem;
+        g2(DIVBC_jmp,im1); mem[im2]=imem;
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im1;
         final_sentencia(); grabar_sentencia();
@@ -5114,7 +5114,7 @@ void sentencia() {
         condicion();
         if (!free_sintax) if (pieza!=p_cerrar) c_error(3,25);
         if (pieza==p_cerrar) lexico();
-        g2(ljpf,im1);
+        g2(DIVBC_jpf,im1);
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im1;
         final_sentencia(); grabar_sentencia();
@@ -5126,10 +5126,10 @@ void sentencia() {
         if (pieza!=p_id) c_error(0,67);
 
         if ((*o).tipo==tvglo) {
-          dir=(*o).vglo.offset; g2(lcar,dir);
+          dir=(*o).vglo.offset; g2(DIVBC_car,dir);
         } else if ((*o).tipo==tvloc && (!(*o).bloque || (*o).bloque==bloque_actual)) {
           dir=-(*o).vloc.offset;
-          g2(lcar,-dir); g1(laid);
+          g2(DIVBC_car,-dir); g1(DIVBC_aid);
         } else c_error(0,67);
 
         lexico();
@@ -5146,19 +5146,19 @@ void sentencia() {
         } else {
           if (from<to) step=1; else step=-1;
         }
-        g2(lcar,from); // Asignación del from
-        g1(lasi); g1(lasp);
+        g2(DIVBC_car,from); // Asignación del from
+        g1(DIVBC_asi); g1(DIVBC_asp);
 
         im1=imem; // Inicio del bucle
 
         if (dir>=0) { // Comparación de la condición de permanencia
-          g2(lcar,dir);
+          g2(DIVBC_car,dir);
         } else {
-          g2(lcar,-dir); g1(laid);
+          g2(DIVBC_car,-dir); g1(DIVBC_aid);
         }
-        g1(lptr); g2(lcar,to);
-        if (step>0) g1(lmei); else g1(lmai);
-        g2(ljpf,0); im2=imem-1;
+        g1(DIVBC_ptr); g2(DIVBC_car,to);
+        if (step>0) g1(DIVBC_mei); else g1(DIVBC_mai);
+        g2(DIVBC_jpf,0); im2=imem-1;
 
         final_sentencia(); grabar_sentencia();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
@@ -5171,13 +5171,13 @@ void sentencia() {
         im3=imem; // Posición del continue
 
         if (dir>=0) { // Incremento y vuelta al inicio del bucle
-          g2(lcar,dir); 
+          g2(DIVBC_car,dir); 
         } else {
-          g2(lcar,-dir); g1(laid);
+          g2(DIVBC_car,-dir); g1(DIVBC_aid);
         }
-        g2(lcar,step);
-        g1(lada); g1(lasp);
-        g2(ljmp,im1); mem[im2]=imem;
+        g2(DIVBC_car,step);
+        g1(DIVBC_ada); g1(DIVBC_asp);
+        g2(DIVBC_jmp,im1); mem[im2]=imem;
 
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im3;
@@ -5191,28 +5191,28 @@ void sentencia() {
         lexico();
         if (pieza!=p_abrir) c_error(3,36); lexico();
         if (pieza!=p_ptocoma) {
-          expresion(); g1(lasp);
-          while (pieza==p_coma) { lexico(); expresion(); g1(lasp); }
+          expresion(); g1(DIVBC_asp);
+          while (pieza==p_coma) { lexico(); expresion(); g1(DIVBC_asp); }
         } im1=imem;
         if (pieza!=p_ptocoma) c_error(3,47); lexico();
         if (pieza==p_ptocoma) {
-          g2(lcar,1);
+          g2(DIVBC_car,1);
         } else expresion();
-        g2(ljpf,0); im2=imem-1;
+        g2(DIVBC_jpf,0); im2=imem-1;
         while (pieza==p_coma) { lexico(); expresion();
-          g2(ljpf,im2); im2=imem-1; }
-        g2(ljmp,0); im3=imem-1;
+          g2(DIVBC_jpf,im2); im2=imem-1; }
+        g2(DIVBC_jmp,0); im3=imem-1;
         if (pieza!=p_ptocoma) c_error(3,47); lexico();
         if (pieza!=p_cerrar) {
-          expresion(); g1(lasp);
-          while (pieza==p_coma) { lexico(); expresion(); g1(lasp); }
+          expresion(); g1(DIVBC_asp);
+          while (pieza==p_coma) { lexico(); expresion(); g1(DIVBC_asp); }
         }
-        g2(ljmp,im1);
+        g2(DIVBC_jmp,im1);
         if (pieza!=p_cerrar) c_error(3,25); lexico();
         final_sentencia(); grabar_sentencia();
         mem[im3++]=imem; sentencia();
         if (pieza!=p_end) c_error(0,40); inicio_sentencia(); lexico();
-          g2(ljmp,im3);
+          g2(DIVBC_jmp,im3);
           do { im1=mem[im2]; mem[im2]=imem; im2=im1; } while(im2);
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
           while (tcont[--itcont]!=0) mem[tcont[itcont]]=im3;
@@ -5239,14 +5239,14 @@ void sentencia() {
               lexico();
               if (im1) mem[im1]=imem;
               expresion(); if (pieza!=p_rango) {
-                g2(lcse,0); im1=imem-1;
+                g2(DIVBC_cse,0); im1=imem-1;
               } else {
                 lexico(); expresion();
-                g2(lcsr,0); im1=imem-1;
+                g2(DIVBC_csr,0); im1=imem-1;
               }
 
               if (pieza==p_coma) {
-                g2(ljmp,im3); im3=imem-1;
+                g2(DIVBC_jmp,im3); im3=imem-1;
               }
 
             } while (pieza==p_coma);
@@ -5259,15 +5259,15 @@ void sentencia() {
           } else c_error(0,50);
           if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,65);
           while (pieza==p_ptocoma || pieza==p_coma) lexico();
-          g1(lasp);
+          g1(DIVBC_asp);
           final_sentencia(); grabar_sentencia();
           sentencia();
           if (pieza!=p_end) c_error(0,51); inicio_sentencia();
-            g2(ljmp,im2); im2=imem-1;
+            g2(DIVBC_jmp,im2); im2=imem-1;
           pasa_ptocoma();
           final_sentencia(); grabar_sentencia();
         } inicio_sentencia();
-        if (im1) mem[im1]=imem; g1(lasp);
+        if (im1) mem[im1]=imem; g1(DIVBC_asp);
         while(im2) { im1=mem[im2]; mem[im2]=imem; im2=im1; }
         lexico();
         final_sentencia(); grabar_sentencia(); break;
@@ -5276,19 +5276,19 @@ void sentencia() {
         lexico(); if (pieza==p_abrir) {
           lexico(); if (pieza!=p_cerrar) {
             expresion(); if (pieza!=p_cerrar) c_error(3,25);
-            g1(lfrf);
+            g1(DIVBC_frf);
           } else {
-            g1(lfrm);
+            g1(DIVBC_frm);
           } lexico();
         } else {
-          g1(lfrm);
+          g1(DIVBC_frm);
         }
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
         final_sentencia(); grabar_sentencia(); break;
       case p_debug:
         inicio_sentencia();
-        g1(ldbg); lexico();
+        g1(DIVBC_dbg); lexico();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
         final_sentencia(); grabar_sentencia();
@@ -5298,18 +5298,18 @@ void sentencia() {
         if (itbreak==0) c_error(0,48); lexico();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
-        g2(ljmp,0); tbreak[itbreak++]=imem-1;
+        g2(DIVBC_jmp,0); tbreak[itbreak++]=imem-1;
         final_sentencia(); grabar_sentencia(); break;
       case p_continue:
         inicio_sentencia();
         if (itcont==0) c_error(0,49); lexico();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
-        g2(ljmp,0); tcont[itcont++]=imem-1;
+        g2(DIVBC_jmp,0); tcont[itcont++]=imem-1;
         final_sentencia(); grabar_sentencia(); break;
       case p_clone:
         inicio_sentencia();
-        lexico(); g2(lclo,0); im1=imem-1;
+        lexico(); g2(DIVBC_clo,0); im1=imem-1;
         final_sentencia(); grabar_sentencia();
         sentencia();
         if (pieza!=p_end) c_error(0,40); lexico();
@@ -5352,7 +5352,7 @@ void sentencia() {
         }
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
-        g1(lasp);
+        g1(DIVBC_asp);
         final_sentencia(); grabar_sentencia();
         break;
     }
@@ -5462,19 +5462,19 @@ void expresion_cpa(void) {
   _linea=linea; _ierror=ierror; exp00(0);
   swap(linea,_linea); __ierror=ierror; ierror=_ierror;
   if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointer) {
-    _exp--; generar_expresion(); g1(lcpa);
+    _exp--; generar_expresion(); g1(DIVBC_cpa);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerchar) {
     _exp--; generar_expresion();
-    if (hacer_strfix) { g2(lcar,0); g1(lstrfix); g1(lasp); }
-    g1(lcpachr);
+    if (hacer_strfix) { g2(DIVBC_car,0); g1(DIVBC_strfix); g1(DIVBC_asp); }
+    g1(DIVBC_cpachr);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerbyte) {
     _exp--; generar_expresion();
-    g1(lcpachr);
+    g1(DIVBC_cpachr);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerword) {
     _exp--; generar_expresion();
-    g1(lcpawor);
+    g1(DIVBC_cpawor);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_string) {
-    _exp--; generar_expresion(); g1(lcpastr);
+    _exp--; generar_expresion(); g1(DIVBC_cpastr);
   } else c_error(4,44);
   linea=_linea; ierror=__ierror;
 }
@@ -5486,110 +5486,110 @@ void generar_expresion(void) {
   do {
     switch ((*e).tipo) {
       case econs:
-        g2(lcar,(*e).valor); break;
+        g2(DIVBC_car,(*e).valor); break;
       case estring:
-        g2(lcar,(*e).valor); break;
+        g2(DIVBC_car,(*e).valor); break;
       case erango:
-        g2(lrng,(*e).valor); break;
+        g2(DIVBC_rng,(*e).valor); break;
       case ewhoami:
-        g1(lcid); break;
+        g1(DIVBC_cid); break;
       case ecall:
-        ob=(*e).objeto; g2(lcal,(*ob).proc.offset);
+        ob=(*e).objeto; g2(DIVBC_cal,(*ob).proc.offset);
         if ((*ob).usado) (*ob).proc.offset=imem-1; break;
       case efunc:
-        ob=(*e).objeto; g2(lfun,(*ob).func.codigo); break;
+        ob=(*e).objeto; g2(DIVBC_fun,(*ob).func.codigo); break;
       case efext:
-        ob=(*e).objeto; g2(lext,(*ob).fext.codigo); break;
+        ob=(*e).objeto; g2(DIVBC_ext,(*ob).fext.codigo); break;
       case echeck:
-        g1(lchk); break;
+        g1(DIVBC_chk); break;
       case enull:
-        g1(lnul); break;
+        g1(DIVBC_nul); break;
       case eoper: switch((*e).token) {
-        case p_asig: g1(lasi); break;
-        case p_or: g1(lori); break;
-        case p_xor: g1(lxor); break;
-        case p_and: g1(land); break;
-        case p_igu: g1(ligu); break;
-        case p_dis: g1(ldis); break;
-        case p_may: g1(lmay); break;
-        case p_men: g1(lmen); break;
-        case p_mei: g1(lmei); break;
-        case p_mai: g1(lmai); break;
-        case p_add: g1(ladd); break;
-        case p_sub: g1(lsub); break;
-        case p_mul: g1(lmul); break;
-        case p_div: g1(ldiv); break;
-        case p_mod: g1(lmod); break;
-        case p_neg: g1(lneg); break;
-        case p_pointer: g1(lptr); break;
-        case p_not: g1(lnot); break;
-        case p_punto: g1(laid); break;
-        case p_shr: g1(lshr); break;
-        case p_shl: g1(lshl); break;
-        case p_inc: g1(lipt); break;
-        case p_suma: g1(lpti); break;
-        case p_dec: g1(ldpt); break;
-        case p_resta: g1(lptd); break;
-        case p_add_asig: g1(lada); break;
-        case p_sub_asig: g1(lsua); break;
-        case p_mul_asig: g1(lmua); break;
-        case p_div_asig: g1(ldia); break;
-        case p_mod_asig: g1(lmoa); break;
-        case p_and_asig: g1(lana); break;
-        case p_or_asig: g1(lora); break;
-        case p_xor_asig: g1(lxoa); break;
-        case p_shr_asig: g1(lsra); break;
-        case p_shl_asig: g1(lsla); break;
+        case p_asig: g1(DIVBC_asi); break;
+        case p_or: g1(DIVBC_ori); break;
+        case p_xor: g1(DIVBC_xor); break;
+        case p_and: g1(DIVBC_and); break;
+        case p_igu: g1(DIVBC_igu); break;
+        case p_dis: g1(DIVBC_dis); break;
+        case p_may: g1(DIVBC_may); break;
+        case p_men: g1(DIVBC_men); break;
+        case p_mei: g1(DIVBC_mei); break;
+        case p_mai: g1(DIVBC_mai); break;
+        case p_add: g1(DIVBC_add); break;
+        case p_sub: g1(DIVBC_sub); break;
+        case p_mul: g1(DIVBC_mul); break;
+        case p_div: g1(DIVBC_div); break;
+        case p_mod: g1(DIVBC_mod); break;
+        case p_neg: g1(DIVBC_neg); break;
+        case p_pointer: g1(DIVBC_ptr); break;
+        case p_not: g1(DIVBC_not); break;
+        case p_punto: g1(DIVBC_aid); break;
+        case p_shr: g1(DIVBC_shr); break;
+        case p_shl: g1(DIVBC_shl); break;
+        case p_inc: g1(DIVBC_ipt); break;
+        case p_suma: g1(DIVBC_pti); break;
+        case p_dec: g1(DIVBC_dpt); break;
+        case p_resta: g1(DIVBC_ptd); break;
+        case p_add_asig: g1(DIVBC_ada); break;
+        case p_sub_asig: g1(DIVBC_sua); break;
+        case p_mul_asig: g1(DIVBC_mua); break;
+        case p_div_asig: g1(DIVBC_dia); break;
+        case p_mod_asig: g1(DIVBC_moa); break;
+        case p_and_asig: g1(DIVBC_ana); break;
+        case p_or_asig: g1(DIVBC_ora); break;
+        case p_xor_asig: g1(DIVBC_xoa); break;
+        case p_shr_asig: g1(DIVBC_sra); break;
+        case p_shl_asig: g1(DIVBC_sla); break;
 
-        case p_pointerword: g1(lptrwor); break;
-        case p_sumaword: g1(lptiwor); break;
-        case p_restaword: g1(lptdwor); break;
-        case p_incword: g1(liptwor); break;
-        case p_decword: g1(ldptwor); break;
-        case p_asigword: g1(lasiwor); break;
-        case p_add_asigword: g1(ladawor); break;
-        case p_sub_asigword: g1(lsuawor); break;
-        case p_mul_asigword: g1(lmuawor); break;
-        case p_div_asigword: g1(ldiawor); break;
-        case p_mod_asigword: g1(lmoawor); break;
-        case p_and_asigword: g1(lanawor); break;
-        case p_or_asigword: g1(lorawor); break;
-        case p_xor_asigword: g1(lxoawor); break;
-        case p_shr_asigword: g1(lsrawor); break;
-        case p_shl_asigword: g1(lslawor); break;
+        case p_pointerword: g1(DIVBC_ptrwor); break;
+        case p_sumaword: g1(DIVBC_ptiwor); break;
+        case p_restaword: g1(DIVBC_ptdwor); break;
+        case p_incword: g1(DIVBC_iptwor); break;
+        case p_decword: g1(DIVBC_dptwor); break;
+        case p_asigword: g1(DIVBC_asiwor); break;
+        case p_add_asigword: g1(DIVBC_adawor); break;
+        case p_sub_asigword: g1(DIVBC_suawor); break;
+        case p_mul_asigword: g1(DIVBC_muawor); break;
+        case p_div_asigword: g1(DIVBC_diawor); break;
+        case p_mod_asigword: g1(DIVBC_moawor); break;
+        case p_and_asigword: g1(DIVBC_anawor); break;
+        case p_or_asigword: g1(DIVBC_orawor); break;
+        case p_xor_asigword: g1(DIVBC_xoawor); break;
+        case p_shr_asigword: g1(DIVBC_srawor); break;
+        case p_shl_asigword: g1(DIVBC_slawor); break;
 
-        case p_pointerchar: g1(lptrchr); break;
-        case p_sumachar: g1(lptichr); break;
-        case p_restachar: g1(lptdchr); break;
-        case p_incchar: g1(liptchr); break;
-        case p_decchar: g1(ldptchr); break;
-        case p_asigchar: g1(lasichr); break;
-        case p_add_asigchar: g1(ladachr); break;
-        case p_sub_asigchar: g1(lsuachr); break;
-        case p_mul_asigchar: g1(lmuachr); break;
-        case p_div_asigchar: g1(ldiachr); break;
-        case p_mod_asigchar: g1(lmoachr); break;
-        case p_and_asigchar: g1(lanachr); break;
-        case p_or_asigchar: g1(lorachr); break;
-        case p_xor_asigchar: g1(lxoachr); break;
-        case p_shr_asigchar: g1(lsrachr); break;
-        case p_shl_asigchar: g1(lslachr); break;
+        case p_pointerchar: g1(DIVBC_ptrchr); break;
+        case p_sumachar: g1(DIVBC_ptichr); break;
+        case p_restachar: g1(DIVBC_ptdchr); break;
+        case p_incchar: g1(DIVBC_iptchr); break;
+        case p_decchar: g1(DIVBC_dptchr); break;
+        case p_asigchar: g1(DIVBC_asichr); break;
+        case p_add_asigchar: g1(DIVBC_adachr); break;
+        case p_sub_asigchar: g1(DIVBC_suachr); break;
+        case p_mul_asigchar: g1(DIVBC_muachr); break;
+        case p_div_asigchar: g1(DIVBC_diachr); break;
+        case p_mod_asigchar: g1(DIVBC_moachr); break;
+        case p_and_asigchar: g1(DIVBC_anachr); break;
+        case p_or_asigchar: g1(DIVBC_orachr); break;
+        case p_xor_asigchar: g1(DIVBC_xoachr); break;
+        case p_shr_asigchar: g1(DIVBC_srachr); break;
+        case p_shl_asigchar: g1(DIVBC_slachr); break;
 
-        case p_strcpy: g1(lstrcpy); break;
-        case p_strfix: g1(lstrfix); break;
-        case p_strcat: g1(lstrcat); break;
-        case p_stradd: g1(lstradd); break;
-        case p_strdec: g1(lstrdec); break;
-        case p_strsub: g1(lstrsub); break;
-        case p_strlen: g1(lstrlen); break;
-        case p_strigu: g1(lstrigu); break;
-        case p_strdis: g1(lstrdis); break;
-        case p_strmay: g1(lstrmay); break;
-        case p_strmen: g1(lstrmen); break;
-        case p_strmei: g1(lstrmei); break;
-        case p_strmai: g1(lstrmai); break;
+        case p_strcpy: g1(DIVBC_strcpy); break;
+        case p_strfix: g1(DIVBC_strfix); break;
+        case p_strcat: g1(DIVBC_strcat); break;
+        case p_stradd: g1(DIVBC_stradd); break;
+        case p_strdec: g1(DIVBC_strdec); break;
+        case p_strsub: g1(DIVBC_strsub); break;
+        case p_strlen: g1(DIVBC_strlen); break;
+        case p_strigu: g1(DIVBC_strigu); break;
+        case p_strdis: g1(DIVBC_strdis); break;
+        case p_strmay: g1(DIVBC_strmay); break;
+        case p_strmen: g1(DIVBC_strmen); break;
+        case p_strmei: g1(DIVBC_strmei); break;
+        case p_strmai: g1(DIVBC_strmai); break;
 
-        case p_pointerbyte: g1(lptrchr); break;
+        case p_pointerbyte: g1(DIVBC_ptrchr); break;
         case p_string: break; // Es como un p_pointer nulo, que no se hace
 
         default: c_error(4,41);
@@ -5997,8 +5997,8 @@ void factor(void) {
             _exp=e;
           }
         } else (*ob).cloc.totalen=255;
-        if (parametros>1) g2(lpar,parametros-1); parametros=1;
-        g2(lpri,0); _imem=imem;
+        if (parametros>1) g2(DIVBC_par,parametros-1); parametros=1;
+        g2(DIVBC_pri,0); _imem=imem;
         imem+=1+((*ob).cloc.totalen+5)/4;
         test_buffer(&mem,&imem_max,imem);
         mem[_imem]=0xDAD00000|(*ob).cloc.totalen;
@@ -7033,7 +7033,7 @@ void l_objetos (void) {
 
   sta=fopen("div.tab","wb");
 
-  fprintf(sta,"■ Objetos de %s - DIV Versión " version "\n\n",file_in);
+  fprintf(sta,"Objetos de %s - DIV Versión " version "\n\n",file_in);
 
   for (n=1;n<=8;n++) fprintf(sta,"[%u]: %u\n",n,mem[n]); fprintf(sta,"\n");
 
@@ -7278,7 +7278,7 @@ void l_ensamblador (void) {
 
   sta=fopen("div.eml","wt");
 
-  fprintf(sta,"■ Código EML de %s - DIV Versión " version "\n",file_in);
+  fprintf(sta,"Código EML de %s - DIV Versión " version "\n",file_in);
 
   while (i<imem) { switch ((byte)mem[i]) {
     case lnop: fprintf(sta,"%5u\tnop",i); break;
@@ -7337,7 +7337,7 @@ void l_ensamblador (void) {
     case lrtf: fprintf(sta,"%5u\trtf",i); break;
     case lclo: fprintf(sta,"%5u\tclo %u",i,mem[i+1]); i++; break;
     case lfrf: fprintf(sta,"%5u\tfrf",i); break;
-    case limp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
+    case DIVBC_imp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
     case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
     case lchk: fprintf(sta,"%5u\tchk",i); break;
     case ldbg: fprintf(sta,"%5u\tdbg",i); break;
@@ -7672,165 +7672,165 @@ void gen(int param, int op, int pa) {
   optimizado=0;
 
   switch(op) {
-    case lcar:
-      if (code[15].op==lcar) {
-        code[15].op=mem[imem-2]=lcar2;
+    case DIVBC_car:
+      if (code[15].op==DIVBC_car) {
+        code[15].op=mem[imem-2]=DIVBC_car2;
         code[15].param=2;
         mem[imem++]=pa; optimizado=1;
-      } else if (code[15].op==lcar2) {
-        code[15].op=mem[imem-3]=lcar3;
+      } else if (code[15].op==DIVBC_car2) {
+        code[15].op=mem[imem-3]=DIVBC_car3;
         code[15].param=3;
         mem[imem++]=pa; optimizado=1;
-      } else if (code[15].op==lcar3) {
-        code[15].op=mem[imem-4]=lcar4;
+      } else if (code[15].op==DIVBC_car3) {
+        code[15].op=mem[imem-4]=DIVBC_car4;
         code[15].param=4;
         mem[imem++]=pa; optimizado=1;
       } break;
-    case lasp:
-      if (code[15].op==lasi) {
-        if (code[14].op==lcar) {
+    case DIVBC_asp:
+      if (code[15].op==DIVBC_asi) {
+        if (code[14].op==DIVBC_car) {
           remove_code(1);
-          code[15].op=mem[imem-2]=lcarasiasp;
+          code[15].op=mem[imem-2]=DIVBC_carasiasp;
         } else {
-          code[15].op=mem[imem-1]=lasiasp;
+          code[15].op=mem[imem-1]=DIVBC_asiasp;
           optimizado=1;
         }
-      } else if (code[15].op==lfun) {
-        code[15].op=mem[imem-2]=lfunasp;
+      } else if (code[15].op==DIVBC_fun) {
+        code[15].op=mem[imem-2]=DIVBC_funasp;
         optimizado=1;
       } break;
-    case laid:
-      if (code[15].op==lcar) {
-        code[15].op=mem[imem-2]=lcaraid;
+    case DIVBC_aid:
+      if (code[15].op==DIVBC_car) {
+        code[15].op=mem[imem-2]=DIVBC_caraid;
         optimizado=1;
       } break;
-    case lptr:
-      if (code[15].op==lcar) {
-        code[15].op=mem[imem-2]=lcarptr;
+    case DIVBC_ptr:
+      if (code[15].op==DIVBC_car) {
+        code[15].op=mem[imem-2]=DIVBC_carptr;
         optimizado=1;
-      } else if (code[15].op==lcaradd) {
-        code[15].op=mem[imem-2]=lcaraddptr;
+      } else if (code[15].op==DIVBC_caradd) {
+        code[15].op=mem[imem-2]=DIVBC_caraddptr;
         optimizado=1;
-      } else if (code[15].op==laid) {
-        code[15].op=mem[imem-1]=laidptr;
+      } else if (code[15].op==DIVBC_aid) {
+        code[15].op=mem[imem-1]=DIVBC_aidptr;
         optimizado=1;
-      } else if (code[15].op==ladd) {
-        code[15].op=mem[imem-1]=laddptr;
+      } else if (code[15].op==DIVBC_add) {
+        code[15].op=mem[imem-1]=DIVBC_addptr;
         optimizado=1;
-      } else if (code[15].op==lcaraid) {
-        code[15].op=mem[imem-2]=lcaraidptr;
-        optimizado=1;
-      } break;
-    case lcpa:
-      if (code[15].op==lcaraid) {
-        code[15].op=mem[imem-2]=lcaraidcpa;
+      } else if (code[15].op==DIVBC_caraid) {
+        code[15].op=mem[imem-2]=DIVBC_caraidptr;
         optimizado=1;
       } break;
-    case ladd:
-      if (code[15].op==lcar2){
-        code[15].op=mem[imem-3]=lcar;
+    case DIVBC_cpa:
+      if (code[15].op==DIVBC_caraid) {
+        code[15].op=mem[imem-2]=DIVBC_caraidcpa;
+        optimizado=1;
+      } break;
+    case DIVBC_add:
+      if (code[15].op==DIVBC_car2){
+        code[15].op=mem[imem-3]=DIVBC_car;
         code[15].param=1;
         mem[imem-2]+=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar3){
-        code[15].op=mem[imem-4]=lcar2;
+      } else if (code[15].op==DIVBC_car3){
+        code[15].op=mem[imem-4]=DIVBC_car2;
         code[15].param=2;
         mem[imem-2]+=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar4){
-        code[15].op=mem[imem-5]=lcar3;
+      } else if (code[15].op==DIVBC_car4){
+        code[15].op=mem[imem-5]=DIVBC_car3;
         code[15].param=3;
         mem[imem-2]+=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==0) remove_code(1); else {
-          code[15].op=mem[imem-2]=lcaradd;
+          code[15].op=mem[imem-2]=DIVBC_caradd;
           optimizado=1;
         }
-      } else if (code[15].op==lcarmul){
-        code[15].op=mem[imem-2]=lcarmuladd;
+      } else if (code[15].op==DIVBC_carmul){
+        code[15].op=mem[imem-2]=DIVBC_carmuladd;
         optimizado=1;
       } break;
-    case lmul:
-      if (code[15].op==lcar2){
-        code[15].op=mem[imem-3]=lcar;
+    case DIVBC_mul:
+      if (code[15].op==DIVBC_car2){
+        code[15].op=mem[imem-3]=DIVBC_car;
         code[15].param=1;
         mem[imem-2]*=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar3){
-        code[15].op=mem[imem-4]=lcar2;
+      } else if (code[15].op==DIVBC_car3){
+        code[15].op=mem[imem-4]=DIVBC_car2;
         code[15].param=2;
         mem[imem-2]*=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar4){
-        code[15].op=mem[imem-5]=lcar3;
+      } else if (code[15].op==DIVBC_car4){
+        code[15].op=mem[imem-5]=DIVBC_car3;
         code[15].param=3;
         mem[imem-2]*=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==1) remove_code(1); else {
-          code[15].op=mem[imem-2]=lcarmul;
+          code[15].op=mem[imem-2]=DIVBC_carmul;
           optimizado=1;
         }
       } break;
-    case lsub:
-      if (code[15].op==lcar2){
-        code[15].op=mem[imem-3]=lcar;
+    case DIVBC_sub:
+      if (code[15].op==DIVBC_car2){
+        code[15].op=mem[imem-3]=DIVBC_car;
         code[15].param=1;
         mem[imem-2]-=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar3){
-        code[15].op=mem[imem-4]=lcar2;
+      } else if (code[15].op==DIVBC_car3){
+        code[15].op=mem[imem-4]=DIVBC_car2;
         code[15].param=2;
         mem[imem-2]-=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar4){
-        code[15].op=mem[imem-5]=lcar3;
+      } else if (code[15].op==DIVBC_car4){
+        code[15].op=mem[imem-5]=DIVBC_car3;
         code[15].param=3;
         mem[imem-2]-=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==0) remove_code(1); else {
-          code[15].op=mem[imem-2]=lcarsub;
+          code[15].op=mem[imem-2]=DIVBC_carsub;
           optimizado=1;
         }
       } break;
-    case ldiv:
-      if (code[15].op==lcar2){
+    case DIVBC_div:
+      if (code[15].op==DIVBC_car2){
         if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-3]=lcar;
+          code[15].op=mem[imem-3]=DIVBC_car;
           code[15].param=1;
           mem[imem-2]/=mem[imem-1];
           imem--; optimizado=1;
         }
-      } else if (code[15].op==lcar3){
+      } else if (code[15].op==DIVBC_car3){
         if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-4]=lcar2;
+          code[15].op=mem[imem-4]=DIVBC_car2;
           code[15].param=2;
           mem[imem-2]/=mem[imem-1];
           imem--; optimizado=1;
         }
-      } else if (code[15].op==lcar4){
+      } else if (code[15].op==DIVBC_car4){
         if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-5]=lcar3;
+          code[15].op=mem[imem-5]=DIVBC_car3;
           code[15].param=3;
           mem[imem-2]/=mem[imem-1];
           imem--; optimizado=1;
         }
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==1) remove_code(1);
         else if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-2]=lcardiv; // Un cardiv nunca será "cardiv 0"
+          code[15].op=mem[imem-2]=DIVBC_cardiv; // Un cardiv nunca será "cardiv 0"
           optimizado=1;
         }
       } break;
-    case lneg:
-      if (code[15].op==lcar || code[15].op==lcar2 || code[15].op==lcar3 || code[15].op==lcar4) {
+    case DIVBC_neg:
+      if (code[15].op==DIVBC_car || code[15].op==DIVBC_car2 || code[15].op==DIVBC_car3 || code[15].op==DIVBC_car4) {
         mem[imem-1]=-mem[imem-1]; optimizado=1;
       }
       break;
-    case lnot:
-      if (code[15].op==lcar || code[15].op==lcar2 || code[15].op==lcar3 || code[15].op==lcar4) {
+    case DIVBC_not:
+      if (code[15].op==DIVBC_car || code[15].op==DIVBC_car2 || code[15].op==DIVBC_car3 || code[15].op==DIVBC_car4) {
         mem[imem-1]=mem[imem-1]^-1; optimizado=1;
       }
       break;
