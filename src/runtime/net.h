@@ -1,16 +1,16 @@
-#ifndef __COMUNICA_H_
+﻿#ifndef __COMUNICA_H_
 #define __COMUNICA_H_
 
 //#include "IPXLIB.H"
 //#include "COMLIB.H"
 
-#define MAX_PACK        22
-#define MAX_USERS       512
+#define MAX_PACK  22
+#define MAX_USERS 512
 
 // Dispositivos
-#define IPX     1
-#define SERIAL  2
-#define MODEM   3
+#define IPX    1
+#define SERIAL 2
+#define MODEM  3
 
 // Errores
 #define NET_INITOK         0
@@ -19,28 +19,29 @@
 #define NET_BADNUMPLAYERS -3
 #define NET_BADSYNC       -4
 
-typedef struct { int activa;
-                 int dispositivo;
-                 int servidor;
-                 char nombre[32];
-                 int player_id;
-                 int game_id;
-                 int num_players;
-                 int max_players;
-                 byte *datos;
-                 int longitud_datos;
-               } net_game;
+typedef struct _t_net_game {
+	int   activa;
+	int   dispositivo;
+	int   servidor;
+	char  nombre[32];
+	int   player_id;
+	int   game_id;
+	int   num_players;
+	int   max_players;
+	byte *datos;
+	int   longitud_datos;
+} t_net_game;
 
-extern char net_games[10][32];
-extern int net_players[16];
-extern net_game partida_red;
-extern int quien_soy;
+extern char       net_games[10][32];
+extern int        net_players[16];
+extern t_net_game partida_red;
+extern int        quien_soy;
 
-void net_get_games(void);
-void net_join_game(void);
+void DIV_net_get_games(void);
+void DIV_net_join_game(void);
 
-int _net_get_games(int game_id);
-int _net_join_game(int game_id,char *nombre,byte *datos, int longitud);
+int net_get_games(int game_id);
+int net_join_game(int game_id, char *nombre, byte *datos, int longitud);
 
 /*- Mensajes publicos internos ----*/
 #define MSG_SYNC                10001
