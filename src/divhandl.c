@@ -1100,7 +1100,7 @@ void imp_fontmap(void) {
   if (*(int*)(buffer+1356+'A'*16)) gencode|=2;
   if (*(int*)(buffer+1356+'a'*16)) gencode|=4;
   if (*(int*)(buffer+1356+'?'*16)) gencode|=8;
-  if (*(int*)(buffer+1356+'\xa4'*16)) gencode|=16; // ñ
+  if (*(int*)(buffer+1356+'ñ'*16)) gencode|=16;
 
   memcpy(buffer+1352,&gencode,4);
 

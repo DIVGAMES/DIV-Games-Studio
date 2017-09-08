@@ -1,7 +1,6 @@
-#ifndef __OSD_SDL2__
+﻿#ifndef __OSD_SDL2__
 #define __OSD_SDL2__
 
-#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -9,15 +8,18 @@
 #include <emscripten.h>
 #endif
 
+#include <SDL2/SDL.h>
 #ifdef MIXER
 #include <SDL2/SDL_mixer.h>
 #endif
-
 #ifdef IMAGE
 #include <SDL2/SDL_image.h>
 #endif
-
+#ifdef NETPLAY
+#include <SDL2/SDL_net.h>
+#endif
 #include "osd_sdl.h"
+
 typedef SDL_Keymod OSDEPMod;
 #endif
 

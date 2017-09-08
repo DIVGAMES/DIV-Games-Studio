@@ -25,11 +25,13 @@ SET(HAS_NEWMODE8 0)
 SET(HAS_GIT 0)
 
 IF(CPUARCH STREQUAL "64")
+	ADD_DEFINITIONS(-D__WORDSIZE=64)
 	MESSAGE(STATUS "Buiding Windows 64bit")
 	SET(OS_DEFINITIONS " -mwindows -Dmain=SDL_main ")
 	SET(OS_LIBS mingw32 SDLmain gdi32)
 	set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 ELSE() # Default 32 bits
+	ADD_DEFINITIONS(-D__WORDSIZE=32)
 	MESSAGE(STATUS "Buiding Windows 32bit")
 	SET(OS_DEFINITIONS " -m32 -mwindows -Dmain=SDL_main ")
 	SET(OS_LIBS mingw32 SDLmain m dinput8 dxguid dxerr8 user32 gdi32 winmm imm32 ole32 oleaut32 shell32 version uuid)

@@ -12,6 +12,20 @@
 #include <stdint.h>
 typedef unsigned char byte;
 
+#define DIVASM_SINTAX_INTEL
+
+#if defined(DIVASM_SINTAX_INTEL)
+	#if defined(_MSC_VER)
+		#define DIVASM_BLOCK_BEGIN()   _asm {
+		#define DIVASM_BLOCK_STMT(...) __VA_ARGS__
+		#define DIVASM_BLOCK_END()     }
+	#else
+		#define DIVASM_BLOCK_BEGIN() __asm__ __volatile__ (
+		#define DIVASM_BLOCK_STMT(...) "##__VA_ARGS__\n##"
+		#define DIVASM_BLOCK_END()     );
+	#endif
+#endif
+
 #ifdef GLOBALS
   #define EXTERN
 #else
@@ -22,7 +36,7 @@ typedef unsigned char byte;
 #ifdef WIN32
 #define __export __declspec(dllexport)
 #else
-#define __export /* __export */
+#define __export __attribute__ ((visibility("default"))) /* __export */
 #endif
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Common definitions for all libraries
@@ -334,13 +348,13 @@ EXTERN unsigned long _ghost;
 // DIV exported functions
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
-EXTERN void *(*div_malloc)(size_t __size);             // Don't use malloc()!!!
-EXTERN void  (*div_free  )( void *__ptr );             // Don't use free()!!!
-EXTERN FILE *(*div_fopen )(char *,char *);             // Don't use fopen()!!!
-EXTERN void  (*div_fclose)(FILE *);                    // Don't use fclose()!!!
+EXTERN void    *(*div_malloc)(size_t __size);             // Don't use malloc()!!!
+EXTERN void     (*div_free  )(void *__ptr);               // Don't use free()!!!
+EXTERN FILE    *(*div_fopen )(const char *, const char *);            // Don't use fopen()!!!
+EXTERN void     (*div_fclose)(FILE *);                    // Don't use fclose()!!!
 
-EXTERN int32_t   (*div_rand)(int32_t rang_low,int32_t rang_hi);    // Random between two numbers
-EXTERN void  (*div_text_out)(char *texto,int32_t x,int32_t y); // Screen print function
+EXTERN int32_t  (*div_rand)(int32_t rang_low, int32_t rang_hi);     // Random between two numbers
+EXTERN void     (*div_text_out)(char *texto, int32_t x, int32_t y); // Screen print function
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Macros to get parameters and return values in new functions
@@ -394,33 +408,33 @@ EXTERN void  (*div_text_out)(char *texto,int32_t x,int32_t y); // Screen print f
 // Definition to get the offset of objects
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
-#define GLOBAL_IMPORT()                                       \
-stack            =(int32_t *)DIV_import("stack");                 \
-mem              =(int32_t *)DIV_import("mem");                   \
-palette          =(byte*)DIV_import("palette");               \
-active_palette   =(byte*)DIV_import("active_palette");        \
-key              =(byte*)DIV_import("key");                   \
-graphs			 =(t_g*)DIV_import("graphs");					\
-_buffer          =(unsigned long)DIV_import("buffer");        \
-_background      =(unsigned long)DIV_import("background");    \
-_ghost           =(unsigned long)DIV_import("ghost");         \
-_sp              =(int32_t *)DIV_import("sp");                    \
-_wide            =(int32_t *)DIV_import("wide");                  \
-_height          =(int32_t *)DIV_import("height");                \
-_ss_time         =(int32_t *)DIV_import("ss_time");               \
-_ss_status       =(int32_t *)DIV_import("ss_status");             \
-_ss_exit         =(int32_t *)DIV_import("ss_exit");               \
-_process_size    =(int32_t *)DIV_import("process_size");          \
-_id_offset       =(int32_t *)DIV_import("id_offset");             \
-_id_init_offset  =(int32_t *)DIV_import("id_init_offset");        \
-_id_start_offset =(int32_t *)DIV_import("id_start_offset");       \
-_id_end_offset   =(int32_t *)DIV_import("id_end_offset");         \
-_set_palette     =(int32_t *)DIV_import("set_palette");           \
-div_malloc  = ( void *(*)(size_t )       ) DIV_import("div_malloc"); \
-div_free    = ( void  (*)(void * )       ) DIV_import("div_free"  ); \
-div_fopen   = ( FILE *(*)(char *,char *) ) DIV_import("div_fopen" ); \
-div_fclose  = ( void  (*)(FILE *)        ) DIV_import("div_fclose"); \
-div_rand    = ( int32_t   (*)(int32_t ,int32_t )     ) DIV_import("div_rand"  ); \
-div_text_out= ( void  (*)(char *,int32_t,int32_t)) DIV_import("div_text_out");
+#define GLOBAL_IMPORT() \
+	stack            = (int32_t                           *)DIV_import("stack");           \
+	mem              = (int32_t                           *)DIV_import("mem");             \
+	palette          = (byte                              *)DIV_import("palette");         \
+	active_palette   = (byte                              *)DIV_import("active_palette");  \
+	key              = (byte                              *)DIV_import("key");             \
+	graphs           = (t_g                               *)DIV_import("graphs");          \
+	_buffer          = (unsigned long                      )DIV_import("buffer");          \
+	_background      = (unsigned long                      )DIV_import("background");      \
+	_ghost           = (unsigned long                      )DIV_import("ghost");           \
+	_sp              = (int32_t                           *)DIV_import("sp");              \
+	_wide            = (int32_t                           *)DIV_import("wide");            \
+	_height          = (int32_t                           *)DIV_import("height");          \
+	_ss_time         = (int32_t                           *)DIV_import("ss_time");         \
+	_ss_status       = (int32_t                           *)DIV_import("ss_status");       \
+	_ss_exit         = (int32_t                           *)DIV_import("ss_exit");         \
+	_process_size    = (int32_t                           *)DIV_import("process_size");    \
+	_id_offset       = (int32_t                           *)DIV_import("id_offset");       \
+	_id_init_offset  = (int32_t                           *)DIV_import("id_init_offset");  \
+	_id_start_offset = (int32_t                           *)DIV_import("id_start_offset"); \
+	_id_end_offset   = (int32_t                           *)DIV_import("id_end_offset");   \
+	_set_palette     = (int32_t                           *)DIV_import("set_palette");     \
+	div_malloc       = ( void *(*)(size_t )                )DIV_import("div_malloc");      \
+	div_free         = ( void  (*)(void * )                )DIV_import("div_free"  );      \
+	div_fopen        = ( FILE *(*)(const char *, const char *))DIV_import("div_fopen" );      \
+	div_fclose       = ( void  (*)(FILE *)                 )DIV_import("div_fclose");      \
+	div_rand         = ( int32_t (*)(int32_t , int32_t)    )DIV_import("div_rand"  );      \
+	div_text_out     = ( void (*)(char *, int32_t, int32_t))DIV_import("div_text_out");
 
 #endif

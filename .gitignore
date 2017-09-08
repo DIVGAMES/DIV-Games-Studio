@@ -36,3 +36,9 @@ zipdiv
 *.a
 *.dll
 *.o
+*.FPG
+*.fpg
+*.wav
+*.png
+*.PRG
+*.prg
