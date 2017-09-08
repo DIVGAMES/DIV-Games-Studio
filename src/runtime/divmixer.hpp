@@ -1,4 +1,4 @@
-typedef unsigned short  UWORD;
+﻿typedef unsigned short  UWORD;
 
 #define SBMIXADDRESS    4
 #define SBMIXDATA       5
@@ -21,12 +21,12 @@ typedef unsigned short  UWORD;
 
 #define GUSMIXADDRESS   0x506
 #define GUSMIXDATA      0x106
-#define GUSVOCL         (3<<3) | 2
-#define GUSVOCR         (3<<3) | 3
-#define GUSCDL          (2<<3) | 2
-#define GUSCDR          (2<<3) | 3
-#define GUSMASTERL      (5<<3) | 2
-#define GUSMASTERR      (5<<3) | 3
+#define GUSVOCL         (3 << 3) | 2
+#define GUSVOCR         (3 << 3) | 3
+#define GUSCDL          (2 << 3) | 2
+#define GUSCDR          (2 << 3) | 3
+#define GUSMASTERL      (5 << 3) | 2
+#define GUSMASTERR      (5 << 3) | 3
 
 ////////////////////
 // Mixer de la SB //
@@ -51,9 +51,7 @@ typedef unsigned short  UWORD;
 #define MIX_HIGH_FILT       8
 #define MIX_NO_FILT        20
 
-// Mixer de la SB //
-////////////////////
-
+/* Mixer de la SB */
 extern UWORD SoundCard;
 extern UWORD BaseAddress;
 extern UWORD CD;
@@ -70,4 +68,3 @@ void MIX_GetVolume    (byte reg, byte *left, byte *right);
 void MIX_SetVolume    (byte reg, byte left, byte right);
 void set_mixer        (void);
 void set_init_mixer   (void);
-

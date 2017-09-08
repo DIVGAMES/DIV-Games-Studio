@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
                          VIRTUAL PRESENCE ENGINE
 *****************************************************************************/
 
@@ -281,12 +281,12 @@ VPEWord GetPickWatch(void *,VPEFixed *);   // Get result of pick watching
 #define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
 
 //==================
-//  Funciones de movimiento
+//  Funciones de init/fin y movimiento
 //==================
+void m8_object_avance(int num_object, int angulo, int velocidad);
+void m8_vpe_inicio(char *fichero, char *buffer,int ancho, int alto);
+void m8_vpe_fin();
 
-void _object_avance(int num_object,int angulo,int velocidad);
-void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto);
-void _vpe_fin();
-void InitGraph(char *buffer,int ancho,int alto);
+void InitGraph(char *buffer, int ancho, int alto);
 
 #endif

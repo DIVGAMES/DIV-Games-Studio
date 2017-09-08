@@ -67,7 +67,7 @@ int segundo_font=1;
 //═════════════════════════════════════════════════════════════════════════════
 
 typedef struct _HeaderSetup{
-  char name[16];          // Nombre del archivo (en asciiz, sin path)
+  char name[_MAX_FNAME];  // Nombre del archivo (en asciiz, sin path) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
   unsigned int offset;    // Desplazamiento respecto al inicio del pack
   unsigned int len1;      // Longitud del archivo en el packfile (comprimido)
   unsigned int len2;      // Longitud del archivo real (descomprimido)
@@ -87,17 +87,17 @@ extern char user2[];
 //═════════════════════════════════════════════════════════════════════════════
 
 struct _dirhead {
-  char pack[16];        // Nombre del propio packfile (no va en el archivo)
-  char head[8];         // Cabecera inicial del packfile (dat<-\n00)
-  int crc1,crc2,crc3;   // CRC's de hasta tres programas que lo utilicen
-  int nfiles;           // Número de archivos contenidos
+  char pack[_MAX_FNAME]; // Nombre del propio packfile (no va en el archivo) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
+  char head[8];          // Cabecera inicial del packfile (dat<-\n00)
+  int crc1,crc2,crc3;    // CRC's de hasta tres programas que lo utilicen
+  int nfiles;            // Número de archivos contenidos
 } dirhead;
 
 struct tdir {
-  char name[16];        // Nombre del archivo (en asciiz, sin path)
-  unsigned int offset;  // Desplazamiento respecto al inicio del pack
-  unsigned int len1;    // Longitud del archivo en el packfile (comprimido)
-  unsigned int len2;    // Longitud del archivo real (descomprimido)
+  char name[_MAX_FNAME]; // Nombre del archivo (en asciiz, sin path) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
+  unsigned int offset;   // Desplazamiento respecto al inicio del pack
+  unsigned int len1;     // Longitud del archivo en el packfile (comprimido)
+  unsigned int len2;     // Longitud del archivo real (descomprimido)
 };
 
 struct tdir * hdir;     // Directorio de ficheros
@@ -675,7 +675,11 @@ void create_zip(char *dWork) {
 
   fprintf(stdout, "Writing to: %s\n",out);
 
+#ifdef WIN32
+  pack("system/"RUNTIME".exe","system/EXEC.EXE","foo.zip",out);
+#else
   pack("system/"RUNTIME,"system/EXEC.EXE","foo.zip",out);
+#endif
 
   DaniDel("foo.zip");
 
@@ -702,6 +706,15 @@ void create_zip(char *dWork) {
   zip_entry_fwrite(zip, "system/libmikmod-2.dll");
   zip_entry_close(zip);
 
+  // FIX: Windows needs libmad-0.dll and zlib1.dll to run properly the executable
+  zip_entry_open(zip, "libmad-0.dll");
+  zip_entry_fwrite(zip, "system/libmad-0.dll");
+  zip_entry_close(zip);
+
+  zip_entry_open(zip, "zlib1.dll");
+  zip_entry_fwrite(zip, "system/zlib1.dll");
+  zip_entry_close(zip);
+
   zip_entry_open(zip, "readme.txt");
   zip_entry_write(zip, readme, strlen(readme));
   zip_entry_close(zip);
@@ -717,8 +730,8 @@ void crear_instalacion(void) {
 
   FILE *fin,*fout;
   int x,n,m,topack;
-  char cWork[256];
-  char dWork[256];
+  char cWork[_MAX_PATH+1];
+  char dWork[_MAX_PATH+1];
   unsigned _drive,my_drive;
   byte * chr;
   int TotLen=0,PackSize;
@@ -796,7 +809,7 @@ strcpy(cWork,full);
   }
 
   if (!include_setup) x=0;
-  if ((__ins=_ins=ins=(char *) malloc(n+x+32))==NULL) {
+  if ((__ins=_ins=ins=(char *) malloc(n+x+(_MAX_FNAME)))==NULL) {
     v_texto=(char *)texto[357]; dialogo(err0);
     fclose(fin); return;
   } 
@@ -809,8 +822,15 @@ strcpy(cWork,full);
   }
   fin=fopen("system/exec.ins","rb"); n=fread(_ins+x,1,n,fin)+x; fclose(fin);
 
-  nfiles=2; if (include_setup) nfiles++;
+#if defined(DOS)
+  nfiles=2;
+	if (include_setup) nfiles++;
+#else
+	nfiles=1;
+#endif
   while (ins<_ins+n) { nfiles++; ins+=strlen(ins)+1; } ins=_ins;
+
+fprintf(stdout, "[IDE - CREAR_INSTALACION] creating package...\n");
 
   // *** Eliminate duplicate files
   
@@ -822,8 +842,10 @@ strcpy(cWork,full);
 
   for(x=0;x<nfiles;x++) {
     if (x==0) strcpy(MiHeaderSetup[x].name,ExeGen);
+#if defined(DOS)
     else if (x==1) strcpy(MiHeaderSetup[x].name,"DIV32RUN.DLL");
     else if (x==2 && include_setup) strcpy(MiHeaderSetup[x].name,"SETUP.EXE");
+#endif
     else {
       chr=(byte *)ins;
       if (*ins=='+') { // When the file can not be included in the PACKFILE
@@ -867,6 +889,14 @@ strcpy(cWork,full);
         if (topack) dirhead.nfiles++;
       }
     }
+
+fprintf(stdout, "[IDE - CREAR_INSTALACION] packing file [%s] %d of %d file(s) (__ins [%X], _ins [%X], ins [%X])\n",
+        MiHeaderSetup[x].name,
+        dirhead.nfiles + 1,
+        nfiles,
+        __ins,
+        _ins,
+        ins);
   }
 
   free(MiHeaderSetup); ins=_ins;
@@ -953,7 +983,7 @@ strcpy(cWork,full);
         strcpy(__ins,(char *)chr); __ins+=strlen(__ins)+1;
       }
 
-      fprintf(stdout,"PACKING FILE: %s\n",ins);
+fprintf(stdout,"[IDE - CREAR_INSTALACION] PACKED FILE: %s\n",ins);
       if ((fin=fopen(ins,"rb"))==NULL) {
         v_texto=(char *)texto[231]; dialogo(err0);
         free(hdir); fclose(fout); free(_ins); return;

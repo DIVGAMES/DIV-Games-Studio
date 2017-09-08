@@ -1,4 +1,4 @@
-#ifndef __DIVFLI_H
+﻿#ifndef __DIVFLI_H
 #define __DIVFLI_H
 
 /*************************************************************************/
@@ -14,7 +14,7 @@
 /* Salidas: numero de frames de la animacion                             */
 /*          0 si sucedio algo muy malo.                                  */
 /*************************************************************************/
-int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy);
+int DIVStartFLI(char *nombre, char *Buffer, int Buff_anc, int Buff_alt, int cx, int cy);
 
 /*************************************************************************/
 /* Visualiza el siguiente frame.                                         */
@@ -24,7 +24,7 @@ int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy
 /* Salidas: 1 si el fli continua                                         */
 /*          0 si se va a repetir.                                        */
 /*************************************************************************/
-int Nextframe();
+int DIVNextFrameFLI();
 
 /*************************************************************************/
 /* Termina y libera un fli.                                              */
@@ -33,7 +33,7 @@ int Nextframe();
 /*************************************************************************/
 /* Salidas:  Nada                                                        */
 /*************************************************************************/
-void EndFli();
+void DIVEndFLI();
 
 /*************************************************************************/
 /* Reinicializa un fli.                                                  */
@@ -42,6 +42,6 @@ void EndFli();
 /*************************************************************************/
 /* Salidas:  Nada                                                        */
 /*************************************************************************/
-void ResetFli();
+void DIVResetFLI();
 
 #endif
