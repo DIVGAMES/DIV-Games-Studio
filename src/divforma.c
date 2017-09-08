@@ -948,7 +948,7 @@ int pad_an = map_an + 4-(map_an%4);
         fwrite(&FileHeader.bfReserved1,2,1,f);
         fwrite(&FileHeader.bfReserved2,2,1,f);
         fwrite(&FileHeader.bfOffBits,4,1,f);
-//BITMAPINF_OHEADER
+//BITMAPINFO_HEADER
         InfoHeader.biSize=40;
         InfoHeader.biWidth=map_an;
         InfoHeader.biHeight=map_al;

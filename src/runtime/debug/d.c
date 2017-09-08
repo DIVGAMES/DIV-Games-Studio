@@ -328,7 +328,7 @@ void init_debug(void) {
     if (o[n].tipo==tcglo || o[n].tipo==tcloc) visor[n]=2;
     if (o[n].tipo==tcons && o[n].v1==1) visor[n]=2;
     if ((o[n].tipo==tvloc || o[n].tipo==tvglo || o[n].tipo==tcons) &&
-       (vnom[o[n].nombre]=='a' || vnom[o[n].nombre]=='\xa0' /*á*/) &&
+       (vnom[o[n].nombre]=='a' || vnom[o[n].nombre]=='á') &&
        vnom[o[n].nombre+1]=='n' && vnom[o[n].nombre+2]=='g') visor[n]=4;
     if (o[n].tipo==tcons && !strcmp(vnom+o[n].nombre,"pi")) visor[n]=4;
     if ((o[n].tipo==tvloc || o[n].tipo==tvglo) &&
@@ -367,14 +367,38 @@ void init_debug(void) {
 }
 
 void end_debug(void) {
-  free(fondo_raton); 
-  free(o);
-  free(var);
-  free(usado);
-  free(ids);
-  free(visor);
-  free(source);
-  free(line);
+	if(fondo_raton != NULL) {
+		free(fondo_raton);
+		fondo_raton = NULL;
+	}
+	if(o != NULL) {
+		free(o);
+		o = NULL;
+	}
+	if(var != NULL) {
+		free(var);
+		var = NULL;
+	}
+	if(usado != NULL) {
+		free(usado);
+		usado = NULL;
+	}
+	if(ids != NULL) {
+		free(ids);
+		ids = NULL;
+	}
+	if(visor != NULL) {
+		free(visor);
+		visor = NULL;
+	}
+	if(source != NULL) {
+		free(source);
+		source = NULL;
+	}
+	if(line != NULL) {
+		free(line);
+		line = NULL;
+	}
 }
 //═════════════════════════════════════════════════════════════════════════════
 //  Inicializa el font
@@ -462,7 +486,7 @@ void dialogo(voidReturnType init_handler) {
 
   if (!ventana[max_windows-1].tipo) {
 
-    memmove(&ventana[1].tipo,&v.tipo,sizeof(tventana)*(max_windows-1));
+    memmove(&ventana[1].tipo,&v.tipo,sizeof(t_ventana)*(max_windows-1));
 
     //───────────────────────────────────────────────────────────────────────────
     // Los siguientes valores los debe definir init_handler, valores por defecto:
@@ -549,7 +573,7 @@ void dialogo(voidReturnType init_handler) {
     //───────────────────────────────────────────────────────────────────────────
 
     } else {
-      memmove(&v.tipo,&ventana[1].tipo,sizeof(tventana)*(max_windows-1));
+      memmove(&v.tipo,&ventana[1].tipo,sizeof(t_ventana)*(max_windows-1));
       ventana[max_windows-1].tipo=0;
     }
   }
@@ -731,7 +755,7 @@ void cierra_ventana(void) {
   } free(v.ptr);
 
   x=v.x; y=v.y; an=v.an; al=v.al;
-  memmove(&v.tipo,&ventana[1].tipo,sizeof(tventana)*(max_windows-1));
+  memmove(&v.tipo,&ventana[1].tipo,sizeof(t_ventana)*(max_windows-1));
   actualiza_caja(x,y,an,al);
 
   if (v.tipo==1) { // Diálogo sobre diálogo solo abre el último
@@ -3792,7 +3816,7 @@ void debug2(void) {
             breakpoint[n].line=linea_sel;
             breakpoint[n].offset=m;
             breakpoint[n].code=mem[m];
-            mem[m]=ldbg;
+            mem[m]=DIVBC_dbg;
             pinta_codigo(); v.volcar=1;
           }
         } else { v_texto=(char *)text[63]; dialogo(err0); }
@@ -3807,7 +3831,7 @@ void debug2(void) {
           do { trace_process();
             if (new_mode) ptr=change_mode();
             if (call_to_debug) { call(v.paint_handler); v.volcar=1; break; }
-          } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==lasp || mem[ip]==lasiasp || mem[ip]==lcarasiasp || mem[ip]==lfunasp));
+          } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==DIVBC_asp || mem[ip]==DIVBC_asiasp || mem[ip]==DIVBC_carasiasp || mem[ip]==DIVBC_funasp));
           if (call_to_debug) {
             volcado_completo=1; call_to_debug=0;
             if (new_palette) { new_palette=0; repinta_ventana(); }
@@ -3816,7 +3840,7 @@ void debug2(void) {
           breakpoint[n].line=breakpoint[n].code;
           breakpoint[n].offset=-m;
           breakpoint[n].code=mem[m];
-          mem[m]=ldbg;
+          mem[m]=DIVBC_dbg;
           fin_dialogo=1;
         }
       } else { v_texto=(char *)text[63]; dialogo(err0); }
@@ -3826,7 +3850,7 @@ void debug2(void) {
       do { trace_process();
         if (new_mode) ptr=change_mode();
         if (call_to_debug) { call(v.paint_handler); v.volcar=1; break; }
-      } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==lasp || mem[ip]==lasiasp || mem[ip]==lcarasiasp || mem[ip]==lfunasp));
+      } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==DIVBC_asp || mem[ip]==DIVBC_asiasp || mem[ip]==DIVBC_carasiasp || mem[ip]==DIVBC_funasp));
       if (call_to_debug) {
         volcado_completo=1; call_to_debug=0;
         if (new_palette) { new_palette=0; repinta_ventana(); }
@@ -3862,15 +3886,15 @@ void debug2(void) {
         // se busca un call. Esto es algo impreciso, ya que un cal es un
         // "26", y puede haber un dato constante con ese valor.
 
-        if (mem[iip]==lcal) if (memo(mem[iip+1])==ltyp && memo(mem[iip+1]+2)==lnop) {
+        if (mem[iip]==DIVBC_cal) if (memo(mem[iip+1])==DIVBC_typ && memo(mem[iip+1]+2)==DIVBC_nop) {
           for (n=0;n<max_breakpoint;n++) if (breakpoint[n].line==-1) break;
           if (n<max_breakpoint) {
             breakpoint[n].offset=mem2+1;
-            if (mem[breakpoint[n].offset]==lasp) breakpoint[n].offset++;
+            if (mem[breakpoint[n].offset]==DIVBC_asp) breakpoint[n].offset++;
             breakpoint[n].line=0;
             get_line(breakpoint[n].offset);
             breakpoint[n].code=mem[breakpoint[n].offset];
-            mem[breakpoint[n].offset]=ldbg;
+            mem[breakpoint[n].offset]=DIVBC_dbg;
             fin_dialogo=1; break;
           }
         }
@@ -3880,7 +3904,7 @@ void debug2(void) {
       do { trace_process();
         if (new_mode) ptr=change_mode();
         if (call_to_debug) { call(v.paint_handler); v.volcar=1; break; }
-      } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==lasp || mem[ip]==lasiasp || mem[ip]==lcarasiasp || mem[ip]==lfunasp || process_level>0));
+      } while(ide && ((ip>=mem1 && ip<=mem2) || mem[ip]==DIVBC_asp || mem[ip]==DIVBC_asiasp || mem[ip]==DIVBC_carasiasp || mem[ip]==DIVBC_funasp || process_level>0));
       if (call_to_debug) {
         volcado_completo=1; call_to_debug=0;
         if (new_palette) { new_palette=0; repinta_ventana(); }

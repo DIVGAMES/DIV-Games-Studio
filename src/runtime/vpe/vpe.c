@@ -9,7 +9,7 @@ int    VPE_fog    =0;
 //  Inicializa la libreria
 //═════════════════════════════════════════════════════════════════════════════
 
-void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto)
+void m8_vpe_inicio(char *fichero,char *buffer,int ancho,int alto)
 {
   InitGraph(buffer,ancho,alto); // Init gfx system
   VPE_Init(); // Init VPE
@@ -23,7 +23,7 @@ void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto)
 //  Finaliza la libreria
 //═════════════════════════════════════════════════════════════════════════════
 
-void _vpe_fin()
+void m8_vpe_fin()
 {
   VPE_Stop();     // Stop the engine
   VPE_Shut();     // Shut down VPE
