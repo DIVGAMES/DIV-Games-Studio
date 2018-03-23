@@ -944,7 +944,7 @@ void DIV_get_sector_texture(void) {
 
 	new_region = (struct Region *)Regions.ptr[num_region];
 
-	mem[fade] = new_region->Fade;
+	mem[fade] = 15 - new_region->Fade;
 	if(new_region->FloorTC.pPic != 0) {
 		mem[suelo] = new_region->FloorTC.pPic->code;
 	}
@@ -958,7 +958,7 @@ void DIV_get_sector_texture(void) {
 // - Modifica las texturas de una pared del mapa
 //═════════════════════════════════════════════════════════════════════════════
 void DIV_set_wall_texture(void) {
-	int fade     = (15 - pila[sp--]) % 16;
+	int fade     = pila[sp--];
 	int textura  = pila[sp--];
 	int num_wall = pila[sp];
 
@@ -970,12 +970,15 @@ void DIV_set_wall_texture(void) {
 		return;
 	}
 
+	if(fade < -1 || fade > 15) {
+		return;
+	}
+
 	new_wall = (struct Wall *)Walls.ptr[num_wall];
 
 	if(fade != -1) {
-		new_wall->Fade = fade;
+		new_wall->Fade = 15 - fade;
 	}
-
 	if(textura != -1) {
 		if(new_wall->Type & 1) {
 			TexAlloc(&new_wall->TopTC,
@@ -1012,7 +1015,7 @@ void DIV_get_wall_texture(void) {
 
 	new_wall = (struct Wall *)Walls.ptr[num_wall];
 
-	mem[fade] = new_wall->Fade;
+	mem[fade] = 15 - new_wall->Fade;
 	if(new_wall->Type & 1) {
 		mem[textura] = new_wall->TopTC.pPic->code;
 	}
