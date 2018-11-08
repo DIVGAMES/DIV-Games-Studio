@@ -111,7 +111,7 @@ byte lower[256]=
   "                                   #$           0123456789      "
   " abcdefghijklmnopqrstuvwxyz    _ abcdefghijklmnopqrstuvwxyz     "
   "�ueaaaa�eeeiiiaae��ooouuyou�����aiou����                        "
-  "                                                              ";
+  "                                                                ";
 
 int show_items_called=0;
 int test_video=0;

@@ -1285,7 +1285,7 @@ void c_error(word tipo, word e) {
   // _case_sensitive
   memcpy(lower+129,"ueaaaaçeeeiiiaaeææooouuyouø£Ø×ƒaiou",35);
   memcpy(lower+'A',"abcdefghijklmnopqrstuvwxyz",26);
-  lower['Ñ']='ñ';
+  lower['\xa5' /*'Ñ'*/]='\xa4' /*'ñ'*/;
 
   comp_exit();
 }
@@ -3298,7 +3298,7 @@ void sintactico (void) {
             lexico();
             memcpy(lower+129,"üéâäàåçêëèïîìäåéææôöòûùÿöüø£Ø×ƒáíóú",35);
             memcpy(lower+'A',"ABCDEFGHIJKLMNOPQRSTUVWXYZ",26);
-            lower['Ñ']='Ñ';
+			lower['\xa5' /*'Ñ'*/]='\xa4' /*'ñ'*/;
             break;
           case 4: // _ignore_errors
             lexico();

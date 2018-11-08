@@ -12,6 +12,6 @@ SET(HAS_GIT 0)
 
 SET (PLATFORM "OSX")
 SET (TARGETOS "OSX")
-FILE(GLOB OSX_SOURCES "src/osx/*.c")
+#FILE(GLOB OSX_SOURCES "src/osx/*.c")
 SET(OSDEP ${OSDEP} ${OSX_SOURCES} "src/shared/osdep.c" "src/shared/unzip.c")
-INCLUDE_DIRECTORIES("src/osx")
+#INCLUDE_DIRECTORIES("src/osx")

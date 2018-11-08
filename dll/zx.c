@@ -1,4 +1,9 @@
 // ZX SPECTRUM DLL
+/**
+
+gcc zx.c sdlgfx/SDL_rotozoom.c spectrum/colourspace.c spectrum/libscrplus.c spectrum/bits.c -o zx.so -fPIC -funsigned-char -shared -O3 `sdl-config --cflags` `sdl-config --libs`
+
+**/
 #include <math.h>
 #include <stdio.h>
 //#include <mem.h>

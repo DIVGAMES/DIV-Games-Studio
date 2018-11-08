@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <SDL.h>
-#include <SDL_image.h>
+//#include <SDL_image.h>
 #include "colourspace.h"
 
 #define RENDER_TIMEX	1 // Timex 8x1 attribute mode
