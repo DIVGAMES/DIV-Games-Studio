@@ -21,14 +21,16 @@ void OSDEP_keyInit(void);
 void OSDEP_WarpMouse(int x, int y);
 void OSDEP_Flip(OSDEP_Surface *s);
 uint32_t OSDEP_GetTicks(void);
-void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h);
+void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w,
+		      Sint32 h);
 int OSDEP_IsFullScreen(void);
-OSDEP_VMode ** OSDEP_ListModes(void);
+OSDEP_VMode **OSDEP_ListModes(void);
 
 void OSDEP_SetCaption(char *title, char *icon);
-OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs);
+OSDEP_Surface *OSDEP_SetVideoMode(int width, int height, int bpp, char fs);
 
-int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors);
+int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors,
+		     int firstcolor, int ncolors);
 
 int32_t OSDEP_NumJoysticks(void);
 OSDEP_Joystick *OSDEP_JoystickOpen(int n);
@@ -41,7 +43,6 @@ int OSDEP_JoystickNumAxes(int n);
 uint8_t OSDEP_JoystickGetButton(OSDEP_Joystick *joystick, int button);
 int16_t OSDEP_JoystickGetAxis(OSDEP_Joystick *joystick, int axis);
 
-char * OSDEP_JoystickName(int n);
-
+char *OSDEP_JoystickName(int n);
 
 #endif

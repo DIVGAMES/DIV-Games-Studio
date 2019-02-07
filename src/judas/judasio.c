@@ -13,39 +13,36 @@
 //#include <fcntl.h>
 #include "osdep.h"
 
-FILE * judas_open(char *name);
-int judas_seek(FILE * handle, int bytes, int whence);
-int judas_read(FILE * handle, void *buffer, int size);
-void judas_close(FILE * handle);
+FILE *judas_open(char *name);
+int judas_seek(FILE *handle, int bytes, int whence);
+int judas_read(FILE *handle, void *buffer, int size);
+void judas_close(FILE *handle);
 
 /*
  * Returns nonnegative file handle if successful, -1 on error
  */
-FILE * judas_open(char *name)
+FILE *judas_open(char *name)
 {
-        return fopen(name, "rb");//O_RDONLY | O_BINARY);
+	return fopen(name, "rb"); // O_RDONLY | O_BINARY);
 }
 
 /*
  * Returns file position after seek or -1 on error
  */
-int judas_seek(FILE * handle, int bytes, int whence)
+int judas_seek(FILE *handle, int bytes, int whence)
 {
-        return fseek( handle,bytes, SEEK_CUR);
+	return fseek(handle, bytes, SEEK_CUR);
 }
 
 /*
  * Returns number of bytes actually read, -1 on error
  */
-int judas_read(FILE * handle, void *buffer, int size)
+int judas_read(FILE *handle, void *buffer, int size)
 {
-        return fread(buffer,1,size,handle);
+	return fread(buffer, 1, size, handle);
 }
 
 /*
  * Returns nothing
  */
-void judas_close(FILE * handle)
-{
-        fclose(handle);
-}
+void judas_close(FILE *handle) { fclose(handle); }

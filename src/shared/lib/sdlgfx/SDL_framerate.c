@@ -42,12 +42,12 @@ Uint32 _getTicks()
 {
 	Uint32 ticks = SDL_GetTicks();
 
-	/* 
-	* Since baseticks!=0 is used to track initialization
-	* we need to ensure that the tick count is always >0 
-	* since SDL_GetTicks may not have incremented yet and
-	* return 0 depending on the timing of the calls.
-	*/
+	/*
+	 * Since baseticks!=0 is used to track initialization
+	 * we need to ensure that the tick count is always >0
+	 * since SDL_GetTicks may not have incremented yet and
+	 * return 0 depending on the timing of the calls.
+	 */
 	if (ticks == 0) {
 		return 1;
 	} else {
@@ -63,36 +63,36 @@ reset delay interpolation.
 
 \param manager Pointer to the framerate manager.
 */
-void SDL_initFramerate(FPSmanager * manager)
+void SDL_initFramerate(FPSmanager *manager)
 {
 	/*
-	* Store some sane values 
-	*/
+	 * Store some sane values
+	 */
 	manager->framecount = 0;
 	manager->rate = FPS_DEFAULT;
-	manager->rateticks = (1000.0f / (float) FPS_DEFAULT);
+	manager->rateticks = (1000.0f / (float)FPS_DEFAULT);
 	manager->baseticks = _getTicks();
 	manager->lastticks = manager->baseticks;
-
 }
 
 /*!
-\brief Set the framerate in Hz 
+\brief Set the framerate in Hz
 
 Sets a new framerate for the manager and reset delay interpolation.
-Rate values must be between FPS_LOWER_LIMIT and FPS_UPPER_LIMIT inclusive to be accepted.
+Rate values must be between FPS_LOWER_LIMIT and FPS_UPPER_LIMIT inclusive to be
+accepted.
 
 \param manager Pointer to the framerate manager.
 \param rate The new framerate in Hz (frames per second).
 
 \return 0 for sucess and -1 for error.
 */
-int SDL_setFramerate(FPSmanager * manager, Uint32 rate)
+int SDL_setFramerate(FPSmanager *manager, Uint32 rate)
 {
 	if ((rate >= FPS_LOWER_LIMIT) && (rate <= FPS_UPPER_LIMIT)) {
 		manager->framecount = 0;
 		manager->rate = rate;
-		manager->rateticks = (1000.0f / (float) rate);
+		manager->rateticks = (1000.0f / (float)rate);
 		return (0);
 	} else {
 		return (-1);
@@ -100,7 +100,7 @@ int SDL_setFramerate(FPSmanager * manager, Uint32 rate)
 }
 
 /*!
-\brief Return the current target framerate in Hz 
+\brief Return the current target framerate in Hz
 
 Get the currently set framerate of the manager.
 
@@ -108,7 +108,7 @@ Get the currently set framerate of the manager.
 
 \return Current framerate in Hz or -1 for error.
 */
-int SDL_getFramerate(FPSmanager * manager)
+int SDL_getFramerate(FPSmanager *manager)
 {
 	if (manager == NULL) {
 		return (-1);
@@ -120,14 +120,14 @@ int SDL_getFramerate(FPSmanager * manager)
 /*!
 \brief Return the current framecount.
 
-Get the current framecount from the framerate manager. 
+Get the current framecount from the framerate manager.
 A frame is counted each time SDL_framerateDelay is called.
 
 \param manager Pointer to the framerate manager.
 
 \return Current frame count or -1 for error.
 */
-int SDL_getFramecount(FPSmanager * manager)
+int SDL_getFramecount(FPSmanager *manager)
 {
 	if (manager == NULL) {
 		return (-1);
@@ -145,41 +145,43 @@ drawing too slow), the delay is zero and the delay interpolation is reset.
 
 \param manager Pointer to the framerate manager.
 
-\return The time that passed since the last call to the function in ms. May return 0.
+\return The time that passed since the last call to the function in ms. May
+return 0.
 */
 #ifndef WIN32
 void delay(unsigned int milliseconds)
 {
-	if(milliseconds<1)
+	if (milliseconds < 1)
 		return;
-    //struct timespec spec;
+	// struct timespec spec;
 
-	/* clock() returns the number of clock ticks since the start of the program */
+	/* clock() returns the number of clock ticks since the start of the
+	 * program */
 	/* On PC this is 1000, on ubuntu Linux, this is 1000000 */
-    /* Code taken from Larry Bank's programmers corner website: http://www.bitbanksoftware.com/Programmers/code4.html */
+	/* Code taken from Larry Bank's programmers corner website:
+	 * http://www.bitbanksoftware.com/Programmers/code4.html */
 
-    unsigned int ticksPerMillisecond = 1000;//CLOCKS_PER_SEC/1000;
-    int counter = SDL_GetTicks() + (ticksPerMillisecond * milliseconds);
-    if(milliseconds >= 2)
-    {
-        //usleep((milliseconds - 1)*1000);
-        //spec.tv_nsec = (milliseconds-1)*1000*1000;
-        //spec.tv_sec = 0;
-        //nanosleep(&spec, (struct timespec *)NULL);
-        //sleep(milliseconds -1); /* Sleep through most of it then spin for the last millisecond. */
+	unsigned int ticksPerMillisecond = 1000; // CLOCKS_PER_SEC/1000;
+	int counter = SDL_GetTicks() + (ticksPerMillisecond * milliseconds);
+	if (milliseconds >= 2) {
+		// usleep((milliseconds - 1)*1000);
+		// spec.tv_nsec = (milliseconds-1)*1000*1000;
+		// spec.tv_sec = 0;
+		// nanosleep(&spec, (struct timespec *)NULL);
+		// sleep(milliseconds -1); /* Sleep through most of it then spin
+		// for the last millisecond. */
 		sched_yield();
-        usleep((milliseconds-1));
-    }
+		usleep((milliseconds - 1));
+	}
 
-    while(SDL_GetTicks() < counter)
-    {
-        sched_yield();
-    }
+	while (SDL_GetTicks() < counter) {
+		sched_yield();
+	}
 }
 
 #endif
 
-Uint32 SDL_framerateDelay(FPSmanager * manager)
+Uint32 SDL_framerateDelay(FPSmanager *manager)
 {
 	Uint32 current_ticks;
 	Uint32 target_ticks;
@@ -187,42 +189,44 @@ Uint32 SDL_framerateDelay(FPSmanager * manager)
 	Uint32 time_passed = 0;
 
 	/*
-	* No manager, no delay
-	*/
+	 * No manager, no delay
+	 */
 	if (manager == NULL) {
 		return 0;
 	}
 
 	/*
-	* Initialize uninitialized manager 
-	*/
+	 * Initialize uninitialized manager
+	 */
 	if (manager->baseticks == 0) {
 		SDL_initFramerate(manager);
 	}
 
 	/*
-	* Next frame 
-	*/
+	 * Next frame
+	 */
 	manager->framecount++;
 
 	/*
-	* Get/calc ticks 
-	*/
+	 * Get/calc ticks
+	 */
 	current_ticks = _getTicks();
 	time_passed = current_ticks - manager->lastticks;
 	manager->lastticks = current_ticks;
-	target_ticks = manager->baseticks + (Uint32) ((float) manager->framecount * manager->rateticks);
+	target_ticks =
+	    manager->baseticks +
+	    (Uint32)((float)manager->framecount * manager->rateticks);
 
 	if (current_ticks <= target_ticks) {
 		the_delay = target_ticks - current_ticks;
 #ifdef WIN32
 		SDL_Delay(the_delay);
 #else
-//		delay(the_delay/1000);
+		//		delay(the_delay/1000);
 		sched_yield();
-//		printf("%d\n",the_delay);
-		if(the_delay>2)
-			usleep(the_delay-1);
+		//		printf("%d\n",the_delay);
+		if (the_delay > 2)
+			usleep(the_delay - 1);
 #endif
 	} else {
 		manager->framecount = 0;

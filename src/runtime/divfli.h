@@ -14,7 +14,8 @@
 /* Salidas: numero de frames de la animacion                             */
 /*          0 si sucedio algo muy malo.                                  */
 /*************************************************************************/
-int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy);
+int StartFLI(char *nombre, char *Buffer, int Buff_anc, int Buff_alt, int cx,
+	     int cy);
 
 /*************************************************************************/
 /* Visualiza el siguiente frame.                                         */

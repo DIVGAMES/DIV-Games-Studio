@@ -1,6 +1,7 @@
 //
 // Copyright 2011-2014 NimbusKit
-// Originally ported from https://github.com/ingenuitas/python-tesseract/blob/master/fmemopen.c
+// Originally ported from
+// https://github.com/ingenuitas/python-tesseract/blob/master/fmemopen.c
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
+#ifdef HAS_FMEMOPEN
 
 #ifndef FMEMOPEN_H_
 #define FMEMOPEN_H_
@@ -35,12 +38,13 @@ extern "C" {
  *
  * You must call fclose on the returned file pointer or memory will be leaked.
  *
- * @param buf The data that will be used to back the FILE* methods. Must be at least
+ * @param buf The data that will be used to back the FILE* methods. Must be at
+ * least
  *            @c size bytes.
  * @param size The size of the @c buf data.
  * @param mode The permitted stream operation modes.
- * @return A pointer that can be used in the fread/fwrite/fseek/fclose family of methods.
- *         If a failure occurred NULL will be returned.
+ * @return A pointer that can be used in the fread/fwrite/fseek/fclose family of
+ * methods. If a failure occurred NULL will be returned.
  * @ingroup NimbusMemoryMappping
  */
 FILE *fmemopen(void *buf, int size, const char *mode);
@@ -50,3 +54,5 @@ FILE *fmemopen(void *buf, int size, const char *mode);
 #endif
 
 #endif // #ifndef FMEMOPEN_H_
+
+#endif

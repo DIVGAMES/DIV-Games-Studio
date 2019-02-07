@@ -8,8 +8,8 @@
 //      Memcpy con rep movsb
 //═════════════════════════════════════════════════════════════════════════════
 
-void memcpyb(byte * d, byte * s, int n) {
-  memcpy(d,s,n);
-//  compilar();
+void memcpyb(byte *d, byte *s, int n)
+{
+	memcpy(d, s, n);
+	//  compilar();
 }
-

@@ -13,14 +13,14 @@ extern "C" {
 // Definicion de tipos
 //-----------------------------------------------------------------------------
 typedef unsigned short WORD;
-typedef unsigned char  BYTE;
+typedef unsigned char BYTE;
 
 //-----------------------------------------------------------------------------
 // Definicion de Dispositivos
 //-----------------------------------------------------------------------------
-#define IPX     1
-#define SERIAL  2
-#define MODEM   3
+#define IPX 1
+#define SERIAL 2
+#define MODEM 3
 
 //-----------------------------------------------------------------------------
 // Definicion de errores
@@ -40,24 +40,24 @@ extern int inicializacion_red; // Hay que inicializarla a cero
 //-----------------------------------------------------------------------------
 
 // Rutina para la recepcion de paquetes como servidor
-extern void (*SRV_Packet)(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
+extern void (*SRV_Packet)(WORD Usuario, WORD Comando, BYTE *Buffer, WORD Len);
 
 // Rutina para la recepcion de paquetes como Nodo
-extern void (*NOD_Packet)(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
+extern void (*NOD_Packet)(WORD Usuario, WORD Comando, BYTE *Buffer, WORD Len);
 
 //-----------------------------------------------------------------------------
 // Definicion de procedimientos propios
 //-----------------------------------------------------------------------------
 
 // Inicializa el protocolo ipx (devuelve error o número de nodo)
-int net_init_ipx(int socket,int num_jugadores, int timeout);
+int net_init_ipx(int socket, int num_jugadores, int timeout);
 // socket=identificador de partida(int), 2..8, segundos (1..60)
 
 // ojo con el key(esc) de aborción
 
 // Inicializa el modem (devuelve error o número de nodo)
 int net_init_modem(int puerto, int velocidad, int dial, char *cadena_inicio,
-                   char *cadena_llamada, char *telefono, int timeout);
+		   char *cadena_llamada, char *telefono, int timeout);
 
 // Inicializa el cable serie (devuelve error o número de nodo)
 int net_init_serial(int puerto, int velocidad, int timeout);

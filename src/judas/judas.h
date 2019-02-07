@@ -54,63 +54,66 @@
 /*
  * Sample structure
  */
-typedef struct
-{
-        char *start;
-        char *repeat;
-        char *end;
-        char *vuprofile;
-        unsigned char voicemode;
+typedef struct {
+	char *start;
+	char *repeat;
+	char *end;
+	char *vuprofile;
+	unsigned char voicemode;
 } SAMPLE;
 
 /*
  * Informacion devuelta a DIV
  */
-typedef struct _SoundInfo{
-  int    SoundFreq;
-  int    SoundBits;
-  int    SoundSize;
-  short  *SoundData;
-  SAMPLE *sample;
+typedef struct _SoundInfo {
+	int SoundFreq;
+	int SoundBits;
+	int SoundSize;
+	short *SoundData;
+	SAMPLE *sample;
 } SoundInfo;
 
 /*
  * Channel structure
  */
 #ifdef DOS
-#pragma pack (push, 1);
+#pragma pack(push, 1);
 #endif
 
-typedef struct
-{
-        char *volatile pos;             /* Position which is currently played */
-        char *repeat;                   /* Goes here after hitting end */
-        char *end;                      /* Position of last sample + 1 */
-        SAMPLE *volatile smp;           /* Pointer to sample currently used */
-        unsigned freq;                  /* Playing frequency in hertz */
-        volatile unsigned short fractpos; /* 16bit fractional pos */
-        unsigned char mastervol;        /* 255 = whole volume range of output */
-        unsigned char panning;          /* 0 left, 128 middle, 255 right */
-        signed short vol;               /* Note volume, ranges from 0 to 64*256 */
-        volatile unsigned char voicemode; /* See the bit definitions above */
+typedef struct {
+	char *volatile pos;   /* Position which is currently played */
+	char *repeat;	 /* Goes here after hitting end */
+	char *end;	    /* Position of last sample + 1 */
+	SAMPLE *volatile smp; /* Pointer to sample currently used */
+	unsigned freq;	/* Playing frequency in hertz */
+	volatile unsigned short fractpos; /* 16bit fractional pos */
+	unsigned char mastervol; /* 255 = whole volume range of output */
+	unsigned char panning;   /* 0 left, 128 middle, 255 right */
+	signed short vol;	/* Note volume, ranges from 0 to 64*256 */
+	volatile unsigned char voicemode; /* See the bit definitions above */
 
-        /* Quality mixer internal variables (No need to understand) */
-        volatile char prevvm;           /* voicemode != prevvm if discontinuity in the sound */
-        char *volatile prevpos;         /* Pos != prevpos if discontinuity in the sound */
-        volatile int lastvalleft;       /* Last value from prev. mixed chunk (after volume scaling) */
-        volatile int lastvalright;
-        volatile int smoothvoll;        /* Final volume. Smoothly slided towards given volume */
-        volatile int smoothvolr;
+	/* Quality mixer internal variables (No need to understand) */
+	volatile char
+	    prevvm; /* voicemode != prevvm if discontinuity in the sound */
+	char *volatile prevpos; /* Pos != prevpos if discontinuity in the sound
+				 */
+	volatile int lastvalleft; /* Last value from prev. mixed chunk (after
+				     volume scaling) */
+	volatile int lastvalright;
+	volatile int
+	    smoothvoll; /* Final volume. Smoothly slided towards given volume */
+	volatile int smoothvolr;
 } CHANNEL;
 #ifdef DOS
-#pragma pack (pop);
+#pragma pack(pop);
 #endif
 
 /*
  * General functions
  */
 void judas_config(void);
-int judas_init(unsigned mixrate, unsigned mixer, unsigned mixmode, int interpolation);
+int judas_init(unsigned mixrate, unsigned mixer, unsigned mixmode,
+	       int interpolation);
 void judas_update(void);
 void judas_uninit(void);
 int judas_songisplaying(void);
@@ -121,19 +124,23 @@ int judas_songisplaying(void);
 SAMPLE *judas_allocsample(int length);
 void judas_ipcorrect(SAMPLE *smp);
 void judas_freesample(SAMPLE *smp);
-void judas_playsample(SAMPLE *smp, unsigned chnum, unsigned frequency, unsigned short volume, unsigned char panning);
+void judas_playsample(SAMPLE *smp, unsigned chnum, unsigned frequency,
+		      unsigned short volume, unsigned char panning);
 void judas_stopsample(unsigned chnum);
 void judas_preventdistortion(unsigned active_channels);
 void judas_setmastervolume(unsigned chnum, unsigned char mastervol);
-void judas_setmusicmastervolume(unsigned musicchannels, unsigned char mastervol);
+void judas_setmusicmastervolume(unsigned musicchannels,
+				unsigned char mastervol);
 void judas_setsfxmastervolume(unsigned musicchannels, unsigned char mastervol);
 float judas_getvumeter(unsigned chnum); /* Returns 0..1 */
 
 /*
  * RAW sample & WAV functions
  */
-SoundInfo *judas_loadrawsample(char *name, int repeat, int end, unsigned char voicemode);
-SoundInfo *judas_loadrawsample_mem(char *FileBuffer, int length, int repeat, int end, unsigned char voicemode);
+SoundInfo *judas_loadrawsample(char *name, int repeat, int end,
+			       unsigned char voicemode);
+SoundInfo *judas_loadrawsample_mem(char *FileBuffer, int length, int repeat,
+				   int end, unsigned char voicemode);
 SoundInfo *judas_loadwav(char *name);
 SoundInfo *judas_loadwav_mem(unsigned char *FileBuffer);
 
@@ -216,7 +223,7 @@ extern unsigned judascfg_device;
 extern unsigned judascfg_port;
 extern unsigned judascfg_irq;
 extern unsigned judascfg_dma1;
-extern unsigned judascfg_dma2;          /* SB High DMA, not needed for GUS */
+extern unsigned judascfg_dma2; /* SB High DMA, not needed for GUS */
 
 /*
  * Device, port, IRQ, DMA, mixrate & mixmode currently in use.
@@ -280,4 +287,3 @@ extern volatile char judas_clipped;
 // Debug functions
 void DebugInfo(char *Msg);
 void DebugData(int Val);
-

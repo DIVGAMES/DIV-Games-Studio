@@ -13,28 +13,28 @@
 #define GCW_W 320
 #define GCW_H 240
 
-float w_ratio=1.0;
-float h_ratio=1.0;
+float w_ratio = 1.0;
+float h_ratio = 1.0;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //	Declarations and module-level data
 ///////////////////////////////////////////////////////////////////////////////
 
-#define CRTC_INDEX      0x3d4   //CRT Controller Index
-#define CRTC_OFFSET     0x13    //CRTC offset register index
-#define SC_INDEX        0x3c4   //Sequence Controller Index
-#define MISC_OUTPUT     0x3c2   //Miscellaneous Output register
+#define CRTC_INDEX 0x3d4  // CRT Controller Index
+#define CRTC_OFFSET 0x13  // CRTC offset register index
+#define SC_INDEX 0x3c4    // Sequence Controller Index
+#define MISC_OUTPUT 0x3c2 // Miscellaneous Output register
 
 #ifdef DOS
-byte * vga = (byte *) 0xA0000; // Physical screen 
-                               // TODO - (change this to SDL surface pixels)
+byte *vga = (byte *)0xA0000; // Physical screen
+			     // TODO - (change this to SDL surface pixels)
 #else
-SDL_Surface *vga=NULL;
+SDL_Surface *vga = NULL;
 #ifdef SDL2
-SDL_Window *divWindow=NULL;
-SDL_Renderer *divRender=NULL;
-SDL_Texture *divTexture=NULL;
+SDL_Window *divWindow = NULL;
+SDL_Renderer *divRender = NULL;
+SDL_Texture *divTexture = NULL;
 #endif
 
 #endif
@@ -42,11 +42,11 @@ SDL_Texture *divTexture=NULL;
 void snapshot(byte *p);
 void volcadocsvga(byte *p);
 void volcadoc320200(byte *p);
-void volcadocx(byte * p);
+void volcadocx(byte *p);
 void volcadopsvga(byte *p);
 void volcadop320200(byte *p);
-void volcadopx(byte * p);
-int graba_PCX(byte *mapa,int an,int al,FILE *f);
+void volcadopx(byte *p);
+int graba_PCX(byte *mapa, int an, int al, FILE *f);
 void crear_ghost_vc(int m);
 void crear_ghost_slow(void);
 
@@ -55,57 +55,62 @@ void crear_ghost_slow(void);
 #ifndef __EMSCRIPTEN__
 int IsFullScreen(SDL_Surface *surface)
 {
-    return OSDEP_IsFullScreen(); // Return false if surface is windowed
+	return OSDEP_IsFullScreen(); // Return false if surface is windowed
 }
 
 int SDL_ToggleFS(SDL_Surface *surface)
 {
 
-    if (IsFullScreen(surface))
-    fsmode=0;
-  else 
-    fsmode=1;
-  
-  svmode();
-  set_dac();
-    return 1;
+	if (IsFullScreen(surface))
+		fsmode = 0;
+	else
+		fsmode = 1;
+
+	svmode();
+	set_dac();
+	return 1;
 }
 #endif
 
 #define MAX_YRES 2048
 
-short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
+short scan[MAX_YRES *
+	   4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
 
 struct {
-  byte dot;
-  int crt[20];
-} modox[5]={
+	byte dot;
+	int crt[20];
+} modox[5] = {
 
-  {0xe3,0x0d06,0x3e07,0x4109,0xea10,0xac11,0xdf12,0x0014,0xe715, //320x240
-   0x0616,0xe317,0},
+    {0xe3, 0x0d06, 0x3e07, 0x4109, 0xea10, 0xac11, 0xdf12, 0x0014,
+     0xe715, // 320x240
+     0x0616, 0xe317, 0},
 
-  {0xe3,0x4009,0x0014,0xe317,0}, //320x400
+    {0xe3, 0x4009, 0x0014, 0xe317, 0}, // 320x400
 
-  {0xe7,0x6b00,0x5901,0x5a02,0x8e03,0x5e04,0x8a05,0x0d06,0x3e07, //360x240
-   0x4109,0xea10,0xac11,0xdf12,0x2d13,0x0014,0xe715,0x0616,0xe317,0},
+    {0xe7, 0x6b00, 0x5901, 0x5a02, 0x8e03, 0x5e04, 0x8a05, 0x0d06,
+     0x3e07, // 360x240
+     0x4109, 0xea10, 0xac11, 0xdf12, 0x2d13, 0x0014, 0xe715, 0x0616, 0xe317, 0},
 
-  {0xe7,0x6b00,0x5901,0x5a02,0x8e03,0x5e04,0x8a05,0x4009,0x8810, //360x360
-   0x8511,0x6712,0x2d13,0x0014,0x6d15,0xba16,0xe317,0},
+    {0xe7, 0x6b00, 0x5901, 0x5a02, 0x8e03, 0x5e04, 0x8a05, 0x4009,
+     0x8810, // 360x360
+     0x8511, 0x6712, 0x2d13, 0x0014, 0x6d15, 0xba16, 0xe317, 0},
 
-  {0xe7,0x6e00,0x5d01,0x5e02,0x9103,0x6204,0x8f05,0x6206,0xf007, //376x282
-   0x6109,0x310f,0x3710,0x8911,0x3312,0x2f13,0x0014,0x3c15,0x5c16,0xe317,0}
-};
+    {0xe7,   0x6e00, 0x5d01, 0x5e02, 0x9103, 0x6204,
+     0x8f05, 0x6206, 0xf007, // 376x282
+     0x6109, 0x310f, 0x3710, 0x8911, 0x3312, 0x2f13,
+     0x0014, 0x3c15, 0x5c16, 0xe317, 0}};
 
 //�����������������������������������������������������������������������������
 //      Tabla ghost
 //�����������������������������������������������������������������������������
 
 struct t_tpuntos { // Para la creaci�n de la tabla ghost
-  int r,g,b;
-  struct t_tpuntos * next;
+	int r, g, b;
+	struct t_tpuntos *next;
 } tpuntos[256];
 
-struct t_tpuntos * vcubos[512]; // Para la creaci�n de la tabla ghost
+struct t_tpuntos *vcubos[512]; // Para la creaci�n de la tabla ghost
 
 extern int fli_palette_update;
 
@@ -115,100 +120,142 @@ extern int fli_palette_update;
 
 byte color_oscuro;
 
-void set_paleta (void) {
-  word n;
-//printf("set paleta\n");
-  n=abs(dacout_speed); // if (n>64) n=64;
+void set_paleta(void)
+{
+	word n;
+	// printf("set paleta\n");
+	n = abs(dacout_speed); // if (n>64) n=64;
 
-  if (now_dacout_r<dacout_r) {
-    if (now_dacout_r+n<dacout_r) now_dacout_r+=n; else now_dacout_r=dacout_r;
-  } else if (now_dacout_r>dacout_r) {
-    if (now_dacout_r-n>dacout_r) now_dacout_r-=n; else now_dacout_r=dacout_r;
-  }
+	if (now_dacout_r < dacout_r) {
+		if (now_dacout_r + n < dacout_r)
+			now_dacout_r += n;
+		else
+			now_dacout_r = dacout_r;
+	} else if (now_dacout_r > dacout_r) {
+		if (now_dacout_r - n > dacout_r)
+			now_dacout_r -= n;
+		else
+			now_dacout_r = dacout_r;
+	}
 
-  if (now_dacout_g<dacout_g) {
-    if (now_dacout_g+n<dacout_g) now_dacout_g+=n; else now_dacout_g=dacout_g;
-  } else if (now_dacout_g>dacout_g) {
-    if (now_dacout_g-n>dacout_g) now_dacout_g-=n; else now_dacout_g=dacout_g;
-  }
+	if (now_dacout_g < dacout_g) {
+		if (now_dacout_g + n < dacout_g)
+			now_dacout_g += n;
+		else
+			now_dacout_g = dacout_g;
+	} else if (now_dacout_g > dacout_g) {
+		if (now_dacout_g - n > dacout_g)
+			now_dacout_g -= n;
+		else
+			now_dacout_g = dacout_g;
+	}
 
-  if (now_dacout_b<dacout_b) {
-    if (now_dacout_b+n<dacout_b) now_dacout_b+=n; else now_dacout_b=dacout_b;
-  } else if (now_dacout_b>dacout_b) {
-    if (now_dacout_b-n>dacout_b) now_dacout_b-=n; else now_dacout_b=dacout_b;
-  }
+	if (now_dacout_b < dacout_b) {
+		if (now_dacout_b + n < dacout_b)
+			now_dacout_b += n;
+		else
+			now_dacout_b = dacout_b;
+	} else if (now_dacout_b > dacout_b) {
+		if (now_dacout_b - n > dacout_b)
+			now_dacout_b -= n;
+		else
+			now_dacout_b = dacout_b;
+	}
 
-  n=0; do {
-    if (now_dacout_r>paleta[n]) dac[n]=0; else dac[n]=paleta[n]-now_dacout_r;
-    if (dac[n]>63) dac[n]=63; n++;
-    if (now_dacout_g>paleta[n]) dac[n]=0; else dac[n]=paleta[n]-now_dacout_g;
-    if (dac[n]>63) dac[n]=63; n++;
-    if (now_dacout_b>paleta[n]) dac[n]=0; else dac[n]=paleta[n]-now_dacout_b;
-    if (dac[n]>63) dac[n]=63; n++;
-  } while (n<768);
+	n = 0;
+	do {
+		if (now_dacout_r > paleta[n])
+			dac[n] = 0;
+		else
+			dac[n] = paleta[n] - now_dacout_r;
+		if (dac[n] > 63)
+			dac[n] = 63;
+		n++;
+		if (now_dacout_g > paleta[n])
+			dac[n] = 0;
+		else
+			dac[n] = paleta[n] - now_dacout_g;
+		if (dac[n] > 63)
+			dac[n] = 63;
+		n++;
+		if (now_dacout_b > paleta[n])
+			dac[n] = 0;
+		else
+			dac[n] = paleta[n] - now_dacout_b;
+		if (dac[n] > 63)
+			dac[n] = 63;
+		n++;
+	} while (n < 768);
 
-  color_oscuro=0;
+	color_oscuro = 0;
 
-  if (process_active_palette!=NULL) process_active_palette();
+	if (process_active_palette != NULL)
+		process_active_palette();
 }
 extern int splashtime;
 
-void set_dac (void) {
+void set_dac(void)
+{
 #ifndef DEBUG
-	if(splashtime>0)	
+	if (splashtime > 0)
 		return;
 #endif
-	if(vga==NULL) 
+	if (vga == NULL)
 		return;
 #ifndef DOS
 
 	SDL_Color colors[512];
 
 	int i;
-	int b=0;
-	for(i=0;i<256;i++){
-          colors[i].r=dac[b]*4;
-          colors[i].g=dac[b+1]*4;
-          colors[i].b=dac[b+2]*4;
-          b+=3;
-    }
-	if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
-		printf("Failed to set palette :(\n"); 
-	
+	int b = 0;
+	for (i = 0; i < 256; i++) {
+		colors[i].r = dac[b] * 4;
+		colors[i].g = dac[b + 1] * 4;
+		colors[i].b = dac[b + 2] * 4;
+		b += 3;
+	}
+	if (!OSDEP_SetPalette(vga, colors, 0, 256))
+		printf("Failed to set palette :(\n");
+
 	retrazo();
 #else
-  union REGS regs;
-  word n=0;
-  if (fli_palette_update) return;
-  //retrazo();
-  outp(0x3c8,0);
-  do {
-    outp(0x3c9,dac[n++]);
-    outp(0x3c9,dac[n++]);
-    outp(0x3c9,dac[n++]);
-  } while (n<768);
-  regs.w.ax=0x1001;
-  regs.h.bh=color_oscuro;
-  int386(0x010,&regs,&regs);
+	union REGS regs;
+	word n = 0;
+	if (fli_palette_update)
+		return;
+	// retrazo();
+	outp(0x3c8, 0);
+	do {
+		outp(0x3c9, dac[n++]);
+		outp(0x3c9, dac[n++]);
+		outp(0x3c9, dac[n++]);
+	} while (n < 768);
+	regs.w.ax = 0x1001;
+	regs.h.bh = color_oscuro;
+	int386(0x010, &regs, &regs);
 #endif
 }
 
-void set_dac2 (void) {
+void set_dac2(void)
+{
 #ifdef DOS
-  int n=0;
-  outp(0x3c8,0);
-  do {
-    outp(0x3c9,dac[n++]);
-    outp(0x3c9,dac[n++]);
-    outp(0x3c9,dac[n++]);
-  } while (n<768);
+	int n = 0;
+	outp(0x3c8, 0);
+	do {
+		outp(0x3c9, dac[n++]);
+		outp(0x3c9, dac[n++]);
+		outp(0x3c9, dac[n++]);
+	} while (n < 768);
 #endif
 }
 
-void retrazo (void) {
+void retrazo(void)
+{
 #ifdef DOS
-  while (inp(0x3da)&8);
-  while ((inp(0x3da)&8)==0);
+	while (inp(0x3da) & 8)
+		;
+	while ((inp(0x3da) & 8) == 0)
+		;
 #endif
 }
 
@@ -219,195 +266,225 @@ void retrazo (void) {
 int LinealMode;
 int modovesa;
 
-extern float m_x,m_y;
-
+extern float m_x, m_y;
 
 extern int oldticks;
-void madewith(void) {
+void madewith(void)
+{
 
 	SDL_RWops *rwops = NULL;
 	SDL_Surface *mwsurface, *image;
 
-	rwops = SDL_RWFromMem(madewithsplash,256138);
-	mwsurface = SDL_LoadBMP_RW(rwops,1);
+	rwops = SDL_RWFromMem(madewithsplash, 256138);
+	mwsurface = SDL_LoadBMP_RW(rwops, 1);
 
-	SDL_BlitSurface(mwsurface,NULL,vga,NULL);
+	SDL_BlitSurface(mwsurface, NULL, vga, NULL);
 	OSDEP_Flip(mwsurface);
-  SDL_FreeSurface(mwsurface);
-
-
+	SDL_FreeSurface(mwsurface);
 }
 
-void svmode(void) {
+void svmode(void)
+{
 
-//#ifdef STDOUTLOG
-printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
-//#endif
+	//#ifdef STDOUTLOG
+	printf("setting new video mode %d %d %x\n", vga_an, vga_al, vga);
+	//#endif
 
-//hide the mouse
-SDL_ShowCursor(SDL_DISABLE);
-//	if(vga)
-//		SDL_FreeSurface(vga);	
-	vga=NULL;
+	// hide the mouse
+	SDL_ShowCursor(SDL_DISABLE);
+	//	if(vga)
+	//		SDL_FreeSurface(vga);
+	vga = NULL;
 #ifdef __EMSCRIPTEN__
-	
-	if(!vga)	
-		vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 0);
+
+	if (!vga)
+		vga = OSDEP_SetVideoMode(vga_an, vga_al, 8, 0);
 #else
 
 #ifdef PANDORA
-		vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
+	vga = OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
 #else
 
 #ifdef PSP
-	fsmode=1;
-//		if(!vga)
-			vga=OSDEP_SetVideoMode(480, 272, 8, 0);
-			//SDL_SWSURFACE | SDL_FULLSCREEN);
+	fsmode = 1;
+	//		if(!vga)
+	vga = OSDEP_SetVideoMode(480, 272, 8, 0);
+	// SDL_SWSURFACE | SDL_FULLSCREEN);
 #else
 
-		if(fsmode==1)
-			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
+	if (fsmode == 1)
+		vga = OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
 #endif
 
-		if(!vga || fsmode==0)
-			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+	if (!vga || fsmode == 0)
+		vga = OSDEP_SetVideoMode(
+		    vga_an, vga_al, 8,
+		    0); //, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
 #ifdef GCW
-    
-  if(vga_an>640 || vga_al>480) {
-    
-    vga=OSDEP_SetVideoMode(640,480, 8, 0);
-    if(!vga) 
-      vga=OSDEP_SetVideoMode(320,240, 8, 0);
 
-    if(vga) {
-//    vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
-//    if(!vga) {
-//      vga=SDL_SetVideoMode(320,240, 8, 0);
-//    }
+	if (vga_an > 640 || vga_al > 480) {
 
-//    w_ratio = vga_an / (float)(vga->w*1.0);
-//    h_ratio = vga_al / (float)(vga->h*1.0);   
+		vga = OSDEP_SetVideoMode(640, 480, 8, 0);
+		if (!vga)
+			vga = OSDEP_SetVideoMode(320, 240, 8, 0);
 
-      printf("Setting soft mode %d %d\n",vga->w,vga->h);
-    
-    } 
-  }
-  // hardware scale
+		if (vga) {
+			//    vga=SDL_SetVideoMode(GCW_W,GCW_H, 8, 0);
+			//    if(!vga) {
+			//      vga=SDL_SetVideoMode(320,240, 8, 0);
+			//    }
+
+			//    w_ratio = vga_an / (float)(vga->w*1.0);
+			//    h_ratio = vga_al / (float)(vga->h*1.0);
+
+			printf("Setting soft mode %d %d\n", vga->w, vga->h);
+		}
+	}
+	// hardware scale
 #endif
 
 #endif
-		printf("Set mode: %d,%d\n",vga->w,vga->h);
-		
+	printf("Set mode: %d,%d\n", vga->w, vga->h);
 
 #endif
-
 
 #ifdef STDOUTLOG
-	printf("SET VIDEO MODE %x\n",vga);
+	printf("SET VIDEO MODE %x\n", vga);
 #endif
-	OSDEP_SetCaption( "DIVDX 3.01", "" );
+	OSDEP_SetCaption("DIVDX 3.01", "");
 
-	modovesa=1;
+	modovesa = 1;
 #ifdef DOS
-  VBESCREEN Screen;
+	VBESCREEN Screen;
 
-  int mode=0;
-  int error=0,n;
+	int mode = 0;
+	int error = 0, n;
 
-  LinealMode=0;
-  modovesa=0;
+	LinealMode = 0;
+	modovesa = 0;
 
-  // Comprueba primero si es un modo vesa
+	// Comprueba primero si es un modo vesa
 
-  for (n=0;n<num_video_modes;n++) {
-    if (vga_an==video_modes[n].ancho && vga_al==video_modes[n].alto) {
-      if (video_modes[n].modo && video_modes[n].modo<256000) { mode=video_modes[n].modo; break; }
-    }
-  }
+	for (n = 0; n < num_video_modes; n++) {
+		if (vga_an == video_modes[n].ancho &&
+		    vga_al == video_modes[n].alto) {
+			if (video_modes[n].modo &&
+			    video_modes[n].modo < 256000) {
+				mode = video_modes[n].modo;
+				break;
+			}
+		}
+	}
 
-  if (n<num_video_modes) {
-    modovesa=1;
-    if(VersionVesa<0x102) {
-      if (!VBE_setVideoMode(mode)) error=1;
-      else vga=(char *)0x0A0000;
-    } else {
-      if(VersionVesa<0x200) {
-        if(!SV_setMode(mode)) error=1;
-        else vga=(char *)0x0A0000;
-      } else {
-       	if (vbeSetMode (vga_an, vga_al, 8, &Screen) == 4) {
-          LinealMode=1;
-          mode|=vbeLinearBuffer;
-          if(!SV_setMode(mode)) {
-            LinealMode=0;
-            mode^=vbeLinearBuffer;
-            if(!SV_setMode(mode)) error=1;
-            else vga=(char *)videoMem;
-          } else vga=(char *)videoMem;
-        } else {
-          LinealMode=1;
-          vga=Screen.adr;
-        }
-      }
-    }
-  } else switch(vga_an*1000+vga_al) {
-    case 320200: _setvideomode(_MRES256COLOR); break;
-    case 320240: svmodex(0); break;
-    case 320400: svmodex(1); break;
-    case 360240: svmodex(2); break;
-    case 360360: svmodex(3); break;
-    case 376282: svmodex(4); break;
-    default: error=1; break;
-  }
+	if (n < num_video_modes) {
+		modovesa = 1;
+		if (VersionVesa < 0x102) {
+			if (!VBE_setVideoMode(mode))
+				error = 1;
+			else
+				vga = (char *)0x0A0000;
+		} else {
+			if (VersionVesa < 0x200) {
+				if (!SV_setMode(mode))
+					error = 1;
+				else
+					vga = (char *)0x0A0000;
+			} else {
+				if (vbeSetMode(vga_an, vga_al, 8, &Screen) ==
+				    4) {
+					LinealMode = 1;
+					mode |= vbeLinearBuffer;
+					if (!SV_setMode(mode)) {
+						LinealMode = 0;
+						mode ^= vbeLinearBuffer;
+						if (!SV_setMode(mode))
+							error = 1;
+						else
+							vga = (char *)videoMem;
+					} else
+						vga = (char *)videoMem;
+				} else {
+					LinealMode = 1;
+					vga = Screen.adr;
+				}
+			}
+		}
+	} else
+		switch (vga_an * 1000 + vga_al) {
+		case 320200:
+			_setvideomode(_MRES256COLOR);
+			break;
+		case 320240:
+			svmodex(0);
+			break;
+		case 320400:
+			svmodex(1);
+			break;
+		case 360240:
+			svmodex(2);
+			break;
+		case 360360:
+			svmodex(3);
+			break;
+		case 376282:
+			svmodex(4);
+			break;
+		default:
+			error = 1;
+			break;
+		}
 
-  // OJO!, esto provoca que, en equipos sin VESA, se vea en "320x200 BIG"
-  
-  if (error) {
-    modovesa=0;
-    vga_an=320; vga_al=200; _setvideomode(_MRES256COLOR);
-  }
+	// OJO!, esto provoca que, en equipos sin VESA, se vea en "320x200 BIG"
+
+	if (error) {
+		modovesa = 0;
+		vga_an = 320;
+		vga_al = 200;
+		_setvideomode(_MRES256COLOR);
+	}
 #endif
 
-  m_x=(float)vga_an/2.0;
-  m_y=(float)vga_al/2.0;
+	m_x = (float)vga_an / 2.0;
+	m_y = (float)vga_al / 2.0;
 
-  if (demo) {
-    texto[max_textos].tipo=0;
-    texto[max_textos].centro=4;
-    texto[max_textos].y=vga_al/2;
-    texto[max_textos].x=vga_an/2;
-    texto[max_textos].font=(byte*)fonts[0];
-  } else texto[max_textos].font=0;
+	if (demo) {
+		texto[max_textos].tipo = 0;
+		texto[max_textos].centro = 4;
+		texto[max_textos].y = vga_al / 2;
+		texto[max_textos].x = vga_an / 2;
+		texto[max_textos].font = (byte *)fonts[0];
+	} else
+		texto[max_textos].font = 0;
 
 #ifndef DEBUG
-if(splashtime>0)
-  madewith();
+	if (splashtime > 0)
+		madewith();
 #endif
 }
 
-
-void svmodex(int m) {
+void svmodex(int m)
+{
 #ifdef DOS
-  int n=0;
+	int n = 0;
 
-  _setvideomode(_MRES256COLOR);
+	_setvideomode(_MRES256COLOR);
 
-  outpw(SC_INDEX,0x604); //disable chain4 mode
-  outpw(SC_INDEX,0x100);
-  outp(MISC_OUTPUT,modox[m].dot);
-  outpw(SC_INDEX,0x300);
-  outp(CRTC_INDEX,0x11);
-  outpw(CRTC_INDEX+1,inp(CRTC_INDEX+1)&0x7f);
+	outpw(SC_INDEX, 0x604); // disable chain4 mode
+	outpw(SC_INDEX, 0x100);
+	outp(MISC_OUTPUT, modox[m].dot);
+	outpw(SC_INDEX, 0x300);
+	outp(CRTC_INDEX, 0x11);
+	outpw(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & 0x7f);
 
-  while (modox[m].crt[n]) outpw(CRTC_INDEX,modox[m].crt[n++]);
+	while (modox[m].crt[n])
+		outpw(CRTC_INDEX, modox[m].crt[n++]);
 
-  outpw(SC_INDEX,0x0f02);
-  memset(vga,0,65536);
+	outpw(SC_INDEX, 0x0f02);
+	memset(vga, 0, 65536);
 
-  outp(CRTC_INDEX,CRTC_OFFSET);
-  outp(CRTC_INDEX+1,vga_an/8);
+	outp(CRTC_INDEX, CRTC_OFFSET);
+	outp(CRTC_INDEX + 1, vga_an / 8);
 #endif
 }
 
@@ -415,17 +492,18 @@ void svmodex(int m) {
 //      Reset Video Mode
 //�����������������������������������������������������������������������������
 
-void rvmode(void) {
+void rvmode(void)
+{
 
 // Emscripten has its own fullscreen controls
 #ifndef __EMSCRIPTEN__
-	if(IsFullScreen(vga))
+	if (IsFullScreen(vga))
 		SDL_ToggleFS(vga);
 #endif
 
 #ifdef DOS
-  SV_restoreMode();
-  _setvideomode(3);
+	SV_restoreMode();
+	_setvideomode(3);
 #endif
 }
 
@@ -433,452 +511,537 @@ void rvmode(void) {
 //      Dump buffer to VGA
 //�����������������������������������������������������������������������������
 #ifdef GCW
-void volcadogcw(byte *p) {
+void volcadogcw(byte *p)
+{
 	// blit screen to smaller 320x240 screen
 	byte *qt = (byte *)vga->pixels;
 	byte *q = qt;
-	int row=0;
-	float vy=0;
-	float vx=0;
-	float wratio = vga_an / (float)(vga->w*1.0);
-	float hratio = vga_al / (float)(vga->h*1.0);
+	int row = 0;
+	float vy = 0;
+	float vx = 0;
+	float wratio = vga_an / (float)(vga->w * 1.0);
+	float hratio = vga_al / (float)(vga->h * 1.0);
 	byte *c;
-	//printf("ratio is %fx%f\n",wratio,hratio);
-	
-	if(SDL_MUSTLOCK(vga))
+	// printf("ratio is %fx%f\n",wratio,hratio);
+
+	if (SDL_MUSTLOCK(vga))
 		SDL_LockSurface(vga);
 
-	for (vy=0; vy<vga_al;vy+=hratio) {
+	for (vy = 0; vy < vga_al; vy += hratio) {
 		// calculate the pixel
-		c=&p[vga_an*(int)vy];
-		
-		for(vx=0;vx<vga_an;vx+=wratio) {
-			
-			*q=c[(int)vx];
-//			c+=(int)wratio;
+		c = &p[vga_an * (int)vy];
+
+		for (vx = 0; vx < vga_an; vx += wratio) {
+
+			*q = c[(int)vx];
+			//			c+=(int)wratio;
 			q++;
 		}
-//		memcpy(q,p,vga_an);
-//			p=p[(int)(vga_an*hratio)];
-		//q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+		//		memcpy(q,p,vga_an);
+		//			p=p[(int)(vga_an*hratio)];
+		// q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
 	}
-	if(SDL_MUSTLOCK(vga))
+	if (SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
 
 	return;
-	for (vy=0; vy<vga_al;vy+=hratio) {
-//printf("%d %d %d vy is %f %d\n",row,GCW_W, GCW_H, vy,(int)vy);
+	for (vy = 0; vy < vga_al; vy += hratio) {
+		// printf("%d %d %d vy is %f %d\n",row,GCW_W, GCW_H,
+		// vy,(int)vy);
 		// calculate the pixel
-		c=&p[vga->w*(int)(row/hratio)];
-		q=&qt[vga->pitch*(int)row];
-//		qt = &q[(int)vy *GCW_W];
-		for(vx=0;vx<vga_an;vx+=wratio) {
-//printf("plotting %f %f %x %x\n",vy,vx,q,vga->pixels);		
-			*q=c[(int)vx];
-//			c+=(int)wratio;
+		c = &p[vga->w * (int)(row / hratio)];
+		q = &qt[vga->pitch * (int)row];
+		//		qt = &q[(int)vy *GCW_W];
+		for (vx = 0; vx < vga_an; vx += wratio) {
+			// printf("plotting %f %f %x %x\n",vy,vx,q,vga->pixels);
+			*q = c[(int)vx];
+			//			c+=(int)wratio;
 			q++;
 		}
 		row++;
-//		memcpy(q,p,vga_an);
-//			p=p[(int)(vga_an*hratio)];
-		//q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+		//		memcpy(q,p,vga_an);
+		//			p=p[(int)(vga_an*hratio)];
+		// q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
 	}
-	
 }
 #endif
 
-void volcadosdl(byte *p) {
-	
+void volcadosdl(byte *p)
+{
+
 #ifndef SDL2
-	if(!vga) {
-		printf("setting up screen for first time %d %d\n",vga_an,vga_al);
+	if (!vga) {
+		printf("setting up screen for first time %d %d\n", vga_an,
+		       vga_al);
 		svmode();
 		set_dac(); // tabla_ghost();
 	}
 #else
-	SDL_UpdateTexture(divTexture, NULL, copia, vga_an * sizeof (Uint8));
-SDL_RenderClear(divRender);
-SDL_RenderCopy(divRender, divTexture, NULL, NULL);
-SDL_RenderPresent(divRender);
+	SDL_UpdateTexture(divTexture, NULL, copia, vga_an * sizeof(Uint8));
+	SDL_RenderClear(divRender);
+	SDL_RenderCopy(divRender, divTexture, NULL, NULL);
+	SDL_RenderPresent(divRender);
 #endif
 
-#ifdef GCW 
-	if(vga_an>640 || vga_al>480) {
+#ifdef GCW
+	if (vga_an > 640 || vga_al > 480) {
 		volcadogcw(p);
 		OSDEP_Flip(vga);
 		return;
 	}
 #endif
 
-	if(SDL_MUSTLOCK(vga))
+	if (SDL_MUSTLOCK(vga))
 		SDL_LockSurface(vga);
 
 	byte *q = (byte *)vga->pixels;
-	int vy=0;
-	for (vy=0; vy<vga_al;vy++) {
-		memcpy(q,p,vga_an);
-		p+=vga_an;
-		q+=vga->pitch;//vga_an;//*vga->pitch*vga->format->BytesPerPixel;
+	int vy = 0;
+	for (vy = 0; vy < vga_al; vy++) {
+		memcpy(q, p, vga_an);
+		p += vga_an;
+		q +=
+		    vga->pitch; // vga_an;//*vga->pitch*vga->format->BytesPerPixel;
 	}
 
-//	printf("draw screen\n");
-	if(SDL_MUSTLOCK(vga))
+	//	printf("draw screen\n");
+	if (SDL_MUSTLOCK(vga))
 		SDL_UnlockSurface(vga);
 
-//	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
+	//	SDL_UpdateRect(vga,0,0,vga_an,vga_al);
 	OSDEP_Flip(vga);
 }
 
 long lasttick = 0;
-long newtick =0;
+long newtick = 0;
 long nexttick = 0;
 extern int game_fps;
-int framecount=0;
+int framecount = 0;
 int recording = 0;
-int tfs =0 ;
+int tfs = 0;
 extern int alt_x;
 
 #define maxframes 30000
 
-void volcado(byte *p) {
-//printf("%d %d %d\n",game_fps,freloj,ireloj);//,reloj);
+void volcado(byte *p)
+{
+// printf("%d %d %d\n",game_fps,freloj,ireloj);//,reloj);
 #ifndef __EMSCRIPTEN__
-if ((shift_status&4) && (shift_status&8) && key(_0)) {
-	recording = 1;
-}
-if ((shift_status&4) && (shift_status&8) && key(_9)) {
-	recording = 0;
-}
+	if ((shift_status & 4) && (shift_status & 8) && key(_0)) {
+		recording = 1;
+	}
+	if ((shift_status & 4) && (shift_status & 8) && key(_9)) {
+		recording = 0;
+	}
 
-	if(recording) {
+	if (recording) {
 
-//		if(programRunning )  {
-			
-			framecount++;
-//		}
-			if(!(framecount%(fps/12)) && framecount>5 && framecount<maxframes) { // && framecount%3==1) {
-				char filename[255];
-				memset(filename,0,255);
-				sprintf(filename,"/home/mike/Desktop/out/out%05d.bmp",framecount);
-				SDL_SaveBMP(vga, filename);
-			} else {
-				if(framecount>maxframes)
+		//		if(programRunning )  {
+
+		framecount++;
+		//		}
+		if (!(framecount % (fps / 12)) && framecount > 5 &&
+		    framecount < maxframes) { // && framecount%3==1) {
+			char filename[255];
+			memset(filename, 0, 255);
+			sprintf(filename, "/home/mike/Desktop/out/out%05d.bmp",
+				framecount);
+			SDL_SaveBMP(vga, filename);
+		} else {
+			if (framecount > maxframes)
 				alt_x = 1;
-			}
-	//	}
+		}
+		//	}
 	}
 	// CTRL + ALT + P
 
-	
-	
-  if ((shift_status&4) && (shift_status&8) && key(_P)) {
-    snapshot(p);
-    do {tecla();} while(key(_P));
-  }
-  
-  if (shift_status&8 && key(_ENTER)) {
-	SDL_ToggleFS(vga);
-	do{tecla();} while (key(_ENTER));
- } 
-  
-  
-  
-#endif
-  if (fli_palette_update) retrazo();
+	if ((shift_status & 4) && (shift_status & 8) && key(_P)) {
+		snapshot(p);
+		do {
+			tecla();
+		} while (key(_P));
+	}
 
-volcadosdl(p);
+	if (shift_status & 8 && key(_ENTER)) {
+		SDL_ToggleFS(vga);
+		do {
+			tecla();
+		} while (key(_ENTER));
+	}
+
+#endif
+	if (fli_palette_update)
+		retrazo();
+
+	volcadosdl(p);
 
 #ifdef NOTYET
 
-  if (volcado_completo) {
-    if (modovesa) volcadocsvga(p);
-    else switch(vga_an*1000+vga_al) {
-      case 320200: volcadoc320200(p); break;
-      case 320240: volcadocx(p); break;
-      case 320400: volcadocx(p); break;
-      case 360240: volcadocx(p); break;
-      case 360360: volcadocx(p); break;
-      case 376282: volcadocx(p); break;
-    }
-  } else {
-    if (modovesa) volcadopsvga(p);
-    else switch(vga_an*1000+vga_al) {
-      case 320200: volcadop320200(p); break;
-      case 320240: volcadopx(p); break;
-      case 320400: volcadopx(p); break;
-      case 360240: volcadopx(p); break;
-      case 360360: volcadopx(p); break;
-      case 376282: volcadopx(p); break;
-    }
-  }
+	if (volcado_completo) {
+		if (modovesa)
+			volcadocsvga(p);
+		else
+			switch (vga_an * 1000 + vga_al) {
+			case 320200:
+				volcadoc320200(p);
+				break;
+			case 320240:
+				volcadocx(p);
+				break;
+			case 320400:
+				volcadocx(p);
+				break;
+			case 360240:
+				volcadocx(p);
+				break;
+			case 360360:
+				volcadocx(p);
+				break;
+			case 376282:
+				volcadocx(p);
+				break;
+			}
+	} else {
+		if (modovesa)
+			volcadopsvga(p);
+		else
+			switch (vga_an * 1000 + vga_al) {
+			case 320200:
+				volcadop320200(p);
+				break;
+			case 320240:
+				volcadopx(p);
+				break;
+			case 320400:
+				volcadopx(p);
+				break;
+			case 360240:
+				volcadopx(p);
+				break;
+			case 360360:
+				volcadopx(p);
+				break;
+			case 376282:
+				volcadopx(p);
+				break;
+			}
+	}
 #endif
-  if (fli_palette_update) { fli_palette_update=0; set_dac2(); }
-  init_volcado();
+	if (fli_palette_update) {
+		fli_palette_update = 0;
+		set_dac2();
+	}
+	init_volcado();
 }
 
 //�����������������������������������������������������������������������������
 //      Snapshot
 //�����������������������������������������������������������������������������
 
-void snapshot(byte *p) {
-  FILE * f;
-  int n=0;
-  char cwork[128];
+void snapshot(byte *p)
+{
+	FILE *f;
+	int n = 0;
+	char cwork[128];
 
-  do {
-    sprintf(cwork,"SNAP%04d.PCX",n++);
-    if ((f=fopen(cwork,"rb"))!=NULL) fclose(f);
-  } while (f!=NULL);
+	do {
+		sprintf(cwork, "SNAP%04d.PCX", n++);
+		if ((f = fopen(cwork, "rb")) != NULL)
+			fclose(f);
+	} while (f != NULL);
 
-  f=fopen(cwork,"wb");
-  graba_PCX(p,vga_an,vga_al,f);
-  fclose(f);
+	f = fopen(cwork, "wb");
+	graba_PCX(p, vga_an, vga_al, f);
+	fclose(f);
 }
 
 typedef struct _pcx_header {
-  char manufacturer;
-  char version;
-  char encoding;
-  char bits_per_pixel;
-  short  xmin,ymin;
-  short  xmax,ymax;
-  short  hres;
-  short  vres;
-  char   palette16[48];
-  char   reserved;
-  char   color_planes;
-  short  bytes_per_line;
-  short  palette_type;
-  short  Hresol;
-  short  Vresol;
-  char  filler[54];
-}pcx_header;
+	char manufacturer;
+	char version;
+	char encoding;
+	char bits_per_pixel;
+	short xmin, ymin;
+	short xmax, ymax;
+	short hres;
+	short vres;
+	char palette16[48];
+	char reserved;
+	char color_planes;
+	short bytes_per_line;
+	short palette_type;
+	short Hresol;
+	short Vresol;
+	char filler[54];
+} pcx_header;
 
 struct pcx_struct {
-  pcx_header header;
-  unsigned char far *cimage;
-  unsigned char palette[3*256];
-  unsigned char far *image;
-  int clength;
+	pcx_header header;
+	unsigned char far *cimage;
+	unsigned char palette[3 * 256];
+	unsigned char far *image;
+	int clength;
 };
 
-int graba_PCX(byte *mapa,int an,int al,FILE *f) {
-  byte p[768];
-  int x;
-  byte *cbuffer;
-  struct pcx_struct pcx;
-  int ptr=0;
-  int cptr=0;
-  int Desborde=0;
-  char ActPixel;
-  char cntPixel=0;
-  char Paletilla=12;
+int graba_PCX(byte *mapa, int an, int al, FILE *f)
+{
+	byte p[768];
+	int x;
+	byte *cbuffer;
+	struct pcx_struct pcx;
+	int ptr = 0;
+	int cptr = 0;
+	int Desborde = 0;
+	char ActPixel;
+	char cntPixel = 0;
+	char Paletilla = 12;
 
-        pcx.header.manufacturer=10;
-        pcx.header.version=5;
-        pcx.header.encoding=1;
-        pcx.header.bits_per_pixel=8;
-        pcx.header.xmin=0;
-        pcx.header.ymin=0;
-        pcx.header.xmax=an-1;
-        pcx.header.ymax=al-1;
-        pcx.header.hres=an;
-        pcx.header.vres=al;
-        pcx.header.color_planes=1;
-        pcx.header.bytes_per_line=an;
-        pcx.header.palette_type=0;
-        pcx.header.Hresol=an;
-        pcx.header.Vresol=al;
+	pcx.header.manufacturer = 10;
+	pcx.header.version = 5;
+	pcx.header.encoding = 1;
+	pcx.header.bits_per_pixel = 8;
+	pcx.header.xmin = 0;
+	pcx.header.ymin = 0;
+	pcx.header.xmax = an - 1;
+	pcx.header.ymax = al - 1;
+	pcx.header.hres = an;
+	pcx.header.vres = al;
+	pcx.header.color_planes = 1;
+	pcx.header.bytes_per_line = an;
+	pcx.header.palette_type = 0;
+	pcx.header.Hresol = an;
+	pcx.header.Vresol = al;
 
-        if ((cbuffer=(unsigned char *)malloc(an*al*2))==NULL) return(1);
+	if ((cbuffer = (unsigned char *)malloc(an * al * 2)) == NULL)
+		return (1);
 
-        ActPixel=mapa[ptr];
-        while (ptr < an*al)
-        {
-                while((mapa[ptr]==ActPixel) && (ptr<an*al))
-                {
-                        cntPixel++;
-                        Desborde++;
-                        ptr++;
-                        if(Desborde==an)
-                        {
-                                Desborde=0;
-                                break;
-                        }
-                        if(cntPixel==63)
-                                break;
-                }
-                if(cntPixel==1)
-                {
-                        if(ActPixel>63)
-                                cbuffer[cptr++] = 193;
-                        cbuffer[cptr++] = ActPixel;
-                }
-                else
-                {
-                        cbuffer[cptr++] = 192+cntPixel;
-                        cbuffer[cptr++] = ActPixel;
-                }
-                ActPixel=mapa[ptr];
-                cntPixel=0;
-        }
+	ActPixel = mapa[ptr];
+	while (ptr < an * al) {
+		while ((mapa[ptr] == ActPixel) && (ptr < an * al)) {
+			cntPixel++;
+			Desborde++;
+			ptr++;
+			if (Desborde == an) {
+				Desborde = 0;
+				break;
+			}
+			if (cntPixel == 63)
+				break;
+		}
+		if (cntPixel == 1) {
+			if (ActPixel > 63)
+				cbuffer[cptr++] = 193;
+			cbuffer[cptr++] = ActPixel;
+		} else {
+			cbuffer[cptr++] = 192 + cntPixel;
+			cbuffer[cptr++] = ActPixel;
+		}
+		ActPixel = mapa[ptr];
+		cntPixel = 0;
+	}
 
-        fwrite(&pcx.header,1,sizeof(pcx_header),f);
-        fwrite(cbuffer,1,cptr,f);
-        fwrite(&Paletilla,1,1,f);
-        for (x=0;x<768;x++) p[x]=paleta[x]*4;
-        fwrite(p,1,768,f);
-        free(cbuffer);
-        return(0);
+	fwrite(&pcx.header, 1, sizeof(pcx_header), f);
+	fwrite(cbuffer, 1, cptr, f);
+	fwrite(&Paletilla, 1, 1, f);
+	for (x = 0; x < 768; x++)
+		p[x] = paleta[x] * 4;
+	fwrite(p, 1, 768, f);
+	free(cbuffer);
+	return (0);
 }
 
-int graba_MAP (byte * mapa, int an, int al, FILE * f) {
-  int y;
-  char cwork[32]="";
-  char reglas[576];
+int graba_MAP(byte *mapa, int an, int al, FILE *f)
+{
+	int y;
+	char cwork[32] = "";
+	char reglas[576];
 
-  fwrite("map\x1a\x0d\x0a\x00\x00",8,1,f);      // +000 Cabecera y version
-  fwrite(&an,2,1,f);                   // +008 Ancho
-  fwrite(&al,2,1,f);                   // +010 Alto
-  y=1; fwrite(&y,4,1,f);// +012 C�digo
+	fwrite("map\x1a\x0d\x0a\x00\x00", 8, 1, f); // +000 Cabecera y version
+	fwrite(&an, 2, 1, f);			    // +008 Ancho
+	fwrite(&al, 2, 1, f);			    // +010 Alto
+	y = 1;
+	fwrite(&y, 4, 1, f); // +012 C�digo
 
-  fwrite(cwork,32,1,f);// +016 Descripcion
-  fwrite(paleta,768,1,f);                          // +048 Paleta
+	fwrite(cwork, 32, 1, f);   // +016 Descripcion
+	fwrite(paleta, 768, 1, f); // +048 Paleta
 
-  for (y=0;y<16;y++) {
-    reglas[y*36]=16;
-    reglas[y*36+1]=0;
-    reglas[y*36+2]=0;
-    reglas[y*36+3]=0;
-    memset(&reglas[y*36+4],y*16,32);
-  } fwrite(reglas,1,sizeof(reglas),f);            // +816 Reglas de color
+	for (y = 0; y < 16; y++) {
+		reglas[y * 36] = 16;
+		reglas[y * 36 + 1] = 0;
+		reglas[y * 36 + 2] = 0;
+		reglas[y * 36 + 3] = 0;
+		memset(&reglas[y * 36 + 4], y * 16, 32);
+	}
+	fwrite(reglas, 1, sizeof(reglas), f); // +816 Reglas de color
 
-  y=0; fwrite(&y,2,1,f);                     // +1392 Numero de puntos
-  fwrite(mapa,an*al,1,f);
-  return(0);
+	y = 0;
+	fwrite(&y, 2, 1, f); // +1392 Numero de puntos
+	fwrite(mapa, an * al, 1, f);
+	return (0);
 }
 
 //�����������������������������������������������������������������������������
 //      Restauraci�n parcial del fondo a la copia
 //�����������������������������������������������������������������������������
 
-//int scan0[MAX_YRES]; // indica para cada scan, pixel inicial (vga_an si n/a)
-//int scan1[MAX_YRES]; // indica para cada scan, pixel final (0 si n/a)
+// int scan0[MAX_YRES]; // indica para cada scan, pixel inicial (vga_an si n/a)
+// int scan1[MAX_YRES]; // indica para cada scan, pixel final (0 si n/a)
 
-//short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
+// short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos
+// a volcar
 
-void restore(byte *q, byte *p) {
-  int y=0,n=0;
-  if (vga_an<640 && vga_al>200) { // Modo-X
-    while (y<vga_al) {
-      n=y*4;
-      if (scan[n+1]) memcpy(q+scan[n]*4,p+scan[n]*4,scan[n+1]*4);
-      if (scan[n+3]) memcpy(q+scan[n+2]*4,p+scan[n+2]*4,scan[n+3]*4);
-      q+=vga_an; p+=vga_an; y++;
-    }
-  } else {
-    while (y<vga_al) {
-      n=y*4;
-      if (scan[n+1]) memcpy(q+scan[n],p+scan[n],scan[n+1]);
-      if (scan[n+3]) memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
-      q+=vga_an; p+=vga_an; y++;
-    }
-  }
+void restore(byte *q, byte *p)
+{
+	int y = 0, n = 0;
+	if (vga_an < 640 && vga_al > 200) { // Modo-X
+		while (y < vga_al) {
+			n = y * 4;
+			if (scan[n + 1])
+				memcpy(q + scan[n] * 4, p + scan[n] * 4,
+				       scan[n + 1] * 4);
+			if (scan[n + 3])
+				memcpy(q + scan[n + 2] * 4, p + scan[n + 2] * 4,
+				       scan[n + 3] * 4);
+			q += vga_an;
+			p += vga_an;
+			y++;
+		}
+	} else {
+		while (y < vga_al) {
+			n = y * 4;
+			if (scan[n + 1])
+				memcpy(q + scan[n], p + scan[n], scan[n + 1]);
+			if (scan[n + 3])
+				memcpy(q + scan[n + 2], p + scan[n + 2],
+				       scan[n + 3]);
+			q += vga_an;
+			p += vga_an;
+			y++;
+		}
+	}
 }
 
 //�����������������������������������������������������������������������������
 //      Volcado en el modo 320x200
 //�����������������������������������������������������������������������������
 
-void volcadop320200(byte *p) {
-  int y=0,n;
-  byte * q=(byte *)vga->pixels;
+void volcadop320200(byte *p)
+{
+	int y = 0, n;
+	byte *q = (byte *)vga->pixels;
 
-  #ifdef GRABADORA
-  RegScreen(p);
-  #endif
+#ifdef GRABADORA
+	RegScreen(p);
+#endif
 
-  while (y<vga_al) {
-    n=y*4;
-    if (scan[n+1]) memcpy(q+scan[n],p+scan[n],scan[n+1]);
-    if (scan[n+3]) memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
-    q+=vga_an; p+=vga_an; y++;
-  }
+	while (y < vga_al) {
+		n = y * 4;
+		if (scan[n + 1])
+			memcpy(q + scan[n], p + scan[n], scan[n + 1]);
+		if (scan[n + 3])
+			memcpy(q + scan[n + 2], p + scan[n + 2], scan[n + 3]);
+		q += vga_an;
+		p += vga_an;
+		y++;
+	}
 }
 
-void volcadoc320200(byte *p) {
-  #ifdef GRABADORA
-  RegScreen(p);
-  #endif
-  memcpy(vga,p,vga_an*vga_al);
+void volcadoc320200(byte *p)
+{
+#ifdef GRABADORA
+	RegScreen(p);
+#endif
+	memcpy(vga, p, vga_an * vga_al);
 }
 
 //�����������������������������������������������������������������������������
 //      Volcado en SVGA
 //�����������������������������������������������������������������������������
 
-void volcadopsvga(byte *p) {
+void volcadopsvga(byte *p)
+{
 #ifdef DOS
-  int y=0,page,old_page=-1751,point,t1,t2,n;
-  char *q=vga;
+	int y = 0, page, old_page = -1751, point, t1, t2, n;
+	char *q = vga;
 
-  if(LinealMode) {
-   while (y<vga_al) {
-     n=y*4;
-     if (scan[n+1]) memcpy(q+scan[n],p+scan[n],scan[n+1]);
-     if (scan[n+3]) memcpy(q+scan[n+2],p+scan[n+2],scan[n+3]);
-     q+=vga_an; p+=vga_an; y++;
-   }
-  } else while (y<vga_al) {
-    n=y*4;
-    if (scan[n+1]) {
-      page=(y*vga_an+scan[n])/65536;
-      point=(y*vga_an+scan[n])%65536;
-      if (point+scan[n+1]>65536) {
-        t1=65536-point;
-        t2=scan[n+1]-t1;
-        if (page!=old_page) SV_setBank((signed long)page);
-        memcpy(vga+point,p+scan[n],t1);
-        SV_setBank((signed long)page+1); old_page=page+1;
-        memcpy(vga,p+scan[n]+t1,t2);
-      } else {
-        if (page!=old_page) SV_setBank((signed long)(old_page=page));
-        memcpy(vga+point,p+scan[n],scan[n+1]);
-      }
-    }
-    if (scan[n+3]) {
-      page=(y*vga_an+scan[n+2])/65536;
-      point=(y*vga_an+scan[n+2])%65536;
-      if (point+scan[n+3]>65536) {
-        t1=65536-point;
-        t2=scan[n+3]-t1;
-        if (page!=old_page) SV_setBank((signed long)page);
-        memcpy(vga+point,p+scan[n+2],t1);
-        SV_setBank((signed long)page+1); old_page=page+1;
-        memcpy(vga,p+scan[n+2]+t1,t2);
-      } else {
-        if (page!=old_page) SV_setBank((signed long)(old_page=page));
-        memcpy(vga+point,p+scan[n+2],scan[n+3]);
-      }
-    } p+=vga_an; y++;
-  }
+	if (LinealMode) {
+		while (y < vga_al) {
+			n = y * 4;
+			if (scan[n + 1])
+				memcpy(q + scan[n], p + scan[n], scan[n + 1]);
+			if (scan[n + 3])
+				memcpy(q + scan[n + 2], p + scan[n + 2],
+				       scan[n + 3]);
+			q += vga_an;
+			p += vga_an;
+			y++;
+		}
+	} else
+		while (y < vga_al) {
+			n = y * 4;
+			if (scan[n + 1]) {
+				page = (y * vga_an + scan[n]) / 65536;
+				point = (y * vga_an + scan[n]) % 65536;
+				if (point + scan[n + 1] > 65536) {
+					t1 = 65536 - point;
+					t2 = scan[n + 1] - t1;
+					if (page != old_page)
+						SV_setBank((signed long)page);
+					memcpy(vga + point, p + scan[n], t1);
+					SV_setBank((signed long)page + 1);
+					old_page = page + 1;
+					memcpy(vga, p + scan[n] + t1, t2);
+				} else {
+					if (page != old_page)
+						SV_setBank(
+						    (signed long)(old_page =
+								      page));
+					memcpy(vga + point, p + scan[n],
+					       scan[n + 1]);
+				}
+			}
+			if (scan[n + 3]) {
+				page = (y * vga_an + scan[n + 2]) / 65536;
+				point = (y * vga_an + scan[n + 2]) % 65536;
+				if (point + scan[n + 3] > 65536) {
+					t1 = 65536 - point;
+					t2 = scan[n + 3] - t1;
+					if (page != old_page)
+						SV_setBank((signed long)page);
+					memcpy(vga + point, p + scan[n + 2],
+					       t1);
+					SV_setBank((signed long)page + 1);
+					old_page = page + 1;
+					memcpy(vga, p + scan[n + 2] + t1, t2);
+				} else {
+					if (page != old_page)
+						SV_setBank(
+						    (signed long)(old_page =
+								      page));
+					memcpy(vga + point, p + scan[n + 2],
+					       scan[n + 3]);
+				}
+			}
+			p += vga_an;
+			y++;
+		}
 #endif
-
 }
 
-void volcadocsvga(byte *p) {
+void volcadocsvga(byte *p)
+{
 #ifdef DOS
-  int cnt=vga_an*vga_al;
-  int tpv=0,ActPge=0;
+	int cnt = vga_an * vga_al;
+	int tpv = 0, ActPge = 0;
 
-  if(LinealMode) memcpy(vga,p,cnt);
-  else while(cnt>0) {
-    SV_setBank((signed long)ActPge++);
-    tpv=cnt>65536?65536:cnt;
-    memcpy(vga,p,tpv);
-    p+=tpv;
-    cnt-=tpv;
-  }
+	if (LinealMode)
+		memcpy(vga, p, cnt);
+	else
+		while (cnt > 0) {
+			SV_setBank((signed long)ActPge++);
+			tpv = cnt > 65536 ? 65536 : cnt;
+			memcpy(vga, p, tpv);
+			p += tpv;
+			cnt -= tpv;
+		}
 #endif
 }
 
@@ -886,41 +1049,76 @@ void volcadocsvga(byte *p) {
 //      Volcado en un modo-x
 //�����������������������������������������������������������������������������
 
-void volcadopx(byte * p) {
+void volcadopx(byte *p)
+{
 #ifdef DOS
-  int n,m=(vga_an*vga_al)/4,plano=0x100,y;
-  byte * v2, * p2;
+	int n, m = (vga_an * vga_al) / 4, plano = 0x100, y;
+	byte *v2, *p2;
 
-  do { v2=vga+m; y=0; p2=p++; outpw(SC_INDEX,2+plano); plano<<=1;
-    while (y<vga_al) {
-      n=y*4;
-      if (scan[n+1]) vgacpy(v2+scan[n],p2+scan[n]*4,scan[n+1]);
-      if (scan[n+3]) vgacpy(v2+scan[n+2],p2+scan[n+2]*4,scan[n+3]);
-      v2+=vga_an/4; p2+=vga_an; y++; }
-  } while (plano<=0x800);
+	do {
+		v2 = vga + m;
+		y = 0;
+		p2 = p++;
+		outpw(SC_INDEX, 2 + plano);
+		plano <<= 1;
+		while (y < vga_al) {
+			n = y * 4;
+			if (scan[n + 1])
+				vgacpy(v2 + scan[n], p2 + scan[n] * 4,
+				       scan[n + 1]);
+			if (scan[n + 3])
+				vgacpy(v2 + scan[n + 2], p2 + scan[n + 2] * 4,
+				       scan[n + 3]);
+			v2 += vga_an / 4;
+			p2 += vga_an;
+			y++;
+		}
+	} while (plano <= 0x800);
 
-  outpw(SC_INDEX,0xF02); outp(0x3CE,5); outp(0x3CF,(inp(0x3CF)&252)+1);
-  y=0; v2=vga; while (y<vga_al) {
-    n=y*4;
-    if (scan[n+1]) memcpyb(v2+scan[n],v2+scan[n]+m,scan[n+1]);
-    if (scan[n+3]) memcpyb(v2+scan[n+2],v2+scan[n+2]+m,scan[n+3]);
-    v2+=vga_an/4; y++;
-  } outp(0x3CE,5); outp(0x3CF,inp(0x3CF)&252);
+	outpw(SC_INDEX, 0xF02);
+	outp(0x3CE, 5);
+	outp(0x3CF, (inp(0x3CF) & 252) + 1);
+	y = 0;
+	v2 = vga;
+	while (y < vga_al) {
+		n = y * 4;
+		if (scan[n + 1])
+			memcpyb(v2 + scan[n], v2 + scan[n] + m, scan[n + 1]);
+		if (scan[n + 3])
+			memcpyb(v2 + scan[n + 2], v2 + scan[n + 2] + m,
+				scan[n + 3]);
+		v2 += vga_an / 4;
+		y++;
+	}
+	outp(0x3CE, 5);
+	outp(0x3CF, inp(0x3CF) & 252);
 
 #endif
 }
 
-void volcadocx(byte * p) {
+void volcadocx(byte *p)
+{
 #ifdef DOS
-  int n=(vga_an*vga_al)/4;
+	int n = (vga_an * vga_al) / 4;
 
-  outpw(SC_INDEX,0x102); vgacpy(vga+n,p,n); p++;
-  outpw(SC_INDEX,0x202); vgacpy(vga+n,p,n); p++;
-  outpw(SC_INDEX,0x402); vgacpy(vga+n,p,n); p++;
-  outpw(SC_INDEX,0x802); vgacpy(vga+n,p,n);
+	outpw(SC_INDEX, 0x102);
+	vgacpy(vga + n, p, n);
+	p++;
+	outpw(SC_INDEX, 0x202);
+	vgacpy(vga + n, p, n);
+	p++;
+	outpw(SC_INDEX, 0x402);
+	vgacpy(vga + n, p, n);
+	p++;
+	outpw(SC_INDEX, 0x802);
+	vgacpy(vga + n, p, n);
 
-  outpw(SC_INDEX,0xF02); outp(0x3CE,5); outp(0x3CF,(inp(0x3CF)&252)+1);
-  memcpyb(vga,vga+n,n); outp(0x3CE,5); outp(0x3CF,inp(0x3CF)&252);
+	outpw(SC_INDEX, 0xF02);
+	outp(0x3CE, 5);
+	outp(0x3CF, (inp(0x3CF) & 252) + 1);
+	memcpyb(vga, vga + n, n);
+	outp(0x3CE, 5);
+	outp(0x3CF, inp(0x3CF) & 252);
 #endif
 }
 
@@ -928,273 +1126,502 @@ void volcadocx(byte * p) {
 //      Subrutinas de volcado gen�ricas
 //�����������������������������������������������������������������������������
 
-void vgacpy(byte * q, byte * p, int n) {
-  int m;
+void vgacpy(byte *q, byte *p, int n)
+{
+	int m;
 
-  m=n>>2; while (m--) {
-    *(int*)q=*p+256*(*(p+4)+256*(*(p+8)+256*(*(p+12)))); q+=4; p+=16;
-  }
+	m = n >> 2;
+	while (m--) {
+		*(int *)q = *p + 256 * (*(p + 4) +
+					256 * (*(p + 8) + 256 * (*(p + 12))));
+		q += 4;
+		p += 16;
+	}
 
-  n&=3; while (n--) {
-    *q=*p; q++; p+=4;
-  }
+	n &= 3;
+	while (n--) {
+		*q = *p;
+		q++;
+		p += 4;
+	}
 }
 
 //�����������������������������������������������������������������������������
 //      Selecciona una ventana para su posterior volcado
 //�����������������������������������������������������������������������������
 
-void init_volcado(void) {
+void init_volcado(void)
+{
 #ifndef DROID
-	 memset(&scan[0],0,MAX_YRES*sizeof(short)); 
+	memset(&scan[0], 0, MAX_YRES * sizeof(short));
 #endif
- volcado_completo=0; 
+	volcado_completo = 0;
 }
 
-void volcado_parcial(int x,int y,int an,int al) {
-  int ymax,xmax,n,d1,d2,x2;
+void volcado_parcial(int x, int y, int an, int al)
+{
+	int ymax, xmax, n, d1, d2, x2;
 
-  if (an==vga_an && al==vga_al && x==0 && y==0) { volcado_completo=1; return; }
+	if (an == vga_an && al == vga_al && x == 0 && y == 0) {
+		volcado_completo = 1;
+		return;
+	}
 
-  if (an>0 && al>0 && x<vga_an && y<vga_al) {
-    if (x<0) { an+=x; x=0; } if (y<0) { al+=y; y=0; }
-    if (x+an>vga_an) an=vga_an-x; if (y+al>vga_al) al=vga_al-y;
-    if (an<=0 || al<=0) return;
-    xmax=x+an-1; ymax=y+al-1;
+	if (an > 0 && al > 0 && x < vga_an && y < vga_al) {
+		if (x < 0) {
+			an += x;
+			x = 0;
+		}
+		if (y < 0) {
+			al += y;
+			y = 0;
+		}
+		if (x + an > vga_an)
+			an = vga_an - x;
+		if (y + al > vga_al)
+			al = vga_al - y;
+		if (an <= 0 || al <= 0)
+			return;
+		xmax = x + an - 1;
+		ymax = y + al - 1;
 
-    if (!modovesa) {
-      switch(vga_an*1000+vga_al) {
-        case 320240: case 320400: case 360240: case 360360: case 376282: // Modos X
-          x>>=2; xmax>>=2; an=xmax-x+1; break;
-      }
-    }
+		if (!modovesa) {
+			switch (vga_an * 1000 + vga_al) {
+			case 320240:
+			case 320400:
+			case 360240:
+			case 360360:
+			case 376282: // Modos X
+				x >>= 2;
+				xmax >>= 2;
+				an = xmax - x + 1;
+				break;
+			}
+		}
 
-    while (y<=ymax) { n=y*4;
-      if (scan[n+1]==0) {         // Caso 1, el scan estaba vac�o ...
-        scan[n]=x; scan[n+1]=an;
-      } else if (scan[n+3]==0) {  // Caso 2, ya hay un scan definido ...
-        if (x>scan[n]+scan[n+1] || x+an<scan[n]) { // ... hueco entre medias
-          if (x>scan[n]) {
-            scan[n+2]=x; scan[n+3]=an;
-          } else {
-            scan[n+2]=scan[n]; scan[n+3]=scan[n+1];
-            scan[n]=x; scan[n+1]=an;
-          }
-        } else { // ... no hay hueco, amplia el primer scan
-          if (x<(x2=scan[n])) scan[n]=x;
-          if (x+an>x2+scan[n+1]) scan[n+1]=x+an-scan[n];
-          else scan[n+1]=x2+scan[n+1]-scan[n];
-        }
-      } else {                    // Caso 3, hay 2 scanes definidos ...
-        if (x<=scan[n]+scan[n+1] && x+an>=scan[n+2]) {
-          // Caso 3.1, se tapa el hueco anterior -> queda un solo scan
-          if (x<scan[n]) scan[n]=x;
-          if (x+an>scan[n+2]+scan[n+3]) scan[n+1]=x+an-scan[n]; else scan[n+1]=scan[n+2]+scan[n+3]-scan[n];
-          scan[n+2]=0; scan[n+3]=0;
-        } else {
-          if (x>scan[n]+scan[n+1] || x+an<scan[n]) { // No choca con 1�
-            if (x>scan[n+2]+scan[n+3] || x+an<scan[n+2]) { // No choca con 2�
-              // Caso 3.4, el nuevo no colisiona con ninguno, se calcula el espacio
-              // hasta ambos, y se fusiona con el m�s cercano
-              if (x+an<scan[n]) d1=scan[n]-(x+an); else d1=x-(scan[n]+scan[n+1]);
-              if (x+an<scan[n+2]) d2=scan[n+2]-(x+an); else d2=x-(scan[n+2]+scan[n+3]);
-              if (d1<=d2) {
-                // Caso 3.4.1 se fusiona con el primero
-                if (x<(x2=scan[n])) scan[n]=x;
-                if (x+an>x2+scan[n+1]) scan[n+1]=x+an-scan[n];
-                else scan[n+1]=x2+scan[n+1]-scan[n];
-              } else {
-                // Caso 3.4.2 se fusiona con el segundo
-                if (x<(x2=scan[n+2])) scan[n+2]=x;
-                if (x+an>x2+scan[n+3]) scan[n+3]=x+an-scan[n+2];
-                else scan[n+3]=x2+scan[n+3]-scan[n+2];
-              }
-            } else {
-              // Caso 3.3, el nuevo colisiona con el 2�, se fusionan
-              if (x<(x2=scan[n+2])) scan[n+2]=x;
-              if (x+an>x2+scan[n+3]) scan[n+3]=x+an-scan[n+2];
-              else scan[n+3]=x2+scan[n+3]-scan[n+2];
-            }
-          } else {
-            // Caso 3.2, el nuevo colisiona con el 1�, se fusionan
-            if (x<(x2=scan[n])) scan[n]=x;
-            if (x+an>x2+scan[n+1]) scan[n+1]=x+an-scan[n];
-            else scan[n+1]=x2+scan[n+1]-scan[n];
-          }
-        }
-      } y++;
-    }
-  }
+		while (y <= ymax) {
+			n = y * 4;
+			if (scan[n + 1] ==
+			    0) { // Caso 1, el scan estaba vac�o ...
+				scan[n] = x;
+				scan[n + 1] = an;
+			} else if (scan[n + 3] ==
+				   0) { // Caso 2, ya hay un scan definido ...
+				if (x > scan[n] + scan[n + 1] ||
+				    x + an <
+					scan[n]) { // ... hueco entre medias
+					if (x > scan[n]) {
+						scan[n + 2] = x;
+						scan[n + 3] = an;
+					} else {
+						scan[n + 2] = scan[n];
+						scan[n + 3] = scan[n + 1];
+						scan[n] = x;
+						scan[n + 1] = an;
+					}
+				} else { // ... no hay hueco, amplia el primer
+					 // scan
+					if (x < (x2 = scan[n]))
+						scan[n] = x;
+					if (x + an > x2 + scan[n + 1])
+						scan[n + 1] = x + an - scan[n];
+					else
+						scan[n + 1] =
+						    x2 + scan[n + 1] - scan[n];
+				}
+			} else { // Caso 3, hay 2 scanes definidos ...
+				if (x <= scan[n] + scan[n + 1] &&
+				    x + an >= scan[n + 2]) {
+					// Caso 3.1, se tapa el hueco anterior
+					// -> queda un solo scan
+					if (x < scan[n])
+						scan[n] = x;
+					if (x + an > scan[n + 2] + scan[n + 3])
+						scan[n + 1] = x + an - scan[n];
+					else
+						scan[n + 1] = scan[n + 2] +
+							      scan[n + 3] -
+							      scan[n];
+					scan[n + 2] = 0;
+					scan[n + 3] = 0;
+				} else {
+					if (x > scan[n] + scan[n + 1] ||
+					    x + an <
+						scan[n]) { // No choca con 1�
+						if (x > scan[n + 2] +
+							    scan[n + 3] ||
+						    x + an <
+							scan[n +
+							     2]) { // No choca
+								   // con 2�
+							// Caso 3.4, el nuevo no
+							// colisiona con
+							// ninguno, se calcula
+							// el espacio hasta
+							// ambos, y se fusiona
+							// con el m�s cercano
+							if (x + an < scan[n])
+								d1 = scan[n] -
+								     (x + an);
+							else
+								d1 = x -
+								     (scan[n] +
+								      scan[n +
+									   1]);
+							if (x + an <
+							    scan[n + 2])
+								d2 = scan[n +
+									  2] -
+								     (x + an);
+							else
+								d2 = x -
+								     (scan[n +
+									   2] +
+								      scan[n +
+									   3]);
+							if (d1 <= d2) {
+								// Caso 3.4.1 se
+								// fusiona con
+								// el primero
+								if (x <
+								    (x2 = scan
+									 [n]))
+									scan[n] =
+									    x;
+								if (x + an >
+								    x2 +
+									scan[n +
+									     1])
+									scan[n +
+									     1] =
+									    x +
+									    an -
+									    scan[n];
+								else
+									scan[n +
+									     1] =
+									    x2 +
+									    scan[n +
+										 1] -
+									    scan[n];
+							} else {
+								// Caso 3.4.2 se
+								// fusiona con
+								// el segundo
+								if (x <
+								    (x2 = scan
+									 [n +
+									  2]))
+									scan[n +
+									     2] =
+									    x;
+								if (x + an >
+								    x2 +
+									scan[n +
+									     3])
+									scan[n +
+									     3] =
+									    x +
+									    an -
+									    scan[n +
+										 2];
+								else
+									scan[n +
+									     3] =
+									    x2 +
+									    scan[n +
+										 3] -
+									    scan[n +
+										 2];
+							}
+						} else {
+							// Caso 3.3, el nuevo
+							// colisiona con el 2�,
+							// se fusionan
+							if (x <
+							    (x2 = scan[n + 2]))
+								scan[n + 2] = x;
+							if (x + an >
+							    x2 + scan[n + 3])
+								scan[n + 3] =
+								    x + an -
+								    scan[n + 2];
+							else
+								scan[n + 3] =
+								    x2 +
+								    scan[n +
+									 3] -
+								    scan[n + 2];
+						}
+					} else {
+						// Caso 3.2, el nuevo colisiona
+						// con el 1�, se fusionan
+						if (x < (x2 = scan[n]))
+							scan[n] = x;
+						if (x + an > x2 + scan[n + 1])
+							scan[n + 1] =
+							    x + an - scan[n];
+						else
+							scan[n + 1] =
+							    x2 + scan[n + 1] -
+							    scan[n];
+					}
+				}
+			}
+			y++;
+		}
+	}
 }
 
 //�����������������������������������������������������������������������������
 //      Funciones para la creaci�n de la tabla ghost
 //�����������������������������������������������������������������������������
 
-void init_ghost(void) {
+void init_ghost(void)
+{
 
-  int n,m;
-  byte * d=paleta;
+	int n, m;
+	byte *d = paleta;
 
-  for (n=0;n<768;n++) dac4[n]=paleta[n]*4;
+	for (n = 0; n < 768; n++)
+		dac4[n] = paleta[n] * 4;
 
-  for (n=0;n<512;n++) vcubos[n]=NULL;
+	for (n = 0; n < 512; n++)
+		vcubos[n] = NULL;
 
-  for (n=0;n<256;n++) {
-    tpuntos[n].r=*d++*4; tpuntos[n].g=*d++*4; tpuntos[n].b=*d++*4;
-    m=(((int)tpuntos[n].r&224)<<1)+(((int)tpuntos[n].g&224)>>2)+((int)tpuntos[n].b>>5);
+	for (n = 0; n < 256; n++) {
+		tpuntos[n].r = *d++ * 4;
+		tpuntos[n].g = *d++ * 4;
+		tpuntos[n].b = *d++ * 4;
+		m = (((int)tpuntos[n].r & 224) << 1) +
+		    (((int)tpuntos[n].g & 224) >> 2) + ((int)tpuntos[n].b >> 5);
 
-    if (vcubos[m]==NULL) {
-      vcubos[m]=&tpuntos[n]; tpuntos[n].next=NULL;
-    } else {
-      tpuntos[n].next=vcubos[m]; vcubos[m]=&tpuntos[n];
-    }
-  }
+		if (vcubos[m] == NULL) {
+			vcubos[m] = &tpuntos[n];
+			tpuntos[n].next = NULL;
+		} else {
+			tpuntos[n].next = vcubos[m];
+			vcubos[m] = &tpuntos[n];
+		}
+	}
 }
 
 //�����������������������������������������������������������������������������
 //      Funci�n para la creaci�n de la tabla ghost
 //�����������������������������������������������������������������������������
 
-int rr,gg,bb;
+int rr, gg, bb;
 int num_puntos;
 
-void crear_ghost(void) {
+void crear_ghost(void)
+{
 
-  int n,m;
-  int r3,g3,b3,vcubo;
-  byte * ptr;
+	int n, m;
+	int r3, g3, b3, vcubo;
+	byte *ptr;
 
-  n=255; do {
-    ptr=paleta+n*3; _r=*ptr; _g=*(ptr+1); _b=*(ptr+2); ptr=paleta;
-    m=0; do {
-      rr=((int)(*ptr+_r)<<7)&0x3f00;
-      gg=((int)(*(ptr+1)+_g)<<7)&0x3f00;
-      bb=((int)(*(ptr+2)+_b)<<7)&0x3f00;
-      ptr+=3;
+	n = 255;
+	do {
+		ptr = paleta + n * 3;
+		_r = *ptr;
+		_g = *(ptr + 1);
+		_b = *(ptr + 2);
+		ptr = paleta;
+		m = 0;
+		do {
+			rr = ((int)(*ptr + _r) << 7) & 0x3f00;
+			gg = ((int)(*(ptr + 1) + _g) << 7) & 0x3f00;
+			bb = ((int)(*(ptr + 2) + _b) << 7) & 0x3f00;
+			ptr += 3;
 
-      r3=(rr&0x3800)>>5; g3=(gg&0x3800)>>8; b3=(bb&0x3800)>>11;
-      vcubo=r3+g3+b3;
+			r3 = (rr & 0x3800) >> 5;
+			g3 = (gg & 0x3800) >> 8;
+			b3 = (bb & 0x3800) >> 11;
+			vcubo = r3 + g3 + b3;
 
-      find_min=65536;
-      num_puntos=0;
+			find_min = 65536;
+			num_puntos = 0;
 
-      // Cubos de distancia sqr(0) ��������������������������������������������
+			// Cubos de distancia sqr(0)
+			// ��������������������������������������������
 
-      crear_ghost_vc(vcubo);
+			crear_ghost_vc(vcubo);
 
-      if (num_puntos>1) goto fast_ghost;
+			if (num_puntos > 1)
+				goto fast_ghost;
 
-      // Cubos de distancia sqr(1) ��������������������������������������������
+			// Cubos de distancia sqr(1)
+			// ��������������������������������������������
 
-      if (r3>0) crear_ghost_vc(vcubo-64);
-      if (r3<7*64) crear_ghost_vc(vcubo+64);
-      if (g3>0) crear_ghost_vc(vcubo-8);
-      if (g3<7*8) crear_ghost_vc(vcubo+8);
-      if (b3>0) crear_ghost_vc(vcubo-1);
-      if (b3<7) crear_ghost_vc(vcubo+1);
+			if (r3 > 0)
+				crear_ghost_vc(vcubo - 64);
+			if (r3 < 7 * 64)
+				crear_ghost_vc(vcubo + 64);
+			if (g3 > 0)
+				crear_ghost_vc(vcubo - 8);
+			if (g3 < 7 * 8)
+				crear_ghost_vc(vcubo + 8);
+			if (b3 > 0)
+				crear_ghost_vc(vcubo - 1);
+			if (b3 < 7)
+				crear_ghost_vc(vcubo + 1);
 
-      if (num_puntos>2) goto fast_ghost;
+			if (num_puntos > 2)
+				goto fast_ghost;
 
-      // Cubos de distancia sqr(2) ��������������������������������������������
+			// Cubos de distancia sqr(2)
+			// ��������������������������������������������
 
-      if (r3>0) {
-        if (g3>0) crear_ghost_vc(vcubo-64-8);
-        else { if (g3<7*8) crear_ghost_vc(vcubo-64+8); }
-        if (b3>0) crear_ghost_vc(vcubo-64-1);
-        else { if (b3<7) crear_ghost_vc(vcubo-64+1); }
-      } else if (r3<7*64) {
-        if (g3>0) crear_ghost_vc(vcubo+64-8);
-        else { if (g3<7*8) crear_ghost_vc(vcubo+64+8); }
-        if (b3>0) crear_ghost_vc(vcubo+64-1);
-        else { if (b3<7) crear_ghost_vc(vcubo+64+1); }
-      }
-      if (g3>0) if (b3>0) crear_ghost_vc(vcubo-8-1);
-                else { if (b3<7) crear_ghost_vc(vcubo-8+1); }
-      else if (g3<7*8) if (b3>0) crear_ghost_vc(vcubo+8-1);
-                else { if (b3<7) crear_ghost_vc(vcubo+8+1); }
+			if (r3 > 0) {
+				if (g3 > 0)
+					crear_ghost_vc(vcubo - 64 - 8);
+				else {
+					if (g3 < 7 * 8)
+						crear_ghost_vc(vcubo - 64 + 8);
+				}
+				if (b3 > 0)
+					crear_ghost_vc(vcubo - 64 - 1);
+				else {
+					if (b3 < 7)
+						crear_ghost_vc(vcubo - 64 + 1);
+				}
+			} else if (r3 < 7 * 64) {
+				if (g3 > 0)
+					crear_ghost_vc(vcubo + 64 - 8);
+				else {
+					if (g3 < 7 * 8)
+						crear_ghost_vc(vcubo + 64 + 8);
+				}
+				if (b3 > 0)
+					crear_ghost_vc(vcubo + 64 - 1);
+				else {
+					if (b3 < 7)
+						crear_ghost_vc(vcubo + 64 + 1);
+				}
+			}
+			if (g3 > 0)
+				if (b3 > 0)
+					crear_ghost_vc(vcubo - 8 - 1);
+				else {
+					if (b3 < 7)
+						crear_ghost_vc(vcubo - 8 + 1);
+				}
+			else if (g3 < 7 * 8)
+				if (b3 > 0)
+					crear_ghost_vc(vcubo + 8 - 1);
+				else {
+					if (b3 < 7)
+						crear_ghost_vc(vcubo + 8 + 1);
+				}
 
-      if (find_min==65536) crear_ghost_slow();
+			if (find_min == 65536)
+				crear_ghost_slow();
 
-      fast_ghost: *(ghost+n*256+m)=find_col;
-                  *(ghost+m*256+n)=find_col;
+		fast_ghost:
+			*(ghost + n * 256 + m) = find_col;
+			*(ghost + m * 256 + n) = find_col;
 
-      // if ((punto++&2047)==0) cprintf(".");
+			// if ((punto++&2047)==0) cprintf(".");
 
-    } while (++m<n);
-  } while (--n);
+		} while (++m < n);
+	} while (--n);
 
-  do { *(ghost+n*256+n)=n; } while(++n<256);
+	do {
+		*(ghost + n * 256 + n) = n;
+	} while (++n < 256);
 
-  // if (puntos) cprintf(".\r\n");
+	// if (puntos) cprintf(".\r\n");
 #ifdef DIV2
-  memcpy(ghost_inicial,ghost,256);
+	memcpy(ghost_inicial, ghost, 256);
 
-  n=0; ptr=ghost;
-  do {
-    *ptr++=n++;
-  } while (n<256);
+	n = 0;
+	ptr = ghost;
+	do {
+		*ptr++ = n++;
+	} while (n < 256);
 #endif
 }
 
-void crear_ghost_vc(int m) {
+void crear_ghost_vc(int m)
+{
 
-  int dif;
-  struct t_tpuntos * p;
+	int dif;
+	struct t_tpuntos *p;
 
-  if ((p=vcubos[m])!=NULL) do { num_puntos++;
-    dif=*(int*)(cuad+rr+(*p).r);
-    dif+=*(int*)(cuad+gg+(*p).g);
-    dif+=*(int*)(cuad+bb+(*p).b);
-    if (dif<find_min) { find_min=dif;
-        find_col=((byte*)p-(byte*)tpuntos)/sizeof(struct t_tpuntos); }
-  } while ((p=(*p).next)!=NULL);
+	if ((p = vcubos[m]) != NULL)
+		do {
+			num_puntos++;
+			dif = *(int *)(cuad + rr + (*p).r);
+			dif += *(int *)(cuad + gg + (*p).g);
+			dif += *(int *)(cuad + bb + (*p).b);
+			if (dif < find_min) {
+				find_min = dif;
+				find_col = ((byte *)p - (byte *)tpuntos) /
+					   sizeof(struct t_tpuntos);
+			}
+		} while ((p = (*p).next) != NULL);
 }
 
-void crear_ghost_slow (void) {
+void crear_ghost_slow(void)
+{
 
-  int dmin,dif;
-  byte *pal,*endpal,*color;
+	int dmin, dif;
+	byte *pal, *endpal, *color;
 
-  pal=dac4; endpal=dac4+768; dmin=65536;
-  do {
-    dif=*(int*)(cuad+rr+*pal); pal++;
-    dif+=*(int*)(cuad+gg+*pal); pal++;
-    dif+=*(int*)(cuad+bb+*pal); pal+=4;
-    if (dif<dmin) { dmin=dif; color=pal-6; }
-  } while (pal<endpal);
-  find_col=(color-dac4)/3;
+	pal = dac4;
+	endpal = dac4 + 768;
+	dmin = 65536;
+	do {
+		dif = *(int *)(cuad + rr + *pal);
+		pal++;
+		dif += *(int *)(cuad + gg + *pal);
+		pal++;
+		dif += *(int *)(cuad + bb + *pal);
+		pal += 4;
+		if (dif < dmin) {
+			dmin = dif;
+			color = pal - 6;
+		}
+	} while (pal < endpal);
+	find_col = (color - dac4) / 3;
 }
 
+byte ffind_color(byte r, byte g, byte b)
+{ // Encuentra un color (que no sea el 0)
 
-byte ffind_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
+	byte *color;
 
-  byte *color;
-
-  byte* pal=paleta+3; 
-  byte* endpal=paleta+768; 
-  int dmin=65536;
-  do {
-    if (((pal-paleta)/3)==last_c1) pal+=3;
-    int dif=(int)(r-*pal)*(int)(r-*pal); pal++;
-    dif+=(int)(g-*pal)*(int)(g-*pal); pal++;
-    dif+=(int)(b-*pal)*(int)(b-*pal); pal++;
-    if (dif<dmin) { dmin=dif; color=pal-3; }
-  } while (pal<endpal);
-  return (color-paleta)/3;
+	byte *pal = paleta + 3;
+	byte *endpal = paleta + 768;
+	int dmin = 65536;
+	do {
+		if (((pal - paleta) / 3) == last_c1)
+			pal += 3;
+		int dif = (int)(r - *pal) * (int)(r - *pal);
+		pal++;
+		dif += (int)(g - *pal) * (int)(g - *pal);
+		pal++;
+		dif += (int)(b - *pal) * (int)(b - *pal);
+		pal++;
+		if (dif < dmin) {
+			dmin = dif;
+			color = pal - 3;
+		}
+	} while (pal < endpal);
+	return (color - paleta) / 3;
 }
 
-void find_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
-	find_col = ffind_color(r,g,b);
+void find_color(byte r, byte g, byte b)
+{ // Encuentra un color (que no sea el 0)
+	find_col = ffind_color(r, g, b);
 }
 
-byte media(byte a,byte b) {
-  find_color(
-      (paleta[a*3]+paleta[b*3])/2,
-      (paleta[a*3+1]+paleta[b*3+1])/2,
-      (paleta[a*3+2]+paleta[b*3+2])/2
-    );
-  return(find_col);
+byte media(byte a, byte b)
+{
+	find_color((paleta[a * 3] + paleta[b * 3]) / 2,
+		   (paleta[a * 3 + 1] + paleta[b * 3 + 1]) / 2,
+		   (paleta[a * 3 + 2] + paleta[b * 3 + 2]) / 2);
+	return (find_col);
 }
 
 //����������������������������������������������������������������������������

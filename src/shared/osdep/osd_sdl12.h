@@ -2,7 +2,7 @@
 #define __OSD_SDL12__
 
 #include <SDL/SDL.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef __EMSCRIPTEN__
@@ -23,4 +23,3 @@
 typedef SDLMod OSDEPMod;
 
 #endif
-

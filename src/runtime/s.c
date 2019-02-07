@@ -19,17 +19,20 @@ void caja_rellena(int x, int y, int an, int al);
 void circulo(int relleno, int x0, int y0, int x1, int y1);
 void line_pixel(int x, int y);
 
-
 //════════════════════════════════════════════════════════════════════════════
 // Headers
 //════════════════════════════════════════════════════════════════════════════
 
 void move_scroll(int plano, int x, int y);
 void save_region(void);
-void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0, int y0, int x1, int y1);
-void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0, int y0, int x1, int y1);
-void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1);
-void sp_scang(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1);
+void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0,
+	      int y0, int x1, int y1);
+void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0,
+	       int y0, int x1, int y1);
+void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1,
+	     int y1);
+void sp_scang(byte *p, short n, byte *si, int an, int x0, int y0, int x1,
+	      int y1);
 void texc(byte *p, int x, int y, byte an, int al);
 void texn(byte *p, int x, int y, byte an, int al);
 void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo);
@@ -51,7 +54,7 @@ void pinta_sprite_m7(int n, int ide, int x, int y, int size, int ang);
 // Module variables
 //════════════════════════════════════════════════════════════════════════════
 
-int seno[angle_360 + 1], coseno[angle_360 + 1]; //m7
+int seno[angle_360 + 1], coseno[angle_360 + 1]; // m7
 
 //════════════════════════════════════════════════════════════════════════════
 // Fast scroll parallax table
@@ -63,7 +66,8 @@ tfast *fast;
 // Multiplies 2 numbers in 8.24 format
 //════════════════════════════════════════════════════════════════════════════
 
-static int mul_24(int a, int b) {
+static int mul_24(int a, int b)
+{
 	uint64_t c = (uint64_t)a * (uint64_t)b;
 	return (c >> 24);
 }
@@ -72,7 +76,8 @@ static int mul_24(int a, int b) {
 //  Muliply two 16:16 floating points
 //════════════════════════════════════════════════════════════════════════════
 
-static unsigned int mul_16(long a, long b) {
+static unsigned int mul_16(long a, long b)
+{
 	uint64_t c = (uint64_t)a * (uint64_t)b;
 	return c >> 16;
 }
@@ -81,7 +86,8 @@ static unsigned int mul_16(long a, long b) {
 // Function to draw 2 sprites of a scroll, sorted by Z
 //════════════════════════════════════════════════════════════════════════════
 
-void pinta_sprites_scroll(void) {
+void pinta_sprites_scroll(void)
+{
 #ifdef DEBUG
 	int oreloj;
 #endif
@@ -99,9 +105,12 @@ void pinta_sprites_scroll(void) {
 		ide = 0;
 		max = 0x80000000;
 		for (id = id_start; id <= id_end; id += iloc_len)
-			if ((mem[id + _Status] == 2 || mem[id + _Status] == 4) && mem[id + _Ctype] == 1 &&
-			    (mem[id + _Cnumber] == 0 || (mem[id + _Cnumber] & (1 << snum))) && !mem[id + _Painted] &&
-			    mem[id + _Z] > max) {
+			if ((mem[id + _Status] == 2 ||
+			     mem[id + _Status] == 4) &&
+			    mem[id + _Ctype] == 1 &&
+			    (mem[id + _Cnumber] == 0 ||
+			     (mem[id + _Cnumber] & (1 << snum))) &&
+			    !mem[id + _Painted] && mem[id + _Z] > max) {
 				ide = id;
 				max = mem[id + _Z];
 			}
@@ -120,7 +129,8 @@ void pinta_sprites_scroll(void) {
 // Determines movement of scrolling window (automatic or manual)
 //════════════════════════════════════════════════════════════════════════════
 
-void mover_scroll(int back) {
+void mover_scroll(int back)
+{
 	int i, x, y, ix, iy, r;
 
 	if (i = (scroll + snum)->camera) { // Checks if scrolling is automatic
@@ -185,16 +195,26 @@ void mover_scroll(int back) {
 				if ((scroll + snum)->ratio) {
 					ix = iscroll[snum].map1_x - x;
 					iy = iscroll[snum].map1_y - y;
-					move_scroll(1, ix * 100 / (scroll + snum)->ratio, iy * 100 / (scroll + snum)->ratio);
+					move_scroll(
+					    1,
+					    ix * 100 / (scroll + snum)->ratio,
+					    iy * 100 / (scroll + snum)->ratio);
 				}
 		}
 	} else { // Comprueba si se mueve el scroll manualmente
-		if ((scroll + snum)->x0 != iscroll[snum].map1_x || (scroll + snum)->y0 != iscroll[snum].map1_y) {
-			move_scroll(0, (scroll + snum)->x0 - iscroll[snum].map1_x, (scroll + snum)->y0 - iscroll[snum].map1_y);
+		if ((scroll + snum)->x0 != iscroll[snum].map1_x ||
+		    (scroll + snum)->y0 != iscroll[snum].map1_y) {
+			move_scroll(0,
+				    (scroll + snum)->x0 - iscroll[snum].map1_x,
+				    (scroll + snum)->y0 - iscroll[snum].map1_y);
 		}
 		if (back)
-			if ((scroll + snum)->x1 != iscroll[snum].map2_x || (scroll + snum)->y1 != iscroll[snum].map2_y) {
-				move_scroll(1, (scroll + snum)->x1 - iscroll[snum].map2_x, (scroll + snum)->y1 - iscroll[snum].map2_y);
+			if ((scroll + snum)->x1 != iscroll[snum].map2_x ||
+			    (scroll + snum)->y1 != iscroll[snum].map2_y) {
+				move_scroll(
+				    1,
+				    (scroll + snum)->x1 - iscroll[snum].map2_x,
+				    (scroll + snum)->y1 - iscroll[snum].map2_y);
 			}
 	}
 }
@@ -203,7 +223,8 @@ void mover_scroll(int back) {
 // Scroll simple
 //════════════════════════════════════════════════════════════════════════════
 
-void scroll_simple(void) {
+void scroll_simple(void)
+{
 	int n, b;
 #ifdef DEBUG
 	int oreloj = get_ticks();
@@ -234,7 +255,8 @@ void scroll_simple(void) {
 // Scroll parallax
 //════════════════════════════════════════════════════════════════════════════
 
-void scroll_parallax(void) {
+void scroll_parallax(void)
+{
 	int n, an, b1, b2;
 #ifdef DEBUG
 	int oreloj = get_ticks();
@@ -270,9 +292,11 @@ void scroll_parallax(void) {
 			do {
 				if (fast[scan].inc[nt]) {
 					if (nt & 1) {
-						memcpy(di, si1, fast[scan].inc[nt]);
+						memcpy(di, si1,
+						       fast[scan].inc[nt]);
 					} else {
-						memcpy(di, si2, fast[scan].inc[nt]);
+						memcpy(di, si2,
+						       fast[scan].inc[nt]);
 					}
 					di += fast[scan].inc[nt];
 					si1 += fast[scan].inc[nt];
@@ -298,7 +322,8 @@ void scroll_parallax(void) {
 //      Set_scroll(plane,x,y) - snum
 //════════════════════════════════════════════════════════════════════════════
 
-void set_scroll(int plane, int x, int y) {
+void set_scroll(int plane, int x, int y)
+{
 	int an, al, iscan;
 	int _nx, nx, ny;
 	byte *di, *si, *_si;
@@ -459,8 +484,9 @@ void set_scroll(int plane, int x, int y) {
 // Recalculates list of increments for a scan (0..vga_al-1)
 //════════════════════════════════════════════════════════════════════════════
 
-void process_scan(int n) { // Reprocesses a whole scan
-	int in;                // index of fast[in].{nt,inc[]}
+void process_scan(int n)
+{		// Reprocesses a whole scan
+	int in; // index of fast[in].{nt,inc[]}
 	byte *si;
 	int resta, an;
 	int nt = 0, esdato = 0;
@@ -509,7 +535,8 @@ void process_scan(int n) { // Reprocesses a whole scan
 // One pixel is pushed into all lines from the right
 //════════════════════════════════════════════════════════════════════════════
 
-void process_scan_right(void) {
+void process_scan_right(void)
+{
 	int n, in, block;
 	byte *si;
 
@@ -529,11 +556,14 @@ void process_scan_right(void) {
 			if (fast[in].inc[1]) { // If it begins with foreground
 				fast[in].inc[1]--;
 			}
-			if (!fast[in].inc[1]) { // A couple of stretches finished
+			if (!fast[in]
+				 .inc[1]) { // A couple of stretches finished
 				fast[in].nt -= 2;
-				memmove(&fast[in].inc[0], &fast[in].inc[2], (max_inc - 2) * 2);
+				memmove(&fast[in].inc[0], &fast[in].inc[2],
+					(max_inc - 2) * 2);
 
-				if (fast[in].nt < max_inc && fast[in].nt + 2 >= max_inc) {
+				if (fast[in].nt < max_inc &&
+				    fast[in].nt + 2 >= max_inc) {
 					process_scan(iscroll[snum].al - n);
 					goto cont_loop;
 				}
@@ -542,7 +572,7 @@ void process_scan_right(void) {
 
 		// 2nd, add pixel on the right
 
-		if (*si) {                 // If foreground incoming
+		if (*si) {		       // If foreground incoming
 			if (fast[in].nt & 1) { // If stretch ends in foreground
 				if (fast[in].nt < max_inc)
 					fast[in].inc[fast[in].nt]++;
@@ -550,7 +580,7 @@ void process_scan_right(void) {
 				if (++fast[in].nt < max_inc)
 					fast[in].inc[fast[in].nt] = 1;
 			}
-		} else {                   // If background incoming
+		} else {		       // If background incoming
 			if (fast[in].nt & 1) { // If stretch ends in foreground
 				if (++fast[in].nt < max_inc)
 					fast[in].inc[fast[in].nt] = 1;
@@ -577,7 +607,8 @@ void process_scan_right(void) {
 // Push a pixel into all lines from the left (leaving from the right)
 //════════════════════════════════════════════════════════════════════════════
 
-void process_scan_left(void) {
+void process_scan_left(void)
+{
 	int n, in, block;
 	byte *si;
 
@@ -594,18 +625,21 @@ void process_scan_left(void) {
 		if (fast[in].nt < max_inc) {
 			if (!--fast[in].inc[fast[in].nt])
 				fast[in].nt--;
-		} else {                   // Complex case
-			if (fast[in].nt & 1) { // If line ended in foreground ...
-				if (!*si) {        // ... and now ends in background
+		} else { // Complex case
+			if (fast[in].nt &
+			    1) {	    // If line ended in foreground ...
+				if (!*si) { // ... and now ends in background
 					if (--fast[in].nt == max_inc - 1) {
-						process_scan(iscroll[snum].al - n);
+						process_scan(iscroll[snum].al -
+							     n);
 						goto cont_loop;
 					}
 				}
-			} else {       // If line ended in background ...
+			} else {	   // If line ended in background ...
 				if (*si) { // ... and now ends in foreground
 					if (--fast[in].nt == max_inc - 1) {
-						process_scan(iscroll[snum].al - n);
+						process_scan(iscroll[snum].al -
+							     n);
 						goto cont_loop;
 					}
 				}
@@ -615,12 +649,15 @@ void process_scan_left(void) {
 		// 2nd, add pixel on the left
 
 		if (*(si - iscroll[snum].an + 1)) { // If foreground incoming
-			if (!fast[in].inc[0]) {         // If stretch begins in foreground
+			if (!fast[in]
+				 .inc[0]) { // If stretch begins in foreground
 				fast[in].inc[1]++;
 			} else { // If it begins in background
 				fast[in].nt += 2;
 				if (fast[in].nt < max_inc) {
-					memmove(&fast[in].inc[2], &fast[in].inc[0], (max_inc - 2) * 2);
+					memmove(&fast[in].inc[2],
+						&fast[in].inc[0],
+						(max_inc - 2) * 2);
 					fast[in].inc[0] = 0;
 					fast[in].inc[1] = 1;
 				}
@@ -646,15 +683,20 @@ void process_scan_left(void) {
 //      Move_scroll(snum,plano,ix,iy)
 //════════════════════════════════════════════════════════════════════════════
 
-byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y);
+byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		   int x, int y);
 
-byte *scroll_left(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y);
+byte *scroll_left(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		  int x, int y);
 
-byte *scroll_down(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y);
+byte *scroll_down(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		  int x, int y);
 
-byte *scroll_up(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y);
+byte *scroll_up(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		int x, int y);
 
-void move_scroll(int plano, int x, int y) {
+void move_scroll(int plano, int x, int y)
+{
 	int ix, iy;
 
 	if (snum < 0 || snum > 9)
@@ -730,108 +772,91 @@ void move_scroll(int plano, int x, int y) {
 	if (ix > 0)
 		do {
 			if (plano == 0) {
-				iscroll[snum].sscr1 = scroll_right(iscroll[snum]._sscr1,
-				                                   iscroll[snum].sscr1,
-				                                   &iscroll[snum].block1,
-				                                   iscroll[snum].map1,
-				                                   iscroll[snum].map1_an,
-				                                   iscroll[snum].map1_al,
-				                                   x++,
-				                                   y);
+				iscroll[snum].sscr1 = scroll_right(
+				    iscroll[snum]._sscr1, iscroll[snum].sscr1,
+				    &iscroll[snum].block1, iscroll[snum].map1,
+				    iscroll[snum].map1_an,
+				    iscroll[snum].map1_al, x++, y);
 				if (iscroll[snum].on == 2) {
-					process_scan_right(); // Push a scan from the right (exits from the left)
+					process_scan_right(); // Push a scan
+							      // from the right
+							      // (exits from the
+							      // left)
 				}
 			} else {
-				iscroll[snum].sscr2 = scroll_right(iscroll[snum]._sscr2,
-				                                   iscroll[snum].sscr2,
-				                                   &iscroll[snum].block2,
-				                                   iscroll[snum].map2,
-				                                   iscroll[snum].map2_an,
-				                                   iscroll[snum].map2_al,
-				                                   x++,
-				                                   y);
+				iscroll[snum].sscr2 = scroll_right(
+				    iscroll[snum]._sscr2, iscroll[snum].sscr2,
+				    &iscroll[snum].block2, iscroll[snum].map2,
+				    iscroll[snum].map2_an,
+				    iscroll[snum].map2_al, x++, y);
 			}
 		} while (--ix);
 
 	if (ix < 0)
 		do {
 			if (plano == 0) {
-				iscroll[snum].sscr1 = scroll_left(iscroll[snum]._sscr1,
-				                                  iscroll[snum].sscr1,
-				                                  &iscroll[snum].block1,
-				                                  iscroll[snum].map1,
-				                                  iscroll[snum].map1_an,
-				                                  iscroll[snum].map1_al,
-				                                  x--,
-				                                  y);
+				iscroll[snum].sscr1 = scroll_left(
+				    iscroll[snum]._sscr1, iscroll[snum].sscr1,
+				    &iscroll[snum].block1, iscroll[snum].map1,
+				    iscroll[snum].map1_an,
+				    iscroll[snum].map1_al, x--, y);
 				if (iscroll[snum].on == 2) {
-					process_scan_left(); // Push a scan from the left (exits from the right)
+					process_scan_left(); // Push a scan from
+							     // the left (exits
+							     // from the right)
 				}
 			} else {
-				iscroll[snum].sscr2 = scroll_left(iscroll[snum]._sscr2,
-				                                  iscroll[snum].sscr2,
-				                                  &iscroll[snum].block2,
-				                                  iscroll[snum].map2,
-				                                  iscroll[snum].map2_an,
-				                                  iscroll[snum].map2_al,
-				                                  x--,
-				                                  y);
+				iscroll[snum].sscr2 = scroll_left(
+				    iscroll[snum]._sscr2, iscroll[snum].sscr2,
+				    &iscroll[snum].block2, iscroll[snum].map2,
+				    iscroll[snum].map2_an,
+				    iscroll[snum].map2_al, x--, y);
 			}
 		} while (++ix);
 
 	if (iy > 0)
 		do {
 			if (plano == 0) {
-				iscroll[snum].sscr1 = scroll_down(iscroll[snum]._sscr1,
-				                                  iscroll[snum].sscr1,
-				                                  &iscroll[snum].block1,
-				                                  iscroll[snum].map1,
-				                                  iscroll[snum].map1_an,
-				                                  iscroll[snum].map1_al,
-				                                  x,
-				                                  y++);
+				iscroll[snum].sscr1 = scroll_down(
+				    iscroll[snum]._sscr1, iscroll[snum].sscr1,
+				    &iscroll[snum].block1, iscroll[snum].map1,
+				    iscroll[snum].map1_an,
+				    iscroll[snum].map1_al, x, y++);
 				if (iscroll[snum].on == 2) {
-					if (++iscroll[snum].iscan == iscroll[snum].al)
+					if (++iscroll[snum].iscan ==
+					    iscroll[snum].al)
 						iscroll[snum].iscan = 0;
 					process_scan(iscroll[snum].al - 1);
 				}
 			} else {
-				iscroll[snum].sscr2 = scroll_down(iscroll[snum]._sscr2,
-				                                  iscroll[snum].sscr2,
-				                                  &iscroll[snum].block2,
-				                                  iscroll[snum].map2,
-				                                  iscroll[snum].map2_an,
-				                                  iscroll[snum].map2_al,
-				                                  x,
-				                                  y++);
+				iscroll[snum].sscr2 = scroll_down(
+				    iscroll[snum]._sscr2, iscroll[snum].sscr2,
+				    &iscroll[snum].block2, iscroll[snum].map2,
+				    iscroll[snum].map2_an,
+				    iscroll[snum].map2_al, x, y++);
 			}
 		} while (--iy);
 
 	if (iy < 0)
 		do {
 			if (plano == 0) {
-				iscroll[snum].sscr1 = scroll_up(iscroll[snum]._sscr1,
-				                                iscroll[snum].sscr1,
-				                                &iscroll[snum].block1,
-				                                iscroll[snum].map1,
-				                                iscroll[snum].map1_an,
-				                                iscroll[snum].map1_al,
-				                                x,
-				                                y--);
+				iscroll[snum].sscr1 = scroll_up(
+				    iscroll[snum]._sscr1, iscroll[snum].sscr1,
+				    &iscroll[snum].block1, iscroll[snum].map1,
+				    iscroll[snum].map1_an,
+				    iscroll[snum].map1_al, x, y--);
 				if (iscroll[snum].on == 2) {
 					if (iscroll[snum].iscan-- == 0)
-						iscroll[snum].iscan = iscroll[snum].al - 1;
+						iscroll[snum].iscan =
+						    iscroll[snum].al - 1;
 					process_scan(0);
 				}
 			} else {
-				iscroll[snum].sscr2 = scroll_up(iscroll[snum]._sscr2,
-				                                iscroll[snum].sscr2,
-				                                &iscroll[snum].block2,
-				                                iscroll[snum].map2,
-				                                iscroll[snum].map2_an,
-				                                iscroll[snum].map2_al,
-				                                x,
-				                                y--);
+				iscroll[snum].sscr2 = scroll_up(
+				    iscroll[snum]._sscr2, iscroll[snum].sscr2,
+				    &iscroll[snum].block2, iscroll[snum].map2,
+				    iscroll[snum].map2_an,
+				    iscroll[snum].map2_al, x, y--);
 			}
 		} while (++iy);
 
@@ -848,7 +873,9 @@ void move_scroll(int plano, int x, int y) {
 // Unidirectional scrolling functions
 //════════════════════════════════════════════════════════════════════════════
 
-byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y) {
+byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		   int x, int y)
+{
 
 	// Scrolling window (_buf,iscroll[snum].an,iscroll[snum].al(+1))
 	// Number of scans in first block (*block)
@@ -875,11 +902,13 @@ byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
 
 	buf++;
 	if (buf == _buf + iscroll[snum].an * iscroll[snum].al) {
-		memcpy(_buf, _buf + iscroll[snum].an * iscroll[snum].al, iscroll[snum].an);
+		memcpy(_buf, _buf + iscroll[snum].an * iscroll[snum].al,
+		       iscroll[snum].an);
 		buf = _buf;
 		*block = iscroll[snum].al;
 	} else if (((int)(buf - _buf) % iscroll[snum].an) == 0) {
-		memcpy(_buf, _buf + iscroll[snum].an * iscroll[snum].al, iscroll[snum].an);
+		memcpy(_buf, _buf + iscroll[snum].an * iscroll[snum].al,
+		       iscroll[snum].an);
 		(*block)--;
 	}
 
@@ -905,7 +934,9 @@ byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
 	return (ret);
 }
 
-byte *scroll_left(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y) {
+byte *scroll_left(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		  int x, int y)
+{
 	int n, m, b;
 	byte *ret;
 
@@ -924,12 +955,14 @@ byte *scroll_left(byte *_buf, byte *buf, int *block, byte *map, int an, int al, 
 	map += y * an + x; // 1st pixel in map
 
 	if (buf == _buf) {
-		memcpy(_buf + iscroll[snum].an * iscroll[snum].al, _buf, iscroll[snum].an);
+		memcpy(_buf + iscroll[snum].an * iscroll[snum].al, _buf,
+		       iscroll[snum].an);
 		buf = _buf + iscroll[snum].an * iscroll[snum].al - 1;
 		*block = 1;
 	} else if (((int)(buf - _buf) % iscroll[snum].an) == 0) {
 		buf--;
-		memcpy(_buf + iscroll[snum].an * iscroll[snum].al, _buf, iscroll[snum].an);
+		memcpy(_buf + iscroll[snum].an * iscroll[snum].al, _buf,
+		       iscroll[snum].an);
 		(*block)++;
 	} else
 		buf--;
@@ -955,7 +988,9 @@ byte *scroll_left(byte *_buf, byte *buf, int *block, byte *map, int an, int al, 
 	return (ret);
 }
 
-byte *scroll_down(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y) {
+byte *scroll_down(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		  int x, int y)
+{
 	int n, m;
 	byte *ret;
 
@@ -999,7 +1034,9 @@ byte *scroll_down(byte *_buf, byte *buf, int *block, byte *map, int an, int al, 
 	return (ret);
 }
 
-byte *scroll_up(byte *_buf, byte *buf, int *block, byte *map, int an, int al, int x, int y) {
+byte *scroll_up(byte *_buf, byte *buf, int *block, byte *map, int an, int al,
+		int x, int y)
+{
 	int n, m;
 	byte *ret;
 
@@ -1043,8 +1080,9 @@ byte *scroll_up(byte *_buf, byte *buf, int *block, byte *map, int an, int al, in
 //      External function to draw sprites (for the language put)
 //════════════════════════════════════════════════════════════════════════════
 
-void put_sprite(
-    int file, int graph, int x, int y, int angle, int size, int flags, int reg, byte *cop, int copan, int copal) {
+void put_sprite(int file, int graph, int x, int y, int angle, int size,
+		int flags, int reg, byte *cop, int copan, int copal)
+{
 
 	int *ptr;
 	byte *si;
@@ -1123,9 +1161,11 @@ void put_sprite(
 			if (flags & 2)
 				yg = al - 1 - yg;
 			y -= yg;
-			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 && y + al <= clipy1) // Draw sprite without clipping
+			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 &&
+			    y + al <= clipy1) // Draw sprite without clipping
 				sp_normal(si, x, y, an, al, flags);
-			else if (x < clipx1 && y < clipy1 && x + an > clipx0 && y + al > clipy0) // Draw clipped sprite
+			else if (x < clipx1 && y < clipy1 && x + an > clipx0 &&
+				 y + al > clipy0) // Draw clipped sprite
 				sp_cortado(si, x, y, an, al, flags);
 			x0s = x;
 			x1s = x + an - 1;
@@ -1145,7 +1185,8 @@ void put_sprite(
 //                Function that draws process sprites
 //════════════════════════════════════════════════════════════════════════════
 
-void pinta_sprite(void) { // Draws a sprite (if visible), according to mem[ide+ ... ]
+void pinta_sprite(void)
+{ // Draws a sprite (if visible), according to mem[ide+ ... ]
 
 	int *ptr;
 	byte *si;
@@ -1164,7 +1205,8 @@ void pinta_sprite(void) { // Draws a sprite (if visible), according to mem[ide+ 
 		while (mem[ide + _Angle] < 0)
 			mem[ide + _Angle] += 2 * pi;
 		mem[ide + _Flags] &= 254;
-		mem[ide + _Graph] = ((mem[ide + _Angle] + (2 * pi) / (m * 2)) * m) / (2 * pi);
+		mem[ide + _Graph] =
+		    ((mem[ide + _Angle] + (2 * pi) / (m * 2)) * m) / (2 * pi);
 		if (mem[ide + _Graph] >= m)
 			mem[ide + _Graph] = 0;
 		if ((mem[ide + _Graph] = mem[n + 1 + mem[ide + _Graph]]) < 0) {
@@ -1227,12 +1269,15 @@ void pinta_sprite(void) { // Draws a sprite (if visible), according to mem[ide+ 
 		}
 
 		if (putsprite != NULL) {
-			putsprite(si, x, y, an, al, xg, yg, mem[ide + _Angle], mem[ide + _Size], mem[ide + _Flags]);
+			putsprite(si, x, y, an, al, xg, yg, mem[ide + _Angle],
+				  mem[ide + _Size], mem[ide + _Flags]);
 		} else if (mem[ide + _Angle] && mem[ide + _XGraph] <= 0) {
-			sp_rotado(si, x, y, an, al, xg, yg, mem[ide + _Angle], mem[ide + _Size], mem[ide + _Flags]);
+			sp_rotado(si, x, y, an, al, xg, yg, mem[ide + _Angle],
+				  mem[ide + _Size], mem[ide + _Flags]);
 			save_region();
 		} else if (mem[ide + _Size] != 100) {
-			sp_escalado(si, x, y, an, al, xg, yg, mem[ide + _Size], mem[ide + _Flags]);
+			sp_escalado(si, x, y, an, al, xg, yg, mem[ide + _Size],
+				    mem[ide + _Flags]);
 			save_region();
 		} else {
 			if (mem[ide + _Flags] & 1)
@@ -1241,9 +1286,11 @@ void pinta_sprite(void) { // Draws a sprite (if visible), according to mem[ide+ 
 			if (mem[ide + _Flags] & 2)
 				yg = al - 1 - yg;
 			y -= yg;
-			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 && y + al <= clipy1) // Draw sprite without clipping
+			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 &&
+			    y + al <= clipy1) // Draw sprite without clipping
 				sp_normal(si, x, y, an, al, mem[ide + _Flags]);
-			else if (x < clipx1 && y < clipy1 && x + an > clipx0 && y + al > clipy0) // Draw clipped sprite
+			else if (x < clipx1 && y < clipy1 && x + an > clipx0 &&
+				 y + al > clipy0) // Draw clipped sprite
 				sp_cortado(si, x, y, an, al, mem[ide + _Flags]);
 			x0s = x;
 			x1s = x + an - 1;
@@ -1254,7 +1301,8 @@ void pinta_sprite(void) { // Draws a sprite (if visible), according to mem[ide+ 
 	}
 }
 
-void save_region(void) {
+void save_region(void)
+{
 	if (mem[ide + _Ctype] == 0) {
 		if (clipx0 > x0s)
 			x0s = clipx0;
@@ -1277,106 +1325,107 @@ void save_region(void) {
 // Sprite - [mirrored] [ghost]
 //════════════════════════════════════════════════════════════════════════════
 
-void sp_normal(byte *p, int x, int y, int an, int al, int flags) {
+void sp_normal(byte *p, int x, int y, int an, int al, int flags)
+{
 
 	byte *q = copia + y * vga_an + x;
 	int ancho = an;
 
 	switch (flags & 7) {
-		case 0: //--
+	case 0: //--
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p++;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-			} while (--al);
-			break;
-		case 1: //h-
-			p += an - 1;
+				if (*p)
+					*q = *p;
+				p++;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+		} while (--al);
+		break;
+	case 1: // h-
+		p += an - 1;
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p--;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-				p += an * 2;
-			} while (--al);
-			break;
-		case 2: //-v
-			p += (al - 1) * an;
+				if (*p)
+					*q = *p;
+				p--;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+			p += an * 2;
+		} while (--al);
+		break;
+	case 2: //-v
+		p += (al - 1) * an;
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p++;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-				p -= an * 2;
-			} while (--al);
-			break;
-		case 3: //hv
-			p += al * an - 1;
+				if (*p)
+					*q = *p;
+				p++;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+			p -= an * 2;
+		} while (--al);
+		break;
+	case 3: // hv
+		p += al * an - 1;
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p--;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-			} while (--al);
-			break;
-		case 4: //-- Ghost
+				if (*p)
+					*q = *p;
+				p--;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+		} while (--al);
+		break;
+	case 4: //-- Ghost
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p++;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-			} while (--al);
-			break;
-		case 5: //h- Ghost
-			p += an - 1;
+				*q = ghost[(*p << 8) + *q];
+				p++;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+		} while (--al);
+		break;
+	case 5: // h- Ghost
+		p += an - 1;
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p--;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-				p += an * 2;
-			} while (--al);
-			break;
-		case 6: //-v Ghost
-			p += (al - 1) * an;
+				*q = ghost[(*p << 8) + *q];
+				p--;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+			p += an * 2;
+		} while (--al);
+		break;
+	case 6: //-v Ghost
+		p += (al - 1) * an;
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p++;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-				p -= an * 2;
-			} while (--al);
-			break;
-		case 7: //hv Ghost
-			p += al * an - 1;
+				*q = ghost[(*p << 8) + *q];
+				p++;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+			p -= an * 2;
+		} while (--al);
+		break;
+	case 7: // hv Ghost
+		p += al * an - 1;
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p--;
-					q++;
-				} while (--an);
-				q += vga_an - (an = ancho);
-			} while (--al);
-			break;
+				*q = ghost[(*p << 8) + *q];
+				p--;
+				q++;
+			} while (--an);
+			q += vga_an - (an = ancho);
+		} while (--al);
+		break;
 	}
 }
 
@@ -1384,7 +1433,8 @@ void sp_normal(byte *p, int x, int y, int an, int al, int flags) {
 // Sprite - clipped [mirrored] [ghost]
 //════════════════════════════════════════════════════════════════════════════
 
-void sp_cortado(byte *p, int x, int y, int an, int al, int flags) {
+void sp_cortado(byte *p, int x, int y, int an, int al, int flags)
+{
 
 	byte *q = copia + y * vga_an + x;
 	int salta_x, long_x, resto_x;
@@ -1411,130 +1461,130 @@ void sp_cortado(byte *p, int x, int y, int an, int al, int flags) {
 	long_y = al - salta_y - resto_y;
 
 	switch (flags & 7) {
-		case 0: //--
-			p += an * salta_y + salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			an = long_x;
+	case 0: //--
+		p += an * salta_y + salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		an = long_x;
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p++;
-					q++;
-				} while (--an);
-				q += vga_an - (an = long_x);
-				p += resto_x;
-			} while (--long_y);
-			break;
-		case 1: //h-
-			p += an * salta_y + an - 1 - salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			salta_x = long_x;
+				if (*p)
+					*q = *p;
+				p++;
+				q++;
+			} while (--an);
+			q += vga_an - (an = long_x);
+			p += resto_x;
+		} while (--long_y);
+		break;
+	case 1: // h-
+		p += an * salta_y + an - 1 - salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		salta_x = long_x;
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p--;
-					q++;
-				} while (--salta_x);
-				q += vga_an - (salta_x = long_x);
-				p += an + long_x;
-			} while (--long_y);
-			break;
-		case 2: //-v
-			p += (al - 1) * an - an * salta_y + salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			salta_x = long_x;
+				if (*p)
+					*q = *p;
+				p--;
+				q++;
+			} while (--salta_x);
+			q += vga_an - (salta_x = long_x);
+			p += an + long_x;
+		} while (--long_y);
+		break;
+	case 2: //-v
+		p += (al - 1) * an - an * salta_y + salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		salta_x = long_x;
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p++;
-					q++;
-				} while (--salta_x);
-				q += vga_an - (salta_x = long_x);
-				p += resto_x - an * 2;
-			} while (--long_y);
-			break;
-		case 3: //hv
-			p += al * an - 1 - an * salta_y - salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			salta_x = long_x;
+				if (*p)
+					*q = *p;
+				p++;
+				q++;
+			} while (--salta_x);
+			q += vga_an - (salta_x = long_x);
+			p += resto_x - an * 2;
+		} while (--long_y);
+		break;
+	case 3: // hv
+		p += al * an - 1 - an * salta_y - salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		salta_x = long_x;
+		do {
 			do {
-				do {
-					if (*p)
-						*q = *p;
-					p--;
-					q++;
-				} while (--salta_x);
-				q += vga_an - (salta_x = long_x);
-				p -= resto_x;
-			} while (--long_y);
-			break;
-		case 4: //-- Ghost
-			p += an * salta_y + salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			an = long_x;
+				if (*p)
+					*q = *p;
+				p--;
+				q++;
+			} while (--salta_x);
+			q += vga_an - (salta_x = long_x);
+			p -= resto_x;
+		} while (--long_y);
+		break;
+	case 4: //-- Ghost
+		p += an * salta_y + salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		an = long_x;
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p++;
-					q++;
-				} while (--an);
-				q += vga_an - (an = long_x);
-				p += resto_x;
-			} while (--long_y);
-			break;
-		case 5: //h- Ghost
-			p += an * salta_y + an - 1 - salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			salta_x = long_x;
+				*q = ghost[(*p << 8) + *q];
+				p++;
+				q++;
+			} while (--an);
+			q += vga_an - (an = long_x);
+			p += resto_x;
+		} while (--long_y);
+		break;
+	case 5: // h- Ghost
+		p += an * salta_y + an - 1 - salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		salta_x = long_x;
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p--;
-					q++;
-				} while (--salta_x);
-				q += vga_an - (salta_x = long_x);
-				p += an + long_x;
-			} while (--long_y);
-			break;
-		case 6: //-v Ghost
-			p += (al - 1) * an - an * salta_y + salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			salta_x = long_x;
+				*q = ghost[(*p << 8) + *q];
+				p--;
+				q++;
+			} while (--salta_x);
+			q += vga_an - (salta_x = long_x);
+			p += an + long_x;
+		} while (--long_y);
+		break;
+	case 6: //-v Ghost
+		p += (al - 1) * an - an * salta_y + salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		salta_x = long_x;
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p++;
-					q++;
-				} while (--salta_x);
-				q += vga_an - (salta_x = long_x);
-				p += resto_x - an * 2;
-			} while (--long_y);
-			break;
-		case 7: //hv Ghost
-			p += al * an - 1 - an * salta_y - salta_x;
-			q += vga_an * salta_y + salta_x;
-			resto_x += salta_x;
-			salta_x = long_x;
+				*q = ghost[(*p << 8) + *q];
+				p++;
+				q++;
+			} while (--salta_x);
+			q += vga_an - (salta_x = long_x);
+			p += resto_x - an * 2;
+		} while (--long_y);
+		break;
+	case 7: // hv Ghost
+		p += al * an - 1 - an * salta_y - salta_x;
+		q += vga_an * salta_y + salta_x;
+		resto_x += salta_x;
+		salta_x = long_x;
+		do {
 			do {
-				do {
-					*q = ghost[(*p << 8) + *q];
-					p--;
-					q++;
-				} while (--salta_x);
-				q += vga_an - (salta_x = long_x);
-				p -= resto_x;
-			} while (--long_y);
-			break;
+				*q = ghost[(*p << 8) + *q];
+				p--;
+				q++;
+			} while (--salta_x);
+			q += vga_an - (salta_x = long_x);
+			p -= resto_x;
+		} while (--long_y);
+		break;
 	}
 }
 
@@ -1542,7 +1592,9 @@ void sp_cortado(byte *p, int x, int y, int an, int al, int flags) {
 // Sprite - scaled [clipped] [mirrored] [ghost]
 //════════════════════════════════════════════════════════════════════════════
 
-void sp_escalado(byte *old_si, int x, int y, int an, int al, int xg, int yg, int size, int flags) {
+void sp_escalado(byte *old_si, int x, int y, int an, int al, int xg, int yg,
+		 int size, int flags)
+{
 
 	int salta_x, long_x, resto_x; // Regarding screen
 	int salta_y, long_y, resto_y;
@@ -1639,7 +1691,9 @@ void sp_escalado(byte *old_si, int x, int y, int an, int al, int xg, int yg, int
 // Sprite - rotated [scaled] [clipped] [mirrored] [ghost]
 //════════════════════════════════════════════════════════════════════════════
 
-void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, int size, int flags) {
+void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang,
+	       int size, int flags)
+{
 
 	float d0, d1, d2, d3;
 	float a0, a1, a2, a3;
@@ -1742,34 +1796,39 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 			while (h == hmax0) {
 				if ((hmax0 = p[l0 - 1]) != h) {
 					x0.l = p[l0] << 16;
-					ix0 = ((p[l0 - 2] << 16) - x0.l) / (hmax0 - h);
+					ix0 = ((p[l0 - 2] << 16) - x0.l) /
+					      (hmax0 - h);
 					if (ix0 < 0)
 						x0.l += 65535;
 					switch (l0 & 6) {
-						case 0:
-							g0y.l = 0;
-							ig0y = (al << 16) / (hmax0 - h);
-							g0x.l = 0;
-							ig0x = 0;
-							break;
-						case 2:
-							g0x.l = ((an - 1) << 16) + 65535;
-							ig0x = (an << 16) / (h - hmax0);
-							g0y.l = 0;
-							ig0y = 0;
-							break;
-						case 4:
-							g0y.l = ((al - 1) << 16) + 65535;
-							ig0y = (al << 16) / (h - hmax0);
-							g0x.l = ((an - 1) << 16) + 65535;
-							ig0x = 0;
-							break;
-						case 6:
-							g0x.l = 0;
-							ig0x = (an << 16) / (hmax0 - h);
-							g0y.l = ((al - 1) << 16) + 65535;
-							ig0y = 0;
-							break;
+					case 0:
+						g0y.l = 0;
+						ig0y = (al << 16) / (hmax0 - h);
+						g0x.l = 0;
+						ig0x = 0;
+						break;
+					case 2:
+						g0x.l =
+						    ((an - 1) << 16) + 65535;
+						ig0x = (an << 16) / (h - hmax0);
+						g0y.l = 0;
+						ig0y = 0;
+						break;
+					case 4:
+						g0y.l =
+						    ((al - 1) << 16) + 65535;
+						ig0y = (al << 16) / (h - hmax0);
+						g0x.l =
+						    ((an - 1) << 16) + 65535;
+						ig0x = 0;
+						break;
+					case 6:
+						g0x.l = 0;
+						ig0x = (an << 16) / (hmax0 - h);
+						g0y.l =
+						    ((al - 1) << 16) + 65535;
+						ig0y = 0;
+						break;
 					}
 				}
 				l0 -= 2;
@@ -1777,34 +1836,39 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 			while (h == hmax1) {
 				if ((hmax1 = p[l1 + 3]) != h) {
 					x1.l = p[l1] << 16;
-					ix1 = ((p[l1 + 2] << 16) - x1.l) / (hmax1 - h);
+					ix1 = ((p[l1 + 2] << 16) - x1.l) /
+					      (hmax1 - h);
 					if (ix1 < 0)
 						x1.l += 65535;
 					switch (l1 & 6) {
-						case 0:
-							g1x.l = 0;
-							ig1x = (an << 16) / (hmax1 - h);
-							g1y.l = 0;
-							ig1y = 0;
-							break;
-						case 2:
-							g1y.l = 0;
-							ig1y = (al << 16) / (hmax1 - h);
-							g1x.l = ((an - 1) << 16) + 65535;
-							ig1x = 0;
-							break;
-						case 4:
-							g1x.l = ((an - 1) << 16) + 65535;
-							ig1x = (an << 16) / (h - hmax1);
-							g1y.l = ((al - 1) << 16) + 65535;
-							ig1y = 0;
-							break;
-						case 6:
-							g1y.l = ((al - 1) << 16) + 65535;
-							ig1y = (al << 16) / (h - hmax1);
-							g1x.l = 0;
-							ig1x = 0;
-							break;
+					case 0:
+						g1x.l = 0;
+						ig1x = (an << 16) / (hmax1 - h);
+						g1y.l = 0;
+						ig1y = 0;
+						break;
+					case 2:
+						g1y.l = 0;
+						ig1y = (al << 16) / (hmax1 - h);
+						g1x.l =
+						    ((an - 1) << 16) + 65535;
+						ig1x = 0;
+						break;
+					case 4:
+						g1x.l =
+						    ((an - 1) << 16) + 65535;
+						ig1x = (an << 16) / (h - hmax1);
+						g1y.l =
+						    ((al - 1) << 16) + 65535;
+						ig1y = 0;
+						break;
+					case 6:
+						g1y.l =
+						    ((al - 1) << 16) + 65535;
+						ig1y = (al << 16) / (h - hmax1);
+						g1x.l = 0;
+						ig1x = 0;
+						break;
 					}
 				}
 				l1 += 2;
@@ -1818,12 +1882,16 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 				x0.l = p[l0] << 16;
 				ix0 = 0;
 				switch (l0 & 6) {
-					case 2: g0x.l = ((an - 1) << 16) + 65535; break;
-					case 4:
-						g0y.l = ((al - 1) << 16) + 65535;
-						g0x.l = ((an - 1) << 16) + 65535;
-						break;
-					case 6: g0y.l = ((al - 1) << 16) + 65535; break;
+				case 2:
+					g0x.l = ((an - 1) << 16) + 65535;
+					break;
+				case 4:
+					g0y.l = ((al - 1) << 16) + 65535;
+					g0x.l = ((an - 1) << 16) + 65535;
+					break;
+				case 6:
+					g0y.l = ((al - 1) << 16) + 65535;
+					break;
 				}
 			}
 			if (h == hmax1) {
@@ -1834,12 +1902,16 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 				x1.l = p[l1] << 16;
 				ix1 = 0;
 				switch (l1 & 6) {
-					case 2: g1x.l = ((an - 1) << 16) + 65535; break;
-					case 4:
-						g1x.l = ((an - 1) << 16) + 65535;
-						g1y.l = ((al - 1) << 16) + 65535;
-						break;
-					case 6: g1y.l = ((al - 1) << 16) + 65535; break;
+				case 2:
+					g1x.l = ((an - 1) << 16) + 65535;
+					break;
+				case 4:
+					g1x.l = ((an - 1) << 16) + 65535;
+					g1y.l = ((al - 1) << 16) + 65535;
+					break;
+				case 6:
+					g1y.l = ((al - 1) << 16) + 65535;
+					break;
 				}
 			}
 		}
@@ -1856,80 +1928,55 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 			g1y.l = kk;
 		}
 
-		if (h < clipy1 && h >= clipy0 && x0.w[1] < clipx1 && x1.w[1] >= clipx0 && x1.w[1] > x0.w[1])
+		if (h < clipy1 && h >= clipy0 && x0.w[1] < clipx1 &&
+		    x1.w[1] >= clipx0 && x1.w[1] > x0.w[1])
 			if (x0.w[1] < clipx0)
 				if (x1.w[1] >= clipx1)
 					if (flags & 4)
 						sp_scancg(ptrcopia + clipx0,
-						          x1.w[1] - x0.w[1],
-						          clipx1 - clipx0 - 1,
-						          clipx0 - x0.w[1],
-						          si,
-						          an,
-						          g0x.l,
-						          g0y.l,
-						          g1x.l,
-						          g1y.l);
+							  x1.w[1] - x0.w[1],
+							  clipx1 - clipx0 - 1,
+							  clipx0 - x0.w[1], si,
+							  an, g0x.l, g0y.l,
+							  g1x.l, g1y.l);
 					else
 						sp_scanc(ptrcopia + clipx0,
-						         x1.w[1] - x0.w[1],
-						         clipx1 - clipx0 - 1,
-						         clipx0 - x0.w[1],
-						         si,
-						         an,
-						         g0x.l,
-						         g0y.l,
-						         g1x.l,
-						         g1y.l);
+							 x1.w[1] - x0.w[1],
+							 clipx1 - clipx0 - 1,
+							 clipx0 - x0.w[1], si,
+							 an, g0x.l, g0y.l,
+							 g1x.l, g1y.l);
 				else if (flags & 4)
 					sp_scancg(ptrcopia + clipx0,
-					          x1.w[1] - x0.w[1],
-					          x1.w[1] - clipx0,
-					          clipx0 - x0.w[1],
-					          si,
-					          an,
-					          g0x.l,
-					          g0y.l,
-					          g1x.l,
-					          g1y.l);
+						  x1.w[1] - x0.w[1],
+						  x1.w[1] - clipx0,
+						  clipx0 - x0.w[1], si, an,
+						  g0x.l, g0y.l, g1x.l, g1y.l);
 				else
 					sp_scanc(ptrcopia + clipx0,
-					         x1.w[1] - x0.w[1],
-					         x1.w[1] - clipx0,
-					         clipx0 - x0.w[1],
-					         si,
-					         an,
-					         g0x.l,
-					         g0y.l,
-					         g1x.l,
-					         g1y.l);
+						 x1.w[1] - x0.w[1],
+						 x1.w[1] - clipx0,
+						 clipx0 - x0.w[1], si, an,
+						 g0x.l, g0y.l, g1x.l, g1y.l);
 			else if (x1.w[1] >= clipx1)
 				if (flags & 4)
 					sp_scancg(ptrcopia + x0.w[1],
-					          x1.w[1] - x0.w[1],
-					          clipx1 - 1 - x0.w[1],
-					          0,
-					          si,
-					          an,
-					          g0x.l,
-					          g0y.l,
-					          g1x.l,
-					          g1y.l);
+						  x1.w[1] - x0.w[1],
+						  clipx1 - 1 - x0.w[1], 0, si,
+						  an, g0x.l, g0y.l, g1x.l,
+						  g1y.l);
 				else
 					sp_scanc(ptrcopia + x0.w[1],
-					         x1.w[1] - x0.w[1],
-					         clipx1 - 1 - x0.w[1],
-					         0,
-					         si,
-					         an,
-					         g0x.l,
-					         g0y.l,
-					         g1x.l,
-					         g1y.l);
+						 x1.w[1] - x0.w[1],
+						 clipx1 - 1 - x0.w[1], 0, si,
+						 an, g0x.l, g0y.l, g1x.l,
+						 g1y.l);
 			else if (flags & 4)
-				sp_scang(ptrcopia + x0.w[1], x1.w[1] - x0.w[1], si, an, g0x.l, g0y.l, g1x.l, g1y.l);
+				sp_scang(ptrcopia + x0.w[1], x1.w[1] - x0.w[1],
+					 si, an, g0x.l, g0y.l, g1x.l, g1y.l);
 			else
-				sp_scan(ptrcopia + x0.w[1], x1.w[1] - x0.w[1], si, an, g0x.l, g0y.l, g1x.l, g1y.l);
+				sp_scan(ptrcopia + x0.w[1], x1.w[1] - x0.w[1],
+					si, an, g0x.l, g0y.l, g1x.l, g1y.l);
 
 		if ((flags & 3) == 1 || (flags & 3) == 2) {
 			kk = x0.l;
@@ -1959,7 +2006,9 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 // Draw a sprite rotated and scaled, with no clipping
 //════════════════════════════════════════════════════════════════════════════
 
-void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0, int y0, int x1, int y1) {
+void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0,
+	      int y0, int x1, int y1)
+{
 
 	union {
 		int32_t l;
@@ -1986,7 +2035,9 @@ void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0, int 
 	} while (m--);
 }
 
-void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0, int y0, int x1, int y1) {
+void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0,
+	       int y0, int x1, int y1)
+{
 
 	union {
 		int32_t l;
@@ -2017,7 +2068,8 @@ void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0, int
 // Draw a sprite rotated and scaled, with clipping
 //════════════════════════════════════════════════════════════════════════════
 
-void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1) {
+void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1)
+{
 
 	union {
 		int32_t l;
@@ -2039,7 +2091,9 @@ void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1)
 	} while (n--);
 }
 
-void sp_scang(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1) {
+void sp_scang(byte *p, short n, byte *si, int an, int x0, int y0, int x1,
+	      int y1)
+{
 
 	union {
 		int32_t l;
@@ -2065,7 +2119,8 @@ void sp_scang(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1
 // Drawings
 //════════════════════════════════════════════════════════════════════════════
 
-void pinta_drawings(void) {
+void pinta_drawings(void)
+{
 	int x, y, an, al;
 	int n = 0;
 
@@ -2105,11 +2160,22 @@ void pinta_drawings(void) {
 			color = drawing[n].color;
 
 			switch (drawing[n].tipo) {
-				case 1: line(drawing[n].x0, drawing[n].y0, drawing[n].x1, drawing[n].y1); break;
-				case 2: caja(x, y, an, al); break;
-				case 3: caja_rellena(x, y, an, al); break;
-				case 4: circulo(0, x, y, x + an - 1, y + al - 1); break;
-				case 5: circulo(1, x, y, x + an - 1, y + al - 1); break;
+			case 1:
+				line(drawing[n].x0, drawing[n].y0,
+				     drawing[n].x1, drawing[n].y1);
+				break;
+			case 2:
+				caja(x, y, an, al);
+				break;
+			case 3:
+				caja_rellena(x, y, an, al);
+				break;
+			case 4:
+				circulo(0, x, y, x + an - 1, y + al - 1);
+				break;
+			case 5:
+				circulo(1, x, y, x + an - 1, y + al - 1);
+				break;
 			}
 		}
 	while (++n < max_drawings);
@@ -2119,7 +2185,8 @@ void pinta_drawings(void) {
 //      Draw a box, according to modo_caja, line_fx and color
 //═════════════════════════════════════════════════════════════════════════════
 
-void caja(int x, int y, int an, int al) {
+void caja(int x, int y, int an, int al)
+{
 	line(x, y, x + an - 1, y);
 	line(x, y + al - 1, x + an - 1, y + al - 1);
 	al -= 2;
@@ -2131,7 +2198,8 @@ void caja(int x, int y, int an, int al) {
 		} while (--al);
 }
 
-void caja_rellena(int x, int y, int an, int al) {
+void caja_rellena(int x, int y, int an, int al)
+{
 	do {
 		line(x, y, x + an - 1, y);
 		y++;
@@ -2142,7 +2210,8 @@ void caja_rellena(int x, int y, int an, int al) {
 //      Draw a circle (line_fx and color)
 //═════════════════════════════════════════════════════════════════════════════
 
-void circulo(int relleno, int x0, int y0, int x1, int y1) {
+void circulo(int relleno, int x0, int y0, int x1, int y1)
+{
 
 	int p[2048];   // Points in circumference
 	double cx, rx; // Center and radius of circumference
@@ -2236,7 +2305,8 @@ void circulo(int relleno, int x0, int y0, int x1, int y1) {
 // Drawing primitive functions
 //════════════════════════════════════════════════════════════════════════════
 
-void line(int x0, int y0, int x1, int y1) {
+void line(int x0, int y0, int x1, int y1)
+{
 	int dx, dy, a, b, d, x, y;
 
 	if (x0 > x1) {
@@ -2390,7 +2460,8 @@ void line(int x0, int y0, int x1, int y1) {
 // Draws a pixel with opacity level set in line_fx (0..15)
 //════════════════════════════════════════════════════════════════════════════
 
-void line_pixel(int x, int y) {
+void line_pixel(int x, int y)
+{
 	byte a, b, c, d;
 	int n, color256;
 	byte *p;
@@ -2401,263 +2472,263 @@ void line_pixel(int x, int y) {
 
 		switch (line_fx) {
 
-			case 0:
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + n + a);
-				c = *(ghost + n + b);
-				d = *(ghost + n + c);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 1:
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + n + a);
-				c = *(ghost + n + b);
-				if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 2:
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + n + a);
-				c = *(ghost + n + b);
-				d = *(ghost + b + c * 256);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 3: // *** 25% ****
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + n + a);
-				if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 4:
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + n + a);
-				c = *(ghost + a + b * 256);
-				d = *(ghost + b + c * 256);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 5:
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + n + a);
-				c = *(ghost + a + b * 256);
-				if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 6:
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + n + a);
-				c = *(ghost + a + b * 256);
-				d = *(ghost + a + c * 256);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 7: // *** 50% ****
-				n = (int)*p * 256;
-				a = *(ghost + n + color);
-				if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 8:
-				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + color256 + a);
-				c = *(ghost + a + b * 256);
-				d = *(ghost + a + c * 256);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 9:
-				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + color256 + a);
-				c = *(ghost + a + b * 256);
-				if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 10:
-				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + color256 + a);
-				c = *(ghost + a + b * 256);
-				d = *(ghost + b + c * 256);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 11: // *** 75% ****
-				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + color256 + a);
-				if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 12:
-				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + color256 + a);
-				c = *(ghost + color256 + b);
-				d = *(ghost + b + c * 256);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 13:
-				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + color256 + a);
-				c = *(ghost + color256 + b);
-				if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 14:
-				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
-				b = *(ghost + color256 + a);
-				c = *(ghost + color256 + b);
-				d = *(ghost + color256 + c);
-				if (d != *p)
-					*p = d;
-				else if (c != *p)
-					*p = c;
-				else if (b != *p)
-					*p = b;
-				else if (a != *p)
-					*p = a;
-				else
-					*p = color;
-				break;
-
-			case 15: // Put color
+		case 0:
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + n + a);
+			c = *(ghost + n + b);
+			d = *(ghost + n + c);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
 				*p = color;
-				break;
+			break;
+
+		case 1:
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + n + a);
+			c = *(ghost + n + b);
+			if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 2:
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + n + a);
+			c = *(ghost + n + b);
+			d = *(ghost + b + c * 256);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 3: // *** 25% ****
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + n + a);
+			if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 4:
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + n + a);
+			c = *(ghost + a + b * 256);
+			d = *(ghost + b + c * 256);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 5:
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + n + a);
+			c = *(ghost + a + b * 256);
+			if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 6:
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + n + a);
+			c = *(ghost + a + b * 256);
+			d = *(ghost + a + c * 256);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 7: // *** 50% ****
+			n = (int)*p * 256;
+			a = *(ghost + n + color);
+			if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 8:
+			n = (int)*p * 256;
+			color256 = color * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + color256 + a);
+			c = *(ghost + a + b * 256);
+			d = *(ghost + a + c * 256);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 9:
+			n = (int)*p * 256;
+			color256 = color * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + color256 + a);
+			c = *(ghost + a + b * 256);
+			if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 10:
+			n = (int)*p * 256;
+			color256 = color * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + color256 + a);
+			c = *(ghost + a + b * 256);
+			d = *(ghost + b + c * 256);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 11: // *** 75% ****
+			n = (int)*p * 256;
+			color256 = color * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + color256 + a);
+			if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 12:
+			n = (int)*p * 256;
+			color256 = color * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + color256 + a);
+			c = *(ghost + color256 + b);
+			d = *(ghost + b + c * 256);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 13:
+			n = (int)*p * 256;
+			color256 = color * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + color256 + a);
+			c = *(ghost + color256 + b);
+			if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 14:
+			n = (int)*p * 256;
+			color256 = color * 256;
+			a = *(ghost + n + color);
+			b = *(ghost + color256 + a);
+			c = *(ghost + color256 + b);
+			d = *(ghost + color256 + c);
+			if (d != *p)
+				*p = d;
+			else if (c != *p)
+				*p = c;
+			else if (b != *p)
+				*p = b;
+			else if (a != *p)
+				*p = a;
+			else
+				*p = color;
+			break;
+
+		case 15: // Put color
+			*p = color;
+			break;
 		}
 	}
 }
-
 
 //════════════════════════════════════════════════════════════════════════════
 // Texts
 //════════════════════════════════════════════════════════════════════════════
 
-void text_out(char *ptr, int x, int y) {
+void text_out(char *ptr, int x, int y)
+{
 	int an, al;
 	byte *ptr2;
 
@@ -2688,7 +2759,8 @@ void text_out(char *ptr, int x, int y) {
 			x += f_i[0].espacio;
 			ptr++;
 		} else {
-			texc(fonts[0] + fnt[*ptr].offset, x, y + fnt[*ptr].incY, fnt[*ptr].ancho, fnt[*ptr].alto);
+			texc(fonts[0] + fnt[*ptr].offset, x, y + fnt[*ptr].incY,
+			     fnt[*ptr].ancho, fnt[*ptr].alto);
 			x = x + fnt[*ptr].ancho;
 			ptr++;
 		}
@@ -2696,7 +2768,8 @@ void text_out(char *ptr, int x, int y) {
 
 void checkpal_font(int ifonts);
 
-void pinta_textos(int n) { // E: texto[]
+void pinta_textos(int n)
+{ // E: texto[]
 
 	int x, y, an, al;
 	int fuente;
@@ -2714,18 +2787,23 @@ void pinta_textos(int n) { // E: texto[]
 					ptr = text[91];
 			} else
 				switch (texto[n].tipo) {
-					case 0: ptr = (byte *)&mem[texto[n].ptr]; break;
-					case 1:
-						if (mem[texto[n].ptr] < 0) {
-							numero[0] = '-';
-							ltoa(-mem[texto[n].ptr], (char *)numero + 1, 10);
-						} else
-							ltoa(mem[texto[n].ptr], (char *)numero, 10);
-						ptr = numero;
-						break;
+				case 0:
+					ptr = (byte *)&mem[texto[n].ptr];
+					break;
+				case 1:
+					if (mem[texto[n].ptr] < 0) {
+						numero[0] = '-';
+						ltoa(-mem[texto[n].ptr],
+						     (char *)numero + 1, 10);
+					} else
+						ltoa(mem[texto[n].ptr],
+						     (char *)numero, 10);
+					ptr = numero;
+					break;
 				}
 
-			texto[n].an = 0; // Initializes region to flip for this text
+			texto[n].an =
+			    0; // Initializes region to flip for this text
 
 			x = texto[n].x; // X first character
 			y = texto[n].y; // Y
@@ -2756,27 +2834,36 @@ void pinta_textos(int n) { // E: texto[]
 			}
 
 			switch (texto[n].centro) {
-				case 0: break;
-				case 1: x = x - (an >> 1); break;
-				case 2: x = x - an; break;
-				case 3: y = y - (al >> 1); break;
-				case 4:
-					x = x - (an >> 1);
-					y = y - (al >> 1);
-					break;
-				case 5:
-					x = x - an;
-					y = y - (al >> 1);
-					break;
-				case 6: y = y - al; break;
-				case 7:
-					x = x - (an >> 1);
-					y = y - al;
-					break;
-				case 8:
-					x = x - an;
-					y = y - al;
-					break;
+			case 0:
+				break;
+			case 1:
+				x = x - (an >> 1);
+				break;
+			case 2:
+				x = x - an;
+				break;
+			case 3:
+				y = y - (al >> 1);
+				break;
+			case 4:
+				x = x - (an >> 1);
+				y = y - (al >> 1);
+				break;
+			case 5:
+				x = x - an;
+				y = y - (al >> 1);
+				break;
+			case 6:
+				y = y - al;
+				break;
+			case 7:
+				x = x - (an >> 1);
+				y = y - al;
+				break;
+			case 8:
+				x = x - an;
+				y = y - al;
+				break;
 			}
 
 			if (y < vga_al && y + al > 0) {
@@ -2786,11 +2873,15 @@ void pinta_textos(int n) { // E: texto[]
 				texto[n].an = an;
 				texto[n].al = al;
 
-				if (y >= 0 && y + al <= vga_al) { // El texto coge entero (coord. y)
+				if (y >= 0 &&
+				    y + al <= vga_al) { // El texto coge entero
+							// (coord. y)
 
-					while (*ptr && x + fnt[*ptr].ancho <= 0) {
+					while (*ptr &&
+					       x + fnt[*ptr].ancho <= 0) {
 						if (fnt[*ptr].ancho == 0) {
-							x += f_i[fuente].espacio;
+							x +=
+							    f_i[fuente].espacio;
 							ptr++;
 						} else {
 							x = x + fnt[*ptr].ancho;
@@ -2800,10 +2891,13 @@ void pinta_textos(int n) { // E: texto[]
 
 					if (*ptr && x < 0)
 						if (fnt[*ptr].ancho == 0) {
-							x += f_i[fuente].espacio;
+							x +=
+							    f_i[fuente].espacio;
 							ptr++;
 						} else {
-							texc(texto[n].font + fnt[*ptr].offset,
+							texc(texto[n].font +
+								 fnt[*ptr]
+								     .offset,
 							     x,
 							     y + fnt[*ptr].incY,
 							     fnt[*ptr].ancho,
@@ -2812,12 +2906,16 @@ void pinta_textos(int n) { // E: texto[]
 							ptr++;
 						}
 
-					while (*ptr && x + fnt[*ptr].ancho <= vga_an)
+					while (*ptr &&
+					       x + fnt[*ptr].ancho <= vga_an)
 						if (fnt[*ptr].ancho == 0) {
-							x += f_i[fuente].espacio;
+							x +=
+							    f_i[fuente].espacio;
 							ptr++;
 						} else {
-							texn(texto[n].font + fnt[*ptr].offset,
+							texn(texto[n].font +
+								 fnt[*ptr]
+								     .offset,
 							     x,
 							     y + fnt[*ptr].incY,
 							     fnt[*ptr].ancho,
@@ -2828,10 +2926,13 @@ void pinta_textos(int n) { // E: texto[]
 
 					if (*ptr && x < vga_an)
 						if (fnt[*ptr].ancho == 0) {
-							x += f_i[fuente].espacio;
+							x +=
+							    f_i[fuente].espacio;
 							ptr++;
 						} else
-							texc(texto[n].font + fnt[*ptr].offset,
+							texc(texto[n].font +
+								 fnt[*ptr]
+								     .offset,
 							     x,
 							     y + fnt[*ptr].incY,
 							     fnt[*ptr].ancho,
@@ -2841,7 +2942,8 @@ void pinta_textos(int n) { // E: texto[]
 
 					while (*ptr && x + fnt[*ptr].ancho <= 0)
 						if (fnt[*ptr].ancho == 0) {
-							x += f_i[fuente].espacio;
+							x +=
+							    f_i[fuente].espacio;
 							ptr++;
 						} else {
 							x = x + fnt[*ptr].ancho;
@@ -2850,10 +2952,13 @@ void pinta_textos(int n) { // E: texto[]
 
 					while (*ptr && x < vga_an)
 						if (fnt[*ptr].ancho == 0) {
-							x += f_i[fuente].espacio;
+							x +=
+							    f_i[fuente].espacio;
 							ptr++;
 						} else {
-							texc(texto[n].font + fnt[*ptr].offset,
+							texc(texto[n].font +
+								 fnt[*ptr]
+								     .offset,
 							     x,
 							     y + fnt[*ptr].incY,
 							     fnt[*ptr].ancho,
@@ -2867,7 +2972,8 @@ void pinta_textos(int n) { // E: texto[]
 	while (++n < max_textos);
 }
 
-void texn(byte *p, int x, int y, byte an, int al) {
+void texn(byte *p, int x, int y, byte an, int al)
+{
 
 	byte *q = copia + y * vga_an + x;
 	int ancho = an;
@@ -2883,7 +2989,8 @@ void texn(byte *p, int x, int y, byte an, int al) {
 	} while (--al);
 }
 
-void texc(byte *p, int x, int y, byte an, int al) {
+void texc(byte *p, int x, int y, byte an, int al)
+{
 
 	byte *q = copia + y * vga_an + x;
 	int salta_x, long_x, resto_x;
@@ -2937,7 +3044,8 @@ void texc(byte *p, int x, int y, byte an, int al) {
 
 void pinta_sprites_m7(int n, int cx, int cy, float ang);
 
-void pinta_m7(int n) {
+void pinta_m7(int n)
+{
 	int x, y;
 #ifdef DEBUG
 	int oreloj = get_ticks();
@@ -2958,11 +3066,15 @@ void pinta_m7(int n) {
 	angle = (mem[id + _Angle] * 4096) / (2 * pi);
 
 	if (mem[id + _Resolution] > 0) {
-		x = (((mem[id + _X] * 256) / mem[id + _Resolution]) * 256 - get_distx(mem[id + _Angle], distance * 65536));
-		y = -(((mem[id + _Y] * 256) / mem[id + _Resolution]) * 256 - get_disty(mem[id + _Angle], distance * 65536));
+		x = (((mem[id + _X] * 256) / mem[id + _Resolution]) * 256 -
+		     get_distx(mem[id + _Angle], distance * 65536));
+		y = -(((mem[id + _Y] * 256) / mem[id + _Resolution]) * 256 -
+		      get_disty(mem[id + _Angle], distance * 65536));
 	} else {
-		x = (mem[id + _X] * 65536 - get_distx(mem[id + _Angle], distance * 65536));
-		y = -(mem[id + _Y] * 65536 - get_disty(mem[id + _Angle], distance * 65536));
+		x = (mem[id + _X] * 65536 -
+		     get_distx(mem[id + _Angle], distance * 65536));
+		y = -(mem[id + _Y] * 65536 -
+		      get_disty(mem[id + _Angle], distance * 65536));
 	}
 
 	pinta_modo7(n, x, height * 16384, y, angle); //<<14
@@ -2981,7 +3093,8 @@ void pinta_m7(int n) {
 // Draws mode 7 sprites (scroll snum)
 //════════════════════════════════════════════════════════════════════════════
 
-void pinta_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera position
+void pinta_sprites_m7(int n, int cx, int cy, float ang)
+{ // We pass in camera position
 	int factor;
 #ifdef DEBUG
 	int oreloj;
@@ -2996,11 +3109,16 @@ void pinta_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera p
 	// Pre-calculate _Dist1 and _Dist2 for each mode-7 object
 
 	for (id = id_start; id <= id_end; id += iloc_len) {
-		if ((mem[id + _Status] == 2 || mem[id + _Status] == 4) && mem[id + _Ctype] == 2 &&
-		    (mem[id + _Cnumber] == 0 || (mem[id + _Cnumber] & (1 << n)))) {
+		if ((mem[id + _Status] == 2 || mem[id + _Status] == 4) &&
+		    mem[id + _Ctype] == 2 &&
+		    (mem[id + _Cnumber] == 0 ||
+		     (mem[id + _Cnumber] & (1 << n)))) {
 			if (mem[id + _Resolution] > 0) {
-				dx = (mem[id + _X] * 16) / mem[id + _Resolution] - cx2;
-				dy = cy2 - (mem[id + _Y] * 16) / mem[id + _Resolution];
+				dx = (mem[id + _X] * 16) /
+					 mem[id + _Resolution] -
+				     cx2;
+				dy = cy2 - (mem[id + _Y] * 16) /
+					       mem[id + _Resolution];
 			} else {
 				dx = mem[id + _X] * 16 - cx2;
 				dy = cy2 - mem[id + _Y] * 16;
@@ -3010,8 +3128,10 @@ void pinta_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera p
 			else {
 				mem[id + _Dist1] = sqrt(dx * dx + dy * dy);
 				a = ang - atan2(dy, dx);
-				mem[id + _Dist2] = (float)mem[id + _Dist1] * sin(a);
-				mem[id + _Dist1] = (float)mem[id + _Dist1] * cos(a);
+				mem[id + _Dist2] =
+				    (float)mem[id + _Dist1] * sin(a);
+				mem[id + _Dist1] =
+				    (float)mem[id + _Dist1] * cos(a);
 			}
 		} else
 			mem[id + _Dist1] = 0;
@@ -3029,8 +3149,11 @@ void pinta_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera p
 		ide = 0;
 		max = 0x80000000;
 		for (id = id_start; id <= id_end; id += iloc_len) {
-			if (mem[id + _Ctype] == 2 && mem[id + _Dist1] && !mem[id + _Painted]) {
-				if (mem[id + _Dist1] > max || (mem[id + _Dist1] == max && mem[id + _Z] > old_z)) {
+			if (mem[id + _Ctype] == 2 && mem[id + _Dist1] &&
+			    !mem[id + _Painted]) {
+				if (mem[id + _Dist1] > max ||
+				    (mem[id + _Dist1] == max &&
+				     mem[id + _Z] > old_z)) {
 					ide = id;
 					max = mem[id + _Dist1];
 					distmax = mem[id + _Dist2];
@@ -3040,21 +3163,28 @@ void pinta_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera p
 		}
 
 		if (ide) {
-			if (max >= 32) { // Don't draw object if it's at camera coordinates (±2)
+			if (max >= 32) { // Don't draw object if it's at camera
+					 // coordinates (±2)
 
 				h = (m7 + n)->height - mem[ide + _Height];
-				altura = (h * (max - factor)) / (max);                // in pix/4
-				altura = im7[n].y + im7[n].al / 2 + (h - altura) / 4; // in pix
+				altura =
+				    (h * (max - factor)) / (max); // in pix/4
+				altura = im7[n].y + im7[n].al / 2 +
+					 (h - altura) / 4; // in pix
 				altura += (m7 + n)->horizon - im7[n].al / 2;
 
 				h += 1000;
-				porcen = (h * (max - factor)) / (max);                // en pix/4
-				porcen = im7[n].y + im7[n].al / 2 + (h - porcen) / 4; // in pix
-				porcen += (m7 + n)->horizon - im7[n].al / 2 - altura;
+				porcen =
+				    (h * (max - factor)) / (max); // en pix/4
+				porcen = im7[n].y + im7[n].al / 2 +
+					 (h - porcen) / 4; // in pix
+				porcen +=
+				    (m7 + n)->horizon - im7[n].al / 2 - altura;
 
 				porcen = mem[ide + _Size] * porcen / 1000;
 
-				anchura = vga_an / 2 + (factor * distmax) / (max * 16);
+				anchura = vga_an / 2 +
+					  (factor * distmax) / (max * 16);
 
 				a = ((float)mem[ide + _Angle] / radian) - ang;
 				h = (a * 4096.0) / 6.2831853;
@@ -3064,13 +3194,15 @@ void pinta_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera p
 				while (h >= 4096)
 					h -= 4096;
 
-				pinta_sprite_m7(n, ide, anchura, altura, porcen, h);
+				pinta_sprite_m7(n, ide, anchura, altura, porcen,
+						h);
 #ifdef DEBUG
 				process_paint(ide, get_ticks() - oreloj);
 #endif
 
 				// *** White pixel at object base ***
-				// if (altura<vga_al && altura>=0 && anchura<vga_an && anchura>=0) {
+				// if (altura<vga_al && altura>=0 &&
+				// anchura<vga_an && anchura>=0) {
 				//   *(copia+altura*vga_an+anchura)=127;
 				// }
 			}
@@ -3084,7 +3216,8 @@ void pinta_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera p
 // Draw a sprite (mem[ide]) in modo 7 (if in front of camera)
 //════════════════════════════════════════════════════════════════════════════
 
-void pinta_sprite_m7(int n, int ide, int x, int y, int size, int ang) {
+void pinta_sprite_m7(int n, int ide, int x, int y, int size, int ang)
+{
 
 	int *ptr;
 	byte *si;
@@ -3125,7 +3258,7 @@ void pinta_sprite_m7(int n, int ide, int x, int y, int size, int ang) {
 	if ((ptr = g[mem[ide + _File]].grf[mem[ide + _Graph]]) != NULL) {
 
 		an = ptr[13];
-		al = ptr[14];                        // Graph width and height
+		al = ptr[14];			     // Graph width and height
 		si = (byte *)ptr + 64 + ptr[15] * 4; // Graph start
 
 		if (ptr[15] == 0 || *((word *)ptr + 32) == 65535) {
@@ -3144,12 +3277,14 @@ void pinta_sprite_m7(int n, int ide, int x, int y, int size, int ang) {
 // Get_distx/y(angle, dist)
 //════════════════════════════════════════════════════════════════════════════
 
-int get_distx(int a, int d) {
+int get_distx(int a, int d)
+{
 	angulo = (float)a / radian;
 	return ((int)((float)cos(angulo) * d));
 }
 
-int get_disty(int a, int d) {
+int get_disty(int a, int d)
+{
 	angulo = (float)a / radian;
 	return (-(int)((float)sin(angulo) * d));
 }
@@ -3158,7 +3293,8 @@ int get_disty(int a, int d) {
 // Draws map in perspective
 //════════════════════════════════════════════════════════════════════════════
 
-void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
+void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo)
+{
 
 	int y, u, du, vv, dv, pos_x, pos_y;
 	int ancho_m, alto_m, ancho_e, alto_e;
@@ -3167,7 +3303,8 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 	int mediox_modo7_16;
 	int distancia = ((im7[n].an * (m7 + n)->focus) / 320) << 16;
 	int divisor;
-	byte *di = copia + im7[n].y * vga_an + im7[n].x, *di_end, color = (m7 + n)->color;
+	byte *di = copia + im7[n].y * vga_an + im7[n].x, *di_end,
+	     color = (m7 + n)->color;
 
 	mediox_modo7_16 = mediox_modo7 << 16;
 
@@ -3197,10 +3334,12 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 		sint = mul_24(seno[angulo], proyeccion_y);
 		cost = mul_24(coseno[angulo], proyeccion_y);
 
-		u = camara_x + mul_16(distancia, cost) + mul_16(sint, -mediox_modo7_16);
+		u = camara_x + mul_16(distancia, cost) +
+		    mul_16(sint, -mediox_modo7_16);
 		du = sint;
 
-		vv = camara_z + mul_16(distancia, sint) - mul_16(cost, -mediox_modo7_16);
+		vv = camara_z + mul_16(distancia, sint) -
+		     mul_16(cost, -mediox_modo7_16);
 		dv = -cost;
 		vv = -vv;
 		dv = -dv;
@@ -3211,10 +3350,15 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 			do {
 				pos_x = u >> 16;
 				pos_y = vv >> 16;
-				if (pos_x > ancho_m || pos_x < 0 || pos_y > alto_m || pos_y < 0) {
-					*di = *(im7[n].ext + (pos_y & alto_e) * im7[n].ext_an + (pos_x & ancho_e));
+				if (pos_x > ancho_m || pos_x < 0 ||
+				    pos_y > alto_m || pos_y < 0) {
+					*di =
+					    *(im7[n].ext +
+					      (pos_y & alto_e) * im7[n].ext_an +
+					      (pos_x & ancho_e));
 				} else {
-					*di = *(im7[n].map + pos_y * im7[n].map_an + pos_x);
+					*di = *(im7[n].map +
+						pos_y * im7[n].map_an + pos_x);
 				}
 				u += du;
 				vv += dv;
@@ -3223,10 +3367,12 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 			do {
 				pos_x = u >> 16;
 				pos_y = vv >> 16;
-				if (pos_x > ancho_m || pos_x < 0 || pos_y > alto_m || pos_y < 0) {
+				if (pos_x > ancho_m || pos_x < 0 ||
+				    pos_y > alto_m || pos_y < 0) {
 					*di = color;
 				} else {
-					*di = *(im7[n].map + pos_y * im7[n].map_an + pos_x);
+					*di = *(im7[n].map +
+						pos_y * im7[n].map_an + pos_x);
 				}
 				u += du;
 				vv += dv;
@@ -3234,12 +3380,12 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 	}
 }
 
-
 //════════════════════════════════════════════════════════════════════════════
 // Initializes sine and cosine tables
 //════════════════════════════════════════════════════════════════════════════
 
-void init_sin_cos() {
+void init_sin_cos()
+{
 	int i;
 
 	for (i = 0; i < angle_90; i++) { // Generate sine and cosine tables

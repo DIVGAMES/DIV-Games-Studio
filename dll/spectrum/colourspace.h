@@ -1,13 +1,13 @@
 #pragma once
 
 /*
-	SCRplus - (c) Edward Cree 2010-12
-	Licensed under the GNU GPL v3+
+        SCRplus - (c) Edward Cree 2010-12
+        Licensed under the GNU GPL v3+
 */
 
-#include <stdio.h>
-#include <math.h>
 #include "bits.h"
+#include <math.h>
+#include <stdio.h>
 
 typedef unsigned char rgb_t[3], hsv_t[3], yuv_t[3];
 

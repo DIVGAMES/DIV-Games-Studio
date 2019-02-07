@@ -5,7 +5,7 @@
 //  Assembly funcs (need converting to c)
 //─────────────────────────────────────────────────────────────────────────────
 
-//extern "C" {
+// extern "C" {
 
 void nucleo8_8(int v, int u, int du, int dv, int ancho, short *destino);
 void nucleo8_16(int v, int u, int du, int dv, int ancho, short *destino);

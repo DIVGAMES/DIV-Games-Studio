@@ -1,4 +1,3 @@
 
-void InitSound              (void);
-void EndSound               (void);
-
+void InitSound(void);
+void EndSound(void);

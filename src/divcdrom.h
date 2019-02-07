@@ -8,6 +8,7 @@ void CDftrack();
 void CDbtrack();
 void CDfsec();
 void CDbsec();
-void CDgetInfo(short *track,unsigned char *Min,unsigned char *Sec,unsigned char *Dec);
+void CDgetInfo(short *track, unsigned char *Min, unsigned char *Sec,
+	       unsigned char *Dec);
 
 #endif

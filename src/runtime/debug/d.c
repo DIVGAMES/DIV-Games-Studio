@@ -9,7 +9,7 @@
 //══════════════════════════════════════════════════════════════════════════
 
 int debug_active = 1; // If this variable is set to 0, the debugger
-                      // and its windows can't be invoked
+		      // and its windows can't be invoked
 
 //══════════════════════════════════════════════════════════════════════════
 
@@ -19,25 +19,23 @@ static void profile0(void);
 static byte *get_offset_byte(int m);
 static word *get_offset_word(int m);
 static void blit_window(int m);
-static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al);
+static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x,
+		       int y, int an, int al);
 static void wput(byte *copia, int an_copia, int al_copia, int x, int y, int n);
-static void wbox(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al);
+static void wbox(byte *copia, int an_copia, int al_copia, byte c, int x, int y,
+		 int an, int al);
 static int text_len(byte *ptr);
-static void wwrite_in_box(byte *copia,
-                          int an_real_copia,
-                          int an_copia,
-                          int al_copia,
-                          int x_org,
-                          int y_org,
-                          int centro_org,
-                          byte *ptr,
-                          byte c);
+static void wwrite_in_box(byte *copia, int an_real_copia, int an_copia,
+			  int al_copia, int x_org, int y_org, int centro_org,
+			  byte *ptr, byte c);
 
-static void wwrite(byte *copia, int an_copia, int al_copia, int x, int y, int centro, byte *ptr, byte c);
+static void wwrite(byte *copia, int an_copia, int al_copia, int x, int y,
+		   int centro, byte *ptr, byte c);
 
 static void dread_mouse(void);
 static void explode(int x, int y, int an, int al);
-static void wblit(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta);
+static void wblit(byte *copia, int an_copia, int al_copia, byte *p, int x,
+		  int y, int an, int al, int salta);
 
 static void dialog_environment(void);
 static int mouse_in(int x, int y, int x2, int y2);
@@ -48,17 +46,21 @@ static void update_box(int x, int y, int an, int al);
 static void implode(int x, int y, int an, int al);
 static int collides_with(int a, int x, int y, int an, int al);
 
-static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta);
+static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x,
+		       int y, int an, int al, int salta);
 
-static void
-wbox_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al);
-static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, int x, int y, int n);
-static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, int x, int y, int n);
+static void wbox_in_box(byte *copia, int an_real_copia, int an_copia,
+			int al_copia, byte c, int x, int y, int an, int al);
+static void wput_in_box(byte *copia, int an_real_copia, int an_copia,
+			int al_copia, int x, int y, int n);
+static void bwput_in_box(byte *copia, int an_real_copia, int an_copia,
+			 int al_copia, int x, int y, int n);
 
-static void
-wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia, byte *p, int x, int y, byte an, int al, byte c);
+static void wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia,
+		  byte *p, int x, int y, byte an, int al, byte c);
 
-static void wtexn(byte *copia, int an_real_copia, byte *p, int x, int y, byte an, int al, byte c);
+static void wtexn(byte *copia, int an_real_copia, byte *p, int x, int y,
+		  byte an, int al, byte c);
 static void restore_desktop(int x, int y, int an, int al);
 
 static void show_button(t_item *i);
@@ -104,7 +106,6 @@ static void get_line(int n);
 static void draw_process_segment(void);
 static void draw_profile_segment(void);
 
-
 #define max_processes 2048
 
 char combo_error[128]; // To compose error messages
@@ -127,7 +128,7 @@ static int superget = 0;
 static int line0;    // First line nunmber in the debugger window
 static byte *pline0; // Pointer to first line in debugger window
 
-static int mem1, mem2;                         // Current sentence span in mem[] vector
+static int mem1, mem2; // Current sentence span in mem[] vector
 static int line1, column1, line2, column2; // Current sentence span
 
 static int line_sel; // Selected line number
@@ -215,12 +216,12 @@ static int obj_cnt = 0; // Object count in objects list
 
 static int predefined_obj_count;
 
-static int *used; // To indicate which objects have been included in var[]
+static int *used;   // To indicate which objects have been included in var[]
 static int *viewer; // To indicate which type of viewer each object uses
 
 static struct variables {
-	int object;  // Object index in o[]
-	int tab;     // Tabulation (0-no member,1,2,...)
+	int object; // Object index in o[]
+	int tab;    // Tabulation (0-no member,1,2,...)
 	int member; // Member of ..., as index into var[]
 	int index;  // For tables or structs, element in view
 } *var = NULL;
@@ -270,12 +271,15 @@ static unsigned frame_time[256]; // Time used by each function
 //      Debug initialization
 //════════════════════════════════════════════════════════════════════════════
 
-void init_debug(void) {
+void init_debug(void)
+{
 	FILE *f;
 	int n;
 
-	for (n = 0; n < max_windows; n++) ventana[n].tipo = 0;
-	if ((fondo_raton = (byte *)malloc(2048)) == NULL) exer(1);
+	for (n = 0; n < max_windows; n++)
+		ventana[n].tipo = 0;
+	if ((fondo_raton = (byte *)malloc(2048)) == NULL)
+		exer(1);
 	init_big();
 
 	if ((f = fopen("system/exec.dbg", "rb")) != NULL) {
@@ -289,13 +293,15 @@ void init_debug(void) {
 			fread(&obj_size, 4, 1, f);
 			fread(o, 1, n, f);
 			fclose(f);
-			vnames = (char *)o + obj_cnt * sizeof(struct object) + 4;
+			vnames =
+			    (char *)o + obj_cnt * sizeof(struct object) + 4;
 		} else {
 			fclose(f);
 			exer(1);
 		}
 	} else {
-		for (n = 0; n < max_breakpoint; n++) breakpoint[n].line = -1;
+		for (n = 0; n < max_breakpoint; n++)
+			breakpoint[n].line = -1;
 		debug_active = 0;
 		return;
 	}
@@ -333,43 +339,78 @@ void init_debug(void) {
 			line = NULL;
 		}
 
-	if ((var = (struct variables *)malloc(sizeof(struct variables) * obj_cnt)) == NULL) exer(1);
-	if ((ids = (int *)malloc(sizeof(int) * max_processes)) == NULL) exer(1);
-	if ((used = (int *)malloc(sizeof(int) * obj_cnt)) == NULL) exer(1);
-	if ((viewer = (int *)malloc(sizeof(int) * obj_cnt)) == NULL) exer(1);
+	if ((var = (struct variables *)malloc(sizeof(struct variables) *
+					      obj_cnt)) == NULL)
+		exer(1);
+	if ((ids = (int *)malloc(sizeof(int) * max_processes)) == NULL)
+		exer(1);
+	if ((used = (int *)malloc(sizeof(int) * obj_cnt)) == NULL)
+		exer(1);
+	if ((viewer = (int *)malloc(sizeof(int) * obj_cnt)) == NULL)
+		exer(1);
 
 	// Sets object filters
 
 	memset(viewer, 0, sizeof(int) * obj_cnt);
 	for (n = 0; n < obj_cnt; n++) {
-		if (o[n].type == tcglo || o[n].type == tcloc) viewer[n] = 2;
-		if (o[n].type == tcons && o[n].v1 == 1) viewer[n] = 2;
-		if ((o[n].type == tvloc || o[n].type == tvglo || o[n].type == tcons) &&
-		    (vnames[o[n].name] == 'a' || vnames[o[n].name] == '\xa0' /*á*/) && vnames[o[n].name + 1] == 'n' &&
+		if (o[n].type == tcglo || o[n].type == tcloc)
+			viewer[n] = 2;
+		if (o[n].type == tcons && o[n].v1 == 1)
+			viewer[n] = 2;
+		if ((o[n].type == tvloc || o[n].type == tvglo ||
+		     o[n].type == tcons) &&
+		    (vnames[o[n].name] == 'a' ||
+		     vnames[o[n].name] == '\xa0' /*á*/) &&
+		    vnames[o[n].name + 1] == 'n' &&
 		    vnames[o[n].name + 2] == 'g')
 			viewer[n] = 4;
-		if (o[n].type == tcons && !strcmp(vnames + o[n].name, "pi")) viewer[n] = 4;
+		if (o[n].type == tcons && !strcmp(vnames + o[n].name, "pi"))
+			viewer[n] = 4;
 		if ((o[n].type == tvloc || o[n].type == tvglo) &&
-		    (vnames[o[n].name + 2] == 'e' || (vnames[o[n].name + 2] >= '0' && vnames[o[n].name + 2] <= '9')) &&
+		    (vnames[o[n].name + 2] == 'e' ||
+		     (vnames[o[n].name + 2] >= '0' &&
+		      vnames[o[n].name + 2] <= '9')) &&
 		    vnames[o[n].name] == 'i' && vnames[o[n].name + 1] == 'd')
 			viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "caller_id")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "father")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "bigbro")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "smallbro")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "son")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "process_id")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "id_scan")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "type_scan")) viewer[n] = 3;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "is_executed")) viewer[n] = 1;
-		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "is_painted")) viewer[n] = 1;
-		if (o[n].type == tvglo && !strcmp(vnames + o[n].name, "fading")) viewer[n] = 1;
-		if (o[n].type == ttglo && !strcmp(vnames + o[n].name, "argv")) viewer[n] = 2;
+		if (o[n].type == tvloc &&
+		    !strcmp(vnames + o[n].name, "caller_id"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "father"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "bigbro"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc &&
+		    !strcmp(vnames + o[n].name, "smallbro"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc && !strcmp(vnames + o[n].name, "son"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc &&
+		    !strcmp(vnames + o[n].name, "process_id"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc &&
+		    !strcmp(vnames + o[n].name, "id_scan"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc &&
+		    !strcmp(vnames + o[n].name, "type_scan"))
+			viewer[n] = 3;
+		if (o[n].type == tvloc &&
+		    !strcmp(vnames + o[n].name, "is_executed"))
+			viewer[n] = 1;
+		if (o[n].type == tvloc &&
+		    !strcmp(vnames + o[n].name, "is_painted"))
+			viewer[n] = 1;
+		if (o[n].type == tvglo && !strcmp(vnames + o[n].name, "fading"))
+			viewer[n] = 1;
+		if (o[n].type == ttglo && !strcmp(vnames + o[n].name, "argv"))
+			viewer[n] = 2;
 
-		if (o[n].type == ttglo && !strcmp(vnames + o[n].name, "name") && o[n - 2].type == tsglo &&
+		if (o[n].type == ttglo && !strcmp(vnames + o[n].name, "name") &&
+		    o[n - 2].type == tsglo &&
 		    !strcmp(vnames + o[n - 2].name, "dirinfo"))
 			viewer[n] = 2;
-		if (o[n].type == tvglo && !strcmp(vnames + o[n].name, "attrib") && o[n - 13].type == tsglo &&
+		if (o[n].type == tvglo &&
+		    !strcmp(vnames + o[n].name, "attrib") &&
+		    o[n - 13].type == tsglo &&
 		    !strcmp(vnames + o[n - 13].name, "fileinfo"))
 			viewer[n] = 6;
 	}
@@ -384,10 +425,12 @@ void init_debug(void) {
 	}
 	memset(f_time, 0, 256 * 4);
 
-	for (n = 0; n < max_breakpoint; n++) breakpoint[n].line = -1;
+	for (n = 0; n < max_breakpoint; n++)
+		breakpoint[n].line = -1;
 }
 
-void end_debug(void) {
+void end_debug(void)
+{
 	free(fondo_raton);
 	free(o);
 	free(var);
@@ -403,7 +446,8 @@ void end_debug(void) {
 
 static int old_big = -1;
 
-void init_big(void) {
+void init_big(void)
+{
 	FILE *f;
 	int n;
 	byte *ptr;
@@ -426,7 +470,8 @@ void init_big(void) {
 		f = fopen("system/grande.fon", "rb");
 	else
 		f = fopen("system/pequeno.fon", "rb");
-	if (f == NULL) exer(5);
+	if (f == NULL)
+		exer(5);
 	fseek(f, 0, SEEK_END);
 	n = ftell(f);
 	if ((text_font = (byte *)malloc(n)) != NULL) {
@@ -455,16 +500,28 @@ void init_big(void) {
 			fclose(f);
 			while (graf_ptr < ptr + n && *((int *)graf_ptr) < 256) {
 				if (*(int *)(graf_ptr + 60)) {
-					graf[*((int *)graf_ptr)] = graf_ptr + 60;
-					*(word *)(graf_ptr + 60) = *(int *)(graf_ptr + 52);
-					*(word *)(graf_ptr + 62) = *(int *)(graf_ptr + 56);
-					graf_ptr += *(int *)(graf_ptr + 52) * *(int *)(graf_ptr + 56) + 68;
+					graf[*((int *)graf_ptr)] =
+					    graf_ptr + 60;
+					*(word *)(graf_ptr + 60) =
+					    *(int *)(graf_ptr + 52);
+					*(word *)(graf_ptr + 62) =
+					    *(int *)(graf_ptr + 56);
+					graf_ptr +=
+					    *(int *)(graf_ptr + 52) *
+						*(int *)(graf_ptr + 56) +
+					    68;
 				} else {
-					graf[*((int *)graf_ptr)] = graf_ptr + 56;
-					*(word *)(graf_ptr + 56) = *(int *)(graf_ptr + 52);
-					*(word *)(graf_ptr + 58) = *(int *)(graf_ptr + 56);
+					graf[*((int *)graf_ptr)] =
+					    graf_ptr + 56;
+					*(word *)(graf_ptr + 56) =
+					    *(int *)(graf_ptr + 52);
+					*(word *)(graf_ptr + 58) =
+					    *(int *)(graf_ptr + 56);
 					*(int *)(graf_ptr + 60) = 0;
-					graf_ptr += *(int *)(graf_ptr + 52) * *(int *)(graf_ptr + 56) + 64;
+					graf_ptr +=
+					    *(int *)(graf_ptr + 52) *
+						*(int *)(graf_ptr + 56) +
+					    64;
 				}
 			}
 			graf_ptr = ptr;
@@ -479,7 +536,8 @@ void init_big(void) {
 //  Initializes colors (after switching palette)
 //═════════════════════════════════════════════════════════════════════════════
 
-void init_colors(void) {
+void init_colors(void)
+{
 	c0 = ffind_color(0, 0, 0);
 	c4 = ffind_color(63, 63, 63);
 	c2 = media(c0, c4);
@@ -506,7 +564,8 @@ void init_colors(void) {
 
 static void dummy_handler(void) {}
 
-static void dialog(voidReturnType init_handler) {
+static void dialog(voidReturnType init_handler)
+{
 
 	byte *ptr;
 	int x, y, an, al;
@@ -514,10 +573,12 @@ static void dialog(voidReturnType init_handler) {
 
 	if (!ventana[max_windows - 1].tipo) {
 
-		memmove(&ventana[1].tipo, &v.tipo, sizeof(tventana) * (max_windows - 1));
+		memmove(&ventana[1].tipo, &v.tipo,
+			sizeof(tventana) * (max_windows - 1));
 
 		//───────────────────────────────────────────────────────────────────────────
-		// The following values must be defined by init_handler. Default values:
+		// The following values must be defined by init_handler. Default
+		// values:
 		//───────────────────────────────────────────────────────────────────────────
 
 		v.tipo = 1;
@@ -556,7 +617,8 @@ static void dialog(voidReturnType init_handler) {
 		v.x = x;
 		v.y = y;
 
-		if ((ptr = (byte *)malloc(an * al)) != NULL) { // Window, free in close_window
+		if ((ptr = (byte *)malloc(an * al)) !=
+		    NULL) { // Window, free in close_window
 
 			//───────────────────────────────────────────────────────────────────────────
 			// Move windows to background if needed
@@ -585,16 +647,21 @@ static void dialog(voidReturnType init_handler) {
 			}
 			wrectangle(ptr, an, al, c2, 0, 0, an, al);
 			wput(ptr, an, al, an - 9, 2, 35);
-			if (!strcmp((char *)v.titulo, (char *)text[1]) || !strcmp((char *)v.titulo, (char *)text[2]))
+			if (!strcmp((char *)v.titulo, (char *)text[1]) ||
+			    !strcmp((char *)v.titulo, (char *)text[2]))
 				wbox(ptr, an, al, c_r_low, 2, 2, an - 12, 7);
 			else
 				wbox(ptr, an, al, c_b_low, 2, 2, an - 12, 7);
 			if (text_len(v.titulo) + 3 > an - 12) {
-				wwrite_in_box(ptr, an, an - 11, al, 4, 2, 0, v.titulo, c1);
-				wwrite_in_box(ptr, an, an - 11, al, 3, 2, 0, v.titulo, c4);
+				wwrite_in_box(ptr, an, an - 11, al, 4, 2, 0,
+					      v.titulo, c1);
+				wwrite_in_box(ptr, an, an - 11, al, 3, 2, 0,
+					      v.titulo, c4);
 			} else {
-				wwrite(ptr, an, al, 3 + (an - 12) / 2, 2, 1, v.titulo, c1);
-				wwrite(ptr, an, al, 2 + (an - 12) / 2, 2, 1, v.titulo, c4);
+				wwrite(ptr, an, al, 3 + (an - 12) / 2, 2, 1,
+				       v.titulo, c1);
+				wwrite(ptr, an, al, 2 + (an - 12) / 2, 2, 1,
+				       v.titulo, c4);
 			}
 
 			call(v.paint_handler);
@@ -604,13 +671,17 @@ static void dialog(voidReturnType init_handler) {
 				al *= 2;
 			}
 
-			do { dread_mouse(); } while ((mouse_b & 1) || key(_ESC));
+			do {
+				dread_mouse();
+			} while ((mouse_b & 1) || key(_ESC));
 
 			explode(x, y, an, al);
 
 			wblit(copia, vga_an, vga_al, ptr, x, y, an, al, 0);
 			volcado_parcial(x, y, an, al);
-			do { dread_mouse(); } while (mouse_b & 1);
+			do {
+				dread_mouse();
+			} while (mouse_b & 1);
 			dialog_environment();
 
 			//───────────────────────────────────────────────────────────────────────────
@@ -618,7 +689,8 @@ static void dialog(voidReturnType init_handler) {
 			//───────────────────────────────────────────────────────────────────────────
 
 		} else {
-			memmove(&v.tipo, &ventana[1].tipo, sizeof(tventana) * (max_windows - 1));
+			memmove(&v.tipo, &ventana[1].tipo,
+				sizeof(tventana) * (max_windows - 1));
 			ventana[max_windows - 1].tipo = 0;
 		}
 	}
@@ -628,7 +700,8 @@ static void dialog(voidReturnType init_handler) {
 //      Redraws a window (including tile bar and icons)
 //═════════════════════════════════════════════════════════════════════════════
 
-static void redraw_window(void) {
+static void redraw_window(void)
+{
 	int an = v.an, al = v.al;
 	if (big) {
 		an /= 2;
@@ -653,7 +726,8 @@ static void redraw_window(void) {
 //		Dialog box management - Debugger
 //═════════════════════════════════════════════════════════════════════════════
 
-static void dialog_environment(void) {
+static void dialog_environment(void)
+{
 
 	int n, m, oldn = max_windows;
 	int dialogo_invocado;
@@ -676,12 +750,16 @@ static void dialog_environment(void) {
 			n = max_windows;
 
 		//─────────────────────────────────────────────────────────────────────────
-		// If we were over another window before, we must repaint it to clear
-		// possible "hi-lite"s
+		// If we were over another window before, we must repaint it to
+		// clear possible "hi-lite"s
 		//─────────────────────────────────────────────────────────────────────────
 
-		if (n == 0) // If we're over the bar, the window is repainted too
-			if (!mouse_in(v.x + 2 * big2, v.y + 10 * big2, v.x + v.an - 2 * big2, v.y + v.al - 2 * big2)) n--;
+		if (n ==
+		    0) // If we're over the bar, the window is repainted too
+			if (!mouse_in(v.x + 2 * big2, v.y + 10 * big2,
+				      v.x + v.an - 2 * big2,
+				      v.y + v.al - 2 * big2))
+				n--;
 
 		if (n != oldn && oldn == 0)
 			if (v.primer_plano == 1) {
@@ -699,7 +777,8 @@ static void dialog_environment(void) {
 				salir_del_dialogo = 0;
 			}
 		oldn = max_windows;
-		if (n < 0) n++;
+		if (n < 0)
+			n++;
 
 		//─────────────────────────────────────────────────────────────────────────
 		// Determines cursor shape
@@ -707,7 +786,8 @@ static void dialog_environment(void) {
 
 		if (n == max_windows)
 			mouse_graf = 1;
-		else if (mouse_in(v.x + 2 * big2, v.y + 2 * big2, v.x + v.an - 2 * big2, v.y + 9 * big2))
+		else if (mouse_in(v.x + 2 * big2, v.y + 2 * big2,
+				  v.x + v.an - 2 * big2, v.y + 9 * big2))
 			if (mouse_x <= v.x + v.an - 10 * big2)
 				mouse_graf = 2;
 			else
@@ -720,7 +800,9 @@ static void dialog_environment(void) {
 		//─────────────────────────────────────────────────────────────────────────
 
 		if (n == 0)
-			if (mouse_in(v.x + 2 * big2, v.y + 10 * big2, v.x + v.an - 2 * big2, v.y + v.al - 2 * big2)) {
+			if (mouse_in(v.x + 2 * big2, v.y + 10 * big2,
+				     v.x + v.an - 2 * big2,
+				     v.y + v.al - 2 * big2)) {
 
 				dialogo_invocado = 1;
 				wmouse_x = mouse_x - v.x;
@@ -739,7 +821,8 @@ static void dialog_environment(void) {
 
 			} else { // If we're over the window control bar...
 
-				if (mouse_graf == 2 && (mouse_b & 1)) move_window();
+				if (mouse_graf == 2 && (mouse_b & 1))
+					move_window();
 
 				if (mouse_graf == 5 && (mouse_b & 1)) {
 					close_window();
@@ -778,7 +861,9 @@ static void dialog_environment(void) {
 
 		if (key(_ESC) && !key(_L_CTRL)) {
 			for (n = 0; n < v.items; n++)
-				if (v.item[n].tipo == 2 && (v.item[n].estado & 2)) break;
+				if (v.item[n].tipo == 2 &&
+				    (v.item[n].estado & 2))
+					break;
 			if (n == v.items) {
 				close_window();
 				salir_del_dialogo = 1;
@@ -789,21 +874,26 @@ static void dialog_environment(void) {
 		// End main loop
 		//─────────────────────────────────────────────────────────────────────────
 
-		if (!dont_blit_anything) { blit_copy(); }
+		if (!dont_blit_anything) {
+			blit_copy();
+		}
 
 	} while (!salir_del_dialogo);
 	fin_dialogo = 0;
 
 	get[0] = 0;
 
-	do { dread_mouse(); } while ((mouse_b & 1) || key(_ESC));
+	do {
+		dread_mouse();
+	} while ((mouse_b & 1) || key(_ESC));
 }
 
 //════════════════════════════════════════════════════════════════════════════
 //      Draw a dialog box
 //════════════════════════════════════════════════════════════════════════════
 
-static void refrescadialogo(void) {
+static void refrescadialogo(void)
+{
 
 	byte *ptr = v.ptr;
 	int an = v.an, al = v.al;
@@ -834,7 +924,8 @@ static void refrescadialogo(void) {
 //		Close active window (index 0)
 //═════════════════════════════════════════════════════════════════════════════
 
-static void close_window(void) {
+static void close_window(void)
+{
 	int x, y, an, al;
 
 	call(v.close_handler);
@@ -844,14 +935,17 @@ static void close_window(void) {
 		wput(v.ptr, v.an, v.al, v.an - 9, 2, -45);
 	blit_window(0);
 	volcado_parcial(v.x, v.y, v.an, v.al);
-	if (!dont_blit_anything) { blit_copy(); }
+	if (!dont_blit_anything) {
+		blit_copy();
+	}
 	free(v.ptr);
 
 	x = v.x;
 	y = v.y;
 	an = v.an;
 	al = v.al;
-	memmove(&v.tipo, &ventana[1].tipo, sizeof(tventana) * (max_windows - 1));
+	memmove(&v.tipo, &ventana[1].tipo,
+		sizeof(tventana) * (max_windows - 1));
 	update_box(x, y, an, al);
 
 	if (v.tipo == 1) { // Dialog on top of dialog, only last one is opened
@@ -859,7 +953,9 @@ static void close_window(void) {
 		blit_window(0);
 	}
 
-	do { dread_mouse(); } while ((mouse_b & 1) || key(_ESC));
+	do {
+		dread_mouse();
+	} while ((mouse_b & 1) || key(_ESC));
 
 	implode(x, y, an, al);
 }
@@ -868,7 +964,8 @@ static void close_window(void) {
 //      Move a window
 //═════════════════════════════════════════════════════════════════════════════
 
-static void move_window(void) {
+static void move_window(void)
+{
 	int ix, iy;
 	int x, y, an, al;
 
@@ -889,7 +986,9 @@ static void move_window(void) {
 		update_box(x, y, an, al);
 		v.tipo = 1;
 		blit_window(0);
-		if (!dont_blit_anything) { blit_copy(); }
+		if (!dont_blit_anything) {
+			blit_copy();
+		}
 	} while (mouse_b & 1);
 
 	wrectangle(v.ptr, an / big2, al / big2, c2, 0, 0, an / big2, al / big2);
@@ -897,10 +996,12 @@ static void move_window(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Blit a window, normal or darkened depending on whether it's in foreground or not
+//	Blit a window, normal or darkened depending on whether it's in
+//foreground or not
 //═════════════════════════════════════════════════════════════════════════════
 
-static void blit_window(int m) {
+static void blit_window(int m)
+{
 
 	int x, y, an, al, n;
 	byte *_ptr;
@@ -920,8 +1021,10 @@ static void blit_window(int m) {
 		al += y;
 		y = 0;
 	}
-	if (x + an > vga_an) an = vga_an - x;
-	if (y + al > vga_al) al = vga_al - y;
+	if (x + an > vga_an)
+		an = vga_an - x;
+	if (y + al > vga_al)
+		al = vga_al - y;
 
 	for (n = m; n >= 0; n--)
 		if (ventana[n].tipo)
@@ -958,9 +1061,13 @@ static void blit_window(int m) {
 
 				if (_an > 0 && _al > 0)
 					if (ventana[n].primer_plano == 1)
-						wblit(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit(copia, vga_an, vga_al,
+						      _ptr, __x, _y, _an, _al,
+						      salta_x);
 					else
-						wblit_dark(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit_dark(
+						    copia, vga_an, vga_al, _ptr,
+						    __x, _y, _an, _al, salta_x);
 			}
 
 	volcado_parcial(x, y, an, al);
@@ -970,7 +1077,9 @@ static void blit_window(int m) {
 //      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
-static void wblit(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta) {
+static void wblit(byte *copia, int an_copia, int al_copia, byte *p, int x,
+		  int y, int an, int al, int salta)
+{
 
 	byte *q;
 	int salta_x, long_x, resto_x;
@@ -1013,7 +1122,9 @@ static void wblit(byte *copia, int an_copia, int al_copia, byte *p, int x, int y
 //      Window blit
 //═════════════════════════════════════════════════════════════════════════════
 
-static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x, int y, int an, int al, int salta) {
+static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x,
+		       int y, int an, int al, int salta)
+{
 
 	byte *q, *_ghost;
 	int salta_x, long_x, resto_x;
@@ -1025,7 +1136,6 @@ static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x, 
 		_ghost = ghost + 256 * (int)c0;
 	else
 		_ghost = ghost_inicial;
-
 
 	if (x < 0)
 		salta_x = -x;
@@ -1067,12 +1177,15 @@ static void wblit_dark(byte *copia, int an_copia, int al_copia, byte *p, int x, 
 //      Draw a box onscreen
 //═════════════════════════════════════════════════════════════════════════════
 
-static void wbox(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al) {
+static void wbox(byte *copia, int an_copia, int al_copia, byte c, int x, int y,
+		 int an, int al)
+{
 	wbox_in_box(copia, an_copia, an_copia, al_copia, c, x, y, an, al);
 }
 
-static void
-wbox_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al) {
+static void wbox_in_box(byte *copia, int an_real_copia, int an_copia,
+			int al_copia, byte c, int x, int y, int an, int al)
+{
 	byte *p;
 
 	if (big) {
@@ -1093,8 +1206,10 @@ wbox_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, byte c, 
 		an += x;
 		x = 0;
 	}
-	if (y + al > al_copia) al = al_copia - y;
-	if (x + an > an_copia) an = an_copia - x;
+	if (y + al > al_copia)
+		al = al_copia - y;
+	if (x + an > an_copia)
+		an = an_copia - x;
 
 	if (an > 0 && al > 0) {
 		p = copia + y * an_real_copia + x;
@@ -1105,12 +1220,13 @@ wbox_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, byte c, 
 	}
 }
 
-
 //═════════════════════════════════════════════════════════════════════════════
 //      Draw a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
-static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x, int y, int an, int al) {
+static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x,
+		       int y, int an, int al)
+{
 	wbox(copia, an_copia, al_copia, c, x, y, an, 1);
 	wbox(copia, an_copia, al_copia, c, x, y + al - 1, an, 1);
 	wbox(copia, an_copia, al_copia, c, x, y + 1, 1, al - 2);
@@ -1121,13 +1237,19 @@ static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x, i
 //      Put a graphic
 //═════════════════════════════════════════════════════════════════════════════
 
-static void put(int x, int y, int n) { wput_in_box(copia, vga_an, vga_an, vga_al, x, y, n); }
+static void put(int x, int y, int n)
+{
+	wput_in_box(copia, vga_an, vga_an, vga_al, x, y, n);
+}
 
-static void wput(byte *copia, int an_copia, int al_copia, int x, int y, int n) {
+static void wput(byte *copia, int an_copia, int al_copia, int x, int y, int n)
+{
 	wput_in_box(copia, an_copia, an_copia, al_copia, x, y, n);
 }
 
-static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, int x, int y, int n) {
+static void wput_in_box(byte *copia, int an_real_copia, int an_copia,
+			int al_copia, int x, int y, int n)
+{
 
 	int al, an;
 	int block;
@@ -1137,7 +1259,8 @@ static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_cop
 
 	if (big)
 		if (n >= 32 || n < 0) {
-			bwput_in_box(copia, an_real_copia, an_copia, al_copia, x, y, n);
+			bwput_in_box(copia, an_real_copia, an_copia, al_copia,
+				     x, y, n);
 			return;
 		}
 
@@ -1165,7 +1288,8 @@ static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_cop
 		resto_x = x + an - an_copia;
 	else
 		resto_x = 0;
-	if ((long_x = an - salta_x - resto_x) <= 0) return;
+	if ((long_x = an - salta_x - resto_x) <= 0)
+		return;
 
 	if (y < 0)
 		salta_y = -y;
@@ -1175,20 +1299,32 @@ static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_cop
 		resto_y = y + al - al_copia;
 	else
 		resto_y = 0;
-	if ((long_y = al - salta_y - resto_y) <= 0) return;
+	if ((long_y = al - salta_y - resto_y) <= 0)
+		return;
 
 	p += an * salta_y + salta_x;
 	q += an_real_copia * salta_y + salta_x;
 	resto_x += salta_x;
 	an = long_x;
-	if (block) do {
+	if (block)
+		do {
 			do {
 				switch (*p) {
-					case 0: *q = c0; break;
-					case 1: *q = c1; break;
-					case 2: *q = c2; break;
-					case 3: *q = c3; break;
-					case 4: *q = c4; break;
+				case 0:
+					*q = c0;
+					break;
+				case 1:
+					*q = c1;
+					break;
+				case 2:
+					*q = c2;
+					break;
+				case 3:
+					*q = c3;
+					break;
+				case 4:
+					*q = c4;
+					break;
 				}
 				p++;
 				q++;
@@ -1200,10 +1336,18 @@ static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_cop
 		do {
 			do {
 				switch (*p) {
-					case 1: *q = c1; break;
-					case 2: *q = c2; break;
-					case 3: *q = c3; break;
-					case 4: *q = c4; break;
+				case 1:
+					*q = c1;
+					break;
+				case 2:
+					*q = c2;
+					break;
+				case 3:
+					*q = c3;
+					break;
+				case 4:
+					*q = c4;
+					break;
 				}
 				p++;
 				q++;
@@ -1213,7 +1357,9 @@ static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_cop
 		} while (--long_y);
 }
 
-static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, int x, int y, int n) {
+static void bwput_in_box(byte *copia, int an_real_copia, int an_copia,
+			 int al_copia, int x, int y, int n)
+{
 
 	int al, an;
 	int block;
@@ -1243,7 +1389,8 @@ static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_co
 		y *= 2;
 	} else {
 		an_copia = -an_copia;
-		if (an_real_copia < 0) an_real_copia = -an_real_copia;
+		if (an_real_copia < 0)
+			an_real_copia = -an_real_copia;
 	}
 
 	q = copia + y * an_real_copia + x;
@@ -1256,7 +1403,8 @@ static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_co
 		resto_x = x + an - an_copia;
 	else
 		resto_x = 0;
-	if ((long_x = an - salta_x - resto_x) <= 0) return;
+	if ((long_x = an - salta_x - resto_x) <= 0)
+		return;
 
 	if (y < 0)
 		salta_y = -y;
@@ -1266,21 +1414,33 @@ static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_co
 		resto_y = y + al - al_copia;
 	else
 		resto_y = 0;
-	if ((long_y = al - salta_y - resto_y) <= 0) return;
+	if ((long_y = al - salta_y - resto_y) <= 0)
+		return;
 
 	p += an * salta_y + salta_x;
 	q += an_real_copia * salta_y + salta_x;
 	resto_x += salta_x;
 	an = long_x;
 
-	if (block) do {
+	if (block)
+		do {
 			do {
 				switch (*p) {
-					case 0: *q = c0; break;
-					case 1: *q = c1; break;
-					case 2: *q = c2; break;
-					case 3: *q = c3; break;
-					case 4: *q = c4; break;
+				case 0:
+					*q = c0;
+					break;
+				case 1:
+					*q = c1;
+					break;
+				case 2:
+					*q = c2;
+					break;
+				case 3:
+					*q = c3;
+					break;
+				case 4:
+					*q = c4;
+					break;
 				}
 				p++;
 				q++;
@@ -1292,10 +1452,18 @@ static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_co
 		do {
 			do {
 				switch (*p) {
-					case 1: *q = c1; break;
-					case 2: *q = c2; break;
-					case 3: *q = c3; break;
-					case 4: *q = c4; break;
+				case 1:
+					*q = c1;
+					break;
+				case 2:
+					*q = c2;
+					break;
+				case 3:
+					*q = c3;
+					break;
+				case 4:
+					*q = c4;
+					break;
 				}
 				p++;
 				q++;
@@ -1309,7 +1477,8 @@ static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_co
 //      Text drawing functions
 //═════════════════════════════════════════════════════════════════════════════
 
-static int char_len(char c) {
+static int char_len(char c)
+{
 	struct _car {
 		byte an;
 		word dir;
@@ -1318,7 +1487,8 @@ static int char_len(char c) {
 	return (car[c].an);
 }
 
-static int text_len(byte *ptr) {
+static int text_len(byte *ptr)
+{
 
 	int an;
 
@@ -1334,13 +1504,16 @@ static int text_len(byte *ptr) {
 		ptr++;
 	}
 
-	if (big) an /= 2;
+	if (big)
+		an /= 2;
 
-	if (an) an--;
+	if (an)
+		an--;
 	return (an);
 }
 
-static int text_len2(byte *ptr) {
+static int text_len2(byte *ptr)
+{
 
 	int an;
 
@@ -1356,24 +1529,23 @@ static int text_len2(byte *ptr) {
 		ptr++;
 	}
 
-	if (big) an /= 2;
+	if (big)
+		an /= 2;
 
 	return (an - 1);
 }
 
-static void wwrite(byte *copia, int an_copia, int al_copia, int x, int y, int centro, byte *ptr, byte c) {
-	wwrite_in_box(copia, an_copia, an_copia, al_copia, x, y, centro, ptr, c);
+static void wwrite(byte *copia, int an_copia, int al_copia, int x, int y,
+		   int centro, byte *ptr, byte c)
+{
+	wwrite_in_box(copia, an_copia, an_copia, al_copia, x, y, centro, ptr,
+		      c);
 }
 
-static void wwrite_in_box(byte *copia,
-                          int an_real_copia,
-                          int an_copia,
-                          int al_copia,
-                          int x_org,
-                          int y_org,
-                          int centro_org,
-                          byte *ptr,
-                          byte c) {
+static void wwrite_in_box(byte *copia, int an_real_copia, int an_copia,
+			  int al_copia, int x_org, int y_org, int centro_org,
+			  byte *ptr, byte c)
+{
 
 	int an, al, button, multi;
 	int centro = centro_org, x = x_org, y = y_org;
@@ -1418,53 +1590,77 @@ static void wwrite_in_box(byte *copia,
 				font++;
 			}
 			al = *text_font;
-			if (an) an--;
+			if (an)
+				an--;
 		}
 	}
 
 	font = text_font + 1025;
 
 	switch (centro) {
-		case 0: break;
-		case 1: x = x - (an >> 1); break;
-		case 2: x = x - an + 1; break;
-		case 3: y = y - (al >> 1); break;
-		case 4:
-			x = x - (an >> 1);
-			y = y - (al >> 1);
-			break;
-		case 5:
-			x = x - an + 1;
-			y = y - (al >> 1);
-			break;
-		case 6: y = y - al + 1; break;
-		case 7:
-			x = x - (an >> 1);
-			y = y - al + 1;
-			break;
-		case 8:
-			x = x - an + 1;
-			y = y - al + 1;
-			break;
+	case 0:
+		break;
+	case 1:
+		x = x - (an >> 1);
+		break;
+	case 2:
+		x = x - an + 1;
+		break;
+	case 3:
+		y = y - (al >> 1);
+		break;
+	case 4:
+		x = x - (an >> 1);
+		y = y - (al >> 1);
+		break;
+	case 5:
+		x = x - an + 1;
+		y = y - (al >> 1);
+		break;
+	case 6:
+		y = y - al + 1;
+		break;
+	case 7:
+		x = x - (an >> 1);
+		y = y - al + 1;
+		break;
+	case 8:
+		x = x - an + 1;
+		y = y - al + 1;
+		break;
 	}
 
 	if (button)
 		if (c != c0) {
-			wbox(copia, an_real_copia, al_copia, c2, x - 2, y - 2, an + 4, al + 4);
-			wrectangle(copia, an_real_copia, al_copia, c0, x - 3, y - 3, an + 6, al + 6);
-			wrectangle(copia, an_real_copia, al_copia, c3, x - 2, y - 2, an + 3, 1);
-			wrectangle(copia, an_real_copia, al_copia, c3, x - 2, y - 2, 1, al + 3);
-			wrectangle(copia, an_real_copia, al_copia, c4, x - 2, y - 2, 1, 1);
-			wrectangle(copia, an_real_copia, al_copia, c1, x - 1, y + al + 1, an + 3, 1);
-			wrectangle(copia, an_real_copia, al_copia, c1, x + an + 1, y - 1, 1, al + 3);
+			wbox(copia, an_real_copia, al_copia, c2, x - 2, y - 2,
+			     an + 4, al + 4);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 3,
+				   y - 3, an + 6, al + 6);
+			wrectangle(copia, an_real_copia, al_copia, c3, x - 2,
+				   y - 2, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c3, x - 2,
+				   y - 2, 1, al + 3);
+			wrectangle(copia, an_real_copia, al_copia, c4, x - 2,
+				   y - 2, 1, 1);
+			wrectangle(copia, an_real_copia, al_copia, c1, x - 1,
+				   y + al + 1, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c1,
+				   x + an + 1, y - 1, 1, al + 3);
 		} else {
-			wbox(copia, an_real_copia, al_copia, c1, x - 2, y - 2, an + 4, al + 4);
-			wrectangle(copia, an_real_copia, al_copia, c0, x - 3, y - 3, an + 6, al + 6);
-			wrectangle(copia, an_real_copia, al_copia, c0, x - 2, y - 2, an + 3, 1);
-			wrectangle(copia, an_real_copia, al_copia, c0, x - 2, y - 2, 1, al + 3);
-			wrectangle(copia, an_real_copia, al_copia, c2, x - 1, y + al + 1, an + 3, 1);
-			wrectangle(copia, an_real_copia, al_copia, c2, x + an + 1, y - 1, 1, al + 3);
-			wrectangle(copia, an_real_copia, al_copia, c3, x + an + 1, y + al + 1, 1, 1);
+			wbox(copia, an_real_copia, al_copia, c1, x - 2, y - 2,
+			     an + 4, al + 4);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 3,
+				   y - 3, an + 6, al + 6);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 2,
+				   y - 2, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c0, x - 2,
+				   y - 2, 1, al + 3);
+			wrectangle(copia, an_real_copia, al_copia, c2, x - 1,
+				   y + al + 1, an + 3, 1);
+			wrectangle(copia, an_real_copia, al_copia, c2,
+				   x + an + 1, y - 1, 1, al + 3);
+			wrectangle(copia, an_real_copia, al_copia, c3,
+				   x + an + 1, y + al + 1, 1, 1);
 		}
 
 	if (centro_org & 0xFF00) {
@@ -1479,31 +1675,41 @@ static void wwrite_in_box(byte *copia,
 				font++;
 			}
 			al = *text_font;
-			if (an) an--;
+			if (an)
+				an--;
 		}
 		font = text_font + 1025;
 		switch (centro) {
-			case 0: break;
-			case 1: x = x_org - (an >> 1); break;
-			case 2: x = x_org - an + 1; break;
-			case 3: y = y_org - (al >> 1); break;
-			case 4:
-				x = x_org - (an >> 1);
-				y = y_org - (al >> 1);
-				break;
-			case 5:
-				x = x_org - an + 1;
-				y = y_org - (al >> 1);
-				break;
-			case 6: y = y_org - al + 1; break;
-			case 7:
-				x = x_org - (an >> 1);
-				y = y_org - al + 1;
-				break;
-			case 8:
-				x = x_org - an + 1;
-				y = y_org - al + 1;
-				break;
+		case 0:
+			break;
+		case 1:
+			x = x_org - (an >> 1);
+			break;
+		case 2:
+			x = x_org - an + 1;
+			break;
+		case 3:
+			y = y_org - (al >> 1);
+			break;
+		case 4:
+			x = x_org - (an >> 1);
+			y = y_org - (al >> 1);
+			break;
+		case 5:
+			x = x_org - an + 1;
+			y = y_org - (al >> 1);
+			break;
+		case 6:
+			y = y_org - al + 1;
+			break;
+		case 7:
+			x = x_org - (an >> 1);
+			y = y_org - al + 1;
+			break;
+		case 8:
+			x = x_org - an + 1;
+			y = y_org - al + 1;
+			break;
 		}
 	}
 
@@ -1518,30 +1724,39 @@ static void wwrite_in_box(byte *copia,
 	}
 
 	if (y < al_copia && y + al > 0) {
-		if (y >= 0 && y + al <= al_copia) { // El texto coge entero (coord. y)
+		if (y >= 0 &&
+		    y + al <= al_copia) { // El texto coge entero (coord. y)
 			while (*ptr && x + car[*ptr].an <= 0) {
 				x = x + car[*ptr].an;
 				ptr++;
 			}
 			if (*ptr && x < 0) {
-				wtexc(copia, an_real_copia, an_copia, al_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+				wtexc(copia, an_real_copia, an_copia, al_copia,
+				      font + car[*ptr].dir, x, y, car[*ptr].an,
+				      al, c);
 				x = x + car[*ptr].an;
 				ptr++;
 			}
 			while (*ptr && x + car[*ptr].an <= an_copia) {
-				wtexn(copia, an_real_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+				wtexn(copia, an_real_copia,
+				      font + car[*ptr].dir, x, y, car[*ptr].an,
+				      al, c);
 				x = x + car[*ptr].an;
 				ptr++;
 			}
 			if (*ptr && x < an_copia)
-				wtexc(copia, an_real_copia, an_copia, al_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+				wtexc(copia, an_real_copia, an_copia, al_copia,
+				      font + car[*ptr].dir, x, y, car[*ptr].an,
+				      al, c);
 		} else {
 			while (*ptr && x + car[*ptr].an <= 0) {
 				x = x + car[*ptr].an;
 				ptr++;
 			}
 			while (*ptr && x < an_copia) {
-				wtexc(copia, an_real_copia, an_copia, al_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+				wtexc(copia, an_real_copia, an_copia, al_copia,
+				      font + car[*ptr].dir, x, y, car[*ptr].an,
+				      al, c);
 				x = x + car[*ptr].an;
 				ptr++;
 			}
@@ -1549,14 +1764,17 @@ static void wwrite_in_box(byte *copia,
 	}
 }
 
-static void wtexn(byte *copia, int an_real_copia, byte *p, int x, int y, byte an, int al, byte c) {
+static void wtexn(byte *copia, int an_real_copia, byte *p, int x, int y,
+		  byte an, int al, byte c)
+{
 
 	byte *q = copia + y * an_real_copia + x;
 	int ancho = an;
 
 	do {
 		do {
-			if (*p) *q = c;
+			if (*p)
+				*q = c;
 			p++;
 			q++;
 		} while (--an);
@@ -1564,8 +1782,9 @@ static void wtexn(byte *copia, int an_real_copia, byte *p, int x, int y, byte an
 	} while (--al);
 }
 
-static void
-wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia, byte *p, int x, int y, byte an, int al, byte c) {
+static void wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia,
+		  byte *p, int x, int y, byte an, int al, byte c)
+{
 
 	byte *q = copia + y * an_real_copia + x;
 	int salta_x, long_x, resto_x;
@@ -1597,7 +1816,8 @@ wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia, byte *p, int x
 	an = long_x;
 	do {
 		do {
-			if (*p) *q = c;
+			if (*p)
+				*q = c;
 			p++;
 			q++;
 		} while (--an);
@@ -1610,10 +1830,12 @@ wtexc(byte *copia, int an_real_copia, int an_copia, int al_copia, byte *p, int x
 //      Explode a new window
 //═════════════════════════════════════════════════════════════════════════════
 
-static void explode(int x, int y, int an, int al) {
+static void explode(int x, int y, int an, int al)
+{
 	int n = 0, type = v.tipo, b = big;
 	int xx, yy, aan, aal;
-	if (dont_blit_anything) return;
+	if (dont_blit_anything)
+		return;
 	v.tipo = 0;
 	big = 0;
 	update_box(x, y, an, al);
@@ -1635,16 +1857,20 @@ static void explode(int x, int y, int an, int al) {
 	big = b;
 }
 
-static void implode(int x, int y, int an, int al) {
+static void implode(int x, int y, int an, int al)
+{
 	int n = 9, b = big;
 	int xx, yy, aan, aal;
-	if (dont_blit_anything) return;
+	if (dont_blit_anything)
+		return;
 	big = 0;
 	do {
 		aan = (an * n) / 10;
-		if (!aan) aan = 1;
+		if (!aan)
+			aan = 1;
 		aal = (al * n) / 10;
-		if (!aal) aal = 1;
+		if (!aal)
+			aal = 1;
 		xx = x + an / 2 - aan / 2;
 		yy = y + al / 2 - aal / 2;
 		wrectangle(copia, vga_an, vga_al, c4, xx, yy, aan, aal);
@@ -1656,10 +1882,13 @@ static void implode(int x, int y, int an, int al) {
 	big = b;
 }
 
-static void extrude(int x, int y, int an, int al, int x2, int y2, int an2, int al2) {
+static void extrude(int x, int y, int an, int al, int x2, int y2, int an2,
+		    int al2)
+{
 	int n = 9, type = v.tipo, b = big;
 	int xx, yy, aan, aal;
-	if (dont_blit_anything) return;
+	if (dont_blit_anything)
+		return;
 	v.tipo = 0;
 	big = 0;
 	update_box(x, y, an, al);
@@ -1682,7 +1911,8 @@ static void extrude(int x, int y, int an, int al, int x2, int y2, int an2, int a
 //      Updates a box on screen
 //═════════════════════════════════════════════════════════════════════════════
 
-static void update_box(int x, int y, int an, int al) {
+static void update_box(int x, int y, int an, int al)
+{
 
 	int n;
 	byte *_ptr;
@@ -1697,9 +1927,12 @@ static void update_box(int x, int y, int an, int al) {
 		al += y;
 		y = 0;
 	}
-	if (x + an > vga_an) an = vga_an - x;
-	if (y + al > vga_al) al = vga_al - y;
-	if (an <= 0 || al <= 0) return;
+	if (x + an > vga_an)
+		an = vga_an - x;
+	if (y + al > vga_al)
+		al = vga_al - y;
+	if (an <= 0 || al <= 0)
+		return;
 
 	restore_desktop(x, y, an, al);
 
@@ -1738,9 +1971,13 @@ static void update_box(int x, int y, int an, int al) {
 
 				if (_an > 0 && _al > 0)
 					if (ventana[n].primer_plano == 1)
-						wblit(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit(copia, vga_an, vga_al,
+						      _ptr, __x, _y, _an, _al,
+						      salta_x);
 					else
-						wblit_dark(copia, vga_an, vga_al, _ptr, __x, _y, _an, _al, salta_x);
+						wblit_dark(
+						    copia, vga_an, vga_al, _ptr,
+						    __x, _y, _an, _al, salta_x);
 			}
 
 	volcado_parcial(x, y, an, al);
@@ -1750,19 +1987,23 @@ static void update_box(int x, int y, int an, int al) {
 //	Check if two windows overlap
 //═════════════════════════════════════════════════════════════════════════════
 
-static int colisionan(int a, int b) {
+static int colisionan(int a, int b)
+{
 
-	if (ventana[b].y < ventana[a].y + ventana[a].al && ventana[b].y + ventana[b].al > ventana[a].y &&
-	    ventana[b].x < ventana[a].x + ventana[a].an && ventana[b].x + ventana[b].an > ventana[a].x)
+	if (ventana[b].y < ventana[a].y + ventana[a].al &&
+	    ventana[b].y + ventana[b].al > ventana[a].y &&
+	    ventana[b].x < ventana[a].x + ventana[a].an &&
+	    ventana[b].x + ventana[b].an > ventana[a].x)
 		return (1);
 	else
 		return (0);
 }
 
-static int collides_with(int a, int x, int y, int an, int al) {
+static int collides_with(int a, int x, int y, int an, int al)
+{
 
-	if (y < ventana[a].y + ventana[a].al && y + al > ventana[a].y && x < ventana[a].x + ventana[a].an &&
-	    x + an > ventana[a].x)
+	if (y < ventana[a].y + ventana[a].al && y + al > ventana[a].y &&
+	    x < ventana[a].x + ventana[a].an && x + an > ventana[a].x)
 		return (1);
 	else
 		return (0);
@@ -1772,16 +2013,21 @@ static int collides_with(int a, int x, int y, int an, int al) {
 //      restore desktop *** BEWARE *** here background must be updated
 //════════════════════════════════════════════════════════════════════════════
 
-static void restore_desktop(int x, int y, int an, int al) {
+static void restore_desktop(int x, int y, int an, int al)
+{
 
 	byte *p;
 	byte *t;
 	int n, _an;
 
-	if (y < 0) y = 0;
-	if (x < 0) x = 0;
-	if (y + al > vga_al) al = vga_al - y;
-	if (x + an > vga_an) an = vga_an - x;
+	if (y < 0)
+		y = 0;
+	if (x < 0)
+		x = 0;
+	if (y + al > vga_al)
+		al = vga_al - y;
+	if (x + an > vga_an)
+		an = vga_an - x;
 
 	if (an > 0 && al > 0) {
 		p = copia + y * vga_an + x;
@@ -1818,18 +2064,22 @@ void restore_desktop(int x,int y,int an,int al) {
 //      Item definitions
 //═════════════════════════════════════════════════════════════════════════════
 
-static void _button(byte *t, int x, int y, int c) {
+static void _button(byte *t, int x, int y, int c)
+{
 	v.item[v.items].tipo = 1;
 	v.item[v.items].estado = 0;
 	v.item[v.items].button.texto = t;
 	v.item[v.items].button.x = x;
 	v.item[v.items].button.y = y;
 	v.item[v.items].button.center = c;
-	if (v.selected_item == -1) v.selected_item = v.items;
+	if (v.selected_item == -1)
+		v.selected_item = v.items;
 	v.items++;
 }
 
-static void _get(byte *t, int x, int y, int an, byte *buffer, int lon_buffer, int r0, int r1) {
+static void _get(byte *t, int x, int y, int an, byte *buffer, int lon_buffer,
+		 int r0, int r1)
+{
 	v.item[v.items].tipo = 2;
 	v.item[v.items].estado = 0;
 	v.item[v.items].get.texto = t;
@@ -1840,11 +2090,13 @@ static void _get(byte *t, int x, int y, int an, byte *buffer, int lon_buffer, in
 	v.item[v.items].get.lon_buffer = lon_buffer;
 	v.item[v.items].get.r0 = r0;
 	v.item[v.items].get.r1 = r1;
-	if (v.selected_item == -1) v.selected_item = v.items;
+	if (v.selected_item == -1)
+		v.selected_item = v.items;
 	v.items++;
 }
 
-static void _flag(byte *t, int x, int y, int *valor) {
+static void _flag(byte *t, int x, int y, int *valor)
+{
 	v.item[v.items].tipo = 3;
 	v.item[v.items].estado = 0;
 	v.item[v.items].flag.texto = t;
@@ -1858,15 +2110,23 @@ static void _flag(byte *t, int x, int y, int *valor) {
 //      Items drawing
 //═════════════════════════════════════════════════════════════════════════════
 
-static void _show_items(void) {
+static void _show_items(void)
+{
 	int n = 0;
 	show_items_called = 1;
-	wbox(v.ptr, v.an / big2, v.al / big2, c2, 2, 10, v.an / big2 - 4, v.al / big2 - 12);
+	wbox(v.ptr, v.an / big2, v.al / big2, c2, 2, 10, v.an / big2 - 4,
+	     v.al / big2 - 12);
 	while (n < v.items) {
 		switch (abs(v.item[n].tipo)) {
-			case 1: show_button(&v.item[n]); break;
-			case 2: show_get(&v.item[n]); break;
-			case 3: show_flag(&v.item[n]); break;
+		case 1:
+			show_button(&v.item[n]);
+			break;
+		case 2:
+			show_get(&v.item[n]);
+			break;
+		case 3:
+			show_flag(&v.item[n]);
+			break;
 		}
 		n++;
 	}
@@ -1874,14 +2134,21 @@ static void _show_items(void) {
 	show_items_called = 0;
 }
 
-static void _show_items2(void) {
+static void _show_items2(void)
+{
 	int n = 0;
 	show_items_called = 1;
 	while (n < v.items) {
 		switch (v.item[n].tipo) {
-			case 1: show_button(&v.item[n]); break;
-			case 2: show_get(&v.item[n]); break;
-			case 3: show_flag(&v.item[n]); break;
+		case 1:
+			show_button(&v.item[n]);
+			break;
+		case 2:
+			show_get(&v.item[n]);
+			break;
+		case 3:
+			show_flag(&v.item[n]);
+			break;
 		}
 		n++;
 	}
@@ -1889,27 +2156,37 @@ static void _show_items2(void) {
 	show_items_called = 0;
 }
 
-static void show_button(t_item *i) {
-	wwrite(v.ptr, v.an / big2, v.al / big2, i->button.x, i->button.y, i->button.center, i->button.texto, c3);
-	if (&v.item[v.selected_item] == i) select_button(i, 1);
+static void show_button(t_item *i)
+{
+	wwrite(v.ptr, v.an / big2, v.al / big2, i->button.x, i->button.y,
+	       i->button.center, i->button.texto, c3);
+	if (&v.item[v.selected_item] == i)
+		select_button(i, 1);
 }
 
-static void show_get(t_item *i) {
-	wbox(v.ptr, v.an / big2, v.al / big2, c1, i->get.x, i->get.y + 8, i->get.an, 9);
-	wwrite_in_box(
-	    v.ptr, v.an / big2, i->get.an - 1 + i->get.x, v.al / big2, i->get.x + 1, i->get.y + 9, 0, i->get.buffer, c3);
-	wwrite(v.ptr, v.an / big2, v.al / big2, i->get.x + 1, i->get.y, 0, i->get.texto, c12);
-	wwrite(v.ptr, v.an / big2, v.al / big2, i->get.x, i->get.y, 0, i->get.texto, c3);
+static void show_get(t_item *i)
+{
+	wbox(v.ptr, v.an / big2, v.al / big2, c1, i->get.x, i->get.y + 8,
+	     i->get.an, 9);
+	wwrite_in_box(v.ptr, v.an / big2, i->get.an - 1 + i->get.x, v.al / big2,
+		      i->get.x + 1, i->get.y + 9, 0, i->get.buffer, c3);
+	wwrite(v.ptr, v.an / big2, v.al / big2, i->get.x + 1, i->get.y, 0,
+	       i->get.texto, c12);
+	wwrite(v.ptr, v.an / big2, v.al / big2, i->get.x, i->get.y, 0,
+	       i->get.texto, c3);
 	if (&v.item[v.selected_item] == i) {
-		if (i->estado & 2) select_get(i, 0, 0);
+		if (i->estado & 2)
+			select_get(i, 0, 0);
 		select_get(i, 1, 0);
 	}
 }
 
-static void select_get(t_item *i, int activo, int ocultar_error) {
+static void select_get(t_item *i, int activo, int ocultar_error)
+{
 	int n;
 	if (activo) {
-		wrectangle(v.ptr, v.an / big2, v.al / big2, c12, i->get.x - 1, i->get.y + 7, i->get.an + 2, 11);
+		wrectangle(v.ptr, v.an / big2, v.al / big2, c12, i->get.x - 1,
+			   i->get.y + 7, i->get.an + 2, 11);
 		if (i->estado & 2) {
 			strcpy(get, (char *)i->get.buffer);
 			get_pos = strlen(get);
@@ -1921,10 +2198,16 @@ static void select_get(t_item *i, int activo, int ocultar_error) {
 				if (i->get.r0 == i->get.r1)
 					strcpy((char *)i->get.buffer, get);
 				else {
-					if (atoi(get) >= i->get.r0 && atoi(get) <= i->get.r1)
-						itoa(atoi(get), (char *)i->get.buffer, 10);
-					else if (!ocultar_error && !show_items_called) {
-						sprintf(combo_error, "%s [%d..%d].", text[4], i->get.r0, text[5], i->get.r1, text[6]);
+					if (atoi(get) >= i->get.r0 &&
+					    atoi(get) <= i->get.r1)
+						itoa(atoi(get),
+						     (char *)i->get.buffer, 10);
+					else if (!ocultar_error &&
+						 !show_items_called) {
+						sprintf(combo_error,
+							"%s [%d..%d].", text[4],
+							i->get.r0, text[5],
+							i->get.r1, text[6]);
 						text[3] = (byte *)combo_error;
 						v_texto = (char *)text[3];
 						dialog(err0);
@@ -1934,34 +2217,38 @@ static void select_get(t_item *i, int activo, int ocultar_error) {
 		i->estado &= 1;
 
 		if (!superget) {
-			wbox(v.ptr, v.an / big2, v.al / big2, c1, i->get.x, i->get.y + 8, i->get.an, 9);
-			wwrite_in_box(v.ptr,
-			              v.an / big2,
-			              i->get.an - 1 + i->get.x,
-			              v.al / big2,
-			              i->get.x + 1,
-			              i->get.y + 9,
-			              0,
-			              i->get.buffer,
-			              c3);
-			wrectangle(v.ptr, v.an / big2, v.al / big2, c2, i->get.x - 1, i->get.y + 7, i->get.an + 2, 11);
+			wbox(v.ptr, v.an / big2, v.al / big2, c1, i->get.x,
+			     i->get.y + 8, i->get.an, 9);
+			wwrite_in_box(v.ptr, v.an / big2,
+				      i->get.an - 1 + i->get.x, v.al / big2,
+				      i->get.x + 1, i->get.y + 9, 0,
+				      i->get.buffer, c3);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c2,
+				   i->get.x - 1, i->get.y + 7, i->get.an + 2,
+				   11);
 		}
 
 		for (n = 0; n < max_items; n++)
-			if (i == &v.item[n]) v.active_item = n;
+			if (i == &v.item[n])
+				v.active_item = n;
 	}
 }
 
-static void show_flag(t_item *i) {
+static void show_flag(t_item *i)
+{
 	if (*i->flag.valor)
-		wput(v.ptr, v.an / big2, v.al / big2, i->flag.x, i->flag.y, -59);
+		wput(v.ptr, v.an / big2, v.al / big2, i->flag.x, i->flag.y,
+		     -59);
 	else
 		wput(v.ptr, v.an / big2, v.al / big2, i->flag.x, i->flag.y, 58);
-	wwrite(v.ptr, v.an / big2, v.al / big2, i->flag.x + 9, i->flag.y, 0, i->flag.texto, c12);
-	wwrite(v.ptr, v.an / big2, v.al / big2, i->flag.x + 8, i->flag.y, 0, i->flag.texto, c3);
+	wwrite(v.ptr, v.an / big2, v.al / big2, i->flag.x + 9, i->flag.y, 0,
+	       i->flag.texto, c12);
+	wwrite(v.ptr, v.an / big2, v.al / big2, i->flag.x + 8, i->flag.y, 0,
+	       i->flag.texto, c3);
 }
 
-static void select_button(t_item *i, int activo) {
+static void select_button(t_item *i, int activo)
+{
 	int x = i->button.x, y = i->button.y;
 	int an, al;
 
@@ -1973,39 +2260,52 @@ static void select_button(t_item *i, int activo) {
 		al = 7;
 	}
 	switch ((i->button.center & 0xFF)) {
-		case 0: break;
-		case 1: x = x - (an >> 1); break;
-		case 2: x = x - an + 1; break;
-		case 3: y = y - (al >> 1); break;
-		case 4:
-			x = x - (an >> 1);
-			y = y - (al >> 1);
-			break;
-		case 5:
-			x = x - an + 1;
-			y = y - (al >> 1);
-			break;
-		case 6: y = y - al + 1; break;
-		case 7:
-			x = x - (an >> 1);
-			y = y - al + 1;
-			break;
-		case 8:
-			x = x - an + 1;
-			y = y - al + 1;
-			break;
+	case 0:
+		break;
+	case 1:
+		x = x - (an >> 1);
+		break;
+	case 2:
+		x = x - an + 1;
+		break;
+	case 3:
+		y = y - (al >> 1);
+		break;
+	case 4:
+		x = x - (an >> 1);
+		y = y - (al >> 1);
+		break;
+	case 5:
+		x = x - an + 1;
+		y = y - (al >> 1);
+		break;
+	case 6:
+		y = y - al + 1;
+		break;
+	case 7:
+		x = x - (an >> 1);
+		y = y - al + 1;
+		break;
+	case 8:
+		x = x - an + 1;
+		y = y - al + 1;
+		break;
 	}
 	if (v.ptr[(x - 4) * big2 - 1 + (y - 5) * big2 * v.an] == c12) {
 		if (activo) {
-			wrectangle(v.ptr, v.an / big2, v.al / big2, c1, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c1, x - 4,
+				   y - 4, an + 8, al + 8);
 		} else {
-			wrectangle(v.ptr, v.an / big2, v.al / big2, c12, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c12, x - 4,
+				   y - 4, an + 8, al + 8);
 		}
 	} else {
 		if (activo) {
-			wrectangle(v.ptr, v.an / big2, v.al / big2, c12, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c12, x - 4,
+				   y - 4, an + 8, al + 8);
 		} else {
-			wrectangle(v.ptr, v.an / big2, v.al / big2, c2, x - 4, y - 4, an + 8, al + 8);
+			wrectangle(v.ptr, v.an / big2, v.al / big2, c2, x - 4,
+				   y - 4, an + 8, al + 8);
 		}
 	}
 }
@@ -2014,7 +2314,8 @@ static void select_button(t_item *i, int activo) {
 //      Items processing
 //═════════════════════════════════════════════════════════════════════════════
 
-static void _process_items(void) {
+static void _process_items(void)
+{
 	int n = 0, estado;
 	int asc, kesc, est;
 
@@ -2036,18 +2337,29 @@ static void _process_items(void) {
 				ascii = 0;
 				_select_new_item(v.selected_item + 1);
 			}
-			if (ascii == 0x1b) { // && (v.item[v.selected_item].estado&2)) {
+			if (ascii ==
+			    0x1b) { // && (v.item[v.selected_item].estado&2)) {
 				if (v.item[v.selected_item].tipo == 2) {
 					asc = ascii;
 					kesc = kbdFLAGS[28];
 					est = v.item[v.selected_item].estado;
 					ascii = 0;
-					if (superget) strcpy((char *)v.item[v.selected_item].get.buffer, "");
-					strcpy(get, (char *)v.item[v.selected_item].get.buffer);
+					if (superget)
+						strcpy(
+						    (char *)v
+							.item[v.selected_item]
+							.get.buffer,
+						    "");
+					strcpy(get,
+					       (char *)v.item[v.selected_item]
+						   .get.buffer);
 					get_pos = strlen(get);
-					select_get(&v.item[v.selected_item], 0, 1);
-					select_get(&v.item[v.selected_item], 1, 1);
-					if (est == v.item[v.selected_item].estado) {
+					select_get(&v.item[v.selected_item], 0,
+						   1);
+					select_get(&v.item[v.selected_item], 1,
+						   1);
+					if (est ==
+					    v.item[v.selected_item].estado) {
 						ascii = asc;
 						kbdFLAGS[28] = kesc;
 					} else {
@@ -2061,18 +2373,21 @@ static void _process_items(void) {
 
 	while (n < v.items) {
 		switch (v.item[n].tipo) {
-			case 1:
-				estado = button_status(n);
-				if (estado != v.item[n].estado) process_button(n, estado);
-				break;
-			case 2:
-				estado = get_status(n);
-				if (estado != v.item[n].estado || estado >= 2) process_get(n, estado);
-				break;
-			case 3:
-				estado = flag_status(n);
-				if (estado != v.item[n].estado) process_flag(n, estado);
-				break;
+		case 1:
+			estado = button_status(n);
+			if (estado != v.item[n].estado)
+				process_button(n, estado);
+			break;
+		case 2:
+			estado = get_status(n);
+			if (estado != v.item[n].estado || estado >= 2)
+				process_get(n, estado);
+			break;
+		case 3:
+			estado = flag_status(n);
+			if (estado != v.item[n].estado)
+				process_flag(n, estado);
+			break;
 		}
 		n++;
 	}
@@ -2085,116 +2400,119 @@ static void _process_items(void) {
 	}
 }
 
-static void _select_new_item(int i) {
-	if (v.selected_item == i) return;
+static void _select_new_item(int i)
+{
+	if (v.selected_item == i)
+		return;
 	switch (abs(v.item[v.selected_item].tipo)) {
-		case 1: select_button(&v.item[v.selected_item], 0); break;
-		case 2: select_get(&v.item[v.selected_item], 0, 0); break;
+	case 1:
+		select_button(&v.item[v.selected_item], 0);
+		break;
+	case 2:
+		select_get(&v.item[v.selected_item], 0, 0);
+		break;
 	}
 	i--;
 	do {
 		i++;
-		if (i >= v.items) i = 0;
+		if (i >= v.items)
+			i = 0;
 	} while (v.item[i].tipo >= 3 || v.item[i].tipo < 1);
 
 	switch (v.item[v.selected_item = i].tipo) {
-		case 1: select_button(&v.item[v.selected_item], 1); break;
-		case 2: select_get(&v.item[v.selected_item], 1, 0); break;
+	case 1:
+		select_button(&v.item[v.selected_item], 1);
+		break;
+	case 2:
+		select_get(&v.item[v.selected_item], 1, 0);
+		break;
 	}
 	v.volcar = 1;
 }
 
-static void _reselect_item(void) {
+static void _reselect_item(void)
+{
 	switch (v.item[v.selected_item].tipo) {
-		case 1: select_button(&v.item[v.selected_item], 0); break;
-		case 2: select_get(&v.item[v.selected_item], 0, 0); break;
+	case 1:
+		select_button(&v.item[v.selected_item], 0);
+		break;
+	case 2:
+		select_get(&v.item[v.selected_item], 0, 0);
+		break;
 	}
 	switch (v.item[v.selected_item].tipo) {
-		case 1: select_button(&v.item[v.selected_item], 1); break;
-		case 2: select_get(&v.item[v.selected_item], 1, 0); break;
+	case 1:
+		select_button(&v.item[v.selected_item], 1);
+		break;
+	case 2:
+		select_get(&v.item[v.selected_item], 1, 0);
+		break;
 	}
 	v.volcar = 1;
 }
 
-static void process_button(int n, int e) {
+static void process_button(int n, int e)
+{
 	if (v.item[n].estado == 3 && e != 3) {
 		v.active_item = n;
 		kbdFLAGS[28] = 0;
 		ascii = 0;
 	}
 	switch (e) {
-		case 0:
-			wwrite(v.ptr,
-			       v.an / big2,
-			       v.al / big2,
-			       v.item[n].button.x,
-			       v.item[n].button.y,
-			       v.item[n].button.center,
-			       v.item[n].button.texto,
-			       c3);
-			break;
-		case 1:
-			if (v.item[n].estado == 2) v.active_item = n;
-			wwrite(v.ptr,
-			       v.an / big2,
-			       v.al / big2,
-			       v.item[n].button.x,
-			       v.item[n].button.y,
-			       v.item[n].button.center,
-			       v.item[n].button.texto,
-			       c4);
-			break;
-			break;
-		case 2:
-			_select_new_item(n);
-			wwrite(v.ptr,
-			       v.an / big2,
-			       v.al / big2,
-			       v.item[n].button.x,
-			       v.item[n].button.y,
-			       v.item[n].button.center,
-			       v.item[n].button.texto,
-			       c0);
-			break;
-		case 3:
-			wwrite(v.ptr,
-			       v.an / big2,
-			       v.al / big2,
-			       v.item[n].button.x,
-			       v.item[n].button.y,
-			       v.item[n].button.center,
-			       v.item[n].button.texto,
-			       c0);
-			break;
+	case 0:
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].button.x,
+		       v.item[n].button.y, v.item[n].button.center,
+		       v.item[n].button.texto, c3);
+		break;
+	case 1:
+		if (v.item[n].estado == 2)
+			v.active_item = n;
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].button.x,
+		       v.item[n].button.y, v.item[n].button.center,
+		       v.item[n].button.texto, c4);
+		break;
+		break;
+	case 2:
+		_select_new_item(n);
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].button.x,
+		       v.item[n].button.y, v.item[n].button.center,
+		       v.item[n].button.texto, c0);
+		break;
+	case 3:
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].button.x,
+		       v.item[n].button.y, v.item[n].button.center,
+		       v.item[n].button.texto, c0);
+		break;
 	}
 	v.item[n].estado = e;
 	v.volcar = 1;
 }
 
-static int get_status(int n) {
+static int get_status(int n)
+{
 	int x = v.item[n].estado;
 	if (strcmp((char *)v.item[n].get.texto, "")) {
 		if (wmouse_in(v.item[n].get.x,
-		              v.item[n].get.y, // bit 0 "hilite"
-		              v.item[n].get.an,
-		              18))
+			      v.item[n].get.y, // bit 0 "hilite"
+			      v.item[n].get.an, 18))
 			x |= 1;
 		else
 			x &= 2;
 	} else {
 		if (wmouse_in(v.item[n].get.x,
-		              v.item[n].get.y + 8, // bit 0 "hilite"
-		              v.item[n].get.an,
-		              10))
+			      v.item[n].get.y + 8, // bit 0 "hilite"
+			      v.item[n].get.an, 10))
 			x |= 1;
 		else
 			x &= 2;
 	}
 	if ((x & 1) && (mouse_b & 1)) {
-		if (!(old_mouse_b & 1) && (x & 2)) x |= 4;
+		if (!(old_mouse_b & 1) && (x & 2))
+			x |= 4;
 		x |= 2;
 	}
-	if ((ascii && (ascii != 0x1b) && v.selected_item == n)) { //||superget) {
+	if ((ascii && (ascii != 0x1b) &&
+	     v.selected_item == n)) { //||superget) {
 		if (!(x & 2)) {
 			if (ascii == 13)
 				ascii = 0;
@@ -2203,11 +2521,13 @@ static int get_status(int n) {
 		}
 		x |= 2;
 	}
-	if (superget) x = 3; // x&=3;
+	if (superget)
+		x = 3; // x&=3;
 	return (x);
 }
 
-static void process_get(int n, int e) {
+static void process_get(int n, int e)
+{
 	int old_e;
 
 	old_e = v.item[n].estado;
@@ -2218,58 +2538,74 @@ static void process_get(int n, int e) {
 		get_pos = strlen(get);
 	}
 
-	if (e & 4) *get = 0;
+	if (e & 4)
+		*get = 0;
 	e &= 3;
 
 	switch (v.item[n].estado = e) {
-		case 2: get_input(n); break;
-		case 3: get_input(n); break;
+	case 2:
+		get_input(n);
+		break;
+	case 3:
+		get_input(n);
+		break;
 	}
 
 	switch (v.item[n].estado) {
-		case 2:
-		case 0:
-			wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].get.x, v.item[n].get.y, 0, v.item[n].get.texto, c3);
-			break;
-		case 3:
-		case 1:
-			wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].get.x, v.item[n].get.y, 0, v.item[n].get.texto, c4);
-			break;
+	case 2:
+	case 0:
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].get.x,
+		       v.item[n].get.y, 0, v.item[n].get.texto, c3);
+		break;
+	case 3:
+	case 1:
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].get.x,
+		       v.item[n].get.y, 0, v.item[n].get.texto, c4);
+		break;
 	}
 
-	if (old_e != v.item[n].estado) v.volcar = 1;
+	if (old_e != v.item[n].estado)
+		v.volcar = 1;
 }
 
-static int flag_status(int n) {
+static int flag_status(int n)
+{
 	int x = 0;
-	if (wmouse_in(v.item[n].flag.x, v.item[n].flag.y, text_len(v.item[n].flag.texto) + 10, 8)) x = 1;
-	if (x && (mouse_b & 1)) x = 2;
+	if (wmouse_in(v.item[n].flag.x, v.item[n].flag.y,
+		      text_len(v.item[n].flag.texto) + 10, 8))
+		x = 1;
+	if (x && (mouse_b & 1))
+		x = 2;
 	return (x);
 }
 
-static void process_flag(int n, int e) {
+static void process_flag(int n, int e)
+{
 
-	if (v.item[n].estado == 3 && e != 3) v.active_item = n;
+	if (v.item[n].estado == 3 && e != 3)
+		v.active_item = n;
 	switch (e) {
-		case 0:
-			wwrite(
-			    v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x + 8, v.item[n].flag.y, 0, v.item[n].flag.texto, c3);
-			break;
-		case 1:
-			wwrite(
-			    v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x + 8, v.item[n].flag.y, 0, v.item[n].flag.texto, c4);
-			break;
-		case 2:
-			wwrite(
-			    v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x + 8, v.item[n].flag.y, 0, v.item[n].flag.texto, c4);
-			if (v.item[n].estado == 1) {
-				v.active_item = n;
-				if (*v.item[n].flag.valor = !*v.item[n].flag.valor)
-					wput(v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x, v.item[n].flag.y, -59);
-				else
-					wput(v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x, v.item[n].flag.y, 58);
-			}
-			break;
+	case 0:
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x + 8,
+		       v.item[n].flag.y, 0, v.item[n].flag.texto, c3);
+		break;
+	case 1:
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x + 8,
+		       v.item[n].flag.y, 0, v.item[n].flag.texto, c4);
+		break;
+	case 2:
+		wwrite(v.ptr, v.an / big2, v.al / big2, v.item[n].flag.x + 8,
+		       v.item[n].flag.y, 0, v.item[n].flag.texto, c4);
+		if (v.item[n].estado == 1) {
+			v.active_item = n;
+			if (*v.item[n].flag.valor = !*v.item[n].flag.valor)
+				wput(v.ptr, v.an / big2, v.al / big2,
+				     v.item[n].flag.x, v.item[n].flag.y, -59);
+			else
+				wput(v.ptr, v.an / big2, v.al / big2,
+				     v.item[n].flag.x, v.item[n].flag.y, 58);
+		}
+		break;
 	}
 	v.item[n].estado = e;
 	v.volcar = 1;
@@ -2279,67 +2615,77 @@ static void process_flag(int n, int e) {
 //      Input function
 //═════════════════════════════════════════════════════════════════════════════
 
-static void get_input(int n) {
+static void get_input(int n)
+{
 	char cwork[512];
 	int x, l, scroll;
 
-	if (!*get) get_pos = 0;
+	if (!*get)
+		get_pos = 0;
 
 	switch (ascii) {
-		case 1:
-		case 0x1a:
-		case 0x1b: break;
-		case 8:
-			if (get_pos) {
-				strcpy(&get[get_pos - 1], &get[get_pos]);
-				get_pos--;
-				//        get[strlen(get)-1]=0;
-			}
-			if (!*get && superget) strcpy((char *)v.item[v.selected_item].get.buffer, "");
+	case 1:
+	case 0x1a:
+	case 0x1b:
+		break;
+	case 8:
+		if (get_pos) {
+			strcpy(&get[get_pos - 1], &get[get_pos]);
+			get_pos--;
+			//        get[strlen(get)-1]=0;
+		}
+		if (!*get && superget)
+			strcpy((char *)v.item[v.selected_item].get.buffer, "");
+		v.volcar = 1;
+		break;
+	case 13:
+		ascii = 0;
+		kbdFLAGS[28] = 0;
+		_select_new_item(n + 1);
+		return;
+	default:
+		if (!(shift_status & 15) && ascii == 0) {
+			l = v.volcar;
 			v.volcar = 1;
-			break;
-		case 13:
-			ascii = 0;
-			kbdFLAGS[28] = 0;
-			_select_new_item(n + 1);
-			return;
-		default:
-			if (!(shift_status & 15) && ascii == 0) {
-				l = v.volcar;
-				v.volcar = 1;
-				switch (scan_code) {
-					case 77:
-						get_pos++;
-						break; // cursor right
-					case 75:
-						get_pos--;
-						break; // cursor left
-					case 71:
-						get_pos = 0;
-						break; // Start
-					case 79:
-						get_pos = strlen(get);
-						break; // End
-					case 83:
-						get[strlen(get) + 1] = 0;
-						strcpy(&get[get_pos], &get[get_pos + 1]);
-						if (!*get && superget) strcpy((char *)v.item[v.selected_item].get.buffer, "");
-						break;
-					default: v.volcar = l; break;
-				}
-			} else if (ascii && char_len(ascii) > 1 && (x = strlen(get)) < v.item[n].get.lon_buffer - 1) {
-				strcpy(cwork, get);
-				cwork[get_pos] = ascii;
-				cwork[get_pos + 1] = 0;
-				strcat(cwork, get + get_pos);
-				strcpy(get, cwork);
+			switch (scan_code) {
+			case 77:
 				get_pos++;
-				v.volcar = 1;
-				get[x++] = ascii;
-				get[x] = 0;
-				v.volcar = 1;
+				break; // cursor right
+			case 75:
+				get_pos--;
+				break; // cursor left
+			case 71:
+				get_pos = 0;
+				break; // Start
+			case 79:
+				get_pos = strlen(get);
+				break; // End
+			case 83:
+				get[strlen(get) + 1] = 0;
+				strcpy(&get[get_pos], &get[get_pos + 1]);
+				if (!*get && superget)
+					strcpy((char *)v.item[v.selected_item]
+						   .get.buffer,
+					       "");
+				break;
+			default:
+				v.volcar = l;
+				break;
 			}
-			break;
+		} else if (ascii && char_len(ascii) > 1 &&
+			   (x = strlen(get)) < v.item[n].get.lon_buffer - 1) {
+			strcpy(cwork, get);
+			cwork[get_pos] = ascii;
+			cwork[get_pos + 1] = 0;
+			strcat(cwork, get + get_pos);
+			strcpy(get, cwork);
+			get_pos++;
+			v.volcar = 1;
+			get[x++] = ascii;
+			get[x] = 0;
+			v.volcar = 1;
+		}
+		break;
 	}
 
 	if (v.volcar || get_cursor != (system_clock & 4)) {
@@ -2361,37 +2707,30 @@ static void get_input(int n) {
 		} else
 			scroll = 0;
 
-		wbox(v.ptr, v.an / big2, v.al / big2, c0, v.item[n].get.x, v.item[n].get.y + 8, v.item[n].get.an, 9);
+		wbox(v.ptr, v.an / big2, v.al / big2, c0, v.item[n].get.x,
+		     v.item[n].get.y + 8, v.item[n].get.an, 9);
 		//    wwrite_in_box(v.ptr,v.an/big2,v.item[n].get.an-1+v.item[n].get.x,v.al/big2,v.item[n].get.x+1,v.item[n].get.y+9,0,cwork,c4);
-		wwrite_in_box(v.ptr + (v.item[n].get.x + 1) * big2,
-		              v.an / big2,
-		              v.item[n].get.an - 2,
-		              v.al / big2,
-		              0 - scroll,
-		              v.item[n].get.y + 9,
-		              0,
-		              (byte *)cwork,
-		              c4);
+		wwrite_in_box(v.ptr + (v.item[n].get.x + 1) * big2, v.an / big2,
+			      v.item[n].get.an - 2, v.al / big2, 0 - scroll,
+			      v.item[n].get.y + 9, 0, (byte *)cwork, c4);
 
 		if (system_clock & 4) {
-			//      if (strlen(get)) x=v.item[n].get.x+text_len(get)+2; else x=v.item[n].get.x+1;
+			//      if (strlen(get))
+			//      x=v.item[n].get.x+text_len(get)+2; else
+			//      x=v.item[n].get.x+1;
 			x = l + 1;
 			wbox_in_box(v.ptr + (v.item[n].get.x + 1) * big2,
-			            v.an / big2,
-			            v.item[n].get.an - 2,
-			            v.al / big2,
-			            c3,
-			            x - scroll,
-			            v.item[n].get.y + 9,
-			            2,
-			            7);
+				    v.an / big2, v.item[n].get.an - 2,
+				    v.al / big2, c3, x - scroll,
+				    v.item[n].get.y + 9, 2, 7);
 			//      wbox_in_box(v.ptr,v.an/big2,v.item[n].get.an-1+v.item[n].get.x,v.al/big2,c3,x,v.item[n].get.y+9,2,7);
 		}
 	}
 	get_cursor = (system_clock & 4);
 }
 
-static int button_status(int n) {
+static int button_status(int n)
+{
 	int x = v.item[n].button.x, y = v.item[n].button.y;
 	int an, al, e = 0;
 
@@ -2403,31 +2742,43 @@ static int button_status(int n) {
 		al = 7;
 	}
 	switch ((v.item[n].button.center & 0xFF)) {
-		case 0: break;
-		case 1: x = x - (an >> 1); break;
-		case 2: x = x - an + 1; break;
-		case 3: y = y - (al >> 1); break;
-		case 4:
-			x = x - (an >> 1);
-			y = y - (al >> 1);
-			break;
-		case 5:
-			x = x - an + 1;
-			y = y - (al >> 1);
-			break;
-		case 6: y = y - al + 1; break;
-		case 7:
-			x = x - (an >> 1);
-			y = y - al + 1;
-			break;
-		case 8:
-			x = x - an + 1;
-			y = y - al + 1;
-			break;
+	case 0:
+		break;
+	case 1:
+		x = x - (an >> 1);
+		break;
+	case 2:
+		x = x - an + 1;
+		break;
+	case 3:
+		y = y - (al >> 1);
+		break;
+	case 4:
+		x = x - (an >> 1);
+		y = y - (al >> 1);
+		break;
+	case 5:
+		x = x - an + 1;
+		y = y - (al >> 1);
+		break;
+	case 6:
+		y = y - al + 1;
+		break;
+	case 7:
+		x = x - (an >> 1);
+		y = y - al + 1;
+		break;
+	case 8:
+		x = x - an + 1;
+		y = y - al + 1;
+		break;
 	}
-	if (wmouse_in(x - 3, y - 3, an + 6, al + 6)) e = 1;
-	if (e && (mouse_b & 1)) e = 2;
-	if (v.selected_item == n && kbdFLAGS[28]) e = 3;
+	if (wmouse_in(x - 3, y - 3, an + 6, al + 6))
+		e = 1;
+	if (e && (mouse_b & 1))
+		e = 2;
+	if (v.selected_item == n && kbdFLAGS[28])
+		e = 3;
 	return (e);
 }
 
@@ -2435,7 +2786,8 @@ static int button_status(int n) {
 //      Read mouse adapted to the interpreter
 //════════════════════════════════════════════════════════════════════════════
 
-static void dread_mouse(void) {
+static void dread_mouse(void)
+{
 	tecla();
 	short ix, iy;
 	int n = 0;
@@ -2445,7 +2797,6 @@ static void dread_mouse(void) {
 	memset(&regs, 0, sizeof(regs));
 	regs.w.ax = 3;
 	int386(0x33, &regs, &regs);
-
 
 	old_mouse_b = mouse_b;
 	mouse_b = regs.w.bx;
@@ -2457,17 +2808,17 @@ static void dread_mouse(void) {
 	ix = regs.w.cx;
 	iy = regs.w.dx;
 
-	if (mouse->speed < 0) mouse->speed = 0;
-	if (mouse->speed > 9) mouse->speed = 9;
+	if (mouse->speed < 0)
+		mouse->speed = 0;
+	if (mouse->speed > 9)
+		mouse->speed = 9;
 
 	m_x += (float)ix / (1.0 + ((float)mouse->speed / 3.0));
 	m_y += (float)iy / (1.0 + ((float)mouse->speed / 3.0));
 #endif
 
-
 	mouse_x = (int)mouse->x;
 	mouse_y = (int)mouse->y;
-
 
 	if (mouse_x < 0) {
 		mouse_x = 0;
@@ -2486,15 +2837,17 @@ static void dread_mouse(void) {
 
 	fprintf(stdout, "%d %d %d %d\n", mouse_x, vga_an, mouse_y, vga_al);
 
-
-	if (n) set_mouse(mouse_x, mouse_y);
+	if (n)
+		set_mouse(mouse_x, mouse_y);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//		Blitting of the virtual screen copy to the real one (main screen)
+//		Blitting of the virtual screen copy to the real one (main
+//screen)
 //═════════════════════════════════════════════════════════════════════════════
 
-static void blit_copy(void) {
+static void blit_copy(void)
+{
 
 	dread_mouse();
 	save_restore(fondo_raton, mouse_x, mouse_y, mouse_graf, 0);
@@ -2508,7 +2861,8 @@ static void blit_copy(void) {
 	dacout_g = 0;
 	dacout_b = 0;
 	dacout_speed = 16;
-	while (now_dacout_r != dacout_r || now_dacout_g != dacout_g || now_dacout_b != dacout_b) {
+	while (now_dacout_r != dacout_r || now_dacout_g != dacout_g ||
+	       now_dacout_b != dacout_b) {
 		set_paleta();
 		set_dac();
 	}
@@ -2520,7 +2874,8 @@ static void blit_copy(void) {
 //      Save (flag=0) or recover (flag=1) a virtual box from copia
 //═════════════════════════════════════════════════════════════════════════════
 
-static void save_restore(byte *p, int x, int y, int n, int flag) {
+static void save_restore(byte *p, int x, int y, int n, int flag)
+{
 	byte *q;
 	int an, al;
 	int salta_x, long_x, resto_x;
@@ -2532,7 +2887,8 @@ static void save_restore(byte *p, int x, int y, int n, int flag) {
 	x -= *((word *)(graf[n] + 4));
 	y -= *((word *)(graf[n] + 6));
 
-	if (x >= vga_an || y >= vga_al || x + an <= 0 || y + al <= 0) return;
+	if (x >= vga_an || y >= vga_al || x + an <= 0 || y + al <= 0)
+		return;
 
 	volcado_parcial(x, y, an, al);
 
@@ -2580,30 +2936,37 @@ static void save_restore(byte *p, int x, int y, int n, int flag) {
 //      Check if mouse is inside a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
-static int mouse_in(int x, int y, int x2, int y2) {
+static int mouse_in(int x, int y, int x2, int y2)
+{
 	return (mouse_x >= x && mouse_x <= x2 && mouse_y >= y && mouse_y <= y2);
 }
 
-static int wmouse_in(int x, int y, int an, int al) {
-	return (wmouse_x >= x && wmouse_x <= x + an - 1 && wmouse_y >= y && wmouse_y <= y + al - 1);
+static int wmouse_in(int x, int y, int an, int al)
+{
+	return (wmouse_x >= x && wmouse_x <= x + an - 1 && wmouse_y >= y &&
+		wmouse_y <= y + al - 1);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
 //      ERROR dialog box
 //═════════════════════════════════════════════════════════════════════════════
 
-static void err1(void) {
+static void err1(void)
+{
 	int an = v.an / big2, al = v.al / big2;
 	_show_items();
 	wwrite(v.ptr, an, al, 4, 12, 0, (byte *)v_texto, c3);
 }
 
-static void err2(void) {
+static void err2(void)
+{
 	_process_items();
-	if (v.active_item == 0) fin_dialogo = 1;
+	if (v.active_item == 0)
+		fin_dialogo = 1;
 }
 
-static void err0(void) {
+static void err0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[1];
 	v.an = text_len((byte *)v_texto) + 8;
@@ -2619,23 +2982,27 @@ static void err0(void) {
 
 static char *te;
 
-static void _err1(void) {
+static void _err1(void)
+{
 	int an = v.an / big2, al = v.al / big2, n;
 	char cwork[256];
 	_show_items();
 	wwrite(v.ptr, an, al, 4, 12, 0, text[8], c4);
 	if (obj_cnt) {
 		for (n = 0; n < obj_cnt; n++)
-			if (o[n].type == tproc && o[n].v0 == mem[id + _Bloque]) break;
+			if (o[n].type == tproc && o[n].v0 == mem[id + _Bloque])
+				break;
 		if (n < obj_cnt)
-			wwrite(v.ptr, an, al, 46, 12, 0, (byte *)vnames + o[n].name, c3);
+			wwrite(v.ptr, an, al, 46, 12, 0,
+			       (byte *)vnames + o[n].name, c3);
 		else
 			wwrite(v.ptr, an, al, 46, 12, 0, text[9], c3);
 	} else
 		wwrite(v.ptr, an, al, 46, 12, 0, text[9], c3);
 	wwrite(v.ptr, an, al, 4, 12 + 8, 0, (byte *)text[10], c4);
 	if (v_function >= 0)
-		wwrite(v.ptr, an, al, 46, 12 + 8, 0, (byte *)fname[v_function], c3);
+		wwrite(v.ptr, an, al, 46, 12 + 8, 0, (byte *)fname[v_function],
+		       c3);
 	else
 		wwrite(v.ptr, an, al, 46, 12 + 8, 0, text[9], c3);
 
@@ -2646,31 +3013,40 @@ static void _err1(void) {
 	wwrite(v.ptr, an, al, 4, 12 + 24, 0, (byte *)v_texto, c3);
 }
 
-static void _err2(void) {
+static void _err2(void)
+{
 	int n;
 	_process_items();
-	if (v.active_item == 0) fin_dialogo = 1;
+	if (v.active_item == 0)
+		fin_dialogo = 1;
 	if (v.active_item == 1) {
 		fin_dialogo = 1;
 		n = 0;
 		while (n < nomitidos) {
-			if (omitidos[n] == num_error) break;
+			if (omitidos[n] == num_error)
+				break;
 			n++;
 		}
-		if (n >= nomitidos && nomitidos < 128) { omitidos[nomitidos++] = num_error; }
+		if (n >= nomitidos && nomitidos < 128) {
+			omitidos[nomitidos++] = num_error;
+		}
 	}
 	if (v.active_item == 2) {
-		if (debug_active) call_to_debug = 1;
+		if (debug_active)
+			call_to_debug = 1;
 		fin_dialogo = 1;
 	}
-	if (v.active_item == 3) exer(0);
+	if (v.active_item == 3)
+		exer(0);
 }
 
-static void _err0(void) {
+static void _err0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[1];
 	v.an = text_len((byte *)v_texto) + 8;
-	if (v.an < 218 + 16) v.an = 218 + 16;
+	if (v.an < 218 + 16)
+		v.an = 218 + 16;
 	v.al = 38 + 16 + 8;
 	v.paint_handler = _err1;
 	v.click_handler = _err2;
@@ -2688,7 +3064,8 @@ static void _err0(void) {
 
 extern int ignore_errors;
 
-void e(int texto) {
+void e(int texto)
+{
 #ifdef __EMSCRIPTEN__
 	//	printf("ERROR: %s\n",(char *)text[texto]);
 	return;
@@ -2698,27 +3075,32 @@ void e(int texto) {
 	int ticks_e = ticks;
 	int dr = dacout_r, dg = dacout_g, db = dacout_b;
 
-	if (v_function == -1) return; // Some errors are better ignored...
+	if (v_function == -1)
+		return; // Some errors are better ignored...
 
 	num_error = texto;
 	te = (char *)text[texto];
 	n = 0;
 	while (n < nomitidos) {
-		if (omitidos[n] == num_error) break;
+		if (omitidos[n] == num_error)
+			break;
 		n++;
 	}
-	if (ignore_errors || n < nomitidos) return;
+	if (ignore_errors || n < nomitidos)
+		return;
 
 	smouse_x = mouse->x;
 	smouse_y = mouse->y;
 	set_mouse(mouse_x, mouse_y);
-	if (!v.tipo) memcpy(copia_debug, copia, vga_an * vga_al);
+	if (!v.tipo)
+		memcpy(copia_debug, copia, vga_an * vga_al);
 	dacout_r = 0;
 	dacout_g = 0;
 	dacout_b = 0;
 	dacout_speed = 16;
 
-	//  while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
+	//  while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g ||
+	//  now_dacout_b!=dacout_b) {
 	//    set_paleta(); set_dac();
 	//  }
 
@@ -2737,22 +3119,26 @@ void e(int texto) {
 //      DEBUG sentence dialog box
 //═════════════════════════════════════════════════════════════════════════════
 
-static void deb1(void) {
+static void deb1(void)
+{
 	int an = v.an / big2, al = v.al / big2, n;
 	_show_items();
 	wwrite(v.ptr, an, al, 4, 12, 0, text[8], c4);
 	if (obj_cnt) {
 		for (n = 0; n < obj_cnt; n++)
-			if (o[n].type == tproc && o[n].v0 == mem[id + _Bloque]) break;
+			if (o[n].type == tproc && o[n].v0 == mem[id + _Bloque])
+				break;
 		if (n < obj_cnt)
-			wwrite(v.ptr, an, al, 46, 12, 0, (byte *)vnames + o[n].name, c3);
+			wwrite(v.ptr, an, al, 46, 12, 0,
+			       (byte *)vnames + o[n].name, c3);
 		else
 			wwrite(v.ptr, an, al, 46, 12, 0, text[9], c3);
 	} else
 		wwrite(v.ptr, an, al, 46, 12, 0, text[9], c3);
 }
 
-static void deb2(void) {
+static void deb2(void)
+{
 	_process_items();
 	if (v.active_item == 2) {
 		mem[ip - 1] = 0; // Changes the DEBUG into a NOP
@@ -2765,10 +3151,12 @@ static void deb2(void) {
 		}
 		fin_dialogo = 1;
 	}
-	if (v.active_item == 1) exer(0);
+	if (v.active_item == 1)
+		exer(0);
 }
 
-static void deb0(void) {
+static void deb0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[15];
 	v.an = 190;
@@ -2780,7 +3168,8 @@ static void deb0(void) {
 	_button(text[18], 7, v.al - 14, 0);
 }
 
-void deb(void) {
+void deb(void)
+{
 	int smouse_x, smouse_y;
 	int reloj_e = reloj;
 	int ticks_e = ticks;
@@ -2789,7 +3178,8 @@ void deb(void) {
 	smouse_x = mouse->x;
 	smouse_y = mouse->y;
 	set_mouse(mouse_x, mouse_y);
-	if (!v.tipo) memcpy(copia_debug, copia, vga_an * vga_al);
+	if (!v.tipo)
+		memcpy(copia_debug, copia, vga_an * vga_al);
 	dacout_r = 0;
 	dacout_g = 0;
 	dacout_b = 0;
@@ -2810,12 +3200,15 @@ void deb(void) {
 //	  Determines whether all processes have been executed
 //════════════════════════════════════════════════════════════════════════════
 
-static int procesos_ejecutados(void) {
+static int procesos_ejecutados(void)
+{
 	int max = 0x80000000, ide = 0;
-	if (process_stoped) return (0);
+	if (process_stoped)
+		return (0);
 	id = id_old;
 	do {
-		if (mem[id + _Status] == 2 && !mem[id + _Executed] && mem[id + _Priority] > max) {
+		if (mem[id + _Status] == 2 && !mem[id + _Executed] &&
+		    mem[id + _Priority] > max) {
 			ide = id;
 			max = mem[id + _Priority];
 		}
@@ -2831,7 +3224,8 @@ static int procesos_ejecutados(void) {
 //		Determins ids[] (process list, by execution order)
 //════════════════════════════════════════════════════════════════════════════
 
-static void determina_ids(void) {
+static void determina_ids(void)
+{
 	int max, ide, id;
 
 	iids = 0; // Number of processes
@@ -2839,7 +3233,8 @@ static void determina_ids(void) {
 
 	// Clears all processes from the list
 
-	for (ide = id_start; ide <= id_end; ide += iloc_len) mem[ide + _Painted] = 0;
+	for (ide = id_start; ide <= id_end; ide += iloc_len)
+		mem[ide + _Painted] = 0;
 
 	// First adds to the list the processes that have already run
 
@@ -2850,7 +3245,8 @@ static void determina_ids(void) {
 		max = 0x80000000;
 		id = id_old;
 		do {
-			if (mem[id + _Status] == 2 && mem[id + _Executed] && !mem[id + _Painted] && mem[id + _Priority] > max) {
+			if (mem[id + _Status] == 2 && mem[id + _Executed] &&
+			    !mem[id + _Painted] && mem[id + _Priority] > max) {
 				ide = id;
 				max = mem[id + _Priority];
 			}
@@ -2861,7 +3257,8 @@ static void determina_ids(void) {
 		} while (id != id_old);
 		if (ide) {
 			mem[ide + _Painted] = 1;
-			if (iids < max_processes) ids[iids++] = ide;
+			if (iids < max_processes)
+				ids[iids++] = ide;
 		}
 	} while (ide);
 
@@ -2869,8 +3266,10 @@ static void determina_ids(void) {
 
 	if (process_stoped) {
 		mem[process_stoped + _Painted] = 1;
-		if (ids_next == -1) ids_next = iids;
-		if (iids < max_processes) ids[iids++] = process_stoped;
+		if (ids_next == -1)
+			ids_next = iids;
+		if (iids < max_processes)
+			ids[iids++] = process_stoped;
 	}
 
 	// Then adds the processes yet to run
@@ -2880,7 +3279,8 @@ static void determina_ids(void) {
 		max = 0x80000000;
 		id = id_old;
 		do {
-			if (mem[id + _Status] == 2 && !mem[id + _Executed] && !mem[id + _Painted] && mem[id + _Priority] > max) {
+			if (mem[id + _Status] == 2 && !mem[id + _Executed] &&
+			    !mem[id + _Painted] && mem[id + _Priority] > max) {
 				ide = id;
 				max = mem[id + _Priority];
 			}
@@ -2891,8 +3291,10 @@ static void determina_ids(void) {
 		} while (id != id_old);
 		if (ide) {
 			mem[ide + _Painted] = 1;
-			if (ids_next == -1) ids_next = iids;
-			if (iids < max_processes) ids[iids++] = ide;
+			if (ids_next == -1)
+				ids_next = iids;
+			if (iids < max_processes)
+				ids[iids++] = ide;
 		}
 	} while (ide);
 
@@ -2903,7 +3305,8 @@ static void determina_ids(void) {
 		max = 0x80000000;
 		id = id_old;
 		do {
-			if (mem[id + _Status] != 0 && !mem[id + _Painted] && mem[id + _Priority] > max) {
+			if (mem[id + _Status] != 0 && !mem[id + _Painted] &&
+			    mem[id + _Priority] > max) {
 				ide = id;
 				max = mem[id + _Priority];
 			}
@@ -2914,32 +3317,37 @@ static void determina_ids(void) {
 		} while (id != id_old);
 		if (ide) {
 			mem[ide + _Painted] = 1;
-			if (iids < max_processes) ids[iids++] = ide;
+			if (iids < max_processes)
+				ids[iids++] = ide;
 		}
 	} while (ide);
 }
-
 
 //════════════════════════════════════════════════════════════════════════════
 //      Draw the process list and info on selected one
 //════════════════════════════════════════════════════════════════════════════
 
-static void draw_proc_list(void) {
+static void draw_proc_list(void)
+{
 	char msg[512];
 	byte *ptr = v.ptr;
 	int n, m, x;
 	int an = v.an / big2, al = v.al / big2;
 
-	wbox(ptr, an, al, c1, 4, 20, 118, 126 - 5 - 16 - 32); // Fill process listbox
+	wbox(ptr, an, al, c1, 4, 20, 118,
+	     126 - 5 - 16 - 32); // Fill process listbox
 
 	for (m = ids_ini; m < ids_ini + 9 && m < iids; m++) {
 		if (m == ids_select) {
 			x = c4;
-			wbox(ptr, an, al, c01, 4, 20 + (m - ids_ini) * 8, 118, 9); // Fill process listbox
+			wbox(ptr, an, al, c01, 4, 20 + (m - ids_ini) * 8, 118,
+			     9); // Fill process listbox
 		} else
 			x = c3;
 		for (n = 0; n < obj_cnt; n++)
-			if (o[n].type == tproc && o[n].v0 == mem[ids[m] + _Bloque]) break;
+			if (o[n].type == tproc &&
+			    o[n].v0 == mem[ids[m] + _Bloque])
+				break;
 		if (n < obj_cnt)
 			strcpy(msg, (char *)vnames + o[n].name);
 		else
@@ -2947,24 +3355,40 @@ static void draw_proc_list(void) {
 		strcat(msg, "(");
 		itoa(mem[ids[m] + _Id], msg + strlen(msg), 10);
 		strcat(msg, ")");
-		wwrite_in_box(ptr, an, 90, al, 10, 21 + (m - ids_ini) * 8, 0, (byte *)msg, x);
+		wwrite_in_box(ptr, an, 90, al, 10, 21 + (m - ids_ini) * 8, 0,
+			      (byte *)msg, x);
 		switch (mem[ids[m] + _Status]) {
-			case 0: msg[0] = '-'; break;
-			case 1: msg[0] = 'K'; break;
-			case 2: msg[0] = 'A'; break;
-			case 3: msg[0] = 'S'; break;
-			case 4: msg[0] = 'F'; break;
-			default: msg[0] = '?'; break;
+		case 0:
+			msg[0] = '-';
+			break;
+		case 1:
+			msg[0] = 'K';
+			break;
+		case 2:
+			msg[0] = 'A';
+			break;
+		case 3:
+			msg[0] = 'S';
+			break;
+		case 4:
+			msg[0] = 'F';
+			break;
+		default:
+			msg[0] = '?';
+			break;
 		}
 		msg[1] = 0;
-		wwrite(ptr, an, al, 93, 21 + (m - ids_ini) * 8, 0, (byte *)msg, x);
+		wwrite(ptr, an, al, 93, 21 + (m - ids_ini) * 8, 0, (byte *)msg,
+		       x);
 		if (mem[ids[m] + _Executed])
 			sprintf(msg, "%03d", mem[ids[m] + _Frame] + 100);
 		else
 			sprintf(msg, "%03d", mem[ids[m] + _Frame]);
 		strcat(msg, "%");
-		wwrite_in_box(ptr, an, 121, al, 101, 21 + (m - ids_ini) * 8, 0, (byte *)msg, x);
-		if (m == ids_next) wput(ptr, an, al, 4, 21 + (m - ids_ini) * 8, 36);
+		wwrite_in_box(ptr, an, 121, al, 101, 21 + (m - ids_ini) * 8, 0,
+			      (byte *)msg, x);
+		if (m == ids_next)
+			wput(ptr, an, al, 4, 21 + (m - ids_ini) * 8, 36);
 	}
 
 	wrectangle(ptr, an, al, c0, 91, 19, 1, 128 - 5 - 16 - 32);
@@ -2974,17 +3398,29 @@ static void draw_proc_list(void) {
 	strcpy(msg, (char *)text[19]);
 	itoa(ids[ids_select], msg + strlen(msg), 10);
 	switch (mem[ids[ids_select] + _Status]) {
-		case 1: strcat(msg, (char *)text[20]); break;
-		case 2: strcat(msg, (char *)text[21]); break;
-		case 3: strcat(msg, (char *)text[22]); break;
-		case 4: strcat(msg, (char *)text[23]); break;
-		default: strcat(msg, (char *)text[24]); break;
+	case 1:
+		strcat(msg, (char *)text[20]);
+		break;
+	case 2:
+		strcat(msg, (char *)text[21]);
+		break;
+	case 3:
+		strcat(msg, (char *)text[22]);
+		break;
+	case 4:
+		strcat(msg, (char *)text[23]);
+		break;
+	default:
+		strcat(msg, (char *)text[24]);
+		break;
 	}
 	wwrite(ptr, an, al, 134, 11, 0, (byte *)msg, c1);
 	wwrite(ptr, an, al, 133, 11, 0, (byte *)msg, c3);
 
 	for (n = 0; n < obj_cnt; n++)
-		if (o[n].type == tproc && o[n].v0 == mem[ids[ids_select] + _Bloque]) break;
+		if (o[n].type == tproc &&
+		    o[n].v0 == mem[ids[ids_select] + _Bloque])
+			break;
 	if (n < obj_cnt)
 		strcpy(msg, vnames + o[n].name);
 	else
@@ -2993,46 +3429,82 @@ static void draw_proc_list(void) {
 	wbox(ptr, an, al, c1, 134, 20, 118 + 304 - 256, 9); // Process name box
 	wwrite_in_box(ptr, an, 252, al, 135, 21, 0, (byte *)msg, c3);
 
-	wbox(ptr, an, al, c12, 200 - 16 + 304 - 256 - 4, 47, 54 + 16 + 4, 32); // Process main variables
+	wbox(ptr, an, al, c12, 200 - 16 + 304 - 256 - 4, 47, 54 + 16 + 4,
+	     32); // Process main variables
 
 	if (mem[ids[ids_select] + _Resolution])
-		sprintf(msg, "x=%f", (float)mem[ids[ids_select] + _X] / (float)mem[ids[ids_select] + _Resolution]);
+		sprintf(msg, "x=%f",
+			(float)mem[ids[ids_select] + _X] /
+			    (float)mem[ids[ids_select] + _Resolution]);
 	else
 		sprintf(msg, "x=%d", mem[ids[ids_select] + _X]);
 	wwrite_in_box(ptr, an, an - 2, al, an - 39, 48, 1, (byte *)msg, c1);
 	wwrite_in_box(ptr, an, an - 2, al, an - 40, 48, 1, (byte *)msg, c3);
 	if (mem[ids[ids_select] + _Resolution])
-		sprintf(msg, "y=%f", (float)mem[ids[ids_select] + _Y] / (float)mem[ids[ids_select] + _Resolution]);
+		sprintf(msg, "y=%f",
+			(float)mem[ids[ids_select] + _Y] /
+			    (float)mem[ids[ids_select] + _Resolution]);
 	else
 		sprintf(msg, "y=%d", mem[ids[ids_select] + _Y]);
 	wwrite_in_box(ptr, an, an - 2, al, an - 39, 48 + 8, 1, (byte *)msg, c1);
 	wwrite_in_box(ptr, an, an - 2, al, an - 40, 48 + 8, 1, (byte *)msg, c3);
 
 	switch (mem[ids[ids_select] + _Ctype]) {
-		case 0: strcpy(msg, (char *)text[25]); break;
-		case 1: strcpy(msg, (char *)text[26]); break;
-		case 2: strcpy(msg, (char *)text[27]); break;
-		case 3: strcpy(msg, (char *)text[28]); break;
-		default: strcpy(msg, (char *)text[29]); break;
+	case 0:
+		strcpy(msg, (char *)text[25]);
+		break;
+	case 1:
+		strcpy(msg, (char *)text[26]);
+		break;
+	case 2:
+		strcpy(msg, (char *)text[27]);
+		break;
+	case 3:
+		strcpy(msg, (char *)text[28]);
+		break;
+	default:
+		strcpy(msg, (char *)text[29]);
+		break;
 	}
-	wwrite_in_box(ptr, an, an - 2, al, an - 39, 48 + 16, 1, (byte *)msg, c1);
-	wwrite_in_box(ptr, an, an - 2, al, an - 40, 48 + 16, 1, (byte *)msg, c3);
+	wwrite_in_box(ptr, an, an - 2, al, an - 39, 48 + 16, 1, (byte *)msg,
+		      c1);
+	wwrite_in_box(ptr, an, an - 2, al, an - 40, 48 + 16, 1, (byte *)msg,
+		      c3);
 
 	switch (mem[ids[ids_select] + _Flags] & 7) {
-		case 0: strcpy(msg, (char *)text[30]); break;
-		case 1: strcpy(msg, (char *)text[31]); break;
-		case 2: strcpy(msg, (char *)text[32]); break;
-		case 3: strcpy(msg, (char *)text[33]); break;
-		case 4: strcpy(msg, (char *)text[34]); break;
-		case 5: strcpy(msg, (char *)text[35]); break;
-		case 6: strcpy(msg, (char *)text[36]); break;
-		case 7: strcpy(msg, (char *)text[37]); break;
+	case 0:
+		strcpy(msg, (char *)text[30]);
+		break;
+	case 1:
+		strcpy(msg, (char *)text[31]);
+		break;
+	case 2:
+		strcpy(msg, (char *)text[32]);
+		break;
+	case 3:
+		strcpy(msg, (char *)text[33]);
+		break;
+	case 4:
+		strcpy(msg, (char *)text[34]);
+		break;
+	case 5:
+		strcpy(msg, (char *)text[35]);
+		break;
+	case 6:
+		strcpy(msg, (char *)text[36]);
+		break;
+	case 7:
+		strcpy(msg, (char *)text[37]);
+		break;
 	}
-	wwrite_in_box(ptr, an, an - 2, al, an - 39, 48 + 24, 1, (byte *)msg, c1);
-	wwrite_in_box(ptr, an, an - 2, al, an - 40, 48 + 24, 1, (byte *)msg, c3);
+	wwrite_in_box(ptr, an, an - 2, al, an - 39, 48 + 24, 1, (byte *)msg,
+		      c1);
+	wwrite_in_box(ptr, an, an - 2, al, an - 40, 48 + 24, 1, (byte *)msg,
+		      c3);
 
 	wbox(ptr, an, al, c1, 134, 32, 46, 46); // Process graphic
-	process_graph(ids[ids_select], ptr + 32 * big2 * v.an + 134 * big2, v.an, 46 * big2, 46 * big2);
+	process_graph(ids[ids_select], ptr + 32 * big2 * v.an + 134 * big2,
+		      v.an, 46 * big2, 46 * big2);
 
 	draw_segment();
 }
@@ -3041,7 +3513,8 @@ static void draw_proc_list(void) {
 //		Draws the graphic for a process in the debugger
 //════════════════════════════════════════════════════════════════════════════
 
-static void process_graph(int id, byte *q, int van, int an, int al) {
+static void process_graph(int id, byte *q, int van, int an, int al)
+{
 
 	int file, graph, angle;
 	int x, y, n, m;
@@ -3054,19 +3527,24 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 	graph = mem[id + _Graph];
 	angle = mem[id + _Angle];
 
-	if (file < 0 || file > max_fpgs) return;
+	if (file < 0 || file > max_fpgs)
+		return;
 
 	if (mem[id + _Ctype] == 2 || mem[id + _Ctype] == 3)
 		angle = 0;
 	else if ((n = mem[id + _XGraph]) > 0) {
 		m = mem[n];
-		if (m < 1 || m > 256) return;
-		while (angle >= 2 * pi) angle -= 2 * pi;
-		while (angle < 0) angle += 2 * pi;
+		if (m < 1 || m > 256)
+			return;
+		while (angle >= 2 * pi)
+			angle -= 2 * pi;
+		while (angle < 0)
+			angle += 2 * pi;
 		mem[id + _Flags] &= 254;
 		graph = ((angle + (2 * pi) / (m * 2)) * m) / (2 * pi);
 		angle = 0;
-		if (graph >= m) graph = 0;
+		if (graph >= m)
+			graph = 0;
 		if ((graph = mem[n + 1 + graph]) < 0) {
 			graph = -graph;
 			mem[id + _Flags] |= 1;
@@ -3077,9 +3555,12 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 		max_grf = 1000;
 	else
 		max_grf = 2000;
-	if (graph <= 0 || graph >= max_grf) return;
-	if (g[file].grf == NULL) return;
-	if ((ptr = g[file].grf[graph]) == NULL) return;
+	if (graph <= 0 || graph >= max_grf)
+		return;
+	if (g[file].grf == NULL)
+		return;
+	if ((ptr = g[file].grf[graph]) == NULL)
+		return;
 
 	x = mem[id + _X];
 	y = mem[id + _Y];
@@ -3101,13 +3582,15 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 		clipy0 = y;
 		clipx1 = ptr[13];
 		clipy1 = ptr[14];
-		sp_size(&clipx0, &clipy0, &clipx1, &clipy1, xg, yg, angle, mem[id + _Size], mem[id + _Flags]);
+		sp_size(&clipx0, &clipy0, &clipx1, &clipy1, xg, yg, angle,
+			mem[id + _Size], mem[id + _Flags]);
 	} else if (mem[id + _Size] != 100) {
 		clipx0 = x;
 		clipy0 = y;
 		clipx1 = ptr[13];
 		clipy1 = ptr[14];
-		sp_size_scaled(&clipx0, &clipy0, &clipx1, &clipy1, xg, yg, mem[id + _Size], mem[id + _Flags]);
+		sp_size_scaled(&clipx0, &clipy0, &clipx1, &clipy1, xg, yg,
+			       mem[id + _Size], mem[id + _Flags]);
 	} else {
 		if (mem[id + _Flags] & 1)
 			clipx0 = x - (ptr[13] - 1 - xg);
@@ -3123,24 +3606,30 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 
 	buffer_an = clipx1 - clipx0 + 1;
 	buffer_al = clipy1 - clipy0 + 1;
-	if ((buffer = (byte *)malloc(buffer_an * buffer_al)) == NULL) return;
+	if ((buffer = (byte *)malloc(buffer_an * buffer_al)) == NULL)
+		return;
 	memset(buffer, 0, buffer_an * buffer_al);
 
 	// Now paint the sprite in the buffer(clip...)
 
-	put_collision(buffer, ptr, x, y, xg, yg, angle, mem[id + _Size], mem[id + _Flags]);
+	put_collision(buffer, ptr, x, y, xg, yg, angle, mem[id + _Size],
+		      mem[id + _Flags]);
 
 	// ventana q, van, de an*al
 
-	wbox(v.ptr, v.an / big2, v.al / big2, c0, 134, 32, an / big2, al / big2); // Draws black background
+	wbox(v.ptr, v.an / big2, v.al / big2, c0, 134, 32, an / big2,
+	     al / big2); // Draws black background
 
-	if (buffer_an <= an && buffer_al <= al) { // If it fits in window, center it
+	if (buffer_an <= an &&
+	    buffer_al <= al) { // If it fits in window, center it
 
 		q += (an - buffer_an) / 2 + ((al - buffer_al) / 2) * van;
 		p = buffer;
 		old_an = buffer_an;
 		do {
-			do { *q++ = *p++; } while (--buffer_an);
+			do {
+				*q++ = *p++;
+			} while (--buffer_an);
 			q += van - (buffer_an = old_an);
 		} while (--buffer_al);
 
@@ -3163,7 +3652,8 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 		old_an = an;
 		yr = 0;
 
-		if (an && al) do {
+		if (an && al)
+			do {
 				p = buffer + (yr >> 8) * buffer_an;
 				xr = 0;
 				do {
@@ -3183,7 +3673,8 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 //      Function invoked as debug (when pressing F12 during execution)
 //════════════════════════════════════════════════════════════════════════════
 
-void debug(void) {
+void debug(void)
+{
 
 	smouse_x = mouse->x;
 	smouse_y = mouse->y;
@@ -3199,7 +3690,8 @@ void debug(void) {
 	memcpy(copia_debug, copia, vga_an * vga_al);
 
 	//  dacout_r=0; dacout_g=0; dacout_b=0; dacout_speed=16;
-	//  while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
+	//  while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g ||
+	//  now_dacout_b!=dacout_b) {
 	//    set_paleta(); set_dac();
 	//  }
 
@@ -3223,7 +3715,8 @@ void debug(void) {
 
 static int member;
 
-static void crear_lista_variables(void) {
+static void crear_lista_variables(void)
+{
 	int n, nuevo, incluir;
 
 	memset(used, 0, sizeof(int) * obj_cnt);
@@ -3234,49 +3727,65 @@ static void crear_lista_variables(void) {
 
 	do {
 		nuevo = 0;
-		for (n = 0; n < obj_cnt; n++) { // Searches first one alphabetically
+		for (n = 0; n < obj_cnt;
+		     n++) { // Searches first one alphabetically
 
-			if (!pre_defined && n < predefined_obj_count) continue;
-			if (!user_defined && n >= predefined_obj_count) continue;
-			if (used[n]) continue;
-			if (o[n].member) continue;
+			if (!pre_defined && n < predefined_obj_count)
+				continue;
+			if (!user_defined && n >= predefined_obj_count)
+				continue;
+			if (used[n])
+				continue;
+			if (o[n].member)
+				continue;
 
 			switch (o[n].type) {
-				case tcons: incluir = show_const; break;
-				case tcglo:
-				case tvglo:
-				case ttglo:
-				case tsglo:
-				case tbglo:
-				case twglo:
-				case tpigl:
-				case tpwgl:
-				case tpbgl:
-				case tpcgl:
-				case tpsgl: incluir = show_global; break;
-				case tcloc:
-				case tvloc:
-				case ttloc:
-				case tsloc:
-				case tbloc:
-				case twloc:
-				case tpilo:
-				case tpwlo:
-				case tpblo:
-				case tpclo:
-				case tpslo:
-					if (o[n].block) {
-						if (o[n].block == current_block)
-							incluir = show_private;
-						else
-							incluir = 0;
-					} else
-						incluir = show_local;
-					break;
-				default: incluir = 0; break;
+			case tcons:
+				incluir = show_const;
+				break;
+			case tcglo:
+			case tvglo:
+			case ttglo:
+			case tsglo:
+			case tbglo:
+			case twglo:
+			case tpigl:
+			case tpwgl:
+			case tpbgl:
+			case tpcgl:
+			case tpsgl:
+				incluir = show_global;
+				break;
+			case tcloc:
+			case tvloc:
+			case ttloc:
+			case tsloc:
+			case tbloc:
+			case twloc:
+			case tpilo:
+			case tpwlo:
+			case tpblo:
+			case tpclo:
+			case tpslo:
+				if (o[n].block) {
+					if (o[n].block == current_block)
+						incluir = show_private;
+					else
+						incluir = 0;
+				} else
+					incluir = show_local;
+				break;
+			default:
+				incluir = 0;
+				break;
 			}
 			if (incluir) {
-				if (!nuevo || (nuevo && strcmp(vnames + o[n].name, vnames + o[nuevo].name) == -1)) { nuevo = n; }
+				if (!nuevo ||
+				    (nuevo &&
+				     strcmp(vnames + o[n].name,
+					    vnames + o[nuevo].name) == -1)) {
+					nuevo = n;
+				}
 			}
 		}
 		if (nuevo) {
@@ -3286,41 +3795,6 @@ static void crear_lista_variables(void) {
 			used[nuevo] = 1;
 
 			switch (o[nuevo].type) {
-				case tpigl:
-				case tpwgl:
-				case tpbgl:
-				case tpcgl:
-				case tpsgl:
-				case tpilo:
-				case tpwlo:
-				case tpblo:
-				case tpclo:
-				case tpslo: var[var_cnt].index = -1; break;
-				default: var[var_cnt].index = 0; break;
-			}
-			var_cnt++;
-
-			if (o[nuevo].type == tsglo || o[nuevo].type == tsloc) {
-				member = nuevo + 1;
-				include_members(var_cnt, 1, var[var_cnt - 1].index);
-			}
-			if (o[nuevo].type == tpsgl || o[nuevo].type == tpslo) {
-				member = o[nuevo].v1 + 1;
-				include_members(var_cnt, 1, var[var_cnt - 1].index);
-			}
-		}
-	} while (nuevo);
-}
-
-static void excluye_miembros(int padre, int nivel, int index) {
-	int m;
-	m = o[member].member;
-	while (m == o[member].member) {
-		if (index == -1)
-			var[padre].object = -member;
-		else
-			var[padre].object = member;
-		switch (o[member].type) {
 			case tpigl:
 			case tpwgl:
 			case tpbgl:
@@ -3330,7 +3804,51 @@ static void excluye_miembros(int padre, int nivel, int index) {
 			case tpwlo:
 			case tpblo:
 			case tpclo:
-			case tpslo: var[padre].index = -1; break;
+			case tpslo:
+				var[var_cnt].index = -1;
+				break;
+			default:
+				var[var_cnt].index = 0;
+				break;
+			}
+			var_cnt++;
+
+			if (o[nuevo].type == tsglo || o[nuevo].type == tsloc) {
+				member = nuevo + 1;
+				include_members(var_cnt, 1,
+						var[var_cnt - 1].index);
+			}
+			if (o[nuevo].type == tpsgl || o[nuevo].type == tpslo) {
+				member = o[nuevo].v1 + 1;
+				include_members(var_cnt, 1,
+						var[var_cnt - 1].index);
+			}
+		}
+	} while (nuevo);
+}
+
+static void excluye_miembros(int padre, int nivel, int index)
+{
+	int m;
+	m = o[member].member;
+	while (m == o[member].member) {
+		if (index == -1)
+			var[padre].object = -member;
+		else
+			var[padre].object = member;
+		switch (o[member].type) {
+		case tpigl:
+		case tpwgl:
+		case tpbgl:
+		case tpcgl:
+		case tpsgl:
+		case tpilo:
+		case tpwlo:
+		case tpblo:
+		case tpclo:
+		case tpslo:
+			var[padre].index = -1;
+			break;
 		}
 		padre++;
 		if (o[member].type == tsglo || o[member].type == tsloc) {
@@ -3341,7 +3859,8 @@ static void excluye_miembros(int padre, int nivel, int index) {
 	}
 }
 
-static void include_members(int padre, int nivel, int index) {
+static void include_members(int padre, int nivel, int index)
+{
 	int m;
 
 	m = o[member].member;
@@ -3357,17 +3876,21 @@ static void include_members(int padre, int nivel, int index) {
 		used[member] = 1;
 
 		switch (o[member].type) {
-			case tpigl:
-			case tpwgl:
-			case tpbgl:
-			case tpcgl:
-			case tpsgl:
-			case tpilo:
-			case tpwlo:
-			case tpblo:
-			case tpclo:
-			case tpslo: var[var_cnt].index = -1; break;
-			default: var[var_cnt].index = 0; break;
+		case tpigl:
+		case tpwgl:
+		case tpbgl:
+		case tpcgl:
+		case tpsgl:
+		case tpilo:
+		case tpwlo:
+		case tpblo:
+		case tpclo:
+		case tpslo:
+			var[var_cnt].index = -1;
+			break;
+		default:
+			var[var_cnt].index = 0;
+			break;
 		}
 		var_cnt++;
 
@@ -3388,17 +3911,20 @@ static int _var_ini = -1, _var_select = -1;
 static void change0(void);
 static void changestring0(void);
 
-static void inspect1(void) {
+static void inspect1(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	_show_items();
 	wwrite(ptr, an, al, 4, al - 14, 0, text[38], c3);
 
-	wrectangle(ptr, an, al, c0, 3, 19, 128 + 32 + 64, 83); // Processes listbox limits
+	wrectangle(ptr, an, al, c0, 3, 19, 128 + 32 + 64,
+		   83); // Processes listbox limits
 	wrectangle(ptr, an, al, c0, 122 + 32 + 64, 19, 9, 83);
 	wrectangle(ptr, an, al, c0, 122 + 32 + 64, 27, 9, 83 - 16);
 
-	wput(ptr, an, al, 123 + 32 + 64, 20, -39); // Up/down buttons (pressed 41,42)
+	wput(ptr, an, al, 123 + 32 + 64, 20,
+	     -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, 123 + 32 + 64, 134 - 40, -40);
 
 	crear_lista_variables();
@@ -3407,11 +3933,16 @@ static void inspect1(void) {
 		var_ini = _var_ini;
 		var_select = _var_select;
 
-		if (var_ini + 10 > var_cnt && var_ini) var_ini = var_cnt - 10;
-		if (var_ini < 0) var_ini = 0;
-		if (var_select >= var_cnt) var_select = var_cnt - 1;
-		if (var_select < var_ini) var_select = var_ini;
-		if (var_select >= var_ini + 10) var_select = var_ini + 9;
+		if (var_ini + 10 > var_cnt && var_ini)
+			var_ini = var_cnt - 10;
+		if (var_ini < 0)
+			var_ini = 0;
+		if (var_select >= var_cnt)
+			var_select = var_cnt - 1;
+		if (var_select < var_ini)
+			var_select = var_ini;
+		if (var_select >= var_ini + 10)
+			var_select = var_ini + 9;
 
 	} else {
 		var_ini = 0;
@@ -3423,13 +3954,15 @@ static void inspect1(void) {
 	draw_segment2();
 }
 
-static void draw_segment2(void) {
+static void draw_segment2(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = 27, max = 89, n;
 	float x;
 
-	wbox(ptr, an, al, c2, 123 + 32 + 64, 28, 7, 65); // Clears the slider bar
+	wbox(ptr, an, al, c2, 123 + 32 + 64, 28, 7,
+	     65); // Clears the slider bar
 
 	if (var_cnt <= 1)
 		n = min;
@@ -3442,7 +3975,8 @@ static void draw_segment2(void) {
 	wput(ptr, an, al, 123 + 32 + 64, n + 1, -43);
 }
 
-static void inspect2(void) {
+static void inspect2(void)
+{
 	int n, type;
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
@@ -3450,13 +3984,15 @@ static void inspect2(void) {
 
 	_process_items();
 	if (scan_code == 80 && var_select + 1 < var_cnt) {
-		if (var_ini + 10 == ++var_select) var_ini++;
+		if (var_ini + 10 == ++var_select)
+			var_ini++;
 		draw_var_list();
 		vacia_buffer();
 		v.volcar = 1;
 	}
 	if (scan_code == 72 && var_select) {
-		if (var_ini == var_select--) var_ini--;
+		if (var_ini == var_select--)
+			var_ini--;
 		draw_var_list();
 		vacia_buffer();
 		v.volcar = 1;
@@ -3464,7 +4000,8 @@ static void inspect2(void) {
 	if (scan_code == 81) {
 		for (n = 0; n < 10; n++)
 			if (var_select + 1 < var_cnt) {
-				if (var_ini + 10 == ++var_select) var_ini++;
+				if (var_ini + 10 == ++var_select)
+					var_ini++;
 			}
 		draw_var_list();
 		vacia_buffer();
@@ -3473,7 +4010,8 @@ static void inspect2(void) {
 	if (scan_code == 73) {
 		for (n = 0; n < 10; n++)
 			if (var_select) {
-				if (var_ini == var_select--) var_ini--;
+				if (var_ini == var_select--)
+					var_ini--;
 			}
 		draw_var_list();
 		vacia_buffer();
@@ -3495,7 +4033,8 @@ static void inspect2(void) {
 				wput(ptr, an, al, 123 + 32 + 64, 20, -41);
 				button = 1;
 				if (var_select) {
-					if (var_ini == var_select--) var_ini--;
+					if (var_ini == var_select--)
+						var_ini--;
 					draw_var_list();
 					v.volcar = 1;
 				}
@@ -3517,8 +4056,10 @@ static void inspect2(void) {
 		if (var_cnt > 1 && (mouse_b & 1)) {
 			x = (float)(wmouse_y - 28) / 64.0;
 			var_select = x * (var_cnt - 1);
-			if (var_select < var_ini) var_ini = var_select;
-			if (var_select >= var_ini + 10) var_ini = var_select - 9;
+			if (var_select < var_ini)
+				var_ini = var_select;
+			if (var_select >= var_ini + 10)
+				var_ini = var_select - 9;
 			draw_var_list();
 			v.volcar = 1;
 		}
@@ -3530,7 +4071,8 @@ static void inspect2(void) {
 				wput(ptr, an, al, 123 + 32 + 64, 94, -42);
 				button = 2;
 				if (var_select + 1 < var_cnt) {
-					if (var_ini + 10 == ++var_select) var_ini++;
+					if (var_ini + 10 == ++var_select)
+						var_ini++;
 					draw_var_list();
 					v.volcar = 1;
 				}
@@ -3549,335 +4091,399 @@ static void inspect2(void) {
 
 	if (var_cnt) {
 		if (var[var_select].object > 0) {
-			if (scan_code == 75) goto dec_index;
-			if (scan_code == 77) goto inc_index;
+			if (scan_code == 75)
+				goto dec_index;
+			if (scan_code == 77)
+				goto inc_index;
 		}
 	}
 
 	if (scan_code == 71) { // Home key
-		if (var[var_select].object > 0) switch (o[var[var_select].object].type) {
-				case tpigl:
-				case tpilo:
-				case tpwgl:
-				case tpwlo:
-				case tpbgl:
-				case tpblo:
-				case tpcgl:
-				case tpclo:
+		if (var[var_select].object > 0)
+			switch (o[var[var_select].object].type) {
+			case tpigl:
+			case tpilo:
+			case tpwgl:
+			case tpwlo:
+			case tpbgl:
+			case tpblo:
+			case tpcgl:
+			case tpclo:
+				var[var_select].index = -1;
+				draw_var_list();
+				v.volcar = 1;
+				break;
+			case tpsgl:
+			case tpslo:
+				if (var[var_select].index > -1) {
 					var[var_select].index = -1;
-					draw_var_list();
-					v.volcar = 1;
-					break;
-				case tpsgl:
-				case tpslo:
-					if (var[var_select].index > -1) {
-						var[var_select].index = -1;
-						if (!var[var_select].member) {
-							member = o[var[var_select].object].v1 + 1;
-							excluye_miembros(var_select + 1, 1, var[var_select].index);
-							if (var_ini + 10 > var_cnt && var_ini) var_ini = var_cnt - 10;
-							if (var_ini < 0) var_ini = 0;
-							draw_segment2();
-						}
-						draw_var_list();
+					if (!var[var_select].member) {
+						member =
+						    o[var[var_select].object]
+							.v1 +
+						    1;
+						excluye_miembros(
+						    var_select + 1, 1,
+						    var[var_select].index);
+						if (var_ini + 10 > var_cnt &&
+						    var_ini)
+							var_ini = var_cnt - 10;
+						if (var_ini < 0)
+							var_ini = 0;
 						draw_segment2();
-						v.volcar = 1;
 					}
-					break;
-				default:
-					var[var_select].index = 0;
 					draw_var_list();
+					draw_segment2();
 					v.volcar = 1;
-					break;
+				}
+				break;
+			default:
+				var[var_select].index = 0;
+				draw_var_list();
+				v.volcar = 1;
+				break;
 			}
 	}
 
 	if (scan_code == 79) { // End key
-		if (var[var_select].object > 0) switch (o[var[var_select].object].type) {
-				case tpigl:
-				case tpilo:
-				case tpwgl:
-				case tpwlo:
-				case tpbgl:
-				case tpblo:
-				case tpcgl:
-				case tpclo:
-					if (var[var_select].index == -1) {
-						type = o[var[var_select].object].type;
-						switch (o[var[var_select].object].type) {
-							case tpigl:
-							case tpwgl:
-							case tpbgl:
-							case tpcgl:
-							case tpsgl: o[var[var_select].object].type = tvglo; break;
-							case tpilo:
-							case tpwlo:
-							case tpblo:
-							case tpclo:
-							case tpslo: o[var[var_select].object].type = tvloc; break;
-						}
-						n = memo(get_offset(var_select));
-						o[var[var_select].object].type = type;
-						if (!n) break; // Not if pointer is null
-					}
-					if (o[var[var_select].object].v2 == -1) {
-						var[var_select].index = 0;
+		if (var[var_select].object > 0)
+			switch (o[var[var_select].object].type) {
+			case tpigl:
+			case tpilo:
+			case tpwgl:
+			case tpwlo:
+			case tpbgl:
+			case tpblo:
+			case tpcgl:
+			case tpclo:
+				if (var[var_select].index == -1) {
+					type = o[var[var_select].object].type;
+					switch (
+					    o[var[var_select].object].type) {
+					case tpigl:
+					case tpwgl:
+					case tpbgl:
+					case tpcgl:
+					case tpsgl:
+						o[var[var_select].object].type =
+						    tvglo;
+						break;
+					case tpilo:
+					case tpwlo:
+					case tpblo:
+					case tpclo:
+					case tpslo:
+						o[var[var_select].object].type =
+						    tvloc;
 						break;
 					}
-				case ttglo:
-				case ttloc:
-				case tbglo:
-				case tbloc:
-				case twglo:
-				case twloc:
-					var[var_select].index = o[var[var_select].object].v2 + 1;
-					if (o[var[var_select].object].v3 > -1) var[var_select].index *= o[var[var_select].object].v3 + 1;
-					if (o[var[var_select].object].v4 > -1) var[var_select].index *= o[var[var_select].object].v4 + 1;
-					var[var_select].index--;
+					n = memo(get_offset(var_select));
+					o[var[var_select].object].type = type;
+					if (!n)
+						break; // Not if pointer is null
+				}
+				if (o[var[var_select].object].v2 == -1) {
+					var[var_select].index = 0;
 					break;
-				case tpsgl:
-				case tpslo:
-					if (var[var_select].index == -1) {
-						if (memo(get_offset(var_select)) == 0) break; // Doesn't show the struct if pointer is null
-						var[var_select].index = 0;
-						if (!var[var_select].member) {
-							member = o[var[var_select].object].v1 + 1;
-							excluye_miembros(var_select + 1, 1, var[var_select].index);
-							draw_segment2();
-						}
-						draw_var_list();
-						break;
-					}
-					if (o[var[var_select].object].v3 == -1)
-						var[var_select].index = 0;
-					else
-						var[var_select].index = o[var[var_select].object].v2 - 1;
+				}
+			case ttglo:
+			case ttloc:
+			case tbglo:
+			case tbloc:
+			case twglo:
+			case twloc:
+				var[var_select].index =
+				    o[var[var_select].object].v2 + 1;
+				if (o[var[var_select].object].v3 > -1)
+					var[var_select].index *=
+					    o[var[var_select].object].v3 + 1;
+				if (o[var[var_select].object].v4 > -1)
+					var[var_select].index *=
+					    o[var[var_select].object].v4 + 1;
+				var[var_select].index--;
+				break;
+			case tpsgl:
+			case tpslo:
+				if (var[var_select].index == -1) {
+					if (memo(get_offset(var_select)) == 0)
+						break; // Doesn't show the
+						       // struct if pointer is
+						       // null
+					var[var_select].index = 0;
 					if (!var[var_select].member) {
-						member = o[var[var_select].object].v1 + 1;
-						excluye_miembros(var_select + 1, 1, var[var_select].index);
+						member =
+						    o[var[var_select].object]
+							.v1 +
+						    1;
+						excluye_miembros(
+						    var_select + 1, 1,
+						    var[var_select].index);
 						draw_segment2();
 					}
 					draw_var_list();
 					break;
-				case tsglo:
-				case tsloc: var[var_select].index = o[var[var_select].object].v2 - 1; break;
+				}
+				if (o[var[var_select].object].v3 == -1)
+					var[var_select].index = 0;
+				else
+					var[var_select].index =
+					    o[var[var_select].object].v2 - 1;
+				if (!var[var_select].member) {
+					member =
+					    o[var[var_select].object].v1 + 1;
+					excluye_miembros(var_select + 1, 1,
+							 var[var_select].index);
+					draw_segment2();
+				}
+				draw_var_list();
+				break;
+			case tsglo:
+			case tsloc:
+				var[var_select].index =
+				    o[var[var_select].object].v2 - 1;
+				break;
 			}
 		draw_var_list();
 		v.volcar = 1;
 	}
 
-	if (var_cnt == 0 && v.active_item < 9) v.active_item = -1;
-	if (var[var_select].object < 0 && v.active_item < 9) v.active_item = -1;
+	if (var_cnt == 0 && v.active_item < 9)
+		v.active_item = -1;
+	if (var[var_select].object < 0 && v.active_item < 9)
+		v.active_item = -1;
 
 	switch (v.active_item) {
-		case 0: // Change
-			if (o[var[var_select].object].type != tcons) {
-				if (o[var[var_select].object].type == tsglo || o[var[var_select].object].type == tsloc ||
-				    ((o[var[var_select].object].type == tpsgl || o[var[var_select].object].type == tpslo) &&
-				     var[var_select].index >= 0)) {
-					v_texto = (char *)text[39];
-					dialog(err0);
-				} else if (o[var[var_select].object].type == tcglo || o[var[var_select].object].type == tcloc) {
-					dialog(changestring0);
-					draw_var_list();
-					v.volcar = 1;
-				} else {
-					dialog(change0);
-					draw_var_list();
-					v.volcar = 1;
-				}
-			} else {
-				v_texto = (char *)text[40];
+	case 0: // Change
+		if (o[var[var_select].object].type != tcons) {
+			if (o[var[var_select].object].type == tsglo ||
+			    o[var[var_select].object].type == tsloc ||
+			    ((o[var[var_select].object].type == tpsgl ||
+			      o[var[var_select].object].type == tpslo) &&
+			     var[var_select].index >= 0)) {
+				v_texto = (char *)text[39];
 				dialog(err0);
+			} else if (o[var[var_select].object].type == tcglo ||
+				   o[var[var_select].object].type == tcloc) {
+				dialog(changestring0);
+				draw_var_list();
+				v.volcar = 1;
+			} else {
+				dialog(change0);
+				draw_var_list();
+				v.volcar = 1;
+			}
+		} else {
+			v_texto = (char *)text[40];
+			dialog(err0);
+		}
+		break;
+	case 1: // Index--
+	dec_index:
+		switch (o[var[var_select].object].type) {
+		case ttglo:
+		case ttloc:
+		case tsglo:
+		case tsloc:
+		case tbglo:
+		case tbloc:
+		case twglo:
+		case twloc:
+			if (var[var_select].index > 0)
+				var[var_select].index--;
+			draw_var_list();
+			v.volcar = 1;
+			break;
+		case tpigl:
+		case tpilo:
+		case tpwgl:
+		case tpwlo:
+		case tpbgl:
+		case tpblo:
+		case tpcgl:
+		case tpclo:
+			if (var[var_select].index > -1)
+				var[var_select].index--;
+			draw_var_list();
+			v.volcar = 1;
+			break;
+		case tpsgl:
+		case tpslo:
+			if (var[var_select].index > -1) {
+				var[var_select].index--;
+				if (!var[var_select].member) {
+					member =
+					    o[var[var_select].object].v1 + 1;
+					excluye_miembros(var_select + 1, 1,
+							 var[var_select].index);
+					draw_segment2();
+				}
+				draw_var_list();
+				v.volcar = 1;
 			}
 			break;
-		case 1: // Index--
-		dec_index:
-			switch (o[var[var_select].object].type) {
-				case ttglo:
-				case ttloc:
-				case tsglo:
-				case tsloc:
-				case tbglo:
-				case tbloc:
-				case twglo:
-				case twloc:
-					if (var[var_select].index > 0) var[var_select].index--;
-					draw_var_list();
-					v.volcar = 1;
-					break;
+		}
+		break;
+	case 2: // Index++
+	inc_index:
+		switch (o[var[var_select].object].type) {
+		case tpigl:
+		case tpilo:
+		case tpwgl:
+		case tpwlo:
+		case tpbgl:
+		case tpblo:
+		case tpcgl:
+		case tpclo:
+			if (var[var_select].index == -1) {
+				type = o[var[var_select].object].type;
+				switch (o[var[var_select].object].type) {
 				case tpigl:
-				case tpilo:
 				case tpwgl:
-				case tpwlo:
 				case tpbgl:
-				case tpblo:
 				case tpcgl:
-				case tpclo:
-					if (var[var_select].index > -1) var[var_select].index--;
-					draw_var_list();
-					v.volcar = 1;
-					break;
 				case tpsgl:
-				case tpslo:
-					if (var[var_select].index > -1) {
-						var[var_select].index--;
-						if (!var[var_select].member) {
-							member = o[var[var_select].object].v1 + 1;
-							excluye_miembros(var_select + 1, 1, var[var_select].index);
-							draw_segment2();
-						}
-						draw_var_list();
-						v.volcar = 1;
-					}
+					o[var[var_select].object].type = tvglo;
 					break;
-			}
-			break;
-		case 2: // Index++
-		inc_index:
-			switch (o[var[var_select].object].type) {
-				case tpigl:
 				case tpilo:
-				case tpwgl:
 				case tpwlo:
-				case tpbgl:
 				case tpblo:
-				case tpcgl:
 				case tpclo:
-					if (var[var_select].index == -1) {
-						type = o[var[var_select].object].type;
-						switch (o[var[var_select].object].type) {
-							case tpigl:
-							case tpwgl:
-							case tpbgl:
-							case tpcgl:
-							case tpsgl: o[var[var_select].object].type = tvglo; break;
-							case tpilo:
-							case tpwlo:
-							case tpblo:
-							case tpclo:
-							case tpslo: o[var[var_select].object].type = tvloc; break;
-						}
-						n = memo(get_offset(var_select));
-						o[var[var_select].object].type = type;
-						if (!n) break; // No si el puntero es NULL
-					}
-					if (o[var[var_select].object].v2 == -1) {
-						var[var_select].index++;
-						draw_var_list();
-						v.volcar = 1;
-						break;
-					}
-				case ttglo:
-				case ttloc:
-				case tbglo:
-				case tbloc:
-				case twglo:
-				case twloc:
-					n = o[var[var_select].object].v2 + 1;
-					if (o[var[var_select].object].v3 > -1) n *= o[var[var_select].object].v3 + 1;
-					if (o[var[var_select].object].v4 > -1) n *= o[var[var_select].object].v4 + 1;
-					if (var[var_select].index < n - 1) var[var_select].index++;
-					draw_var_list();
-					v.volcar = 1;
-					break;
-				case tpsgl:
 				case tpslo:
-					if (var[var_select].index == -1) {
-						if (memo(get_offset(var_select)) == 0) break; // Doesn't show the structure if pointer is null
-					}
-					if (o[var[var_select].object].v3 == -1)
-						var[var_select].index++;
-					else if (var[var_select].index < o[var[var_select].object].v2 - 1)
-						var[var_select].index++;
-					if (!var[var_select].member) {
-						member = o[var[var_select].object].v1 + 1;
-						excluye_miembros(var_select + 1, 1, var[var_select].index);
-						draw_segment2();
-					}
-					draw_var_list();
-					v.volcar = 1;
+					o[var[var_select].object].type = tvloc;
 					break;
-				case tsglo:
-				case tsloc:
-					if (var[var_select].index < o[var[var_select].object].v2 - 1) var[var_select].index++;
-					draw_var_list();
-					v.volcar = 1;
-					break;
+				}
+				n = memo(get_offset(var_select));
+				o[var[var_select].object].type = type;
+				if (!n)
+					break; // No si el puntero es NULL
 			}
-			break;
-		case 3: // View as angle
-			if (viewer[var[var_select].object] == 4)
-				viewer[var[var_select].object] = 0;
-			else
-				viewer[var[var_select].object] = 4;
+			if (o[var[var_select].object].v2 == -1) {
+				var[var_select].index++;
+				draw_var_list();
+				v.volcar = 1;
+				break;
+			}
+		case ttglo:
+		case ttloc:
+		case tbglo:
+		case tbloc:
+		case twglo:
+		case twloc:
+			n = o[var[var_select].object].v2 + 1;
+			if (o[var[var_select].object].v3 > -1)
+				n *= o[var[var_select].object].v3 + 1;
+			if (o[var[var_select].object].v4 > -1)
+				n *= o[var[var_select].object].v4 + 1;
+			if (var[var_select].index < n - 1)
+				var[var_select].index++;
 			draw_var_list();
 			v.volcar = 1;
 			break;
-		case 4: // View as process
-			if (viewer[var[var_select].object] == 3)
-				viewer[var[var_select].object] = 0;
-			else
-				viewer[var[var_select].object] = 3;
+		case tpsgl:
+		case tpslo:
+			if (var[var_select].index == -1) {
+				if (memo(get_offset(var_select)) == 0)
+					break; // Doesn't show the structure if
+					       // pointer is null
+			}
+			if (o[var[var_select].object].v3 == -1)
+				var[var_select].index++;
+			else if (var[var_select].index <
+				 o[var[var_select].object].v2 - 1)
+				var[var_select].index++;
+			if (!var[var_select].member) {
+				member = o[var[var_select].object].v1 + 1;
+				excluye_miembros(var_select + 1, 1,
+						 var[var_select].index);
+				draw_segment2();
+			}
 			draw_var_list();
 			v.volcar = 1;
 			break;
-		case 5: // View as text
-			if (viewer[var[var_select].object] == 2)
-				viewer[var[var_select].object] = 0;
-			else
-				viewer[var[var_select].object] = 2;
+		case tsglo:
+		case tsloc:
+			if (var[var_select].index <
+			    o[var[var_select].object].v2 - 1)
+				var[var_select].index++;
 			draw_var_list();
 			v.volcar = 1;
 			break;
-		case 6: // View as boolean
-			if (viewer[var[var_select].object] == 1)
-				viewer[var[var_select].object] = 0;
-			else
-				viewer[var[var_select].object] = 1;
-			draw_var_list();
-			v.volcar = 1;
-			break;
-		case 7: // View as Hex
-			if (viewer[var[var_select].object] == 5)
-				viewer[var[var_select].object] = 0;
-			else
-				viewer[var[var_select].object] = 5;
-			draw_var_list();
-			v.volcar = 1;
-			break;
-		case 8: // View as Bin
-			if (viewer[var[var_select].object] == 6)
-				viewer[var[var_select].object] = 0;
-			else
-				viewer[var[var_select].object] = 6;
-			draw_var_list();
-			v.volcar = 1;
-			break;
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-		case 14: // Flags
-			crear_lista_variables();
-			var_ini = 0;
-			var_select = 0;
-			draw_var_list();
-			draw_segment2();
-			v.volcar = 1;
-			break;
+		}
+		break;
+	case 3: // View as angle
+		if (viewer[var[var_select].object] == 4)
+			viewer[var[var_select].object] = 0;
+		else
+			viewer[var[var_select].object] = 4;
+		draw_var_list();
+		v.volcar = 1;
+		break;
+	case 4: // View as process
+		if (viewer[var[var_select].object] == 3)
+			viewer[var[var_select].object] = 0;
+		else
+			viewer[var[var_select].object] = 3;
+		draw_var_list();
+		v.volcar = 1;
+		break;
+	case 5: // View as text
+		if (viewer[var[var_select].object] == 2)
+			viewer[var[var_select].object] = 0;
+		else
+			viewer[var[var_select].object] = 2;
+		draw_var_list();
+		v.volcar = 1;
+		break;
+	case 6: // View as boolean
+		if (viewer[var[var_select].object] == 1)
+			viewer[var[var_select].object] = 0;
+		else
+			viewer[var[var_select].object] = 1;
+		draw_var_list();
+		v.volcar = 1;
+		break;
+	case 7: // View as Hex
+		if (viewer[var[var_select].object] == 5)
+			viewer[var[var_select].object] = 0;
+		else
+			viewer[var[var_select].object] = 5;
+		draw_var_list();
+		v.volcar = 1;
+		break;
+	case 8: // View as Bin
+		if (viewer[var[var_select].object] == 6)
+			viewer[var[var_select].object] = 0;
+		else
+			viewer[var[var_select].object] = 6;
+		draw_var_list();
+		v.volcar = 1;
+		break;
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14: // Flags
+		crear_lista_variables();
+		var_ini = 0;
+		var_select = 0;
+		draw_var_list();
+		draw_segment2();
+		v.volcar = 1;
+		break;
 	}
 }
 
-static void inspect3(void) {
+static void inspect3(void)
+{
 	_var_ini = var_ini;
 	_var_select = var_select;
 }
 
 static char titulo[256];
 
-static void inspect0(void) {
+static void inspect0(void)
+{
 	int n, x = 50;
 
 	v.tipo = 1;
@@ -3885,7 +4491,9 @@ static void inspect0(void) {
 	strcpy(titulo, (char *)text[41]);
 
 	for (n = 0; n < obj_cnt; n++)
-		if (o[n].type == tproc && o[n].v0 == mem[ids[ids_select] + _Bloque]) break;
+		if (o[n].type == tproc &&
+		    o[n].v0 == mem[ids[ids_select] + _Bloque])
+			break;
 	if (n < obj_cnt)
 		strcat(titulo, vnames + o[n].name);
 	else
@@ -3933,7 +4541,8 @@ static void inspect0(void) {
 
 // Functions to avoid page faults
 
-static byte *capar_byte(byte *dir) {
+static byte *capar_byte(byte *dir)
+{
 	memptrsize offset;
 	offset = ((memptrsize)dir - (memptrsize)mem) / 4;
 	if (capar(offset))
@@ -3942,7 +4551,8 @@ static byte *capar_byte(byte *dir) {
 		return ((byte *)mem);
 }
 
-static word *capar_word(word *dir) {
+static word *capar_word(word *dir)
+{
 	memptrsize offset;
 	offset = ((memptrsize)dir - (memptrsize)mem) / 4;
 	if (capar(offset))
@@ -3953,7 +4563,8 @@ static word *capar_word(word *dir) {
 
 static int memo(int dir) { return (mem[capar(dir)]); }
 
-static void draw_var_list(void) {
+static void draw_var_list(void)
+{
 	char msg[512];
 	byte *ptr = v.ptr, x;
 	int an = v.an / big2, al = v.al / big2;
@@ -3967,211 +4578,283 @@ static void draw_var_list(void) {
 
 	for (m = var_ini; m < fin && m < var_cnt; m++) {
 		if (m == var_select) {
-			wbox(ptr, an, al, c01, 4, 20 + (m - var_ini) * 8, 150 + 64, 9); // Fill processes listbox
+			wbox(ptr, an, al, c01, 4, 20 + (m - var_ini) * 8,
+			     150 + 64, 9); // Fill processes listbox
 			x = c4;
 		} else
 			x = c3;
 		if (var[m].object < 0) {
 			switch (o[abs(var[m].object)].type) {
-				case tcons: strcpy(msg, "CONST "); break;
-				case tvglo:
-				case tvloc: strcpy(msg, "INT "); break;
-				case tcglo:
-				case tcloc: strcpy(msg, "STRING "); break;
-				case tbglo:
-				case tbloc: strcpy(msg, "BYTE "); break;
-				case twglo:
-				case twloc: strcpy(msg, "WORD "); break;
-				case ttglo:
-				case ttloc: strcpy(msg, "INT "); break;
-				case tpigl:
-				case tpilo: strcpy(msg, "INT POINTER "); break;
-				case tpwgl:
-				case tpwlo: strcpy(msg, "WORD POINTER "); break;
-				case tpbgl:
-				case tpblo: strcpy(msg, "BYTE POINTER "); break;
-				case tpsgl:
-				case tpslo:
-					strcpy(msg, "STRUCT POINTER ");
-					strcat(msg, vnames + o[o[abs(var[m].object)].v1].name);
-					strcat(msg, vnames + o[o[abs(var[m].object)].v1].name);
-					strupr(msg);
-					strcat(msg, " ");
-					break;
-				case tpcgl:
-				case tpclo: strcpy(msg, "STRING POINTER "); break;
-				case tsglo:
-				case tsloc: strcpy(msg, "STRUCT "); break;
+			case tcons:
+				strcpy(msg, "CONST ");
+				break;
+			case tvglo:
+			case tvloc:
+				strcpy(msg, "INT ");
+				break;
+			case tcglo:
+			case tcloc:
+				strcpy(msg, "STRING ");
+				break;
+			case tbglo:
+			case tbloc:
+				strcpy(msg, "BYTE ");
+				break;
+			case twglo:
+			case twloc:
+				strcpy(msg, "WORD ");
+				break;
+			case ttglo:
+			case ttloc:
+				strcpy(msg, "INT ");
+				break;
+			case tpigl:
+			case tpilo:
+				strcpy(msg, "INT POINTER ");
+				break;
+			case tpwgl:
+			case tpwlo:
+				strcpy(msg, "WORD POINTER ");
+				break;
+			case tpbgl:
+			case tpblo:
+				strcpy(msg, "BYTE POINTER ");
+				break;
+			case tpsgl:
+			case tpslo:
+				strcpy(msg, "STRUCT POINTER ");
+				strcat(msg,
+				       vnames +
+					   o[o[abs(var[m].object)].v1].name);
+				strcat(msg,
+				       vnames +
+					   o[o[abs(var[m].object)].v1].name);
+				strupr(msg);
+				strcat(msg, " ");
+				break;
+			case tpcgl:
+			case tpclo:
+				strcpy(msg, "STRING POINTER ");
+				break;
+			case tsglo:
+			case tsloc:
+				strcpy(msg, "STRUCT ");
+				break;
 			}
 			strcat(msg, vnames + o[abs(var[m].object)].name);
 			x = c2;
 		} else
 			switch (o[var[m].object].type) {
-				case tcons:
-					strcpy(msg, "CONST ");
-					strcat(msg, vnames + o[var[m].object].name);
-					display(o[var[m].object].v0, var[m].object, msg);
-					break;
-				case tvglo:
-				case tvloc:
-					strcpy(msg, "INT ");
-					strcat(msg, vnames + o[var[m].object].name);
-					display(memo(get_offset(m)), var[m].object, msg);
-					break;
-				case tcglo:
-				case tcloc:
-					strcpy(msg, "STRING ");
-					strcat(msg, vnames + o[var[m].object].name);
-					display(get_offset(m), var[m].object, msg);
-					break;
-				case tbglo:
-				case tbloc:
-					strcpy(msg, "BYTE ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (o[var[m].object].v3 == -1 && o[var[m].object].v2 == 0)
-						goto show_variable;
-					else
-						goto show_tabla;
-				case twglo:
-				case twloc:
-					strcpy(msg, "WORD ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (o[var[m].object].v3 == -1 && o[var[m].object].v2 == 0)
-						goto show_variable;
-					else
-						goto show_tabla;
-				case ttglo:
-				case ttloc:
-					strcpy(msg, "INT ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (o[var[m].object].v3 == -1 && o[var[m].object].v2 == 0)
-						goto show_variable;
-					else
-						goto show_tabla;
-				case tpigl:
-				case tpilo:
-					strcpy(msg, "INT POINTER ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (var[m].index == -1)
-						goto show_variable;
-					else
-						goto show_tabla;
-				case tpwgl:
-				case tpwlo:
-					strcpy(msg, "WORD POINTER ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (var[m].index == -1)
-						goto show_variable;
-					else
-						goto show_tabla;
-				case tpbgl:
-				case tpblo:
-					strcpy(msg, "BYTE POINTER ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (var[m].index == -1)
-						goto show_variable;
-					else
-						goto show_tabla;
-				case tpsgl:
-				case tpslo:
-					strcpy(msg, "STRUCT POINTER ");
-					strcat(msg, vnames + o[o[var[m].object].v1].name);
-					strupr(msg);
-					strcat(msg, " ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (var[m].index == -1)
-						goto show_variable;
-					else
-						goto show_indice;
-				case tpcgl:
-				case tpclo:
-					strcpy(msg, "STRING POINTER ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (var[m].index == -1)
-						goto show_variable;
-					else
-						goto show_tabla;
-				show_tabla:
-					strcat(msg, "[");
-					if (o[var[m].object].v3 == -1) { // 1D table
-						itoa(var[m].index, msg + strlen(msg), 10);
-					} else if (o[var[m].object].v4 == -1) { // 2D table
-						itoa(var[m].index % (o[var[m].object].v2 + 1), msg + strlen(msg), 10);
-						strcat(msg, ",");
-						itoa(var[m].index / (o[var[m].object].v2 + 1), msg + strlen(msg), 10);
-					} else { // 3D table
-						itoa(var[m].index % (o[var[m].object].v2 + 1), msg + strlen(msg), 10);
-						strcat(msg, ",");
-						itoa((var[m].index / (o[var[m].object].v2 + 1)) % (o[var[m].object].v3 + 1),
-						     msg + strlen(msg),
-						     10);
-						strcat(msg, ",");
-						itoa((var[m].index / (o[var[m].object].v2 + 1)) / (o[var[m].object].v3 + 1),
-						     msg + strlen(msg),
-						     10);
+			case tcons:
+				strcpy(msg, "CONST ");
+				strcat(msg, vnames + o[var[m].object].name);
+				display(o[var[m].object].v0, var[m].object,
+					msg);
+				break;
+			case tvglo:
+			case tvloc:
+				strcpy(msg, "INT ");
+				strcat(msg, vnames + o[var[m].object].name);
+				display(memo(get_offset(m)), var[m].object,
+					msg);
+				break;
+			case tcglo:
+			case tcloc:
+				strcpy(msg, "STRING ");
+				strcat(msg, vnames + o[var[m].object].name);
+				display(get_offset(m), var[m].object, msg);
+				break;
+			case tbglo:
+			case tbloc:
+				strcpy(msg, "BYTE ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (o[var[m].object].v3 == -1 &&
+				    o[var[m].object].v2 == 0)
+					goto show_variable;
+				else
+					goto show_tabla;
+			case twglo:
+			case twloc:
+				strcpy(msg, "WORD ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (o[var[m].object].v3 == -1 &&
+				    o[var[m].object].v2 == 0)
+					goto show_variable;
+				else
+					goto show_tabla;
+			case ttglo:
+			case ttloc:
+				strcpy(msg, "INT ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (o[var[m].object].v3 == -1 &&
+				    o[var[m].object].v2 == 0)
+					goto show_variable;
+				else
+					goto show_tabla;
+			case tpigl:
+			case tpilo:
+				strcpy(msg, "INT POINTER ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (var[m].index == -1)
+					goto show_variable;
+				else
+					goto show_tabla;
+			case tpwgl:
+			case tpwlo:
+				strcpy(msg, "WORD POINTER ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (var[m].index == -1)
+					goto show_variable;
+				else
+					goto show_tabla;
+			case tpbgl:
+			case tpblo:
+				strcpy(msg, "BYTE POINTER ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (var[m].index == -1)
+					goto show_variable;
+				else
+					goto show_tabla;
+			case tpsgl:
+			case tpslo:
+				strcpy(msg, "STRUCT POINTER ");
+				strcat(msg,
+				       vnames + o[o[var[m].object].v1].name);
+				strupr(msg);
+				strcat(msg, " ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (var[m].index == -1)
+					goto show_variable;
+				else
+					goto show_indice;
+			case tpcgl:
+			case tpclo:
+				strcpy(msg, "STRING POINTER ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (var[m].index == -1)
+					goto show_variable;
+				else
+					goto show_tabla;
+			show_tabla:
+				strcat(msg, "[");
+				if (o[var[m].object].v3 == -1) { // 1D table
+					itoa(var[m].index, msg + strlen(msg),
+					     10);
+				} else if (o[var[m].object].v4 ==
+					   -1) { // 2D table
+					itoa(var[m].index %
+						 (o[var[m].object].v2 + 1),
+					     msg + strlen(msg), 10);
+					strcat(msg, ",");
+					itoa(var[m].index /
+						 (o[var[m].object].v2 + 1),
+					     msg + strlen(msg), 10);
+				} else { // 3D table
+					itoa(var[m].index %
+						 (o[var[m].object].v2 + 1),
+					     msg + strlen(msg), 10);
+					strcat(msg, ",");
+					itoa((var[m].index /
+					      (o[var[m].object].v2 + 1)) %
+						 (o[var[m].object].v3 + 1),
+					     msg + strlen(msg), 10);
+					strcat(msg, ",");
+					itoa((var[m].index /
+					      (o[var[m].object].v2 + 1)) /
+						 (o[var[m].object].v3 + 1),
+					     msg + strlen(msg), 10);
+				}
+				strcat(msg, "]");
+			show_variable:
+				if (var[m].index == -1) {
+					type = o[var[m].object].type;
+					switch (o[var[m].object].type) {
+					case tpigl:
+					case tpwgl:
+					case tpbgl:
+					case tpcgl:
+					case tpsgl:
+						o[var[m].object].type = tvglo;
+						break;
+					case tpilo:
+					case tpwlo:
+					case tpblo:
+					case tpclo:
+					case tpslo:
+						o[var[m].object].type = tvloc;
+						break;
 					}
-					strcat(msg, "]");
-				show_variable:
-					if (var[m].index == -1) {
-						type = o[var[m].object].type;
-						switch (o[var[m].object].type) {
-							case tpigl:
-							case tpwgl:
-							case tpbgl:
-							case tpcgl:
-							case tpsgl: o[var[m].object].type = tvglo; break;
-							case tpilo:
-							case tpwlo:
-							case tpblo:
-							case tpclo:
-							case tpslo: o[var[m].object].type = tvloc; break;
-						}
-						if (!memo(get_offset(m)))
-							strcat(msg, " = NULL");
-						else
-							display(memo(get_offset(m)), var[m].object, msg);
-						o[var[m].object].type = type;
-					} else if (o[var[m].object].type == ttglo || o[var[m].object].type == ttloc ||
-					           o[var[m].object].type == tpigl || o[var[m].object].type == tpilo) {
-						display(memo(get_offset(m)), var[m].object, msg);
-					} else if (o[var[m].object].type == twglo || o[var[m].object].type == twloc ||
-					           o[var[m].object].type == tpwgl || o[var[m].object].type == tpwlo) {
-						display(*get_offset_word(m), var[m].object, msg);
-					} else if (o[var[m].object].type == tbglo || o[var[m].object].type == tbloc ||
-					           o[var[m].object].type == tpbgl || o[var[m].object].type == tpblo) {
-						display(*get_offset_byte(m), var[m].object, msg);
-					} else if (o[var[m].object].type == tpcgl || o[var[m].object].type == tpclo) {
-						display(*get_offset_byte(m), var[m].object, msg);
-					}
+					if (!memo(get_offset(m)))
+						strcat(msg, " = NULL");
+					else
+						display(memo(get_offset(m)),
+							var[m].object, msg);
+					o[var[m].object].type = type;
+				} else if (o[var[m].object].type == ttglo ||
+					   o[var[m].object].type == ttloc ||
+					   o[var[m].object].type == tpigl ||
+					   o[var[m].object].type == tpilo) {
+					display(memo(get_offset(m)),
+						var[m].object, msg);
+				} else if (o[var[m].object].type == twglo ||
+					   o[var[m].object].type == twloc ||
+					   o[var[m].object].type == tpwgl ||
+					   o[var[m].object].type == tpwlo) {
+					display(*get_offset_word(m),
+						var[m].object, msg);
+				} else if (o[var[m].object].type == tbglo ||
+					   o[var[m].object].type == tbloc ||
+					   o[var[m].object].type == tpbgl ||
+					   o[var[m].object].type == tpblo) {
+					display(*get_offset_byte(m),
+						var[m].object, msg);
+				} else if (o[var[m].object].type == tpcgl ||
+					   o[var[m].object].type == tpclo) {
+					display(*get_offset_byte(m),
+						var[m].object, msg);
+				}
+				break;
+			case tsglo:
+			case tsloc:
+				strcpy(msg, "STRUCT ");
+				strcat(msg, vnames + o[var[m].object].name);
+				if (o[var[m].object].v4 == -1 &&
+				    o[var[m].object].v3 == 0)
 					break;
-				case tsglo:
-				case tsloc:
-					strcpy(msg, "STRUCT ");
-					strcat(msg, vnames + o[var[m].object].name);
-					if (o[var[m].object].v4 == -1 && o[var[m].object].v3 == 0) break;
-				show_indice:
-					strcat(msg, "[");
-					if (o[var[m].object].v4 == -1) { // 1D struct
-						itoa(var[m].index, msg + strlen(msg), 10);
-					} else if (o[var[m].object].v5 == -1) { // 2D struct
-						itoa(var[m].index % (o[var[m].object].v3 + 1), msg + strlen(msg), 10);
-						strcat(msg, ",");
-						itoa(var[m].index / (o[var[m].object].v3 + 1), msg + strlen(msg), 10);
-					} else { // 3D struct
-						itoa(var[m].index % (o[var[m].object].v3 + 1), msg + strlen(msg), 10);
-						strcat(msg, ",");
-						itoa((var[m].index / (o[var[m].object].v3 + 1)) % (o[var[m].object].v4 + 1),
-						     msg + strlen(msg),
-						     10);
-						strcat(msg, ",");
-						itoa((var[m].index / (o[var[m].object].v3 + 1)) / (o[var[m].object].v4 + 1),
-						     msg + strlen(msg),
-						     10);
-					}
-					strcat(msg, "]");
-					break;
+			show_indice:
+				strcat(msg, "[");
+				if (o[var[m].object].v4 == -1) { // 1D struct
+					itoa(var[m].index, msg + strlen(msg),
+					     10);
+				} else if (o[var[m].object].v5 ==
+					   -1) { // 2D struct
+					itoa(var[m].index %
+						 (o[var[m].object].v3 + 1),
+					     msg + strlen(msg), 10);
+					strcat(msg, ",");
+					itoa(var[m].index /
+						 (o[var[m].object].v3 + 1),
+					     msg + strlen(msg), 10);
+				} else { // 3D struct
+					itoa(var[m].index %
+						 (o[var[m].object].v3 + 1),
+					     msg + strlen(msg), 10);
+					strcat(msg, ",");
+					itoa((var[m].index /
+					      (o[var[m].object].v3 + 1)) %
+						 (o[var[m].object].v4 + 1),
+					     msg + strlen(msg), 10);
+					strcat(msg, ",");
+					itoa((var[m].index /
+					      (o[var[m].object].v3 + 1)) /
+						 (o[var[m].object].v4 + 1),
+					     msg + strlen(msg), 10);
+				}
+				strcat(msg, "]");
+				break;
 			}
-		wwrite_in_box(ptr, an, 144 + 9 + 64, al, 10 + var[m].tab * 8, 21 + (m - var_ini) * 8, 0, (byte *)msg, x);
+		wwrite_in_box(ptr, an, 144 + 9 + 64, al, 10 + var[m].tab * 8,
+			      21 + (m - var_ini) * 8, 0, (byte *)msg, x);
 	}
 
 	draw_segment2();
@@ -4181,86 +4864,95 @@ static void draw_var_list(void) {
 //  Visualizes an object according to its viewer[]
 //════════════════════════════════════════════════════════════════════════════
 
-static void display(int valor, int object, char *str) {
+static void display(int valor, int object, char *str)
+{
 	int n;
 	strcat(str, " = ");
 	switch (viewer[object]) {
-		case 0: // Integer
-			itoa(valor, str + strlen(str), 10);
-			break;
-		case 1: // Boolean
-			if (valor & 1)
-				strcat(str, "TRUE");
+	case 0: // Integer
+		itoa(valor, str + strlen(str), 10);
+		break;
+	case 1: // Boolean
+		if (valor & 1)
+			strcat(str, "TRUE");
+		else
+			strcat(str, "FALSE");
+		break;
+	case 2: // Text
+		if (valor >= 256) {
+			strcat(str, "\"");
+			if (strlen((char *)&mem[valor]) + strlen(str) < 511) {
+				strcat(str, (char *)&mem[valor]);
+			} else {
+				str[strlen(str) + 256] = 0;
+				memcpy(str + strlen(str), (char *)&mem[valor],
+				       256);
+			}
+			strcat(str, "\"");
+		} else if (valor >= 0 && valor <= 255) {
+			if (valor == 0)
+				strcat(str, "<EOL>");
 			else
-				strcat(str, "FALSE");
-			break;
-		case 2: // Text
-			if (valor >= 256) {
-				strcat(str, "\"");
-				if (strlen((char *)&mem[valor]) + strlen(str) < 511) {
-					strcat(str, (char *)&mem[valor]);
-				} else {
-					str[strlen(str) + 256] = 0;
-					memcpy(str + strlen(str), (char *)&mem[valor], 256);
-				}
-				strcat(str, "\"");
-			} else if (valor >= 0 && valor <= 255) {
-				if (valor == 0)
-					strcat(str, "<EOL>");
-				else
-					sprintf(str + strlen(str), "\"%c\"\0", valor);
-			} else
-				itoa(valor, str + strlen(str), 10);
-			break;
-		case 3: // Process
-			if (valor == id_init) {
-				strcat(str, "div_main()");
-			} else if (valor) {
-				for (n = 0; n < iids; n++)
-					if (ids[n] == valor) break;
-				if (n < iids) {
-					for (n = 0; n < obj_cnt; n++)
-						if (o[n].type == tproc && o[n].v0 == mem[valor + _Bloque]) break;
-					if (n < obj_cnt) {
-						strcat(str, (char *)vnames + o[n].name);
-						strcat(str, "(");
-						n = 1;
-					} else
-						n = 0;
+				sprintf(str + strlen(str), "\"%c\"\0", valor);
+		} else
+			itoa(valor, str + strlen(str), 10);
+		break;
+	case 3: // Process
+		if (valor == id_init) {
+			strcat(str, "div_main()");
+		} else if (valor) {
+			for (n = 0; n < iids; n++)
+				if (ids[n] == valor)
+					break;
+			if (n < iids) {
+				for (n = 0; n < obj_cnt; n++)
+					if (o[n].type == tproc &&
+					    o[n].v0 == mem[valor + _Bloque])
+						break;
+				if (n < obj_cnt) {
+					strcat(str, (char *)vnames + o[n].name);
+					strcat(str, "(");
+					n = 1;
 				} else
 					n = 0;
-				itoa(valor, str + strlen(str), 10);
-				if (n) strcat(str, ")");
 			} else
-				strcat(str, (char *)text[53]);
-			break;
-		case 4: // Angle
-			while (valor > pi) valor -= 2 * pi;
-			while (valor < -pi) valor += 2 * pi;
-			sprintf(str + strlen(str), "%.3fº, %.4f rad", (float)valor / 1000.0, (float)valor / radian);
-			break;
-		case 5: // Hex
-			sprintf(str + strlen(str), "0x%X\0", valor);
-			break;
-		case 6: // Bin
-			for (n = 0; n < 32; n++)
+				n = 0;
+			itoa(valor, str + strlen(str), 10);
+			if (n)
+				strcat(str, ")");
+		} else
+			strcat(str, (char *)text[53]);
+		break;
+	case 4: // Angle
+		while (valor > pi)
+			valor -= 2 * pi;
+		while (valor < -pi)
+			valor += 2 * pi;
+		sprintf(str + strlen(str), "%.3fº, %.4f rad",
+			(float)valor / 1000.0, (float)valor / radian);
+		break;
+	case 5: // Hex
+		sprintf(str + strlen(str), "0x%X\0", valor);
+		break;
+	case 6: // Bin
+		for (n = 0; n < 32; n++)
+			if (valor & 0x80000000)
+				break;
+			else
+				valor <<= 1;
+		if (n < 32) {
+			for (; n < 32; n++) {
 				if (valor & 0x80000000)
-					break;
+					strcat(str, "1");
 				else
-					valor <<= 1;
-			if (n < 32) {
-				for (; n < 32; n++) {
-					if (valor & 0x80000000)
-						strcat(str, "1");
-					else
-						strcat(str, "0");
-					valor <<= 1;
-				}
-				strcat(str, " Bin");
-			} else {
-				strcat(str, "0 Bin");
+					strcat(str, "0");
+				valor <<= 1;
 			}
-			break;
+			strcat(str, " Bin");
+		} else {
+			strcat(str, "0 Bin");
+		}
+		break;
 	}
 }
 
@@ -4270,155 +4962,241 @@ static void display(int valor, int object, char *str) {
 
 static int get_offset(int m) { return (capar(_get_offset(m))); }
 
-static int _get_offset(int m) {
-	if (var[m].member == 0) switch (o[var[m].object].type) {
-			case tvglo: return (o[var[m].object].v0);
-			case tcglo: return (o[var[m].object].v0);
-			case ttglo:
-				if (var[m].index >= 0) return (o[var[m].object].v0 + var[m].index);
-			case tpigl:
-				if (var[m].index >= 0)
-					return (memo(o[var[m].object].v0) + var[m].index);
-				else
-					return (o[var[m].object].v0);
-			case tbglo:
-			case tbloc:
-			case tpbgl:
-			case tpblo:
-			case tpcgl:
-			case tpclo: return (1);
-			case twglo:
-			case twloc:
-			case tpwgl:
-			case tpwlo: return (2);
-			case tsglo: return (o[var[m].object].v0 + var[m].index * o[var[m].object].v1);
-			case tpsgl:
-				if (var[m].index >= 0)
-					return (memo(o[var[m].object].v0) + var[m].index * o[o[var[m].object].v1].v1);
-				else
-					return (o[var[m].object].v0);
-			case tvloc: return (o[var[m].object].v0 + ids[ids_select]);
-			case tcloc: return (o[var[m].object].v0 + ids[ids_select]);
-			case ttloc: return (o[var[m].object].v0 + ids[ids_select] + var[m].index);
-			case tpilo:
-				if (var[m].index >= 0)
-					return (memo(o[var[m].object].v0 + ids[ids_select]) + var[m].index);
-				else
-					return (o[var[m].object].v0 + ids[ids_select]);
-			case tsloc: return (o[var[m].object].v0 + var[m].index * o[var[m].object].v1 + ids[ids_select]);
-			case tpslo:
-				if (var[m].index >= 0)
-					return (memo(o[var[m].object].v0 + ids[ids_select]) + var[m].index * o[o[var[m].object].v1].v1);
-				else
-					return (o[var[m].object].v0 + ids[ids_select]);
+static int _get_offset(int m)
+{
+	if (var[m].member == 0)
+		switch (o[var[m].object].type) {
+		case tvglo:
+			return (o[var[m].object].v0);
+		case tcglo:
+			return (o[var[m].object].v0);
+		case ttglo:
+			if (var[m].index >= 0)
+				return (o[var[m].object].v0 + var[m].index);
+		case tpigl:
+			if (var[m].index >= 0)
+				return (memo(o[var[m].object].v0) +
+					var[m].index);
+			else
+				return (o[var[m].object].v0);
+		case tbglo:
+		case tbloc:
+		case tpbgl:
+		case tpblo:
+		case tpcgl:
+		case tpclo:
+			return (1);
+		case twglo:
+		case twloc:
+		case tpwgl:
+		case tpwlo:
+			return (2);
+		case tsglo:
+			return (o[var[m].object].v0 +
+				var[m].index * o[var[m].object].v1);
+		case tpsgl:
+			if (var[m].index >= 0)
+				return (memo(o[var[m].object].v0) +
+					var[m].index *
+					    o[o[var[m].object].v1].v1);
+			else
+				return (o[var[m].object].v0);
+		case tvloc:
+			return (o[var[m].object].v0 + ids[ids_select]);
+		case tcloc:
+			return (o[var[m].object].v0 + ids[ids_select]);
+		case ttloc:
+			return (o[var[m].object].v0 + ids[ids_select] +
+				var[m].index);
+		case tpilo:
+			if (var[m].index >= 0)
+				return (memo(o[var[m].object].v0 +
+					     ids[ids_select]) +
+					var[m].index);
+			else
+				return (o[var[m].object].v0 + ids[ids_select]);
+		case tsloc:
+			return (o[var[m].object].v0 +
+				var[m].index * o[var[m].object].v1 +
+				ids[ids_select]);
+		case tpslo:
+			if (var[m].index >= 0)
+				return (memo(o[var[m].object].v0 +
+					     ids[ids_select]) +
+					var[m].index *
+					    o[o[var[m].object].v1].v1);
+			else
+				return (o[var[m].object].v0 + ids[ids_select]);
 		}
 	else {
 		switch (o[var[m].object].type) {
-			case tvglo:
-			case tvloc: return (o[var[m].object].v0 + get_offset(var[m].member - 1));
-			case tcglo:
-			case tcloc: return (o[var[m].object].v0 + get_offset(var[m].member - 1));
-			case ttglo:
-			case ttloc: return (o[var[m].object].v0 + get_offset(var[m].member - 1) + var[m].index);
-			case tpigl:
-			case tpilo:
-				if (var[m].index >= 0)
-					return (memo(o[var[m].object].v0 + get_offset(var[m].member - 1)) + var[m].index);
-				else
-					return (o[var[m].object].v0 + get_offset(var[m].member - 1));
-			case tbglo:
-			case tbloc:
-			case tpbgl:
-			case tpblo:
-			case tpcgl:
-			case tpclo: return (1);
-			case twglo:
-			case twloc:
-			case tpwgl:
-			case tpwlo: return (2);
-			case tsglo:
-			case tsloc:
-				return (o[var[m].object].v0 + var[m].index * o[var[m].object].v1 + get_offset(var[m].member - 1));
-			case tpsgl:
-			case tpslo:
-				if (var[m].index >= 0)
-					return (memo(o[var[m].object].v0 + get_offset(var[m].member - 1)) +
-					        var[m].index * o[o[var[m].object].v1].v1);
-				else
-					return (o[var[m].object].v0 + get_offset(var[m].member - 1));
+		case tvglo:
+		case tvloc:
+			return (o[var[m].object].v0 +
+				get_offset(var[m].member - 1));
+		case tcglo:
+		case tcloc:
+			return (o[var[m].object].v0 +
+				get_offset(var[m].member - 1));
+		case ttglo:
+		case ttloc:
+			return (o[var[m].object].v0 +
+				get_offset(var[m].member - 1) + var[m].index);
+		case tpigl:
+		case tpilo:
+			if (var[m].index >= 0)
+				return (memo(o[var[m].object].v0 +
+					     get_offset(var[m].member - 1)) +
+					var[m].index);
+			else
+				return (o[var[m].object].v0 +
+					get_offset(var[m].member - 1));
+		case tbglo:
+		case tbloc:
+		case tpbgl:
+		case tpblo:
+		case tpcgl:
+		case tpclo:
+			return (1);
+		case twglo:
+		case twloc:
+		case tpwgl:
+		case tpwlo:
+			return (2);
+		case tsglo:
+		case tsloc:
+			return (o[var[m].object].v0 +
+				var[m].index * o[var[m].object].v1 +
+				get_offset(var[m].member - 1));
+		case tpsgl:
+		case tpslo:
+			if (var[m].index >= 0)
+				return (memo(o[var[m].object].v0 +
+					     get_offset(var[m].member - 1)) +
+					var[m].index *
+					    o[o[var[m].object].v1].v1);
+			else
+				return (o[var[m].object].v0 +
+					get_offset(var[m].member - 1));
 		}
 	}
 	return (0);
 }
 
-static byte *_get_offset_byte(int m) {
-	if (var[m].member == 0) switch (o[var[m].object].type) {
-			case tbglo: return (&memb[o[var[m].object].v0 * 4 + var[m].index]);
-			case tbloc: return (&memb[o[var[m].object].v0 * 4 + var[m].index + ids[ids_select] * 4]);
-			case tpbgl:
-			case tpcgl:
-				if (var[m].index >= 0)
-					return (&memb[memo(o[var[m].object].v0) * 4 + var[m].index]);
-				else
-					return (&memb[o[var[m].object].v0 * 4]);
-			case tpblo:
-			case tpclo:
-				if (var[m].index >= 0)
-					return (&memb[memo(o[var[m].object].v0 + ids[ids_select]) * 4 + var[m].index]);
-				else
-					return (&memb[o[var[m].object].v0 * 4 + ids[ids_select] * 4]);
+static byte *_get_offset_byte(int m)
+{
+	if (var[m].member == 0)
+		switch (o[var[m].object].type) {
+		case tbglo:
+			return (&memb[o[var[m].object].v0 * 4 + var[m].index]);
+		case tbloc:
+			return (&memb[o[var[m].object].v0 * 4 + var[m].index +
+				      ids[ids_select] * 4]);
+		case tpbgl:
+		case tpcgl:
+			if (var[m].index >= 0)
+				return (&memb[memo(o[var[m].object].v0) * 4 +
+					      var[m].index]);
+			else
+				return (&memb[o[var[m].object].v0 * 4]);
+		case tpblo:
+		case tpclo:
+			if (var[m].index >= 0)
+				return (&memb[memo(o[var[m].object].v0 +
+						   ids[ids_select]) *
+						  4 +
+					      var[m].index]);
+			else
+				return (&memb[o[var[m].object].v0 * 4 +
+					      ids[ids_select] * 4]);
 		}
 	else
 		switch (o[var[m].object].type) {
-			case tbglo:
-			case tbloc:
-			case tpcgl:
-			case tpclo: return (&memb[o[var[m].object].v0 * 4 + var[m].index + get_offset(var[m].member - 1) * 4]);
-			case tpbgl:
-			case tpblo:
-				if (var[m].index >= 0)
-					return (&memb[memo(o[var[m].object].v0 + get_offset(var[m].member - 1)) * 4 + var[m].index]);
-				else
-					return (&memb[o[var[m].object].v0 * 4 + get_offset(var[m].member - 1) * 4]);
-		}
-	return (0);
-}
-
-static byte *get_offset_byte(int m) { return (capar_byte(_get_offset_byte(m))); }
-
-static word *_get_offset_word(int m) {
-	if (var[m].member == 0) switch (o[var[m].object].type) {
-			case twglo: return ((word *)&memb[o[var[m].object].v0 * 4 + var[m].index * 2]);
-			case twloc: return ((word *)&memb[o[var[m].object].v0 * 4 + var[m].index * 2 + ids[ids_select] * 4]);
-			case tpwgl:
-				if (var[m].index >= 0)
-					return ((word *)&memb[memo(o[var[m].object].v0) * 4 + var[m].index * 2]);
-				else
-					return ((word *)&memb[o[var[m].object].v0 * 4]);
-			case tpwlo:
-				if (var[m].index >= 0)
-					return ((word *)&memb[memo(o[var[m].object].v0 + ids[ids_select]) * 4 + var[m].index * 2]);
-				else
-					return ((word *)&memb[o[var[m].object].v0 * 4 + ids[ids_select] * 4]);
-		}
-	else
-		switch (o[var[m].object].type) {
-			case twglo:
-			case twloc:
+		case tbglo:
+		case tbloc:
+		case tpcgl:
+		case tpclo:
+			return (&memb[o[var[m].object].v0 * 4 + var[m].index +
+				      get_offset(var[m].member - 1) * 4]);
+		case tpbgl:
+		case tpblo:
+			if (var[m].index >= 0)
 				return (
-				    (word *)&memb[o[var[m].object].v0 * 4 + var[m].index * 2 + get_offset(var[m].member - 1) * 4]);
-			case tpwgl:
-			case tpwlo:
-				if (var[m].index >= 0)
-					return ((word *)&memb[memo(o[var[m].object].v0 + get_offset(var[m].member - 1)) * 4 +
-					                      var[m].index * 2]);
-				else
-					return ((word *)&memb[o[var[m].object].v0 * 4 + get_offset(var[m].member - 1) * 4]);
+				    &memb[memo(o[var[m].object].v0 +
+					       get_offset(var[m].member - 1)) *
+					      4 +
+					  var[m].index]);
+			else
+				return (
+				    &memb[o[var[m].object].v0 * 4 +
+					  get_offset(var[m].member - 1) * 4]);
 		}
 	return (0);
 }
 
-static word *get_offset_word(int m) { return (capar_word(_get_offset_word(m))); }
+static byte *get_offset_byte(int m)
+{
+	return (capar_byte(_get_offset_byte(m)));
+}
+
+static word *_get_offset_word(int m)
+{
+	if (var[m].member == 0)
+		switch (o[var[m].object].type) {
+		case twglo:
+			return ((word *)&memb[o[var[m].object].v0 * 4 +
+					      var[m].index * 2]);
+		case twloc:
+			return ((word *)&memb[o[var[m].object].v0 * 4 +
+					      var[m].index * 2 +
+					      ids[ids_select] * 4]);
+		case tpwgl:
+			if (var[m].index >= 0)
+				return ((
+				    word *)&memb[memo(o[var[m].object].v0) * 4 +
+						 var[m].index * 2]);
+			else
+				return ((word *)&memb[o[var[m].object].v0 * 4]);
+		case tpwlo:
+			if (var[m].index >= 0)
+				return ((word *)&memb[memo(o[var[m].object].v0 +
+							   ids[ids_select]) *
+							  4 +
+						      var[m].index * 2]);
+			else
+				return ((word *)&memb[o[var[m].object].v0 * 4 +
+						      ids[ids_select] * 4]);
+		}
+	else
+		switch (o[var[m].object].type) {
+		case twglo:
+		case twloc:
+			return (
+			    (word *)&memb[o[var[m].object].v0 * 4 +
+					  var[m].index * 2 +
+					  get_offset(var[m].member - 1) * 4]);
+		case tpwgl:
+		case tpwlo:
+			if (var[m].index >= 0)
+				return (
+				    (word *)&memb[memo(o[var[m].object].v0 +
+						       get_offset(
+							   var[m].member - 1)) *
+						      4 +
+						  var[m].index * 2]);
+			else
+				return ((
+				    word *)&memb[o[var[m].object].v0 * 4 +
+						 get_offset(var[m].member - 1) *
+						     4]);
+		}
+	return (0);
+}
+
+static word *get_offset_word(int m)
+{
+	return (capar_word(_get_offset_word(m)));
+}
 
 //═════════════════════════════════════════════════════════════════════════════
 //		Changes a variable's value (in Inspect)
@@ -4430,36 +5208,42 @@ static int valor;
 
 static void change1(void) { _show_items(); }
 
-static void change2(void) {
+static void change2(void)
+{
 	_process_items();
 	switch (v.active_item) {
-		case 1:
-			if (get_offset(var_select) == 1) {
-				if (atoi(buscar) < 0 || atoi(buscar) > 255) {
-					v_texto = (char *)text[54];
-					dialog(err0);
-				} else {
-					*get_offset_byte(var_select) = (byte)atoi(buscar);
-					fin_dialogo = 1;
-				}
-			} else if (get_offset(var_select) == 2) {
-				if (atoi(buscar) < 0 || atoi(buscar) > 65535) {
-					v_texto = (char *)text[55];
-					dialog(err0);
-				} else {
-					*get_offset_word(var_select) = (word)atoi(buscar);
-					fin_dialogo = 1;
-				}
+	case 1:
+		if (get_offset(var_select) == 1) {
+			if (atoi(buscar) < 0 || atoi(buscar) > 255) {
+				v_texto = (char *)text[54];
+				dialog(err0);
 			} else {
-				mem[get_offset(var_select)] = atoi(buscar);
+				*get_offset_byte(var_select) =
+				    (byte)atoi(buscar);
 				fin_dialogo = 1;
 			}
-			break;
-		case 2: fin_dialogo = 1; break;
+		} else if (get_offset(var_select) == 2) {
+			if (atoi(buscar) < 0 || atoi(buscar) > 65535) {
+				v_texto = (char *)text[55];
+				dialog(err0);
+			} else {
+				*get_offset_word(var_select) =
+				    (word)atoi(buscar);
+				fin_dialogo = 1;
+			}
+		} else {
+			mem[get_offset(var_select)] = atoi(buscar);
+			fin_dialogo = 1;
+		}
+		break;
+	case 2:
+		fin_dialogo = 1;
+		break;
 	}
 }
 
-static void change0(void) {
+static void change0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[56];
 	v.an = 126;
@@ -4489,23 +5273,28 @@ static char enterstring[256];
 
 static void changestring1(void) { _show_items(); }
 
-static void changestring2(void) {
+static void changestring2(void)
+{
 	_process_items();
 	switch (v.active_item) {
-		case 1:
-			if (strlen(enterstring) <= o[var[var_select].object].v1 + 1)
-				strcpy((char *)&mem[get_offset(var_select)], enterstring);
-			else {
-				v_texto = (char *)text[59];
-				dialog(err0);
-			}
-			fin_dialogo = 1;
-			break;
-		case 2: fin_dialogo = 1; break;
+	case 1:
+		if (strlen(enterstring) <= o[var[var_select].object].v1 + 1)
+			strcpy((char *)&mem[get_offset(var_select)],
+			       enterstring);
+		else {
+			v_texto = (char *)text[59];
+			dialog(err0);
+		}
+		fin_dialogo = 1;
+		break;
+	case 2:
+		fin_dialogo = 1;
+		break;
 	}
 }
 
-static void changestring0(void) {
+static void changestring0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[60];
 	v.an = 226;
@@ -4525,7 +5314,8 @@ static void changestring0(void) {
 //  Main debugging window
 //════════════════════════════════════════════════════════════════════════════
 
-static void debug1(void) {
+static void debug1(void)
+{
 	char msg[256];
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2, n;
@@ -4542,11 +5332,13 @@ static void debug1(void) {
 	wwrite(ptr, an, al, 4, 11, 0, (byte *)msg, c1);
 	wwrite(ptr, an, al, 3, 11, 0, (byte *)msg, c3);
 
-	wrectangle(ptr, an, al, c0, 3, 19, 128, 128 - 5 - 16 - 32); // Limits of processes listbox
+	wrectangle(ptr, an, al, c0, 3, 19, 128,
+		   128 - 5 - 16 - 32); // Limits of processes listbox
 	wrectangle(ptr, an, al, c0, 122, 19, 9, 128 - 5 - 16 - 32);
 	wrectangle(ptr, an, al, c0, 122, 27, 9, 112 - 5 - 16 - 32);
 
-	wrectangle(ptr, an, al, c0, 133, 19, 120 + 304 - 256, 11); // Process name box
+	wrectangle(ptr, an, al, c0, 133, 19, 120 + 304 - 256,
+		   11); // Process name box
 
 	wrectangle(ptr, an, al, c0, 133, 31, 48, 48); // Graphic box
 
@@ -4556,12 +5348,16 @@ static void debug1(void) {
 	determina_ids();
 
 	for (n = 0; n < iids; n++)
-		if (ids[n] == ids_old) break;
-	if (n < iids) { // If previously-selected process is still in the list...
+		if (ids[n] == ids_old)
+			break;
+	if (n <
+	    iids) { // If previously-selected process is still in the list...
 		ids_select = n;
 		ids_ini = ids_select - ids_inc;
-		if (ids_ini && ids_ini + 13 > iids) ids_ini = iids - 13;
-		if (ids_ini < 0) ids_ini = 0;
+		if (ids_ini && ids_ini + 13 > iids)
+			ids_ini = iids - 13;
+		if (ids_ini < 0)
+			ids_ini = 0;
 	} else {
 		if (ids_next + 12 <= iids) {
 			if (ids_next)
@@ -4580,13 +5376,15 @@ static void debug1(void) {
 	wrectangle(ptr, an, al, c0, 47, 146 - 16 - 32, an - 50, 43 + 16 + 32);
 }
 
-static void draw_segment(void) {
+static void draw_segment(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = 27, max = 129 - 16 - 32, n;
 	float x;
 
-	wbox(ptr, an, al, c2, 123, 28, 7, 105 - 16 - 32); // Clear the slider bar
+	wbox(ptr, an, al, c2, 123, 28, 7,
+	     105 - 16 - 32); // Clear the slider bar
 
 	if (iids == 1)
 		n = min;
@@ -4599,16 +5397,22 @@ static void draw_segment(void) {
 	wput(ptr, an, al, 123, n + 1, -43);
 }
 
-static byte *change_mode(void) {
+static byte *change_mode(void)
+{
 	new_mode = 0;
 	free(v.ptr);
 	v.an = 304 * big2;
 	v.al = (146 + 46) * big2;
-	if ((v.ptr = (byte *)malloc(v.an * v.al)) == NULL) exer(1);
-	if (v.x < 0) v.x = 0;
-	if (v.y < 0) v.y = 0;
-	if (v.x + v.an > vga_an) v.x = vga_an - v.an;
-	if (v.y + v.al > vga_al) v.y = vga_al - v.al;
+	if ((v.ptr = (byte *)malloc(v.an * v.al)) == NULL)
+		exer(1);
+	if (v.x < 0)
+		v.x = 0;
+	if (v.y < 0)
+		v.y = 0;
+	if (v.x + v.an > vga_an)
+		v.x = vga_an - v.an;
+	if (v.y + v.al > vga_al)
+		v.y = vga_al - v.al;
 	redraw_window();
 	call(v.paint_handler);
 	v.volcar = 1;
@@ -4616,7 +5420,8 @@ static byte *change_mode(void) {
 	return (v.ptr);
 }
 
-static void debug2(void) {
+static void debug2(void)
+{
 	int n, m, iip; //,id;
 	float x;
 	byte *ptr = v.ptr;
@@ -4624,7 +5429,8 @@ static void debug2(void) {
 
 	_process_items();
 
-	if (dont_blit_anything) goto next_frame;
+	if (dont_blit_anything)
+		goto next_frame;
 
 	if (!(shift_status & 15) && ascii == 0) {
 
@@ -4641,13 +5447,15 @@ static void debug2(void) {
 			v.volcar = 1;
 		}
 		if (scan_code == 81) {
-			for (n = 0; n < 11; n++) f_down();
+			for (n = 0; n < 11; n++)
+				f_down();
 			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
 		}
 		if (scan_code == 73) {
-			for (n = 0; n < 11; n++) f_up();
+			for (n = 0; n < 11; n++)
+				f_up();
 			draw_id();
 			vacia_buffer();
 			v.volcar = 1;
@@ -4676,7 +5484,8 @@ static void debug2(void) {
 		if (kbdFLAGS[80]) {
 			kbdFLAGS[80] = 0;
 			if (ids_select + 1 < iids) {
-				if (ids_ini + 9 == ++ids_select) ids_ini++;
+				if (ids_ini + 9 == ++ids_select)
+					ids_ini++;
 				draw_proc_list();
 				v.volcar = 1;
 			}
@@ -4684,7 +5493,8 @@ static void debug2(void) {
 		if (kbdFLAGS[72]) {
 			kbdFLAGS[72] = 0;
 			if (ids_select) {
-				if (ids_ini == ids_select--) ids_ini--;
+				if (ids_ini == ids_select--)
+					ids_ini--;
 				draw_proc_list();
 				v.volcar = 1;
 			}
@@ -4692,7 +5502,8 @@ static void debug2(void) {
 		if (scan_code == 81 || scan_code == 118) {
 			for (n = 0; n < 9; n++)
 				if (ids_select + 1 < iids) {
-					if (ids_ini + 9 == ++ids_select) ids_ini++;
+					if (ids_ini + 9 == ++ids_select)
+						ids_ini++;
 				}
 			draw_proc_list();
 			v.volcar = 1;
@@ -4700,7 +5511,8 @@ static void debug2(void) {
 		if (scan_code == 73 || scan_code == 132) {
 			for (n = 0; n < 9; n++)
 				if (ids_select) {
-					if (ids_ini == ids_select--) ids_ini--;
+					if (ids_ini == ids_select--)
+						ids_ini--;
 				}
 			draw_proc_list();
 			v.volcar = 1;
@@ -4722,7 +5534,8 @@ static void debug2(void) {
 				wput(ptr, an, al, 123, 20, -41);
 				button = 1;
 				if (ids_select) {
-					if (ids_ini == ids_select--) ids_ini--;
+					if (ids_ini == ids_select--)
+						ids_ini--;
 					draw_proc_list();
 					v.volcar = 1;
 				}
@@ -4744,8 +5557,10 @@ static void debug2(void) {
 		if (iids > 1 && (mouse_b & 1)) {
 			x = (float)(wmouse_y - 28) / (104.0 - 16.0 - 32.0);
 			ids_select = x * (iids - 1);
-			if (ids_select < ids_ini) ids_ini = ids_select;
-			if (ids_select >= ids_ini + 9) ids_ini = ids_select - 8;
+			if (ids_select < ids_ini)
+				ids_ini = ids_select;
+			if (ids_select >= ids_ini + 9)
+				ids_ini = ids_select - 8;
 			draw_proc_list();
 			v.volcar = 1;
 		}
@@ -4757,7 +5572,8 @@ static void debug2(void) {
 				wput(ptr, an, al, 123, 134 - 16 - 32, -42);
 				button = 2;
 				if (ids_select + 1 < iids) {
-					if (ids_ini + 9 == ++ids_select) ids_ini++;
+					if (ids_ini + 9 == ++ids_select)
+						ids_ini++;
 					draw_proc_list();
 					v.volcar = 1;
 				}
@@ -4774,47 +5590,227 @@ static void debug2(void) {
 		v.volcar = 1;
 	}
 
-	if ((mouse_b & 1) && wmouse_in(48 + 5, 147 - 16 - 32, an - 52 - 5, 41 + 16 + 32)) {
+	if ((mouse_b & 1) &&
+	    wmouse_in(48 + 5, 147 - 16 - 32, an - 52 - 5, 41 + 16 + 32)) {
 		line_sel = line0 + (wmouse_y - (147 - 16 - 32)) / 8;
-		if (line_sel == line0 + 11) line_sel = line0 + 10;
+		if (line_sel == line0 + 11)
+			line_sel = line0 + 10;
 		draw_id();
 		v.volcar = 1;
 	}
 
-	if (scan_code == _F4) goto go_here;
-	if (scan_code == _F5) goto goto_proc;
-	if (scan_code == _F6) goto exec_proc;
-	if (scan_code == _F7) goto inspect_proc;
-	if (scan_code == _F8) goto trace_proc;
-	if (scan_code == _F9) goto set_break;
-	if (scan_code == _F10) goto step_proc;
-	if (scan_code == 32 || kbdFLAGS[_F11]) goto profile_window;
-	if (scan_code == 33 || kbdFLAGS[_F12]) goto next_frame;
+	if (scan_code == _F4)
+		goto go_here;
+	if (scan_code == _F5)
+		goto goto_proc;
+	if (scan_code == _F6)
+		goto exec_proc;
+	if (scan_code == _F7)
+		goto inspect_proc;
+	if (scan_code == _F8)
+		goto trace_proc;
+	if (scan_code == _F9)
+		goto set_break;
+	if (scan_code == _F10)
+		goto step_proc;
+	if (scan_code == 32 || kbdFLAGS[_F11])
+		goto profile_window;
+	if (scan_code == 33 || kbdFLAGS[_F12])
+		goto next_frame;
 
 	switch (v.active_item) {
-		case 0: // Next frame
-		next_frame:
-			ids_old = ids[ids_select];
-			ids_inc = ids_select - ids_ini;
-			do {
-				exec_process();
-				if (new_mode) ptr = change_mode();
-				if (call_to_debug) {
-					call(v.paint_handler);
-					v.volcar = 1;
-					break;
-				}
-			} while (ide);
+	case 0: // Next frame
+	next_frame:
+		ids_old = ids[ids_select];
+		ids_inc = ids_select - ids_ini;
+		do {
+			exec_process();
+			if (new_mode)
+				ptr = change_mode();
 			if (call_to_debug) {
-				volcado_completo = 1;
-				call_to_debug = 0;
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
+				call(v.paint_handler);
+				v.volcar = 1;
 				break;
 			}
-			if (procesos) {
+		} while (ide);
+		if (call_to_debug) {
+			volcado_completo = 1;
+			call_to_debug = 0;
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
+			}
+			break;
+		}
+		if (procesos) {
+			reloj = clock_debug;
+			ticks = ticks_debug;
+			set_mouse(smouse_x, smouse_y);
+			volcados_saltados = 0;
+			saltar_volcado = 0;
+			dacout_r = dr;
+			dacout_g = dg;
+			dacout_b = db;
+			debugger_step = 1;
+			frame_end();
+			frame_start();
+			debugger_step = 0;
+			clock_debug = reloj;
+			ticks_debug = ticks;
+			smouse_x = mouse->x;
+			smouse_y = mouse->y;
+			set_mouse(mouse_x, mouse_y);
+			memcpy(copia_debug, copia, vga_an * vga_al);
+			call(v.paint_handler);
+			for (n = 0; n < iids; n++)
+				if (ids[n] == ids_old)
+					break;
+			if (n < iids) { // If previously-selected process is
+					// still in the list...
+				ids_select = n;
+				ids_ini = ids_select - ids_inc;
+				if (ids_ini && ids_ini + 13 > iids)
+					ids_ini = iids - 13;
+				if (ids_ini < 0)
+					ids_ini = 0;
+				draw_proc_list();
+				determine_id();
+			}
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
+			}
+			dread_mouse();
+			_process_items();
+			v.volcar = 1;
+			volcado_completo = 1;
+			if (dont_blit_anything)
+				dialog(profile0);
+		} else
+			fin_dialogo = 1;
+		break;
+	case 1: // Goto
+	goto_proc:
+		dialog(process_list0);
+		// int line0;     // First line number in debugger window
+		// byte * pline0; // Pointer to first line in debugger window
+		// int line_sel; // Selected line number
+		if (v_aceptar) {
+			x_start = 54;
+			while (line0 > lp1[lp_select]) {
+				line0--;
+				pline0--;
+				do {
+					pline0--;
+				} while (*pline0);
+				pline0++;
+			}
+			while (line0 < lp1[lp_select]) {
+				line0++;
+				pline0 += strlen((char *)pline0) + 1;
+			}
+			line_sel = line0;
+			draw_id();
+			vacia_buffer();
+			v.volcar = 1;
+		}
+		break;
+	case 2: // Breakpoint
+	set_break:
+		for (n = 0; n < max_breakpoint; n++)
+			if (breakpoint[n].line == line_sel)
+				break;
+		if (n < max_breakpoint) { // A breakpoint is disabled
+			breakpoint[n].line = -1;
+			mem[abs(breakpoint[n].offset)] = breakpoint[n].code;
+			draw_id();
+			v.volcar = 1;
+		} else {
+			for (n = 0; n < max_breakpoint; n++)
+				if (breakpoint[n].line == -1)
+					break;
+			if (n < max_breakpoint) {
+				if ((m = get_ip(line_sel)) >= 0) {
+					breakpoint[n].line = line_sel;
+					breakpoint[n].offset = m;
+					breakpoint[n].code = mem[m];
+					mem[m] = ldbg;
+					draw_id();
+					v.volcar = 1;
+				}
+			} else {
+				v_texto = (char *)text[63];
+				dialog(err0);
+			}
+		}
+		break;
+	case 3: // Go here!
+	go_here:
+		for (n = 0; n < max_breakpoint; n++)
+			if (breakpoint[n].line == -1)
+				break;
+		if (n < max_breakpoint) {
+			if ((m = get_ip(line_sel)) >= 0) {
+				breakpoint[n].code = line_sel;
+				do {
+					trace_process();
+					if (new_mode)
+						ptr = change_mode();
+					if (call_to_debug) {
+						call(v.paint_handler);
+						v.volcar = 1;
+						break;
+					}
+				} while (ide && ((ip >= mem1 && ip <= mem2) ||
+						 mem[ip] == lasp ||
+						 mem[ip] == lasiasp ||
+						 mem[ip] == lcarasiasp ||
+						 mem[ip] == lfunasp));
+				if (call_to_debug) {
+					volcado_completo = 1;
+					call_to_debug = 0;
+					if (new_palette) {
+						new_palette = 0;
+						redraw_window();
+					}
+					break;
+				}
+				breakpoint[n].line = breakpoint[n].code;
+				breakpoint[n].offset = -m;
+				breakpoint[n].code = mem[m];
+				mem[m] = ldbg;
+				fin_dialogo = 1;
+			}
+		} else {
+			v_texto = (char *)text[63];
+			dialog(err0);
+		}
+		break;
+	case 4: // Trace
+	trace_proc:
+		do {
+			trace_process();
+			if (new_mode)
+				ptr = change_mode();
+			if (call_to_debug) {
+				call(v.paint_handler);
+				v.volcar = 1;
+				break;
+			}
+		} while (ide && ((ip >= mem1 && ip <= mem2) ||
+				 mem[ip] == lasp || mem[ip] == lasiasp ||
+				 mem[ip] == lcarasiasp || mem[ip] == lfunasp));
+		if (call_to_debug) {
+			volcado_completo = 1;
+			call_to_debug = 0;
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
+			}
+			break;
+		}
+		if (procesos) {
+			if (procesos_ejecutados()) {
 				reloj = clock_debug;
 				ticks = ticks_debug;
 				set_mouse(smouse_x, smouse_y);
@@ -4833,316 +5829,175 @@ static void debug2(void) {
 				smouse_y = mouse->y;
 				set_mouse(mouse_x, mouse_y);
 				memcpy(copia_debug, copia, vga_an * vga_al);
-				call(v.paint_handler);
-				for (n = 0; n < iids; n++)
-					if (ids[n] == ids_old) break;
-				if (n < iids) { // If previously-selected process is still in the list...
-					ids_select = n;
-					ids_ini = ids_select - ids_inc;
-					if (ids_ini && ids_ini + 13 > iids) ids_ini = iids - 13;
-					if (ids_ini < 0) ids_ini = 0;
-					draw_proc_list();
-					determine_id();
-				}
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
-				dread_mouse();
-				_process_items();
-				v.volcar = 1;
 				volcado_completo = 1;
-				if (dont_blit_anything) dialog(profile0);
-			} else
-				fin_dialogo = 1;
-			break;
-		case 1: // Goto
-		goto_proc:
-			dialog(process_list0);
-			//int line0;     // First line number in debugger window
-			//byte * pline0; // Pointer to first line in debugger window
-			//int line_sel; // Selected line number
-			if (v_aceptar) {
-				x_start = 54;
-				while (line0 > lp1[lp_select]) {
-					line0--;
-					pline0--;
-					do { pline0--; } while (*pline0);
-					pline0++;
-				}
-				while (line0 < lp1[lp_select]) {
-					line0++;
-					pline0 += strlen((char *)pline0) + 1;
-				}
-				line_sel = line0;
-				draw_id();
-				vacia_buffer();
-				v.volcar = 1;
+			} else if (new_palette)
+				set_dac();
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
 			}
-			break;
-		case 2: // Breakpoint
-		set_break:
-			for (n = 0; n < max_breakpoint; n++)
-				if (breakpoint[n].line == line_sel) break;
-			if (n < max_breakpoint) { // A breakpoint is disabled
-				breakpoint[n].line = -1;
-				mem[abs(breakpoint[n].offset)] = breakpoint[n].code;
-				draw_id();
-				v.volcar = 1;
-			} else {
-				for (n = 0; n < max_breakpoint; n++)
-					if (breakpoint[n].line == -1) break;
-				if (n < max_breakpoint) {
-					if ((m = get_ip(line_sel)) >= 0) {
-						breakpoint[n].line = line_sel;
-						breakpoint[n].offset = m;
-						breakpoint[n].code = mem[m];
-						mem[m] = ldbg;
-						draw_id();
-						v.volcar = 1;
-					}
-				} else {
-					v_texto = (char *)text[63];
-					dialog(err0);
-				}
-			}
-			break;
-		case 3: // Go here!
-		go_here:
-			for (n = 0; n < max_breakpoint; n++)
-				if (breakpoint[n].line == -1) break;
-			if (n < max_breakpoint) {
-				if ((m = get_ip(line_sel)) >= 0) {
-					breakpoint[n].code = line_sel;
-					do {
-						trace_process();
-						if (new_mode) ptr = change_mode();
-						if (call_to_debug) {
-							call(v.paint_handler);
-							v.volcar = 1;
+			ids_old = -1;
+			call(v.paint_handler);
+			v.volcar = 1;
+		} else
+			fin_dialogo = 1;
+		break;
+	case 5: // Step
+	step_proc:
+
+		// When calling a function, a "Go Here!" is performed at the end
+
+		for (iip = mem1; iip < mem2; iip++) {
+
+			// BEWARE! To know if next sentence calls a function, we
+			// search for a "call" This is a tad imprecise, as a
+			// 'cal' is a 26, and there could be constant data with
+			// that same value
+
+			if (mem[iip] == lcal)
+				if (memo(mem[iip + 1]) == ltyp &&
+				    memo(mem[iip + 1] + 2) == lnop) {
+					for (n = 0; n < max_breakpoint; n++)
+						if (breakpoint[n].line == -1)
 							break;
-						}
-					} while (ide && ((ip >= mem1 && ip <= mem2) || mem[ip] == lasp || mem[ip] == lasiasp ||
-					                 mem[ip] == lcarasiasp || mem[ip] == lfunasp));
-					if (call_to_debug) {
-						volcado_completo = 1;
-						call_to_debug = 0;
-						if (new_palette) {
-							new_palette = 0;
-							redraw_window();
-						}
+					if (n < max_breakpoint) {
+						breakpoint[n].offset = mem2 + 1;
+						if (mem[breakpoint[n].offset] ==
+						    lasp)
+							breakpoint[n].offset++;
+						breakpoint[n].line = 0;
+						get_line(breakpoint[n].offset);
+						breakpoint[n].code =
+						    mem[breakpoint[n].offset];
+						mem[breakpoint[n].offset] =
+						    ldbg;
+						fin_dialogo = 1;
 						break;
 					}
-					breakpoint[n].line = breakpoint[n].code;
-					breakpoint[n].offset = -m;
-					breakpoint[n].code = mem[m];
-					mem[m] = ldbg;
-					fin_dialogo = 1;
 				}
-			} else {
-				v_texto = (char *)text[63];
-				dialog(err0);
-			}
-			break;
-		case 4: // Trace
-		trace_proc:
-			do {
-				trace_process();
-				if (new_mode) ptr = change_mode();
-				if (call_to_debug) {
-					call(v.paint_handler);
-					v.volcar = 1;
-					break;
-				}
-			} while (ide && ((ip >= mem1 && ip <= mem2) || mem[ip] == lasp || mem[ip] == lasiasp ||
-			                 mem[ip] == lcarasiasp || mem[ip] == lfunasp));
+		} // If no breakpoints left, a Trace will be performed
+
+		process_level = 0;
+		do {
+			trace_process();
+			if (new_mode)
+				ptr = change_mode();
 			if (call_to_debug) {
-				volcado_completo = 1;
-				call_to_debug = 0;
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
-				break;
-			}
-			if (procesos) {
-				if (procesos_ejecutados()) {
-					reloj = clock_debug;
-					ticks = ticks_debug;
-					set_mouse(smouse_x, smouse_y);
-					volcados_saltados = 0;
-					saltar_volcado = 0;
-					dacout_r = dr;
-					dacout_g = dg;
-					dacout_b = db;
-					debugger_step = 1;
-					frame_end();
-					frame_start();
-					debugger_step = 0;
-					clock_debug = reloj;
-					ticks_debug = ticks;
-					smouse_x = mouse->x;
-					smouse_y = mouse->y;
-					set_mouse(mouse_x, mouse_y);
-					memcpy(copia_debug, copia, vga_an * vga_al);
-					volcado_completo = 1;
-				} else if (new_palette)
-					set_dac();
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
-				ids_old = -1;
 				call(v.paint_handler);
 				v.volcar = 1;
-			} else
-				fin_dialogo = 1;
-			break;
-		case 5: // Step
-		step_proc:
-
-			// When calling a function, a "Go Here!" is performed at the end
-
-			for (iip = mem1; iip < mem2; iip++) {
-
-				// BEWARE! To know if next sentence calls a function, we search for a "call"
-				// This is a tad imprecise, as a 'cal' is a 26, and there could be constant
-				// data with that same value
-
-				if (mem[iip] == lcal)
-					if (memo(mem[iip + 1]) == ltyp && memo(mem[iip + 1] + 2) == lnop) {
-						for (n = 0; n < max_breakpoint; n++)
-							if (breakpoint[n].line == -1) break;
-						if (n < max_breakpoint) {
-							breakpoint[n].offset = mem2 + 1;
-							if (mem[breakpoint[n].offset] == lasp) breakpoint[n].offset++;
-							breakpoint[n].line = 0;
-							get_line(breakpoint[n].offset);
-							breakpoint[n].code = mem[breakpoint[n].offset];
-							mem[breakpoint[n].offset] = ldbg;
-							fin_dialogo = 1;
-							break;
-						}
-					}
-			} // If no breakpoints left, a Trace will be performed
-
-			process_level = 0;
-			do {
-				trace_process();
-				if (new_mode) ptr = change_mode();
-				if (call_to_debug) {
-					call(v.paint_handler);
-					v.volcar = 1;
-					break;
-				}
-			} while (ide && ((ip >= mem1 && ip <= mem2) || mem[ip] == lasp || mem[ip] == lasiasp ||
-			                 mem[ip] == lcarasiasp || mem[ip] == lfunasp || process_level > 0));
-			if (call_to_debug) {
-				volcado_completo = 1;
-				call_to_debug = 0;
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
 				break;
 			}
-			if (procesos) {
-				if (procesos_ejecutados()) {
-					reloj = clock_debug;
-					ticks = ticks_debug;
-					set_mouse(smouse_x, smouse_y);
-					volcados_saltados = 0;
-					saltar_volcado = 0;
-					dacout_r = dr;
-					dacout_g = dg;
-					dacout_b = db;
-					debugger_step = 1;
-					frame_end();
-					frame_start();
-					debugger_step = 0;
-					clock_debug = reloj;
-					ticks_debug = ticks;
-					smouse_x = mouse->x;
-					smouse_y = mouse->y;
-					set_mouse(mouse_x, mouse_y);
-					memcpy(copia_debug, copia, vga_an * vga_al);
-					volcado_completo = 1;
-				} else if (new_palette)
-					set_dac();
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
-				ids_old = -1;
-				call(v.paint_handler);
-				v.volcar = 1;
-			} else
-				fin_dialogo = 1;
+		} while (ide &&
+			 ((ip >= mem1 && ip <= mem2) || mem[ip] == lasp ||
+			  mem[ip] == lasiasp || mem[ip] == lcarasiasp ||
+			  mem[ip] == lfunasp || process_level > 0));
+		if (call_to_debug) {
+			volcado_completo = 1;
+			call_to_debug = 0;
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
+			}
 			break;
-		case 6: // Inspect
-		inspect_proc:
-			current_block = mem[ids[ids_select] + _Bloque];
-			dialog(inspect0);
-			draw_proc_list();
+		}
+		if (procesos) {
+			if (procesos_ejecutados()) {
+				reloj = clock_debug;
+				ticks = ticks_debug;
+				set_mouse(smouse_x, smouse_y);
+				volcados_saltados = 0;
+				saltar_volcado = 0;
+				dacout_r = dr;
+				dacout_g = dg;
+				dacout_b = db;
+				debugger_step = 1;
+				frame_end();
+				frame_start();
+				debugger_step = 0;
+				clock_debug = reloj;
+				ticks_debug = ticks;
+				smouse_x = mouse->x;
+				smouse_y = mouse->y;
+				set_mouse(mouse_x, mouse_y);
+				memcpy(copia_debug, copia, vga_an * vga_al);
+				volcado_completo = 1;
+			} else if (new_palette)
+				set_dac();
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
+			}
+			ids_old = -1;
+			call(v.paint_handler);
 			v.volcar = 1;
-			break;
+		} else
+			fin_dialogo = 1;
+		break;
+	case 6: // Inspect
+	inspect_proc:
+		current_block = mem[ids[ids_select] + _Bloque];
+		dialog(inspect0);
+		draw_proc_list();
+		v.volcar = 1;
+		break;
 
 		//  case 5: id=mem[ids[ids_select]+_Father]; break; // Father
-		//  case 6: id=mem[ids[ids_select]+_SmallBro]; break; // SmallBro
-		//  case 7: id=mem[ids[ids_select]+_BigBro]; break; // BigBro
-		//  case 8: id=mem[ids[ids_select]+_Son]; break; // Son
+		//  case 6: id=mem[ids[ids_select]+_SmallBro]; break; //
+		//  SmallBro case 7: id=mem[ids[ids_select]+_BigBro]; break; //
+		//  BigBro case 8: id=mem[ids[ids_select]+_Son]; break; // Son
 
-		case 7: // Profile
-		profile_window:
-			dialog(profile0);
-			break;
-		case 8: // Ex. Process
-		exec_proc:
-			exec_process();
-			if (new_mode) ptr = change_mode();
-			if (call_to_debug) {
-				call(v.paint_handler);
-				v.volcar = 1;
-				volcado_completo = 1;
-				call_to_debug = 0;
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
+	case 7: // Profile
+	profile_window:
+		dialog(profile0);
+		break;
+	case 8: // Ex. Process
+	exec_proc:
+		exec_process();
+		if (new_mode)
+			ptr = change_mode();
+		if (call_to_debug) {
+			call(v.paint_handler);
+			v.volcar = 1;
+			volcado_completo = 1;
+			call_to_debug = 0;
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
 			}
-			if (procesos) {
-				if (procesos_ejecutados()) {
-					reloj = clock_debug;
-					ticks = ticks_debug;
-					set_mouse(smouse_x, smouse_y);
-					volcados_saltados = 0;
-					saltar_volcado = 0;
-					dacout_r = dr;
-					dacout_g = dg;
-					dacout_b = db;
-					debugger_step = 1;
-					frame_end();
-					frame_start();
-					debugger_step = 0;
-					clock_debug = reloj;
-					ticks_debug = ticks;
-					smouse_x = mouse->x;
-					smouse_y = mouse->y;
-					set_mouse(mouse_x, mouse_y);
-					memcpy(copia_debug, copia, vga_an * vga_al);
-					volcado_completo = 1;
-				} else if (new_palette)
-					set_dac();
-				if (new_palette) {
-					new_palette = 0;
-					redraw_window();
-				}
-				ids_old = -1;
-				call(v.paint_handler);
-				v.volcar = 1;
-			} else
-				fin_dialogo = 1;
-			break;
+		}
+		if (procesos) {
+			if (procesos_ejecutados()) {
+				reloj = clock_debug;
+				ticks = ticks_debug;
+				set_mouse(smouse_x, smouse_y);
+				volcados_saltados = 0;
+				saltar_volcado = 0;
+				dacout_r = dr;
+				dacout_g = dg;
+				dacout_b = db;
+				debugger_step = 1;
+				frame_end();
+				frame_start();
+				debugger_step = 0;
+				clock_debug = reloj;
+				ticks_debug = ticks;
+				smouse_x = mouse->x;
+				smouse_y = mouse->y;
+				set_mouse(mouse_x, mouse_y);
+				memcpy(copia_debug, copia, vga_an * vga_al);
+				volcado_completo = 1;
+			} else if (new_palette)
+				set_dac();
+			if (new_palette) {
+				new_palette = 0;
+				redraw_window();
+			}
+			ids_old = -1;
+			call(v.paint_handler);
+			v.volcar = 1;
+		} else
+			fin_dialogo = 1;
+		break;
 	}
 
 	/*
@@ -5150,22 +6005,24 @@ static void debug2(void) {
     if ((id&1) && id>=id_start && id<=id_end && id==mem[id]) {
       for (n=0;n<iids;n++) if (ids[n]==id) break;
       if (n<iids) {
-        ids_select=n;
-        if (ids_select<ids_ini) ids_ini=ids_select;
-        if (ids_select>=ids_ini+13) ids_ini=ids_select-12;
-        draw_proc_list();
-        v.volcar=1;
+	ids_select=n;
+	if (ids_select<ids_ini) ids_ini=ids_select;
+	if (ids_select>=ids_ini+13) ids_ini=ids_select-12;
+	draw_proc_list();
+	v.volcar=1;
       }
     }
   }*/
 }
 
-static void debug3(void) {
+static void debug3(void)
+{
 	ids_old = ids[ids_select];
 	ids_inc = ids_select - ids_ini;
 }
 
-static void debug0(void) {
+static void debug0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[64];
 	v.an = 304;
@@ -5183,20 +6040,24 @@ static void debug0(void) {
 	_button(text[71], v.an - 40, 35, 1);
 	_button(text[72], 136, 102 - 18, 0);
 	_button(text[73],
-	        (v.an - 8 - text_len((byte *)"\15Sgte. Frame") + 136 + text_len((byte *)"\15Perfiles")) / 2,
-	        102 - 18,
-	        1);
+		(v.an - 8 - text_len((byte *)"\15Sgte. Frame") + 136 +
+		 text_len((byte *)"\15Perfiles")) /
+		    2,
+		102 - 18, 1);
 }
 
 //════════════════════════════════════════════════════════════════════════════
 //  Functions that draw source code in the debugger window
 //════════════════════════════════════════════════════════════════════════════
 
-static void get_line(int n) { // Get line number from IP (instruction pointer) address
+static void get_line(int n)
+{ // Get line number from IP (instruction pointer) address
 	int x = 0;
-	if (line == NULL) return;
+	if (line == NULL)
+		return;
 	for (x = 0; x < num_sentences; x++)
-		if (n >= line[x * 6] && n <= line[x * 6 + 1]) break;
+		if (n >= line[x * 6] && n <= line[x * 6 + 1])
+			break;
 	if (x < num_sentences) {
 		mem1 = line[x * 6];
 		mem2 = line[x * 6 + 1];
@@ -5214,25 +6075,31 @@ static void get_line(int n) { // Get line number from IP (instruction pointer) a
 	}
 }
 
-static int get_ip(int n) { // Get IP address from line number
+static int get_ip(int n)
+{ // Get IP address from line number
 	int x = 0;
-	if (line == NULL) return (0);
+	if (line == NULL)
+		return (0);
 	for (x = 0; x < num_sentences; x++)
-		if (n == line[x * 6 + 2] - 1) break;
+		if (n == line[x * 6 + 2] - 1)
+			break;
 	if (x < num_sentences)
 		return (line[x * 6]);
 	else
 		return (-1);
 }
 
-static void determine_id(void) { // Determines what must be displayed for "ids_next"
+static void determine_id(void)
+{ // Determines what must be displayed for "ids_next"
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2, l;
 	char msg[256];
 
-	if (line == NULL) return;
+	if (line == NULL)
+		return;
 
-	wbox(ptr, an, al, c1, 4, 147 - 16 - 32, 41, 8); // Clears space to display the ID
+	wbox(ptr, an, al, c1, 4, 147 - 16 - 32, 41,
+	     8); // Clears space to display the ID
 	wrectangle(ptr, an, al, c0, 3, 146 - 16 - 32, 43, 10);
 	itoa(ids[ids_next], msg, 10);
 	wwrite_in_box(ptr, an, 46, al, 24, 148 - 16 - 32, 1, (byte *)msg, c0);
@@ -5241,75 +6108,109 @@ static void determine_id(void) { // Determines what must be displayed for "ids_n
 	if (process_stoped)
 		get_line(ip);
 	else
-		get_line(mem[ids[ids_next] + _IP]); // Obtains line/column/mem 1/2
+		get_line(
+		    mem[ids[ids_next] + _IP]); // Obtains line/column/mem 1/2
 
 	l = line0 = line1 - 3;
-	if (l < 0) l = line0 = 0;
+	if (l < 0)
+		l = line0 = 0;
 
-	//if (linea1) l=line0=linea1-1; else l=linea0=0;
+	// if (linea1) l=line0=linea1-1; else l=linea0=0;
 
 	pline0 = source + 1;
-	while (l--) pline0 += strlen((char *)pline0) + 1;
+	while (l--)
+		pline0 += strlen((char *)pline0) + 1;
 
 	line_sel = line1;
 
 	draw_id();
 }
 
-static void draw_id(void) { // Draws the ID
+static void draw_id(void)
+{ // Draws the ID
 	byte *p = pline0, c;
 	int n, x, l = line0;
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 
-	if (line == NULL) return;
+	if (line == NULL)
+		return;
 
-	wbox(ptr, an, al, c1, 48 + 5, 147 - 16 - 32, an - 52 - 5, 41 + 16 + 32); // Clear the window
+	wbox(ptr, an, al, c1, 48 + 5, 147 - 16 - 32, an - 52 - 5,
+	     41 + 16 + 32); // Clear the window
 
 	wbox(ptr, an, al, c12, 48, 147 - 16 - 32, 5, 41 + 16 + 32);
 
 	wrectangle(ptr, an, al, c0, 47 + 5, 146 - 16 - 32, 1, 43 + 16 + 32);
 
 	for (n = 0; n < 11; n++, l++) {
-		if (p >= end_source) break;
-		if (l == line_sel) wbox(ptr, an, al, c0, 48 + 5, 147 - 16 - 32 + (line_sel - line0) * 8, an - 52 - 5, 9);
+		if (p >= end_source)
+			break;
+		if (l == line_sel)
+			wbox(ptr, an, al, c0, 48 + 5,
+			     147 - 16 - 32 + (line_sel - line0) * 8,
+			     an - 52 - 5, 9);
 		for (x = 0; x < max_breakpoint; x++)
 			if (breakpoint[x].line == l)
-				wbox(ptr, an, al, c_r_low, 48 + 5, 148 - 16 - 32 + (l - line0) * 8, an - 52 - 5, 7);
+				wbox(ptr, an, al, c_r_low, 48 + 5,
+				     148 - 16 - 32 + (l - line0) * 8,
+				     an - 52 - 5, 7);
 		if (l == line1) {
 			wput(ptr, an, al, 48, 148 - 16 - 32 + n * 8, 36);
 			c = *(p + column1);
 			*(p + column1) = 0;
 			x = x_start - 54;
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p, c3);
-			if (text_len(p)) x += text_len(p) + 1;
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x,
+				      148 - 16 - 32 + n * 8, 0, p, c3);
+			if (text_len(p))
+				x += text_len(p) + 1;
 			*(p + column1) = c;
 			if (l == line2) {
 				c = *(p + column2 + 1);
 				*(p + column2 + 1) = 0;
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p + column1, c0);
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column1, c4);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+					      x + 1, 148 - 16 - 32 + n * 8, 0,
+					      p + column1, c0);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+					      x, 148 - 16 - 32 + n * 8, 0,
+					      p + column1, c4);
 				x += text_len(p + column1) + 1;
 				*(p + column2 + 1) = c;
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column2 + 1, c3);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+					      x, 148 - 16 - 32 + n * 8, 0,
+					      p + column2 + 1, c3);
 			} else {
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p + column1, c0);
-				wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column1, c4);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+					      x + 1, 148 - 16 - 32 + n * 8, 0,
+					      p + column1, c0);
+				wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+					      x, 148 - 16 - 32 + n * 8, 0,
+					      p + column1, c4);
 			}
 		} else if (l == line2) {
 			c = *(p + column2 + 1);
 			*(p + column2 + 1) = 0;
 			x = x_start - 54;
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1, 148 - 16 - 32 + n * 8, 0, p, c0);
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p, c4);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x + 1,
+				      148 - 16 - 32 + n * 8, 0, p, c0);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x,
+				      148 - 16 - 32 + n * 8, 0, p, c4);
 			x += text_len(p) + 1;
 			*(p + column2 + 1) = c;
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x, 148 - 16 - 32 + n * 8, 0, p + column2 + 1, c3);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x,
+				      148 - 16 - 32 + n * 8, 0, p + column2 + 1,
+				      c3);
 		} else if (l > line1 && l < line2) {
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_start - 54 + 1, 148 - 16 - 32 + n * 8, 0, p, c0);
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_start - 54, 148 - 16 - 32 + n * 8, 0, p, c4);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+				      x_start - 54 + 1, 148 - 16 - 32 + n * 8,
+				      0, p, c0);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+				      x_start - 54, 148 - 16 - 32 + n * 8, 0, p,
+				      c4);
 		} else {
-			wwrite_in_box(ptr + 54 * big2, an, an - 59, al, x_start - 54, 148 - 16 - 32 + n * 8, 0, p, c3);
+			wwrite_in_box(ptr + 54 * big2, an, an - 59, al,
+				      x_start - 54, 148 - 16 - 32 + n * 8, 0, p,
+				      c3);
 		}
 		p += strlen((char *)p) + 1;
 	}
@@ -5319,29 +6220,36 @@ static void f_home(void) { x_start = 54; }
 
 static void f_right(void) { x_start -= 6; }
 
-static void f_left(void) {
-	if (x_start < 54) x_start += 6;
+static void f_left(void)
+{
+	if (x_start < 54)
+		x_start += 6;
 }
 
-static void f_up(void) {
+static void f_up(void)
+{
 	if (line_sel) {
 		line_sel--;
 		if (line_sel < line0) {
 			line0--;
 			pline0--;
-			do { pline0--; } while (*pline0);
+			do {
+				pline0--;
+			} while (*pline0);
 			pline0++;
 		}
 	}
 }
 
-static void f_down(void) {
+static void f_down(void)
+{
 	byte *p;
 	int n;
 
 	n = line_sel - line0 + 1;
 	p = (byte *)pline0;
-	while (n-- && p < end_source) p += strlen((char *)p) + 1;
+	while (n-- && p < end_source)
+		p += strlen((char *)p) + 1;
 	if (p < end_source) {
 		line_sel++;
 		if (line_sel == line0 + 11) {
@@ -5357,7 +6265,8 @@ static void f_down(void) {
 
 extern byte strlower[256];
 
-static void crear_lista_procesos(void) {
+static void crear_lista_procesos(void)
+{
 	byte *p, *q;
 	char cwork[512];
 	int line = 0, n;
@@ -5368,49 +6277,74 @@ static void crear_lista_procesos(void) {
 	lp_select = 0;
 
 	do {
-		while (*p && p < end_source) p++;
+		while (*p && p < end_source)
+			p++;
 		p++;
 		line++;
 		if (p < end_source) {
-			while (*p == ' ' && p < end_source) p++;
+			while (*p == ' ' && p < end_source)
+				p++;
 			if (p + 9 < end_source) {
 				memcpy(cwork, p, 9);
 				cwork[9] = 0;
-				if (cwork[8] == ' ') cwork[8] = 0;
-				if (cwork[7] == ' ') cwork[7] = 0;
+				if (cwork[8] == ' ')
+					cwork[8] = 0;
+				if (cwork[7] == ' ')
+					cwork[7] = 0;
 				n = strlen(cwork);
-				do { cwork[n] = tolower(cwork[n]); } while (n--);
-				if (!strcmp(cwork, "process") || !strcmp(cwork, "function")) {
+				do {
+					cwork[n] = tolower(cwork[n]);
+				} while (n--);
+				if (!strcmp(cwork, "process") ||
+				    !strcmp(cwork, "function")) {
 					p += strlen(cwork);
-					while (*p == ' ' && p < end_source) p++;
+					while (*p == ' ' && p < end_source)
+						p++;
 					if (p < end_source) {
 						if (lp_sort) {
 							q = p;
 							n = 0;
-							while (*q && q < end_source) {
+							while (*q &&
+							       q < end_source) {
 								cwork[n++] = *q;
 								q++;
 							}
 							cwork[n] = 0;
 							n = 0;
 							while (n < lp_num) {
-								if (strcmp(cwork, lp2[n]) < 0) break;
+								if (strcmp(
+									cwork,
+									lp2[n]) <
+								    0)
+									break;
 								n++;
 							}
 							if (n < lp_num) {
-								memmove(&lp1[n + 1], &lp1[n], 4 * (511 - n));
-								memmove(&lp2[n + 1], &lp2[n], 4 * (511 - n));
+								memmove(
+								    &lp1[n + 1],
+								    &lp1[n],
+								    4 * (511 -
+									 n));
+								memmove(
+								    &lp2[n + 1],
+								    &lp2[n],
+								    4 * (511 -
+									 n));
 								lp1[n] = line;
-								lp2[n] = (char *)p;
+								lp2[n] =
+								    (char *)p;
 							} else {
-								lp1[lp_num] = line;
-								lp2[lp_num] = (char *)p;
+								lp1[lp_num] =
+								    line;
+								lp2[lp_num] =
+								    (char *)p;
 							}
 						} else {
 							lp1[lp_num] = line;
 							lp2[lp_num] = (char *)p;
 						}
-						if (++lp_num == 512) break;
+						if (++lp_num == 512)
+							break;
 					} else
 						break;
 				}
@@ -5421,17 +6355,20 @@ static void crear_lista_procesos(void) {
 	} while (1);
 }
 
-static void pintar_lista_procesos(void) {
+static void pintar_lista_procesos(void)
+{
 	byte *ptr = v.ptr, *p;
 	char cwork[512];
 	int an = v.an / big2, al = v.al / big2;
 	int n, m, x;
 
-	wbox(ptr, an, al, c1, 4, 20, 128 + 32 - 10, 121); // Process listbox limits
+	wbox(ptr, an, al, c1, 4, 20, 128 + 32 - 10,
+	     121); // Process listbox limits
 
 	for (m = lp_ini; m < lp_ini + 15 && m < lp_num; m++) {
 		if (m == lp_select) {
-			wbox(ptr, an, al, c01, 4, 20 + (m - lp_ini) * 8, 150, 9); // Process listbox fill
+			wbox(ptr, an, al, c01, 4, 20 + (m - lp_ini) * 8, 150,
+			     9); // Process listbox fill
 			x = c4;
 		} else
 			x = c3;
@@ -5442,18 +6379,21 @@ static void pintar_lista_procesos(void) {
 			p++;
 		}
 		cwork[n] = 0;
-		wwrite_in_box(ptr, an, 153, al, 5, 21 + (m - lp_ini) * 8, 0, (byte *)cwork, x);
+		wwrite_in_box(ptr, an, 153, al, 5, 21 + (m - lp_ini) * 8, 0,
+			      (byte *)cwork, x);
 	}
 	draw_process_segment();
 }
 
-static void draw_process_segment(void) {
+static void draw_process_segment(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = 27, max = 129, n;
 	float x;
 
-	wbox(ptr, an, al, c2, 123 + 32, 28, 7, max - min + 3); // Clear the slider bar
+	wbox(ptr, an, al, c2, 123 + 32, 28, 7,
+	     max - min + 3); // Clear the slider bar
 
 	if (lp_num <= 1)
 		n = min;
@@ -5466,7 +6406,8 @@ static void draw_process_segment(void) {
 	wput(ptr, an, al, 123 + 32, n + 1, -43);
 }
 
-static void process_list1(void) {
+static void process_list1(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	_show_items();
@@ -5474,7 +6415,8 @@ static void process_list1(void) {
 	wwrite(ptr, an, al, 5, 11, 0, text[74], c1);
 	wwrite(ptr, an, al, 4, 11, 0, text[74], c3);
 
-	wrectangle(ptr, an, al, c0, 3, 19, 128 + 32, 123); // Listbox process limits
+	wrectangle(ptr, an, al, c0, 3, 19, 128 + 32,
+		   123); // Listbox process limits
 	wrectangle(ptr, an, al, c0, 122 + 32, 19, 9, 123);
 	wrectangle(ptr, an, al, c0, 122 + 32, 27, 9, 123 - 16);
 
@@ -5487,7 +6429,8 @@ static void process_list1(void) {
 
 static int lp_boton;
 
-static void process_list2(void) {
+static void process_list2(void)
+{
 	int n;
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
@@ -5496,13 +6439,15 @@ static void process_list2(void) {
 	_process_items();
 
 	if (scan_code == 80 && lp_select + 1 < lp_num) {
-		if (lp_ini + 15 == ++lp_select) lp_ini++;
+		if (lp_ini + 15 == ++lp_select)
+			lp_ini++;
 		pintar_lista_procesos();
 		vacia_buffer();
 		v.volcar = 1;
 	}
 	if (scan_code == 72 && lp_select) {
-		if (lp_ini == lp_select--) lp_ini--;
+		if (lp_ini == lp_select--)
+			lp_ini--;
 		pintar_lista_procesos();
 		vacia_buffer();
 		v.volcar = 1;
@@ -5510,7 +6455,8 @@ static void process_list2(void) {
 	if (scan_code == 81) {
 		for (n = 0; n < 15; n++)
 			if (lp_select + 1 < lp_num) {
-				if (lp_ini + 15 == ++lp_select) lp_ini++;
+				if (lp_ini + 15 == ++lp_select)
+					lp_ini++;
 			}
 		pintar_lista_procesos();
 		vacia_buffer();
@@ -5519,7 +6465,8 @@ static void process_list2(void) {
 	if (scan_code == 73) {
 		for (n = 0; n < 15; n++)
 			if (lp_select) {
-				if (lp_ini == lp_select--) lp_ini--;
+				if (lp_ini == lp_select--)
+					lp_ini--;
 			}
 		pintar_lista_procesos();
 		vacia_buffer();
@@ -5546,7 +6493,8 @@ static void process_list2(void) {
 				wput(ptr, an, al, 123 + 32, 20, -41);
 				lp_boton = 1;
 				if (lp_select) {
-					if (lp_ini == lp_select--) lp_ini--;
+					if (lp_ini == lp_select--)
+						lp_ini--;
 					pintar_lista_procesos();
 					v.volcar = 1;
 				}
@@ -5563,14 +6511,15 @@ static void process_list2(void) {
 		v.volcar = 1;
 	}
 
-
 	if (wmouse_in(123 + 32, 28, 7, 105)) {
 		mouse_graf = 13;
 		if (lp_num > 1 && (mouse_b & 1)) {
 			x = (float)(wmouse_y - 28) / 104.0;
 			lp_select = x * (lp_num - 1);
-			if (lp_select < lp_ini) lp_ini = lp_select;
-			if (lp_select >= lp_ini + 15) lp_ini = lp_select - 14;
+			if (lp_select < lp_ini)
+				lp_ini = lp_select;
+			if (lp_select >= lp_ini + 15)
+				lp_ini = lp_select - 14;
 			pintar_lista_procesos();
 			v.volcar = 1;
 		}
@@ -5582,7 +6531,8 @@ static void process_list2(void) {
 				wput(ptr, an, al, 123 + 32, 94 + 40, -42);
 				lp_boton = 2;
 				if (lp_select + 1 < lp_num) {
-					if (lp_ini + 15 == ++lp_select) lp_ini++;
+					if (lp_ini + 15 == ++lp_select)
+						lp_ini++;
 					pintar_lista_procesos();
 					v.volcar = 1;
 				}
@@ -5600,20 +6550,24 @@ static void process_list2(void) {
 	}
 
 	switch (v.active_item) {
-		case 0:
-			if (lp_num) v_aceptar = 1;
-			fin_dialogo = 1;
-			break;
-		case 1: fin_dialogo = 1; break;
-		case 2:
-			crear_lista_procesos();
-			pintar_lista_procesos();
-			v.volcar = 1;
-			break;
+	case 0:
+		if (lp_num)
+			v_aceptar = 1;
+		fin_dialogo = 1;
+		break;
+	case 1:
+		fin_dialogo = 1;
+		break;
+	case 2:
+		crear_lista_procesos();
+		pintar_lista_procesos();
+		v.volcar = 1;
+		break;
 	}
 }
 
-static void process_list0(void) {
+static void process_list0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[75];
 
@@ -5632,16 +6586,16 @@ static void process_list0(void) {
 // Profile - Execution time profiles
 //═════════════════════════════════════════════════════════════════════════════
 
-//int lp1[512];     // Object ID corresponding to each process
-//int lp_num;       // Number of process blocks in the list
-//int lp_ini;       // First block displayed in window
-//int lp_select;    // Selected process block
+// int lp1[512];     // Object ID corresponding to each process
+// int lp_num;       // Number of process blocks in the list
+// int lp_ini;       // First block displayed in window
+// int lp_select;    // Selected process block
 
-//int obj_start; // Start of first object (&obj[0])
-//int obj_size;  // Length of each object (struct object)
+// int obj_start; // Start of first object (&obj[0])
+// int obj_size;  // Length of each object (struct object)
 //(The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;)
 
-//unsigned f_time[256]; // Time taken by each function
+// unsigned f_time[256]; // Time taken by each function
 static unsigned f_time_total;
 static unsigned f_exec_total;
 static unsigned f_paint_total;
@@ -5653,12 +6607,12 @@ static int lp2_select; //???
 
 //════════════════════════════════════════════════════════════════════════════
 
-//extern int cpu_type;
+// extern int cpu_type;
 
 static unsigned int get_tick(void);
 
-#pragma aux get_tick = "mov ecx,10h"                                                                                   \
-                       "db 0fh,032h" parm[] value[eax] modify[eax ecx edx]
+#pragma aux get_tick = "mov ecx,10h"                                           \
+		       "db 0fh,032h" parm[] value[eax] modify[eax ecx edx]
 
 // "rdmsr"
 // "mov cl,4"
@@ -5666,25 +6620,27 @@ static unsigned int get_tick(void);
 
 static void reset_tick(void);
 
-#pragma aux reset_tick = "mov ecx,10h"                                                                                 \
-                         "xor edx,edx"                                                                                 \
-                         "xor eax,eax"                                                                                 \
-                         "db 0fh,030h" parm[] modify[ecx eax edx]
+#pragma aux reset_tick = "mov ecx,10h"                                         \
+			 "xor edx,edx"                                         \
+			 "xor eax,eax"                                         \
+			 "db 0fh,030h" parm[] modify[ecx eax edx]
 
 // "wrmsr"
 
 #define IntIncr (unsigned int)(11932 / 256)
 
-unsigned int get_ticks(void) {
+unsigned int get_ticks(void)
+{
 	//	printf("ticks\n");
 
-	return OSDEP_GetTicks(); ///10;
+	return OSDEP_GetTicks(); /// 10;
 #ifdef DOS
 	unsigned int x, xnull;
 
-	//OJO, es importante haber reprogramado el timer con el siguiente out
-	//outp(0x43, 0x34); // 0x36 00110100, lsb/msb, counter 0, mode ¡2!, binary
-	xnull = (unsigned char)inp(0x40);               // LSB
+	// OJO, es importante haber reprogramado el timer con el siguiente out
+	// outp(0x43, 0x34); // 0x36 00110100, lsb/msb, counter 0, mode ¡2!,
+	// binary
+	xnull = (unsigned char)inp(0x40);		// LSB
 	x = ticks + IntIncr - (unsigned char)inp(0x40); // MSB
 	return (x);
 #else
@@ -5692,18 +6648,26 @@ unsigned int get_ticks(void) {
 #endif
 }
 
-void function_exec(int id, int n) { // ID, cicles
-	if (n > 0) f_time[id] += n;
+void function_exec(int id, int n)
+{ // ID, cicles
+	if (n > 0)
+		f_time[id] += n;
 }
 
-void process_exec(int id, int n) { // ID, cicles
-	if (!debug_active) return;
-	if (n > 0) o[(mem[id + _Bloque] - obj_start) / obj_size].v4 += n;
+void process_exec(int id, int n)
+{ // ID, cicles
+	if (!debug_active)
+		return;
+	if (n > 0)
+		o[(mem[id + _Bloque] - obj_start) / obj_size].v4 += n;
 }
 
-void process_paint(int id, int n) { // ID, cicles
-	if (!debug_active) return;
-	if (n > 0) o[(mem[id + _Bloque] - obj_start) / obj_size].v5 += n;
+void process_paint(int id, int n)
+{ // ID, cicles
+	if (!debug_active)
+		return;
+	if (n > 0)
+		o[(mem[id + _Bloque] - obj_start) / obj_size].v5 += n;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -5719,7 +6683,8 @@ void process_paint(int id, int n) { // ID, cicles
 
 static int absolut = 0;
 
-static void crear_lista_profile(void) {
+static void crear_lista_profile(void)
+{
 	int n;
 
 	lp_num = 0;
@@ -5737,13 +6702,16 @@ static void crear_lista_profile(void) {
 		if (o[n].type == tproc) {
 			f_exec_total += o[n].v4;
 			f_paint_total += o[n].v5;
-			if (o[n].v4 > f_max) f_max = o[n].v4;
-			if (o[n].v5 > f_max) f_max = o[n].v5;
+			if (o[n].v4 > f_max)
+				f_max = o[n].v4;
+			if (o[n].v5 > f_max)
+				f_max = o[n].v5;
 		}
 	}
 
 	for (n = 0; n < 240; n++) {
-		if (f_time[n] > f_max) f_max = f_time[n];
+		if (f_time[n] > f_max)
+			f_max = f_time[n];
 	}
 
 	f_exec_total += f_time[255];
@@ -5753,12 +6721,18 @@ static void crear_lista_profile(void) {
 	f_paint_total += f_time[251];
 	f_paint_total += f_time[250];
 
-	if (f_time[255] > f_max) f_max = f_time[255];
-	if (f_time[254] > f_max) f_max = f_time[254];
-	if (f_time[253] > f_max) f_max = f_time[253];
-	if (f_time[252] > f_max) f_max = f_time[252];
-	if (f_time[251] > f_max) f_max = f_time[251];
-	if (f_time[250] > f_max) f_max = f_time[250];
+	if (f_time[255] > f_max)
+		f_max = f_time[255];
+	if (f_time[254] > f_max)
+		f_max = f_time[254];
+	if (f_time[253] > f_max)
+		f_max = f_time[253];
+	if (f_time[252] > f_max)
+		f_max = f_time[252];
+	if (f_time[251] > f_max)
+		f_max = f_time[251];
+	if (f_time[250] > f_max)
+		f_max = f_time[250];
 
 	f_time_total = f_exec_total + f_paint_total;
 
@@ -5768,211 +6742,295 @@ static void crear_lista_profile(void) {
 	}
 
 	for (n = 0; n < obj_cnt; n++) {
-		if (o[n].type == tproc && (o[n].v4 > f_time_total / 10000 || o[n].v5 > f_time_total / 10000)) {
+		if (o[n].type == tproc && (o[n].v4 > f_time_total / 10000 ||
+					   o[n].v5 > f_time_total / 10000)) {
 			lp1[lp_num++] = n;
 		}
 	}
 
 	for (n = 0; n < 240; n++) {
-		if (f_time[n] > f_time_total / 10000) { lp2[lp2_num++] = (char *)n; }
+		if (f_time[n] > f_time_total / 10000) {
+			lp2[lp2_num++] = (char *)n;
+		}
 	}
 }
 
-static void pintar_lista_profile(void) {
+static void pintar_lista_profile(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int m, x, porcen, porcen2;
 	char cwork[256];
 
-	wbox(ptr, an, al, c1, 4, lpy, an - 16, lpnum * lpal - 1); // Process listbox limits
+	wbox(ptr, an, al, c1, 4, lpy, an - 16,
+	     lpnum * lpal - 1); // Process listbox limits
 	for (m = lp_ini; m < lp_ini + lpnum && m < lp_num; m++) {
 		if (m == lp_select) {
-			wbox(ptr, an, al, c01, 4, lpy + (m - lp_ini) * lpal, an - 16 - 130, lpal - 1); // Process listbox fill
+			wbox(ptr, an, al, c01, 4, lpy + (m - lp_ini) * lpal,
+			     an - 16 - 130, lpal - 1); // Process listbox fill
 			x = c4;
 		} else
 			x = c3;
-		wrectangle(ptr, an, al, c0, an - 12 - 130, lpy - 1 + (m - lp_ini) * lpal, 66, lpal + 1); // Bars limits
+		wrectangle(ptr, an, al, c0, an - 12 - 130,
+			   lpy - 1 + (m - lp_ini) * lpal, 66,
+			   lpal + 1); // Bars limits
 
-		wbox(ptr, an, al, c_g_low0, an - 11 - 130, lpy + (m - lp_ini) * lpal, 64, lpal - 1); // Execution
+		wbox(ptr, an, al, c_g_low0, an - 11 - 130,
+		     lpy + (m - lp_ini) * lpal, 64, lpal - 1); // Execution
 
-		porcen = (unsigned)(((double)o[lp1[m]].v4 * (double)10000.0) / (double)f_time_total);
-		porcen2 = (unsigned)(((double)o[lp1[m]].v4 * (double)10000.0) / (double)f_max);
-		wbox(ptr, an, al, c_g_low, an - 11 - 130, lpy + (m - lp_ini) * lpal, (64 * porcen2) / 10000, lpal - 1);
+		porcen = (unsigned)(((double)o[lp1[m]].v4 * (double)10000.0) /
+				    (double)f_time_total);
+		porcen2 = (unsigned)(((double)o[lp1[m]].v4 * (double)10000.0) /
+				     (double)f_max);
+		wbox(ptr, an, al, c_g_low, an - 11 - 130,
+		     lpy + (m - lp_ini) * lpal, (64 * porcen2) / 10000,
+		     lpal - 1);
 		sprintf(cwork, "%d.%02d%c", porcen / 100, porcen % 100, '%');
 		if (absolut)
 			if (game_frames > 0)
-				sprintf(cwork, "%d", (int)((o[lp1[m]].v4 * 100) / game_frames));
+				sprintf(
+				    cwork, "%d",
+				    (int)((o[lp1[m]].v4 * 100) / game_frames));
 			else
 				sprintf(cwork, "0");
 
-		wwrite(ptr, an, al, an - 10 - 130 + 32, lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork, c_g_low0);
-		wwrite(ptr, an, al, an - 11 - 130 + 32, lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork, c34);
+		wwrite(ptr, an, al, an - 10 - 130 + 32,
+		       lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork,
+		       c_g_low0);
+		wwrite(ptr, an, al, an - 11 - 130 + 32,
+		       lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork, c34);
 
-		wbox(ptr, an, al, c_r_low0, an - 11 - 65, lpy + (m - lp_ini) * lpal, 64, lpal - 1); // Video
+		wbox(ptr, an, al, c_r_low0, an - 11 - 65,
+		     lpy + (m - lp_ini) * lpal, 64, lpal - 1); // Video
 
-		porcen = (unsigned)(((double)o[lp1[m]].v5 * (double)10000.0) / (double)f_time_total);
-		porcen2 = (unsigned)(((double)o[lp1[m]].v5 * (double)10000.0) / (double)f_max);
-		wbox(ptr, an, al, c_r_low, an - 11 - 65, lpy + (m - lp_ini) * lpal, (64 * porcen2) / 10000, lpal - 1);
+		porcen = (unsigned)(((double)o[lp1[m]].v5 * (double)10000.0) /
+				    (double)f_time_total);
+		porcen2 = (unsigned)(((double)o[lp1[m]].v5 * (double)10000.0) /
+				     (double)f_max);
+		wbox(ptr, an, al, c_r_low, an - 11 - 65,
+		     lpy + (m - lp_ini) * lpal, (64 * porcen2) / 10000,
+		     lpal - 1);
 		sprintf(cwork, "%d.%02d%c", porcen / 100, porcen % 100, '%');
 		if (absolut)
 			if (game_frames > 0)
-				sprintf(cwork, "%d", (int)((o[lp1[m]].v5 * 100) / game_frames));
+				sprintf(
+				    cwork, "%d",
+				    (int)((o[lp1[m]].v5 * 100) / game_frames));
 			else
 				sprintf(cwork, "0");
 
-		wwrite(ptr, an, al, an - 10 - 65 + 32, lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork, c_r_low0);
-		wwrite(ptr, an, al, an - 11 - 65 + 32, lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork, c34);
+		wwrite(ptr, an, al, an - 10 - 65 + 32,
+		       lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork,
+		       c_r_low0);
+		wwrite(ptr, an, al, an - 11 - 65 + 32,
+		       lpy + 1 + (m - lp_ini) * lpal, 1, (byte *)cwork, c34);
 
-		wwrite_in_box(
-		    ptr, an, an - 13 - 131, al, 5, lpy + 1 + (m - lp_ini) * lpal, 0, (byte *)vnames + o[lp1[m]].name, x);
-		wbox(ptr, an, al, c0, 4, lpy + (m - lp_ini) * lpal + lpal - 1, an - 16, 1);
+		wwrite_in_box(ptr, an, an - 13 - 131, al, 5,
+			      lpy + 1 + (m - lp_ini) * lpal, 0,
+			      (byte *)vnames + o[lp1[m]].name, x);
+		wbox(ptr, an, al, c0, 4, lpy + (m - lp_ini) * lpal + lpal - 1,
+		     an - 16, 1);
 	}
 
-	wbox(ptr, an, al, c1, 4, lp2y, an - lp2esp - 16, lp2num * lp2al - 1); // Process listbox limits
+	wbox(ptr, an, al, c1, 4, lp2y, an - lp2esp - 16,
+	     lp2num * lp2al - 1); // Process listbox limits
 	for (m = lp2_ini; m < lp2_ini + lp2num && m < lp2_num; m++) {
 		if (m == lp2_select) {
-			wbox(ptr,
-			     an,
-			     al,
-			     c01,
-			     4,
-			     lp2y + (m - lp2_ini) * lp2al,
+			wbox(ptr, an, al, c01, 4, lp2y + (m - lp2_ini) * lp2al,
 			     an - lp2esp - 16 - 65,
 			     lp2al - 1); // Process listbox fill
 			x = c4;
 		} else
 			x = c3;
-		wrectangle(
-		    ptr, an, al, c0, an - lp2esp - 12 - 65, lp2y - 1 + (m - lp2_ini) * lp2al, 1, lp2al + 1); // Bars limits
+		wrectangle(ptr, an, al, c0, an - lp2esp - 12 - 65,
+			   lp2y - 1 + (m - lp2_ini) * lp2al, 1,
+			   lp2al + 1); // Bars limits
 
-		wbox(ptr, an, al, c_g_low0, an - lp2esp - 11 - 65, lp2y + (m - lp2_ini) * lp2al, 64, lp2al - 1); // Execution
+		wbox(ptr, an, al, c_g_low0, an - lp2esp - 11 - 65,
+		     lp2y + (m - lp2_ini) * lp2al, 64, lp2al - 1); // Execution
 
-		porcen = (unsigned)(((double)f_time[(memptrsize)lp2[m]] * (double)10000.0) / (double)f_time_total);
-		porcen2 = (unsigned)(((double)f_time[(memptrsize)lp2[m]] * (double)10000.0) / (double)f_max);
-		wbox(ptr,
-		     an,
-		     al,
-		     c_g_low,
-		     an - lp2esp - 11 - 65,
-		     lp2y + (m - lp2_ini) * lp2al,
-		     (64 * porcen2) / 10000,
+		porcen = (unsigned)(((double)f_time[(memptrsize)lp2[m]] *
+				     (double)10000.0) /
+				    (double)f_time_total);
+		porcen2 = (unsigned)(((double)f_time[(memptrsize)lp2[m]] *
+				      (double)10000.0) /
+				     (double)f_max);
+		wbox(ptr, an, al, c_g_low, an - lp2esp - 11 - 65,
+		     lp2y + (m - lp2_ini) * lp2al, (64 * porcen2) / 10000,
 		     lpal - 1);
 		sprintf(cwork, "%d.%02d%c", porcen / 100, porcen % 100, '%');
 		if (absolut)
 			if (game_frames > 0)
-				sprintf(cwork, "%d", (int)((f_time[(memptrsize)lp2[m]] * 100) / game_frames));
+				sprintf(
+				    cwork, "%d",
+				    (int)((f_time[(memptrsize)lp2[m]] * 100) /
+					  game_frames));
 			else
 				sprintf(cwork, "0");
 
-		wwrite(ptr, an, al, an - lp2esp - 10 - 33, lp2y + 1 + (m - lp2_ini) * lp2al, 1, (byte *)cwork, c_g_low0);
-		wwrite(ptr, an, al, an - lp2esp - 11 - 33, lp2y + 1 + (m - lp2_ini) * lp2al, 1, (byte *)cwork, c34);
+		wwrite(ptr, an, al, an - lp2esp - 10 - 33,
+		       lp2y + 1 + (m - lp2_ini) * lp2al, 1, (byte *)cwork,
+		       c_g_low0);
+		wwrite(ptr, an, al, an - lp2esp - 11 - 33,
+		       lp2y + 1 + (m - lp2_ini) * lp2al, 1, (byte *)cwork, c34);
 
-		wwrite_in_box(ptr,
-		              an,
-		              an - lp2esp - 13 - 66,
-		              al,
-		              5,
-		              lp2y + 1 + (m - lp2_ini) * lp2al,
-		              0,
-		              (byte *)fname[(memptrsize)lp2[m]],
-		              x);
-		wbox(ptr, an, al, c0, 4, lp2y + (m - lp2_ini) * lp2al + lp2al - 1, an - lp2esp - 16, 1);
+		wwrite_in_box(ptr, an, an - lp2esp - 13 - 66, al, 5,
+			      lp2y + 1 + (m - lp2_ini) * lp2al, 0,
+			      (byte *)fname[(memptrsize)lp2[m]], x);
+		wbox(ptr, an, al, c0, 4,
+		     lp2y + (m - lp2_ini) * lp2al + lp2al - 1, an - lp2esp - 16,
+		     1);
 	}
 
-	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 0 + lp2y - 1, lp2esp - 1, lp2al + 1);
-	wbox(ptr, an, al, c_g_low0, an - lp2esp - 1, lp2al * 0 + lp2y, lp2esp - 3, lp2al - 1);
-	porcen = (unsigned)(((double)f_time[255] * (double)10000.0) / (double)f_time_total);
-	porcen2 = (unsigned)(((double)f_time[255] * (double)10000.0) / (double)f_max);
-	wbox(ptr, an, al, c_g_low, an - lp2esp - 1, lp2al * 0 + lp2y, ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
-	sprintf(cwork, "%s %d.%02d%c", text[77], porcen / 100, porcen % 100, '%');
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 0 + lp2y - 1,
+		   lp2esp - 1, lp2al + 1);
+	wbox(ptr, an, al, c_g_low0, an - lp2esp - 1, lp2al * 0 + lp2y,
+	     lp2esp - 3, lp2al - 1);
+	porcen = (unsigned)(((double)f_time[255] * (double)10000.0) /
+			    (double)f_time_total);
+	porcen2 =
+	    (unsigned)(((double)f_time[255] * (double)10000.0) / (double)f_max);
+	wbox(ptr, an, al, c_g_low, an - lp2esp - 1, lp2al * 0 + lp2y,
+	     ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
+	sprintf(cwork, "%s %d.%02d%c", text[77], porcen / 100, porcen % 100,
+		'%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s %d", text[77], (int)((f_time[255] * 100) / game_frames));
+			sprintf(cwork, "%s %d", text[77],
+				(int)((f_time[255] * 100) / game_frames));
 		else
 			sprintf(cwork, "%s 0", text[77]);
-	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 0, 1, (byte *)cwork, c_g_low0);
-	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 0, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 0, 1,
+	       (byte *)cwork, c_g_low0);
+	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 0, 1,
+	       (byte *)cwork, c34);
 
-	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 1 + lp2y - 1, lp2esp - 1, lp2al + 1);
-	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 1 + lp2y, lp2esp - 3, lp2al - 1);
-	porcen = (unsigned)(((double)f_time[254] * (double)10000.0) / (double)f_time_total);
-	porcen2 = (unsigned)(((double)f_time[254] * (double)10000.0) / (double)f_max);
-	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 1 + lp2y, ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
-	sprintf(cwork, "%s %d.%02d%c", text[78], porcen / 100, porcen % 100, '%');
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 1 + lp2y - 1,
+		   lp2esp - 1, lp2al + 1);
+	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 1 + lp2y,
+	     lp2esp - 3, lp2al - 1);
+	porcen = (unsigned)(((double)f_time[254] * (double)10000.0) /
+			    (double)f_time_total);
+	porcen2 =
+	    (unsigned)(((double)f_time[254] * (double)10000.0) / (double)f_max);
+	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 1 + lp2y,
+	     ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
+	sprintf(cwork, "%s %d.%02d%c", text[78], porcen / 100, porcen % 100,
+		'%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s %d", text[78], (int)((f_time[254] * 100) / game_frames));
+			sprintf(cwork, "%s %d", text[78],
+				(int)((f_time[254] * 100) / game_frames));
 		else
 			sprintf(cwork, "%s 0", text[78]);
-	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 1, 1, (byte *)cwork, c_r_low0);
-	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 1, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 1, 1,
+	       (byte *)cwork, c_r_low0);
+	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 1, 1,
+	       (byte *)cwork, c34);
 
-	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 2 + lp2y - 1, lp2esp - 1, lp2al + 1);
-	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 2 + lp2y, lp2esp - 3, lp2al - 1);
-	porcen = (unsigned)(((double)f_time[253] * (double)10000.0) / (double)f_time_total);
-	porcen2 = (unsigned)(((double)f_time[253] * (double)10000.0) / (double)f_max);
-	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 2 + lp2y, ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
-	sprintf(cwork, "%s %d.%02d%c", text[79], porcen / 100, porcen % 100, '%');
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 2 + lp2y - 1,
+		   lp2esp - 1, lp2al + 1);
+	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 2 + lp2y,
+	     lp2esp - 3, lp2al - 1);
+	porcen = (unsigned)(((double)f_time[253] * (double)10000.0) /
+			    (double)f_time_total);
+	porcen2 =
+	    (unsigned)(((double)f_time[253] * (double)10000.0) / (double)f_max);
+	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 2 + lp2y,
+	     ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
+	sprintf(cwork, "%s %d.%02d%c", text[79], porcen / 100, porcen % 100,
+		'%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s %d", text[79], (int)((f_time[253] * 100) / game_frames));
+			sprintf(cwork, "%s %d", text[79],
+				(int)((f_time[253] * 100) / game_frames));
 		else
 			sprintf(cwork, "%s 0", text[79]);
-	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 2, 1, (byte *)cwork, c_r_low0);
-	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 2, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 2, 1,
+	       (byte *)cwork, c_r_low0);
+	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 2, 1,
+	       (byte *)cwork, c34);
 
-	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 3 + lp2y - 1, lp2esp - 1, lp2al + 1);
-	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 3 + lp2y, lp2esp - 3, lp2al - 1);
-	porcen = (unsigned)(((double)f_time[252] * (double)10000.0) / (double)f_time_total);
-	porcen2 = (unsigned)(((double)f_time[252] * (double)10000.0) / (double)f_max);
-	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 3 + lp2y, ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 3 + lp2y - 1,
+		   lp2esp - 1, lp2al + 1);
+	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 3 + lp2y,
+	     lp2esp - 3, lp2al - 1);
+	porcen = (unsigned)(((double)f_time[252] * (double)10000.0) /
+			    (double)f_time_total);
+	porcen2 =
+	    (unsigned)(((double)f_time[252] * (double)10000.0) / (double)f_max);
+	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 3 + lp2y,
+	     ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
 	sprintf(cwork, "Scroll %d.%02d%c", porcen / 100, porcen % 100, '%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "Scroll %d", (int)((f_time[252] * 100) / game_frames));
+			sprintf(cwork, "Scroll %d",
+				(int)((f_time[252] * 100) / game_frames));
 		else
 			sprintf(cwork, "Scroll 0");
-	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 3, 1, (byte *)cwork, c_r_low0);
-	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 3, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 3, 1,
+	       (byte *)cwork, c_r_low0);
+	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 3, 1,
+	       (byte *)cwork, c34);
 
-	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 4 + lp2y - 1, lp2esp - 1, lp2al + 1);
-	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 4 + lp2y, lp2esp - 3, lp2al - 1);
-	porcen = (unsigned)(((double)f_time[251] * (double)10000.0) / (double)f_time_total);
-	porcen2 = (unsigned)(((double)f_time[251] * (double)10000.0) / (double)f_max);
-	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 4 + lp2y, ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
-	sprintf(cwork, "%s %d.%02d%c", text[80], porcen / 100, porcen % 100, '%');
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 4 + lp2y - 1,
+		   lp2esp - 1, lp2al + 1);
+	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 4 + lp2y,
+	     lp2esp - 3, lp2al - 1);
+	porcen = (unsigned)(((double)f_time[251] * (double)10000.0) /
+			    (double)f_time_total);
+	porcen2 =
+	    (unsigned)(((double)f_time[251] * (double)10000.0) / (double)f_max);
+	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 4 + lp2y,
+	     ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
+	sprintf(cwork, "%s %d.%02d%c", text[80], porcen / 100, porcen % 100,
+		'%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s %d", text[80], (int)((f_time[251] * 100) / game_frames));
+			sprintf(cwork, "%s %d", text[80],
+				(int)((f_time[251] * 100) / game_frames));
 		else
 			sprintf(cwork, "%s 0", text[80]);
-	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 4, 1, (byte *)cwork, c_r_low0);
-	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 4, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 4, 1,
+	       (byte *)cwork, c_r_low0);
+	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 4, 1,
+	       (byte *)cwork, c34);
 
-	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 5 + lp2y - 1, lp2esp - 1, lp2al + 1);
-	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 5 + lp2y, lp2esp - 3, lp2al - 1);
-	porcen = (unsigned)(((double)f_time[250] * (double)10000.0) / (double)f_time_total);
-	porcen2 = (unsigned)(((double)f_time[250] * (double)10000.0) / (double)f_max);
-	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 5 + lp2y, ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
-	sprintf(cwork, "%s %d.%02d%c", text[81], porcen / 100, porcen % 100, '%');
+	wrectangle(ptr, an, al, c0, an - lp2esp - 2, lp2al * 5 + lp2y - 1,
+		   lp2esp - 1, lp2al + 1);
+	wbox(ptr, an, al, c_r_low0, an - lp2esp - 1, lp2al * 5 + lp2y,
+	     lp2esp - 3, lp2al - 1);
+	porcen = (unsigned)(((double)f_time[250] * (double)10000.0) /
+			    (double)f_time_total);
+	porcen2 =
+	    (unsigned)(((double)f_time[250] * (double)10000.0) / (double)f_max);
+	wbox(ptr, an, al, c_r_low, an - lp2esp - 1, lp2al * 5 + lp2y,
+	     ((lp2esp - 3) * porcen2) / 10000, lp2al - 1);
+	sprintf(cwork, "%s %d.%02d%c", text[81], porcen / 100, porcen % 100,
+		'%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s %d", text[81], (int)((f_time[250] * 100) / game_frames));
+			sprintf(cwork, "%s %d", text[81],
+				(int)((f_time[250] * 100) / game_frames));
 		else
 			sprintf(cwork, "%s 0", text[81]);
-	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 5, 1, (byte *)cwork, c_r_low0);
-	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 5, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, an - lp2esp + 48, lp2y + 1 + lp2al * 5, 1,
+	       (byte *)cwork, c_r_low0);
+	wwrite(ptr, an, al, an - lp2esp + 47, lp2y + 1 + lp2al * 5, 1,
+	       (byte *)cwork, c34);
 
 	draw_profile_segment();
 }
 
-static void draw_profile_segment(void) {
+static void draw_profile_segment(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	int min = lpy + 7, max = lpy + lpnum * lpal - 13, n;
 	float x;
 
-	wbox(ptr, an, al, c2, an - 11, lpy + 8, 7, max - min + 3); // Clear the slider bar
+	wbox(ptr, an, al, c2, an - 11, lpy + 8, 7,
+	     max - min + 3); // Clear the slider bar
 	if (lp_num <= 1)
 		n = min;
 	else {
@@ -5985,7 +7043,8 @@ static void draw_profile_segment(void) {
 	min = lp2y + 7;
 	max = lp2y + lp2num * lp2al - 13, n;
 
-	wbox(ptr, an, al, c2, an - lp2esp - 11, lp2y + 8, 7, max - min + 3); // Clear the slider bar
+	wbox(ptr, an, al, c2, an - lp2esp - 11, lp2y + 8, 7,
+	     max - min + 3); // Clear the slider bar
 	if (lp2_num <= 1)
 		n = min;
 	else {
@@ -5996,7 +7055,8 @@ static void draw_profile_segment(void) {
 	wput(ptr, an, al, an - lp2esp - 11, n + 1, -43);
 }
 
-static void profile1(void) {
+static void profile1(void)
+{
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
 	char cwork[256];
@@ -6010,7 +7070,8 @@ static void profile1(void) {
 	wrectangle(ptr, an, al, c0, 3, 12, an - 6, 11); // Overall speed %
 	wbox(ptr, an, al, c_b_low0, 4, 13, an - 8, 9);
 	x = (unsigned)(ffps2 * 100.0);
-	if (x > 10000) x = 10000;
+	if (x > 10000)
+		x = 10000;
 	if (game_frames) {
 		n = (int)(((double)f_time_total / game_frames) * 50.0);
 		if (n > 10000)
@@ -6024,7 +7085,10 @@ static void profile1(void) {
 	sprintf(cwork, "%s %d.%02d%c", text[82], x / 100, x % 100, '%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s = %d", text[83], (int)(((double)(f_exec_total + f_paint_total) / game_frames) * 100.0));
+			sprintf(cwork, "%s = %d", text[83],
+				(int)(((double)(f_exec_total + f_paint_total) /
+				       game_frames) *
+				      100.0));
 		else
 			sprintf(cwork, "%s = 0", text[83]);
 	wwrite(ptr, an, al, an / 2, 14, 1, (byte *)cwork, c_b_low0);
@@ -6032,42 +7096,58 @@ static void profile1(void) {
 
 	wrectangle(ptr, an, al, c0, 3, 11 + 14, an / 2 - 4, 11); // Execution %
 	wbox(ptr, an, al, c_g_low0, 4, 12 + 14, an / 2 - 6, 9);
-	x = (unsigned)(((double)f_exec_total * (double)10000.0) / (double)f_time_total);
+	x = (unsigned)(((double)f_exec_total * (double)10000.0) /
+		       (double)f_time_total);
 	wbox(ptr, an, al, c_g_low, 4, 12 + 14, ((an / 2 - 6) * x) / 10000, 9);
 	sprintf(cwork, "%s %d.%02d%c", text[84], x / 100, x % 100, '%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s %d", text[84], (int)((f_exec_total * 100) / game_frames));
+			sprintf(cwork, "%s %d", text[84],
+				(int)((f_exec_total * 100) / game_frames));
 		else
 			sprintf(cwork, "%s = 0", text[84]);
-	wwrite(ptr, an, al, 4 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c_g_low0);
-	wwrite(ptr, an, al, 3 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, 4 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork,
+	       c_g_low0);
+	wwrite(ptr, an, al, 3 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork,
+	       c34);
 
-	wrectangle(ptr, an, al, c0, an / 2 + 1, 11 + 14, an / 2 - 4, 11); // Drawing %
+	wrectangle(ptr, an, al, c0, an / 2 + 1, 11 + 14, an / 2 - 4,
+		   11); // Drawing %
 	wbox(ptr, an, al, c_r_low0, an / 2 + 2, 12 + 14, an / 2 - 6, 9);
-	x = (unsigned)(((double)f_paint_total * (double)10000.0) / (double)f_time_total);
-	wbox(ptr, an, al, c_r_low, an / 2 + 2, 12 + 14, ((an / 2 - 6) * x) / 10000, 9);
+	x = (unsigned)(((double)f_paint_total * (double)10000.0) /
+		       (double)f_time_total);
+	wbox(ptr, an, al, c_r_low, an / 2 + 2, 12 + 14,
+	     ((an / 2 - 6) * x) / 10000, 9);
 	sprintf(cwork, "%s %d.%02d%c", text[85], x / 100, x % 100, '%');
 	if (absolut)
 		if (game_frames > 0)
-			sprintf(cwork, "%s %d", text[85], (int)((f_paint_total * 100) / game_frames));
+			sprintf(cwork, "%s %d", text[85],
+				(int)((f_paint_total * 100) / game_frames));
 		else
 			sprintf(cwork, "%s = 0", text[85]);
-	wwrite(ptr, an, al, an / 2 + 3 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c_r_low0);
-	wwrite(ptr, an, al, an / 2 + 2 + (an / 2 - 4) / 2, 13 + 14, 1, (byte *)cwork, c34);
+	wwrite(ptr, an, al, an / 2 + 3 + (an / 2 - 4) / 2, 13 + 14, 1,
+	       (byte *)cwork, c_r_low0);
+	wwrite(ptr, an, al, an / 2 + 2 + (an / 2 - 4) / 2, 13 + 14, 1,
+	       (byte *)cwork, c34);
 
-	wrectangle(ptr, an, al, c0, 3, lpy - 1, an - 6, lpal + 1); // Process listbox limits
+	wrectangle(ptr, an, al, c0, 3, lpy - 1, an - 6,
+		   lpal + 1); // Process listbox limits
 	wrectangle(ptr, an, al, c0, 3, lpy - 1, an - 6, lpnum * lpal + 1);
 	wrectangle(ptr, an, al, c0, an - 12, lpy - 1, 9, lpnum * lpal + 1);
 	wrectangle(ptr, an, al, c0, an - 12, lpy + 7, 9, lpnum * lpal + 1 - 16);
 	wput(ptr, an, al, an - 11, lpy, -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, an - 11, lpy + lpnum * lpal - 8, -40);
 
-	wrectangle(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6, lp2al + 1); // Process listbox limits
-	wrectangle(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6, lp2num * lp2al + 1);
-	wrectangle(ptr, an, al, c0, an - lp2esp - 12, lp2y - 1, 9, lp2num * lp2al + 1);
-	wrectangle(ptr, an, al, c0, an - lp2esp - 12, lp2y + 7, 9, lp2num * lp2al + 1 - 16);
-	wput(ptr, an, al, an - lp2esp - 11, lp2y, -39); // Up/down buttons (pressed 41,42)
+	wrectangle(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6,
+		   lp2al + 1); // Process listbox limits
+	wrectangle(ptr, an, al, c0, 3, lp2y - 1, an - lp2esp - 6,
+		   lp2num * lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 12, lp2y - 1, 9,
+		   lp2num * lp2al + 1);
+	wrectangle(ptr, an, al, c0, an - lp2esp - 12, lp2y + 7, 9,
+		   lp2num * lp2al + 1 - 16);
+	wput(ptr, an, al, an - lp2esp - 11, lp2y,
+	     -39); // Up/down buttons (pressed 41,42)
 	wput(ptr, an, al, an - lp2esp - 11, lp2y + lp2num * lp2al - 8, -40);
 
 	pintar_lista_profile();
@@ -6075,7 +7155,8 @@ static void profile1(void) {
 
 static int lp2_boton;
 
-static void profile2(void) {
+static void profile2(void)
+{
 	int n;
 	byte *ptr = v.ptr;
 	int an = v.an / big2, al = v.al / big2;
@@ -6105,7 +7186,8 @@ static void profile2(void) {
 				wput(ptr, an, al, an - 11, lpy, -41);
 				lp_boton = 1;
 				if (lp_select) {
-					if (lp_ini == lp_select--) lp_ini--;
+					if (lp_ini == lp_select--)
+						lp_ini--;
 					pintar_lista_profile();
 					v.volcar = 1;
 				}
@@ -6122,14 +7204,16 @@ static void profile2(void) {
 		v.volcar = 1;
 	}
 
-
 	if (wmouse_in(an - 11, lpy + 8, 7, lpnum * lpal - 17)) {
 		mouse_graf = 13;
 		if (lp_num > 1 && (mouse_b & 1)) {
-			x = (float)(wmouse_y - lpy - 8) / (float)(lpnum * lpal - 18);
+			x = (float)(wmouse_y - lpy - 8) /
+			    (float)(lpnum * lpal - 18);
 			lp_select = x * (lp_num - 1);
-			if (lp_select < lp_ini) lp_ini = lp_select;
-			if (lp_select >= lp_ini + lpnum) lp_ini = lp_select - lpnum + 1;
+			if (lp_select < lp_ini)
+				lp_ini = lp_select;
+			if (lp_select >= lp_ini + lpnum)
+				lp_ini = lp_select - lpnum + 1;
 			pintar_lista_profile();
 			v.volcar = 1;
 		}
@@ -6138,10 +7222,12 @@ static void profile2(void) {
 	if (wmouse_in(an - 12, lpy + lpnum * lpal - 9, 9, 9)) {
 		if (mouse_b & 1) {
 			if (lp_boton == 0) {
-				wput(ptr, an, al, an - 11, lpy + lpnum * lpal - 8, -42);
+				wput(ptr, an, al, an - 11,
+				     lpy + lpnum * lpal - 8, -42);
 				lp_boton = 2;
 				if (lp_select + 1 < lp_num) {
-					if (lp_ini + lpnum == ++lp_select) lp_ini++;
+					if (lp_ini + lpnum == ++lp_select)
+						lp_ini++;
 					pintar_lista_profile();
 					v.volcar = 1;
 				}
@@ -6160,7 +7246,8 @@ static void profile2(void) {
 
 	// Functions listbox
 
-	if (wmouse_in(3, lp2y, an - lp2esp - 15, lp2num * lp2al) && (mouse_b & 1)) {
+	if (wmouse_in(3, lp2y, an - lp2esp - 15, lp2num * lp2al) &&
+	    (mouse_b & 1)) {
 		n = lp2_ini + (wmouse_y - lp2y) / lp2al;
 		if (n < lp2_num) {
 			if (lp2_select != n) {
@@ -6177,7 +7264,8 @@ static void profile2(void) {
 				wput(ptr, an, al, an - lp2esp - 11, lp2y, -41);
 				lp2_boton = 1;
 				if (lp2_select) {
-					if (lp2_ini == lp2_select--) lp2_ini--;
+					if (lp2_ini == lp2_select--)
+						lp2_ini--;
 					pintar_lista_profile();
 					v.volcar = 1;
 				}
@@ -6194,14 +7282,16 @@ static void profile2(void) {
 		v.volcar = 1;
 	}
 
-
 	if (wmouse_in(an - lp2esp - 11, lp2y + 8, 7, lp2num * lp2al - 17)) {
 		mouse_graf = 13;
 		if (lp2_num > 1 && (mouse_b & 1)) {
-			x = (float)(wmouse_y - lp2y - 8) / (float)(lp2num * lp2al - 18);
+			x = (float)(wmouse_y - lp2y - 8) /
+			    (float)(lp2num * lp2al - 18);
 			lp2_select = x * (lp2_num - 1);
-			if (lp2_select < lp2_ini) lp2_ini = lp2_select;
-			if (lp2_select >= lp2_ini + lp2num) lp2_ini = lp2_select - lp2num + 1;
+			if (lp2_select < lp2_ini)
+				lp2_ini = lp2_select;
+			if (lp2_select >= lp2_ini + lp2num)
+				lp2_ini = lp2_select - lp2num + 1;
 			pintar_lista_profile();
 			v.volcar = 1;
 		}
@@ -6210,59 +7300,67 @@ static void profile2(void) {
 	if (wmouse_in(an - lp2esp - 12, lp2y + lp2num * lp2al - 9, 9, 9)) {
 		if (mouse_b & 1) {
 			if (lp2_boton == 0) {
-				wput(ptr, an, al, an - lp2esp - 11, lp2y + lp2num * lp2al - 8, -42);
+				wput(ptr, an, al, an - lp2esp - 11,
+				     lp2y + lp2num * lp2al - 8, -42);
 				lp2_boton = 2;
 				if (lp2_select + 1 < lp2_num) {
-					if (lp2_ini + lp2num == ++lp2_select) lp2_ini++;
+					if (lp2_ini + lp2num == ++lp2_select)
+						lp2_ini++;
 					pintar_lista_profile();
 					v.volcar = 1;
 				}
 			}
 		} else if (lp2_boton == 2) {
-			wput(ptr, an, al, an - lp2esp - 11, lp2y + lp2num * lp2al - 8, -40);
+			wput(ptr, an, al, an - lp2esp - 11,
+			     lp2y + lp2num * lp2al - 8, -40);
 			lp2_boton = 0;
 			v.volcar = 1;
 		}
 		mouse_graf = 9;
 	} else if (lp2_boton == 2) {
-		wput(ptr, an, al, an - lp2esp - 11, lp2y + lp2num * lp2al - 8, -40);
+		wput(ptr, an, al, an - lp2esp - 11, lp2y + lp2num * lp2al - 8,
+		     -40);
 		lp2_boton = 0;
 		v.volcar = 1;
 	}
 
-	if (scan_code == 33 || kbdFLAGS[_F12]) goto profiler_next_frame;
+	if (scan_code == 33 || kbdFLAGS[_F12])
+		goto profiler_next_frame;
 
 	switch (v.active_item) {
-		case 0:
-		profiler_next_frame:
-			dont_blit_anything = 1;
-			profiler_x = v.x;
-			profiler_y = v.y;
-			fin_dialogo = 1;
-			break;
-		case 1:
-			for (n = 0; n < obj_cnt; n++) {
-				if (o[n].type == tproc) {
-					o[n].v4 = 0; // Time_exec
-					o[n].v5 = 0; // Time_paint
-				}
+	case 0:
+	profiler_next_frame:
+		dont_blit_anything = 1;
+		profiler_x = v.x;
+		profiler_y = v.y;
+		fin_dialogo = 1;
+		break;
+	case 1:
+		for (n = 0; n < obj_cnt; n++) {
+			if (o[n].type == tproc) {
+				o[n].v4 = 0; // Time_exec
+				o[n].v5 = 0; // Time_paint
 			}
-			memset(f_time, 0, 256 * 4);
-			ffps2 = 0.0f;
-			game_ticks = 0.0f;
-			game_frames = 0.0f;
-			call(v.paint_handler);
-			v.volcar = 1;
-			break;
-		case 2: fin_dialogo = 1; break;
-		case 3:
-			call(v.paint_handler);
-			v.volcar = 1;
-			break;
+		}
+		memset(f_time, 0, 256 * 4);
+		ffps2 = 0.0f;
+		game_ticks = 0.0f;
+		game_frames = 0.0f;
+		call(v.paint_handler);
+		v.volcar = 1;
+		break;
+	case 2:
+		fin_dialogo = 1;
+		break;
+	case 3:
+		call(v.paint_handler);
+		v.volcar = 1;
+		break;
 	}
 }
 
-static void profile0(void) {
+static void profile0(void)
+{
 	v.tipo = 1;
 	v.titulo = text[86];
 
@@ -6272,12 +7370,13 @@ static void profile0(void) {
 	v.click_handler = profile2;
 
 	_button(text[87], 7, v.al - 14, 0);
-	_button(text[88], 7 + 3 + text_len((byte *)"\15 Siguiente Frame "), v.al - 14, 0);
+	_button(text[88], 7 + 3 + text_len((byte *)"\15 Siguiente Frame "),
+		v.al - 14, 0);
 	_button(text[89], v.an - 8, v.al - 14, 2);
 	_flag(text[90],
-	      7 + 3 + text_len((byte *)"\15 Siguiente Frame ") + 3 + text_len((byte *)"\15 Comenzar "),
-	      v.al - 14,
-	      &absolut);
+	      7 + 3 + text_len((byte *)"\15 Siguiente Frame ") + 3 +
+		  text_len((byte *)"\15 Comenzar "),
+	      v.al - 14, &absolut);
 }
 
 //════════════════════════════════════════════════════════════════════════════

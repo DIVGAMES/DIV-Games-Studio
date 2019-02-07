@@ -1,15 +1,15 @@
 #pragma once
 
 /*
-	SCRplus - (c) Edward Cree 2010-11
-	Licensed under the GNU GPL v3+
+        SCRplus - (c) Edward Cree 2010-11
+        Licensed under the GNU GPL v3+
 */
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
-#define max(a,b)	((a)>(b)?(a):(b))
-#define min(a,b)	((a)>(b)?(b):(a))
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#define min(a, b) ((a) > (b) ? (b) : (a))
 
 void fputw(unsigned short int a, FILE *stream);
 void fputq(unsigned long int a, FILE *stream);
