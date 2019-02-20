@@ -1,4 +1,4 @@
-#include <stdbool.h>
+﻿#include <stdbool.h>
 #include <stdint.h>
 
 #include "internal.h"
@@ -783,7 +783,7 @@ WLoopStart:
 		//Coord = (Coord & 0xFFFFFF00) |
 		//       ((Coord & 0xFF)       &
 		//     ((CoordM2 & 0xFF00) >> 8));                           // and dl, ah
-		if(PixPtr>=ScrBase && PixPtr<&((unsigned char *)ScrBase)[Engine.ScrWidth*Engine.ScrHeight]) {
+		if(PixPtr >= ScrBase && PixPtr < &((unsigned char *)ScrBase)[Engine.ScrWidth * Engine.ScrHeight]) {
 			Coord &= ((CoordM2 & 0xFF00) >> 8);                    // and dl, ah
 			PixPtr[0] = PalPtr[RawPtr[Coord]];                     // mov bl, [esi+edx]
 		}                                                           // mov bl, [ebx]

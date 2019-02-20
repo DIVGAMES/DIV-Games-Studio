@@ -1,4 +1,4 @@
-#ifndef __OSDEP_H
+﻿#ifndef __OSDEP_H
 #define __OSDEP_H
 
 // OSDEP includes
@@ -25,12 +25,12 @@
 #include <stdint.h>
 #else
 #include <time.h>
-typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
-typedef unsigned long uint64_t;
-typedef long int64_t;
+typedef unsigned char  uint8_t;
+typedef unsigned int   uint32_t;
+typedef unsigned long  uint64_t;
+typedef long           int64_t;
 typedef unsigned short uint16_t;
-typedef int int32_t;
+typedef int            int32_t;
 
 #endif
 
@@ -64,15 +64,10 @@ typedef int int32_t;
 #define _MAX_EXT 64
 #endif
 
-
-
-
-
-
 #if __WORDSIZE == 32
-#define memptrsize uint32_t
+#define memptrsize int32_t // Fix: must be SIGNED INT to avoid mismatching
 #else
-#define memptrsize uint64_t
+#define memptrsize int64_t // Fix: must be SIGNED INT to avoid mismatching
 #endif
 
 
@@ -98,16 +93,16 @@ typedef int int32_t;
 #else
 #ifndef PS2
 #ifndef PSP
-extern char * strupr(char *string);
-extern char * strlwr(char *string);
+extern char *strupr(char *string);
+extern char *strlwr(char *string);
 #endif
 #endif
 
 #endif
 
-extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
+extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives);
 #ifndef __WIN32__
-char * itoa(long n, char *buf, int len);
+char *itoa(long n, char *buf, int len);
 #endif
 
 #define ltoa itoa 
@@ -116,14 +111,14 @@ char * itoa(long n, char *buf, int len);
 
 
 extern void _splitpath (
-   const char *path,  // Path Input
-   char *drive,       // Drive     : Output
-   char *dir,         // Directory : Output
-   char *fname,       // Filename  : Output
-   char *ext          // Extension : Output
+	const char *path,  // Path Input
+	char       *drive, // Drive     : Output
+	char       *dir,   // Directory : Output
+	char       *fname, // Filename  : Output
+	char       *ext    // Extension : Output
 );
 
-extern char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes);
+extern char *_fullpath(char *_FullPath, const char *_Path, size_t _SizeInBytes);
 
 
 // dos directory stuff
@@ -131,13 +126,14 @@ extern char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes);
 #include <dirent.h>
 
 struct find_t {
-  char reserved[21];
-  unsigned char attrib;
-  unsigned short wr_time;
-  unsigned short wr_date;
-  unsigned long size;
-  char name[256];
+	char           reserved[21];
+	unsigned char  attrib;
+	unsigned short wr_time;
+	unsigned short wr_date;
+	unsigned long  size;
+	char           name[256];
 };
+
 #ifndef _A_NORMAL
 #define _A_NORMAL (0x00)
 //Normal file (no read/write restrictions)
@@ -171,8 +167,7 @@ struct find_t {
 //Archive file
 #endif
 
-unsigned int _dos_findfirst(char *name, unsigned int attr, 
-                            struct find_t *result);
+unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result);
 unsigned int _dos_findnext(struct find_t *result);
 
 unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
@@ -180,35 +175,29 @@ unsigned int _dos_setfileattr(const char *filename, unsigned int attr);
 void __mkdir(char *dir);
 
 void _dos_getdrive( unsigned int *drive);
-void _makepath(
-   char *path,
-   const char *drive,
-   const char *dir,
-   const char *fname,
-   const char *ext 
-);
+void _makepath(char *path, const char *drive, const char *dir, const char *fname, const char *ext);
 
 extern void compilar(void);
 extern int _chdir(const char* Directory);
 
 //#define SoundInfo SDL_AudioSpec
 
-#define TXTRESET		0
-#define BRIGHT 		1
-#define DIM		2
-#define UNDERLINE 	3
-#define BLINK		4
-#define REVERSE		7
-#define HIDDEN		8
+#define TXTRESET  0
+#define BRIGHT    1
+#define DIM       2
+#define UNDERLINE 3
+#define BLINK     4
+#define REVERSE   7
+#define HIDDEN    8
 
-#define BLACK 		0
-#define RED		1
-#define GREEN		2
-#define YELLOW		3
-#define BLUE		4
-#define MAGENTA		5
-#define CYAN		6
-#define	WHITE		7
+#define BLACK     0
+#define RED       1
+#define GREEN     2
+#define YELLOW    3
+#define BLUE      4
+#define MAGENTA   5
+#define CYAN      6
+#define	WHITE     7
 
 
 void textcolor(int attr, int fg, int bg);
@@ -222,4 +211,3 @@ void textcolor(int attr, int fg, int bg);
 #endif
 
 #endif // __OSDEP_H
-

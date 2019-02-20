@@ -1,17 +1,17 @@
-
+ï»¿
 // Strings, nuevo: p_string, cglo, cloc, p_*char, l*chr, ...
-// 00 - optimizacion de c¢digo intermedio
+// 00 - optimizacion de cÃ³digo intermedio
 // 00 - tablas y estructuras de hasta 3 dimensiones
-// 01 - a¤adir strings globales
+// 01 - aÃ±adir strings globales
 // 02 - probar en PRG, y provocar todos los nuevos errores
-// 03 - a¤adir nuevo set de instrucciones al int‚rprete
+// 03 - aÃ±adir nuevo set de instrucciones al intÃ©rprete
 // 04 - Preparar el debugger para el soporte de strings
-// 05 - a¤adir strings locales y privadas
-// 06 - comprobacion de rango en ejecuci¢n (strings con prefijo 0xdad00000)
+// 05 - aÃ±adir strings locales y privadas
+// 06 - comprobacion de rango en ejecuciÃ³n (strings con prefijo 0xdad00000)
 // 07 - long_header=9, en lugar de 36
 // 08 - strings globales miembros
 // 09 - strings locales miembros
-// 10 - inicializaci¢n de estructuras contemplando los strings miembros
+// 10 - inicializaciÃ³n de estructuras contemplando los strings miembros
 // 11 - STRING p,q; define 2 cadenas (en lugar de una cadena y un int)
 // 12 - Poder inicializar los registros en las estructuras globalmente (struct pepe[9] x=10; end)
 // 13 - Sentencia compiler_options (_max_process,_extended_conditions,_simple_conditions,_case_sensitive,_ignore_errors,_free_sintax)
@@ -19,7 +19,7 @@
 // 15 - Nuevo sistema de tipos (int/char/string) en expresiones y condiciones (tipo_expresion)
 // 16 - Auto conversion de "A" a char("A") en asignaciones a char (literal/constante literal/string -> char)
 // 17 - Sobrecarga de = += + en operaciones de cadenas (strcpy,strcat,stradd)
-// 18 - A¤adir y quitar caracteres con string++/--, string-=n, string-n (strdec,strsub,strlen)
+// 18 - AÃ±adir y quitar caracteres con string++/--, string-=n, string-n (strdec,strsub,strlen)
 // 19 - Poder definir literales en varias lineas del fuente (varios consecutivos se convierten en uno)
 // 20 - Corregido fallo del coloreador de listados (al llegar un eof con /* sin cerrar)
 // 21 - Comparaciones entre cadenas (strigu/dis/may/men/mai/mei)
@@ -28,56 +28,56 @@
 //      bytes y words: pero en [ptr+n] no se puede saber por cuanto multiplicar n)
 // 24 - Solucionados algunos fallos relacionados con los accesos remotos
 // 25 - Unidas las reservadas del modo7 con las del modo 8
-// 26 - A¤adidas la opciones _no_check (no comprobar rangos ni ides) y _no_strfix
+// 26 - AÃ±adidas la opciones _no_check (no comprobar rangos ni ides) y _no_strfix
 // 27 - Funciones ascii: char,strcpy,strcat,strlen,strcmp,strchr,strstr,strset,upper,lower y strdel
 // 28 - Habilitado un 'parche' para indicar al compilador que algunas funciones devuelven un string
 // 29 - Poder recibir un parametro en un string/char global o local (cpachr, cpastr)
 // 30 - Habilitado un sistema multi-par/pri y arreglados algunos temas de las llamadas a procesos
-// 31 - Habilitada la idea de recibir un par metro en un string private, incluso indicando su longitud (ej, proc(string s[2]))
-// 32 - Permitir la redeclaracion del par metro string dentro de la seccion private (con la misma longitud)
+// 31 - Habilitada la idea de recibir un parÃ¡metro en un string private, incluso indicando su longitud (ej, proc(string s[2]))
+// 32 - Permitir la redeclaracion del parÃ¡metro string dentro de la seccion private (con la misma longitud)
 // 33 - Procesos tipo "function" (no retornan al llamador hasta haber terminado) (FCount,CallerId)
-// 34 - Arreglado el tema de los retornos de function (al caller del £ltimo proceso)
+// 34 - Arreglado el tema de los retornos de function (al caller del Ãºltimo proceso)
 // 35 - Poder hacer STEP sobre funciones (se hace un go here! a la siguiente sentencia)
-// 36 - A¤adir bytes globales y un nuevo, nuevamente, sistema de inicializaci¢n de datos
+// 36 - AÃ±adir bytes globales y un nuevo, nuevamente, sistema de inicializaciÃ³n de datos
 //      (ver p_byte, bglo y p_pointerbyte)
 // 37 - Preparar el debugger para el soporte de bytes y words
-// 38 - Ultimos cambios en el Debugger (en Ver datos), y conversi¢n al Castellano.
-// 39 - A¤adir bytes locales y privados (bloc)
+// 38 - Ultimos cambios en el Debugger (en Ver datos), y conversiÃ³n al Castellano.
+// 39 - AÃ±adir bytes locales y privados (bloc)
 // 40 - Bytes miembros de estructuras (globales/locales y privados)
-// 41 - Inicializaci¢n de estructuras contemplando los bytes miembros (frm,ifrm_max)
-// 42 - A¤adidas al int‚rprete instrucciones para el manejo de words (???wor)
+// 41 - InicializaciÃ³n de estructuras contemplando los bytes miembros (frm,ifrm_max)
+// 42 - AÃ±adidas al intÃ©rprete instrucciones para el manejo de words (???wor)
 // 43 - Words al igual que bytes (wglo wloc *word ???wor)
-// 44 - Poder recibir un byte o word como par metro (y redeclararlo como private)
+// 44 - Poder recibir un byte o word como parÃ¡metro (y redeclararlo como private)
 // 45 - Fallo del coloreador (debajo de process ... poner ?????????)
-// 46 - Que en las listas de procesos (F5) aparezcan tambi‚n las funciones (editor y debugger)
+// 46 - Que en las listas de procesos (F5) aparezcan tambiÃ©n las funciones (editor y debugger)
 // 47 - Fallo de que desaparezcan (completamente) los sprites en los modos 8
 // 48 - Pasar los IMPORT al comienzo del programa y emitir un error adecuado para los IMPORT antiguos (y adaptar help)
 // 49 - Quitado el formateador de listados (dejado todo en divfrm.cpp por si en el futuro se quiere hacer, de forma separada a divc.cpp)
 // 50 - Que las funciones puedan devolver un valor con return despues de haber hecho FRAME (sistema multipila)
-// 51 - A¤adido el tipo INT opcional para los datos enteros convencionales en DIV 1
-// 52 - Declaraci¢n de punteros a INT globales/locales/privados y miembros de estructuras (tpigl,tpilo) de hasta 3 dimensiones
-// 53 - Utilizaci¢n de punteros INT, generaci¢n de c¢digo para los mismos (y pruebas)
+// 51 - AÃ±adido el tipo INT opcional para los datos enteros convencionales en DIV 1
+// 52 - DeclaraciÃ³n de punteros a INT globales/locales/privados y miembros de estructuras (tpigl,tpilo) de hasta 3 dimensiones
+// 53 - UtilizaciÃ³n de punteros INT, generaciÃ³n de cÃ³digo para los mismos (y pruebas)
 // 54 - Soporte en el debugger para punteros INT globales y locales (p, p[0], p[1], ...)
-// 55 - Punteros a int como par metros y redeclaraci¢n en secci¢n PRIVATE
-// 56 - Prohibir la redeclaraci¢n de variables private (solo si es 1 vez como parametro y otra como private)
-// 57 - Punteros a byte/word, tanto global como local y private, member o no, declaraci¢n y c¢digo
+// 55 - Punteros a int como parÃ¡metros y redeclaraciÃ³n en secciÃ³n PRIVATE
+// 56 - Prohibir la redeclaraciÃ³n de variables private (solo si es 1 vez como parametro y otra como private)
+// 57 - Punteros a byte/word, tanto global como local y private, member o no, declaraciÃ³n y cÃ³digo
 // 58 - Soporte en el debugger de punteros de tipo byte y word (globales y locales)
 // 59 - Eliminada la posibilidad de utilizar * para definir un puntero (y en el debugger se usa POINTER)
-//      (esto es importante para no animar a utilizar *puntero despu‚s ...)
+//      (esto es importante para no animar a utilizar *puntero despuÃ©s ...)
 // 60 - Probar punteros int/word/byte (glo/loc/pri/mem/par)
-// 61 - Implementados "string pointer" exactamente igual que los "byte pointer" (s¢lo varia la visualizaci¢n en el debug)
+// 61 - Implementados "string pointer" exactamente igual que los "byte pointer" (sÃ³lo varia la visualizaciÃ³n en el debug)
 // 62 - Punteros a estructuras STRUCT POINTER NOMBRESTRUCT tal; (por defecto a 0)
 // 63 - Resuelto el problema del acceso a los miembros de la estructura original
 // 64 - Soporte en el debugger para punteros a estructuras (!!! mas chungo de lo que yo pensaba)
 // 65 - Funcion de "capar()" direcciones en DEBUG para evitar en lo posible los page fault
-// 66 - Resueltos "n-mil" problemas con los putos punteros, el debugger y la madre que lo pari¢ ...
+// 66 - Resueltos "n-mil" problemas con los putos punteros, el debugger y la madre que lo pariÃ³ ...
 // 67 - Hacer que int/byte/word/string pointer p1,p2; defina dos punteros
-// 68 - Funcion screen_copy que puede pasar una region de pantalla a una region de un gr fico
-// 69 - Argc/argv al igual que en C, con los par metros del programa
-// 70 - Nuevo sistema de carga de funciones, definiendo el retorno y el tipo de los par metros
+// 68 - Funcion screen_copy que puede pasar una region de pantalla a una region de un grÃ¡fico
+// 69 - Argc/argv al igual que en C, con los parÃ¡metros del programa
+// 70 - Nuevo sistema de carga de funciones, definiendo el retorno y el tipo de los parÃ¡metros
 //      (y eliminadas las excepciones antes contempladas con las funciones de cadenas)
-// 71 - Funcion de ordenaci¢n y desordenaci¢n (nombre_estructura,campo,modo)
-// 72 - Minimizado el buffer circular de teclado en la ejecuci¢n de los juegos
+// 71 - Funcion de ordenaciÃ³n y desordenaciÃ³n (nombre_estructura,campo,modo)
+// 72 - Minimizado el buffer circular de teclado en la ejecuciÃ³n de los juegos
 // 73 - Comprobar accesos a "NULL pointed data" de lectura/escritura
 // 74 - Opciones _no_id_check _no_range_check _no_null_check (englobadas en _no_check)
 // 75 - Opcion de compilacion _no_optimize (para poder deshabiliatar la optimizacion)
@@ -96,118 +96,118 @@
 // E - Finalizar el autoformateador de listados
 // F - Generar un NFO informativo del programa compilado (TAB+LST+EML)
 
-// ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 // SOLUCION 1: POINTERS BYTE/WORD LIMITADOS A TABLAS BYTE/WORD
 
-// OJO! No se podr  hacer ptrbyte++ (ya que incrementar  4 bytes)
-//      ni ptrword++, que incrementar  2 words
+// OJO! No se podrÃ¡ hacer ptrbyte++ (ya que incrementarÃ¡ 4 bytes)
+//      ni ptrword++, que incrementarÃ¡ 2 words
 
-// (*)  A la hora de hacer que *ptrbyte sea ptrbyte[0] (supongo que a¤adiendo
-//      un nuevo tipo de ¨p_pointerb?), se deber¡a emitir un error al hacer
+// (*)  A la hora de hacer que *ptrbyte sea ptrbyte[0] (supongo que aÃ±adiendo
+//      un nuevo tipo de Â¿p_pointerb?), se deberÃ­a emitir un error al hacer
 //      ++, --, +=, etc. sobre un p_pointerb/w ...
-//    - Problema, ¨como prohibir ptrbyte=ptrbyte+1;?
-//    - Tambi‚n se podr¡an permitir las operaciones, aunque los resultados fueran err¢neos
+//    - Problema, Â¿como prohibir ptrbyte=ptrbyte+1;?
+//    - TambiÃ©n se podrÃ­an permitir las operaciones, aunque los resultados fueran errÃ³neos
 
-//    - Aun as¡, ¨como explicar a la gente que ptrint++ funciona, pero que ptrbyte++ no?
+//    - Aun asÃ­, Â¿como explicar a la gente que ptrint++ funciona, pero que ptrbyte++ no?
 
-//    - Ventajas: ya est  (casi) hecho, no presenta incompatibilidades con
-//      DIV1, hay poco tiempo disponible ..., aun as¡, se permite el uso
-//      de memoria din mica ... y siempre se podr  pasar a la SOLUCION 3 m s
+//    - Ventajas: ya estÃ¡ (casi) hecho, no presenta incompatibilidades con
+//      DIV1, hay poco tiempo disponible ..., aun asÃ­, se permite el uso
+//      de memoria dinÃ¡mica ... y siempre se podrÃ¡ pasar a la SOLUCION 3 mÃ¡s
 //      adelante
 
-//    - aunque quiz  esto no se deber¡a llamar pointer ... sino algo como
-//      "t blas din micas" (por que se pueden hacer mallocs de las mismas)
+//    - aunque quizÃ¡ esto no se deberÃ­a llamar pointer ... sino algo como
+//      "tÃ¡blas dinÃ¡micas" (por que se pueden hacer mallocs de las mismas)
 
-//    - Hombre, tambi‚n servir¡a para pasar tablas y estructuras por par metros.
-//    - Quiz  se deber¡a prohibir utilizar "p_mul" (*) para diferenciarlos de
+//    - Hombre, tambiÃ©n servirÃ­a para pasar tablas y estructuras por parÃ¡metros.
+//    - QuizÃ¡ se deberÃ­a prohibir utilizar "p_mul" (*) para diferenciarlos de
 //      los punteros en C.
 
-//    - El problema es: ¨Se prohibe operar (sumas y dem s) con ptrbyte/word? -> NO
+//    - El problema es: Â¿Se prohibe operar (sumas y demÃ¡s) con ptrbyte/word? -> NO
 
-//    - ¨Poder utilizar *ptrbyte como ptrbyte[0] ? -> NO, ya que ello inducir¡a
+//    - Â¿Poder utilizar *ptrbyte como ptrbyte[0] ? -> NO, ya que ello inducirÃ­a
 //      al acceso de bytes con *ptrbyte, cuando no es posible
 
 // SOLUCION 2: POINTERS BYTE/WORD RELATIVOS A &MEM[0]
 
-//    - OJO, quiz  los punteros a byte y word deber¡an ser diferentes
+//    - OJO, quizÃ¡ los punteros a byte y word deberÃ­an ser diferentes
 //    - (que pointerb/w fueran un offset byte/word relativo a &memb[0])
-//    - ¨Nuevo dise¤o para: tpwgl tpwlo tpbgl tpblo? (teni‚ndolos siempre multiplicados *2 o *4)
+//    - Â¿Nuevo diseÃ±o para: tpwgl tpwlo tpbgl tpblo? (teniÃ©ndolos siempre multiplicados *2 o *4)
 //    - a) en incializacion se debe multiplicar *2 o *4 la constante (ptrbyte=&tablabyte)
-//    - b) como cojones se hace ptrbyte=&loquesea ? (como paso de par metro, asignaci¢n, etc...)
-//    - c) y que pasa con ¨ptrword=ptrbyte?
-//    - d) es m s, ¨y que pasa si se envia como par metro un ptrbyte y se recibe un ptrint?
+//    - b) como cojones se hace ptrbyte=&loquesea ? (como paso de parÃ¡metro, asignaciÃ³n, etc...)
+//    - c) y que pasa con Â¿ptrword=ptrbyte?
+//    - d) es mÃ¡s, Â¿y que pasa si se envia como parÃ¡metro un ptrbyte y se recibe un ptrint?
 
-//    - Solo podr¡a hacerse de forma que todos los accesos de lectura a ptrbyte se dividiera por 4
-//      y en los de escritura se multiplicara por cuatro, y aun as¡:
-//      ­­­ fallar¡a ptrbyte1=ptrbyte2 !!! (o pasando y recibiendo un ptrbyte par metro)
-//      ¨[ptrbyte+n] ... y *ptrbyte?
+//    - Solo podrÃ­a hacerse de forma que todos los accesos de lectura a ptrbyte se dividiera por 4
+//      y en los de escritura se multiplicara por cuatro, y aun asÃ­:
+//      Â¡Â¡Â¡ fallarÃ­a ptrbyte1=ptrbyte2 !!! (o pasando y recibiendo un ptrbyte parÃ¡metro)
+//      Â¿[ptrbyte+n] ... y *ptrbyte?
 
-//    - Es una gilipollez, ya que ptrbyte=ptrbyte+1 le seguir¡a sumando 4 !!!
+//    - Es una gilipollez, ya que ptrbyte=ptrbyte+1 le seguirÃ­a sumando 4 !!!
 
-//    - Ventajas: Pues que no s‚ si en este caso la virtud estar  en el
-//      t‚rmino medio ...
+//    - Ventajas: Pues que no sÃ© si en este caso la virtud estarÃ¡ en el
+//      tÃ©rmino medio ...
 
 // SOLUCION 3: PASAR TODOS LOS OFFSET A BYTE
 
-//    - Deber¡a haber alguna forma de tener todos los offset multiplicados por 4 (en bytes)
+//    - DeberÃ­a haber alguna forma de tener todos los offset multiplicados por 4 (en bytes)
 
-//    - Problemas: ["ptr"+n] (por cuanto multiplicar n), adem s de como resolver
-//      [ptrint+ptrbyte+2*x...], acceso en el int‚rprete a todos los datos de mem
+//    - Problemas: ["ptr"+n] (por cuanto multiplicar n), ademÃ¡s de como resolver
+//      [ptrint+ptrbyte+2*x...], acceso en el intÃ©rprete a todos los datos de mem
 //      mem[id+_Graph], los propios id (multiplicarlos o no?- > mejor no, y hacer que el p_punto los multiplique,
-//      ya que, adem s deben ser impares), programas antiguos que hicieran uso de punteros
-//      (p=&kk; *p..., p++, *p... para ello se deber¡a emitir un error de compilaci¢n al utilizar *p o [p],
+//      ya que, ademÃ¡s deben ser impares), programas antiguos que hicieran uso de punteros
+//      (p=&kk; *p..., p++, *p... para ello se deberÃ­a emitir un error de compilaciÃ³n al utilizar *p o [p],
 //      obligando a que redeclaren p como un ptrint), que ptrint++ sea ptrint+=4 y ptrword++ sea ptrword+=2,
 
 //    - Cambiarian tambien los sizeof(), ahora en bytes, y las operaciones con
-//      ficheros, aumentando la incompatibilidad con DIV1 (ya que la gente podr¡a
+//      ficheros, aumentando la incompatibilidad con DIV1 (ya que la gente podrÃ­a
 //      haber utilizado un save("pepe.dat",&tabla,10) ...
 
-//    - Resumiendo: que los problemas gordos son el int‚rprete (sobre todo, ya
+//    - Resumiendo: que los problemas gordos son el intÃ©rprete (sobre todo, ya
 //      que era un rollo eso del "#define memo(x) *(int*)(memb+x)" ),
 //      el de [ptr???+???] (y ptrint++), y las incompatibilidades con DIV1
 
-//    - Ventajas: El acceso libre a cualquier tipo de dato, la simplificaci¢n
-//      de strings, el poder hacer que "byte a" ocupe realmente s¢lo un byte, ...
-//      que es la forma correcta de hacerlo, y que si no se hace ahora quiz 
+//    - Ventajas: El acceso libre a cualquier tipo de dato, la simplificaciÃ³n
+//      de strings, el poder hacer que "byte a" ocupe realmente sÃ³lo un byte, ...
+//      que es la forma correcta de hacerlo, y que si no se hace ahora quizÃ¡
 //      no se pueda hacer nunca.
 
 // SOLUCION 4: PASAR LOS OFFSET A FLOAT
 
-//    - Se que a bote pronto parace una gilipollez, pero ¨no ser¡a lo ideal
+//    - Se que a bote pronto parace una gilipollez, pero Â¿no serÃ­a lo ideal
 //      poder tener como offset de bytes numeros .25, .50 y .75?
 
-//    - Lo guay ser¡a que ptrint++ seguir¡a sumando 1.0
+//    - Lo guay serÃ­a que ptrint++ seguirÃ­a sumando 1.0
 
-//    - y para los accesos a bytes se sumar¡a .25, el problema es que todo
-//      se llenar¡a de llamadas a _CHP e iria muy lento
+//    - y para los accesos a bytes se sumarÃ­a .25, el problema es que todo
+//      se llenarÃ­a de llamadas a _CHP e iria muy lento
 
-//    - Adem s, ¨como iban a devolver offset o sizeof() un float si el
+//    - AdemÃ¡s, Â¿como iban a devolver offset o sizeof() un float si el
 //      lenguaje no los maneja?
 
 // OJO! EN ESTA VERSION TODAVIA NO HE HECHO NINGUNA BURRADA
 //      RELATIVA A MULTIPLICAR LOS OFFSET POR 4 !!!!!!!!!!!
-//      (en una ocasi¢n lo intent‚ .. y lo acab‚ deshaciendo todo)
+//      (en una ocasiÃ³n lo intentÃ© .. y lo acabÃ© deshaciendo todo)
 
-// ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// Optimizaci¢n de codigo intermedio
+// OptimizaciÃ³n de codigo intermedio
 
-// 1er paso: Crear una funci¢n de generaci¢n de mnem¢nicos, en lugar de un
-//           acceso libre a mem[], para localizar el problema de la optimizaci¢n
+// 1er paso: Crear una funciÃ³n de generaciÃ³n de mnemÃ³nicos, en lugar de un
+//           acceso libre a mem[], para localizar el problema de la optimizaciÃ³n
 
 // no se puede generar codigo a byte, pero si utilizar el sistema de "byte"
-// como compresion de los EXE, descomprimiendo en el int‚rprete al cargar
+// como compresion de los EXE, descomprimiendo en el intÃ©rprete al cargar
 
-// ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 // Tablas y estructuras multidimensionales
 // revisar errores: 35, ...
-// OJO en la ayuda con las tablas y las estrucuturas de SOLO una dimensi¢n
+// OJO en la ayuda con las tablas y las estrucuturas de SOLO una dimensiÃ³n
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      DIV - Compilador Interno
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 //#define listados // Para generar los listados de objetos y EML (LST/TAB/EML)
 
@@ -259,11 +259,11 @@ void add_code(int dir, int param, int op);
 
 
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Constantes
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-#define version "0c88b" //Versi¢n del compilador
+#define version "0c88b" //VersiÃ³n del compilador
 
 #ifndef SHARE
 #define max_obj 8192    //Compiler object maximum limit compiler
@@ -273,10 +273,10 @@ void add_code(int dir, int param, int op);
 #define long_med_id 20  //Longitud media de los identificadores (+4+4+1)
 #endif
 
-#define max_nodos 128   //M ximo n£mero de nodos del l‚xico para s¡mbolos
-#define max_exp 512     //M ximo n£mero de elementos en una expresi¢n
+#define max_nodos 128   //MÃ¡ximo nÃºmero de nodos del lÃ©xico para sÃ­mbolos
+#define max_exp 512     //MÃ¡ximo nÃºmero de elementos en una expresiÃ³n
 #define long_header 9   //Longitud de la cabecera al inicio de los programas
-#define long_pila 2048  //Longitud de la pila en ejecuci¢n
+#define long_pila 2048  //Longitud de la pila en ejecuciÃ³n
 
 #define default_buffer    (16384*8)
 #define security_distance (4096*8)
@@ -284,20 +284,20 @@ void add_code(int dir, int param, int op);
 
 #define cr 13           //Retorno de carro
 #define lf 10           //Salto de linea
-#define tab 9           //Tabulaci¢n
+#define tab 9           //TabulaciÃ³n
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #define l_err 0         //Valores de lex_case, si no son punteros a lex_simb
-#define l_cr  1         //Fin de linea (l_err Car cter no esperado)
+#define l_cr  1         //Fin de linea (l_err CarÃ¡cter no esperado)
 #define l_id  2         //Identificador o palabra reservada
 #define l_spc 3         //Espacios y tabulaciones
 #define l_lit 4         //Literal
-#define l_num 5         //Constante num‚rica
+#define l_num 5         //Constante numÃ©rica
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Valores sint cticos o tokens (pieza)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Valores sintÃ¡cticos o tokens (pieza)
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #define p_ultima        0x00 //Fin de fichero <EOF>
 
@@ -477,9 +477,9 @@ void add_code(int dir, int param, int op);
 
 #define p_lit           0xfc //Puntero al literal (txt) en pieza_num
 #define p_id            0xfd //o es un ptr a vnom (a un ptr al objeto)
-#define p_num           0xfe //N£mero en pieza_num
+#define p_num           0xfe //NÃºmero en pieza_num
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #define tnone   0       // Tipos de objetos en obj[]
 #define tcons   1
@@ -493,7 +493,7 @@ void add_code(int dir, int param, int op);
 #define tfunc   9
 #define tsglo   10
 #define tsloc   11
-#define tfext   12      // Funci¢n de una librer¡a externa
+#define tfext   12      // FunciÃ³n de una librerÃ­a externa
 
 #define tbglo   13      // Byte global
 #define twglo   14
@@ -513,169 +513,169 @@ void add_code(int dir, int param, int op);
 #define tpsgl   25      // Punteros a struct
 #define tpslo   26
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #define econs   0       // Constante          // Tipos de elementos en tabexp[]
 #define eoper   1       // Operador
-#define erango  2       // Comprobaci¢n de rango
+#define erango  2       // ComprobaciÃ³n de rango
 #define ewhoami 3       // Identificador de proceso
-#define ecall   4       // Creaci¢n de un proceso
-#define efunc   5       // Llamada a una funci¢n interna
-#define efext   6       // Llamada a una funci¢n externa
-#define echeck  7       // Comprobaci¢n de validez de un identificador
+#define ecall   4       // CreaciÃ³n de un proceso
+#define efunc   5       // Llamada a una funciÃ³n interna
+#define efext   6       // Llamada a una funciÃ³n externa
+#define echeck  7       // ComprobaciÃ³n de validez de un identificador
 #define estring 8       // Cadena de texto (su offset constante)
-#define enull   9       // Comprobaci¢n de NULL pointer
+#define enull   9       // ComprobaciÃ³n de NULL pointer
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-//ÄMnem¢nicoÄC¢dg.ÄOperandos (Generaci¢n de c¢digo EML, "*" ğ "a£n no usado")
+//â”€MnemÃ³nicoâ”€CÃ³dg.â”€Operandos (GeneraciÃ³n de cÃ³digo EML, "*" Â­ "aÃºn no usado")
 
-#define lnop  0 // *            No operaci¢n
-#define lcar  1 // valor        Carga una constante en pila
-#define lasi  2 //              Saca valor, offset y mete el valor en [offset]
-#define lori  3 //              Or l¢gico
-#define lxor  4 //              Xor, or exclusivo
-#define land  5 //              And l¢gico, operador sobre condiciones
-#define ligu  6 //              Igual, operador logico de comparaci¢n
-#define ldis  7 //              Distinto, true si los 2 valores son diferentes
-#define lmay  8 //              Mayor, comparaci¢n con signo
-#define lmen  9 //              Menor, idem
-#define lmei 10 //              Menor o igual
-#define lmai 11 //              Mayor o igual
-#define ladd 12 //              Suma dos constantes
-#define lsub 13 //              Resta, operaci¢n binaria
-#define lmul 14 //              Multiplicaci¢n
-#define ldiv 15 //              Divisi¢n de enteros
-#define lmod 16 //              M¢dulo, resto de la divisi¢n
-#define lneg 17 //              Negaci¢n, cambia de signo una constante
-#define lptr 18 //              Pointer, saca offset y mete [offset]
-#define lnot 19 //              Negaci¢n binaria, bit a bit
-#define laid 20 //              Suma id a la constante de la pila
-#define lcid 21 //              Carga id en la pila
-#define lrng 22 // rango        Realiza una comparaci¢n de rango
-#define ljmp 23 // offset       Salta a una direcci¢n de mem[]
-#define ljpf 24 // offset       Salta si un valor es falso a una direcci¢n
-#define lfun 25 // c¢digo       Llamada a un proceso interno, ej. signal()
-#define lcal 26 // offset       Crea un nuevo proceso en el programa
-#define lret 27 //              Auto-eliminaci¢n del proceso
-#define lasp 28 //              Desecha un valor apilado
-#define lfrm 29 //              Detiene por este frame la ejecuci¢n del proceso
-#define lcbp 30 // num_par      Inicializa el puntero a los par metros locales
-#define lcpa 31 //              Saca offset, lee par metro [offset] y bp++
-#define ltyp 32 // bloque       Define el tipo de proceso actual (colisiones)
-#define lpri 33 // offset       Salta a la direcci¢n, y carga var. privadas
-#define lcse 34 // offset       Si switch <> expresi¢n, salta al offset
-#define lcsr 35 // offset       Si switch no esta en el rango, salta al offset
-#define lshr 36 //              Rotacion a la derecha (modo C, >>)
-#define lshl 37 //              Rotacion a la izquierda (modo C, <<)
-#define lipt 38 //              Incremento y pointer
-#define lpti 39 //              Pointer e incremento
-#define ldpt 40 //              Decremento y pointer
-#define lptd 41 //              Pointer y decremento
-#define lada 42 //              Add-asignaci¢n
-#define lsua 43 //              Sub-asignaci¢n
-#define lmua 44 //              Mul-asignaci¢n
-#define ldia 45 //              Div-asignaci¢n
-#define lmoa 46 //              Mod-asignaci¢n
-#define lana 47 //              And-asignaci¢n
-#define lora 48 //              Or-asignaci¢n
-#define lxoa 49 //              Xor-asignaci¢n
-#define lsra 50 //              Shr-asignaci¢n
-#define lsla 51 //              Shl-asignaci¢n
-#define lpar 52 // num_par_pri  Define el n£mero de par metros privados
-#define lrtf 53 //              Auto-eliminaci¢n del proceso, devuelve un valor
-#define lclo 54 // offset       Crea un clon del proceso actual
-#define lfrf 55 //              Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
-#define limp 56 // offset text  Importa una DLL externa
-#define lext 57 // c¢digo       Llama a una funci¢n externa
-#define lchk 58 //              Comprueba la validez de un identificador
-#define ldbg 59 //              Invoca al debugger
+#define DIVBC_nop  0 // *            No operaciÃ³n
+#define DIVBC_car  1 // valor        Carga una constante en pila
+#define DIVBC_asi  2 //              Saca valor, offset y mete el valor en [offset]
+#define DIVBC_ori  3 //              Or lÃ³gico
+#define DIVBC_xor  4 //              Xor, or exclusivo
+#define DIVBC_and  5 //              And lÃ³gico, operador sobre condiciones
+#define DIVBC_igu  6 //              Igual, operador logico de comparaciÃ³n
+#define DIVBC_dis  7 //              Distinto, true si los 2 valores son diferentes
+#define DIVBC_may  8 //              Mayor, comparaciÃ³n con signo
+#define DIVBC_men  9 //              Menor, idem
+#define DIVBC_mei 10 //              Menor o igual
+#define DIVBC_mai 11 //              Mayor o igual
+#define DIVBC_add 12 //              Suma dos constantes
+#define DIVBC_sub 13 //              Resta, operaciÃ³n binaria
+#define DIVBC_mul 14 //              MultiplicaciÃ³n
+#define DIVBC_div 15 //              DivisiÃ³n de enteros
+#define DIVBC_mod 16 //              MÃ³dulo, resto de la divisiÃ³n
+#define DIVBC_neg 17 //              NegaciÃ³n, cambia de signo una constante
+#define DIVBC_ptr 18 //              Pointer, saca offset y mete [offset]
+#define DIVBC_not 19 //              NegaciÃ³n binaria, bit a bit
+#define DIVBC_aid 20 //              Suma id a la constante de la pila
+#define DIVBC_cid 21 //              Carga id en la pila
+#define DIVBC_rng 22 // rango        Realiza una comparaciÃ³n de rango
+#define DIVBC_jmp 23 // offset       Salta a una direcciÃ³n de mem[]
+#define DIVBC_jpf 24 // offset       Salta si un valor es falso a una direcciÃ³n
+#define DIVBC_fun 25 // cÃ³digo       Llamada a un proceso interno, ej. signal()
+#define DIVBC_cal 26 // offset       Crea un nuevo proceso en el programa
+#define DIVBC_ret 27 //              Auto-eliminaciÃ³n del proceso
+#define DIVBC_asp 28 //              Desecha un valor apilado
+#define DIVBC_frm 29 //              Detiene por este frame la ejecuciÃ³n del proceso
+#define DIVBC_cbp 30 // num_par      Inicializa el puntero a los parÃ¡metros locales
+#define DIVBC_cpa 31 //              Saca offset, lee parÃ¡metro [offset] y bp++
+#define DIVBC_typ 32 // bloque       Define el tipo de proceso actual (colisiones)
+#define DIVBC_pri 33 // offset       Salta a la direcciÃ³n, y carga var. privadas
+#define DIVBC_cse 34 // offset       Si switch <> expresiÃ³n, salta al offset
+#define DIVBC_csr 35 // offset       Si switch no esta en el rango, salta al offset
+#define DIVBC_shr 36 //              Rotacion a la derecha (modo C, >>)
+#define DIVBC_shl 37 //              Rotacion a la izquierda (modo C, <<)
+#define DIVBC_ipt 38 //              Incremento y pointer
+#define DIVBC_pti 39 //              Pointer e incremento
+#define DIVBC_dpt 40 //              Decremento y pointer
+#define DIVBC_ptd 41 //              Pointer y decremento
+#define DIVBC_ada 42 //              Add-asignaciÃ³n
+#define DIVBC_sua 43 //              Sub-asignaciÃ³n
+#define DIVBC_mua 44 //              Mul-asignaciÃ³n
+#define DIVBC_dia 45 //              Div-asignaciÃ³n
+#define DIVBC_moa 46 //              Mod-asignaciÃ³n
+#define DIVBC_ana 47 //              And-asignaciÃ³n
+#define DIVBC_ora 48 //              Or-asignaciÃ³n
+#define DIVBC_xoa 49 //              Xor-asignaciÃ³n
+#define DIVBC_sra 50 //              Shr-asignaciÃ³n
+#define DIVBC_sla 51 //              Shl-asignaciÃ³n
+#define DIVBC_par 52 // num_par_pri  Define el nÃºmero de parÃ¡metros privados
+#define DIVBC_rtf 53 //              Auto-eliminaciÃ³n del proceso, devuelve un valor
+#define DIVBC_clo 54 // offset       Crea un clon del proceso actual
+#define DIVBC_frf 55 //              Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
+#define DIVBC_imp 56 // offset text  Importa una DLL externa
+#define DIVBC_ext 57 // cÃ³digo       Llama a una funciÃ³n externa
+#define DIVBC_chk 58 //              Comprueba la validez de un identificador
+#define DIVBC_dbg 59 //              Invoca al debugger
 
-// Instrucciones a¤adidas para la optimizaci¢n (DIV 2.0)
+// Instrucciones aÃ±adidas para la optimizaciÃ³n (DIV 2.0)
 
-#define lcar2 60
-#define lcar3 61
-#define lcar4 62
-#define lasiasp 63
-#define lcaraid 64
-#define lcarptr 65
-#define laidptr 66
-#define lcaraidptr 67
-#define lcaraidcpa 68
-#define laddptr 69
-#define lfunasp 70
-#define lcaradd 71
-#define lcaraddptr 72
-#define lcarmul 73
-#define lcarmuladd 74
-#define lcarasiasp 75
-#define lcarsub 76
-#define lcardiv 77
+#define DIVBC_car2 60
+#define DIVBC_car3 61
+#define DIVBC_car4 62
+#define DIVBC_asiasp 63
+#define DIVBC_caraid 64
+#define DIVBC_carptr 65
+#define DIVBC_aidptr 66
+#define DIVBC_caraidptr 67
+#define DIVBC_caraidcpa 68
+#define DIVBC_addptr 69
+#define DIVBC_funasp 70
+#define DIVBC_caradd 71
+#define DIVBC_caraddptr 72
+#define DIVBC_carmul 73
+#define DIVBC_carmuladd 74
+#define DIVBC_carasiasp 75
+#define DIVBC_carsub 76
+#define DIVBC_cardiv 77
 
-// Instrucciones a¤adidas para el manejo de caracteres
+// Instrucciones aÃ±adidas para el manejo de caracteres
 
-#define lptrchr 78  // Pointer, saca (index, offset) y mete [offset+byte index]
-#define lasichr 79  // Saca (valor, index, offset) y mete el valor en [offset+byte index]
-#define liptchr 80  // Incremento y pointer
-#define lptichr 81  // Pointer e incremento
-#define ldptchr 82  // Decremento y pointer
-#define lptdchr 83  // Pointer y decremento
-#define ladachr 84  // Add-asignaci¢n
-#define lsuachr 85  // Sub-asignaci¢n
-#define lmuachr 86  // Mul-asignaci¢n
-#define ldiachr 87  // Div-asignaci¢n
-#define lmoachr 88  // Mod-asignaci¢n
-#define lanachr 89  // And-asignaci¢n
-#define lorachr 90  // Or-asignaci¢n
-#define lxoachr 91  // Xor-asignaci¢n
-#define lsrachr 92  // Shr-asignaci¢n
-#define lslachr 93  // Shl-asignaci¢n
-#define lcpachr 94  // Saca offset, lee par metro [offset] y bp++
+#define DIVBC_ptrchr 78  // Pointer, saca (index, offset) y mete [offset+byte index]
+#define DIVBC_asichr 79  // Saca (valor, index, offset) y mete el valor en [offset+byte index]
+#define DIVBC_iptchr 80  // Incremento y pointer
+#define DIVBC_ptichr 81  // Pointer e incremento
+#define DIVBC_dptchr 82  // Decremento y pointer
+#define DIVBC_ptdchr 83  // Pointer y decremento
+#define DIVBC_adachr 84  // Add-asignaciÃ³n
+#define DIVBC_suachr 85  // Sub-asignaciÃ³n
+#define DIVBC_muachr 86  // Mul-asignaciÃ³n
+#define DIVBC_diachr 87  // Div-asignaciÃ³n
+#define DIVBC_moachr 88  // Mod-asignaciÃ³n
+#define DIVBC_anachr 89  // And-asignaciÃ³n
+#define DIVBC_orachr 90  // Or-asignaciÃ³n
+#define DIVBC_xoachr 91  // Xor-asignaciÃ³n
+#define DIVBC_srachr 92  // Shr-asignaciÃ³n
+#define DIVBC_slachr 93  // Shl-asignaciÃ³n
+#define DIVBC_cpachr 94  // Saca offset, lee parÃ¡metro [offset] y bp++
 
-// Instrucciones a¤adidas para el manejo de cadenas
+// Instrucciones aÃ±adidas para el manejo de cadenas
 
-#define lstrcpy 95  // Saca si, di, y hace strcpy(mem[di],[si]) (deja di en pila)
-#define lstrfix 96  // Amplia una cadena antes de meter un char en ella
-#define lstrcat 97  // Concatena dos cadenas (opera como strcpy)
-#define lstradd 98  // Suma dos strings "en el aire" y deja en pila el puntero al aire
-#define lstrdec 99  // A¤ade o quita caracteres a una cadena
-#define lstrsub 100 // Quita caracteres a una cadena (-=)
-#define lstrlen 101 // Sustituye una cadena por su longitud
-#define lstrigu 102 // Comparacion de igualdad de dos cadenas
-#define lstrdis 103 // Cadenas distintas
-#define lstrmay 104 // Cadena mayor
-#define lstrmen 105 // Cadena menor
-#define lstrmei 106 // Cadena mayor o igual
-#define lstrmai 107 // Cadena menor o igual
-#define lcpastr 108 // Carga un par metro en una cadena
+#define DIVBC_strcpy 95  // Saca si, di, y hace strcpy(mem[di],[si]) (deja di en pila)
+#define DIVBC_strfix 96  // Amplia una cadena antes de meter un char en ella
+#define DIVBC_strcat 97  // Concatena dos cadenas (opera como strcpy)
+#define DIVBC_stradd 98  // Suma dos strings "en el aire" y deja en pila el puntero al aire
+#define DIVBC_strdec 99  // AÃ±ade o quita caracteres a una cadena
+#define DIVBC_strsub 100 // Quita caracteres a una cadena (-=)
+#define DIVBC_strlen 101 // Sustituye una cadena por su longitud
+#define DIVBC_strigu 102 // Comparacion de igualdad de dos cadenas
+#define DIVBC_strdis 103 // Cadenas distintas
+#define DIVBC_strmay 104 // Cadena mayor
+#define DIVBC_strmen 105 // Cadena menor
+#define DIVBC_strmei 106 // Cadena mayor o igual
+#define DIVBC_strmai 107 // Cadena menor o igual
+#define DIVBC_cpastr 108 // Carga un parÃ¡metro en una cadena
 
-// Instrucciones a¤adidas para el manejo de Words
+// Instrucciones aÃ±adidas para el manejo de Words
 
-#define lptrwor 109 // Pointer, saca (index, offset) y mete [offset+byte index]
-#define lasiwor 110 // Saca (valor, index, offset) y mete el valor en [offset+byte index]
-#define liptwor 111 // Incremento y pointer
-#define lptiwor 112 // Pointer e incremento
-#define ldptwor 113 // Decremento y pointer
-#define lptdwor 114 // Pointer y decremento
-#define ladawor 115 // Add-asignaci¢n
-#define lsuawor 116 // Sub-asignaci¢n
-#define lmuawor 117 // Mul-asignaci¢n
-#define ldiawor 118 // Div-asignaci¢n
-#define lmoawor 119 // Mod-asignaci¢n
-#define lanawor 120 // And-asignaci¢n
-#define lorawor 121 // Or-asignaci¢n
-#define lxoawor 122 // Xor-asignaci¢n
-#define lsrawor 123 // Shr-asignaci¢n
-#define lslawor 124 // Shl-asignaci¢n
-#define lcpawor 125 // Saca offset, lee par metro [offset] y bp++
+#define DIVBC_ptrwor 109 // Pointer, saca (index, offset) y mete [offset+byte index]
+#define DIVBC_asiwor 110 // Saca (valor, index, offset) y mete el valor en [offset+byte index]
+#define DIVBC_iptwor 111 // Incremento y pointer
+#define DIVBC_ptiwor 112 // Pointer e incremento
+#define DIVBC_dptwor 113 // Decremento y pointer
+#define DIVBC_ptdwor 114 // Pointer y decremento
+#define DIVBC_adawor 115 // Add-asignaciÃ³n
+#define DIVBC_suawor 116 // Sub-asignaciÃ³n
+#define DIVBC_muawor 117 // Mul-asignaciÃ³n
+#define DIVBC_diawor 118 // Div-asignaciÃ³n
+#define DIVBC_moawor 119 // Mod-asignaciÃ³n
+#define DIVBC_anawor 120 // And-asignaciÃ³n
+#define DIVBC_orawor 121 // Or-asignaciÃ³n
+#define DIVBC_xoawor 122 // Xor-asignaciÃ³n
+#define DIVBC_srawor 123 // Shr-asignaciÃ³n
+#define DIVBC_slawor 124 // Shl-asignaciÃ³n
+#define DIVBC_cpawor 125 // Saca offset, lee parÃ¡metro [offset] y bp++
 
-// Miscel nea
+// MiscelÃ¡nea
 
-#define lnul    126 // Comprueba que un puntero no sea NULL
+#define DIVBC_nul    126 // Comprueba que un puntero no sea NULL
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Prototipos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void c_error(word,word);
 void analiza_comandos(word,byte**);
@@ -703,9 +703,9 @@ void comp_exit(void)
 
 
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Variables globales del compilador
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #include "div_stub.h"
 
@@ -728,20 +728,20 @@ int comprueba_null;
 int hacer_strfix;
 int optimizar;
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 FILE * div_open_file(char * file);
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-int old_linea; // Situaci¢n en el fichero del token anterior al £ltimo leido
+int old_linea; // SituaciÃ³n en el fichero del token anterior al Ãºltimo leido
 byte * old_ierror, * old_ierror_end;
 
-// El £ltimo token leido est  en (linea,ierror,ierror_end)
+// El Ãºltimo token leido estÃ¡ en (linea,ierror,ierror_end)
 
 byte * ultima_linea,cero=0;
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 // Informacion para EXEC.LIN (posicion en mem y fuente de cada sentencia)
 
@@ -753,17 +753,17 @@ void inicio_sentencia(void);  // Fija inicio, linea1, columna1
 void final_sentencia(void);   // Fija final, linea2, columna2
 void grabar_sentencia(void);  // Guarda las seis variables en el fichero
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-// Tabla de objetos ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ *iobj primer objeto libre
+// Tabla de objetos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *iobj primer objeto libre
 
 struct objeto {
   byte tipo;    // Tipo de objeto
   byte usado;   // Indica si el objeto ha sido usado antes de definirse
-  byte * name;  // Puntero al nombre, para alg£n listado
-  byte * ierror;// Puntero al c¢digo para determinar la columna si es necesario
-  int linea;    // L¡nea de c¢digo fuente, para informar del error
-  int param;    // Indica que es un objeto declarado en los par metros
+  byte * name;  // Puntero al nombre, para algÃºn listado
+  byte * ierror;// Puntero al cÃ³digo para determinar la columna si es necesario
+  int linea;    // LÃ­nea de cÃ³digo fuente, para informar del error
+  int param;    // Indica que es un objeto declarado en los parÃ¡metros
   struct objeto * anterior; // Anterior objeto de igual nombre
   struct objeto * bloque;   // Bloque de este proceso (0-global/local N-private)
   struct objeto * member;   // Indica a que struct pertenece (0-n/a)
@@ -796,14 +796,14 @@ struct objeto {
     } cglo,pcgl;
     struct {                                            // Struct
       int offset;
-      int len_item;                                     // N£mero de campos
+      int len_item;                                     // NÃºmero de campos
       int totalitems;                                   // Numero total de registros
       int items1,items2,items3;                         // -1 si n/a
     } sglo,sloc;
     struct {                                            // Struct pointer
       int offset;
       struct objeto * ostruct;                          // Puntero al struct
-      int totalitems;                                   // N£mero total de registros
+      int totalitems;                                   // NÃºmero total de registros
       int items1,items2,items3;                         // -1 si n/a
     } psgl,pslo;
     struct {                                            // Variable local
@@ -844,9 +844,9 @@ struct objeto {
       int num_par;
     } fext;
   };
-} obj[max_obj], * iobj; // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+} obj[max_obj], * iobj; // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 byte * vnom=NULL; // Vector de nombres (cad_hash:int, pieza (o iobj):int, asciiz)
 union { byte*b; byte**p; } ivnom;
@@ -855,7 +855,7 @@ byte * inicio_objetos; // Para el crear listado de la tabla de objetos
 
 byte * vhash[256]; // Pointer to the vector of names
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 struct exp_ele {
   byte tipo; // econs, eoper, erango, ewhoami, ecall
@@ -883,13 +883,13 @@ int linea, num_nodos, num_obj;
 
 int num_obj_predefinidos;
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int parametros;
 
 int acceso_remoto; // Para no permitir id.private
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #define max_break 512
 int tbreak[max_break];
@@ -899,9 +899,9 @@ int itbreak;
 int tcont[max_cont];
 int itcont;
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-int pila[long_pila+max_exp+64]; // c lculo de expresiones (compilaci¢n y ejecuci¢n)
+int pila[long_pila+max_exp+64]; // cÃ¡lculo de expresiones (compilaciÃ³n y ejecuciÃ³n)
 
 int32_t * mem_ory=NULL, * frm=NULL;
 int32_t * mem=NULL, * loc=NULL;
@@ -914,12 +914,12 @@ byte * imemptr;
 int iloc_len; // final de las variables locales incluyendo las privadas
 
 // mem[]        vector de memoria destino
-// imem         puntero para la generaci¢n de datos y c¢digo
-// imem_max     fin de la memoria destino (indice m ximo de mem[])
+// imem         puntero para la generaciÃ³n de datos y cÃ³digo
+// imem_max     fin de la memoria destino (indice mÃ¡ximo de mem[])
 // iloc         inicio en mem[] de las variables locales (inicializadas)
 // iloc_len     longitud de las variables locales
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄ Inserci¢n en la tabla de expresiones, acceso a variables
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ InserciÃ³n en la tabla de expresiones, acceso a variables
 
 //vglo           &vglo ptr
 //tglo[_exp]     &tglo <_exp> add rng ptr
@@ -930,16 +930,16 @@ int iloc_len; // final de las variables locales incluyendo las privadas
 //proc.vloc      &proc ptr &vloc add ptr
 //proc.tloc[_exp] &proc ptr &tloc <_exp> add rng add ptr
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Variables relacionadas con el listado formateado
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-int coment=0;           // 0-C¢digo, 1-Dentro de comentario, 2-Anidado, ...
+int coment=0;           // 0-CÃ³digo, 1-Dentro de comentario, 2-Anidado, ...
 int convert=0;          // Indica si se deben generar ya los token en ls
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Informaci¢n sobre los errores
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      InformaciÃ³n sobre los errores
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int numero_error=-1;
 int linea_error;
@@ -947,21 +947,21 @@ int columna_error;
 
 int error_27=27;        // Para emitir "se esperaba una sentencia"
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int program_type=0;
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 struct {      // Peephole, "mirilla" para el optimizador
-  int dir;    // Direcci¢n
-  int param;  // Indica si ese opcode tiene par metro
+  int dir;    // DirecciÃ³n
+  int param;  // Indica si ese opcode tiene parÃ¡metro
   int op;     // Opcode
-} code[16];   // En code[15] debe quedar siempre la £ltima instrucci¢n generada
+} code[16];   // En code[15] debe quedar siempre la Ãºltima instrucciÃ³n generada
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Inicializaci¢n del compilador
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      InicializaciÃ³n del compilador
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 FILE * linf; // EXEC.LIN
 FILE * lprg; // EXEC.PGM
@@ -975,9 +975,9 @@ void inicializa_compilador(void) {
   for (n=0;n<256;n++) if (lower[n]==' ') lower[n]=0;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Prepara la compilacion para un programa
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void mensaje_compilacion(byte * p) {
   if(compilemode) {
@@ -1108,7 +1108,7 @@ free_resources();
   mem[5]=iloc_len-iloc;
   mem[6]=iloc;
   mem[7]=0; // Antes imem+iloc (inicio textos), ahora no se utiliza
-  mem[8]=imem+iloc; // N£mero de elementos ocupados en mem[]
+  mem[8]=imem+iloc; // NÃºmero de elementos ocupados en mem[]
 
   mensaje_compilacion(texto[204]);
 
@@ -1203,9 +1203,9 @@ free_resources();
   }
 
   // _case_sensitive
-  memcpy(lower+129,"ueaaaa‡eeeiiiaae‘‘ooouuyou›œŸaiou",35);
+  memcpy(lower+129,"ueaaaaÃ§eeeiiiaaeÃ¦Ã¦ooouuyouÃ¸Â£Ã˜Ã—Æ’aiou",35);
   memcpy(lower+'A',"abcdefghijklmnopqrstuvwxyz",26);
-  lower['¥']='¤';
+  lower['\xa5' /*'Ã‘'*/]='\xa4' /*'Ã±'*/;
 
   comp_exit();
 
@@ -1233,9 +1233,9 @@ void free_resources(void) {
   vnom = NULL;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Errores internos del compilador
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int _le,_t;
 byte *_ie;
@@ -1283,16 +1283,16 @@ void c_error(word tipo, word e) {
   columna_error=columna;
 
   // _case_sensitive
-  memcpy(lower+129,"ueaaaa‡eeeiiiaae‘‘ooouuyou›œŸaiou",35);
+  memcpy(lower+129,"ueaaaaÃ§eeeiiiaaeÃ¦Ã¦ooouuyouÃ¸Â£Ã˜Ã—Æ’aiou",35);
   memcpy(lower+'A',"abcdefghijklmnopqrstuvwxyz",26);
-  lower['¥']='¤';
+  lower['\xa5' /*'Ã‘'*/]='\xa4' /*'Ã±'*/;
 
   comp_exit();
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Con el primer token leido guarda el inicio de una sentencia
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void inicio_sentencia(void) {
   byte * p=ierror-1;
@@ -1305,9 +1305,9 @@ void inicio_sentencia(void) {
   while (*p!=cr && *p!=lf && p>_source) { columna1++; p--; }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Con el primer token que no es de la sentecia guarda el fin de una sentencia
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void final_sentencia(void) {
   byte * p=old_ierror_end-1;
@@ -1321,9 +1321,9 @@ void final_sentencia(void) {
   while (*p!=cr && *p!=lf && p>_source) { columna2++; p--; }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Guarda un registro (inicio,final,linea1,...) en EXEC.LIN
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void grabar_sentencia(void) {
   fwrite(&inicio,4,1,linf);
@@ -1334,9 +1334,9 @@ void grabar_sentencia(void) {
   fwrite(&columna2,4,1,linf);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Comprueba los l¡mites de un buffer de generaci¢n de c¢digo
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Comprueba los lÃ­mites de un buffer de generaciÃ³n de cÃ³digo
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void test_buffer(int * * buffer,int * maximo,int n) {
   int max;
@@ -1354,9 +1354,9 @@ void test_buffer(int * * buffer,int * maximo,int n) {
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Precarga de las estructuras l‚xicas, analiza el fichero ltlex.def
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Precarga de las estructuras lÃ©xicas, analiza el fichero ltlex.def
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void analiza_ltlex(void){
 
@@ -1404,7 +1404,7 @@ void analiza_ltlex(void){
 	buf--; ivnom.b++;
       } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
         lex_case[*buf]=(struct lex_ele*)l_lit;
-      } else {                          //Analiza un nuevo s¡mbolo
+      } else {                          //Analiza un nuevo sÃ­mbolo
         if ((e=lex_case[*buf])==0) {
           if (num_nodos++==max_nodos) c_error(0,3);
           e=lex_case[*buf]=ilex_simb++; (*e).caracter=*buf++;
@@ -1432,11 +1432,11 @@ void analiza_ltlex(void){
 
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Precarga de la tabla de objetos, analiza el fichero ltobj.def
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-//      OJO, en este proceso no se comprueban los l¡mites de memoria
+//      OJO, en este proceso no se comprueban los lÃ­mites de memoria
 
 
 void precarga_obj (void) {
@@ -1639,9 +1639,9 @@ void precarga_obj (void) {
 
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//  Adivina cual ser  la siguiente pieza lexica leida (y donde estar )
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  Adivina cual serÃ¡ la siguiente pieza lexica leida (y donde estarÃ¡)
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int next_pieza;
 int next_linea;
@@ -1747,9 +1747,9 @@ byte * next_lexico(byte * _source, int coment, int linea) { // No genera nunca e
 }
 
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Lexico (lee una nueva pieza del *source)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int IsWAV(char *FileName);
 int en_fopen=0;
@@ -1866,11 +1866,12 @@ void lexico(void) {
       n=(strlen((char *)ivnom.b)+ptr4)/4;
       memcpy(&mem_ory[itxt],ivnom.b,strlen((char *)ivnom.b)+1);
 
-//      fprintf(stdout,"FILE: %s\n",(char *)ivnom.b);
-//	      fprintf(stdout,"LOOKING FOR FILE: %s [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+fprintf(stdout,"[COMPILER: LEXICO] LOOKING FOR: %s [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+fflush(stdout);
 
       if ((!ivnom.b[0]!='.' && ivnom.b[1]!=0) && (ivnom.b[0]!='/' && ivnom.b[1]!=0) && strcmp("/",(char *)ivnom.b) && (f=div_open_file((char *)ivnom.b))!=NULL) {
-	      fprintf(stdout,"FOUND FILE: [%s] [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+fprintf(stdout,"[COMPILER: LEXICO] FOUND FILE: [%s] [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+fflush(stdout);
 
         empaquetable=0;
 
@@ -1900,10 +1901,19 @@ void lexico(void) {
 
         if (IsWAV(full)) empaquetable=1;
 
-        // ???
-		empaquetable=1;
+        /*// ???
+		empaquetable=1;*/
 
-        if (!empaquetable || en_fopen) fwrite("+",1,1,lins);
+        if (!empaquetable || en_fopen) {
+fprintf(stdout,"[COMPILER: LEXICO] NOT PACKEABLE FILE: [%s] [%s] [%s]\n\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+fflush(stdout);
+
+					fwrite("+",1,1,lins);
+				}
+				else {
+fprintf(stdout,"[COMPILER: LEXICO] PACKEABLE FILE: [%s] [%s] [%s]\n\n",(char *)ivnom.b,full,(char *)&tipo[8]);
+fflush(stdout);
+				}
         fwrite(full,1,strlen(full)+1,lins);
         fflush(lins);
       }
@@ -1957,9 +1967,9 @@ void lexico(void) {
   } source=_source; ierror_end=_source-1;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Pasa varias comas o puntos y coma seguidos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void pasa_ptocoma(void) {
   do {
@@ -1967,9 +1977,9 @@ void pasa_ptocoma(void) {
   } while (pieza==p_ptocoma);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      An lisis de una declaraci¢n pointer (int, word o byte)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      AnÃ¡lisis de una declaraciÃ³n pointer (int, word o byte)
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 struct objeto * analiza_pointer(int tipo, int offset) {
   struct objeto * ob;
@@ -1978,7 +1988,7 @@ struct objeto * analiza_pointer(int tipo, int offset) {
   if (pieza!=p_id) c_error(1,148);
   ob=o; if ((*ob).tipo!=tnone) {
     if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-      if ((*ob).tipo==tipo) { // Se repite un pointer par metro como private
+      if ((*ob).tipo==tipo) { // Se repite un pointer parÃ¡metro como private
         save_error(0); lexico();
         len1=-1; len2=-1; len3=-1;
         if (pieza==p_corab) { lexico();
@@ -2025,7 +2035,7 @@ struct objeto * analiza_pointer(int tipo, int offset) {
   return(ob);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int analiza_pointer_struct(int tipo, int offset, struct objeto * estructura) {
   struct objeto * ob;
@@ -2034,7 +2044,7 @@ int analiza_pointer_struct(int tipo, int offset, struct objeto * estructura) {
   if (pieza!=p_id) c_error(1,148);
   ob=o; if ((*ob).tipo!=tnone) {
     if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-      if ((*ob).tipo==tipo) { // Se repite un pointer par metro como private
+      if ((*ob).tipo==tipo) { // Se repite un pointer parÃ¡metro como private
         save_error(0); lexico();
         items1=-1; items2=-1; items3=-1;
         if (pieza==p_corab) { lexico();
@@ -2078,16 +2088,16 @@ int analiza_pointer_struct(int tipo, int offset, struct objeto * estructura) {
   (*ob).psgl.offset=offset;       // del pointer
   (*ob).psgl.ostruct=estructura;  // struct original
 
-  // (*ob).psgl.len_item ğ (*((*ob).psgl.ostruct)).len_item;
+  // (*ob).psgl.len_item Â­ (*((*ob).psgl.ostruct)).len_item;
 
   return(1);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Analisis sint ctico (dirige todo el proceso de compilaci¢n)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Analisis sintÃ¡ctico (dirige todo el proceso de compilaciÃ³n)
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmember
+int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idÂ­member
   int len=0,dup,i,_itxt,_imem;
   struct objeto * ob;
   struct objeto * old_member,* member2;
@@ -2097,7 +2107,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmemb
 
   while (pieza!=p_end) {
 
-    if (pieza==p_struct) {                              // Miembro struct ÄÄÄ
+    if (pieza==p_struct) {                              // Miembro struct â”€â”€â”€
 
       lexico();
 
@@ -2106,7 +2116,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmemb
         old_member=member; member=NULL; lexico(); member=old_member;
         if (pieza!=p_id) c_error(1,110); ob=o;
 
-        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
+        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asÃ­
         if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
         lexico();
         puntero_a_struct:
@@ -2235,7 +2245,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmemb
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_byte) {                         // Miembro byte ÄÄÄ
+    } else if (pieza==p_byte) {                         // Miembro byte â”€â”€â”€
 
       lexico();
 
@@ -2310,7 +2320,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmemb
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_word) {                         // Miembro word ÄÄÄ
+    } else if (pieza==p_word) {                         // Miembro word â”€â”€â”€
 
       lexico();
 
@@ -2407,7 +2417,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmemb
       } else {
 
         ob=o; if ((*ob).tipo!=tnone) c_error(0,114); lexico();
-        if (pieza==p_corab) { lexico();                   // Miembro tabla ÄÄÄ
+        if (pieza==p_corab) { lexico();                   // Miembro tabla â”€â”€â”€
           (*ob).tipo=ttglo; (*ob).tglo.offset=len;
           if (((*ob).tglo.len1=constante())<0) c_error(4,35);
           if (pieza==p_coma) {
@@ -2431,7 +2441,7 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmemb
             imem=_imem;
           } len+=(*ob).tglo.totalen;
 
-        } else {                                          // Miembro variable ÄÄÄ
+        } else {                                          // Miembro variable â”€â”€â”€
 
           (*ob).tipo=tvglo; (*ob).vglo.offset=len;
           test_buffer(&mem,&imem_max,offstruct+len);
@@ -2447,9 +2457,9 @@ int analiza_struct(int offstruct) { // tras " struct id [ <const> ] " // idğmemb
   } return(len);
 }
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // idğmember
+int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // idÂ­member
   int len=0,dup,i,_itxt,_iloc;
   struct objeto * ob;
   struct objeto * old_member,* member2;
@@ -2459,7 +2469,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
 
   while (pieza!=p_end) {
 
-    if (pieza==p_struct) {                              // Miembro struct ÄÄÄ
+    if (pieza==p_struct) {                              // Miembro struct â”€â”€â”€
 
       lexico();
 
@@ -2468,7 +2478,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         old_member=member; member=NULL; lexico(); member=old_member;
         if (pieza!=p_id) c_error(1,110); ob=o;
 
-        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
+        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asÃ­
         if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
         lexico();
         puntero_a_struct:
@@ -2596,7 +2606,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_byte) {                         // Miembro byte ÄÄÄ
+    } else if (pieza==p_byte) {                         // Miembro byte â”€â”€â”€
 
       lexico();
 
@@ -2671,7 +2681,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_word) {                         // Miembro word ÄÄÄ
+    } else if (pieza==p_word) {                         // Miembro word â”€â”€â”€
 
       lexico();
 
@@ -2769,7 +2779,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
       } else {
 
         ob=o; if ((*ob).tipo!=tnone) c_error(0,114); lexico();
-        if (pieza==p_corab) { lexico();    // Miembro tabla ÄÄÄ
+        if (pieza==p_corab) { lexico();    // Miembro tabla â”€â”€â”€
           (*ob).tipo=ttloc; (*ob).tloc.offset=len;
           if (((*ob).tloc.len1=constante())<0) c_error(4,35);
           if (pieza==p_coma) {
@@ -2793,7 +2803,7 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
             iloc=_iloc;
           } len+=(*ob).tloc.totalen;
 
-        } else {                                          // Miembro variable ÄÄÄ
+        } else {                                          // Miembro variable â”€â”€â”€
 
           (*ob).tipo=tvloc; (*ob).vloc.offset=len;
           test_buffer(&loc,&iloc_max,offstruct+len);
@@ -2810,9 +2820,9 @@ int analiza_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
   } return(len);
 }
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " // idğmember
+int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " // idÂ­member
   int len=0,dup,i,_itxt,_imem;
   struct objeto * ob;
   struct objeto * old_member,* member2;
@@ -2822,7 +2832,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
 
   while (pieza!=p_end) {
 
-    if (pieza==p_struct) {                              // Miembro struct ÄÄÄ
+    if (pieza==p_struct) {                              // Miembro struct â”€â”€â”€
 
       lexico();
 
@@ -2831,7 +2841,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         old_member=member; member=NULL; lexico(); member=old_member;
         if (pieza!=p_id) c_error(1,110); ob=o;
 
-        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
+        if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asÃ­
         if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
         lexico();
         puntero_a_struct:
@@ -2959,7 +2969,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_byte) {                         // Miembro byte ÄÄÄ
+    } else if (pieza==p_byte) {                         // Miembro byte â”€â”€â”€
 
       lexico();
 
@@ -3033,7 +3043,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
       }
 
-    } else if (pieza==p_word) {                         // Miembro word ÄÄÄ
+    } else if (pieza==p_word) {                         // Miembro word â”€â”€â”€
 
       lexico();
 
@@ -3130,7 +3140,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
       } else {
 
         ob=o; if ((*ob).tipo!=tnone) c_error(0,114); lexico();
-        if (pieza==p_corab) { lexico();    // Miembro tabla ÄÄÄ
+        if (pieza==p_corab) { lexico();    // Miembro tabla â”€â”€â”€
           (*ob).tipo=ttloc; (*ob).tloc.offset=len;
           if (((*ob).tloc.len1=constante())<0) c_error(4,35);
           if (pieza==p_coma) {
@@ -3154,7 +3164,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
             imem=_imem;
           } len+=(*ob).tloc.totalen;
 
-        } else {                                          // Miembro variable ÄÄÄ
+        } else {                                          // Miembro variable â”€â”€â”€
 
           (*ob).tipo=tvloc; (*ob).vloc.offset=len;
 
@@ -3174,7 +3184,7 @@ int analiza_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
   } return(len);
 }
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #ifdef DIVDLL
 typedef struct _DLL{
         char    *Name;
@@ -3186,29 +3196,32 @@ DLL *ImpDLL;
 int PrevOrder;
 int nFuns;
 
-PE    *divcpe;
+PE    divcpe;
 
-void CNT_export(char *name,void *dir,int nparms)
+void CNT_export(char *name,void *dir,int32_t nparms)
 {
   name=name;
   dir=dir;
   nparms=nparms;
   nFuns++;
 }
-void CMP_export(char *name,void *dir,int nparms)
+void CMP_export(char *name,void *dir,int32_t nparms)
 {
   dir=dir;
   ImpDLL[nFuns].Name  =name;
   ImpDLL[nFuns].nParms=nparms;
   ImpDLL[nFuns].Order =PrevOrder++;
+fprintf(stdout, "IMPORT: CMP_export: %d = %s, %d, %d\n",nFuns, ImpDLL[nFuns].Name, ImpDLL[nFuns].nParms, ImpDLL[nFuns].Order);
+fflush(stdout);
   nFuns++;
 }
 
 int ImportDll(char *name)
 {
-debugprintf("Looking for funcs in %s\n",name);
+fprintf(stdout, "IMPORT: Looking for funcs in %s\n",name);
+fflush(stdout);
   nFuns=0;
-#ifdef DIVDLL
+
   COM_export=CNT_export;
   divcpe=DIV_ImportDll(name);
   if (divcpe==NULL) return 0;
@@ -3222,14 +3235,12 @@ debugprintf("Looking for funcs in %s\n",name);
   divcpe=DIV_ImportDll(name);
   if (divcpe==NULL) { free(ImpDLL); return 0; }
 return nFuns;
-#endif
+
 }
 
 void UnimportDll()
 {
-#ifdef DIVDLL
   DIV_UnImportDll(divcpe);
-#endif
 }
 
 struct _dlls {
@@ -3241,7 +3252,7 @@ struct _dlls {
 int idlls;              // Indice de la estructura anterior
 #endif
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 void sintactico (void) {
 
@@ -3255,11 +3266,11 @@ void sintactico (void) {
 
   lexico();
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Opciones de compilacion
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // p_compiler_options {opcion} {;}
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   max_process=0; // Valores de las opciones por defecto
   ignore_errors=0;
@@ -3296,9 +3307,9 @@ void sintactico (void) {
             break;
           case 3: // _case_sensitive
             lexico();
-            memcpy(lower+129,"‚ƒ„…†‡ˆ‰Š‹Œ„†‚‘‘“”•–—˜”›œŸ ¡¢£",35);
+            memcpy(lower+129,"Ã¼Ã©Ã¢Ã¤Ã Ã¥Ã§ÃªÃ«Ã¨Ã¯Ã®Ã¬Ã¤Ã¥Ã©Ã¦Ã¦Ã´Ã¶Ã²Ã»Ã¹Ã¿Ã¶Ã¼Ã¸Â£Ã˜Ã—Æ’Ã¡Ã­Ã³Ãº",35);
             memcpy(lower+'A',"ABCDEFGHIJKLMNOPQRSTUVWXYZ",26);
-            lower['¥']='¥';
+            lower['\xa5' /*'Ã‘'*/]='\xa4' /*'Ã±'*/;
             break;
           case 4: // _ignore_errors
             lexico();
@@ -3347,11 +3358,11 @@ void sintactico (void) {
     } while (1);
   }
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Cabecera
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // p_program p_id {;}
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   save_error(0);
   if (pieza!=p_program && pieza!=p_setup_program) c_error(4,20);
@@ -3379,11 +3390,11 @@ void sintactico (void) {
   dlls[0].columna2=columna2;
   idlls=1;
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  // Import de librerias din micas
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Import de librerias dinÃ¡micas
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // {p_import p_lit {;}}
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   PrevOrder=0;
 
@@ -3392,10 +3403,10 @@ void sintactico (void) {
     lexico();
     if (pieza!=p_lit && !(pieza==p_id && (*o).tipo==tcons && (*o).cons.literal))
 		c_error(1,62);
-	lexico();
-    if (!free_sintax) 
-		if (pieza!=p_ptocoma) 
-			c_error(3,66);
+//	lexico();
+//    if (!free_sintax) 
+//		if (pieza!=p_ptocoma) 
+//			c_error(3,66);
 
     old_source=source;
     nombre_dll=(byte*)&mem[pieza_num];
@@ -3403,12 +3414,14 @@ void sintactico (void) {
     if (idlls<64) 
 		dlls[idlls].filename=pieza_num;
 
-//printf("DLL: %lx %d %s\n",&mem[pieza_num],pieza_num,nombre_dll);
+fprintf(stdout, "IMPORT: DLL: %lx %d %s\n",&mem[pieza_num],pieza_num,nombre_dll);
+fflush(stdout);
 
     if (nombre_dll==NULL) c_error(0,63);
     if ((num_extern=ImportDll((char *)nombre_dll))==0) c_error(0,63);
     if (num_extern>0) {
-		printf("num funcs: %d\n",num_extern);
+fprintf(stdout, "IMPORT: num funcs: %d\n",num_extern);
+fflush(stdout);
       save_error(0);
       for (n=0;n<num_extern;n++) {
         source=(byte *)ImpDLL[n].Name;
@@ -3422,6 +3435,9 @@ void sintactico (void) {
       free(ImpDLL);
       UnimportDll();
     }
+    source=old_source;
+    lexico();
+    if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
     while (pieza==p_ptocoma || pieza==p_coma) lexico();
     final_sentencia();
 
@@ -3451,11 +3467,11 @@ void sintactico (void) {
 		while (pieza==p_ptocoma || pieza==p_coma) lexico();
 		final_sentencia();
 	}
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Zona de constantes
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // [ p_const {;} { p_id p_asig <exp> {; | ,} } ]
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   if (pieza==p_const) {
     pasa_ptocoma();
@@ -3472,9 +3488,9 @@ void sintactico (void) {
     }
   }
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Variables globales, pueden usarse en expresiones constantes
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // <variable> := p_id [ p_asig <exp> ] {;}
   //
   // <tabla> := p_id p_corab ( p_corce p_asig <init>
@@ -3482,7 +3498,7 @@ void sintactico (void) {
   //
   // <init>  := ( <string> | <exp> [ [p_dup] p_abrir <init> p_cerrar ] )
   //            [ p_coma <init>]
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   if (pieza==p_global) {
     pasa_ptocoma();
@@ -3495,7 +3511,7 @@ void sintactico (void) {
         if (pieza==p_pointer) { // Se define un puntero a struct
 
           lexico(); if (pieza!=p_id) c_error(1,110); ob=o;
-          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
+          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asÃ­
           if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
           lexico();
           puntero_a_struct:
@@ -3835,14 +3851,14 @@ void sintactico (void) {
     }
   }
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Variables locales, no se pueden usar en expresiones constantes
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // <variable> := p_id [ p_asig <exp> ] {;}
   //
   // <tabla> := p_id p_corab ( p_corce p_asig <init>
   //                       | <exp> p_corce [ p_asig <init> ] ) {;}
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   if (pieza==p_local) {
     pasa_ptocoma();
@@ -3855,7 +3871,7 @@ void sintactico (void) {
         if (pieza==p_pointer) { // Se define un puntero a struct
 
           lexico(); if (pieza!=p_id) c_error(1,110); ob=o;
-          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
+          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asÃ­
           if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
           lexico();
           puntero_a_struct_local:
@@ -4191,16 +4207,16 @@ void sintactico (void) {
     }
   }
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  // C¢digo principal
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // CÃ³digo principal
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-  // Genera el salto al inicio del c¢digo (long_header)
+  // Genera el salto al inicio del cÃ³digo (long_header)
 
   mem[0]=program_type; mem[1]=imem; iloc_len=iloc;
 
-  g2(ltyp,(memptrsize)bloque_actual);
-  g2(lcbp,0);
+  g2(DIVBC_typ,(memptrsize)bloque_actual);
+  g2(DIVBC_cbp,0);
 #ifdef DIVDLL
   linea1=dlls[0].linea1;
   columna1=dlls[0].columna1;
@@ -4211,11 +4227,11 @@ void sintactico (void) {
 
   if (pieza==p_import) c_error(0,147); // Advertir a usuarios de DIV 1
 
-  // Genera el c¢digo para cargar las librer¡as
+  // Genera el cÃ³digo para cargar las librerÃ­as
 
   for (n=1;n<idlls;n++) {
     inicio=imem; final=imem+1;
-    g2(limp,dlls[n].filename);
+    g2(DIVBC_imp,dlls[n].filename);
     linea1=dlls[n].linea1;
     columna1=dlls[n].columna1;
     linea2=dlls[n].linea2;
@@ -4236,7 +4252,7 @@ void sintactico (void) {
   if (iloc>iloc_len) iloc_len=iloc; iloc=n;
   parametros=0;
 
-  g1(lfrm);
+  g1(DIVBC_frm);
 
   if (pieza!=p_begin) c_error(0,29);
   inicio_sentencia(); inicio=final;
@@ -4245,14 +4261,14 @@ void sintactico (void) {
   sentencia();
 
   if (pieza!=p_end) c_error(0,40); inicio_sentencia();
-  g1(lret);
+  g1(DIVBC_ret);
   pasa_ptocoma(); final_sentencia(); grabar_sentencia();
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Procesos
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // p_process p_id p_abrir [ id { , id } ] p_cerrar { ; } p_begin ... p_end
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   save_error(0);
   while (pieza==p_process || pieza==p_function) {
@@ -4268,9 +4284,9 @@ void sintactico (void) {
     } else c_error(2,118);
     (*ob).proc.offset=imem; (*ob).proc.num_par=0;
 
-    g2(ltyp,(memptrsize)bloque_actual);
-    if (n==p_function) g1(lnop);
-    g2(lcbp,0); _imem=imem-1;
+    g2(DIVBC_typ,(memptrsize)bloque_actual);
+    if (n==p_function) g1(DIVBC_nop);
+    g2(DIVBC_cbp,0); _imem=imem-1;
     if (pieza!=p_abrir) c_error(3,36);
 
     parametros=1; n=iloc; lexico();
@@ -4285,10 +4301,10 @@ void sintactico (void) {
     pasa_ptocoma(); final_sentencia();
 
     if (parametros>1) {
-      g2(lpar,parametros-1);
+      g2(DIVBC_par,parametros-1);
     }
 
-    parametros=-1; // Para que los par metros se puedan repetir como PRIVATE
+    parametros=-1; // Para que los parÃ¡metros se puedan repetir como PRIVATE
 
     num_par=mem[_imem]=(*ob).proc.num_par;
 
@@ -4300,7 +4316,7 @@ void sintactico (void) {
     final=imem-1; grabar_sentencia();
     sentencia();
     if (pieza!=p_end) c_error(0,40); inicio_sentencia();
-    g1(lret);
+    g1(DIVBC_ret);
     pasa_ptocoma(); final_sentencia(); grabar_sentencia();
 
     save_error(0);
@@ -4310,12 +4326,12 @@ void sintactico (void) {
 
 }
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Analiza las variables privadas de un bloque, como las locales
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     // *** OJO *** No se debe permitir #id.tvpri
-    //             pues fallar¡a a no ser que #id fuera del mismo tipo que el
+    //             pues fallarÃ­a a no ser que #id fuera del mismo tipo que el
     //             proceso actual (hermano)
 
 void analiza_private(void) {
@@ -4326,7 +4342,7 @@ void analiza_private(void) {
   if (pieza==p_private) {
     pasa_ptocoma();
 
-    g2(lpri,0); _imem_old=imem-1;
+    g2(DIVBC_pri,0); _imem_old=imem-1;
 
     while (pieza==p_id || pieza==p_int || pieza==p_pointer || pieza==p_struct || pieza==p_string || pieza==p_byte || pieza==p_word) {
 
@@ -4337,7 +4353,7 @@ void analiza_private(void) {
         if (pieza==p_pointer) { // Se define un puntero a struct
 
           lexico(); if (pieza!=p_id) c_error(1,110); ob=o;
-          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer as¡
+          if ((*ob).tipo==tnone) c_error(0,150); // No se define el pointer asÃ­
           if ((*ob).tipo!=tsglo && (*ob).tipo!=tsloc) c_error(0,150);
           lexico();
           puntero_a_struct:
@@ -4430,7 +4446,7 @@ void analiza_private(void) {
         } else {
 
           if (pieza!=p_id) c_error(1,125);
-          ob=o; if ((*ob).tipo!=tnone) { // Mira si se repite un par metro ...
+          ob=o; if ((*ob).tipo!=tnone) { // Mira si se repite un parÃ¡metro ...
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
               if ((*ob).tipo==tcloc) { // Se repite un string
                 save_error(0);
@@ -4518,7 +4534,7 @@ void analiza_private(void) {
           if (pieza!=p_id) c_error(1,142);
           ob=o; if ((*ob).tipo!=tnone) {
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-              if ((*ob).tipo==tbloc) { // Se repite un byte par metro
+              if ((*ob).tipo==tbloc) { // Se repite un byte parÃ¡metro
                 lexico();
                 if (pieza==p_corab) c_error(2,53);
                 else if (pieza==p_asig) c_error(0,54);
@@ -4610,7 +4626,7 @@ void analiza_private(void) {
           if (pieza!=p_id) c_error(1,145);
           ob=o; if ((*ob).tipo!=tnone) {
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
-              if ((*ob).tipo==twloc) { // Se repite un word par metro
+              if ((*ob).tipo==twloc) { // Se repite un word parÃ¡metro
                 lexico();
                 if (pieza==p_corab) c_error(2,53);
                 else if (pieza==p_asig) c_error(0,54);
@@ -4702,7 +4718,7 @@ void analiza_private(void) {
 
         } else {
 
-          // Si el objeto no es tnone, se repite un par metro o bien es un error
+          // Si el objeto no es tnone, se repite un parÃ¡metro o bien es un error
 
           ob=o; if ((*ob).tipo!=tnone) {
             if (parametros==-1 && (*ob).param==1 && (*ob).bloque==bloque_actual) {
@@ -4771,12 +4787,12 @@ void analiza_private(void) {
 
 }
 
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-  // Inicializaci¢n de tablas (a mem[imem++])
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // InicializaciÃ³n de tablas (a mem[imem++])
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // <init>  := ( <string> | <exp> [ [p_dup] p_abrir <init> p_cerrar ] )
   //            [ p_coma <init>]
-  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  //â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
 void tglo_init(memptrsize tipo) { // Tipo: 0-Int o variado (struct), 1-Word, 2-Byte
@@ -4818,7 +4834,7 @@ void tglo_init2(int tipo) {
 
   while (1) {
 
-    // Mira si finaliza la inicializaci¢n de datos
+    // Mira si finaliza la inicializaciÃ³n de datos
 
     if (pieza==p_cerrar || pieza==p_ptocoma) {
       if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) {
@@ -4837,7 +4853,7 @@ void tglo_init2(int tipo) {
       return;
     }
 
-    // Una coma sola, como "3,,4", avanza una posici¢n (y define un 0)
+    // Una coma sola, como "3,,4", avanza una posiciÃ³n (y define un 0)
 
     if (pieza==p_coma) {
       if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) {
@@ -4932,7 +4948,7 @@ void tglo_init2(int tipo) {
             if (frm[imem]==0xdad00000) c_error(2,128);
           }
 
-          // Mete un valor num‚rico en la memoria
+          // Mete un valor numÃ©rico en la memoria
 
           if (*(imemptr-(memptrsize)mem+(memptrsize)frm)==1 || tipo==1) { // En un word
 
@@ -4977,13 +4993,13 @@ void tglo_init2(int tipo) {
     if (dup<1) c_error(2,38);
     lexico();
 
-    // Analiza la secuencia como otra inicializaci¢n ...
+    // Analiza la secuencia como otra inicializaciÃ³n ...
 
     oimemptr=imemptr;
     tglo_init2(tipo);
     if (pieza!=p_cerrar) c_error(3,25);
 
-    // Y la duplica el n£mero de veces indicado
+    // Y la duplica el nÃºmero de veces indicado
 
     if (dup>1) {
       len=imemptr-oimemptr;
@@ -5025,9 +5041,9 @@ void tglo_init2(int tipo) {
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Analisis de un bloque de sentencias;
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void sentencia() {
 
@@ -5042,12 +5058,12 @@ void sentencia() {
         lexico(); if (pieza==p_abrir) {
           lexico(); if (pieza!=p_cerrar) {
             expresion(); if (pieza!=p_cerrar) c_error(3,25);
-            g1(lrtf);
+            g1(DIVBC_rtf);
             } else {
-            g1(lret);
+            g1(DIVBC_ret);
             } lexico();
           } else {
-          g1(lret);
+          g1(DIVBC_ret);
         }
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
@@ -5060,13 +5076,13 @@ void sentencia() {
         condicion();
         if (!free_sintax) if (pieza!=p_cerrar) c_error(3,25);
         if (pieza==p_cerrar) lexico();
-        g2(ljpf,0); im1=imem-1;
+        g2(DIVBC_jpf,0); im1=imem-1;
         final_sentencia(); grabar_sentencia();
         sentencia();
         if (pieza==p_else) {
           inicio_sentencia();
           lexico();
-          g2(ljmp,0); mem[im1]=imem; im1=imem-1;
+          g2(DIVBC_jmp,0); mem[im1]=imem; im1=imem-1;
           final_sentencia(); grabar_sentencia();
           sentencia();
           }
@@ -5078,7 +5094,7 @@ void sentencia() {
         im1=imem; sentencia();
         if (pieza!=p_end) c_error(0,40);
         inicio_sentencia(); lexico();
-        g2(ljmp,im1);
+        g2(DIVBC_jmp,im1);
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im1;
         final_sentencia(); grabar_sentencia();
@@ -5092,12 +5108,12 @@ void sentencia() {
         condicion();
         if (!free_sintax) if (pieza!=p_cerrar) c_error(3,25);
         if (pieza==p_cerrar) lexico();
-        g2(ljpf,0); im2=imem-1;
+        g2(DIVBC_jpf,0); im2=imem-1;
         final_sentencia(); grabar_sentencia();
         sentencia();
         if (pieza!=p_end) c_error(0,40); inicio_sentencia();
         lexico();
-        g2(ljmp,im1); mem[im2]=imem;
+        g2(DIVBC_jmp,im1); mem[im2]=imem;
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im1;
         final_sentencia(); grabar_sentencia();
@@ -5114,7 +5130,7 @@ void sentencia() {
         condicion();
         if (!free_sintax) if (pieza!=p_cerrar) c_error(3,25);
         if (pieza==p_cerrar) lexico();
-        g2(ljpf,im1);
+        g2(DIVBC_jpf,im1);
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im1;
         final_sentencia(); grabar_sentencia();
@@ -5126,10 +5142,10 @@ void sentencia() {
         if (pieza!=p_id) c_error(0,67);
 
         if ((*o).tipo==tvglo) {
-          dir=(*o).vglo.offset; g2(lcar,dir);
+          dir=(*o).vglo.offset; g2(DIVBC_car,dir);
         } else if ((*o).tipo==tvloc && (!(*o).bloque || (*o).bloque==bloque_actual)) {
           dir=-(*o).vloc.offset;
-          g2(lcar,-dir); g1(laid);
+          g2(DIVBC_car,-dir); g1(DIVBC_aid);
         } else c_error(0,67);
 
         lexico();
@@ -5146,19 +5162,19 @@ void sentencia() {
         } else {
           if (from<to) step=1; else step=-1;
         }
-        g2(lcar,from); // Asignaci¢n del from
-        g1(lasi); g1(lasp);
+        g2(DIVBC_car,from); // AsignaciÃ³n del from
+        g1(DIVBC_asi); g1(DIVBC_asp);
 
         im1=imem; // Inicio del bucle
 
-        if (dir>=0) { // Comparaci¢n de la condici¢n de permanencia
-          g2(lcar,dir);
+        if (dir>=0) { // ComparaciÃ³n de la condiciÃ³n de permanencia
+          g2(DIVBC_car,dir);
         } else {
-          g2(lcar,-dir); g1(laid);
+          g2(DIVBC_car,-dir); g1(DIVBC_aid);
         }
-        g1(lptr); g2(lcar,to);
-        if (step>0) g1(lmei); else g1(lmai);
-        g2(ljpf,0); im2=imem-1;
+        g1(DIVBC_ptr); g2(DIVBC_car,to);
+        if (step>0) g1(DIVBC_mei); else g1(DIVBC_mai);
+        g2(DIVBC_jpf,0); im2=imem-1;
 
         final_sentencia(); grabar_sentencia();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
@@ -5168,16 +5184,16 @@ void sentencia() {
         if (pieza!=p_end) c_error(0,40); inicio_sentencia();
         lexico();
 
-        im3=imem; // Posici¢n del continue
+        im3=imem; // PosiciÃ³n del continue
 
         if (dir>=0) { // Incremento y vuelta al inicio del bucle
-          g2(lcar,dir); 
+          g2(DIVBC_car,dir); 
         } else {
-          g2(lcar,-dir); g1(laid);
+          g2(DIVBC_car,-dir); g1(DIVBC_aid);
         }
-        g2(lcar,step);
-        g1(lada); g1(lasp);
-        g2(ljmp,im1); mem[im2]=imem;
+        g2(DIVBC_car,step);
+        g1(DIVBC_ada); g1(DIVBC_asp);
+        g2(DIVBC_jmp,im1); mem[im2]=imem;
 
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
         while (tcont[--itcont]!=0) mem[tcont[itcont]]=im3;
@@ -5191,28 +5207,28 @@ void sentencia() {
         lexico();
         if (pieza!=p_abrir) c_error(3,36); lexico();
         if (pieza!=p_ptocoma) {
-          expresion(); g1(lasp);
-          while (pieza==p_coma) { lexico(); expresion(); g1(lasp); }
+          expresion(); g1(DIVBC_asp);
+          while (pieza==p_coma) { lexico(); expresion(); g1(DIVBC_asp); }
         } im1=imem;
         if (pieza!=p_ptocoma) c_error(3,47); lexico();
         if (pieza==p_ptocoma) {
-          g2(lcar,1);
+          g2(DIVBC_car,1);
         } else expresion();
-        g2(ljpf,0); im2=imem-1;
+        g2(DIVBC_jpf,0); im2=imem-1;
         while (pieza==p_coma) { lexico(); expresion();
-          g2(ljpf,im2); im2=imem-1; }
-        g2(ljmp,0); im3=imem-1;
+          g2(DIVBC_jpf,im2); im2=imem-1; }
+        g2(DIVBC_jmp,0); im3=imem-1;
         if (pieza!=p_ptocoma) c_error(3,47); lexico();
         if (pieza!=p_cerrar) {
-          expresion(); g1(lasp);
-          while (pieza==p_coma) { lexico(); expresion(); g1(lasp); }
+          expresion(); g1(DIVBC_asp);
+          while (pieza==p_coma) { lexico(); expresion(); g1(DIVBC_asp); }
         }
-        g2(ljmp,im1);
+        g2(DIVBC_jmp,im1);
         if (pieza!=p_cerrar) c_error(3,25); lexico();
         final_sentencia(); grabar_sentencia();
         mem[im3++]=imem; sentencia();
         if (pieza!=p_end) c_error(0,40); inicio_sentencia(); lexico();
-          g2(ljmp,im3);
+          g2(DIVBC_jmp,im3);
           do { im1=mem[im2]; mem[im2]=imem; im2=im1; } while(im2);
         while (tbreak[--itbreak]!=0) mem[tbreak[itbreak]]=imem;
           while (tcont[--itcont]!=0) mem[tcont[itcont]]=im3;
@@ -5239,14 +5255,14 @@ void sentencia() {
               lexico();
               if (im1) mem[im1]=imem;
               expresion(); if (pieza!=p_rango) {
-                g2(lcse,0); im1=imem-1;
+                g2(DIVBC_cse,0); im1=imem-1;
               } else {
                 lexico(); expresion();
-                g2(lcsr,0); im1=imem-1;
+                g2(DIVBC_csr,0); im1=imem-1;
               }
 
               if (pieza==p_coma) {
-                g2(ljmp,im3); im3=imem-1;
+                g2(DIVBC_jmp,im3); im3=imem-1;
               }
 
             } while (pieza==p_coma);
@@ -5259,15 +5275,15 @@ void sentencia() {
           } else c_error(0,50);
           if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,65);
           while (pieza==p_ptocoma || pieza==p_coma) lexico();
-          g1(lasp);
+          g1(DIVBC_asp);
           final_sentencia(); grabar_sentencia();
           sentencia();
           if (pieza!=p_end) c_error(0,51); inicio_sentencia();
-            g2(ljmp,im2); im2=imem-1;
+            g2(DIVBC_jmp,im2); im2=imem-1;
           pasa_ptocoma();
           final_sentencia(); grabar_sentencia();
         } inicio_sentencia();
-        if (im1) mem[im1]=imem; g1(lasp);
+        if (im1) mem[im1]=imem; g1(DIVBC_asp);
         while(im2) { im1=mem[im2]; mem[im2]=imem; im2=im1; }
         lexico();
         final_sentencia(); grabar_sentencia(); break;
@@ -5276,19 +5292,19 @@ void sentencia() {
         lexico(); if (pieza==p_abrir) {
           lexico(); if (pieza!=p_cerrar) {
             expresion(); if (pieza!=p_cerrar) c_error(3,25);
-            g1(lfrf);
+            g1(DIVBC_frf);
           } else {
-            g1(lfrm);
+            g1(DIVBC_frm);
           } lexico();
         } else {
-          g1(lfrm);
+          g1(DIVBC_frm);
         }
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
         final_sentencia(); grabar_sentencia(); break;
       case p_debug:
         inicio_sentencia();
-        g1(ldbg); lexico();
+        g1(DIVBC_dbg); lexico();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
         final_sentencia(); grabar_sentencia();
@@ -5298,18 +5314,18 @@ void sentencia() {
         if (itbreak==0) c_error(0,48); lexico();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
-        g2(ljmp,0); tbreak[itbreak++]=imem-1;
+        g2(DIVBC_jmp,0); tbreak[itbreak++]=imem-1;
         final_sentencia(); grabar_sentencia(); break;
       case p_continue:
         inicio_sentencia();
         if (itcont==0) c_error(0,49); lexico();
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
-        g2(ljmp,0); tcont[itcont++]=imem-1;
+        g2(DIVBC_jmp,0); tcont[itcont++]=imem-1;
         final_sentencia(); grabar_sentencia(); break;
       case p_clone:
         inicio_sentencia();
-        lexico(); g2(lclo,0); im1=imem-1;
+        lexico(); g2(DIVBC_clo,0); im1=imem-1;
         final_sentencia(); grabar_sentencia();
         sentencia();
         if (pieza!=p_end) c_error(0,40); lexico();
@@ -5352,16 +5368,16 @@ void sentencia() {
         }
         if (!free_sintax) if (pieza!=p_ptocoma) c_error(3,66);
         while (pieza==p_ptocoma || pieza==p_coma) lexico();
-        g1(lasp);
+        g1(DIVBC_asp);
         final_sentencia(); grabar_sentencia();
         break;
     }
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Analisis de una condici¢n (genera c¢digo para calcularla)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Analisis de una condiciÃ³n (genera cÃ³digo para calcularla)
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int tipo_expresion=0; // 0 - int, 1 - char o byte, 2 - string
 int tipo_factor=0;    // idem
@@ -5437,9 +5453,9 @@ void con2() {
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Analisis de una expresi¢n (genera c¢digo para calcularla)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Analisis de una expresiÃ³n (genera cÃ³digo para calcularla)
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void expresion(void) {
   byte * __ierror, * _ierror;
@@ -5462,19 +5478,19 @@ void expresion_cpa(void) {
   _linea=linea; _ierror=ierror; exp00(0);
   swap(linea,_linea); __ierror=ierror; ierror=_ierror;
   if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointer) {
-    _exp--; generar_expresion(); g1(lcpa);
+    _exp--; generar_expresion(); g1(DIVBC_cpa);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerchar) {
     _exp--; generar_expresion();
-    if (hacer_strfix) { g2(lcar,0); g1(lstrfix); g1(lasp); }
-    g1(lcpachr);
+    if (hacer_strfix) { g2(DIVBC_car,0); g1(DIVBC_strfix); g1(DIVBC_asp); }
+    g1(DIVBC_cpachr);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerbyte) {
     _exp--; generar_expresion();
-    g1(lcpachr);
+    g1(DIVBC_cpachr);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerword) {
     _exp--; generar_expresion();
-    g1(lcpawor);
+    g1(DIVBC_cpawor);
   } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_string) {
-    _exp--; generar_expresion(); g1(lcpastr);
+    _exp--; generar_expresion(); g1(DIVBC_cpastr);
   } else c_error(4,44);
   linea=_linea; ierror=__ierror;
 }
@@ -5486,110 +5502,110 @@ void generar_expresion(void) {
   do {
     switch ((*e).tipo) {
       case econs:
-        g2(lcar,(*e).valor); break;
+        g2(DIVBC_car,(*e).valor); break;
       case estring:
-        g2(lcar,(*e).valor); break;
+        g2(DIVBC_car,(*e).valor); break;
       case erango:
-        g2(lrng,(*e).valor); break;
+        g2(DIVBC_rng,(*e).valor); break;
       case ewhoami:
-        g1(lcid); break;
+        g1(DIVBC_cid); break;
       case ecall:
-        ob=(*e).objeto; g2(lcal,(*ob).proc.offset);
+        ob=(*e).objeto; g2(DIVBC_cal,(*ob).proc.offset);
         if ((*ob).usado) (*ob).proc.offset=imem-1; break;
       case efunc:
-        ob=(*e).objeto; g2(lfun,(*ob).func.codigo); break;
+        ob=(*e).objeto; g2(DIVBC_fun,(*ob).func.codigo); break;
       case efext:
-        ob=(*e).objeto; g2(lext,(*ob).fext.codigo); break;
+        ob=(*e).objeto; g2(DIVBC_ext,(*ob).fext.codigo); break;
       case echeck:
-        g1(lchk); break;
+        g1(DIVBC_chk); break;
       case enull:
-        g1(lnul); break;
+        g1(DIVBC_nul); break;
       case eoper: switch((*e).token) {
-        case p_asig: g1(lasi); break;
-        case p_or: g1(lori); break;
-        case p_xor: g1(lxor); break;
-        case p_and: g1(land); break;
-        case p_igu: g1(ligu); break;
-        case p_dis: g1(ldis); break;
-        case p_may: g1(lmay); break;
-        case p_men: g1(lmen); break;
-        case p_mei: g1(lmei); break;
-        case p_mai: g1(lmai); break;
-        case p_add: g1(ladd); break;
-        case p_sub: g1(lsub); break;
-        case p_mul: g1(lmul); break;
-        case p_div: g1(ldiv); break;
-        case p_mod: g1(lmod); break;
-        case p_neg: g1(lneg); break;
-        case p_pointer: g1(lptr); break;
-        case p_not: g1(lnot); break;
-        case p_punto: g1(laid); break;
-        case p_shr: g1(lshr); break;
-        case p_shl: g1(lshl); break;
-        case p_inc: g1(lipt); break;
-        case p_suma: g1(lpti); break;
-        case p_dec: g1(ldpt); break;
-        case p_resta: g1(lptd); break;
-        case p_add_asig: g1(lada); break;
-        case p_sub_asig: g1(lsua); break;
-        case p_mul_asig: g1(lmua); break;
-        case p_div_asig: g1(ldia); break;
-        case p_mod_asig: g1(lmoa); break;
-        case p_and_asig: g1(lana); break;
-        case p_or_asig: g1(lora); break;
-        case p_xor_asig: g1(lxoa); break;
-        case p_shr_asig: g1(lsra); break;
-        case p_shl_asig: g1(lsla); break;
+        case p_asig: g1(DIVBC_asi); break;
+        case p_or: g1(DIVBC_ori); break;
+        case p_xor: g1(DIVBC_xor); break;
+        case p_and: g1(DIVBC_and); break;
+        case p_igu: g1(DIVBC_igu); break;
+        case p_dis: g1(DIVBC_dis); break;
+        case p_may: g1(DIVBC_may); break;
+        case p_men: g1(DIVBC_men); break;
+        case p_mei: g1(DIVBC_mei); break;
+        case p_mai: g1(DIVBC_mai); break;
+        case p_add: g1(DIVBC_add); break;
+        case p_sub: g1(DIVBC_sub); break;
+        case p_mul: g1(DIVBC_mul); break;
+        case p_div: g1(DIVBC_div); break;
+        case p_mod: g1(DIVBC_mod); break;
+        case p_neg: g1(DIVBC_neg); break;
+        case p_pointer: g1(DIVBC_ptr); break;
+        case p_not: g1(DIVBC_not); break;
+        case p_punto: g1(DIVBC_aid); break;
+        case p_shr: g1(DIVBC_shr); break;
+        case p_shl: g1(DIVBC_shl); break;
+        case p_inc: g1(DIVBC_ipt); break;
+        case p_suma: g1(DIVBC_pti); break;
+        case p_dec: g1(DIVBC_dpt); break;
+        case p_resta: g1(DIVBC_ptd); break;
+        case p_add_asig: g1(DIVBC_ada); break;
+        case p_sub_asig: g1(DIVBC_sua); break;
+        case p_mul_asig: g1(DIVBC_mua); break;
+        case p_div_asig: g1(DIVBC_dia); break;
+        case p_mod_asig: g1(DIVBC_moa); break;
+        case p_and_asig: g1(DIVBC_ana); break;
+        case p_or_asig: g1(DIVBC_ora); break;
+        case p_xor_asig: g1(DIVBC_xoa); break;
+        case p_shr_asig: g1(DIVBC_sra); break;
+        case p_shl_asig: g1(DIVBC_sla); break;
 
-        case p_pointerword: g1(lptrwor); break;
-        case p_sumaword: g1(lptiwor); break;
-        case p_restaword: g1(lptdwor); break;
-        case p_incword: g1(liptwor); break;
-        case p_decword: g1(ldptwor); break;
-        case p_asigword: g1(lasiwor); break;
-        case p_add_asigword: g1(ladawor); break;
-        case p_sub_asigword: g1(lsuawor); break;
-        case p_mul_asigword: g1(lmuawor); break;
-        case p_div_asigword: g1(ldiawor); break;
-        case p_mod_asigword: g1(lmoawor); break;
-        case p_and_asigword: g1(lanawor); break;
-        case p_or_asigword: g1(lorawor); break;
-        case p_xor_asigword: g1(lxoawor); break;
-        case p_shr_asigword: g1(lsrawor); break;
-        case p_shl_asigword: g1(lslawor); break;
+        case p_pointerword: g1(DIVBC_ptrwor); break;
+        case p_sumaword: g1(DIVBC_ptiwor); break;
+        case p_restaword: g1(DIVBC_ptdwor); break;
+        case p_incword: g1(DIVBC_iptwor); break;
+        case p_decword: g1(DIVBC_dptwor); break;
+        case p_asigword: g1(DIVBC_asiwor); break;
+        case p_add_asigword: g1(DIVBC_adawor); break;
+        case p_sub_asigword: g1(DIVBC_suawor); break;
+        case p_mul_asigword: g1(DIVBC_muawor); break;
+        case p_div_asigword: g1(DIVBC_diawor); break;
+        case p_mod_asigword: g1(DIVBC_moawor); break;
+        case p_and_asigword: g1(DIVBC_anawor); break;
+        case p_or_asigword: g1(DIVBC_orawor); break;
+        case p_xor_asigword: g1(DIVBC_xoawor); break;
+        case p_shr_asigword: g1(DIVBC_srawor); break;
+        case p_shl_asigword: g1(DIVBC_slawor); break;
 
-        case p_pointerchar: g1(lptrchr); break;
-        case p_sumachar: g1(lptichr); break;
-        case p_restachar: g1(lptdchr); break;
-        case p_incchar: g1(liptchr); break;
-        case p_decchar: g1(ldptchr); break;
-        case p_asigchar: g1(lasichr); break;
-        case p_add_asigchar: g1(ladachr); break;
-        case p_sub_asigchar: g1(lsuachr); break;
-        case p_mul_asigchar: g1(lmuachr); break;
-        case p_div_asigchar: g1(ldiachr); break;
-        case p_mod_asigchar: g1(lmoachr); break;
-        case p_and_asigchar: g1(lanachr); break;
-        case p_or_asigchar: g1(lorachr); break;
-        case p_xor_asigchar: g1(lxoachr); break;
-        case p_shr_asigchar: g1(lsrachr); break;
-        case p_shl_asigchar: g1(lslachr); break;
+        case p_pointerchar: g1(DIVBC_ptrchr); break;
+        case p_sumachar: g1(DIVBC_ptichr); break;
+        case p_restachar: g1(DIVBC_ptdchr); break;
+        case p_incchar: g1(DIVBC_iptchr); break;
+        case p_decchar: g1(DIVBC_dptchr); break;
+        case p_asigchar: g1(DIVBC_asichr); break;
+        case p_add_asigchar: g1(DIVBC_adachr); break;
+        case p_sub_asigchar: g1(DIVBC_suachr); break;
+        case p_mul_asigchar: g1(DIVBC_muachr); break;
+        case p_div_asigchar: g1(DIVBC_diachr); break;
+        case p_mod_asigchar: g1(DIVBC_moachr); break;
+        case p_and_asigchar: g1(DIVBC_anachr); break;
+        case p_or_asigchar: g1(DIVBC_orachr); break;
+        case p_xor_asigchar: g1(DIVBC_xoachr); break;
+        case p_shr_asigchar: g1(DIVBC_srachr); break;
+        case p_shl_asigchar: g1(DIVBC_slachr); break;
 
-        case p_strcpy: g1(lstrcpy); break;
-        case p_strfix: g1(lstrfix); break;
-        case p_strcat: g1(lstrcat); break;
-        case p_stradd: g1(lstradd); break;
-        case p_strdec: g1(lstrdec); break;
-        case p_strsub: g1(lstrsub); break;
-        case p_strlen: g1(lstrlen); break;
-        case p_strigu: g1(lstrigu); break;
-        case p_strdis: g1(lstrdis); break;
-        case p_strmay: g1(lstrmay); break;
-        case p_strmen: g1(lstrmen); break;
-        case p_strmei: g1(lstrmei); break;
-        case p_strmai: g1(lstrmai); break;
+        case p_strcpy: g1(DIVBC_strcpy); break;
+        case p_strfix: g1(DIVBC_strfix); break;
+        case p_strcat: g1(DIVBC_strcat); break;
+        case p_stradd: g1(DIVBC_stradd); break;
+        case p_strdec: g1(DIVBC_strdec); break;
+        case p_strsub: g1(DIVBC_strsub); break;
+        case p_strlen: g1(DIVBC_strlen); break;
+        case p_strigu: g1(DIVBC_strigu); break;
+        case p_strdis: g1(DIVBC_strdis); break;
+        case p_strmay: g1(DIVBC_strmay); break;
+        case p_strmen: g1(DIVBC_strmen); break;
+        case p_strmei: g1(DIVBC_strmei); break;
+        case p_strmai: g1(DIVBC_strmai); break;
 
-        case p_pointerbyte: g1(lptrchr); break;
+        case p_pointerbyte: g1(DIVBC_ptrchr); break;
         case p_string: break; // Es como un p_pointer nulo, que no se hace
 
         default: c_error(4,41);
@@ -5599,10 +5615,10 @@ void generar_expresion(void) {
   } while (++e!=_exp);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Analisis de una expresi¢n constante
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Analisis de una expresiÃ³n constante
 //      No se procesan valores locales ni llamadas a otros procesos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int constante (void) {
 
@@ -5641,7 +5657,7 @@ int constante (void) {
       case p_mod: if (pila[i]==0) c_error(4,34); pila[i-1]%=pila[i]; i--; break;
       case p_neg: pila[i]=-pila[i]; break;
 
-// Creo que se quit¢ los pointer (y los rangos, por consiguiente) por los FROM,
+// Creo que se quitÃ³ los pointer (y los rangos, por consiguiente) por los FROM,
 // ya que provocaba confusion el tomar como constante una variable ...
 
 //      case p_pointer: pila[i]=mem[pila[i]]; break;
@@ -5657,9 +5673,9 @@ int constante (void) {
   linea=_linea; ierror=__ierror; return(pila[i]);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      An lisis de una expresi¢n a *tabexp
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      AnÃ¡lisis de una expresiÃ³n a *tabexp
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void exp00(int tipo_exp) {
   int te=tipo_expresion;
@@ -5732,7 +5748,7 @@ void div_exp2() {
     tf=tipo_factor;
     lexico(); exp3();
     if (tf==2 || tipo_factor==2) {
-      // OJO, p==q no se har  el strcmp() si son dos punteros a cadenas
+      // OJO, p==q no se harÃ¡ el strcmp() si son dos punteros a cadenas
       p+=p_strigu-p_igu;
       (*_exp).tipo=eoper; (*_exp++).token=p;
       tipo_factor=0;
@@ -5810,7 +5826,7 @@ void unario() {
         if ((*(_exp-2)).tipo==econs && (*(_exp-2)).valor==0) _exp-=2;
         else c_error(4,132); // &words[<exp>] ???
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_string) {
-        // &cadena ğ cadena
+        // &cadena Â­ cadena
       } else c_error(4,32);
     } else if (p==p_inc || p==p_dec) {
       if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointer) {
@@ -5834,11 +5850,11 @@ void unario() {
       } else c_error(4,122);
     } else if (p==p_pointer) {
       if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerchar) {
-        // *cadena[0] ğ cadena[0]
+        // *cadena[0] Â­ cadena[0]
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerbyte) {
-        // *cadena[0] ğ cadena[0]
+        // *cadena[0] Â­ cadena[0]
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_pointerword) {
-        // *cadena[0] ğ cadena[0]
+        // *cadena[0] Â­ cadena[0]
       } else if ((*(_exp-1)).tipo==eoper && (*(_exp-1)).token==p_string) {
         // *cadena == cadena
       } else {
@@ -5862,8 +5878,8 @@ void exp6() { // Operador de acceso a variables o tablas locales ajenas
     acceso_remoto=1; lexico(); factor(); acceso_remoto=0;
 
     // OJO, el <p_punto> DEBE SER LO SEGUNDO que el <factor>
-    // introduzca en la <expresi¢n>, no quedan m s cojones.
-    // (bueno, si, hacer aqu¡ una b£squeda del p_punto entre e-1 y _exp ...)
+    // introduzca en la <expresiÃ³n>, no quedan mÃ¡s cojones.
+    // (bueno, si, hacer aquÃ­ una bÃºsqueda del p_punto entre e-1 y _exp ...)
 
     if ((*e).tipo==eoper && (*e).token==p_punto)
       (*e).token=p_add; else c_error(4,43);
@@ -5917,7 +5933,7 @@ void factor(void) {
         case tproc:
           (*_exp).tipo=econs; (*_exp++).valor=(memptrsize)o; break;
         case tsglo:
-          if ((*o).sglo.offset==long_header) { // type mouse ğ 0
+          if ((*o).sglo.offset==long_header) { // type mouse Â­ 0
             (*_exp).tipo=econs; (*_exp++).valor=0; break;
           }
         default: c_error(0,60);
@@ -5945,14 +5961,14 @@ void factor(void) {
       } lexico(); if (pieza!=p_cerrar) c_error(3,25); lexico();
       break;
 
-    case p_struct: // Se comprueba la declaraci¢n de un puntero a struct par metro
+    case p_struct: // Se comprueba la declaraciÃ³n de un puntero a struct parÃ¡metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
         lexico();
-        if (pieza!=p_pointer) c_error(0,151); // No se define el pointer as¡
+        if (pieza!=p_pointer) c_error(0,151); // No se define el pointer asÃ­
         lexico(); if (pieza!=p_id) c_error(1,110); obs=o;
-        if ((*obs).tipo==tnone) c_error(0,150); // No se define el pointer as¡
+        if ((*obs).tipo==tnone) c_error(0,150); // No se define el pointer asÃ­
         if ((*obs).tipo!=tsglo && (*obs).tipo!=tsloc) c_error(0,150);
         lexico(); ob=o;
         analiza_pointer_struct(tpslo,iloc++,obs);
@@ -5963,7 +5979,7 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_pointer;
       } break;
 
-    case p_string: // Se comprueba la declaraci¢n de un string par metro
+    case p_string: // Se comprueba la declaraciÃ³n de un string parÃ¡metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -5997,8 +6013,8 @@ void factor(void) {
             _exp=e;
           }
         } else (*ob).cloc.totalen=255;
-        if (parametros>1) g2(lpar,parametros-1); parametros=1;
-        g2(lpri,0); _imem=imem;
+        if (parametros>1) g2(DIVBC_par,parametros-1); parametros=1;
+        g2(DIVBC_pri,0); _imem=imem;
         imem+=1+((*ob).cloc.totalen+5)/4;
         test_buffer(&mem,&imem_max,imem);
         mem[_imem]=0xDAD00000|(*ob).cloc.totalen;
@@ -6011,7 +6027,7 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_string;
       } break;
 
-    case p_byte: // Se comprueba la declaraci¢n de un byte par metro
+    case p_byte: // Se comprueba la declaraciÃ³n de un byte parÃ¡metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -6043,7 +6059,7 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_pointerbyte;
       } break;
 
-    case p_word: // Se comprueba la declaraci¢n de un word par metro
+    case p_word: // Se comprueba la declaraciÃ³n de un word parÃ¡metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -6075,14 +6091,14 @@ void factor(void) {
         (*_exp).tipo=eoper; (*_exp++).token=p_pointerword;
       } break;
 
-    case p_int: // Se comprueba la declaraci¢n de un int par metro
+    case p_int: // Se comprueba la declaraciÃ³n de un int parÃ¡metro
       if (parametros<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
         lexico();
         if (pieza==p_pointer) {
 
-    case p_pointer: // Declaraci¢n de un puntero a int par metro
+    case p_pointer: // DeclaraciÃ³n de un puntero a int parÃ¡metro
           if (parametros<=0) {
             if (error_27==27) c_error(1,27); else c_error(0,error_27);
           } parametros++;
@@ -6213,7 +6229,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ğ mi_byte[0]
+        } else { // mi_byte Â­ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerbyte ; break;
 
@@ -6251,7 +6267,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ğ mi_byte[0]
+        } else { // mi_byte Â­ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerword; break;
 
@@ -6409,7 +6425,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ğ mi_byte[0]
+        } else { // mi_byte Â­ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerbyte ; break;
 
@@ -6450,7 +6466,7 @@ void factor(void) {
           }
           if (pieza!=p_corce) c_error(3,26);
           lexico();
-        } else { // mi_byte ğ mi_byte[0]
+        } else { // mi_byte Â­ mi_byte[0]
           (*_exp).tipo=econs; (*_exp++).valor=0;
         } (*_exp).tipo=eoper; (*_exp++).token=p_pointerword; break;
 
@@ -6532,7 +6548,7 @@ void factor(void) {
 
       case tproc:
         ob=o; lexico(); if (pieza!=p_abrir) c_error(3,36); lexico();
-        p=0; while (pieza!=p_cerrar) { // pğnum_par
+        p=0; while (pieza!=p_cerrar) { // pÂ­num_par
           p++;
           exp00(0);
           if (pieza!=p_cerrar) if (pieza!=p_coma) c_error(3,25);
@@ -6550,9 +6566,9 @@ void factor(void) {
           en_fopen=0;
         } else lexico();
 
-        p=0; while (pieza!=p_cerrar) { // pğnum_par
+        p=0; while (pieza!=p_cerrar) { // pÂ­num_par
 
-          if ((*ob).func.par[p]==1) { // Par metro del tipo 1 (struct,campo)
+          if ((*ob).func.par[p]==1) { // ParÃ¡metro del tipo 1 (struct,campo)
 
             // RECIBE: nombre_struct,nombre_campo
             // GENERA: offset_struct,len_item,totalen,offset_campo,tipo_campo
@@ -6577,7 +6593,7 @@ void factor(void) {
             else if ((*o).tipo==tpcgl || (*o).tipo==tpclo) (*_exp++).valor=2;
             else (*_exp++).valor=0;
             lexico();
-          } else {                           // Par metro del tipo 0 (gen‚rico)
+          } else {                           // ParÃ¡metro del tipo 0 (genÃ©rico)
             exp00(0);
           } p++;
 
@@ -6591,7 +6607,7 @@ void factor(void) {
 
       case tfext:
         ob=o; lexico(); if (pieza!=p_abrir) c_error(3,36); lexico();
-        p=0; while (pieza!=p_cerrar) { // pğnum_par
+        p=0; while (pieza!=p_cerrar) { // pÂ­num_par
           p++;
           exp00(0);
           if (pieza!=p_cerrar) if (pieza!=p_coma) c_error(3,25);
@@ -6725,7 +6741,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ğ mi_byte[0]
+      } else { // mi_byte Â­ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerbyte; break;
 
@@ -6762,7 +6778,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ğ mi_byte[0]
+      } else { // mi_byte Â­ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerword; break;
 
@@ -6908,7 +6924,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ğ mi_byte[0]
+      } else { // mi_byte Â­ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerbyte; break;
 
@@ -6945,7 +6961,7 @@ void factor_struct(void) {
           (*_exp).tipo=eoper; (*_exp++).token=p_add;
         }
         if (pieza!=p_corce) c_error(3,26); lexico();
-      } else { // mi_byte ğ mi_byte[0]
+      } else { // mi_byte Â­ mi_byte[0]
         (*_exp).tipo=econs; (*_exp++).valor=0;
       } struct_pointer=p_pointerword; break;
 
@@ -7021,9 +7037,9 @@ void factor_struct(void) {
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Graba el fichero de la tabla de objetos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #ifdef listados
 
@@ -7033,7 +7049,7 @@ void l_objetos (void) {
 
   sta=fopen("div.tab","wb");
 
-  fprintf(sta,"ş Objetos de %s - DIV Versi¢n " version "\n\n",file_in);
+  fprintf(sta,"Objetos de %s - DIV VersiÃ³n " version "\n\n",file_in);
 
   for (n=1;n<=8;n++) fprintf(sta,"[%u]: %u\n",n,mem[n]); fprintf(sta,"\n");
 
@@ -7198,9 +7214,9 @@ void l_objetos (void) {
 
 #endif
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Graba el fichero con informaci¢n para debugging
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Graba el fichero con informaciÃ³n para debugging
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 // Ojo, falta grabar items1,items2 e items3 (o len1,len2,len3 para tablas)
 
@@ -7237,7 +7253,7 @@ void save_dbg(void) {
     ob.v4=(memptrsize)obj[n].sglo.items2;
     ob.v5=(memptrsize)obj[n].sglo.items3;
     if (obj[n].tipo==tpsgl || obj[n].tipo==tpslo) ob.v1=(ob.v1-(memptrsize)&obj[0])/sizeof(struct objeto);
-    // OJO ! que no se pueden a¤adir objetos aqu¡ (ver uso de &obj[0] y sizeof(struct objeto))
+    // OJO ! que no se pueden aÃ±adir objetos aquÃ­ (ver uso de &obj[0] y sizeof(struct objeto))
     fwrite(&ob,sizeof(ob),1,sta);
   }
 
@@ -7249,9 +7265,9 @@ void save_dbg(void) {
   fclose(sta);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//    Graba los par metros de ejecuci¢n para el int‚rprete
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//    Graba los parÃ¡metros de ejecuciÃ³n para el intÃ©rprete
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void save_exec_bin(void) {
   FILE * sta;
@@ -7265,9 +7281,9 @@ void save_exec_bin(void) {
   fclose(sta);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Graba el fichero ensamblador
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #ifdef listados
 
@@ -7278,7 +7294,7 @@ void l_ensamblador (void) {
 
   sta=fopen("div.eml","wt");
 
-  fprintf(sta,"ş C¢digo EML de %s - DIV Versi¢n " version "\n",file_in);
+  fprintf(sta,"CÃ³digo EML de %s - DIV VersiÃ³n " version "\n",file_in);
 
   while (i<imem) { switch ((byte)mem[i]) {
     case lnop: fprintf(sta,"%5u\tnop",i); break;
@@ -7419,10 +7435,10 @@ void l_ensamblador (void) {
 
 #endif
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Funcion para localizar y abrir un fichero (pal,fpg,fnt,...)
-//  Esta funci¢n debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//  Esta funciÃ³n debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 FILE *__fpopen (byte *file, char *mode) {
 	
 	char fprgpath[_MAX_PATH*2];
@@ -7575,9 +7591,9 @@ FILE * div_open_file(char * file) {
   return(f);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Dialogo de compilar
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 uint8_t e_msg[32];
 int compilado=0;
@@ -7637,24 +7653,24 @@ void compilar_programa(void) {
   tecla(); scan_code=0; ascii=0; mouse_b=0;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//  Funciones de generaci¢n de c¢digo
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  Funciones de generaciÃ³n de cÃ³digo
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 // void g1(int op) { mem[imem++]=op; }
 // void g2(int op, int pa) { mem[imem++]=op; mem[imem++]=pa; }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//  Optimizaci¢n peephole de c¢digo intermedio EML
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  OptimizaciÃ³n peephole de cÃ³digo intermedio EML
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-// *** OJO!!! *** quiz  se pueda quitar "dir" y esa comprobaci¢n absurda ...
+// *** OJO!!! *** quizÃ¡ se pueda quitar "dir" y esa comprobaciÃ³n absurda ...
 
 //struct {      // Peephole, "mirilla" de optimizacion
-//  int dir;    // Direcci¢n
-//  int param;  // Indica el n£mero de parametros de la instruccion
+//  int dir;    // DirecciÃ³n
+//  int param;  // Indica el nÃºmero de parametros de la instruccion
 //  int op;     // Opcode
-//} code[16];   // En code[15] debe quedar siempre la £ltima instrucci¢n generada
+//} code[16];   // En code[15] debe quedar siempre la Ãºltima instrucciÃ³n generada
 
 void g1(int op) {
   if (optimizar) gen(0,op,0); else mem[imem++]=op;
@@ -7672,165 +7688,165 @@ void gen(int param, int op, int pa) {
   optimizado=0;
 
   switch(op) {
-    case lcar:
-      if (code[15].op==lcar) {
-        code[15].op=mem[imem-2]=lcar2;
+    case DIVBC_car:
+      if (code[15].op==DIVBC_car) {
+        code[15].op=mem[imem-2]=DIVBC_car2;
         code[15].param=2;
         mem[imem++]=pa; optimizado=1;
-      } else if (code[15].op==lcar2) {
-        code[15].op=mem[imem-3]=lcar3;
+      } else if (code[15].op==DIVBC_car2) {
+        code[15].op=mem[imem-3]=DIVBC_car3;
         code[15].param=3;
         mem[imem++]=pa; optimizado=1;
-      } else if (code[15].op==lcar3) {
-        code[15].op=mem[imem-4]=lcar4;
+      } else if (code[15].op==DIVBC_car3) {
+        code[15].op=mem[imem-4]=DIVBC_car4;
         code[15].param=4;
         mem[imem++]=pa; optimizado=1;
       } break;
-    case lasp:
-      if (code[15].op==lasi) {
-        if (code[14].op==lcar) {
+    case DIVBC_asp:
+      if (code[15].op==DIVBC_asi) {
+        if (code[14].op==DIVBC_car) {
           remove_code(1);
-          code[15].op=mem[imem-2]=lcarasiasp;
+          code[15].op=mem[imem-2]=DIVBC_carasiasp;
         } else {
-          code[15].op=mem[imem-1]=lasiasp;
+          code[15].op=mem[imem-1]=DIVBC_asiasp;
           optimizado=1;
         }
-      } else if (code[15].op==lfun) {
-        code[15].op=mem[imem-2]=lfunasp;
+      } else if (code[15].op==DIVBC_fun) {
+        code[15].op=mem[imem-2]=DIVBC_funasp;
         optimizado=1;
       } break;
-    case laid:
-      if (code[15].op==lcar) {
-        code[15].op=mem[imem-2]=lcaraid;
+    case DIVBC_aid:
+      if (code[15].op==DIVBC_car) {
+        code[15].op=mem[imem-2]=DIVBC_caraid;
         optimizado=1;
       } break;
-    case lptr:
-      if (code[15].op==lcar) {
-        code[15].op=mem[imem-2]=lcarptr;
+    case DIVBC_ptr:
+      if (code[15].op==DIVBC_car) {
+        code[15].op=mem[imem-2]=DIVBC_carptr;
         optimizado=1;
-      } else if (code[15].op==lcaradd) {
-        code[15].op=mem[imem-2]=lcaraddptr;
+      } else if (code[15].op==DIVBC_caradd) {
+        code[15].op=mem[imem-2]=DIVBC_caraddptr;
         optimizado=1;
-      } else if (code[15].op==laid) {
-        code[15].op=mem[imem-1]=laidptr;
+      } else if (code[15].op==DIVBC_aid) {
+        code[15].op=mem[imem-1]=DIVBC_aidptr;
         optimizado=1;
-      } else if (code[15].op==ladd) {
-        code[15].op=mem[imem-1]=laddptr;
+      } else if (code[15].op==DIVBC_add) {
+        code[15].op=mem[imem-1]=DIVBC_addptr;
         optimizado=1;
-      } else if (code[15].op==lcaraid) {
-        code[15].op=mem[imem-2]=lcaraidptr;
-        optimizado=1;
-      } break;
-    case lcpa:
-      if (code[15].op==lcaraid) {
-        code[15].op=mem[imem-2]=lcaraidcpa;
+      } else if (code[15].op==DIVBC_caraid) {
+        code[15].op=mem[imem-2]=DIVBC_caraidptr;
         optimizado=1;
       } break;
-    case ladd:
-      if (code[15].op==lcar2){
-        code[15].op=mem[imem-3]=lcar;
+    case DIVBC_cpa:
+      if (code[15].op==DIVBC_caraid) {
+        code[15].op=mem[imem-2]=DIVBC_caraidcpa;
+        optimizado=1;
+      } break;
+    case DIVBC_add:
+      if (code[15].op==DIVBC_car2){
+        code[15].op=mem[imem-3]=DIVBC_car;
         code[15].param=1;
         mem[imem-2]+=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar3){
-        code[15].op=mem[imem-4]=lcar2;
+      } else if (code[15].op==DIVBC_car3){
+        code[15].op=mem[imem-4]=DIVBC_car2;
         code[15].param=2;
         mem[imem-2]+=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar4){
-        code[15].op=mem[imem-5]=lcar3;
+      } else if (code[15].op==DIVBC_car4){
+        code[15].op=mem[imem-5]=DIVBC_car3;
         code[15].param=3;
         mem[imem-2]+=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==0) remove_code(1); else {
-          code[15].op=mem[imem-2]=lcaradd;
+          code[15].op=mem[imem-2]=DIVBC_caradd;
           optimizado=1;
         }
-      } else if (code[15].op==lcarmul){
-        code[15].op=mem[imem-2]=lcarmuladd;
+      } else if (code[15].op==DIVBC_carmul){
+        code[15].op=mem[imem-2]=DIVBC_carmuladd;
         optimizado=1;
       } break;
-    case lmul:
-      if (code[15].op==lcar2){
-        code[15].op=mem[imem-3]=lcar;
+    case DIVBC_mul:
+      if (code[15].op==DIVBC_car2){
+        code[15].op=mem[imem-3]=DIVBC_car;
         code[15].param=1;
         mem[imem-2]*=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar3){
-        code[15].op=mem[imem-4]=lcar2;
+      } else if (code[15].op==DIVBC_car3){
+        code[15].op=mem[imem-4]=DIVBC_car2;
         code[15].param=2;
         mem[imem-2]*=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar4){
-        code[15].op=mem[imem-5]=lcar3;
+      } else if (code[15].op==DIVBC_car4){
+        code[15].op=mem[imem-5]=DIVBC_car3;
         code[15].param=3;
         mem[imem-2]*=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==1) remove_code(1); else {
-          code[15].op=mem[imem-2]=lcarmul;
+          code[15].op=mem[imem-2]=DIVBC_carmul;
           optimizado=1;
         }
       } break;
-    case lsub:
-      if (code[15].op==lcar2){
-        code[15].op=mem[imem-3]=lcar;
+    case DIVBC_sub:
+      if (code[15].op==DIVBC_car2){
+        code[15].op=mem[imem-3]=DIVBC_car;
         code[15].param=1;
         mem[imem-2]-=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar3){
-        code[15].op=mem[imem-4]=lcar2;
+      } else if (code[15].op==DIVBC_car3){
+        code[15].op=mem[imem-4]=DIVBC_car2;
         code[15].param=2;
         mem[imem-2]-=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar4){
-        code[15].op=mem[imem-5]=lcar3;
+      } else if (code[15].op==DIVBC_car4){
+        code[15].op=mem[imem-5]=DIVBC_car3;
         code[15].param=3;
         mem[imem-2]-=mem[imem-1];
         imem--; optimizado=1;
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==0) remove_code(1); else {
-          code[15].op=mem[imem-2]=lcarsub;
+          code[15].op=mem[imem-2]=DIVBC_carsub;
           optimizado=1;
         }
       } break;
-    case ldiv:
-      if (code[15].op==lcar2){
+    case DIVBC_div:
+      if (code[15].op==DIVBC_car2){
         if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-3]=lcar;
+          code[15].op=mem[imem-3]=DIVBC_car;
           code[15].param=1;
           mem[imem-2]/=mem[imem-1];
           imem--; optimizado=1;
         }
-      } else if (code[15].op==lcar3){
+      } else if (code[15].op==DIVBC_car3){
         if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-4]=lcar2;
+          code[15].op=mem[imem-4]=DIVBC_car2;
           code[15].param=2;
           mem[imem-2]/=mem[imem-1];
           imem--; optimizado=1;
         }
-      } else if (code[15].op==lcar4){
+      } else if (code[15].op==DIVBC_car4){
         if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-5]=lcar3;
+          code[15].op=mem[imem-5]=DIVBC_car3;
           code[15].param=3;
           mem[imem-2]/=mem[imem-1];
           imem--; optimizado=1;
         }
-      } else if (code[15].op==lcar){
+      } else if (code[15].op==DIVBC_car){
         if (mem[imem-1]==1) remove_code(1);
         else if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-2]=lcardiv; // Un cardiv nunca ser  "cardiv 0"
+          code[15].op=mem[imem-2]=DIVBC_cardiv; // Un cardiv nunca serÃ¡ "cardiv 0"
           optimizado=1;
         }
       } break;
-    case lneg:
-      if (code[15].op==lcar || code[15].op==lcar2 || code[15].op==lcar3 || code[15].op==lcar4) {
+    case DIVBC_neg:
+      if (code[15].op==DIVBC_car || code[15].op==DIVBC_car2 || code[15].op==DIVBC_car3 || code[15].op==DIVBC_car4) {
         mem[imem-1]=-mem[imem-1]; optimizado=1;
       }
       break;
-    case lnot:
-      if (code[15].op==lcar || code[15].op==lcar2 || code[15].op==lcar3 || code[15].op==lcar4) {
+    case DIVBC_not:
+      if (code[15].op==DIVBC_car || code[15].op==DIVBC_car2 || code[15].op==DIVBC_car3 || code[15].op==DIVBC_car4) {
         mem[imem-1]=mem[imem-1]^-1; optimizado=1;
       }
       break;
@@ -7873,9 +7889,9 @@ void add_code(int dir, int param, int op) {
   } code[15].dir=dir; code[15].param=param; code[15].op=op;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Precompilaci¢n
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      PrecompilaciÃ³n
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void plexico(void) {
   byte ** ptr, * _ivnom, h, * _source=source;

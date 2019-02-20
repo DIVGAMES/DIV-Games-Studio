@@ -186,30 +186,30 @@ els = (int *)malloc(size*5);
 
 while(i++<mem[7]-36) {
 	switch ((byte)mem[i]) {
-	    case lnop: fprintf(sta,"%5u\tnop",i); break;
-    case lcar: fprintf(sta,"%5u\tcar %u",i,mem[i+1]); i++; break;
-    case lasi: fprintf(sta,"%5u\tasi",i); break;
-    case lori: fprintf(sta,"%5u\tori",i); break;
-    case lxor: fprintf(sta,"%5u\txor",i); break;
-    case land: fprintf(sta,"%5u\tand",i); break;
-    case ligu: fprintf(sta,"%5u\tigu",i); break;
-    case ldis: fprintf(sta,"%5u\tdis",i); break;
-    case lmay: fprintf(sta,"%5u\tmay",i); break;
-    case lmen: fprintf(sta,"%5u\tmen",i); break;
-    case lmei: fprintf(sta,"%5u\tmei",i); break;
-    case lmai: fprintf(sta,"%5u\tmai",i); break;
-    case ladd: fprintf(sta,"%5u\tadd",i); break;
-    case lsub: fprintf(sta,"%5u\tsub",i); break;
-    case lmul: fprintf(sta,"%5u\tmul",i); break;
-    case ldiv: fprintf(sta,"%5u\tdiv",i); break;
-    case lmod: fprintf(sta,"%5u\tmod",i); break;
-    case lneg: fprintf(sta,"%5u\tneg",i); break;
-    case lptr: fprintf(sta,"%5u\tptr",i); break;
-    case lnot: fprintf(sta,"%5u\tnot",i); break;
-    case laid: fprintf(sta,"%5u\taid",i); break;
-    case lcid: fprintf(sta,"%5u\tcid",i); break;
-    case lrng: fprintf(sta,"%5u\trng %u",i,mem[i+1]); i++; break;
-    case ljmp: 
+	    case DIVBC_nop: fprintf(sta,"%5u\tnop",i); break;
+    case DIVBC_car: fprintf(sta,"%5u\tcar %u",i,mem[i+1]); i++; break;
+    case DIVBC_asi: fprintf(sta,"%5u\tasi",i); break;
+    case DIVBC_ori: fprintf(sta,"%5u\tori",i); break;
+    case DIVBC_xor: fprintf(sta,"%5u\txor",i); break;
+    case DIVBC_and: fprintf(sta,"%5u\tand",i); break;
+    case DIVBC_igu: fprintf(sta,"%5u\tigu",i); break;
+    case DIVBC_dis: fprintf(sta,"%5u\tdis",i); break;
+    case DIVBC_may: fprintf(sta,"%5u\tmay",i); break;
+    case DIVBC_men: fprintf(sta,"%5u\tmen",i); break;
+    case DIVBC_mei: fprintf(sta,"%5u\tmei",i); break;
+    case DIVBC_mai: fprintf(sta,"%5u\tmai",i); break;
+    case DIVBC_add: fprintf(sta,"%5u\tadd",i); break;
+    case DIVBC_sub: fprintf(sta,"%5u\tsub",i); break;
+    case DIVBC_mul: fprintf(sta,"%5u\tmul",i); break;
+    case DIVBC_div: fprintf(sta,"%5u\tdiv",i); break;
+    case DIVBC_mod: fprintf(sta,"%5u\tmod",i); break;
+    case DIVBC_neg: fprintf(sta,"%5u\tneg",i); break;
+    case DIVBC_ptr: fprintf(sta,"%5u\tptr",i); break;
+    case DIVBC_not: fprintf(sta,"%5u\tnot",i); break;
+    case DIVBC_aid: fprintf(sta,"%5u\taid",i); break;
+    case DIVBC_cid: fprintf(sta,"%5u\tcid",i); break;
+    case DIVBC_rng: fprintf(sta,"%5u\trng %u",i,mem[i+1]); i++; break;
+    case DIVBC_jmp: 
 		fprintf(sta,"%5u\tjmp %u",i,mem[i+1]); 
 //		if(mem[i+1]<i) {
 //			printf("jump %d %d\n",i,mem[i+1]);
@@ -218,7 +218,7 @@ while(i++<mem[7]-36) {
 //		}
 		i++; 
 		break;
-    case ljpf: 
+    case DIVBC_jpf: 
 		fprintf(sta,"%5u\tjpf %u",i,mem[i+1]); 
 		if(mem[i+1]<i) {
 				printf("jump backward %d %d\n",i,mem[i+1]);
@@ -229,7 +229,7 @@ while(i++<mem[7]-36) {
 			jpf[mem[i+1]]++;
 		}
 		// check if there is a back jump before
-		if(mem[mem[i+1]-2]==ljmp) {
+		if(mem[mem[i+1]-2]==DIVBC_jmp) {
 			printf("jpf followed by jump %d %d %d\n",i,mem[i+1],mem[mem[i+1]-1]);
 			jmp[mem[mem[i+1]-1]]--;
 			printf("jmp[%d]=%d\n",mem[mem[i+1]-1],jmp[mem[mem[i+1]-1]]);
@@ -237,7 +237,7 @@ while(i++<mem[7]-36) {
 		}
 		i++; 
 		break;
-    case lfun: 
+    case DIVBC_fun: 
 		fprintf(sta,"%5u\tfun %u stack: %d",i,mem[i+1],sp); 
 //			printf("func %d\n",mem[i+1]);
 		switch(mem[i+1]) {
@@ -256,7 +256,7 @@ while(i++<mem[7]-36) {
 				printf("text used at %u\n",i);
 
 			if(mem[i+1]==16) { // write 
-				if(mem[i-2]==lcar) // static
+				if(mem[i-2]==DIVBC_car) // static
 					printf("static text val\n");
 				else
 					printf("by ref\n");
@@ -268,43 +268,43 @@ while(i++<mem[7]-36) {
 		}
 		i++; 		
 		break;
-    case lcal: fprintf(sta,"%5u\tcal %u",i,mem[i+1]); i++; break;
-    case lret: fprintf(sta,"%5u\tret",i); break;
-    case lasp: 
+    case DIVBC_cal: fprintf(sta,"%5u\tcal %u",i,mem[i+1]); i++; break;
+    case DIVBC_ret: fprintf(sta,"%5u\tret",i); break;
+    case DIVBC_asp: 
 		fprintf(sta,"%5u\tasp",i); 
 //		printf("LASP: %d\n",i);
 		break;
-    case lfrm: fprintf(sta,"%5u\tfrm",i); break;
-    case lcbp: fprintf(sta,"%5u\tcbp %u",i,mem[i+1]); i++; break;
-    case lcpa: fprintf(sta,"%5u\tcpa",i); break;
-    case ltyp: fprintf(sta,"\n%5u\ttyp %u",i,mem[i+1]); i++; break;
-    case lpri: fprintf(sta,"%5u\tpri %u",i,mem[i+1]); i++; break;
-    case lcse: fprintf(sta,"%5u\tcse %u",i,mem[i+1]); i++; break;
-    case lcsr: fprintf(sta,"%5u\tcsr %u",i,mem[i+1]); i++; break;
-    case lshr: fprintf(sta,"%5u\tshr",i); break;
-    case lshl: fprintf(sta,"%5u\tshl",i); break;
-    case lipt: fprintf(sta,"%5u\tipt",i); break;
-    case lpti: fprintf(sta,"%5u\tpti",i); break;
-    case ldpt: fprintf(sta,"%5u\tdpt",i); break;
-    case lptd: fprintf(sta,"%5u\tptd",i); break;
-    case lada: fprintf(sta,"%5u\tada",i); break;
-    case lsua: fprintf(sta,"%5u\tsua",i); break;
-    case lmua: fprintf(sta,"%5u\tmua",i); break;
-    case ldia: fprintf(sta,"%5u\tdia",i); break;
-    case lmoa: fprintf(sta,"%5u\tmoa",i); break;
-    case lana: fprintf(sta,"%5u\tana",i); break;
-    case lora: fprintf(sta,"%5u\tora",i); break;
-    case lxoa: fprintf(sta,"%5u\txoa",i); break;
-    case lsra: fprintf(sta,"%5u\tsra",i); break;
-    case lsla: fprintf(sta,"%5u\tsla",i); break;
-    case lpar: fprintf(sta,"%5u\tpar %u",i,mem[i+1]); i++; break;
-    case lrtf: fprintf(sta,"%5u\trtf",i); break;
-    case lclo: fprintf(sta,"%5u\tclo %u",i,mem[i+1]); i++; break;
-    case lfrf: fprintf(sta,"%5u\tfrf",i); break;
-    case limp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
-    case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
-    case lchk: fprintf(sta,"%5u\tchk",i); break;
-    case ldbg: fprintf(sta,"%5u\tdbg",i); break;
+    case DIVBC_frm: fprintf(sta,"%5u\tfrm",i); break;
+    case DIVBC_cbp: fprintf(sta,"%5u\tcbp %u",i,mem[i+1]); i++; break;
+    case DIVBC_cpa: fprintf(sta,"%5u\tcpa",i); break;
+    case DIVBC_typ: fprintf(sta,"\n%5u\ttyp %u",i,mem[i+1]); i++; break;
+    case DIVBC_pri: fprintf(sta,"%5u\tpri %u",i,mem[i+1]); i++; break;
+    case DIVBC_cse: fprintf(sta,"%5u\tcse %u",i,mem[i+1]); i++; break;
+    case DIVBC_csr: fprintf(sta,"%5u\tcsr %u",i,mem[i+1]); i++; break;
+    case DIVBC_shr: fprintf(sta,"%5u\tshr",i); break;
+    case DIVBC_shl: fprintf(sta,"%5u\tshl",i); break;
+    case DIVBC_ipt: fprintf(sta,"%5u\tipt",i); break;
+    case DIVBC_pti: fprintf(sta,"%5u\tpti",i); break;
+    case DIVBC_dpt: fprintf(sta,"%5u\tdpt",i); break;
+    case DIVBC_ptd: fprintf(sta,"%5u\tptd",i); break;
+    case DIVBC_ada: fprintf(sta,"%5u\tada",i); break;
+    case DIVBC_sua: fprintf(sta,"%5u\tsua",i); break;
+    case DIVBC_mua: fprintf(sta,"%5u\tmua",i); break;
+    case DIVBC_dia: fprintf(sta,"%5u\tdia",i); break;
+    case DIVBC_moa: fprintf(sta,"%5u\tmoa",i); break;
+    case DIVBC_ana: fprintf(sta,"%5u\tana",i); break;
+    case DIVBC_ora: fprintf(sta,"%5u\tora",i); break;
+    case DIVBC_xoa: fprintf(sta,"%5u\txoa",i); break;
+    case DIVBC_sra: fprintf(sta,"%5u\tsra",i); break;
+    case DIVBC_sla: fprintf(sta,"%5u\tsla",i); break;
+    case DIVBC_par: fprintf(sta,"%5u\tpar %u",i,mem[i+1]); i++; break;
+    case DIVBC_rtf: fprintf(sta,"%5u\trtf",i); break;
+    case DIVBC_clo: fprintf(sta,"%5u\tclo %u",i,mem[i+1]); i++; break;
+    case DIVBC_frf: fprintf(sta,"%5u\tfrf",i); break;
+    case DIVBC_imp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
+    case DIVBC_ext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
+    case DIVBC_chk: fprintf(sta,"%5u\tchk",i); break;
+    case DIVBC_dbg: fprintf(sta,"%5u\tdbg",i); break;
 }
 }
 
@@ -359,13 +359,13 @@ i=mem[1]-1;
 	
 		switch ((byte)mem[i]) {
 			// no op
-    case lnop:
+    case DIVBC_nop:
 		fprintf(sta,"%5u\tnop",i); 
 		fprintf(prg,"// NOP\n");
 		break;
     
 			// load val to stack
-    case lcar: 
+    case DIVBC_car: 
 		fprintf(sta,"%5u\tcar %d",i,mem[i+1]); 
 //		fprintf(prg,"// sp: %d %d\n",sp,mem[i+1]);
 		stack[sp]=mem[i+1];
@@ -378,7 +378,7 @@ i=mem[1]-1;
 		sp++;
 		i++; 
 		break;
-    case lasi: 
+    case DIVBC_asi: 
 		fprintf(sta,"%5u\tasi",i); 
 //		fprintf(prg,"// lasi: %d %d [%s] [%s]\n",sp,i,cmd,cstack[sp-2]);
 //		fflush(prg);
@@ -393,7 +393,7 @@ local struct reserved[0]
         process_type   // Tipo de proceso
         type_scan      // Para scanear procesos por tipo
         status         // Estado actual de este proceso
-        param_offset   // Puntero a los par metros pasados
+        param_offset   // Puntero a los par┬ámetros pasados
         program_index  // Contador de programa para este proceso
         is_executed    // Indica si el proceso ya ha sido ejecutado
         is_painted     // Indica si el proceso ya ha sido pintado
@@ -402,28 +402,28 @@ local struct reserved[0]
         frame_percent  // Porcentaje de frame recorrido
         box_x0         // Caja ocupada por el sprite cada
         box_y0         // vez que se pinta para realizar
-        box_x1         // volcado y restauraci¢n de fondo
+        box_x1         // volcado y restauraci┬ón de fondo
         box_y1         // parcial (dump_type==partial_dump)
 end
 
 local father=0          // Identificador del padre
-local son=0             // Identificador del £ltimo hijo
+local son=0             // Identificador del ┬último hijo
 local smallbro=0        // Identificador del hermano menor
 local bigbro=0          // Identificador del hermano mayor
 local priority=0        // Prioridad de proceso (a mayor se procesa antes)
 local ctype=0           // Tipo de coordenada
 local x=0               // Coordenada X
 local y=0               // Coordenada Y
-local z=0               // Prioridad de impresi¢n del gr fico
-local graph=0           // C¢digo del gr fico para este proceso
-local flags=0           // +1 iversi¢n horiz., +2 inversion vert., +4 Ghost
-local size=100          // Tama¤o del proceso (en tanto por ciento)
+local z=0               // Prioridad de impresi┬ón del gr┬áfico
+local graph=0           // C┬ódigo del gr┬áfico para este proceso
+local flags=0           // +1 iversi┬ón horiz., +2 inversion vert., +4 Ghost
+local size=100          // Tama┬ño del proceso (en tanto por ciento)
 local angle=0           // Angulo del proceso
-local region=0          // Regi¢n de clipping para este proceso
-local file=0            // Fichero del que tomar los gr ficos
-local xgraph=0          // Puntero a tabla: n§graficos, graf_angulo_0, ...
+local region=0          // Regi┬ón de clipping para este proceso
+local file=0            // Fichero del que tomar los gr┬áficos
+local xgraph=0          // Puntero a tabla: n┬ºgraficos, graf_angulo_0, ...
 local height=1          // Altura de los procesos en el modo-7 (pix/4)
-local cnumber=0         // N§ de scroll o m7 en el que est  (0 en todos, o bien: +1 en el 0, +2 en el 1, +4 en el 2, ...)
+local cnumber=0         // N┬º de scroll o m7 en el que est┬á (0 en todos, o bien: +1 en el 0, +2 en el 1, +4 en el 2, ...)
 local resolution=0 
 
 */
@@ -443,7 +443,7 @@ local resolution=0
 		con=1;
 		sp--;
 		break;
-    case lori: 
+    case DIVBC_ori: 
 		fprintf(sta,"%5u\tori",i);
 //		fprintf(prg,"// UNIMP! || (ORI)\n");
 		fprintf(prg,"// stack: || %d %d\n",sp,i);
@@ -457,12 +457,12 @@ local resolution=0
 		strcpy(cmd,condstack[con-1]);
 
 		break;
-    case lxor: 
+    case DIVBC_xor: 
 		fprintf(sta,"%5u\txor",i); 
 		fprintf(prg,"// UNIMP! XOR\n");
 		fprintf(prg,"// stack: %d\n",sp);
 		break;
-    case land: 
+    case DIVBC_and: 
 		fprintf(sta,"%5u\tand",i); 
 //		fprintf(prg,"// UNIMP! && (AND)\n");
 		fprintf(prg,"// stack: && %d\n",sp);
@@ -472,7 +472,7 @@ local resolution=0
 //		fprintf(prg,"// condstack %s\n",condstack[con]);
 		strcpy(cmd,condstack[con-1]);
 		break;
-    case ligu: 
+    case DIVBC_igu: 
 		fprintf(sta,"%5u\tigu",i); 
 //		fprintf(prg,"// %s UNIMP! == (IGU)\n",cmd);		
 //		fprintf(prg,"// stack: %d\n",sp);
@@ -480,7 +480,7 @@ local resolution=0
 		strcpy(cmd,condstack[con]);
 		con++;
 		break;
-    case ldis: 
+    case DIVBC_dis: 
 		fprintf(sta,"%5u\tdis",i); 
 //		fprintf(prg,"// UNIMP! != (DIS)\n");		
 //		fprintf(prg,"// stack: %d\n",sp);
@@ -489,7 +489,7 @@ local resolution=0
 		con++;
 
 		break;
-    case lmay: 
+    case DIVBC_may: 
 		fprintf(sta,"%5u\tmay",i); 
 //		fprintf(prg,"// UNIMP! > (MAY)\n");		
 		sprintf(condstack[con],"%s > %s",cstack[sp-2],cstack[sp-1]);
@@ -497,7 +497,7 @@ local resolution=0
 		con++;
 //		fprintf(prg,"// stack: %d %s\n",sp,cmd);
 		break;
-    case lmen: 
+    case DIVBC_men: 
 		fprintf(sta,"%5u\tmen",i); 
 //		fprintf(prg,"// UNIMP! < (MEN)\n");				
 //		fprintf(prg,"// stack: %d\n",sp);
@@ -506,7 +506,7 @@ local resolution=0
 		con++;
 
 		break;
-    case lmei: 
+    case DIVBC_mei: 
 		fprintf(sta,"%5u\tmei",i); 
 //		fprintf(prg,"// UNIMP! <= (MEI)\n");	
 //		fprintf(prg,"// stack: %d\n",sp);
@@ -515,7 +515,7 @@ local resolution=0
 		con++;
 
 		break;
-    case lmai: 
+    case DIVBC_mai: 
 		fprintf(sta,"%5u\tmai",i); 
 //		fprintf(prg,"// UNIMP! >= (MAI)\n");			
 //		fprintf(prg,"// stack: %d\n",sp);
@@ -523,7 +523,7 @@ local resolution=0
 		strcpy(cmd,condstack[con]);
 		con++;
 		break;
-    case ladd: 
+    case DIVBC_add: 
 		fprintf(sta,"%5u\tadd",i);
 		fprintf(prg,"// ladd %d[%d]+%d[%d] %d %d\n",stack[sp-2],stp[sp-2],stack[sp-1],stp[sp-1],sp,i);
 //		fprintf(prg,"// %s add %s\n",cstack[sp-2],cstack[sp-1]);
@@ -545,7 +545,7 @@ local resolution=0
 //		strcpy(cstack[sp-2],cstack[sp]);
 		sp--;
 		break;
-    case lsub: 
+    case DIVBC_sub: 
 		fprintf(sta,"%5u\tsub",i); 
 //		fprintf(prg,"// %d[%d]-%d[%d]\n",stack[sp-2],stp[sp-2],stack[sp-1],stp[sp-1]);
 /*
@@ -567,7 +567,7 @@ local resolution=0
 				
 		sp--;
 		break;
-    case lmul:
+    case DIVBC_mul:
 		fprintf(sta,"%5u\tmul",i); 
 //		fprintf(prg,"// %s*%s\n",cstack[sp-2],cstack[sp-1]);
 		sprintf(cstack[sp],"(%s*%s)",cstack[sp-2],cstack[sp-1]);
@@ -575,21 +575,21 @@ local resolution=0
 		sp-=1;
 		
 		break;
-    case ldiv: 
+    case DIVBC_div: 
 		fprintf(sta,"%5u\tdiv",i); 
 		sprintf(cstack[sp],"(%s/%s)",cstack[sp-2],cstack[sp-1]);
 		strcpy(cstack[sp-2],cstack[sp]);
 		sp-=1;
 	
 		break;
-    case lmod: 
+    case DIVBC_mod: 
 		fprintf(sta,"%5u\tmod",i); 
 		sprintf(cstack[sp],"(%s MOD %s)",cstack[sp-2],cstack[sp-1]);
 		strcpy(cstack[sp-2],cstack[sp]);
 		sp-=1;			
 		break;
 		
-    case lneg: 
+    case DIVBC_neg: 
 		fprintf(sta,"%5u\tneg",i); 
 		sprintf(cstack[sp],"-%s",cstack[sp-1]);
 		stack[sp-1]=-stack[sp-1];
@@ -598,7 +598,7 @@ local resolution=0
 		
 		break;
     
-    case lptr: 
+    case DIVBC_ptr: 
 		fprintf(sta,"%5u\tptr",i); 
 		//
 		fprintf(prg,"// lptr %s %d %d\n",cstack[sp-1],stack[sp-1],i);
@@ -609,8 +609,8 @@ local resolution=0
 		strcpy(cmd,cstack[sp-1]);
 		stp[sp-1]=1;
 		break;
-    case lnot: fprintf(sta,"%5u\tnot",i); break;
-    case laid: 
+    case DIVBC_not: fprintf(sta,"%5u\tnot",i); break;
+    case DIVBC_aid: 
 		fprintf(sta,"%5u\taid",i); 
 //		fprintf(prg,"// UNIMP LAID %d %s\n",i,cstack[sp-1]);
 //		fprintf(prg,"// LOCAL VAR %s\n",cstack[sp-1]);
@@ -619,7 +619,7 @@ local resolution=0
 		fprintf(prg,"// %s %d %d %d\n",cstack[sp-1],stack[sp-1],i,localvar);		
 		
 		break;
-    case lcid: 
+    case DIVBC_cid: 
 		fprintf(sta,"%5u\tcid",i); 
 		stack[sp]=0;
 		strcpy(cstack[sp],"id");
@@ -627,19 +627,19 @@ local resolution=0
 		stp[sp]=1;
 		sp++;
 		break;
-    case lrng: 
+    case DIVBC_rng: 
 		fprintf(sta,"%5u\trng %u",i,mem[i+1]); 
 		fprintf(prg,"// UNIMP range %d %d\n",i,mem[i+1]);
 		i++; 
 		break;
-    case ljmp: 
+    case DIVBC_jmp: 
 		fprintf(sta,"%5u\tjmp %u",i,mem[i+1]); 
 		if(mem[i+1]<i) {
 			fprintf(prg,"// jmp[%d]=%d JMP BACK TO %d %d\nEND\n\n",i,jmp[i],i,mem[i+1]);
 		}
 		i++; 
 		break;
-    case ljpf:
+    case DIVBC_jpf:
 		fprintf(sta,"%5u\tjpf %u",i,mem[i+1]); 
 		
 		if(mem[i+1]<i) 
@@ -650,7 +650,7 @@ local resolution=0
 			// check if the jpf goes past a jmp
 
 //			fprintf(prg,"// jpf %d %d %d\n",mem[mem[i]-2],i,mem[i+1]-2);
-			if(mem[mem[i+1]-2]==ljmp) { 
+			if(mem[mem[i+1]-2]==DIVBC_jmp) { 
 				if(mem[mem[i+1]-1]<mem[i+1]-2)
 					fprintf(prg,"WHILE");
 				else {
@@ -677,7 +677,7 @@ local resolution=0
 		con=0;
 		sp=0;
 		break;
-    case lfun: 
+    case DIVBC_fun: 
 		fprintf(sta,"%5u\tfun %u",i,mem[i+1]); 
 //		fprintf(prg,"// LFUN stack: %d i: %u con: %u\n",sp,i,con);
 		// calling function
@@ -947,18 +947,18 @@ local resolution=0
 		strcpy(condstack[con],cmd);
 		con++;
 		i++; break;
-    case lcal: 
+    case DIVBC_cal: 
 		fprintf(sta,"%5u\tcal %u",i,mem[i+1]); 
 //		fprintf(prg,"\n// lcal %d %d \n",i,sp);
 		sprintf(cmd,"proc%u(",mem[mem[i+1]+1]);
 		
-		fprintf(prg,"// assigned: %s\n",mem[i+2]==lasi?"yes":"no");
+		fprintf(prg,"// assigned: %s\n",mem[i+2]==DIVBC_asi?"yes":"no");
 		
 		spp=sp;
-		while(sp>(mem[i+2]==lasi?1:0)) {
+		while(sp>(mem[i+2]==DIVBC_asi?1:0)) {
 			strcat(cmd,cstack[spp-sp]);
 			sp--;
-			if(sp>(mem[i+2]==lasi?1:0))
+			if(sp>(mem[i+2]==DIVBC_asi?1:0))
 			strcat(cmd,",");
 		}
 		strcat(cmd,")");
@@ -968,13 +968,13 @@ local resolution=0
 		i++; 
 		break;
     
-    case lret: 
+    case DIVBC_ret: 
 		fprintf(sta,"%5u\tret",i); 
 		fprintf(prg,"\nEND // lret %d\n\n",i);
 		if(i&&1)
 			i++;
 		break;
-    case lasp: 
+    case DIVBC_asp: 
 		fprintf(sta,"%5u\tasp",i); 
 		fprintf(prg,"%s;\n",cmd);
 //		fprintf(prg,"// discard stack %d\n",sp);
@@ -983,12 +983,12 @@ local resolution=0
 		sp--;
 
 		break;
-    case lfrm: 
+    case DIVBC_frm: 
 		fprintf(sta,"%5u\tfrm",i); 
 		fprintf(prg,"FRAME;\n"); 
 		break;
 		
-    case lcbp: 
+    case DIVBC_cbp: 
 		fprintf(sta,"%5u\tcbp %u",i,mem[i+1]); 
 	//	fprintf(prg,"// %d args\n",mem[i+1]);
 		args=mem[i+1];
@@ -997,7 +997,7 @@ local resolution=0
 			fprintf(prg,");\n");
 
 		i++; break;
-    case lcpa: 
+    case DIVBC_cpa: 
 		fprintf(sta,"%5u\tcpa",i); 
 //		fprintf(prg,"// args[]\n");
 		if(args>0) {
@@ -1013,9 +1013,9 @@ local resolution=0
 		}
 		sp=0;
 		break;
-    case ltyp: 
+    case DIVBC_typ: 
 		fprintf(sta,"\n%5u\ttyp %u",i,mem[i+1]); 
-		if(mem[i+2]==lfrm) {
+		if(mem[i+2]==DIVBC_frm) {
 			fprintf(prg,"PROGRAM myprg;\n");
 			i+=2;
 			printglobals();
@@ -1027,7 +1027,7 @@ local resolution=0
 		}
 		
 		i++; break;
-    case lpri: 
+    case DIVBC_pri: 
 		fprintf(sta,"%5u\tpri %u",i,mem[i+1]); 
 		fprintf(prg,"PRIVATE\n");
 		itmp=i;
@@ -1040,27 +1040,27 @@ local resolution=0
 //		i=mem[i+1]-1;
 		sp=0;
 		break;
-    case lcse: fprintf(sta,"%5u\tcse %u",i,mem[i+1]); i++; break;
-    case lcsr: fprintf(sta,"%5u\tcsr %u",i,mem[i+1]); i++; break;
-    case lshr: fprintf(sta,"%5u\tshr",i); break;
-    case lshl: fprintf(sta,"%5u\tshl",i); break;
-    case lipt: fprintf(sta,"%5u\tipt",i); break;
-    case lpti: 
+    case DIVBC_cse: fprintf(sta,"%5u\tcse %u",i,mem[i+1]); i++; break;
+    case DIVBC_csr: fprintf(sta,"%5u\tcsr %u",i,mem[i+1]); i++; break;
+    case DIVBC_shr: fprintf(sta,"%5u\tshr",i); break;
+    case DIVBC_shl: fprintf(sta,"%5u\tshl",i); break;
+    case DIVBC_ipt: fprintf(sta,"%5u\tipt",i); break;
+    case DIVBC_pti: 
 		fprintf(sta,"%5u\tpti",i); 
 		localvar=locvar[0];
 		getvarname(stack[0],cmd);
 		strcat(cmd,"++");
 		break;
-    case ldpt: fprintf(sta,"%5u\tdpt",i); break;
+    case DIVBC_dpt: fprintf(sta,"%5u\tdpt",i); break;
 
-    case lptd: 
+    case DIVBC_ptd: 
 		fprintf(sta,"%5u\tptd",i);
 		localvar=locvar[0];
     	getvarname(stack[0],cmd);
 		strcat(cmd,"++");
 		break;		
 
-    case lada: 
+    case DIVBC_ada: 
 		fprintf(sta,"%5u\tada",i); 
 		localvar=locvar[sp-2];
 		getvarname(stack[sp-2],cstack[sp-2]);
@@ -1068,31 +1068,31 @@ local resolution=0
 		fprintf(prg,"// %s %i\n",cmd,i);
 		sp--;
 		break;
-    case lsua: 
+    case DIVBC_sua: 
 		fprintf(sta,"%5u\tsua",i); 
 		localvar=locvar[sp-2];
 		getvarname(stack[sp-2],name);
 		sprintf(cmd,"%s-=%s",name,cstack[sp-1]);
 		break;
-    case lmua: fprintf(sta,"%5u\tmua",i); break;
-    case ldia: fprintf(sta,"%5u\tdia",i); break;
-    case lmoa: fprintf(sta,"%5u\tmoa",i); break;
-    case lana: fprintf(sta,"%5u\tana",i); break;
-    case lora: fprintf(sta,"%5u\tora",i); break;
-    case lxoa: fprintf(sta,"%5u\txoa",i); break;
-    case lsra: fprintf(sta,"%5u\tsra",i); break;
-    case lsla: fprintf(sta,"%5u\tsla",i); break;
-    case lpar: 
+    case DIVBC_mua: fprintf(sta,"%5u\tmua",i); break;
+    case DIVBC_dia: fprintf(sta,"%5u\tdia",i); break;
+    case DIVBC_moa: fprintf(sta,"%5u\tmoa",i); break;
+    case DIVBC_ana: fprintf(sta,"%5u\tana",i); break;
+    case DIVBC_ora: fprintf(sta,"%5u\tora",i); break;
+    case DIVBC_xoa: fprintf(sta,"%5u\txoa",i); break;
+    case DIVBC_sra: fprintf(sta,"%5u\tsra",i); break;
+    case DIVBC_sla: fprintf(sta,"%5u\tsla",i); break;
+    case DIVBC_par: 
 		fprintf(sta,"%5u\tpar %u",i,mem[i+1]); 
-		fprintf(prg,"// lpar: %d\n",mem[i+1]);
+		fprintf(prg,"// par: %d\n",mem[i+1]);
 		i++; 
 		break;
-    case lrtf: fprintf(sta,"%5u\trtf",i); break;
-    case lclo: fprintf(sta,"%5u\tclo %u",i,mem[i+1]); i++; break;
-    case lfrf: fprintf(sta,"%5u\tfrf",i); break;
-    case limp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
-    case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
-    case lchk: 
+    case DIVBC_rtf: fprintf(sta,"%5u\trtf",i); break;
+    case DIVBC_clo: fprintf(sta,"%5u\tclo %u",i,mem[i+1]); i++; break;
+    case DIVBC_frf: fprintf(sta,"%5u\tfrf",i); break;
+    case DIVBC_imp: fprintf(sta,"%5u\timp %u",i,mem[i+1]); i++; break;
+    case DIVBC_ext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
+    case DIVBC_chk: 
 		fprintf(sta,"%5u\tchk",i); 
 		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
 		getvarname(mem[i+2],name);
@@ -1111,93 +1111,93 @@ local resolution=0
 //		i++;
 //		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
 		i+=2;
-		fprintf(prg,"// lchk next %d %d\n",i,mem[i+1]);
-		if(mem[i+1]==lptr || mem[i+1]==lchk)
+		fprintf(prg,"// chk next %d %d\n",i,mem[i+1]);
+		if(mem[i+1]==DIVBC_ptr || mem[i+1]==DIVBC_chk)
 			i++;
 			
-		if(mem[i+1]==ladd)
+		if(mem[i+1]==DIVBC_add)
 			i++;
 
-		if(mem[i+1]==lptr || mem[i+1]==lchk)
+		if(mem[i+1]==DIVBC_ptr || mem[i+1]==DIVBC_chk)
 			i++;
 			
 		strcpy(cmd,cstack[sp-1]);			
 		fprintf(prg,"// cmd is %s\n",cmd);
-		fprintf(prg,"// lchk next %d %d\n",i,mem[i+1]);
+		fprintf(prg,"// chk next %d %d\n",i,mem[i+1]);
 
 		break;
 		
-    case ldbg: fprintf(sta,"%5u\tdbg",i); break;
+    case DIVBC_dbg: fprintf(sta,"%5u\tdbg",i); break;
 /*
-    case lcar2: fprintf(sta,"%5u\tcar2 %u %u",i,mem[i+1],mem[i+2]); i+=2; break;
-    case lcar3: fprintf(sta,"%5u\tcar3 %u %u %u",i,mem[i+1],mem[i+2],mem[i+3]); i+=3; break;
-    case lcar4: fprintf(sta,"%5u\tcar4 %u %u %u %u",i,mem[i+1],mem[i+2],mem[i+3],mem[i+4]); i+=4; break;
-    case lasiasp: fprintf(sta,"%5u\tasiasp",i); break;
-    case lcaraid: fprintf(sta,"%5u\tcaraid %u",i,mem[i+1]); i++; break;
-    case lcarptr: fprintf(sta,"%5u\tcarptr %u",i,mem[i+1]); i++; break;
-    case laidptr: fprintf(sta,"%5u\taidptr",i); break;
-    case lcaraidptr: fprintf(sta,"%5u\tcaraidptr %u",i,mem[i+1]); i++; break;
-    case lcaraidcpa: fprintf(sta,"%5u\tcaraidcpa %u",i,mem[i+1]); i++; break;
-    case laddptr: fprintf(sta,"%5u\taddptr",i); break;
-    case lfunasp: fprintf(sta,"%5u\tfunasp %u",i,mem[i+1]); i++; break;
-    case lcaradd: fprintf(sta,"%5u\tcaradd %u",i,mem[i+1]); i++; break;
-    case lcaraddptr: fprintf(sta,"%5u\tcaraddptr %u",i,mem[i+1]); i++; break;
-    case lcarmul: fprintf(sta,"%5u\tcarmul %u",i,mem[i+1]); i++; break;
-    case lcarmuladd: fprintf(sta,"%5u\tcarmuladd %u",i,mem[i+1]); i++; break;
-    case lcarasiasp: fprintf(sta,"%5u\tcarasiasp %u",i,mem[i+1]); i++; break;
-    case lcarsub: fprintf(sta,"%5u\tcarsub %u",i,mem[i+1]); i++; break;
-    case lcardiv: fprintf(sta,"%5u\tcardiv %u",i,mem[i+1]); i++; break;
+    case DIVBC_car2: fprintf(sta,"%5u\tcar2 %u %u",i,mem[i+1],mem[i+2]); i+=2; break;
+    case DIVBC_car3: fprintf(sta,"%5u\tcar3 %u %u %u",i,mem[i+1],mem[i+2],mem[i+3]); i+=3; break;
+    case DIVBC_car4: fprintf(sta,"%5u\tcar4 %u %u %u %u",i,mem[i+1],mem[i+2],mem[i+3],mem[i+4]); i+=4; break;
+    case DIVBC_asiasp: fprintf(sta,"%5u\tasiasp",i); break;
+    case DIVBC_caraid: fprintf(sta,"%5u\tcaraid %u",i,mem[i+1]); i++; break;
+    case DIVBC_carptr: fprintf(sta,"%5u\tcarptr %u",i,mem[i+1]); i++; break;
+    case DIVBC_aidptr: fprintf(sta,"%5u\taidptr",i); break;
+    case DIVBC_caraidptr: fprintf(sta,"%5u\tcaraidptr %u",i,mem[i+1]); i++; break;
+    case DIVBC_caraidcpa: fprintf(sta,"%5u\tcaraidcpa %u",i,mem[i+1]); i++; break;
+    case DIVBC_addptr: fprintf(sta,"%5u\taddptr",i); break;
+    case DIVBC_funasp: fprintf(sta,"%5u\tfunasp %u",i,mem[i+1]); i++; break;
+    case DIVBC_caradd: fprintf(sta,"%5u\tcaradd %u",i,mem[i+1]); i++; break;
+    case DIVBC_caraddptr: fprintf(sta,"%5u\tcaraddptr %u",i,mem[i+1]); i++; break;
+    case DIVBC_carmul: fprintf(sta,"%5u\tcarmul %u",i,mem[i+1]); i++; break;
+    case DIVBC_carmuladd: fprintf(sta,"%5u\tcarmuladd %u",i,mem[i+1]); i++; break;
+    case DIVBC_carasiasp: fprintf(sta,"%5u\tcarasiasp %u",i,mem[i+1]); i++; break;
+    case DIVBC_carsub: fprintf(sta,"%5u\tcarsub %u",i,mem[i+1]); i++; break;
+    case DIVBC_cardiv: fprintf(sta,"%5u\tcardiv %u",i,mem[i+1]); i++; break;
 
-    case lptrwor: fprintf(sta,"%5u\tptrwor",i); break;
-    case lasiwor: fprintf(sta,"%5u\tasiwor",i); break;
-    case liptwor: fprintf(sta,"%5u\tiptwor",i); break;
-    case lptiwor: fprintf(sta,"%5u\tptiwor",i); break;
-    case ldptwor: fprintf(sta,"%5u\tdptwor",i); break;
-    case lptdwor: fprintf(sta,"%5u\tptdwor",i); break;
-    case ladawor: fprintf(sta,"%5u\tadawor",i); break;
-    case lsuawor: fprintf(sta,"%5u\tsuawor",i); break;
-    case lmuawor: fprintf(sta,"%5u\tmuawor",i); break;
-    case ldiawor: fprintf(sta,"%5u\tdiawor",i); break;
-    case lmoawor: fprintf(sta,"%5u\tmoawor",i); break;
-    case lanawor: fprintf(sta,"%5u\tanawor",i); break;
-    case lorawor: fprintf(sta,"%5u\torawor",i); break;
-    case lxoawor: fprintf(sta,"%5u\txoawor",i); break;
-    case lsrawor: fprintf(sta,"%5u\tsrawor",i); break;
-    case lslawor: fprintf(sta,"%5u\tslawor",i); break;
-    case lcpawor: fprintf(sta,"%5u\tcpawor",i); break;
+    case DIVBC_ptrwor: fprintf(sta,"%5u\tptrwor",i); break;
+    case DIVBC_asiwor: fprintf(sta,"%5u\tasiwor",i); break;
+    case DIVBC_iptwor: fprintf(sta,"%5u\tiptwor",i); break;
+    case DIVBC_ptiwor: fprintf(sta,"%5u\tptiwor",i); break;
+    case DIVBC_dptwor: fprintf(sta,"%5u\tdptwor",i); break;
+    case DIVBC_ptdwor: fprintf(sta,"%5u\tptdwor",i); break;
+    case DIVBC_adawor: fprintf(sta,"%5u\tadawor",i); break;
+    case DIVBC_suawor: fprintf(sta,"%5u\tsuawor",i); break;
+    case DIVBC_muawor: fprintf(sta,"%5u\tmuawor",i); break;
+    case DIVBC_diawor: fprintf(sta,"%5u\tdiawor",i); break;
+    case DIVBC_moawor: fprintf(sta,"%5u\tmoawor",i); break;
+    case DIVBC_anawor: fprintf(sta,"%5u\tanawor",i); break;
+    case DIVBC_orawor: fprintf(sta,"%5u\torawor",i); break;
+    case DIVBC_xoawor: fprintf(sta,"%5u\txoawor",i); break;
+    case DIVBC_srawor: fprintf(sta,"%5u\tsrawor",i); break;
+    case DIVBC_slawor: fprintf(sta,"%5u\tslawor",i); break;
+    case DIVBC_cpawor: fprintf(sta,"%5u\tcpawor",i); break;
 
-    case lptrchr: fprintf(sta,"%5u\tptrchr",i); break;
-    case lasichr: fprintf(sta,"%5u\tasichr",i); break;
-    case liptchr: fprintf(sta,"%5u\tiptchr",i); break;
-    case lptichr: fprintf(sta,"%5u\tptichr",i); break;
-    case ldptchr: fprintf(sta,"%5u\tdptchr",i); break;
-    case lptdchr: fprintf(sta,"%5u\tptdchr",i); break;
-    case ladachr: fprintf(sta,"%5u\tadachr",i); break;
-    case lsuachr: fprintf(sta,"%5u\tsuachr",i); break;
-    case lmuachr: fprintf(sta,"%5u\tmuachr",i); break;
-    case ldiachr: fprintf(sta,"%5u\tdiachr",i); break;
-    case lmoachr: fprintf(sta,"%5u\tmoachr",i); break;
-    case lanachr: fprintf(sta,"%5u\tanachr",i); break;
-    case lorachr: fprintf(sta,"%5u\torachr",i); break;
-    case lxoachr: fprintf(sta,"%5u\txoachr",i); break;
-    case lsrachr: fprintf(sta,"%5u\tsrachr",i); break;
-    case lslachr: fprintf(sta,"%5u\tslachr",i); break;
-    case lcpachr: fprintf(sta,"%5u\tcpachr",i); break;
+    case DIVBC_ptrchr: fprintf(sta,"%5u\tptrchr",i); break;
+    case DIVBC_asichr: fprintf(sta,"%5u\tasichr",i); break;
+    case DIVBC_iptchr: fprintf(sta,"%5u\tiptchr",i); break;
+    case DIVBC_ptichr: fprintf(sta,"%5u\tptichr",i); break;
+    case DIVBC_dptchr: fprintf(sta,"%5u\tdptchr",i); break;
+    case DIVBC_ptdchr: fprintf(sta,"%5u\tptdchr",i); break;
+    case DIVBC_adachr: fprintf(sta,"%5u\tadachr",i); break;
+    case DIVBC_suachr: fprintf(sta,"%5u\tsuachr",i); break;
+    case DIVBC_muachr: fprintf(sta,"%5u\tmuachr",i); break;
+    case DIVBC_diachr: fprintf(sta,"%5u\tdiachr",i); break;
+    case DIVBC_moachr: fprintf(sta,"%5u\tmoachr",i); break;
+    case DIVBC_anachr: fprintf(sta,"%5u\tanachr",i); break;
+    case DIVBC_orachr: fprintf(sta,"%5u\torachr",i); break;
+    case DIVBC_xoachr: fprintf(sta,"%5u\txoachr",i); break;
+    case DIVBC_srachr: fprintf(sta,"%5u\tsrachr",i); break;
+    case DIVBC_slachr: fprintf(sta,"%5u\tslachr",i); break;
+    case DIVBC_cpachr: fprintf(sta,"%5u\tcpachr",i); break;
 
-    case lstrcpy: fprintf(sta,"%5u\tstrcpy",i); break;
-    case lstrfix: fprintf(sta,"%5u\tstrfix",i); break;
-    case lstrcat: fprintf(sta,"%5u\tstrcat",i); break;
-    case lstradd: fprintf(sta,"%5u\tstradd",i); break;
-    case lstrdec: fprintf(sta,"%5u\tstrdec",i); break;
-    case lstrsub: fprintf(sta,"%5u\tstrsub",i); break;
-    case lstrlen: fprintf(sta,"%5u\tstrlen",i); break;
-    case lstrigu: fprintf(sta,"%5u\tstrigu",i); break;
-    case lstrdis: fprintf(sta,"%5u\tstrdis",i); break;
-    case lstrmay: fprintf(sta,"%5u\tstrmay",i); break;
-    case lstrmen: fprintf(sta,"%5u\tstrmen",i); break;
-    case lstrmei: fprintf(sta,"%5u\tstrmei",i); break;
-    case lstrmai: fprintf(sta,"%5u\tstrmai",i); break;
-    case lcpastr: fprintf(sta,"%5u\tcpastr",i); break;
+    case DIVBC_strcpy: fprintf(sta,"%5u\tstrcpy",i); break;
+    case DIVBC_strfix: fprintf(sta,"%5u\tstrfix",i); break;
+    case DIVBC_strcat: fprintf(sta,"%5u\tstrcat",i); break;
+    case DIVBC_stradd: fprintf(sta,"%5u\tstradd",i); break;
+    case DIVBC_strdec: fprintf(sta,"%5u\tstrdec",i); break;
+    case DIVBC_strsub: fprintf(sta,"%5u\tstrsub",i); break;
+    case DIVBC_strlen: fprintf(sta,"%5u\tstrlen",i); break;
+    case DIVBC_strigu: fprintf(sta,"%5u\tstrigu",i); break;
+    case DIVBC_strdis: fprintf(sta,"%5u\tstrdis",i); break;
+    case DIVBC_strmay: fprintf(sta,"%5u\tstrmay",i); break;
+    case DIVBC_strmen: fprintf(sta,"%5u\tstrmen",i); break;
+    case DIVBC_strmei: fprintf(sta,"%5u\tstrmei",i); break;
+    case DIVBC_strmai: fprintf(sta,"%5u\tstrmai",i); break;
+    case DIVBC_cpastr: fprintf(sta,"%5u\tcpastr",i); break;
 */
     default: fprintf(sta,"***"); break;
   } 

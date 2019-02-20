@@ -1,4 +1,4 @@
-/* unzip.c -- IO on .zip files using zlib 
+﻿/* unzip.c -- IO on .zip files using zlib 
    Version 0.15 beta, Mar 19th, 1998,
 
    Read unzip.h for more info
@@ -83,137 +83,179 @@ char exebin[255];
 #endif
 
 #ifdef WIN32
-
-FILE *fmemopen (void *buf, size_t size, const char *opentype);
-
+FILE *fmemopen(void *buf, size_t size, const char *opentype);
 #endif
-
 #ifdef PSP
-
-FILE *fmemopen (void *buf, size_t size, const char *opentype);
-
+FILE *fmemopen(void *buf, size_t size, const char *opentype);
 #endif
 
-unsigned char *zipptr=NULL;
+unsigned char *zipptr = NULL;
 
-FILE * memz_open_file(unsigned char *file) {
-  char drive[_MAX_DRIVE+1];
-  char dir[_MAX_DIR+1];
-  char fname[_MAX_FNAME+1];
-  char ext[_MAX_EXT+1];
-  
-  char full[_MAX_PATH+1];
+FILE *memz_open_file(unsigned char *file) {
+	char drive[_MAX_DRIVE + 1];
+	char dir  [_MAX_DIR   + 1];
+	char fname[_MAX_FNAME + 1];
+	char ext  [_MAX_EXT   + 1];
+	char full [_MAX_PATH  + 1];
 
+	char *ff = (char *)file;
+	FILE *out;
 
-  char *ff = (char *)file;
+	// trim file to last bit (fixero.ext)
+	while (*ff != 0) {
+		if(*ff =='\\') {
+			*ff='/';
+		}
 
-FILE *out;
+		ff++;
+	}
 
+	if(_fullpath(full, (char *)file, _MAX_PATH) == NULL) {
+		return (NULL);
+	}
 
-// trim file to last bit (fixero.ext)
+	_splitpath(full,drive,dir,fname,ext);
 
-while (*ff!=0) {
-	if(*ff =='\\') *ff='/';
-	ff++;
+		strcpy(full,
+		        fname);
+		strcat(full,
+		       ext);
+/*
+printf("Trying to open data.div/%s\n",
+       full);
+*/
+
+	int len = divz_open_file(full);
+	if(len) {
+		out = fmemopen(zipptr, len, "rb");
+
+printf("zipptr %x, len: %d\n",
+       zipptr,
+       len);
+
+		return out;
+	}
+
+	if(strchr(ext, '.') == NULL) {
+		strcpy(full,
+		       ext);
+	}
+	else {
+		strcpy(full,
+		       strchr(ext, '.') + 1);
+	}
+
+	if(strlen(full)) {
+		strcat(full,
+		       "/");
+	}
+	strcat(full,
+	       fname);
+	strcat(full,
+	       ext);
+
+	if(!len) {
+		strlwr(full);
+	
+		len = divz_open_file(full);
+		if(len) {
+			out = fmemopen(zipptr, len, "rb");
+
+printf("zipptr %x, len: %d\n",
+       zipptr,
+       len);
+
+			return out;
+		}
+	}
+
+	return NULL;
 }
 
-
-
-  if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
-    _splitpath(full,drive,dir,fname,ext);
-     strcpy(full,fname);
-      strcat(full,ext);
-
-//printf("Trying to open data.div/%s\n",full);
-
-int len = divz_open_file(full);
-
-if(len) {
-out = fmemopen(zipptr,len,"rb");
-printf("zipptr %x, len: %d\n",zipptr, len);
-
-return out;
-}
-	if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
-   if (strlen(full)) strcat(full,"/");
-   strcat(full,fname);
-   strcat(full,ext);
-
-if(!len) {
-	   strlwr(full);
-   len = divz_open_file(full);
-
-if(len) {
-out = fmemopen(zipptr,len,"rb");
-printf("zipptr %x, len: %d\n",zipptr, len);
-
-return out;
-}
-}
-
-return NULL;
-
-}
-
-  unzFile *zip=NULL;
-
+	unzFile *zip = NULL;
 
 int divz_open_file(char *full) {
-  unz_file_info fileInfo;
+	unz_file_info fileInfo;
 
-printf("divz open file: [%s]\n",full);
+	int readBytes = 0;
 
-  int readBytes=0;
-
-if(zip!=NULL)			
-	unzClose(zip);
-
-if(datastartpos==0)
-	zip = (unzFile*)unzOpen("data.div");
-else
-	zip = (unzFile*)unzOpen(exebin);
-
-printf("loaded zip: %x %s %d\n",zip,exebin,datastartpos);
+printf("divz open file: [%s]\n",
+       full);
 
 
-printf("Looking for %s\n",full);
+	if(zip != NULL) {
+		unzClose(zip);
+	}
 
-if(zip==NULL)
-	return 0;
+	if(datastartpos == 0) {
+		zip = (unzFile *)unzOpen("data.div");
+	}
+	else {
+		zip = (unzFile *)unzOpen(exebin);
+	}
+
+printf("loaded zip: %x %s %d\n",
+       zip,
+       exebin,
+       datastartpos);
+printf("Looking for %s\n",
+       full);
+
+	if(zip == NULL) {
+		return 0;
+	}
 
 	unzGoToFirstFile(zip);
-				if(unzLocateFile (zip,full,2)==UNZ_OK)
-				{	
-					if(unzOpenCurrentFile(zip)==UNZ_OK)
-					{
-						printf("FOUND IT!\n");
-						if (unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0) == UNZ_OK) {
-//          char *filename = (char *)malloc(fileInfo.size_filename + 1);
-//          unzGetCurrentFileInfo(zip, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
-//          filename[fileInfo.size_filename] = '\0';
-		//			printf("full:%d zipped:%d\n",fileInfo.uncompressed_size, fileInfo.compressed_size);	
-				
-				if(zipptr) 
+	if(unzLocateFile(zip, full, 2) == UNZ_OK) {
+		if(unzOpenCurrentFile(zip) == UNZ_OK) {
+printf("FOUND IT!\n");
+
+			if(unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0) == UNZ_OK) {
+/*
+				har *filename = (char *)malloc(fileInfo.size_filename + 1);
+				unzGetCurrentFileInfo(zip,
+				                     &fileInfo,
+				                      filename,
+				                      fileInfo.size_filename + 1,
+				                      NULL,
+				                      0,
+				                      NULL,
+				                      0);
+				filename[fileInfo.size_filename] = '\0';
+
+printf("full:%d zipped:%d\n",
+       fileInfo.uncompressed_size,
+			 fileInfo.compressed_size);
+*/
+
+				if(zipptr) {
 					free(zipptr);
-				// alloc the space
-				zipptr=(unsigned char *)malloc(fileInfo.uncompressed_size);
-		
-				// read the data
-				 readBytes = unzReadCurrentFile(zip, zipptr, fileInfo.uncompressed_size);
-				unzClose(zip);
-				zip=NULL;
-				printf("Read %d of %d byte\n", readBytes, fileInfo.uncompressed_size);
-				return readBytes;
-					}
-
 				}
-			}
-if(zip!=NULL)			
-unzClose(zip);
-zip=NULL;
+				// alloc the space
+				zipptr = (unsigned char *)malloc(fileInfo.uncompressed_size);
 
-return 0;
-	
+				// read the data
+				readBytes = unzReadCurrentFile(zip,
+				                               zipptr,
+				                               fileInfo.uncompressed_size);
+				unzClose(zip);
+				zip = NULL;
+
+printf("Read %d of %d byte\n",
+       readBytes,
+       fileInfo.uncompressed_size);
+
+				return readBytes;
+			}
+		}
+	}
+
+	if(zip != NULL) {
+		unzClose(zip);
+		zip = NULL;
+	}
+
+	return 0;
 }
 
 

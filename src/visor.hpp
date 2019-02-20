@@ -8,7 +8,7 @@ typedef struct _buffer_sprite3d {
 } buffer_sprite3d;
 
 typedef struct {
-  int porcentaje;       // 100 % es el tama§o normal
+  int porcentaje;       // 100 % es el tama√±o normal
   float alfa;           // Angulo de deriva (0-360)
   float beta;           // Angulo de caida (0-90)
   char *animacion;      // Puntero al nombre de la animacion (incluye path)

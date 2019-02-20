@@ -206,8 +206,8 @@ void llrender_create(llrender *llrender_struct,sprite3d *newcamera)
   num_llrenders++;
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_destroy(llrender *llrender_struct)
 {
@@ -217,8 +217,8 @@ void llrender_destroy(llrender *llrender_struct)
   }
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 int compara(const void *op1, const void *op2)
 {
@@ -234,8 +234,8 @@ int compara(const void *op1, const void *op2)
 }
 */
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_render(llrender *llrender_struct,lptface faces,int nfaces)
 {
@@ -259,9 +259,9 @@ void llrender_render(llrender *llrender_struct,lptface faces,int nfaces)
   lf_free(caras);
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 //  Pinta un triangulo en el buffer de video
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_pintar_triangulo(llrender *llrender_struct,lptface face)
 {
@@ -306,7 +306,7 @@ int zmed;
   if (face->v2->py>complex_y_fin) complex_y_fin=face->v2->py+1;
   if (face->v3->py>complex_y_fin) complex_y_fin=face->v3->py+1;
 
-  // Si el poligono no apunta a la c†mara no se ve y por tanto no se pinta
+  // Si el poligono no apunta a la c√°mara no se ve y por tanto no se pinta
   if( llrender_Cara_Oculta(llrender_struct,face) ) return;
 /*
   #ifdef DEBUG
@@ -395,9 +395,9 @@ int zmed;
 //  #endif
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//  Comprueba si una cara est† oculta
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//  Comprueba si una cara est√° oculta
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 int llrender_Cara_Oculta(llrender *llrender_struct,lptface face)
 {
@@ -411,8 +411,8 @@ int llrender_Cara_Oculta(llrender *llrender_struct,lptface face)
   return 1;
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
 {
@@ -421,16 +421,16 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
   tvertex vertex[4];
   float fwork;
 
-  //  Calculamos cuantos puntos est†n situados detras del plano de clipping
+  //  Calculamos cuantos puntos est√°n situados detras del plano de clipping
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_pintar_triangulo(llrender_struct,face_in);
     return;
   }
   i=(i>>8)&3;
-  if (i==3) return; // El pol°gono est† fuera de pantalla
+  if (i==3) return; // El pol√≠gono est√° fuera de pantalla
   if (i==0) {
-    llrender_clipping_3d_left(llrender_struct,face_in); // El pol°gono est† dentro de pantalla
+    llrender_clipping_3d_left(llrender_struct,face_in); // El pol√≠gono est√° dentro de pantalla
     return;
   }
 
@@ -439,7 +439,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
   face.v2->estado=0;
   face.v3->estado=0;
 
-  if (i==2) { // El resultado del corte es un tri†ngulo
+  if (i==2) { // El resultado del corte es un tri√°ngulo
     // Partimos de un punto situado delante del plano de clipping
     if (face.v1->fpz>=1.0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -502,7 +502,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     face.v3=&vertex[2];
     llrender_clipping_3d_left(llrender_struct,&face);
   }
-  else { // El resultado del corte son dos tri†ngulos
+  else { // El resultado del corte son dos tri√°ngulos
     // Partimos de un punto situado detras del plano de clipping
     if (face.v1->fpz<1.0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -572,8 +572,8 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
   }
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
 {
@@ -583,16 +583,16 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
   float fwork;
   float cero_z,uno_z,dos_z;
 
-  //  Calculamos cuantos puntos est†n situados fuera de la pantalla
+  //  Calculamos cuantos puntos est√°n situados fuera de la pantalla
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_pintar_triangulo(llrender_struct,face_in);
     return;
   }
   i=i&3;
-  if (i==3) return; // El pol°gono est† fuera de pantalla
+  if (i==3) return; // El pol√≠gono est√° fuera de pantalla
   if (i==0) {
-    llrender_clipping_3d_right(llrender_struct,face_in); // El pol°gono est† dentro de pantalla
+    llrender_clipping_3d_right(llrender_struct,face_in); // El pol√≠gono est√° dentro de pantalla
     return;
   }
 
@@ -601,7 +601,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
   face.v2->estado=0;
   face.v3->estado=0;
 
-  if (i==1) { // El resultado del corte son dos tri†ngulos
+  if (i==1) { // El resultado del corte son dos tri√°ngulos
     // Partimos de un punto situado encima de la pantalla
     if (face.v1->fpx<0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -664,7 +664,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     face.v3->estado=0;
     llrender_clipping_3d_right(llrender_struct,&face);
   }
-  else { // El resultado del corte es un tri†ngulo
+  else { // El resultado del corte es un tri√°ngulo
     // Partimos de un punto situado debajo del margen superior de pantalla
     if (face.v1->fpx>=0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -724,8 +724,8 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
   }
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
 {
@@ -735,16 +735,16 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
   float fwork;
   float cero_z,uno_z,dos_z;
 
-  //  Calculamos cuantos puntos est†n situados fuera de la pantalla
+  //  Calculamos cuantos puntos est√°n situados fuera de la pantalla
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_pintar_triangulo(llrender_struct,face_in);
     return;
   }
   i=(i>>2)&3;
-  if (i==3) return; // El pol°gono est† fuera de pantalla
+  if (i==3) return; // El pol√≠gono est√° fuera de pantalla
   if (i==0) {
-    llrender_clipping_3d_up(llrender_struct,face_in); // El pol°gono est† dentro de pantalla
+    llrender_clipping_3d_up(llrender_struct,face_in); // El pol√≠gono est√° dentro de pantalla
     return;
   }
 
@@ -753,7 +753,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
   face.v2->estado=0;
   face.v3->estado=0;
 
-  if (i==1) { // El resultado del corte son dos tri†ngulos
+  if (i==1) { // El resultado del corte son dos tri√°ngulos
     // Partimos de un punto situado encima de la pantalla
     if (face.v1->fpx>llrender_struct->fancho_pantalla) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -814,7 +814,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     face.v3->estado=0;
     llrender_clipping_3d_up(llrender_struct,&face);
   }
-  else { // El resultado del corte es un tri†ngulo
+  else { // El resultado del corte es un tri√°ngulo
     // Partimos de un punto situado debajo del margen superior de pantalla
     if (face.v1->fpx<=llrender_struct->fancho_pantalla) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -872,8 +872,8 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
   }
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
 {
@@ -883,16 +883,16 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
   float fwork;
   float cero_z,uno_z,dos_z;
 
-  //  Calculamos cuantos puntos est†n situados fuera de la pantalla
+  //  Calculamos cuantos puntos est√°n situados fuera de la pantalla
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_pintar_triangulo(llrender_struct,face_in);
     return;
   }
   i=(i>>4)&3;
-  if (i==3) return; // El pol°gono est† fuera de pantalla
+  if (i==3) return; // El pol√≠gono est√° fuera de pantalla
   if (i==0) {
-    llrender_clipping_3d_down(llrender_struct,face_in); // El pol°gono est† dentro de pantalla
+    llrender_clipping_3d_down(llrender_struct,face_in); // El pol√≠gono est√° dentro de pantalla
     return;
   }
 
@@ -901,7 +901,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
   face.v2->estado=0;
   face.v3->estado=0;
 
-  if (i==1) { // El resultado del corte son dos tri†ngulos
+  if (i==1) { // El resultado del corte son dos tri√°ngulos
     // Partimos de un punto situado encima de la pantalla
     if (face.v1->fpy<0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -960,7 +960,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     face.v3->estado=0;
     llrender_clipping_3d_down(llrender_struct,&face);
   }
-  else { // El resultado del corte es un tri†ngulo
+  else { // El resultado del corte es un tri√°ngulo
     // Partimos de un punto situado debajo del margen superior de pantalla
     if (face.v1->fpy>=0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -1016,9 +1016,9 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
   }
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 //
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
 {
@@ -1028,16 +1028,16 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
   float fwork;
   float cero_z,uno_z,dos_z;
 
-  //  Calculamos cuantos puntos est†n situados fuera de la pantalla
+  //  Calculamos cuantos puntos est√°n situados fuera de la pantalla
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_pintar_triangulo(llrender_struct,face_in);
     return;
   }
   i=(i>>6)&3;
-  if (i==3) return; // El pol°gono est† fuera de pantalla
+  if (i==3) return; // El pol√≠gono est√° fuera de pantalla
   if (i==0) {
-    llrender_pintar_triangulo(llrender_struct,face_in); // El pol°gono est† dentro de pantalla
+    llrender_pintar_triangulo(llrender_struct,face_in); // El pol√≠gono est√° dentro de pantalla
     return;
   }
 
@@ -1046,7 +1046,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
   face.v2->estado=0;
   face.v3->estado=0;
 
-  if (i==1) { // El resultado del corte son dos tri†ngulos
+  if (i==1) { // El resultado del corte son dos tri√°ngulos
     // Partimos de un punto situado encima de la pantalla
 
     if (face.v1->fpy>llrender_struct->falto_pantalla) {
@@ -1102,7 +1102,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     face.v3->estado=0;
     llrender_pintar_triangulo(llrender_struct,&face);
   }
-  else { // El resultado del corte es un tri†ngulo
+  else { // El resultado del corte es un tri√°ngulo
     // Partimos de un punto situado debajo del margen superior de pantalla
     if (face.v1->fpy<=llrender_struct->falto_pantalla) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -1154,9 +1154,9 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
   }
 }
 
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 //  Maps a texture on a triangle with gouraud
-//ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+//‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
 
 int dp=0;
 float fids[255];
@@ -1284,7 +1284,7 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
               break;
   }
 
-  //Ordenamos los vertices, v1 el de m†s arriba y v3 el de m†s abajo
+  //Ordenamos los vertices, v1 el de m√°s arriba y v3 el de m√°s abajo
 
   if (v1->fpy > v2->fpy) { vertice=v1; v1=v2; v2=vertice; }
   if (v1->fpy > v3->fpy) { vertice=v1; v1=v3; v3=vertice; }
@@ -1321,7 +1321,7 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
     v3_b=v3->b*63;
   }
 
-  //Calculamos la longitud de la linea m†s larga
+  //Calculamos la longitud de la linea m√°s larga
   altura=v3->py-v1->py;
   if ((v3->fpy-v1->fpy)<0) return;
 //  if (altura<=0) return;
@@ -1512,7 +1512,7 @@ void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmleve
 
   ptr_pantalla=(short *)(llrender_struct->copia+(v1->py)*llrender_struct->vancho);
 
-  for (;;) { //Bucle que recorre el pol°gono de arriba a abajo
+  for (;;) { //Bucle que recorre el pol√≠gono de arriba a abajo
     x1=ajuste_entero(x_izq);
     ancho=ajuste_entero(x_der)-x1;
 

@@ -1,4 +1,4 @@
-//#include <math.h>
+﻿//#include <math.h>
 #include <stdio.h>
 //#include <mem.h>
 
@@ -11,7 +11,7 @@
 extern int  *mem;                // Memory used by DIV programs
 extern int  text_offset;         // Offset to text data
 extern int  process_size;        // size of ALL process
-int  id_offset;           // Offset to the current process
+int         id_offset;           // Offset to the current process
 extern int  id_init_offset;      // Offset to the process zero
 extern int  id_start_offset;     // Offset to the first process
 extern int  id_end_offset;       // Offset to the last process
@@ -25,10 +25,10 @@ byte *dbuffer;
 
 extern char *background;
 
-byte *palette;
-byte  *active_palette;
+byte        *palette;
+byte        *active_palette;
 extern int   set_palette;        // -1:siempre, 0:nunca, 1:una vez, 2:dos, ...
-extern byte  *ghost;
+extern byte *ghost;
 //extern char  key[];              // Actual scancodes
 
 

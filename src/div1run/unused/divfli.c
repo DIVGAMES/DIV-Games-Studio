@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 //#include <conio.h>
@@ -9,96 +9,149 @@
 static void Error_Reporter(char *msg);
 static void Palette_Update(TFUByte (*palette)[256][3]);
 
-TFAnimation *animation=NULL;
-char *CBuffer;
-int CBuff_alt,TFOffset;
-int CBuff_anc;
-TFUByte *TFframe, (*TFpalette)[256][3];
-TFAnimationInfo info;
-char TFNombre[256];
+TFAnimation     *animation=NULL;
+char            *CBuffer;
+int              CBuff_alt,TFOffset;
+int              CBuff_anc;
 
-int fli_palette_update=0;
+TFUByte         *TFframe, (*TFpalette)[256][3];
+TFAnimationInfo  info;
+char             TFNombre[256];
 
-int StartFLI(char *nombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy)
-{
+int fli_palette_update = 0;
 
-  if(animation!=NULL) EndFli();
 
-  strcpy(TFNombre,nombre);
-  TFErrorHandler_Set(Error_Reporter);
-  animation=TFAnimation_NewFile(nombre);
-  if(animation==NULL) return(0);
-  CBuffer  =Buffer;
-  CBuff_alt=Buff_alt;
-  CBuff_anc=Buff_anc;
-  TFOffset =cy*Buff_anc+cx;
+int StartFLI(char *nombre, char *Buffer, int Buff_anc, int Buff_alt, int cx, int cy) {
+	if(animation != NULL) {
+		EndFli();
+	}
 
-  TFAnimation_SetLooping(animation, TF_TRUE);
-  TFAnimation_SetPaletteFunction(animation, Palette_Update);
-  TFAnimation_GetInfo(animation, &info);
+	strcpy(TFNombre, nombre);
 
-  if((cx<0)||(cy<0)) return(0);
-  if((info.Width+cx>Buff_anc)||(info.Height+cy>Buff_alt)) return(0);
-  if((TFframe=(TFUByte *)malloc(info.Height*info.Width))==NULL) return(0);
-  if( (TFpalette=malloc(768) )==NULL) return(0);
+	TFErrorHandler_Set(Error_Reporter);
 
-  TFBuffers_Set(animation, TFframe, TFpalette);
-  Nextframe();
-  Nextframe();
-  return(info.NumFrames);
+	animation = TFAnimation_NewFile(nombre);
+	if(animation == NULL) {
+		return (0);
+	}
+
+	CBuffer   = Buffer;
+	CBuff_alt = Buff_alt;
+	CBuff_anc = Buff_anc;
+	TFOffset  = cy * Buff_anc + cx;
+
+	TFAnimation_SetLooping(animation, TF_TRUE);
+	TFAnimation_SetPaletteFunction(animation, Palette_Update);
+	TFAnimation_GetInfo(animation, &info);
+
+	if((cx < 0) || (cy < 0)) {
+		return (0);
+	}
+
+	if((info.Width  + cx > Buff_anc) ||
+	   (info.Height + cy > Buff_alt)) {
+		return (0);
+	}
+
+	TFframe = (TFUByte *)malloc(info.Height * info.Width);
+	if(TFframe == NULL) {
+		return (0);
+	}
+
+	TFpalette = malloc(768);
+	if(TFpalette == NULL) {
+		free(TFframe); // memory leak fix
+
+		return (0);
+	}
+
+	TFBuffers_Set(animation, TFframe, TFpalette);
+
+	Nextframe();
+	Nextframe();
+
+	return (info.NumFrames);
 }
 
-int Nextframe()
-{
-int i;
-  if(animation==NULL) return 0;
-  TFFrame_Decode(animation);
-  for(i=0; i<info.Height; i++) memcpy(CBuffer+TFOffset+i*CBuff_anc, TFframe+i*info.Width, info.Width);
-  TFAnimation_GetInfo(animation, &info);
-  if(info.CurFrame<info.NumFrames) return(1);
-return(0);
+int Nextframe() {
+	int i;
+
+	if(animation == NULL) {
+		return (0);
+	}
+
+	TFFrame_Decode(animation);
+
+	for(i = 0; i < info.Height; i++) {
+		memcpy(CBuffer + TFOffset + i * CBuff_anc,
+		       TFframe + i * info.Width,
+		       info.Width);
+	}
+
+	TFAnimation_GetInfo(animation, &info);
+
+	if(info.CurFrame < info.NumFrames) {
+		return (1);
+	}
+
+	return (0);
 }
 
-void EndFli()
-{
-  if(animation==NULL) return;
-  TFAnimation_Delete(animation);
-  animation=NULL;
-  free(TFframe);
-  free(TFpalette);
+void EndFli() {
+	if(animation == NULL) {
+		return;
+	}
+
+	TFAnimation_Delete(animation);
+	animation = NULL;
+
+	free(TFframe);
+	free(TFpalette);
 }
 
-void ResetFli()
-{
-  if(animation==NULL) return;
-  TFAnimation_Delete(animation);
-  animation=TFAnimation_NewFile(TFNombre);
-  if(animation==NULL) return;
-  TFBuffers_Set(animation, TFframe, TFpalette);
-  Nextframe();
+void ResetFli() {
+	if(animation == NULL) {
+		return;
+	}
+
+	TFAnimation_Delete(animation);
+	animation = TFAnimation_NewFile(TFNombre);
+	if(animation == NULL) {
+		return;
+	}
+
+	TFBuffers_Set(animation,
+	              TFframe,
+	              TFpalette);
+	Nextframe();
 }
 
 int quit_warning;
 
-static void Error_Reporter(char *msg)
-{
-  quit_warning=(int)msg;
+static void Error_Reporter(char *msg) {
+	quit_warning = (int)msg;
 }
 
 static void Palette_Update(TFUByte (*TFpalette)[256][3]) {
-  char *d=(char*)TFpalette;
-  int n,m=0;
+	char *d = (char*)TFpalette;
+	int n, m = 0;
 
-  for (n=0;n<192;n++) m+=*((int*)d+n);
-  if (m) {
+	for(n = 0; n < 192; n++) {
+		m += *((int *)d + n);
+	}
+	if(m) {
+		fli_palette_update = 1;
 
-  fli_palette_update=1;
-  memcpy(paleta,d,768);
-  dr=now_dacout_r=dacout_r=0;
-  dg=now_dacout_g=dacout_g=0;
-  db=now_dacout_b=dacout_b=0;
-  nueva_paleta();
-  paleta_cargada=1;
+		memcpy(paleta,
+		       d,
+		       768);
 
-  }
+		dr = now_dacout_r = dacout_r = 0;
+		dg = now_dacout_g = dacout_g = 0;
+		db = now_dacout_b = dacout_b = 0;
+
+		nueva_paleta();
+
+		paleta_cargada=1;
+	}
 }
