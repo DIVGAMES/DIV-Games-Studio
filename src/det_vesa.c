@@ -53,6 +53,7 @@ void detectar_vesa(void) { // Detects available video modes
 			free(modes[i]);
 		}
 		num_modos=i-1;
+		free(modes);
 
 	}
 	
