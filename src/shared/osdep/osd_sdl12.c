@@ -60,7 +60,7 @@ void OSDEP_SetCaption(char *title, char *icon) {
 OSDEP_VMode **OSDEP_ListModes(void) {
 	SDL_Rect **modes;
 	int i;
-	static OSDEP_VMode *smodes[1024];
+	OSDEP_VMode **smodes;
 
 	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE);
 	if(modes == (SDL_Rect **)0) {
@@ -71,15 +71,13 @@ OSDEP_VMode **OSDEP_ListModes(void) {
 		return -1;
 	}
 
-	for(i = 0; modes[i]; ++i) {
-		if(modes[i]) {
+	smodes = calloc(1024, sizeof(OSDEP_VMode *));
+
+	for(i = 0; i < 1023 && modes[i]; ++i) {
+			//Note: smodes[1023] reserved to NULL
 			smodes[i]    = (OSDEP_VMode *)malloc(sizeof(OSDEP_VMode));
 			smodes[i]->w = modes[i]->w;
 			smodes[i]->h = modes[i]->h;
-		}
-		else {
-			smodes[i]    = NULL;
-		}
 	}
 
 	return smodes;
