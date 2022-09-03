@@ -50,6 +50,7 @@ void detectar_vesa(void) { // Detects available video modes
 	} else {
 		for(i=0;modes[i];++i) {
 			modos[i].ancho=modes[i]->w; modos[i].alto=modes[i]->h; modos[i].modo=1;
+			free(modes[i]);
 		}
 		num_modos=i-1;
 
