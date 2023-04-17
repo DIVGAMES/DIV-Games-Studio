@@ -1056,6 +1056,7 @@ free_resources();
   if ((lprg=fopen("system/exec.pgm","wb"))==NULL) c_error(0,0);
 
   
+  printf("Default buffer size: %d\n", default_buffer);
 
   imem_max=default_buffer; imem=0;
   if ((mem_ory=mem=(int*)malloc(imem_max*sizeof(memptrsize)))==NULL) c_error(0,0);
@@ -1285,7 +1286,7 @@ void c_error(word tipo, word e) {
   // _case_sensitive
   memcpy(lower+129,"ueaaaaçeeeiiiaaeææooouuyouø£Ø×ƒaiou",35);
   memcpy(lower+'A',"abcdefghijklmnopqrstuvwxyz",26);
-  lower['Ñ']='ñ';
+//  lower['Ñ']='ñ';
 
   comp_exit();
 }
@@ -1869,7 +1870,11 @@ void lexico(void) {
 //      fprintf(stdout,"FILE: %s\n",(char *)ivnom.b);
 //	      fprintf(stdout,"LOOKING FOR FILE: %s [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
 
-      if ((!ivnom.b[0]!='.' && ivnom.b[1]!=0) && (ivnom.b[0]!='/' && ivnom.b[1]!=0) && strcmp("/",(char *)ivnom.b) && (f=div_open_file((char *)ivnom.b))!=NULL) {
+      if (
+        (!ivnom.b[0]!='.' && ivnom.b[1]!=0) && 
+        (ivnom.b[0]!='/' && ivnom.b[1]!=0) && 
+        strcmp("/",(char *)ivnom.b) && 
+        (f=div_open_file((char *)ivnom.b))!=NULL ) {
 	      fprintf(stdout,"FOUND FILE: [%s] [%s] [%s]\n",(char *)ivnom.b,full,(char *)&tipo[8]);
 
         empaquetable=0;
@@ -1895,9 +1900,10 @@ void lexico(void) {
           if (!strcmp((char *)cwork,"wld\x1a\x0d\x0a")) empaquetable=1;
           if (!strcmp((char *)cwork,"wld\x1a\x0d\x0a\x01")) empaquetable=1;
         }
-
-        fclose(f);
-
+        if(f) {
+          fclose(f);
+          f = NULL;
+        }
         if (IsWAV(full)) empaquetable=1;
 
         // ???
@@ -3298,7 +3304,7 @@ void sintactico (void) {
             lexico();
             memcpy(lower+129,"üéâäàåçêëèïîìäåéææôöòûùÿöüø£Ø×ƒáíóú",35);
             memcpy(lower+'A',"ABCDEFGHIJKLMNOPQRSTUVWXYZ",26);
-            lower['Ñ']='Ñ';
+//            lower['Ñ']='Ñ';
             break;
           case 4: // _ignore_errors
             lexico();
@@ -7552,6 +7558,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 
+  return NULL;
 }
 
 FILE * div_open_file(char * file) {

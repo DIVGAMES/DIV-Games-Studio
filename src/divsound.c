@@ -14,7 +14,9 @@ void InitSound(void)
 {
 //	SDL_Init(SDL_INIT_AUDIO);
 //	printf("Sound system initialised\n");
-SDL_InitSubSystem( SDL_INIT_AUDIO );
+
+
+//SDL_InitSubSystem( SDL_INIT_AUDIO );
 #ifdef MIXER
 
 int audio_rate = 44100;
@@ -124,7 +126,7 @@ void EndSound(void)
 Mix_CloseAudio();
 #endif
 
-SDL_QuitSubSystem(SDL_INIT_AUDIO);
+//SDL_QuitSubSystem(SDL_INIT_AUDIO);
 	
 #ifdef NOTYET
   judas_uninit();

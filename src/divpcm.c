@@ -221,7 +221,7 @@ void MOD1(void) {
   wrectangulo(v.ptr, an, al, c0, 1, 38, an-2,       11);
   wrectangulo(v.ptr, an, al, c0, 1, 38,   21,       11);
 
-  if(Mix_PlayingMusic() && mymodinfo->SongCode == SongCode) {
+  if(OSDEP_Mix_PlayingMusic() && mymodinfo->SongCode == SongCode) {
     if(ModButton && ModWindow==v.orden) wput(v.ptr, an, al, 2, 39, -214);
     else                                wput(v.ptr, an, al, 2, 39, -234);
   } else {
@@ -250,7 +250,7 @@ void MOD2(void) {
       ModWindow=v.orden;
       need_refresh=1;
 #ifdef MIXER
-      if(Mix_PlayingMusic() && mymodinfo->SongCode==SongCode) {
+      if(OSDEP_Mix_PlayingMusic() && mymodinfo->SongCode==SongCode) {
         FreeMOD();
         Mix_FreeMusic(mymodinfo->music);
       } else {
@@ -302,8 +302,8 @@ void MOD0(void) {
 
 void FreeMOD(void)
 {
-  Mix_HaltMusic();
-  Mix_SetPostMix(NULL, NULL);
+  OSDEP_Mix_HaltMusic();
+  OSDEP_Mix_SetPostMix(NULL, NULL);
 /*  switch(SongType)
   {
     case XM:   judas_freexm();  break;
@@ -360,7 +360,7 @@ void mostrar_mod_meters(void)
 
   if(mymodinfo->SongCode == SongCode)
   {
-    if(Mix_PlayingMusic())
+    if(OSDEP_Mix_PlayingMusic())
     {
       wbox(v.ptr, an, al, c1,  2, 10,    an-4, al-12-10);
       wbox(v.ptr, an, al, c2, 22, 39, an-4-20,        9);
@@ -502,8 +502,8 @@ Mix_Chunk *DIVMIX_LoadPCM(char *path) {
 
 void OpenSound(void) {
   pcminfo   *mypcminfo;
-  Uint32 wav_length;
-  Uint8 *wav_buffer;
+  uint32_t wav_length;
+  uint8_t *wav_buffer;
 
 #ifdef MIXER
 
@@ -1015,7 +1015,7 @@ debugprintf("TODO - divpcm.cpp OpenDesktopSong\n");
 
 int songposcount=0;
 // make a passthru processor function that does nothing...
-void noEffect(void *udata, Uint8 *stream, int len)
+void noEffect(void *udata, uint8_t *stream, int len)
 {
   songposcount++;
   if(songposcount==32) {
@@ -1217,7 +1217,7 @@ void EditSound1(void)
   int     x, y, y0, y1, p0, p1;
   int     Ancho, Alto, First=1, lx, ly;
   short   muestra;
-  char    cwork[6];
+  char    cwork[10];
 
   _show_items();
 
@@ -1360,7 +1360,7 @@ void EditSound2(void)
 void EditSound3(void)
 {
 //	printf("TODO - divpcm.cpp EditSound3\n");
-Mix_HaltChannel(-1);
+OSDEP_Mix_HaltChannel(-1);
 #ifdef NOTYET
   if(judas_channel[0].smp) judas_stopsample(0);
 #endif
@@ -1520,7 +1520,7 @@ void ModifySound(int option)
   fin = (float)final*tam_rel;
   if(final==ancho_ventana) fin=mypcminfo->SoundSize;
 
-	Mix_HaltChannel(-1);
+	OSDEP_Mix_HaltChannel(-1);
 	
 //  if(judas_channel[0].smp) judas_stopsample(0);
 

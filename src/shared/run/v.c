@@ -171,9 +171,11 @@ void set_dac (void) {
           colors[i].g=dac[b+1]*4;
           colors[i].b=dac[b+2]*4;
           b+=3;
-    }
-	if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
-		printf("Failed to set palette :(\n"); 
+  }
+  
+	if(!OSDEP_SetPalette(vga, colors, 0, 256)) {
+		// printf("Failed to set palette :(\n"); 
+  }
 	
 	retrazo();
 #else
@@ -245,7 +247,7 @@ printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 //#endif
 
 //hide the mouse
-SDL_ShowCursor(SDL_DISABLE);
+OSDEP_ShowCursor(SDL_DISABLE);
 //	if(vga)
 //		SDL_FreeSurface(vga);	
 	vga=NULL;
@@ -304,9 +306,9 @@ SDL_ShowCursor(SDL_DISABLE);
 #endif
 
 
-#ifdef STDOUTLOG
+// #ifdef STDOUTLOG
 	printf("SET VIDEO MODE %x\n",vga);
-#endif
+// #endif
 	OSDEP_SetCaption( "DIVDX 3.01", "" );
 
 	modovesa=1;

@@ -1,7 +1,7 @@
 #ifndef __OSD_SDL2__
 #define __OSD_SDL2__
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -10,11 +10,11 @@
 #endif
 
 #ifdef MIXER
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #endif
 
 #ifdef IMAGE
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 #endif
 
 #include "osd_sdl.h"
@@ -22,3 +22,7 @@ typedef SDL_Keymod OSDEPMod;
 #endif
 
 void OSDEP_SetWindowSize(int w, int h);
+
+int OSDEP_JoystickNumButtons(OSDEP_Joystick *n);
+int OSDEP_JoystickNumHats(OSDEP_Joystick *n);
+int OSDEP_JoystickNumAxes(OSDEP_Joystick *n);

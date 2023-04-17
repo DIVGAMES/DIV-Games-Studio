@@ -6,7 +6,7 @@
 # -a, --author       to filter by author
 # -s, --since        to select start date
 # -u, --until        to select end date
-AGO="3 months ago"
+AGO="30 months ago"
 
 if [ ! -z "$1" ] 
 then

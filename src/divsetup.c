@@ -1086,7 +1086,7 @@ void tapiz_thumb(void)
 	byte *ptr;
 
 
-	SDL_Rect rc;
+	OSDEP_Rect rc;
 	an=128*big2; al=88*big2;
 
 	preparar_tapiz_temp();
@@ -1107,8 +1107,8 @@ void tapiz_thumb(void)
 	rc.w=an;
 	rc.h=al;
 
-	SDL_BlitSurface(tempsurface,NULL, v.surfaceptr, &rc);
-	SDL_FreeSurface(tempsurface);
+	OSDEP_BlitSurface(tempsurface,NULL, v.surfaceptr, &rc);
+	OSDEP_FreeSurface(tempsurface);
 	tempsurface=NULL;
 
 
@@ -1165,7 +1165,7 @@ void tapiz_thumb(void)
 
 byte x_ctapiz[256];
 
-extern SDL_Surface *vga;
+extern OSDEP_Surface *vga;
 
 
 void preparar_tapiz_temp(void) {

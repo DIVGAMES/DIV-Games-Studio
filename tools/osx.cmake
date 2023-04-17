@@ -1,5 +1,6 @@
 # OSX cmake include
 SET(HAS_SDL 1)
+SET(HAS_RAYLIB 0)
 SET(HAS_SDLTTF 0)
 SET(HAS_SDLIMAGE 0)
 SET(HAS_ZLIB 1)
@@ -12,6 +13,12 @@ SET(HAS_GIT 0)
 
 SET (PLATFORM "OSX")
 SET (TARGETOS "OSX")
-FILE(GLOB OSX_SOURCES "src/osx/*.c")
+#FILE(GLOB OSX_SOURCES "src/osx/*.c")
 SET(OSDEP ${OSDEP} ${OSX_SOURCES} "src/shared/osdep.c" "src/shared/unzip.c")
 INCLUDE_DIRECTORIES("src/osx")
+
+IF(HAS_SDL EQUAL 2)
+set(SDL2_INCLUDE_DIRS /opt/homebrew/include/SDL2)
+set(SDL2_MIXER_DIRS /opt/homebrew/include/SDL2)
+set(SDL2_LIBRARIES SDL2 SDL2_mixer)
+ENDIF()

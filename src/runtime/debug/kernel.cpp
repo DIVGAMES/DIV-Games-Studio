@@ -83,8 +83,13 @@ case lcal:
   #endif
   mem[id+_IP]=ip+1; id2=id; if (sp>long_pila) exer(3);
   procesos++; ip=mem[ip]; id=id_start;
-
-//printf("Processes: %d  id:%d p*len:%d id_end: %d\n",procesos,id_end-id,(id_start)+((procesos-2)*iloc_len),id_end);
+dirtylist = true;
+printf("Processes: %d  id:%d p*len:%d id_end: %d\n",
+procesos,
+id,
+// id_end-id,
+(id_start)+((procesos-2)*iloc_len),
+id_end);
 
 
 if((id_start+((procesos-2)*iloc_len)) == id_end)
@@ -99,7 +104,17 @@ if((id_start+((procesos-2)*iloc_len)) == id_end)
 #ifdef LLPROC
   insert_process(id);
 #endif
-  if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; if(id_end>id_max) id_max = id_end;}
+//  printf("Spawning new process, setting dirty flag\n");
+//  dirtylist = true;
+
+  if (id>id_end) { 
+    if (id>imem_max-iloc_len) 
+      exer(2); 
+    id_end=id; 
+    if(id_end>id_max) {
+      id_max = id_end;
+    }
+  }
   memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
   mem[id+_Id]=id;
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
@@ -225,6 +240,7 @@ case lrtf:
   break;
 case lclo:
   procesos++; id2=id; id=id_start;
+  dirtylist = true;
   while (mem[id+_Status] && id<=id_end) id+=iloc_len;
   if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
   memcpy(&mem[id],&mem[id2],iloc_len<<2);

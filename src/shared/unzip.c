@@ -21,7 +21,7 @@ char exebin[255];
 #include "osdep.h"
 
 #ifdef __APPLE__
-#include "fmemopen.h"
+//#include "fmemopen.h"
 #endif
 
 #ifdef STDC

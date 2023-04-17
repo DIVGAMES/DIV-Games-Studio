@@ -12,3 +12,4 @@ SET(HAS_JPEG 0) # legacy jpeg support
 SET(HAS_FLI 1) # legacy fli support
 SET(HAS_MODE8 0) # legacy mode8 support
 SET(HAS_GIT 0) # libgit support
+#SET(DEBUG 1) # debug build

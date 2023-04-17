@@ -20,17 +20,25 @@ static uint32_t flags;
 
 // startup / shutdown
 
-void OSDEP_Init(void) {
+void OSDEP_ShowCursor(int show) {
+	printf("%s\n",__FUNCTION__ );
 
+	SDL_ShowCursor(show);
+}
+
+void OSDEP_Init(void) {
+printf("OSDEP INIT");
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 #endif
 
 	SDL_Init( SDL_INIT_EVERYTHING);
 
+	printf("SDL INIT EVERYTHING");
 }
 
 void OSDEP_Quit(void) {
+	printf("%s\n",__FUNCTION__ );
 	if(OSDEP_screen != NULL) {
 		SDL_FreeSurface(OSDEP_screen);
 		OSDEP_screen = NULL;
@@ -46,16 +54,22 @@ void OSDEP_Quit(void) {
 
 // Timer
 uint32_t OSDEP_GetTicks(void) {
+		// printf("%s\n",__FUNCTION__ );
+
 	return SDL_GetTicks();
 }
 
 // Display
 void OSDEP_SetCaption(char *title, char *icon) {
+		printf("%s\n",__FUNCTION__ );
+
 	SDL_WM_SetCaption((const char *)title, (const char *)icon);
 
 }
 
 OSDEP_VMode ** OSDEP_ListModes(void) {
+		printf("%s\n",__FUNCTION__ );
+return 0;
 	SDL_Rect **modes;
 	int i;
 	static OSDEP_VMode *smodes[1024];
@@ -84,17 +98,25 @@ OSDEP_VMode ** OSDEP_ListModes(void) {
 }
 
 void OSDEP_WarpMouse(int x, int y) {
+		printf("%s\n",__FUNCTION__ );
+
 	SDL_WarpMouse(x, y);
 }
 
 int OSDEP_IsFullScreen(void) {
+		printf("%s\n",__FUNCTION__ );
+
 	if (OSDEP_screen->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
     return 0; // Return false if surface is windowed
 
 }
 
 OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
-//	fprintf(stdout,"%s %d %d\n",__FUNCTION__,width, height);
+		// printf("%s\n",__FUNCTION__ );
+// width = 640;
+// height = 480;
+
+	fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
 	// clear event queue
 
 	SDL_Event event;
@@ -137,10 +159,14 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 
 
 void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
+		printf("%s\n",__FUNCTION__ );
+
 	SDL_UpdateRect(screen, x, y, w, h);
 }
 
 void OSDEP_Flip(OSDEP_Surface *s) {
+
+	printf("%d %s %s\n",__LINE__, __FILE__, __FUNCTION__ );
 
 #ifdef __EMSCRIPTEN__
 		SDL_Flip(OSDEP_screen);
@@ -175,50 +201,78 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 		}
 	}
 	SDL_Flip(OSDEP_screen);
+	printf("%d %s %s completed\n",__LINE__, __FILE__, __FUNCTION__ );
+
 }
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
+printf("%s\n",__FUNCTION__ );
 
 	memcpy(OSDEP_pal, colors, 256*sizeof(OSDEP_Color));
 	SDL_SetPalette(OSDEP_screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0,256);
-	return SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
+
+
+	int res = SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
+printf("REsult: %d\n", res);
+
+return res;
+
 }
 
 // Joysticks
 int32_t OSDEP_NumJoysticks(void) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_NumJoysticks();
 }
 
-int OSDEP_JoystickNumButtons(int n) {
+int OSDEP_JoystickNumButtons(OSDEP_Joystick *n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickNumButtons(n);
+
 }
 
-int OSDEP_JoystickNumHats(int n) {
+int OSDEP_JoystickNumHats(OSDEP_Joystick *n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickNumHats(n);
 }
 
-int OSDEP_JoystickNumAxes(int n) {
+int OSDEP_JoystickNumAxes(OSDEP_Joystick *n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickNumAxes(n);
 }
 
 uint8_t OSDEP_JoystickGetButton(OSDEP_Joystick *joystick, int button) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickGetButton(joystick, button);
 }
 
 int16_t OSDEP_JoystickGetAxis(OSDEP_Joystick *joystick, int axis) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickGetAxis(joystick, axis);
 
 }
 OSDEP_Joystick * OSDEP_JoystickOpen(int n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickOpen(n);
 }
 
 void OSDEP_JoystickClose(OSDEP_Joystick *joy) {
+	printf("%s\n",__FUNCTION__ );
+
 	SDL_JoystickClose(joy);
 	return;
 }
 
 char * OSDEP_JoystickName(int n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickName(n);
 }
 
@@ -338,10 +392,35 @@ void OSDEP_keyInit(void) {
 
 
 //OSDEP_key[SDLK_LSHIFT]=43;
-
 #ifdef NOTYET
 //const _wave=41
 const _c_center=76
 #endif
 
 }
+
+
+// Mixer
+
+void OSDEP_Mix_HaltChannel(int n) {
+	Mix_HaltChannel(n);
+}
+
+unsigned short OSDEP_Mix_VolumeMusic(int n) {
+	return OSDEP_Mix_VolumeMusic(n);
+}
+
+
+unsigned short OSDEP_Mix_Volume(int n ,int m) {
+	return Mix_Volume(n,m);
+}
+int OSDEP_Mix_PlayingMusic(void) {
+	return Mix_PlayingMusic();
+}
+void OSDEP_Mix_HaltMusic(void) {
+	Mix_HaltMusic();
+}
+void OSDEP_Mix_SetPostMix(int n, int m) {
+	Mix_SetPostMix(n,m);
+}
+void OSDEP_Mix_HaltChannel(int);

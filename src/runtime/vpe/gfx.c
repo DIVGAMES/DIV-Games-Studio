@@ -66,8 +66,9 @@ void SetPalette(VPEByte *pal_ptr)
           colors[i].b=pal_ptr[b+2]*4;
           b+=3;
     }
-       if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
-               printf("Failed to set palette :(\n"); 
+       if(!OSDEP_SetPalette(vga, colors, 0, 256)) {
+			// printf("Failed to set palette :(\n"); 
+	   }
        
        retrazo();
 #else

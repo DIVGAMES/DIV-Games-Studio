@@ -127,7 +127,11 @@ int Abrir_FPG(FPG *Fpg,char *Name) {
 	}
 
 	Fpg->nIndex=0;
-	strcpy((char *)Fpg->ActualFile,Name);
+        printf("Name: %s\n", Name);
+        printf("FPG->ActualFile: %s\n", (char *)FPG->ActualFile);
+        if(Name != Fpg->ActualFile) {
+                strcpy((char *)Fpg->ActualFile,Name);
+        }
 	fread(newdac,768,1,fpg);
 	memcpy(dac4,newdac,768);
 	NewDacLoaded=1;

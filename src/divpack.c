@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <zlib.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #define INTOOUT  \
 \

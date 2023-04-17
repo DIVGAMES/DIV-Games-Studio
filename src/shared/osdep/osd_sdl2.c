@@ -17,6 +17,17 @@ extern int vheight;
 
 void OSDEP_Init(void) {
 
+// if(SDL_Init(SDL_INIT_VIDEO) < 0)
+//     {
+//         fprintf(stderr, "SDL initialization failed: %s\n", SDL_GetError());
+//         // return 1;
+//     }
+
+    // if(SDL_Init(SDL_INIT_VIDEO) < 0)
+    // {
+    //     fprintf(stderr, "SDL initialization failed: %s\n", SDL_GetError());
+    //     return;
+    // }
 	SDL_Init( SDL_INIT_EVERYTHING);
 // on windows, get printf working.
 #ifdef __WIN32
@@ -94,14 +105,107 @@ SDL_Log("VW: %d VH: %d W: %d H: %d\n",vwidth, vheight, w,h);
 
 }
 
+OSDEP_Surface * OSDEP_SetVideoModeX(int width, int height, int bpp, char fs) {
+	fprintf(stdout, "Setting Video mode to %d %d\n", width, height);
+// #include <SDL2/SDL.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <time.h>
+
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+#define SCREEN_BPP 8
+
+// int main(int argc, char* argv[])
+// {
+    SDL_Window* window = NULL;
+    SDL_Surface* screen = NULL;
+    SDL_Event event;
+    int done = 0;
+
+    srand(time(NULL));
+
+    if(SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        fprintf(stderr, "SDL initialization failed: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    window = SDL_CreateWindow("Random Pixel Colors", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    if(window == NULL)
+    {
+        fprintf(stderr, "Unable to create window: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    screen = SDL_CreateRGBSurfaceWithFormat(0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_PIXELFORMAT_INDEX8);
+    if(screen == NULL)
+    {
+        fprintf(stderr, "Unable to create surface: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    SDL_Color palette[256];
+
+    for(int i = 0; i < 256; i++)
+    {
+        palette[i].r = rand() % 256;
+        palette[i].g = rand() % 256;
+        palette[i].b = rand() % 256;
+        palette[i].a = 255;
+    }
+
+    SDL_SetPaletteColors(screen->format->palette, palette, 0, 256);
+
+    while(!done)
+    {
+        while(SDL_PollEvent(&event))
+        {
+            if(event.type == SDL_QUIT)
+            {
+                done = 1;
+            }
+        }
+
+        Uint8* pixels = (Uint8*) screen->pixels;
+
+        for(int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
+        {
+            pixels[i] = rand() % 256;
+        }
+
+        SDL_BlitSurface(screen, NULL, SDL_GetWindowSurface(window), NULL);
+        SDL_UpdateWindowSurface(window);
+    }
+
+    SDL_FreeSurface(screen);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+// }
+
+}
+
+
 OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
+	// width = 640;
+	// height = 480;
 	fprintf(stdout, "%s\n", __FUNCTION__);
 	Uint32 rmask, gmask, bmask, amask;
+
+	SDL_Event event;
+	while(SDL_PollEvent(&event)) {
+		fs=fs;
+	}
 
 
 	SDL_Log("Setting Videomode to %d x %d\n", width, height);
     /* SDL interprets each pixel as a 32-bit number, so our masks must depend
        on the endianness (byte order) of the machine */
+
+	   SDL_RendererInfo info = {};
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
     gmask = 0x00ff0000;
@@ -122,45 +226,169 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
      //                   width, height);
 
     } else {
-    	SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &OSDEP_window, &OSDEP_renderer);
+		OSDEP_window= SDL_CreateWindow("Random Pixel Colors", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+		if(OSDEP_window == NULL)
+    {
+        fprintf(stderr, "Unable to create window: %s\n", SDL_GetError());
+        return 1;
+    }
+		//SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_CENTERED,
+        //                                  SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN);
+
+		// // Create a renderer
+    	// OSDEP_renderer = SDL_CreateRenderer(OSDEP_window, -1, 0);
+
+    	// SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &OSDEP_window, &OSDEP_renderer);
     	// hide mouse cursor
-		SDL_ShowCursor(SDL_DISABLE);
+		// SDL_ShowCursor(SDL_DISABLE);
 
 	}
-    if(OSDEP_texture !=NULL) {
-	    SDL_DestroyTexture(OSDEP_texture);
-	    OSDEP_texture = NULL;
-    }
-    if(OSDEP_buffer32 !=NULL) {
-    	SDL_FreeSurface(OSDEP_buffer32);
-    	OSDEP_buffer32 = NULL;
-    }
+
+	// SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
+//  	SDL_UpdateWindowSurface(OSDEP_window);
+
+//	if(!OSDEP_renderer) {
+//		printf("Failed to create renderer\n");
+//	}
+
+	if(!OSDEP_window) {
+		printf("Failed to create window\n");
+	}
+
+	// if(SDL_GetRenderDriverInfo(0, &info) == 0) {
+	// 	int supported = 0;
+	// 	for(int i = 0; i < info.num_texture_formats; ++i) {
+	// 		if(info.texture_formats[i] == SDL_PIXELFORMAT_INDEX8) {
+	// 			supported = 1;
+	// 			break;
+	// 		}
+	// 	}
+	// 	printf("Supported: %s\n", supported ? "YES" : "NO");
+	// } else {
+	// 	printf("Failed: %s\n", SDL_GetError());
+	// }
+
+    // if(OSDEP_texture !=NULL) {
+	//     SDL_DestroyTexture(OSDEP_texture);
+	//     OSDEP_texture = NULL;
+    // }
+    // if(OSDEP_buffer32 !=NULL) {
+    // 	SDL_FreeSurface(OSDEP_buffer32);
+    // 	OSDEP_buffer32 = NULL;
+    // }
+
     if(OSDEP_buffer8 !=NULL) {
     	SDL_FreeSurface(OSDEP_buffer8);
     	OSDEP_buffer8 = NULL;
     }
 
 
-	OSDEP_buffer8 = SDL_CreateRGBSurface(0, width, height, 8,
-		0,0,0,0);
+    OSDEP_buffer8 = SDL_CreateRGBSurfaceWithFormat(0, width, height, 8, SDL_PIXELFORMAT_INDEX8);
+
+	SDL_Color palette[256];
+
+    for(int i = 0; i < 256; i++)
+    {
+        palette[i].r = rand() % 256;
+        palette[i].g = rand() % 256;
+        palette[i].b = rand() % 256;
+        palette[i].a = 255;
+    }
+
+    SDL_SetPaletteColors(OSDEP_buffer8->format->palette, palette, 0, 256);
+
+//	OSDEP_buffer8 = SDL_CreateRGBSurfaceWithFormat(0, width, height, 8, SDL_PIXELFORMAT_INDEX8);
+
+	// SDL_CreateRGBSurface(0, width, height, 8,
+		// 0,0,0,0);
 	
-	OSDEP_buffer32 = SDL_CreateRGBSurface(0, width, height, 32,
-		0,0,0,0);
+	if(!OSDEP_buffer8) {
+		printf("Failed to create 8bit buffer\n");
+	}
+//	OSDEP_buffer32 = SDL_GetWindowSurface(OSDEP_window);
+	// OSDEP_buffer32 = SDL_CreateRGBSurface(0, width, height, 32,
+		// 0,0,0,0);
 		// rmask,
 		// gmask,
 		// bmask,
 		// amask);
 
+	if(!OSDEP_buffer32) {
+		printf("Failed to create 32bit buffer\n");
+	}
 
-	OSDEP_texture = SDL_CreateTextureFromSurface(OSDEP_renderer, OSDEP_buffer32);
+//	OSDEP_texture = SDL_CreateTextureFromSurface(OSDEP_renderer, OSDEP_buffer32);
 
+//	if(!OSDEP_texture) {
+//		printf("Failed to create texture\n");
+//	}
+
+/*
+int done = 0;
+
+OSDEP_Flip(OSDEP_buffer8);
+    while(!done)
+    {
+        while(SDL_PollEvent(&event))
+        {
+            if(event.type == SDL_QUIT)
+            {
+                done = 1;
+            }
+        }
+
+        Uint8* pixels = (Uint8*) OSDEP_buffer8->pixels;
+
+        for(int i = 0; i < width * height; i++)
+        {
+            pixels[i] = rand() % 256;
+        }
+
+        SDL_BlitSurface(OSDEP_buffer8, NULL, SDL_GetWindowSurface(OSDEP_window), NULL);
+        SDL_UpdateWindowSurface(OSDEP_window);
+    }
+
+    // SDL_FreeSurface(screen);
+    // SDL_DestroyWindow(window);
+    // SDL_Quit();
+*/
 	return OSDEP_buffer8;
 }
 
+extern int vga_an;
+extern int vga_al;
 
 void OSDEP_Flip(OSDEP_Surface *s) {
 //	fprintf(stdout, "%s\n", __FUNCTION__);
 
+// SDL_Color palette[256];
+
+//     for(int i = 0; i < 256; i++)
+//     {
+//         palette[i].r = rand() % 256;
+//         palette[i].g = rand() % 256;
+//         palette[i].b = rand() % 256;
+//         palette[i].a = 255;
+//     }
+
+//     SDL_SetPaletteColors(s->format->palette, palette, 0, 256);
+
+// 	Uint8* pixels = (Uint8*) s->pixels;
+
+//         for(int i = 0; i < vga_an * vga_al; i++)
+//         {
+//             pixels[i] = rand() % 256;
+//         }
+
+	SDL_BlitSurface(OSDEP_buffer8, NULL, SDL_GetWindowSurface(OSDEP_window), NULL);
+	SDL_UpdateWindowSurface(OSDEP_window);
+    // SDL_Log("Updateing Texture\n");
+
+	return;
+
+}
+
+void blah(void) {
 	void *pixels; 
   int pitch; 
 
@@ -199,13 +427,13 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 }
 
 void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
-//	fprintf(stdout, "%s\n", __FUNCTION__);
+	// fprintf(stdout, "%s\n", __FUNCTION__);
 	OSDEP_Flip(screen);
 //	SDL_RenderPresent(OSDEP_renderer);	
 }
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
-//	fprintf(stdout, "%s\n", __FUNCTION__);
+	fprintf(stdout, "%s\n", __FUNCTION__);
 //	return 0;
 
 	SDL_SetPaletteColors(surface->format->palette, colors, 0, 256);
@@ -218,15 +446,15 @@ int32_t OSDEP_NumJoysticks(void) {
 	return SDL_NumJoysticks();
 }
 
-int OSDEP_JoystickNumButtons(int n) {
+int OSDEP_JoystickNumButtons(OSDEP_Joystick *n) {
 	return SDL_JoystickNumButtons(n);
 }
 
-int OSDEP_JoystickNumHats(int n) {
+int OSDEP_JoystickNumHats(OSDEP_Joystick *n) {
 	return SDL_JoystickNumHats(n);
 }
 
-int OSDEP_JoystickNumAxes(int n) {
+int OSDEP_JoystickNumAxes(OSDEP_Joystick *n) {
 	return SDL_JoystickNumAxes(n);
 }
 

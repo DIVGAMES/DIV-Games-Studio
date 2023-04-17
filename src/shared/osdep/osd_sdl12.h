@@ -1,7 +1,7 @@
 #ifndef __OSD_SDL12__
 #define __OSD_SDL12__
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <stdlib.h> 
 #include <string.h>
 
@@ -10,7 +10,7 @@
 #endif
 
 #ifdef MIXER
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 #endif
 
 #ifdef IMAGE

@@ -135,8 +135,8 @@ void InitMixer(UWORD card, UWORD address, UWORD master, UWORD voc, UWORD cd)
 {
   voc=(master<voc)?master:voc;
   cd=(master<cd)?master:cd;
-  cd=Mix_VolumeMusic(cd*8);
-  voc=Mix_Volume(-1, voc*8);
+  cd=OSDEP_Mix_VolumeMusic(cd*8);
+  voc=OSDEP_Mix_Volume(-1, voc*8);
 
 #ifdef NOTYET
     if (card > DEV_NOSOUND && card <= DEV_GUS)

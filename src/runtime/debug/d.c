@@ -151,7 +151,7 @@ static int ticks_debug;
 static int button = 0;
 int ids_old = 0, ids_inc;
 
-extern void exec_process(void);
+extern void exec_process(int fast);
 extern void trace_process(void);
 static void inspect0(void);
 static void debug0(void);
@@ -2484,7 +2484,7 @@ static void dread_mouse(void) {
 		n++;
 	}
 
-	fprintf(stdout, "%d %d %d %d\n", mouse_x, vga_an, mouse_y, vga_al);
+//	fprintf(stdout, "%d %d %d %d\n", mouse_x, vga_an, mouse_y, vga_al);
 
 
 	if (n) set_mouse(mouse_x, mouse_y);
@@ -2693,6 +2693,7 @@ void e(int texto) {
 	//	printf("ERROR: %s\n",(char *)text[texto]);
 	return;
 #endif
+	// printf("ERROR: %s\n",(char *)text[texto]);
 	int smouse_x, smouse_y;
 	int reloj_e = reloj, n;
 	int ticks_e = ticks;
@@ -4797,7 +4798,7 @@ static void debug2(void) {
 			ids_old = ids[ids_select];
 			ids_inc = ids_select - ids_ini;
 			do {
-				exec_process();
+				exec_process(0);
 				if (new_mode) ptr = change_mode();
 				if (call_to_debug) {
 					call(v.paint_handler);
@@ -5098,7 +5099,7 @@ static void debug2(void) {
 			break;
 		case 8: // Ex. Process
 		exec_proc:
-			exec_process();
+			exec_process(0);
 			if (new_mode) ptr = change_mode();
 			if (call_to_debug) {
 				call(v.paint_handler);

@@ -60,7 +60,10 @@ void load_index(void) {
     div_index=NULL;
   }
 
+  fprintf(stdout,"Loading help index...");
   if((f=fopen("help/help.idx","rb"))!=NULL) {
+  fprintf(stdout,"Success!\n");
+
     fseek(f,0,SEEK_END); len=ftell(f);
     if ((div_index=(byte*)malloc(len))!=NULL) {
       fseek(f,0,SEEK_SET); fread(div_index,1,len,f); fclose(f);
@@ -76,6 +79,8 @@ void load_index(void) {
         }
       } while (++si<index_end);
     }
+  } else {
+      fprintf(stdout,"Fail!\n");
   }
 }
 
@@ -91,7 +96,9 @@ void make_helpidx(void) {
   i_back=a_back=f_back=0; // La cola se vacía
 
   memset(helpidx,0,sizeof(helpidx));
+  fprintf(stdout,"Opening help file help/help.div ...");
   if((f=fopen("help/help.div","rb"))!=NULL) {
+    fprintf(stdout,"Success!\n");
     fseek(f,0,SEEK_END); len=ftell(f);
     if ((help=(byte*)malloc(len+10))!=NULL) {
 		memset(help,0,len+10);
@@ -118,6 +125,8 @@ void make_helpidx(void) {
 		helpidx[m*2+1]=(long)(i-help)-helpidx[m*2];
       free(help);
     }
+  } else {
+        fprintf(stdout,"Fail!\n");
   }
 }
 

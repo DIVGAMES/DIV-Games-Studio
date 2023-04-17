@@ -7,7 +7,8 @@
 #include <errno.h>
 
 void readmouse(void);
-#include "netlib.h"
+
+// #include "netlib.h"
 
 #include "cdrom.h"
 #include "divmixer.hpp"
@@ -110,6 +111,8 @@ int get_reloj(void) {
 //      Signal(proceso,se�al)
 //����������������������������������������������������������������������������
 
+extern int dirtylist;
+
 void _signal(void) {
   int i;
   bp=pila[sp-1];
@@ -132,7 +135,8 @@ void _signal(void) {
       }
     pila[--sp]=0;
   }
-
+//  printf("Status changed for id %d, setting dirty flag\n", bp);
+  dirtylist = true;
 }
 
 void signal_tree(int p, int s) {
@@ -4322,7 +4326,7 @@ void calculate(void) {
 extern int nullstring[4];
 extern int nstring;
 
-void __itoa(void) {
+void ___itoa(void) {
   itoa(pila[sp],(char*)&mem[nullstring[nstring]],10);
   pila[sp]=nullstring[nstring];
   nstring=((nstring+1)&3);
@@ -4859,7 +4863,7 @@ void function(void) {
     case 151: save_mapcx(0); break;
     case 152: write_in_map(); break;
     case 153: calculate(); break;
-    case 154: __itoa(); break;
+    case 154: ___itoa(); break;
     case 155: change_channel(); break;
     case 156: _malloc(); break;
     case 157: _free(); break;

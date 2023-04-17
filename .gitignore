@@ -1,4 +1,3 @@
-
 a.out
 CMakeCache.txt
 CMakeFiles/
@@ -36,3 +35,7 @@ zipdiv
 *.a
 *.dll
 *.o
+examples_/
+library/
+.DS_Store
+d-*

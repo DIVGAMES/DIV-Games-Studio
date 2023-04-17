@@ -16,6 +16,10 @@
 #define true 1
 #endif
 
+#ifdef HAS_SFMALLOC
+#define SF_TRANSPARENT
+#include "sfmalloc.h"
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Global Variables
@@ -547,11 +551,11 @@ GLOBAL_DATA int * system_clock, cclock, mclock;
 
 GLOBAL_DATA byte * copia; // Copia virtual de pantalla (del entorno)
 
-GLOBAL_DATA SDL_Surface *copia_surface;
-GLOBAL_DATA	SDL_Surface *tempsurface;
-GLOBAL_DATA SDL_Surface *mouse_surface;
-GLOBAL_DATA SDL_Surface *tapiz_surface; // background
-GLOBAL_DATA SDL_Surface *tapiz_temp_surface; // surface for preview
+GLOBAL_DATA OSDEP_Surface *copia_surface;
+GLOBAL_DATA	OSDEP_Surface *tempsurface;
+GLOBAL_DATA OSDEP_Surface *mouse_surface;
+GLOBAL_DATA OSDEP_Surface *tapiz_surface; // background
+GLOBAL_DATA OSDEP_Surface *tapiz_temp_surface; // surface for preview
 
 GLOBAL_DATA uint32_t colorkey;
 GLOBAL_DATA uint32_t rmask, gmask, bmask, amask;
@@ -631,7 +635,7 @@ GLOBAL_DATA TTF_Font* editorfont;
 
 #endif
 
-GLOBAL_DATA SDL_Color colors[256];
+GLOBAL_DATA OSDEP_Color colors[256];
 
 GLOBAL_DATA byte * font; // Font para el editor de programas / hipertexto
 GLOBAL_DATA int font_an,font_al; // Ancho y alto de los carácteres
@@ -717,7 +721,7 @@ struct tventana {
   int _x,_y,_an,_al;                    // Posición salvada al minimizarse
   byte * ptr;                           // Buffer de la ventana
 #ifdef TTF
-  SDL_Surface *surfaceptr;  
+  OSDEP_Surface *surfaceptr;  
 #endif
   struct tmapa * mapa;                  // Puntero a otro struct tipo mapa
   struct tprg * prg;                    // Puntero a otro struct tipo prg
@@ -1082,7 +1086,7 @@ typedef struct {
 typedef struct {
   int an,al;            // Ancho y Alto de la reducción
   char * ptr;           // ==NULL si el thumbnail no se ha comenzado a cargar
-  SDL_Surface *surfaceptr;
+  OSDEP_Surface *surfaceptr;
   int status;           // -1-No es una imagen, 0-Cargado, +N-Nº de bytes leidos
   int filesize;         // Longitud en bytes del fichero
   int tagged;           // Si esta señalizado o no (1/0)

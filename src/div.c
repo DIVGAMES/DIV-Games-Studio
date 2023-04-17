@@ -372,7 +372,7 @@ int DPMIalloc4k(void);
 
 #endif
 
-#if !defined ( GP2X ) && !defined (PS2)
+#if !defined ( GP2X ) && !defined (PS2) && !defined (AMIGA)
 #ifdef MIXER
 void print_init_flags(int flags)
 {
@@ -398,8 +398,8 @@ int main(int argc, char * argv[]) {
 	byte *prgbuf;
 	unsigned n;
 	debugprintf("Welcome to DIV\n");
-	
-#ifdef SDL
+
+#if defined (SDL) || (SDL2)
 	OSDEP_Init();
 	// SDL_INIT_EVERYTHING);
 #endif
@@ -499,6 +499,7 @@ int main(int argc, char * argv[]) {
 	for (n=0;n<24;n++) 
 		tipo[n].defecto=0; tipo[n].inicial=0; 
 
+printf("inicializa_textos\n");
 	inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
 
 	if(compilemode==1) {	
@@ -544,10 +545,10 @@ int main(int argc, char * argv[]) {
 
 	}
 
-	if(SDL_NumJoysticks() > 0)
-		SDL_JoystickOpen(0);
+	if(OSDEP_NumJoysticks() > 0)
+		OSDEP_JoystickOpen(0);
 
-#if !defined( GP2X ) && !defined (PS2) && !defined ( PSP )
+#if !defined( GP2X ) && !defined (PS2) && !defined ( PSP ) && !defined(AMIGA)
 #ifdef MIXER
 	int flags = MIX_INIT_MOD|MIX_INIT_OGG|MIX_INIT_FLAC;
 
@@ -562,7 +563,7 @@ int main(int argc, char * argv[]) {
 
 #ifndef __EMSCRIPTEN__
 	OSDEP_SetCaption((char *)texto[34], "" );
-	SDL_ShowCursor( SDL_FALSE );
+	OSDEP_ShowCursor( false );
 #else
 	OSDEP_SetCaption( "DIV2015 - Javascript HTML5", "" );
 #endif
@@ -708,6 +709,8 @@ extern char user1[];
 extern char user2[];
 
 void inicializa_entorno() {
+  fprintf(stdout,"%d %s\n", __LINE__, __FUNCTION__);
+  
   FILE * f;
   int n;
   char cWork[256];
@@ -718,9 +721,12 @@ void inicializa_entorno() {
     fclose(f);
   }
 
+fprintf(stdout,"User info: %s %s\n", user1,user2);
+
 	actualiza_caja(0,0,vga_an,vga_al);
     volcado_completo=1; volcado(copia);
-    
+
+
   if(!Interpretando) {
     if (!strlen(user1) || !strlen(user2)) {
       dialogo(usuario0);
@@ -733,7 +739,9 @@ void inicializa_entorno() {
 
 //  if(!CopiaDesktop) nueva_ventana(menu_principal0); else UpLoad_Desktop();
 
-  if(CopiaDesktop && !nueva_sesion && !primera_vez) UpLoad_Desktop();
+  if(CopiaDesktop && !nueva_sesion && !primera_vez) 
+  
+  UpLoad_Desktop();
  
   if (!primera_vez) {
     for (n=0;n<max_windows;n++)
@@ -1775,12 +1783,13 @@ void shell(void) {
 	} else {
 		
 		EndSound();
+#ifdef SDL
 #ifndef SDL2
 #if !defined ( GP2X ) && !defined (PS2) && !defined (PSP)
 		SDL_putenv("PROMPT=[DIV] $P$G");
 #endif
 #endif
-
+#endif
 		chdir(tipo[0].path);
 
 		system(s);
@@ -2683,7 +2692,7 @@ void vuelca_ventana(int m) {
   int _x,_y,_an,_al;
   int salta_x,salta_y;
 
-SDL_Rect trc;
+OSDEP_Rect trc;
 
   if (no_volcar_ventanas) return;
 
@@ -3512,6 +3521,7 @@ void end_lexcolor(void);
 //                 SV_cpu586,SV_cpu586p} SV_cpuType;
 
 void inicializacion(void) {
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 	FILE *f;
 	int n;
@@ -3524,7 +3534,7 @@ void inicializacion(void) {
 
 	detectar_vesa();
 
-	printf("Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
+	fprintf(stdout, "Num modes: %d (%d %d)\n",num_modos,vga_an, vga_al);
 
 	for (n=0;n<num_modos;n++) {
 		if (modos[n].ancho==vga_an && modos[n].alto==vga_al) {
@@ -3540,19 +3550,26 @@ void inicializacion(void) {
 		big2=big+1;
 	}
 */
+fprintf(stdout, "Initialising keyboard\n");
 	kbdInit();
 
 
 	if(!Interpretando) {
-		printf("%s (%d,%d)\n\n",marcavga,vga_an,vga_al); // *** Solo info usuario ***
+		fprintf(stdout, "%s (%d,%d)\n\n",marcavga,vga_an,vga_al); // *** Solo info usuario ***
 		check_oldpif();
 	}
 
+fprintf(stdout, "Initialising Help\n");
+
 	make_helpidx(); // *** Crea el índice del hipertexto ***
+fprintf(stdout, "Initialising Help Indexes\n");
+
 	load_index();   // *** Carga el glosario del hipertexto ***
 
+fprintf(stdout, "Initialising Graphc buffers\n");
+
 	if(!Interpretando)
-		printf("%s",(char *)texto[6]); // *** Init buffers gráficos ***
+		fprintf(stdout, "%s",(char *)texto[6]); // *** Init buffers gráficos ***
 
 	undo=(byte*)malloc(undo_memory);
 	tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
@@ -3563,30 +3580,68 @@ void inicializacion(void) {
 	}
 
 	fondo_raton=(byte*)malloc(1024*big2);
-	copia=(byte*)malloc(vga_an*vga_al+6)+6;
+  if(!fondo_raton) {
+    fprintf(stdout,"fondo raton: Could not allocate %d bytes\n", 1024*big2);
+  }
+	copia=(byte*)malloc(vga_an*vga_al+6)+6; 
+  if(!copia) {
+      fprintf(stdout,"copia: Could not allocate %d bytes\n", vga_an*vga_al+6);
+  }
 	dac=(byte*)malloc(768);
+  if(!dac) {
+      fprintf(stdout,"Could not allocate %d bytes\n", 768);
+  }
 	dac4=(byte*)malloc(768);
+  if(!dac4) {
+      fprintf(stdout,"Could not allocate %d bytes\n", 768);
+  }
 	cuad=(byte*)malloc(16384);
-  
+  if(!cuad) {
+      fprintf(stdout,"Could not allocate %d bytes\n", 16384);
+  }
 	ghost=(byte*)malloc(65536); // 256*256 combinations
+  if(!ghost) {
+      fprintf(stdout,"Could not allocate %d bytes\n", 65536);
+  }
 
 	barra=(byte*)malloc(vga_an*19*big2); //OJO
+  if(!barra) {
+
+      fprintf(stdout,"barra: Could not allocate %d bytes\n", vga_an*19*big2);
+      fprintf(stdout,"vga_an: %d big2:%d\n", vga_an, big2);
+  }
 	fill_dac=(byte*)malloc(256);
+  if(!fill_dac) {
+      fprintf(stdout,"Could not allocate %d bytes\n", 256);
+  }
 	error_window=(byte*)malloc(640*38*2);
+  if(!error_window) {
+      fprintf(stdout,"Could not allocate %d bytes\n", 640*38*2);
+  }
 
 	if (fondo_raton==NULL || copia==NULL || dac==NULL || dac4==NULL ||
 			cuad==NULL || ghost==NULL || barra==NULL || undo==NULL || tundo==NULL ||
-			fill_dac==NULL || error_window==NULL)
+			fill_dac==NULL || error_window==NULL) {
+        fprintf(stdout,"Memory allocation failure\n");
 		error(0);
 
-	if (big)
+  }
+
+fprintf(stdout,"Opening font..");
+	if (big) {
+  fprintf(stdout,"BIG ..");
 		f=fopen("system/grande.fon","rb");
-	else
+  }
+	else {
+    fprintf(stdout,"Small ..");
 		f=fopen("system/pequeno.fon","rb");
-
-	if (f==NULL)
+  }
+	if (f==NULL) {
+      fprintf(stdout,"Fail!\n");
 		error(0);
-	
+  } else {
+      fprintf(stdout,"Success!\n");
+  }	
 	fseek(f,0,SEEK_END);
 	n=ftell(f);
 	
@@ -3625,6 +3680,7 @@ void inicializacion(void) {
 		break;
 	} char_size=font_an*font_al;
 
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 	if (f==NULL) 
 		error(0);
@@ -3733,6 +3789,7 @@ mouse_surface = IMG_Load("system/cursor.png");
   // HYPERLINK
 
   // *** Inicializa graf_help[384].offset/an/al/ptr=0
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 	if ((f=fopen("help/help.fig","rb"))==NULL) 
 		error(0); 
@@ -3805,6 +3862,7 @@ fclose(f);
     } else { fclose(f); error(0); }
 #endif
 
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   }
 
@@ -3818,6 +3876,7 @@ fclose(f);
     init_ghost();
     crear_ghost(1);
   }
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   if (!Interpretando) printf("%s",(char *)texto[12]); // *** Miscelánea ***
   find_colors(); memset(copia,c0,vga_an*vga_al);
@@ -3832,11 +3891,16 @@ fclose(f);
   quien_arrastra=0; free_drag=1;
   memset(mask,0,256); mask_on=0; v_pausa=0;
   get=get_buffer;
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   determina_unidades();
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   inicializa_compilador(); // *** Compilador *** espacios de lower a 00
+  fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+
   init_lexcolor();
+
 
   if (!Interpretando) printf("%s",(char *)texto[13]);
 
@@ -3865,6 +3929,8 @@ fclose(f);
 /*
   if(judascfg_device!=DEV_NOSOUND) set_init_mixer();
 */
+fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -3872,7 +3938,7 @@ fclose(f);
 //═════════════════════════════════════════════════════════════════════════════
 
 void finalizacion(void) {
-
+fprintf(stdout,"%d %s\n", __LINE__, __FUNCTION__);
   if(undo!=NULL) {
 	free(undo);
 	undo = NULL;
@@ -3889,7 +3955,7 @@ void finalizacion(void) {
   
   free(font);
   
-  free(tapiz);
+  if (tapiz) free(tapiz);
   free(fill_dac);
   free(barra);
   free(ghost);
@@ -4029,10 +4095,11 @@ void _fwrite(char * s, byte * buf, int n) {
 //═════════════════════════════════════════════════════════════════════════════
 
 void error(int n) {
-	debugprintf("WHOOPS!\n");
+  fprintf(stdout, "WHOOPS! %d\n",n);
+	// debugprintf("WHOOPS!\n");
     finalizacion();
-    printf((char *)texto[14],n);
-    printf("\n");
+    fprintf(stdout,(char *)texto[14],n);
+    fprintf(stdout,"\n");
     exit(0);
 }
 

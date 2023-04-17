@@ -1081,12 +1081,11 @@ void frame_start(void) {
     }
   }
 
-  // Elimina los procesos muertos
-
+  // Kill dead processes
   for (ide=id_start; ide<=id_end; ide+=iloc_len)
     if (mem[ide+_Status]==1) elimina_proceso(ide);
 
-  // Si se está haciendo un fade lo continúa
+  // If a (palette) fade is being made, continue it
 
   if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
     set_paleta();

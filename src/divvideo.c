@@ -6,8 +6,10 @@
 #include "global.h"
 //#include "inc\svga.h"
 //#include "inc\vesa.h"
-#include "lib/sdlgfx/SDL_framerate.h"
 
+#if defined (SDL) || (SDL2)
+#include "lib/sdlgfx/SDL_framerate.h"
+#endif
 
 #ifdef TTF
 #define CDEPTH 32
@@ -35,18 +37,19 @@ void volcadosdl(byte *p);
 
 //byte * vga = (byte *) 0xA0000; // Pantalla fisica
 
-SDL_Surface *vga;
+OSDEP_Surface *vga;
 #ifdef SDL2
 SDL_Window *divWindow;
 SDL_Renderer *divRender;
 #endif
 
-int IsFullScreen(SDL_Surface *surface)
+int IsFullScreen(OSDEP_Surface *surface)
 {
+  return 1;
 	return OSDEP_IsFullScreen();
 }
 
-void SDL_ToggleFS(SDL_Surface *surface)
+void SDL_ToggleFS(OSDEP_Surface *surface)
 {
     if (IsFullScreen(surface))
 		fsmode=0;
@@ -55,11 +58,15 @@ void SDL_ToggleFS(SDL_Surface *surface)
 	
 	svmode();
 	set_dac(dac);
+  fprintf(stdout,"%d %s Hello!\n", __LINE__, __FUNCTION__);
+
 }
 
-int nothing(SDL_Surface *surface) {
+int nothing(OSDEP_Surface *surface) {
+
+#if defined SDL || SDL2
         // Switch to WINDOWED mode
-     Uint32 flags = surface->flags; // Get the video surface flags
+     uint32_t flags = surface->flags; // Get the video surface flags
 
    if (IsFullScreen(surface)) {
         if ((vga = OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, 0)) == NULL) 
@@ -77,7 +84,8 @@ int nothing(SDL_Surface *surface) {
 		fsmode=1;
 	}
 	set_dac(dac);
-    
+
+#endif
     return 1;
 }
 
@@ -114,7 +122,7 @@ FPSmanager fpsman;
 
 void retrazo(void) {
 
-//printf("retrazo (vsync)\n");
+fprintf(stdout, "retrazo (vsync)\n");
 SDL_framerateDelay(&fpsman);
 
 #ifdef NOTYET
@@ -138,6 +146,7 @@ void set_dac(byte *_dac) {
           colors[i].b=_dac[b+2]*4;
           b+=3;
     }
+    printf("Setting Palette\n");
 //	if(vga->format->BitsPerPixel==8) {
 		if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
 			printf("Failed to set palette :(\n"); 
@@ -189,10 +198,19 @@ SDL_setFramerate(&fpsman, 60);
  
   fprintf(stdout,"full screen: %d\n",fsmode);
 
-#ifdef GCW_SOFTSTRETCH
+#if defined (GCW_SOFTSTRETCH) || defined(AMIGA2)
+
+#if defined (AMIGA)
+#define GCW_W 640
+#define GCW_H 480
+	vga=OSDEP_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
+
+#else
+
 	vga=OSDEP_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
 	h_ratio = vga_al / (float)(GCW_H*1.0);
+#endif
 #else
 
 	if(fsmode==0)
@@ -253,8 +271,13 @@ SDL_setFramerate(&fpsman, 60);
 #endif
 
 	modovesa=1;
-	
+
+  fprintf(stdout,"%d %s Hello!\n", __LINE__, __FUNCTION__);
+
 	set_dac(dac);
+
+  // fprintf(stdout,"Hello!\n");
+
 
 #ifdef NOTYET
 
@@ -347,6 +370,7 @@ void svmodex(int m) {
 //═════════════════════════════════════════════════════════════════════════════
 
 void rvmode(void) {
+  printf(__FUNCTION__);
 	if(IsFullScreen(vga))
 		SDL_ToggleFS(vga);
 //	SDL_FreeSurface(copia_surface);
@@ -389,6 +413,8 @@ void vgacpy(byte * q, byte * p, int n) ;
 
 
 void volcadosdlp(byte *p) {
+  fprintf(stdout,"%d %s %s\n", __LINE__, __FILE__, __FUNCTION__);
+
 volcadosdl(p);
 return;
 
@@ -449,6 +475,9 @@ return;
 }
 
 void volcadosdl(byte *p) {
+
+  fprintf(stdout, "%d %s\n", __LINE__, __FUNCTION__);
+
 	int vy;
 	int vx;
 
@@ -472,6 +501,7 @@ void volcadosdl(byte *p) {
 	if(SDL_MUSTLOCK(vga))
 		SDL_LockSurface(vga);
 
+fprintf(stdout,"Locking vga surface\n");
 	byte *q = (byte *)vga->pixels;
 	uint32_t *q32 = (uint32_t *)vga->pixels;
 

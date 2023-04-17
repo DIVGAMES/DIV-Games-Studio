@@ -843,16 +843,29 @@ void RefPalAndDlg(int no_tocar_mapas,int guardar_original)
     } set_dac(dac4);
   }
 
+fprintf(stdout,"Creating dac4\n");
+
   create_dac4();
 
   // Adapta las gamas de color definidas por el usuario
 
+fprintf(stdout,"Creating gama\n");
+
   crea_gama(Setupfile.t_gama,tapiz_gama);
 
   // Restaura el tapiz de fondo
+
+  fprintf(stdout,"Creating tapiz\n");
+
   preparar_tapiz();
 
+
+fprintf(stdout,"Creating caja\n");
+
   actualiza_caja(0,0,vga_an,vga_al);
+
+
+fprintf(stdout,"blitting screen copia\n");
 
   volcado(copia);
 
@@ -884,6 +897,7 @@ void RefPalAndDlg(int no_tocar_mapas,int guardar_original)
   exp_Color0=-1; exp_Color1=-1; exp_Color2=-1;
 
   if (t64!=NULL) { free(t64); t64=NULL; }
+fprintf(stdout,"Done RefPalAndDlg\n");
 
 }
 
@@ -1319,7 +1333,7 @@ extern byte tapiz_gama[128];
 
 byte ctapiz[256];
 //byte col_tapiz[65];
-extern SDL_Surface *vga;
+extern OSDEP_Surface *vga;
 
 void preparar_tapiz(void) {
   FILE * f;

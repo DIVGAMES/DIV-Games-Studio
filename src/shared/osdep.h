@@ -4,6 +4,10 @@
 // OSDEP includes
 // should be good for most SDL ports
 
+#ifdef RAYLIB 
+#include "osdep/osd_raylib.h"
+#endif
+
 #ifdef SDL
 #include "osdep/osd_sdl12.h"
 #endif
@@ -64,10 +68,32 @@ typedef int int32_t;
 #define _MAX_EXT 64
 #endif
 
+// osd function prototypes
+
+OSDEP_VMode ** OSDEP_ListModes(void);
 
 
+int32_t OSDEP_NumJoysticks(void);
+OSDEP_Joystick *OSDEP_JoystickOpen(int n);
+int OSDEP_JoystickNumButtons(OSDEP_Joystick *n);
+int OSDEP_JoystickNumHats(OSDEP_Joystick *n);
+int OSDEP_JoystickNumAxes(OSDEP_Joystick *n);
+
+void OSDEP_SetCaption(char *title, char *icon);
+void OSDEP_ShowCursor(int);
+
+void OSDEP_keyInit(void);
+uint32_t OSDEP_GetTicks(void);
+
+int OSDEP_IsFullScreen(void);
 
 
+unsigned short OSDEP_Mix_VolumeMusic(int);
+unsigned short OSDEP_Mix_Volume(int,int);
+int OSDEP_Mix_PlayingMusic(void);
+void OSDEP_Mix_HaltMusic(void);
+void OSDEP_Mix_SetPostMix(int, int);
+void OSDEP_Mix_HaltChannel(int);
 
 #if __WORDSIZE == 32
 #define memptrsize uint32_t
@@ -107,7 +133,9 @@ extern char * strlwr(char *string);
 
 extern void _dos_setdrive( unsigned __drivenum, unsigned *__drives );
 #ifndef __WIN32__
+#ifndef AMIGA
 char * itoa(long n, char *buf, int len);
+#endif
 #endif
 
 #define ltoa itoa 

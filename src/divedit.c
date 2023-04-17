@@ -1561,7 +1561,7 @@ void _completo(void) {
   int an,al,_an=0,_al=0;
   int i;
   
-  SDL_Rect rc;
+  OSDEP_Rect rc;
   
   rc.x=4;
   rc.y=35;

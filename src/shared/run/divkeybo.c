@@ -254,7 +254,7 @@ void checkmod(OSDEPMod mod) {
 }
 
 #ifdef SDL2
-#include <SDL2/SDL_events.h>
+#include <SDL_events.h>
 
 void PrintEvent(const SDL_Event * event)
 {
@@ -380,7 +380,7 @@ oldhatval = hatval;
 	PrintEvent(&event);
 #endif
 
-#ifdef SDL
+#ifdef SDL 
 		if (event.type == SDL_VIDEORESIZE) {
 //				printf("RESIZING\n");
 			if(event.resize.w!=320 && event.resize.h!=200) {

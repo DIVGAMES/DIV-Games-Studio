@@ -458,6 +458,8 @@ char *          baux;
 
 int UpLoad_Desktop()
 {
+        fprintf(stdout,"%d %s %s\n", __LINE__, __FILE__, __FUNCTION__);
+        
 	int iWork,iWork2,iWork3,x,numvent;
 	FILE *f;
 	

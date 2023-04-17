@@ -130,8 +130,8 @@ extern int reloj;
 
 //extern float m_x=0.0,m_y;
 void tecla(void) {
-mclock = SDL_GetTicks()/100;//(int)clock()/20000;
-reloj = SDL_GetTicks()/100;//(int)clock();
+mclock = OSDEP_GetTicks()/100;//(int)clock()/20000;
+reloj = OSDEP_GetTicks()/100;//(int)clock();
 
 //printf("%d %d\n",mclock,reloj);
 

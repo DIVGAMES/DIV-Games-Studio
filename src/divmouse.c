@@ -304,7 +304,7 @@ int soundstopped=0;
 
 
 #ifdef SDL2
-#include <SDL2/SDL_events.h>
+#include <SDL_events.h>
 
 void PrintEvent(const SDL_Event * event)
 {
@@ -375,11 +375,16 @@ void PrintEvent(const SDL_Event * event)
             break;
         }
     }
+
+	if(event->type == SDL_MOUSEMOTION) {
+		fprintf(stdout, "Mouse Coordinates: (%d, %d)\n", event->motion.x, event->motion.y);
+	}
 }
 #endif
 
 void read_mouse2(void) {
 
+#if defined(SDL) || (SDL2)
 	scan_code  =0;
 	ascii=0;
 
@@ -503,12 +508,12 @@ while(SDL_PollEvent(&event))
 }
 #else
 
-while(SDL_PollEvent(&event) )
+while(SDL_PollEvent(&event) ) {
 #ifdef SDL2
 	PrintEvent(&event);
 #endif
 //	while(0)
-        {
+        
 
 #ifndef SDL2
 			if (event.type == SDL_VIDEORESIZE) {
@@ -585,7 +590,7 @@ while(SDL_PollEvent(&event) )
                 /* Quit the application */
                 salir_del_entorno=1;
             }
-              if (event.type == SDL_MOUSEMOTION)
+            if (event.type == SDL_MOUSEMOTION)
             {
 				if(fsmode==1) {
 					m_x += event.motion.xrel*(1+(Setupfile.mouse_ratio/2));
@@ -797,4 +802,6 @@ while(SDL_PollEvent(&event) )
 		InitSound();
 		soundstopped=0;
 	}
+
+#endif
 }
