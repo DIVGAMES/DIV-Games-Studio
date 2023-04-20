@@ -25,14 +25,23 @@ short GetCodeP0y;
 
 void ReadHeadImageAndPoints(HeadFPG *MiHeadFPG,FILE *fpg)
 {
+        fprintf(stdout, "STUFF: %s\n", __FUNCTION__);
+
         fread(&MiHeadFPG->COD,1,4,fpg);
+        MiHeadFPG->COD = l2b32(MiHeadFPG->COD);
         fread(&MiHeadFPG->LONG,1,4,fpg);
+        MiHeadFPG->LONG = l2b32(MiHeadFPG->LONG);
         memset(MiHeadFPG->Descrip,0,33);
         fread(MiHeadFPG->Descrip,1,32,fpg);
         fread(MiHeadFPG->Filename,1,12,fpg);
         fread(&MiHeadFPG->Ancho,1,4,fpg);
+        MiHeadFPG->Ancho = l2b32(MiHeadFPG->Ancho);
+
         fread(&MiHeadFPG->Alto,1,4,fpg);
+        MiHeadFPG->Alto = l2b32(MiHeadFPG->Alto);
+
         fread(&MiHeadFPG->nPuntos,1,4,fpg);
+        MiHeadFPG->nPuntos = l2b32(MiHeadFPG->nPuntos);
 
         FPGimagen=(char *)malloc(MiHeadFPG->Ancho*MiHeadFPG->Alto);
         if(FPGimagen==NULL)
@@ -192,6 +201,7 @@ char cWork[38];
 
 int ReadHead(HeadFPG *MiHeadFPG,FILE *fpg)
 {
+
         fread(&MiHeadFPG->COD,1,4,fpg);
         fread(&MiHeadFPG->LONG,1,4,fpg);
         memset(MiHeadFPG->Descrip,0,33);
@@ -199,9 +209,18 @@ int ReadHead(HeadFPG *MiHeadFPG,FILE *fpg)
         fread(MiHeadFPG->Filename,1,12,fpg);
         fread(&MiHeadFPG->Ancho,1,4,fpg);
         fread(&MiHeadFPG->Alto,1,4,fpg);
-        if(fread(&MiHeadFPG->nPuntos,1,4,fpg)==4)
+        int res = fread(&MiHeadFPG->nPuntos,1,4,fpg);
+
+        MiHeadFPG->COD = l2b32(MiHeadFPG->COD);
+        MiHeadFPG->LONG = l2b32(MiHeadFPG->LONG);
+        MiHeadFPG->Ancho = l2b32(MiHeadFPG->Ancho);
+        MiHeadFPG->Alto = l2b32(MiHeadFPG->Alto);
+        MiHeadFPG->nPuntos = l2b32(MiHeadFPG->nPuntos);
+
+        if(res==4)
                 return 1;
-return 0;
+        else 
+                return 0;
 }
 
 void WriteHead(HeadFPG *MiHeadFPG,short *puntos,char *imagen,FILE *fpg)
@@ -517,7 +536,8 @@ debugprintf("Deleting map %d\n",COD);
           if(Fpg->DesIndex[n]==COD || Fpg->DesIndex[n]==0) break;
           n++;
         }
-debugprintf("found COD at index: %d\n",n);
+        
+        debugprintf("found COD at index: %d\n",n);
 
         if(Fpg->thumb[n].ptr!=NULL) free(Fpg->thumb[n].ptr);
         memmove(&(Fpg->thumb[n]),&(Fpg->thumb[n+1]),sizeof(t_thumb)*(999-n));

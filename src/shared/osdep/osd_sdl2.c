@@ -51,7 +51,7 @@ uint32_t OSDEP_GetTicks(void) {
 void OSDEP_SetCaption(char *title, char *icon) {
 	fprintf(stdout, "%s\n", __FUNCTION__);
 	strcpy(windowtitle,title);
-	//SDL_WM_SetCaption((const char *)title, (const char *)icon);
+	SDL_WM_SetCaption((const char *)title, (const char *)icon);
 }
 
 OSDEP_VMode ** OSDEP_ListModes(void) {

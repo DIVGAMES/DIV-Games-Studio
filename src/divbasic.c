@@ -4,7 +4,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "global.h"
-
 void ayuda_dibujo(int); // Drawing support
 
 
@@ -16,7 +15,6 @@ void fill_scan(word x,word y);
 void fill_draw(void);
 void copy_block(byte *d,byte *s,int an,int al);
 void xchg_block(byte *d,byte *s,int an,int al);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Global module variables
@@ -56,22 +54,53 @@ void rectangulo(byte c,int x,int y,int an,int al) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void salvaguarda(byte * p, int x, int y, int n, int flag) {
+  // return;
+  FUNCLOG;
   byte *q;
   int an,al;
   int salta_x, long_x, resto_x;
   int salta_y, long_y, resto_y;
 
   al=*((word*)(graf[n]+2));
+  // al = l2b16(al);
   an=*((word*)graf[n]);
+  // an = l2b16(an);
 
-  x-=*((word*)(graf[n]+4));
-  y-=*((word*)(graf[n]+6));
+  // fprintf(stdout, "AN: %d AL: %d", an, al);
+  // fprintf(stdout, "X: %d Y: %d N: %d FLAG: %d\n", x, y, flag);
 
+word tmp = *((word*)(graf[n]+4)); 
+
+// fprintf(stdout, "tmp: %X\n",tmp);
+tmp = l2b16(tmp);
+  // fprintf(stdout, "tmp: %X\n",tmp);
+
+x-=tmp;
+//  x-=*((word*)(graf[n]+4));
+
+  tmp = *((word*)(graf[n]+6)); 
+  // fprintf(stdout, "tmp: %X\n",tmp);
+
+  tmp = l2b16(tmp);
+  // fprintf(stdout, "tmp: %X\n",tmp);
+
+y-=tmp;
+//  y-=*((word*)(graf[n]+6));
+
+  // fprintf(stdout, "X: %d Y: %d N: %d FLAG: %d\n",x,y,flag);
+
+//  error(0);
+
+  FUNCLOG;
 
 	if(x>vga_an | y>vga_al)
 		return;
 
+  FUNCLOG;
+
   volcado_parcial(x,y,an,al);
+
+  FUNCLOG;
 
   q=copia+y*vga_an+x;
 
@@ -86,11 +115,19 @@ void salvaguarda(byte * p, int x, int y, int n, int flag) {
   p+=an*salta_y+salta_x; q+=vga_an*salta_y+salta_x;
   resto_x+=salta_x; an=long_x;
   do {
+      FUNCLOG;
+
     do {
+  FUNCLOG;
+
       if (flag) *q=*p; else *p=*q; p++; q++;
     } while (--an);
+      FUNCLOG;
+
     q+=vga_an-(an=long_x); p+=resto_x;
   } while (--long_y);
+  FUNCLOG;
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,10 +135,13 @@ void salvaguarda(byte * p, int x, int y, int n, int flag) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void put(int x,int y,int n) {
+  FUNCLOG;
   wput_in_box(copia,vga_an,vga_an,vga_al,x,y,n);
 }
 
 void put_bw(int x,int y,int n) { // Puts a contrasting graphic (mouse edition )
+  FUNCLOG;
+
   int al,an;
   byte *p,*q;
   int salta_x, long_x, resto_x;
@@ -110,10 +150,22 @@ void put_bw(int x,int y,int n) { // Puts a contrasting graphic (mouse edition )
   p=graf[n]+8;
 
   al=*((word*)(graf[n]+2));
+  al = l2b16(al);
   an=*((word*)graf[n]);
+  an = l2b16(an);
 
-  x-=*((word*)(graf[n]+4));
-  y-=*((word*)(graf[n]+6));
+word ox = *((word*)(graf[n]+4));
+
+ox = l2b16(ox);
+  x-=ox;
+  //*((word*)(graf[n]+4));
+  
+  word oy = *((word*)(graf[n]+6));
+
+oy = l2b16(oy);
+
+  y-=oy;
+  //*((word*)(graf[n]+6));
 
   if (x>=vga_an || y>=vga_al || x+an<=0 || y+al<=0) return;
 

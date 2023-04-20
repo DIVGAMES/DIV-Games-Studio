@@ -1100,16 +1100,24 @@ void put_sprite(
 		vga_an = copan;
 		vga_al = copal;
 
-		an = ptr[13];
-		al = ptr[14];
-		si = (byte *)ptr + 64 + ptr[15] * 4;
+		int lptr13 = l2b32(ptr[13]);
+		int lptr14 = l2b32(ptr[14]);
+		int lptr15 = l2b32(ptr[15]);
+		word wptr32 = *((word *)ptr + 32);
+		word wptr33 = *((word *)ptr + 33);
 
-		if (ptr[15] == 0 || *((word *)ptr + 32) == 65535) {
-			xg = ptr[13] / 2;
-			yg = ptr[14] / 2;
+		an = lptr13;
+		al = lptr14;
+		si = (byte *)ptr + 64 + lptr15 * 4;
+
+		// fprintf(stdout,"PUT() an: %d al: %dd\n", an, al);
+
+		if (lptr15 == 0 || wptr32 == 65535) {
+			xg = lptr13 / 2;
+			yg = lptr14 / 2;
 		} else {
-			xg = *((word *)ptr + 32);
-			yg = *((word *)ptr + 33);
+			xg = wptr32;
+			yg = wptr33;
 		}
 
 		if (angle) {
@@ -1123,8 +1131,10 @@ void put_sprite(
 			if (flags & 2)
 				yg = al - 1 - yg;
 			y -= yg;
-			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 && y + al <= clipy1) // Draw sprite without clipping
+			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 && y + al <= clipy1) { // Draw sprite without clipping
+				fprintf(stdout, "%d\n", __LINE__);				
 				sp_normal(si, x, y, an, al, flags);
+			}
 			else if (x < clipx1 && y < clipy1 && x + an > clipx0 && y + al > clipy0) // Draw clipped sprite
 				sp_cortado(si, x, y, an, al, flags);
 			x0s = x;
@@ -1214,16 +1224,23 @@ void pinta_sprite(void) { // Draws a sprite (if visible), according to mem[ide+ 
 			y += iscroll[snum].y - iscroll[snum].map1_y;
 		}
 
-		an = ptr[13];
-		al = ptr[14];
-		si = (byte *)ptr + 64 + ptr[15] * 4;
+		int iptr13 = l2b32(ptr[13]);
+		int iptr14 = l2b32(ptr[14]);
+		int iptr15 = l2b32(ptr[15]);
+		
+		an = iptr13;
+		al = iptr14;
+		si = (byte *)ptr + 64 + iptr15 * 4;
 
-		if (ptr[15] == 0 || *((word *)ptr + 32) == 65535) {
-			xg = ptr[13] / 2;
-			yg = ptr[14] / 2;
+		word wptr32 = l2b16(*((word *)ptr + 32) );
+		word wptr33 = l2b16(*((word *)ptr + 33) );
+
+		if (iptr15 == 0 || wptr32 == 65535) {
+			xg = iptr13 / 2;
+			yg = iptr14 / 2;
 		} else {
-			xg = *((word *)ptr + 32);
-			yg = *((word *)ptr + 33);
+			xg = wptr32;
+			yg = wptr33;
 		}
 
 		if (putsprite != NULL) {
@@ -1241,8 +1258,10 @@ void pinta_sprite(void) { // Draws a sprite (if visible), according to mem[ide+ 
 			if (mem[ide + _Flags] & 2)
 				yg = al - 1 - yg;
 			y -= yg;
-			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 && y + al <= clipy1) // Draw sprite without clipping
+			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 && y + al <= clipy1) {// Draw sprite without clipping
+				// fprintf(stdout, "s.c %d\n", __LINE__);				
 				sp_normal(si, x, y, an, al, mem[ide + _Flags]);
+			}
 			else if (x < clipx1 && y < clipy1 && x + an > clipx0 && y + al > clipy0) // Draw clipped sprite
 				sp_cortado(si, x, y, an, al, mem[ide + _Flags]);
 			x0s = x;
@@ -1278,6 +1297,9 @@ void save_region(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void sp_normal(byte *p, int x, int y, int an, int al, int flags) {
+
+	// fprintf(stdout,"SP NORMAL \n");
+	// fprintf(stdout,"p: %x, x: %d y: %d an: %d al: %d flags: %d\n", p,x,y,an,al,flags);
 
 	byte *q = copia + y * vga_an + x;
 	int ancho = an;
@@ -1385,6 +1407,9 @@ void sp_normal(byte *p, int x, int y, int an, int al, int flags) {
 //════════════════════════════════════════════════════════════════════════════
 
 void sp_cortado(byte *p, int x, int y, int an, int al, int flags) {
+
+	// fprintf(stdout,"SP CORTADO \n");
+	// fprintf(stdout,"p: %x, x: %d y: %d an: %d al: %d flags: %d\n", p,x,y,an,al,flags);
 
 	byte *q = copia + y * vga_an + x;
 	int salta_x, long_x, resto_x;
@@ -1544,6 +1569,9 @@ void sp_cortado(byte *p, int x, int y, int an, int al, int flags) {
 
 void sp_escalado(byte *old_si, int x, int y, int an, int al, int xg, int yg, int size, int flags) {
 
+	// fprintf(stdout,"SP ESCALADO \n");
+	// fprintf(stdout,"old_si: %x, x: %d y: %d an: %d al: %d xg: %d\nyg: %d, ang: %d, size: %d, flags: %d\n", old_si,x,y,an,al,xg,yg,size,flags);
+
 	int salta_x, long_x, resto_x; // Regarding screen
 	int salta_y, long_y, resto_y;
 	int xr, ixr, yr, iyr, old_xr, old_an;
@@ -1640,6 +1668,8 @@ void sp_escalado(byte *old_si, int x, int y, int an, int al, int xg, int yg, int
 //════════════════════════════════════════════════════════════════════════════
 
 void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, int size, int flags) {
+	// fprintf(stdout,"SP ROTADO \n");
+	// fprintf(stdout,"si: %x, x: %d y: %d an: %d al: %d xg: %d\nyg: %d, ang: %d, size: %d, flags: %d\n", si,x,y,an,al,xg,yg,ang,size,flags);
 
 	float d0, d1, d2, d3;
 	float a0, a1, a2, a3;
@@ -1654,6 +1684,9 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 		int16_t w[2];
 	} x0, x1, g0x, g1x, g0y, g1y;
 	int ix0, ix1, ig0x, ig1x, ig0y, ig1y, kk;
+
+	int16_t tmpw;
+
 	byte *ptrcopia;
 
 	a = (float)ang / radian;
@@ -1684,6 +1717,24 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 		a3 = a;
 	else
 		a3 = a + (float)atan2(-yg, xg);
+
+	// fprintf(stdout,"Results:\n");
+	// fprintf(stdout,"a: %f\n", a);
+	// fprintf(stdout,"s: %f\n", s);
+	
+	// fprintf(stdout,"xg: %d\n", xg);
+	// fprintf(stdout,"yg: %d\n", yg);
+
+	// fprintf(stdout,"d0: %f\n", d0);
+	// fprintf(stdout,"d1: %f\n", d1);
+	// fprintf(stdout,"d2: %f\n", d2);
+	// fprintf(stdout,"d3: %f\n", d3);
+
+
+	// fprintf(stdout,"a0: %f\n", a0);
+	// fprintf(stdout,"a1: %f\n", a1);
+	// fprintf(stdout,"a2: %f\n", a2);
+	// fprintf(stdout,"a3: %f\n", a3);
 
 	if (flags & 1) {
 		p[0] = x - (int)((float)cos(a0) * d0);
@@ -1856,14 +1907,35 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 			g1y.l = kk;
 		}
 
-		if (h < clipy1 && h >= clipy0 && x0.w[1] < clipx1 && x1.w[1] >= clipx0 && x1.w[1] > x0.w[1])
-			if (x0.w[1] < clipx0)
-				if (x1.w[1] >= clipx1)
+
+// #ifdef AMIGA
+// 		tmpw = x0w1;
+// 		x0w1 = x0.w[0];
+// 		x0.w[0] = tmpw;
+
+// 		tmpw = x1w1;
+// 		x1w1 = x1.w[0];
+// 		x1.w[0] = tmpw;
+// #endif
+
+#ifdef AMIGA
+#define x0w1 x0.w[0]
+#define x1w1 x1.w[0]
+#else
+#define x0w1 x0.w[1]
+#define x1w1 x1.w[1]
+#endif
+
+
+
+		if (h < clipy1 && h >= clipy0 && x0w1 < clipx1 && x1w1 >= clipx0 && x1w1 > x0w1)
+			if (x0w1 < clipx0)
+				if (x1w1 >= clipx1)
 					if (flags & 4)
 						sp_scancg(ptrcopia + clipx0,
-						          x1.w[1] - x0.w[1],
+						          x1w1 - x0w1,
 						          clipx1 - clipx0 - 1,
-						          clipx0 - x0.w[1],
+						          clipx0 - x0w1,
 						          si,
 						          an,
 						          g0x.l,
@@ -1872,9 +1944,9 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 						          g1y.l);
 					else
 						sp_scanc(ptrcopia + clipx0,
-						         x1.w[1] - x0.w[1],
+						         x1w1 - x0w1,
 						         clipx1 - clipx0 - 1,
-						         clipx0 - x0.w[1],
+						         clipx0 - x0w1,
 						         si,
 						         an,
 						         g0x.l,
@@ -1883,9 +1955,9 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 						         g1y.l);
 				else if (flags & 4)
 					sp_scancg(ptrcopia + clipx0,
-					          x1.w[1] - x0.w[1],
-					          x1.w[1] - clipx0,
-					          clipx0 - x0.w[1],
+					          x1w1 - x0w1,
+					          x1w1 - clipx0,
+					          clipx0 - x0w1,
 					          si,
 					          an,
 					          g0x.l,
@@ -1894,20 +1966,20 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 					          g1y.l);
 				else
 					sp_scanc(ptrcopia + clipx0,
-					         x1.w[1] - x0.w[1],
-					         x1.w[1] - clipx0,
-					         clipx0 - x0.w[1],
+					         x1w1 - x0w1,
+					         x1w1 - clipx0,
+					         clipx0 - x0w1,
 					         si,
 					         an,
 					         g0x.l,
 					         g0y.l,
 					         g1x.l,
 					         g1y.l);
-			else if (x1.w[1] >= clipx1)
+			else if (x1w1 >= clipx1)
 				if (flags & 4)
-					sp_scancg(ptrcopia + x0.w[1],
-					          x1.w[1] - x0.w[1],
-					          clipx1 - 1 - x0.w[1],
+					sp_scancg(ptrcopia + x0w1,
+					          x1w1 - x0w1,
+					          clipx1 - 1 - x0w1,
 					          0,
 					          si,
 					          an,
@@ -1916,9 +1988,9 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 					          g1x.l,
 					          g1y.l);
 				else
-					sp_scanc(ptrcopia + x0.w[1],
-					         x1.w[1] - x0.w[1],
-					         clipx1 - 1 - x0.w[1],
+					sp_scanc(ptrcopia + x0w1,
+					         x1w1 - x0w1,
+					         clipx1 - 1 - x0w1,
 					         0,
 					         si,
 					         an,
@@ -1927,9 +1999,19 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 					         g1x.l,
 					         g1y.l);
 			else if (flags & 4)
-				sp_scang(ptrcopia + x0.w[1], x1.w[1] - x0.w[1], si, an, g0x.l, g0y.l, g1x.l, g1y.l);
+				sp_scang(ptrcopia + x0w1, x1w1 - x0w1, si, an, g0x.l, g0y.l, g1x.l, g1y.l);
 			else
-				sp_scan(ptrcopia + x0.w[1], x1.w[1] - x0.w[1], si, an, g0x.l, g0y.l, g1x.l, g1y.l);
+				sp_scan(ptrcopia + x0w1, x1w1 - x0w1, si, an, g0x.l, g0y.l, g1x.l, g1y.l);
+
+// #ifdef AMIGA
+// 		tmpw = x0w1;
+// 		x0w1 = x0w1;
+// 		x0.w[0] = tmpw;
+
+// 		tmpw = x1w1;
+// 		x1w1 = x1w1;
+// 		x1.w[0] = tmpw;
+// #endif
 
 		if ((flags & 3) == 1 || (flags & 3) == 2) {
 			kk = x0.l;
@@ -1960,6 +2042,7 @@ void sp_rotado(byte *si, int x, int y, int an, int al, int xg, int yg, int ang, 
 //════════════════════════════════════════════════════════════════════════════
 
 void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0, int y0, int x1, int y1) {
+// fprintf(stdout, "SP SCANC\n");
 
 	union {
 		int32_t l;
@@ -1978,8 +2061,14 @@ void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0, int 
 	}
 
 	do {
-		if (c = *(si + x.w[1] + y.w[1] * an))
+		#ifdef AMIGA
+		if(c = *(si + x.w[0] + y.w[0] * an))
+		#else
+		if(c = *(si + x.w[1] + y.w[1] * an))
+		#endif 
+		{
 			*p = c;
+		}
 		p++;
 		x.l += x0;
 		y.l += y0;
@@ -1987,6 +2076,7 @@ void sp_scanc(byte *p, short n, short m, short o, byte *si, int an, int x0, int 
 }
 
 void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0, int y0, int x1, int y1) {
+// fprintf(stdout, "SP SCANCG\n");
 
 	union {
 		int32_t l;
@@ -2005,7 +2095,11 @@ void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0, int
 	}
 
 	do {
+		#ifdef AMIGA
+		c = *(si + x.w[0] + y.w[0] * an);
+		#else
 		c = *(si + x.w[1] + y.w[1] * an);
+		#endif
 		*p = ghost[(c << 8) + *p];
 		p++;
 		x.l += x0;
@@ -2018,6 +2112,7 @@ void sp_scancg(byte *p, short n, short m, short o, byte *si, int an, int x0, int
 //════════════════════════════════════════════════════════════════════════════
 
 void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1) {
+// fprintf(stdout, "SP SCAN\n");
 
 	union {
 		int32_t l;
@@ -2030,9 +2125,21 @@ void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1)
 	x0 = (x1 - x0) / n;
 	y0 = (y1 - y0) / n;
 
+	// fprintf(stdout,"l: %d w[0]: %d w[1]: %d\n", x.l, x.w[0], x.w[1]);
+	// fprintf(stdout,"l: %d w[0]: %d w[1]: %d\n", y.l, y.w[0], y.w[1]);
+
+	// exit(0);
+	// return;
+
 	do {
+		#ifdef AMIGA
+		if (c = *(si + x.w[0] + y.w[0] * an))
+		#else
 		if (c = *(si + x.w[1] + y.w[1] * an))
+		#endif 
+		{
 			*p = c;
+		}
 		p++;
 		x.l += x0;
 		y.l += y0;
@@ -2040,6 +2147,7 @@ void sp_scan(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1)
 }
 
 void sp_scang(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1) {
+// fprintf(stdout, "SP SCANG\n");
 
 	union {
 		int32_t l;
@@ -2053,7 +2161,12 @@ void sp_scang(byte *p, short n, byte *si, int an, int x0, int y0, int x1, int y1
 	y0 = (y1 - y0) / n;
 
 	do {
+		#ifdef AMIGA
+		c = *(si + x.w[0] + y.w[0] * an);
+		#else
 		c = *(si + x.w[1] + y.w[1] * an);
+		#endif
+
 		*p = ghost[(c << 8) + *p];
 		p++;
 		x.l += x0;
@@ -3124,16 +3237,24 @@ void pinta_sprite_m7(int n, int ide, int x, int y, int size, int ang) {
 
 	if ((ptr = g[mem[ide + _File]].grf[mem[ide + _Graph]]) != NULL) {
 
-		an = ptr[13];
-		al = ptr[14];                        // Graph width and height
-		si = (byte *)ptr + 64 + ptr[15] * 4; // Graph start
+		int iptr13 = l2b32(ptr[13]);
+		int iptr14 = l2b32(ptr[14]);
+		int iptr15 = l2b32(ptr[15]);
 
-		if (ptr[15] == 0 || *((word *)ptr + 32) == 65535) {
-			xg = ptr[13] / 2;
-			yg = ptr[14] - 1;
+		word wptr32 = l2b16(*((word*)ptr+32));
+		word wptr33 = l2b16(*((word*)ptr+33));
+
+
+		an = iptr13;
+		al = iptr14;                        // Graph width and height
+		si = (byte *)ptr + 64 + iptr15 * 4; // Graph start
+
+		if (iptr15== 0 || wptr32 == 65535) {
+			xg = iptr13 / 2;
+			yg = iptr14 - 1;
 		} else {
-			xg = *((word *)ptr + 32);
-			yg = *((word *)ptr + 33);
+			xg = wptr32;
+			yg = wptr33;
 		}
 
 		sp_escalado(si, x, y, an, al, xg, yg, size, mem[ide + _Flags]);

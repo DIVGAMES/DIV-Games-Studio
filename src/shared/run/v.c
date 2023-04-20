@@ -261,6 +261,12 @@ OSDEP_ShowCursor(SDL_DISABLE);
 		vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
 #else
 
+#ifdef AMIGA
+// fsmode = 1;
+#endif
+
+
+
 #ifdef PSP
 	fsmode=1;
 //		if(!vga)
@@ -273,7 +279,7 @@ OSDEP_ShowCursor(SDL_DISABLE);
 #endif
 
 		if(!vga || fsmode==0)
-			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, fsmode);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
 #ifdef GCW
     

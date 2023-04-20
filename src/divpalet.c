@@ -253,9 +253,16 @@ void crear_ghost_vc(int m) {
 
   if ((p=vcubos[m])!=NULL) do { 
 	  num_puntos++;
+
     dif=*(int*)(cuad+r+(*p).r);
-    dif+=*(int*)(cuad+g+(*p).g);
-    dif+=*(int*)(cuad+b+(*p).b);
+    dif = l2b32(dif);
+    int tmp = *(int*)(cuad+g+(*p).g);
+    tmp = l2b32(tmp);
+    dif+=tmp;
+    tmp = *(int*)(cuad+b+(*p).b);
+    tmp = l2b32(tmp);
+    
+    dif+=tmp;
     if (dif<find_min) { find_min=dif;
         find_col=((byte*)p-(byte*)tpuntos)/sizeof(struct t_tpuntos); }
   } while ((p=(*p).next)!=NULL);
@@ -298,9 +305,18 @@ byte find_color(byte r,byte g,byte b) {
   pal=dac4; endpal=dac4+768; dmin=65536;
   _r=(int)r*256; _g=(int)g*256; _b=(int)b*256;
   do {
-    dif=*(int*)(cuad+_r+*pal); pal++;
-    dif+=*(int*)(cuad+_g+*pal); pal++;
-    dif+=*(int*)(cuad+_b+*pal); pal++;
+    dif=*(int*)(cuad+_r+*pal); 
+    pal++;
+    dif = l2b32(dif);
+    int tmp = *(int*)(cuad+_g+*pal); 
+    tmp = l2b32(tmp);
+    dif+= tmp;
+    pal++;
+    
+    tmp=*(int*)(cuad+_b+*pal); 
+    tmp = l2b32(tmp);
+    dif+=tmp;
+    pal++;
     if (dif<dmin) { dmin=dif; color=pal-3; }
   } while (pal<endpal);
 
@@ -315,9 +331,23 @@ byte find_color_not0(byte r,byte g,byte b) {
   pal=dac4+3; endpal=dac4+768; dmin=65536;
   _r=(int)r*256; _g=(int)g*256; _b=(int)b*256;
   do {
-    dif=*(int*)(cuad+_r+*pal); pal++;
-    dif+=*(int*)(cuad+_g+*pal); pal++;
-    dif+=*(int*)(cuad+_b+*pal); pal++;
+    dif=*(int*)(cuad+_r+*pal); 
+    pal++;
+    dif = l2b32(dif);
+    int tmp = *(int*)(cuad+_g+*pal); 
+    tmp = l2b32(tmp);
+    dif+= tmp;
+    pal++;
+    
+    tmp=*(int*)(cuad+_b+*pal); 
+    tmp = l2b32(tmp);
+    dif+=tmp;
+    pal++;
+
+
+    // dif=*(int*)(cuad+_r+*pal);  pal++;
+    // dif+=*(int*)(cuad+_g+*pal); pal++;
+    // dif+=*(int*)(cuad+_b+*pal); pal++;
     if (dif<dmin) { dmin=dif; color=pal-3; }
   } while (pal<endpal);
 
@@ -1036,9 +1066,22 @@ word find_ord2(byte * dac) {
   if (b<0) b=0; else if (b>63) b=63;
   r2=(int)r*256; g2=(int)g*256; b2=(int)b*256;
   do if (*pal!=255) {
-    dif=*(int*)(cuad+r2+*pal*4); pal++;
-    dif+=*(int*)(cuad+g2+*pal*4); pal++;
-    dif+=*(int*)(cuad+b2+*pal*4); pal+=2;
+    
+    int tmp = *(int*)(cuad+r2+*pal*4); 
+    tmp = l2b32(tmp);
+    dif = tmp;
+    pal++;
+    
+    tmp = *(int*)(cuad+g2+*pal*4);
+    tmp = l2b32(tmp);
+    dif+=tmp; 
+    pal++;
+    
+    tmp = *(int*)(cuad+b2+*pal*4);
+    tmp = l2b32(tmp);
+    dif+=tmp; 
+    pal+=2;
+    // dif+=*(int*)(cuad+b2+*pal*4); pal+=2;
     if (dif<dmin) { dmin=dif; color=pal-4; }
   } else {
     pal+=4;
@@ -1071,7 +1114,8 @@ void fusiona_paleta(void){
 
       if(!div_try) { v_texto=(char *)texto[46]; dialogo(err0); return; }
 
-      mouse_graf=3; volcado(copia);
+      mouse_graf=3; 
+      volcado(copia);
 
       fusionar_paletas();
 
@@ -1148,9 +1192,9 @@ void fusionar_paletas(void){
 
     if (cmin<c-1) {
       n=cmin;
-      dist[n]=*(int*)(cuad+pal[paleta[n]*4]*256+pal[paleta[n+1]*4]*4);
-      dist[n]+=*(int*)(cuad+pal[paleta[n]*4+1]*256+pal[paleta[n+1]*4+1]*4);
-      dist[n]+=*(int*)(cuad+pal[paleta[n]*4+2]*256+pal[paleta[n+1]*4+2]*4);
+      dist[n]=l2b32(*(int*)(cuad+pal[paleta[n]*4]*256+pal[paleta[n+1]*4]*4));
+      dist[n]+=l2b32(*(int*)(cuad+pal[paleta[n]*4+1]*256+pal[paleta[n+1]*4+1]*4));
+      dist[n]+=l2b32(*(int*)(cuad+pal[paleta[n]*4+2]*256+pal[paleta[n+1]*4+2]*4));
     }
 
     if (cmin>1) {
@@ -1416,21 +1460,32 @@ void preparar_tapiz(void) {
 return;
 
 #endif
+
+fprintf(stdout, "Trying to load %s\n", Setupfile.Desktop_Image);
+
   if ((f=fopen(Setupfile.Desktop_Image,"rb"))==NULL) return;
   fseek(f,0,SEEK_END); lon=ftell(f); fseek(f,0,SEEK_SET);
   if (tapiz!=NULL) { free(tapiz); tapiz=NULL; }
 
   if ((temp2=(byte*)malloc(lon))==NULL) { fclose(f); return; }
-  if (fread(temp2,1,lon,f)!=lon) { fclose(f); free(temp2); return; }
+  int llon = fread(temp2,1,lon,f);
+
+  if (llon !=lon) {
+    fprintf(stdout, "Failed to read %d bytes (got %d bytes)\n", lon, llon); 
+    fclose(f); free(temp2); return; 
+    }
   fclose(f);
 
   tap_an=map_an; tap_al=map_al;
+
+  fprintf(stdout,"map_an: %d map_al: %d \n",map_an, map_al);
   if (es_MAP(temp2)) x=1;
   else if (es_PCX(temp2)) x=2;
   else if (es_BMP(temp2)) x=3;
   else if (es_JPG(temp2,lon)) x=4;
   else x=0;
-  swap(map_an,tap_an); swap(map_al,tap_al);
+  swap(map_an,tap_an); 
+  swap(map_al,tap_al);
 
   if (!x) { free(temp2); return; }
 

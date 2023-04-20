@@ -798,7 +798,9 @@ void load_map(void) {
 //����������������������������������������������������������������������������
 
 void new_map(void) {
-  int ancho,alto,cx,cy,color;
+  int ancho,alto;
+  word cx,cy;
+  int color;
   byte * ptr;
 
   color=pila[sp--]; cy=pila[sp--]; cx=pila[sp--];
@@ -811,10 +813,13 @@ void new_map(void) {
   if (cx<0 || cy<0 || cx>=ancho || cy>=alto) { e(155); return; }
 
   if ((ptr=(byte *)malloc(1330+64+4+ancho*alto))!=NULL) {
+    memset(ptr,0,1330+64+4+ancho*alto);
     ptr+=1330; // fix load_map/unload_map
-    *((int*)ptr+13)=ancho; *((int*)ptr+14)=alto;
-    *((int*)ptr+15)=1; // Se define un punto de control (el centro)
-    *((word*)ptr+32)=cx; *((word*)ptr+33)=cy;
+    *((int*)ptr+13)=l2b32(ancho); 
+    *((int*)ptr+14)=l2b32(alto);
+    *((int*)ptr+15)=l2b32(1); // Se define un punto de control (el centro)
+    *((word*)ptr+32)=l2b16(cx); 
+    *((word*)ptr+33)=l2b16(cy);
     memset(ptr+4+64,color,ancho*alto);
 
     while(g[0].grf[next_map_code]) {
@@ -874,7 +879,7 @@ void load_fpg(void) {
       pila[sp]=0; e(105); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
-      //printf("file_len is %d\n",file_len);
+      printf("file_len is %d\n",file_len);
       
 #ifdef __EMSCRIPTEN__ 
 file_len=1352;
@@ -962,24 +967,61 @@ ptr+=1352; // Longitud cabecera fpg
 ptr2=ptr;
 ptr3=ptr;
 
-  while (ptr<=(ptr2+file_len) && *(int*)ptr3<1000 && *(int*)ptr3>0 ) {
+int iptr3 = *(int*)ptr3;
 
-int *ptr_4=(int *)ptr3;
-int *ptr_8=(int*)ptr3;
-	int num = *ptr_4;
-	int len = *(ptr_8+1);
- 
+// fprintf(stdout, "iptr3: %d\n", iptr3);
+
+iptr3 = l2b32(iptr3);
+
+  while (ptr<=(ptr2+file_len) && iptr3<1000 && iptr3>0 ) {
+    // fprintf(stdout, "iptr3: %d \n", iptr3);
+
+    int *ptr_4=(int *)ptr3;
+    int *ptr_8=(int*)ptr3;
+    int num = *ptr_4;
+    num = l2b32(num);
+    
+    // fprintf(stdout, "num: %d \n", num);
+
+
+    int len = *(ptr_8+1);
+
+    len = l2b32(len);
+
+    // fprintf(stdout, "len: %d \n", len);
+
+	 printf("ptr_4 is %x\n",iptr);
+
     lst[num]=iptr=ptr_4;
-    if (m!=palcrc) adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+
+	 printf("iptr is %x\n",iptr);
+
+    if (m!=palcrc) {
+      adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+    }
     ptr=(byte *)&ptr2[len];//(int*)(ptr[4]);
     //if(num<=0 || num>1000) break;
     ptr3=ptr;
     ptr2=ptr;
+    iptr3 = *(int*)ptr3;
+
+    // fprintf(stdout, "iptr3: %d\n", iptr3);
+
+    iptr3 = l2b32(iptr3);
+    // fprintf(stdout, "iptr3: %d\n", iptr3);
+
   }
 #endif
 #ifdef STDOUTLOG
 printf("fpg search ended, %x: ptr: %x\n",(byte *)g[num].fpg+file_len,ptr);
 #endif
+
+// exit(0);
+    fprintf(stdout, "num: %d \n", num);
+
+  fprintf(stdout, "FPG Graphs: %x\n", g[num].grf);
+  fprintf(stdout, "LST: %x\n", lst);
+
   pila[sp]=num;
   max_reloj+=get_reloj()-old_reloj;
 }
@@ -1023,11 +1065,38 @@ void start_scroll(void) {
 
   if (ptr2==NULL) s=1; else s=2; // Tipo de scroll, normal(1) o parallax(2)
 
-  iscroll[snum].map1_an=ptr1[13]; iscroll[snum].map1_al=ptr1[14]; iscroll[snum].map1=(byte*)ptr1+64+ptr1[15]*4;
+  int iptr1_13 = l2b32(ptr1[13]);
+  int iptr1_14 = l2b32(ptr1[14]);
+  int iptr1_15 = l2b32(ptr1[15]);
+  word wptr1_32 = l2b16(*((word*)ptr1+32));
+  word wptr1_33 = l2b16(*((word*)ptr1+33));
+
+  int iptr2_13 = 0;
+  int iptr2_14 = 0;
+  int iptr2_15 = 0;
+  word wptr2_32 = 0;
+  word wptr2_33 = 0;
+
+if(ptr2 != NULL) {
+  iptr2_13 = l2b32(ptr2[13]);
+  iptr2_14 = l2b32(ptr2[14]);
+  iptr2_15 = l2b32(ptr2[15]);
+  wptr2_32 = l2b16(*((word*)ptr2+32));
+  wptr2_33 = l2b16(*((word*)ptr2+33));
+}
+
+
+
+  iscroll[snum].map1_an=iptr1_13; iscroll[snum].map1_al=iptr1_14; iscroll[snum].map1=(byte*)ptr1+64+iptr1_15*4;
   if (iscroll[snum].an>iscroll[snum].map1_an) iscroll[snum].map_flags|=1;
   if (iscroll[snum].al>iscroll[snum].map1_al) iscroll[snum].map_flags|=2;
-  if (ptr1[15]==0) { iscroll[snum].map1_x=0; iscroll[snum].map1_y=0; }
-  else { iscroll[snum].map1_x=*((word*)ptr1+32); iscroll[snum].map1_y=*((word*)ptr1+33); }
+  if (iptr1_15==0) { 
+    iscroll[snum].map1_x=0;
+    iscroll[snum].map1_y=0; 
+  } else { 
+    iscroll[snum].map1_x=wptr1_32; 
+  iscroll[snum].map1_y=wptr1_33; 
+  }
   if ((iscroll[snum]._sscr1=(byte*)malloc(iscroll[snum].an*(iscroll[snum].al+1)))==NULL) { e(100); return; }
   if ((iscroll[snum].fast=(tfast*)malloc(iscroll[snum].al*sizeof(tfast)))==NULL) { e(100); return; }
   iscroll[snum].sscr1=iscroll[snum]._sscr1; iscroll[snum].block1=iscroll[snum].al;
@@ -1035,11 +1104,11 @@ void start_scroll(void) {
   iscroll[snum].on=0; // Si hay alg�n error (malloc), no habr� scroll
 
   if (s==2) {
-    iscroll[snum].map2_an=ptr2[13]; iscroll[snum].map2_al=ptr2[14]; iscroll[snum].map2=(byte*)ptr2+64+ptr2[15]*4;
+    iscroll[snum].map2_an=iptr2_13; iscroll[snum].map2_al=iptr2_14; iscroll[snum].map2=(byte*)ptr2+64+iptr2_15*4;
     if (iscroll[snum].an>iscroll[snum].map2_an) iscroll[snum].map_flags|=4;
     if (iscroll[snum].al>iscroll[snum].map2_al) iscroll[snum].map_flags|=8;
     if (ptr2[15]==0) { iscroll[snum].map2_x=0; iscroll[snum].map2_y=0; }
-    else { iscroll[snum].map2_x=*((word*)ptr2+32); iscroll[snum].map2_y=*((word*)ptr2+33); }
+    else { iscroll[snum].map2_x=wptr2_32; iscroll[snum].map2_y=wptr2_33; }
     if ((iscroll[snum]._sscr2=(byte*)malloc(iscroll[snum].an*(iscroll[snum].al+1)))==NULL) {
       free(iscroll[snum]._sscr1); free(iscroll[snum].fast); e(100); return;
     }
@@ -1269,9 +1338,17 @@ void load_fnt(void) {
   if (process_fnt!=NULL) process_fnt((char*)ptr,file_len);
   an=0; al=0; nan=0; fnt=(TABLAFNT*)((byte*)ptr+1356);
   for (n=0;n<256;n++) {
-    if (fnt[n].ancho) { an+=fnt[n].ancho; nan++; }
+    fnt[n].ancho = l2b32(fnt[n].ancho);
+    fnt[n].alto = l2b32(fnt[n].alto);
+    fnt[n].incY = l2b32(fnt[n].incY);
+    fnt[n].offset = l2b32(fnt[n].offset);
+    if (fnt[n].ancho) { 
+      an+=fnt[n].ancho; nan++;
+    }
     if (fnt[n].alto) {
-      if (fnt[n].alto+fnt[n].incY>al) al=fnt[n].alto+fnt[n].incY;
+      if (fnt[n].alto+fnt[n].incY>al) {
+        al=fnt[n].alto+fnt[n].incY;
+      }
     }
   }
 
@@ -1586,7 +1663,11 @@ void map_xput(void) {
   if (g[file].grf==NULL) { e(111); return; }
 
   if ((ptr=g[file].grf[graf1])!=NULL) {
-    put_sprite(file,graf2,x,y,angle,size,flags,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
+    int iptr13 = l2b32(ptr[13]);
+    int iptr14 = l2b32(ptr[14]);
+    int iptr15 = l2b32(ptr[15]);
+
+    put_sprite(file,graf2,x,y,angle,size,flags,-1,(byte*)ptr+64+iptr15*4,iptr13,iptr13);
   } else e(121);
 
 }
@@ -1607,8 +1688,13 @@ void map_put(void) {
   if (graf1<=0 || graf1>=max_grf) { e(110); return; }
   if (g[file].grf==NULL) { e(111); return; }
 
+
   if ((ptr=g[file].grf[graf1])!=NULL) {
-    put_sprite(file,graf2,x,y,0,100,0,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
+    int iptr13 = l2b32(ptr[13]);
+    int iptr14 = l2b32(ptr[14]);
+    int iptr15 = l2b32(ptr[15]);
+
+    put_sprite(file,graf2,x,y,0,100,0,-1,(byte*)ptr+64+iptr15*4,iptr13,iptr14);
   } else e(121);
 
 }
@@ -1638,8 +1724,12 @@ void map_block_copy(void) {
   if ((ptrd=g[file].grf[grafd])!=NULL) {
     if ((ptr=g[file].grf[graf])!=NULL) {
 
-      vga_an=ptrd[13]; vga_al=ptrd[14];
-      copia=(byte*)ptrd+64+ptrd[15]*4;
+      int iptrd13 = l2b32(ptrd[13]);
+      int iptrd14 = l2b32(ptrd[14]);
+      int iptrd15 = l2b32(ptrd[15]);
+
+      vga_an=iptrd13; vga_al=iptrd14;
+      copia=(byte*)ptrd+64+iptrd15*4;
 
       if (xd>0) clipx0=xd; else clipx0=0;
       if (yd>0) clipy0=yd; else clipy0=0;
@@ -1650,12 +1740,17 @@ void map_block_copy(void) {
       if (clipy0>=vga_al || clipy1<=0) goto no;
       if (clipx0>=clipx1 || clipy0>=clipy1) goto no;
 
-      an=ptr[13]; al=ptr[14];
-      si=(byte*)ptr+64+ptr[15]*4;
+      int iptr13 = l2b32(ptr[13]);
+      int iptr14 = l2b32(ptr[14]);
+      int iptr15 = l2b32(ptr[15]);
+
+      an=iptr13; 
+      al=iptr14;
+      si=(byte*)ptr+64+iptr15*4;
       x=xd-x; y=yd-y;
 
       if (x>=clipx0 && x+an<=clipx1 && y>=clipy0 && y+al<=clipy1) // Pinta sprite sin cortar
-        sp_normal(si,x,y,an,al,0);
+        sp_normal(si,x,y,an,al,0);  
       else if (x<clipx1 && y<clipy1 && x+an>clipx0 && y+al>clipy0) // Pinta sprite cortado
         sp_cortado(si,x,y,an,al,0);
 
@@ -1693,12 +1788,17 @@ void screen_copy(void) {
 
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
+
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
   if (xr<0) xr=0; if (yr<0) yr=0;
-  if (xr+divand>ptr[13]) divand=ptr[13]-xr;
-  if (yr+ald>ptr[14]) ald=ptr[14]-yr;
+  if (xr+divand>iptr13) divand=iptr13-xr;
+  if (yr+ald>iptr14) ald=iptr14-yr;
   if (divand<=0 || ald<=0 || an<=0 || al<=0) return;
 
-  di=(byte*)ptr+64+ptr[15]*4+xr+yr*ptr[13];
+  di=(byte*)ptr+64+iptr15*4+xr+yr*iptr13;
   old_si=copia+region[reg].x0+region[reg].y0*vga_an;
 
   ixr=(float)(an*256)/(float)divand;
@@ -1712,7 +1812,7 @@ void screen_copy(void) {
       *di=*(si+(xr>>8));
       di++; xr+=ixr;
     } while (--an);
-    yr+=iyr; di+=ptr[13]-(an=divand);
+    yr+=iyr; di+=iptr13-(an=divand);
   } while (--ald);
 
 }
@@ -1748,8 +1848,20 @@ void put_screen(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-  } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+
+  word wptr32 = l2b16(*((word*)ptr+32));
+  word wptr33 = l2b16(*((word*)ptr+33));
+
+  if (iptr15==0 || wptr32==65535) { 
+    xg=iptr13/2; 
+    yg=iptr14/2;
+  } else { 
+    xg=wptr32;
+    yg=wptr33; 
+  }
 
   memset(copia2,0,vga_an*vga_al);
   put_sprite(file,graf,xg,yg,0,100,0,0,copia2,vga_an,vga_al);
@@ -1800,9 +1912,13 @@ void map_put_pixel(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (x>=0 && y>=0 && x<ptr[13] && y<ptr[14]) {
-    si=(byte*)ptr+64+ptr[15]*4;
-    *(si+x+y*ptr[13])=color;
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+  if (x>=0 && y>=0 && x<iptr13 && y<iptr14) {
+    si=(byte*)ptr+64+iptr15*4;
+    *(si+x+y*iptr13)=color;
   }
 }
 
@@ -1824,9 +1940,13 @@ void map_get_pixel(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (x>=0 && y>=0 && x<ptr[13] && y<ptr[14]) {
-    si=(byte*)ptr+64+ptr[15]*4;
-    pila[sp]=(int)(*(si+x+y*ptr[13]));
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+  if (x>=0 && y>=0 && x<iptr13 && y<iptr14) {
+    si=(byte*)ptr+64+iptr15*4;
+    pila[sp]=(int)(*(si+x+y*iptr13));
   } else pila[sp]=0;
 }
 
@@ -2537,10 +2657,32 @@ void start_mode7(void) {
   if (ptr1==NULL && ptr2==NULL) { e(132); return; }
   if (ptr1==NULL) { ptr1=ptr2; ptr2=NULL; }
 
-  im7[n].map_an=ptr1[13]; im7[n].map_al=ptr1[14];
-  im7[n].map=(byte*)ptr1+64+ptr1[15]*4;
+  int iptr1_13 = l2b32(ptr1[13]);
+  int iptr1_14 = l2b32(ptr1[14]);
+  int iptr1_15 = l2b32(ptr1[15]);
 
-  if (ptr2!=NULL) { im7[n].ext_an=ptr2[13]; im7[n].ext_al=ptr2[14]; } else im7[n].ext_an=0;
+  int iptr2_13 = 0;
+  int iptr2_14 = 0;
+  int iptr2_15 = 0;
+
+  // word wptr32 = l2b16(*((word*)ptr+32));
+  // word wptr33 = l2b16(*((word*)ptr+33));
+
+
+
+  im7[n].map_an=iptr1_13; 
+  im7[n].map_al=iptr1_14 ;
+  im7[n].map=(byte*)ptr1+64+iptr1_15*4;
+
+  if (ptr2!=NULL) { 
+    iptr2_13 = l2b32(ptr2[13]);
+    iptr2_14 = l2b32(ptr2[14]);
+    iptr2_15 = l2b32(ptr2[15]);
+
+    im7[n].ext_an=iptr2_13; 
+    im7[n].ext_al=iptr2_14; 
+  } 
+  else im7[n].ext_an=0;
 
   switch(im7[n].ext_an) {
     case 1: case 2: case 4: case 8: case 16: case 32: case 64: case 128:
@@ -2552,7 +2694,10 @@ void start_mode7(void) {
     case 256: case 512: case 1024: case 2048: case 4096: case 8192: break;
     default: im7[n].ext_al=0; }
 
-  if (im7[n].ext_an && im7[n].ext_al) im7[n].ext=(byte*)ptr2+64+ptr2[15]*4; else im7[n].ext=NULL;
+  if (im7[n].ext_an && im7[n].ext_al) 
+    im7[n].ext=(byte*)ptr2+64+iptr2_15*4;
+  else 
+   im7[n].ext=NULL;
 
   im7[n].on=1; // Al final si no ha habido errores, fija la variable m7
 }
@@ -2764,16 +2909,29 @@ void get_real_point(void) {
   if (g[mem[id+_File]].grf==NULL) { e(111); return; }
   if ((ptr=g[mem[id+_File]].grf[mem[id+_Graph]])==NULL) { e(121); return; }
 
-  if (n>=0 || n<ptr[15]) {
-    p=(short*)&ptr[16]; px=p[n*2]; py=p[n*2+1];
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+  short sptr16 = l2b16(ptr[16]);
+  word wptr32 = l2b16(*((word*)ptr+32));
+  word wptr33 = l2b16(*((word*)ptr+33));
+
+
+  if (n>=0 || n<iptr15) {
+    p=sptr16; 
+    px=p[n*2]; 
+    py=p[n*2+1];
 
     x=mem[id+_X]; y=mem[id+_Y];
-    if (mem[id+_Resolution]>0) { x/=mem[id+_Resolution]; y/=mem[id+_Resolution]; }
+    if (mem[id+_Resolution]>0) { 
+      x/=mem[id+_Resolution]; 
+      y/=mem[id+_Resolution]; 
+    }
 
-    an=ptr[13]; al=ptr[14];
+    an=iptr13; al=iptr14;
 
-    if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-    } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+    if (iptr15==0 || wptr32==65535) { xg=iptr13/2; yg=iptr14/2;
+    } else { xg=wptr32; yg=wptr33; }
 
     if (mem[id+_Angle]!=0) {
       px-=xg; py-=yg;
@@ -2958,6 +3116,8 @@ void convert_palette(void) {
   if (graf<=0 || graf>=max_grf) { e(110); return; }
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
+
+
 
   n=ptr[13]*ptr[14]; si=(byte*)ptr+64+ptr[15]*4;
   do { *si=(byte)mem[pal_ofs+*si]; si++; } while (--n);

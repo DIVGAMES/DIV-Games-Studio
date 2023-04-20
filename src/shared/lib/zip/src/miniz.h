@@ -161,6 +161,7 @@
 #define MINIZ_HEADER_INCLUDED
 
 #include <stdlib.h>
+#include <stdio.h>
 
 // Defines to completely disable specific portions of miniz.c:
 // If all macros here are defined the only functionality remaining will be CRC-32, adler-32, tinfl, and tdefl.
@@ -1324,11 +1325,17 @@ int mz_inflateEnd(mz_streamp pStream)
 int mz_uncompress(unsigned char *pDest, mz_ulong *pDest_len, const unsigned char *pSource, mz_ulong source_len)
 {
   mz_stream stream;
+    fprintf(stdout, "%s %d\n", __FILE__, __LINE__);
+
   int status;
+
   memset(&stream, 0, sizeof(stream));
+    fprintf(stdout, "%s %d\n", __FILE__, __LINE__);
 
   // In case mz_ulong is 64-bits (argh I hate longs).
-  if ((source_len | *pDest_len) > 0xFFFFFFFFU) return MZ_PARAM_ERROR;
+  if ((source_len | *pDest_len) > 0xFFFFFFFFU) 
+  return MZ_PARAM_ERROR;
+    fprintf(stdout, "%s %d\n", __FILE__, __LINE__);
 
   stream.next_in = pSource;
   stream.avail_in = (mz_uint32)source_len;
@@ -1336,17 +1343,24 @@ int mz_uncompress(unsigned char *pDest, mz_ulong *pDest_len, const unsigned char
   stream.avail_out = (mz_uint32)*pDest_len;
 
   status = mz_inflateInit(&stream);
+    fprintf(stdout, "%s %d\n", __FILE__, __LINE__);
+
   if (status != MZ_OK)
     return status;
+
+    fprintf(stdout, "%s %d\n", __FILE__, __LINE__);
 
   status = mz_inflate(&stream, MZ_FINISH);
   if (status != MZ_STREAM_END)
   {
     mz_inflateEnd(&stream);
+    fprintf(stdout, "%s %d\n", __FILE__, __LINE__);
+
     return ((status == MZ_BUF_ERROR) && (!stream.avail_in)) ? MZ_DATA_ERROR : status;
   }
   *pDest_len = stream.total_out;
 
+    fprintf(stdout, "%s %d\n", __FILE__, __LINE__);
   return mz_inflateEnd(&stream);
 }
 

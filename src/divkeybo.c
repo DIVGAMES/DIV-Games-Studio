@@ -133,11 +133,11 @@ void tecla(void) {
 mclock = OSDEP_GetTicks()/100;//(int)clock()/20000;
 reloj = OSDEP_GetTicks()/100;//(int)clock();
 
-//printf("%d %d\n",mclock,reloj);
+// fprintf(stdout, "Tecla() mclock: %d reloj: %d\n",mclock,reloj);
 
 //mclock++;
 #ifdef NOTYET
-//printf("Reading keyboard\n");
+// printf("Reading keyboard\n");
     ascii=0; scan_code=0;
 
 SDL_Event event;

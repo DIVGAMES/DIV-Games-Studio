@@ -65,5 +65,9 @@ set ( CMAKE_EXE_LINKER_FLAGS "-L/opt/m68k-amigaos/lib -Wl,-rpath,/opt/m68k-amiga
 #  -lSDL -lpthread -lSDL_mixer_nomad")
 set(EXTRA_LIBS ${EXTRA_LIBS} SDL_mixer_nomad pthread )
 
-SET(OSDEP "src/shared/osdep.c" )
+#FILE(GLOB OSX_SOURCES "src/osx/*.c")
+# SET(OSDEP ${OSDEP} ${OSX_SOURCES} "src/shared/osdep.c" "src/shared/unzip.c")
+# INCLUDE_DIRECTORIES("src/osx")
+SET(OSDEP "src/shared/osdep.c"  "src/shared/osdep/amiga.c" )
+#  "src/osx/fmemopen.c")
 

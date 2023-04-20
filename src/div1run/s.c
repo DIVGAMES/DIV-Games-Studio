@@ -1105,7 +1105,9 @@ void sp_rotado(byte * si, int x, int y, int an, int al, int xg, int yg,
   int n,l0,l1;   // Lado 0 y lado 1 (indices p[])
 
   int hmax0,hmax1;
-  union { int l; short w[2]; } x0,x1,g0x,g1x,g0y,g1y;
+  union { int l; 
+  short w[2]; 
+  } x0,x1,g0x,g1x,g0y,g1y;
   int ix0,ix1,ig0x,ig1x,ig0y,ig1y,kk;
   byte * ptrcopia;
 

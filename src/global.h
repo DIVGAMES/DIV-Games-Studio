@@ -21,6 +21,44 @@
 #include "sfmalloc.h"
 #endif
 
+
+#ifdef AMIGA2
+#define FUNCLOG fprintf(stdout, "%d %s %s\n", __LINE__, __FILE__, __FUNCTION__)
+#else
+
+#define FUNCLOG
+#endif
+
+#ifdef AMIGA
+#define l2b16(X) ( X >> 8 ) | ( X <<8 )
+#else
+#define l2b16(X) X
+#endif
+
+#ifdef AMIGA
+#define l2b32(X) \
+  (((uint32_t)(X) << 24) | \
+  (((uint32_t)(X) << 8) & 0x00FF0000U) | \
+  (((uint32_t)(X) >> 8) & 0x0000FF00U) | \
+  ((uint32_t)(X) >> 24))
+
+  // ((char *)&X)[3] | \
+  // ((char *)&X)[2] << 8 | \
+  // ((char *)&X)[1] << 16 | \
+  // ((char *)&X)[0] << 24
+  
+
+/*#define l2b32(X) \
+      ((( X & 0xFF000000) >> 24 ) | \
+      ((X & 0x00FF0000) >> 8 ) | \
+      ((X & 0x0000FF00) << 8 ) | \
+      ((X & 0x000000FF) << 24 ))
+      */
+#else
+#define l2b32(X) X
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //      Global Variables
 ///////////////////////////////////////////////////////////////////////////////

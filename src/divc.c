@@ -692,13 +692,23 @@ static jmp_buf buf;
 
 void comp(void)
 {
-	if (!setjmp(buf))
+	if (!setjmp(buf)) {
 		compilar();
+  } else {
+    // fprintf(stdout,"Compile failed\n");
+  }
+
+  // fprintf(stdout, "Compile ended");
+
+
 }
 
 void comp_exit(void)
 {
-     longjmp(buf,1);        
+  fprintf(stdout, "Comp Exit");
+  // error(0);
+
+  longjmp(buf,1);        
 }
 
 
@@ -1001,10 +1011,11 @@ void compilar(void) {
 
   program_type=0;
 
-free_resources();
+  free_resources();
 
   mensaje_compilacion(texto[201]);
 
+  // error(0);
   vnom=NULL; mem_ory=NULL;
   mem=NULL; loc=NULL; frm=NULL;
   def=NULL; _buf=NULL; _source=NULL;
@@ -1111,6 +1122,17 @@ free_resources();
   mem[7]=0; // Antes imem+iloc (inicio textos), ahora no se utiliza
   mem[8]=imem+iloc; // Número de elementos ocupados en mem[]
 
+/*
+
+  mem[2]=l2b32(imem);
+  mem[3]=l2b32(max_process); // Antes long_header, ahora no se utiliza
+  mem[4]=0; // Antes mem[1]-mem[3] (long datos globales), ahora no se utiliza
+  mem[5]=l2b32(iloc_len-iloc);
+  mem[6]=l2b32(iloc);
+  mem[7]=0; // Antes imem+iloc (inicio textos), ahora no se utiliza
+  mem[8]=l2b32(imem+iloc); // Número de elementos ocupados en mem[]
+
+*/
   mensaje_compilacion(texto[204]);
 
   save_dbg();
@@ -7600,8 +7622,11 @@ void get_error(int n);
 
 void compilar2(void) {
   if (compilado==0) {
-    compilado=1; mouse_graf=3; numero_error=-1;
+    compilado=1; 
+    mouse_graf=3; 
+    numero_error=-1;
     comp();
+    // numero_error = 1;
     if (numero_error>=0) {
       //      strcpy(e_msg,texto[207]);
       //      itoa(numero_error,e_msg+strlen(e_msg),10);

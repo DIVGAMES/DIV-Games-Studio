@@ -2898,8 +2898,11 @@ void mover(byte * sp, int an, int al) {
       if (_coord_x>=0 && _coord_y>=0 && _coord_x<map_an && _coord_y<map_al) {
         xg=an/2; yg=al/2;
         if (size==1 && ang==0) {
-          if (save_undo(_coord_x-xg,_coord_y-yg,an,al))
+          if (save_undo(_coord_x-xg,_coord_y-yg,an,al)) {
+            fprintf(stdout, "%d\n", __LINE__);
+				
             sp_normal(sp,_coord_x,_coord_y,an,al,xg,yg,block*2+ghost);
+          }
           else modo=110;
         } else {
           _an=an; _al=al; _x=_coord_x; _y=_coord_y;

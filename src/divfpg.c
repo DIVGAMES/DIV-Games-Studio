@@ -467,6 +467,9 @@ void abrir_fichero(void) {
 
 		strcat(full, input);
 
+
+		fprintf(stdout,"471 Trying to open: %s\n", full);
+
 		if ((f=fopen(full,"rb"))!=NULL) {
 			fclose(f);
 			v_existe=1;
@@ -496,6 +499,8 @@ void abrir_fichero(void) {
 				strcat(full,"/");
 
 			strcat(full, input);
+
+			fprintf(stdout,"503 Trying to open: %s\n", full);
 
 			if((f=fopen(full,"rb"))==NULL) {
 				v_texto=(char *)texto[44];
@@ -599,6 +604,8 @@ void abrir_fichero(void) {
 				strcat(full,"/");
 
 			strcat(full, input);
+
+			fprintf(stdout,"608 Trying to open: %s\n", full);
 
 			if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
 				if (fread(cwork,1,8,f)==8) {
@@ -1154,10 +1161,19 @@ void Print_List(void) {
 					Progress((char *)texto[437],++_num,num);
 					fseek(g,MiFPG->OffsGrf[n],SEEK_SET);
 					fread(&cab,1,sizeof(cab),g);
+					cab.COD = l2b32(cab.COD);
+					cab.LONG = l2b32(cab.LONG);
+					cab.Ancho = l2b32(cab.Ancho);
+					cab.Alto = l2b32(cab.Alto);
+					cab.nPuntos = l2b32(cab.nPuntos);
+
 					memset(cwork2,0,13);
 					memcpy(cwork2,cab.Filename,12);
 					sprintf(cwork,"[%03d] %s (%s, %dx%d)",
 					cab.COD,cab.Descrip,cwork2,cab.Ancho,cab.Alto);
+
+					fprintf(stdout, "CWORK: %s\n", cwork);
+
 					if (f_ar) {
 						fwrite(cwork,1,strlen(cwork),f);
 						fwrite("\xd\xa",1,2,f);
@@ -1568,6 +1584,7 @@ void crear_un_thumb_FPG(struct t_listboxbr * l){
 			if ((f=fopen((char *)MiFPG->ActualFile,"rb"))!=NULL) {
 				fseek(f,MiFPG->OffsGrf[MiFPG->DesIndex[num]],SEEK_SET);
 				ReadHead(&(MiFPG->MiHeadFPG), f);
+
 				fseek(f,MiFPG->MiHeadFPG.nPuntos*4,SEEK_CUR);
 				MiFPG->thumb[num].an=MiFPG->MiHeadFPG.Ancho;
 				MiFPG->thumb[num].al=MiFPG->MiHeadFPG.Alto;

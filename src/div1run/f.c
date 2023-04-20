@@ -6,7 +6,10 @@
 #include "inter.h"
 #include "divsound.h"
 #include "cdrom.h"
+#ifdef NETPLAY
 #include "net.h"
+#endif
+
 #ifdef DIVDLL
 #include "divdll.h"
 #endif

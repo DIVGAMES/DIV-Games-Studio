@@ -1113,7 +1113,9 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
     }
   }
 
-  if(m3d_edit.fpg_path[0]==0) return;
+  if(m3d_edit.fpg_path[0]==0) 
+    return;
+    
   debugprintf("Trying to load %s\n",(char *)m3d_edit.fpg_path);
   
   if((FPG_F=fopen((char *)m3d_edit.fpg_path,"rb"))==NULL)
@@ -1191,11 +1193,11 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       }
     }
 
-    thumb_tex[n].an   = FPG_D.info.ancho;
-    thumb_tex[n].al   = FPG_D.info.alto;
-    thumb_tex[n].Code = FPG_D.info.cod;
+    thumb_tex[n].an   = l2b32(FPG_D.info.ancho);
+    thumb_tex[n].al   = l2b32(FPG_D.info.alto);
+    thumb_tex[n].Code = l2b32(FPG_D.info.cod);
 
-    sprintf(cwork, "%03d", FPG_D.info.cod);
+    sprintf(cwork, "%03d", l2b32(FPG_D.info.cod));
     if(thumb_tex[n].Cuad)
     {
       strcpy(textura+t_maximo*an_textura, cwork);
@@ -1205,7 +1207,7 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
 
     thumb_tex[n].FilePos = ftell(FPG_F);
 
-    if((FPG_D.imagen=(byte *)malloc(FPG_D.info.ancho*FPG_D.info.alto))==NULL)
+    if((FPG_D.imagen=(byte *)malloc(thumb_tex[n].an*thumb_tex[n].al))==NULL)
     {
       for(n=0; n<max_texturas; n++)
       {
@@ -1216,14 +1218,16 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
         }
       }
       fclose(FPG_F);
-      if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
+      if (prog) 
+        Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
+
       v_texto=(char *)texto[45];
       dialogo(err0);
       return;
     }
 
-    if( fread(FPG_D.imagen, 1, FPG_D.info.ancho*FPG_D.info.alto, FPG_F)
-        != FPG_D.info.ancho*FPG_D.info.alto )
+    if( fread(FPG_D.imagen, 1, thumb_tex[n].an*thumb_tex[n].al, FPG_F)
+        != thumb_tex[n].an*thumb_tex[n].al )
     {
       for(n=0; n<max_texturas; n++)
       {

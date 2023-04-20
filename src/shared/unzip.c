@@ -24,6 +24,11 @@ char exebin[255];
 //#include "fmemopen.h"
 #endif
 
+#ifdef AMIGA
+// #include "fmemopen.h"
+#endif
+
+
 #ifdef STDC
 #  include <stddef.h>
 #  include <string.h>

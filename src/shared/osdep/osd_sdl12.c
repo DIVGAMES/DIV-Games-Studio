@@ -2,7 +2,7 @@
 // CONFIGURED FOR SDL1.2
 
 #include "osd_sdl12.h"
-
+#include "global.h"
 
 // key buffer
 uint8_t OSDEP_key[2048];
@@ -28,6 +28,7 @@ void OSDEP_ShowCursor(int show) {
 
 void OSDEP_Init(void) {
 printf("OSDEP INIT");
+
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
 #endif
@@ -61,7 +62,7 @@ uint32_t OSDEP_GetTicks(void) {
 
 // Display
 void OSDEP_SetCaption(char *title, char *icon) {
-		printf("%s\n",__FUNCTION__ );
+	printf("%s\n",__FUNCTION__ );
 
 	SDL_WM_SetCaption((const char *)title, (const char *)icon);
 
@@ -106,7 +107,8 @@ void OSDEP_WarpMouse(int x, int y) {
 int OSDEP_IsFullScreen(void) {
 		printf("%s\n",__FUNCTION__ );
 
-	if (OSDEP_screen->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
+	if (OSDEP_screen->flags & SDL_FULLSCREEN) 
+	return 1; // return true if surface is fullscreen
     return 0; // Return false if surface is windowed
 
 }
@@ -116,25 +118,33 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 // width = 640;
 // height = 480;
 
+// fs = 1;
 	fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
 	// clear event queue
 
 	SDL_Event event;
 
 	while(SDL_PollEvent(&event)) {
+		fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
+
 		fs=fs;
 	}
 
 	if(fs) {
 		flags = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
 	} else {
-		flags = SDL_SWSURFACE | SDL_RESIZABLE;
+		flags = SDL_HWSURFACE |  SDL_HWPALETTE;
 	}
 
+	if(bpp == 8 && fs == 0) {
+		flags |= SDL_HWPALETTE;
+	}
 	fullscreen = fs;
 	// vwidth = width;
 	// vheight = height;
-	
+
+	fprintf(stdout,"FS: %d\n",fs);
+
 	if(OSDEP_surface !=NULL) {
 		SDL_FreeSurface(OSDEP_surface);
 	}
@@ -151,7 +161,12 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 #endif
 	sw = width;
 	sh = height;	
-#ifdef __EMSCRIPTEN__
+
+
+	SDL_WM_GrabInput(SDL_GRAB_QUERY);
+	// return OSDEP_screen;
+
+#if defined (__EMSCRIPTEN__) || defined (AMIGA)
 	return OSDEP_screen;
 #endif
 	return OSDEP_surface;
@@ -166,14 +181,15 @@ void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 
 
 void OSDEP_Flip(OSDEP_Surface *s) {
 
-	printf("%d %s %s\n",__LINE__, __FILE__, __FUNCTION__ );
+	FUNCLOG;
 
-#ifdef __EMSCRIPTEN__
+#if defined( __EMSCRIPTEN__) || defined (AMIGA)
 		SDL_Flip(OSDEP_screen);
 		return;
 #endif	
 
 	if((vwidth == vga_an && vheight == vga_al) || (vwidth == 0 && vheight == 0)) {
+		// fprintf(stdout,"Full blit surface\n");
 		SDL_BlitSurface(s, NULL, OSDEP_screen, NULL);
 	} else {
 		OSDEP_zoomsurface = zoomSurface(s, (float)vwidth/vga_an, (float)vheight/vga_al, 1);
@@ -201,7 +217,7 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 		}
 	}
 	SDL_Flip(OSDEP_screen);
-	printf("%d %s %s completed\n",__LINE__, __FILE__, __FUNCTION__ );
+	// printf("%d %s %s completed\n",__LINE__, __FILE__, __FUNCTION__ );
 
 }
 

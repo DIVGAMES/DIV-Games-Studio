@@ -499,7 +499,8 @@ extern char input2[32];
 
 void browser0(void);
 
-void menu_mapas0(void) { crear_menu(800);
+void menu_mapas0(void) { 
+  crear_menu(800);
   v.paint_handler=menu_mapas1;
   v.click_handler=menu_mapas2; }
 
@@ -1743,11 +1744,17 @@ void mapa2(void) {
 
     map_an=v.mapa->map_an; map_al=v.mapa->map_al;
 
+
+    fprintf(stdout, "Ancho: %d ALto: %d\n", map_an, map_al);
+
+
     mab=(int *)malloc(((map_an*map_al+31)/32)*4);
 
     if (mab==NULL) {
       v_texto=(char *)texto[45]; dialogo(err0); return;
     }
+
+    fprintf(stdout, "map buffer allocation success\n");
 
     for (n=1;n<max_windows;n++)
     if (ventana[n].tipo && ventana[n].primer_plano==1) {
@@ -1815,6 +1822,8 @@ void mapa2(void) {
     textura_color=NULL;
 
     TipoTex=0;
+
+    fprintf(stdout, "Opening brush file (%s)\n", full);
     if((FilePaintFPG=fopen(full,"rb"))!=NULL) // NOTE !!! Could provide message here
     {
       strcpy((char *)m3d_edit.fpg_path, full);

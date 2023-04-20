@@ -1040,7 +1040,10 @@ void Cfg_Setup_end(void) {
 
     no_volcar_ventanas=0; cierra_rapido=0; exploding_windows=ew;
 
-    actualiza_caja(0,0,vga_an,vga_al); volcado(copia);
+    actualiza_caja(0,0,vga_an,vga_al); 
+    
+
+    volcado(copia);
   }
 }
 

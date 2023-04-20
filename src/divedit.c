@@ -2217,7 +2217,7 @@ void put_char(byte * ptr, int an, byte c,int block) {
   byte *si,color;
 
   si=font+c*char_size;
-//printf("%c",c);
+fprintf(stdout, "%c",c);
 
   if (block) {
 

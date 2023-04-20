@@ -295,6 +295,8 @@ if(ExternDirs[mem[ip]])
 case lchk:
   #ifdef DEBUG
     if (pila[sp]<id_init || pila[sp]>id_max || pila[sp]!=mem[pila[sp]]) {
+      // fprintf(stdout, "pila[sp]=%d id_init=%d id_max=%d mem[pila[sp]]=%d\n", pila[sp], id_init, id_max, mem[pila[sp]]);
+      // fprintf(stdout, " if (pila[sp]<id_init || pila[sp]>id_max || pila[sp]!=mem[pila[sp]])\n");
       v_function=-2; e(141);
       if (call_to_debug) { process_stoped=id; return; }
     }
@@ -335,7 +337,16 @@ case lcaraid:
 
 	pila[++sp]=mem[ip++]+id; 
 	break;
-case lcarptr: pila[++sp]=mem[mem[ip++]]; break;
+case lcarptr:
+// fprintf(stdout,"lcarptr\n");
+// fprintf(stdout,"SP: %d\n", sp);
+// fprintf(stdout,"IP: %d\n", ip);
+// fprintf(stdout,"mem[ip]: %d\n", mem[ip]);
+// fprintf(stdout,"mem[mem[ip]]: %d\n", mem[mem[ip]]);
+
+  pila[++sp]=mem[mem[ip++]]; 
+  break;
+
 case laidptr: pila[sp]=mem[pila[sp]+id]; break;
 case lcaraidptr: pila[++sp]=mem[mem[ip++]+id]; break;
 case lcaraidcpa: mem[mem[ip++]+id]=pila[mem[id+_Param]++]; break;
@@ -360,7 +371,14 @@ case lcarasiasp:
 		dirty(id);
 	} else
 #endif
-	  mem[pila[sp]]=mem[ip++]; sp--;
+  // fprintf(stdout,"lcarasiasp\n");
+  // fprintf(stdout,"SP: %d\n", sp);
+  // fprintf(stdout,"IP: %d\n", ip);
+  // fprintf(stdout,"pila[sp]: %d\n", pila[sp]);
+  // fprintf(stdout,"mem[ip]: %d\n", mem[ip]);
+  // fprintf(stdout,"mem[mem[ip]]: %d\n", mem[mem[ip]]);
+
+  mem[pila[sp]]=mem[ip++]; sp--;
   break;
 case lcarsub: pila[sp]-=mem[ip++]; break;
 case lcardiv: pila[sp]/=mem[ip++]; break; // No hay nunca "cardiv 0"

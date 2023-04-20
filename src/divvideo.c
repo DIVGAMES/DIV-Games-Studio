@@ -122,7 +122,7 @@ FPSmanager fpsman;
 
 void retrazo(void) {
 
-fprintf(stdout, "retrazo (vsync)\n");
+// fprintf(stdout, "retrazo (vsync)\n");
 SDL_framerateDelay(&fpsman);
 
 #ifdef NOTYET
@@ -272,7 +272,8 @@ SDL_setFramerate(&fpsman, 60);
 
 	modovesa=1;
 
-  fprintf(stdout,"%d %s Hello!\n", __LINE__, __FUNCTION__);
+  FUNCLOG;
+  // fprintf(stdout,"%d %s Hello!\n", __LINE__, __FUNCTION__);
 
 	set_dac(dac);
 
@@ -413,7 +414,7 @@ void vgacpy(byte * q, byte * p, int n) ;
 
 
 void volcadosdlp(byte *p) {
-  fprintf(stdout,"%d %s %s\n", __LINE__, __FILE__, __FUNCTION__);
+  FUNCLOG;
 
 volcadosdl(p);
 return;
@@ -476,7 +477,8 @@ return;
 
 void volcadosdl(byte *p) {
 
-  fprintf(stdout, "%d %s\n", __LINE__, __FUNCTION__);
+FUNCLOG;
+  // fprintf(stdout, "%d %s\n", __LINE__, __FUNCTION__);
 
 	int vy;
 	int vx;
@@ -501,7 +503,7 @@ void volcadosdl(byte *p) {
 	if(SDL_MUSTLOCK(vga))
 		SDL_LockSurface(vga);
 
-fprintf(stdout,"Locking vga surface\n");
+// fprintf(stdout,"Locking vga surface\n");
 	byte *q = (byte *)vga->pixels;
 	uint32_t *q32 = (uint32_t *)vga->pixels;
 

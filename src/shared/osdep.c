@@ -285,7 +285,7 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 
   if(namelist!=NULL) {
   	while(++np<nummatch) {
-      fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+      // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
 	  	free(namelist[np]);
     	namelist[np] = NULL;
 	  }
@@ -293,14 +293,22 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 	  namelist=NULL;
   }
 
+#ifdef AMIGA
+  nummatch = scandir("", &namelist, 0, alphasort); 
+#else
   nummatch = scandir(".", &namelist, 0, alphasort); 
+#endif
+
+
+  fprintf(stdout,"Num Matches for working dir: %d\n", nummatch);
+
 	np=-1;
 	type = attr;
 
 	ret =_dos_findnext(result);
 
-	fprintf(stdout,"matches: %d\n",nummatch);
-  fprintf(stdout, "Ret: %d\n",ret);
+	// fprintf(stdout,"matches: %d\n",nummatch);
+  // fprintf(stdout, "Ret: %d\n",ret);
 	return (ret);
 
 }
@@ -308,15 +316,18 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 unsigned int _dos_findnext(struct find_t *result) {
   memset(result, 0, sizeof(*result));
   result->attrib = _A_NORMAL;
-  fprintf(stdout, "NP: %d, Num matches: %d\n", np, nummatch);
+  // fprintf(stdout, "NP: %d, Num matches: %d\n", np, nummatch);
 
   while(++np<nummatch) {
 	  strcpy(result->name,namelist[np]->d_name);
+    // fprintf(stdout,"Found File: %s\n", result->name);
+    // fprintf(stdout,"Flags: %b\n", namelist[np]->d_type);
+
     result->attrib=0;
   	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
-		  if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
+		  if((namelist[np]->d_type & DT_DIR) && type == _A_SUBDIR) {
 			  if(strchr(findmask,'*')) {
-          fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+          // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
   				free(namelist[np]);
           namelist[np] = NULL;
 	  			result->attrib=16;
@@ -329,8 +340,8 @@ unsigned int _dos_findnext(struct find_t *result) {
 	  	if (fnmatch(findmask, findname, FNM_PATHNAME | FNM_CASEFOLD)==0){
 		
         if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
-          fprintf(stdout, "free'ing np [%d] [FILE]\n",np,result->name);
-          fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+          // fprintf(stdout, "free'ing np [%d] [FILE]\n",np,result->name);
+          // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
           if(namelist[np]!=NULL) {
             free(namelist[np]);
             namelist[np]=NULL;
@@ -340,10 +351,10 @@ unsigned int _dos_findnext(struct find_t *result) {
         } 
       }
 	  }
-    fprintf(stdout, "free'ing np [%d] *not matched* %s (num matches: %d) %X\n",np, namelist[np]->d_name, nummatch, namelist[np]);
+    // fprintf(stdout, "free'ing np [%d] *not matched* %s (num matches: %d) %X\n",np, namelist[np]->d_name, nummatch, namelist[np]);
     if(np<nummatch) {
       if(namelist[np]!=NULL) {
-        fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+        // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
 //        free(namelist[np]);
         namelist[np] = NULL;
       }

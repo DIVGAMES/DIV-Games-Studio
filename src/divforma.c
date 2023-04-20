@@ -97,25 +97,45 @@ typedef struct _rgb_quad
 //âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 int es_MAP (byte * buffer) {
+
+
 	if (!strcmp((char *)buffer,"map\x1a\x0d\x0a")) {
-		map_an=*(word*)(buffer+8);
-		map_al=*(word*)(buffer+10);
+    // fprintf(stdout, "Dumping map data: \n");
+    for(int i =0; i< 20; i++) {
+      // fprintf(stdout, "idx: %d HEX: %X DEC: %d\n", i, buffer[i], buffer[i]);
+    }
+    word *wbuffer = (word *)buffer;
+		map_an= buffer[8] | buffer[9] << 8;//wbuffer[4];
+    //*(word*)(buffer+8);
+    // map_an = l2b16(map_an);
+		map_al= buffer[10] | buffer[11] << 8; //wbuffer[5];
+    //*(word*)(buffer+10);
+    // map_al = l2b16(map_al);
+    // fprintf(stdout, "an: %d al: %d\n", map_an, map_al);
+    // error(0);
 		return(1);
 	} else 
+  // error(0);
 		return(0);
 }
 
 void descomprime_MAP (byte * buffer, byte * mapa, int vent) {
 	
+  fprintf(stdout,"dmap: %d\n", vent);
 	short npuntos;
 	if (vent) {
 		memcpy(&Codigo,buffer+12,4);
+    Codigo = l2b16(Codigo);
 		memcpy(Descripcion,buffer+16,32);
 	}
 
 	memcpy(dac4,buffer+48,768);
 	memcpy(&npuntos,buffer+1392,2);
+
+  npuntos = l2b16(npuntos);
 	
+  fprintf(stdout, "npuntos: %d\n", npuntos);
+
 	if (vent) {
 		memcpy(reglas,buffer+816,sizeof(reglas));
 		if(npuntos!=0)
@@ -123,6 +143,7 @@ void descomprime_MAP (byte * buffer, byte * mapa, int vent) {
 	}
 	
 	memcpy(mapa,buffer+1394+(npuntos*4),map_an*map_al);
+  // error(0);
 }
 
 int graba_MAP (byte * mapa, FILE * f) {
@@ -627,7 +648,9 @@ int es_BMP(byte *buffer)
      InfoHeader.biBitCount!=24) return(0);
 
   map_an=InfoHeader.biWidth;
+  map_an = l2b32(map_an);
   map_al=InfoHeader.biHeight;
+  map_al = l2b32(map_al);
 
   return(1);
 }
@@ -646,15 +669,29 @@ void descomprime_BMP(byte *buffer, byte *mapa, int vent)
   byte *old_muestra;
 
   FileHeader.bfType=*((unsigned short*)buffer);
+  FileHeader.bfType = l2b16(FileHeader.bfType);
+
   FileHeader.bfSize=*((unsigned int*)(buffer+2));
+  FileHeader.bfSize = l2b32(FileHeader.bfSize);
+  
   FileHeader.bfReserved1=*((unsigned short*)(buffer+6));
+  FileHeader.bfReserved1 = l2b16(FileHeader.bfReserved1);
+
   FileHeader.bfReserved2=*((unsigned short*)(buffer+8));
+  FileHeader.bfReserved2 = l2b16(FileHeader.bfReserved2);
+
   FileHeader.bfOffBits=*((unsigned int *)(buffer+10));
+  FileHeader.bfOffBits = l2b32(FileHeader.bfOffBits);
 
   pSrc=buffer+14;
   memcpy(&InfoHeader,pSrc,40);
-  map_an = InfoHeader.biWidth;
-  map_al = InfoHeader.biHeight;
+  map_an=InfoHeader.biWidth;
+  map_an = l2b32(map_an);
+  map_al=InfoHeader.biHeight;
+  map_al = l2b32(map_al);
+
+  // map_an = InfoHeader.biWidth;
+  // map_al = InfoHeader.biHeight;
 
   if((!map_an && !map_al) || map_an<0 || map_al<0) return;
 

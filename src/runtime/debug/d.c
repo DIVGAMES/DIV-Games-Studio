@@ -453,20 +453,49 @@ void init_big(void) {
 			fseek(f, 1352, SEEK_SET);
 			fread(graf_ptr, 1, n, f);
 			fclose(f);
-			while (graf_ptr < ptr + n && *((int *)graf_ptr) < 256) {
-				if (*(int *)(graf_ptr + 60)) {
-					graf[*((int *)graf_ptr)] = graf_ptr + 60;
-					*(word *)(graf_ptr + 60) = *(int *)(graf_ptr + 52);
-					*(word *)(graf_ptr + 62) = *(int *)(graf_ptr + 56);
-					graf_ptr += *(int *)(graf_ptr + 52) * *(int *)(graf_ptr + 56) + 68;
+
+			int *igraf_ptr = (int *)graf_ptr;
+			word *wgraf_ptr = (word *)graf_ptr;
+
+			while (graf_ptr < ptr + n && l2b32(igraf_ptr[0]) < 256) {
+				// fprintf(stdout,"graf_ptr: %X\n", graf_ptr);
+
+				if (l2b32(igraf_ptr[15])) {
+					graf[l2b32(*igraf_ptr)] = graf_ptr + 60;
+					wgraf_ptr[30] = l2b32(igraf_ptr[13]);
+					wgraf_ptr[31] = l2b32(igraf_ptr[14]);
+					// fprintf(stdout,"30: %X 31: %X \n", wgraf_ptr[30], wgraf_ptr[31]);
+
+					graf_ptr += wgraf_ptr[30] * wgraf_ptr[31] + 68;
 				} else {
-					graf[*((int *)graf_ptr)] = graf_ptr + 56;
-					*(word *)(graf_ptr + 56) = *(int *)(graf_ptr + 52);
-					*(word *)(graf_ptr + 58) = *(int *)(graf_ptr + 56);
-					*(int *)(graf_ptr + 60) = 0;
-					graf_ptr += *(int *)(graf_ptr + 52) * *(int *)(graf_ptr + 56) + 64;
+					graf[l2b32(igraf_ptr[0])] = graf_ptr + 56;
+					wgraf_ptr[28] = l2b32(igraf_ptr[14]);
+					wgraf_ptr[29] = l2b32(igraf_ptr[13]);
+					// fprintf(stdout,"28: %X 29: %X \n", wgraf_ptr[28], wgraf_ptr[29]);
+
+					igraf_ptr[15] = 0;
+					graf_ptr += wgraf_ptr[28] * wgraf_ptr[29] + 64;
 				}
+				igraf_ptr = (int *)graf_ptr;
+				wgraf_ptr = (word *)graf_ptr;
 			}
+
+			// exit(0);
+
+			// while (graf_ptr < ptr + n && *((int *)graf_ptr) < 256) {
+			// 	if (*(int *)(graf_ptr + 60)) {
+			// 		graf[*((int *)graf_ptr)] = graf_ptr + 60;
+			// 		*(word *)(graf_ptr + 60) = *(int *)(graf_ptr + 52);
+			// 		*(word *)(graf_ptr + 62) = *(int *)(graf_ptr + 56);
+			// 		graf_ptr += *(int *)(graf_ptr + 52) * *(int *)(graf_ptr + 56) + 68;
+			// 	} else {
+			// 		graf[*((int *)graf_ptr)] = graf_ptr + 56;
+			// 		*(word *)(graf_ptr + 56) = *(int *)(graf_ptr + 52);
+			// 		*(word *)(graf_ptr + 58) = *(int *)(graf_ptr + 56);
+			// 		*(int *)(graf_ptr + 60) = 0;
+			// 		graf_ptr += *(int *)(graf_ptr + 52) * *(int *)(graf_ptr + 56) + 64;
+			// 	}
+			// }
 			graf_ptr = ptr;
 		} else {
 			fclose(f);
@@ -1524,24 +1553,32 @@ static void wwrite_in_box(byte *copia,
 				ptr++;
 			}
 			if (*ptr && x < 0) {
-				wtexc(copia, an_real_copia, an_copia, al_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+				word dir = l2b16(car[*ptr].dir);
+
+				wtexc(copia, an_real_copia, an_copia, al_copia, font + dir, x, y, car[*ptr].an, al, c);
 				x = x + car[*ptr].an;
 				ptr++;
 			}
 			while (*ptr && x + car[*ptr].an <= an_copia) {
-				wtexn(copia, an_real_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+				word dir = l2b16(car[*ptr].dir);
+
+				wtexn(copia, an_real_copia, font + dir, x, y, car[*ptr].an, al, c);
 				x = x + car[*ptr].an;
 				ptr++;
 			}
-			if (*ptr && x < an_copia)
-				wtexc(copia, an_real_copia, an_copia, al_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+			if (*ptr && x < an_copia) {
+				word dir = l2b16(car[*ptr].dir);
+				wtexc(copia, an_real_copia, an_copia, al_copia, font + dir, x, y, car[*ptr].an, al, c);
+			}
 		} else {
 			while (*ptr && x + car[*ptr].an <= 0) {
 				x = x + car[*ptr].an;
 				ptr++;
 			}
 			while (*ptr && x < an_copia) {
-				wtexc(copia, an_real_copia, an_copia, al_copia, font + car[*ptr].dir, x, y, car[*ptr].an, al, c);
+				word dir = l2b16(car[*ptr].dir);
+
+				wtexc(copia, an_real_copia, an_copia, al_copia, font + dir, x, y, car[*ptr].an, al, c);
 				x = x + car[*ptr].an;
 				ptr++;
 			}
@@ -3055,6 +3092,12 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 	graph = mem[id + _Graph];
 	angle = mem[id + _Angle];
 
+	fprintf(stdout,"File: %d\n", file);
+	fprintf(stdout,"Graph: %d\n", graph);
+	fprintf(stdout,"Angle: %d\n", angle);
+	
+
+
 	if (file < 0 || file > max_fpgs) return;
 
 	if (mem[id + _Ctype] == 2 || mem[id + _Ctype] == 3)
@@ -3082,6 +3125,10 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 	if (g[file].grf == NULL) return;
 	if ((ptr = g[file].grf[graph]) == NULL) return;
 
+	// ptr = l2b32(ptr);
+
+	fprintf(stdout,"Graf pointer: %d\n", ptr);
+
 	x = mem[id + _X];
 	y = mem[id + _Y];
 	if (mem[id + _Resolution] > 0) {
@@ -3089,41 +3136,67 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 		y /= mem[id + _Resolution];
 	}
 
-	if (ptr[15] == 0 || *((word *)ptr + 32) == 65535) {
-		xg = ptr[13] / 2;
-		yg = ptr[14] / 2;
+	word wptr32 = *((word *)ptr + 32);
+	word wptr33 = *((word *)ptr + 33);
+
+	fprintf(stdout,"wptr32: %d\n", wptr32);
+	fprintf(stdout,"wptr33: %d\n", wptr33);
+
+
+	wptr32 = l2b16(wptr32);
+	wptr33 = l2b16(wptr33);
+	
+	fprintf(stdout,"wptr32: %d\n", wptr32);
+	fprintf(stdout,"wptr33: %d\n", wptr33);
+	
+
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+	if (iptr15 == 0 || wptr32 == 65535) {
+		xg = iptr13 / 2;
+		yg = iptr14 / 2;
 	} else {
-		xg = *((word *)ptr + 32);
-		yg = *((word *)ptr + 33);
+		xg = wptr32;
+		yg = wptr33;
 	}
 
 	if (angle) {
 		clipx0 = x;
 		clipy0 = y;
-		clipx1 = ptr[13];
-		clipy1 = ptr[14];
+		clipx1 = iptr13;
+		clipy1 = iptr14;
 		sp_size(&clipx0, &clipy0, &clipx1, &clipy1, xg, yg, angle, mem[id + _Size], mem[id + _Flags]);
 	} else if (mem[id + _Size] != 100) {
 		clipx0 = x;
 		clipy0 = y;
-		clipx1 = ptr[13];
-		clipy1 = ptr[14];
+		clipx1 = iptr13;
+		clipy1 = iptr14;
 		sp_size_scaled(&clipx0, &clipy0, &clipx1, &clipy1, xg, yg, mem[id + _Size], mem[id + _Flags]);
 	} else {
-		if (mem[id + _Flags] & 1)
-			clipx0 = x - (ptr[13] - 1 - xg);
+		if (mem[id + _Flags] & 1) {
+			clipx0 = x - ( iptr13 - 1 - xg);
+		}
 		else
 			clipx0 = x - xg;
-		if (mem[id + _Flags] & 2)
-			clipy0 = y - (ptr[14] - 1 - yg);
+		if (mem[id + _Flags] & 2) {
+			clipy0 = y - (iptr14 - 1 - yg);
+		}
 		else
 			clipy0 = y - yg;
-		clipx1 = clipx0 + ptr[13] - 1;
-		clipy1 = clipy0 + ptr[14] - 1;
+		clipx1 = clipx0 + iptr13 - 1;
+		clipy1 = clipy0 + iptr14 - 1;
 	}
 
 	buffer_an = clipx1 - clipx0 + 1;
 	buffer_al = clipy1 - clipy0 + 1;
+
+
+	fprintf(stdout, "Buffer_an: %d Buffer_al: %d\n", buffer_an, buffer_al);
+
+	// exit(0);
+
 	if ((buffer = (byte *)malloc(buffer_an * buffer_al)) == NULL) return;
 	memset(buffer, 0, buffer_an * buffer_al);
 

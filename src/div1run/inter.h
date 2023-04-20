@@ -7,6 +7,8 @@
 #define GLOBAL extern
 #endif
 
+
+
 typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 
@@ -37,6 +39,50 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 
 #include "divkeybo.h"
 #include "divfli.h"
+
+#ifdef AMIGA
+
+#define l2b16(X) ( X >> 8 ) | ( X <<8 )
+
+
+#define l2b32(X) \
+  (((uint32_t)(X) << 24) | \
+  (((uint32_t)(X) << 8) & 0x00FF0000U) | \
+  (((uint32_t)(X) >> 8) & 0x0000FF00U) | \
+  ((uint32_t)(X) >> 24))
+
+  // ((char *)&X)[3] | \
+  // ((char *)&X)[2] << 8 | \
+  // ((char *)&X)[1] << 16 | \
+  // ((char *)&X)[0] << 24
+  
+
+/*#define l2b32(X) \
+      ((( X & 0xFF000000) >> 24 ) | \
+      ((X & 0x00FF0000) >> 8 ) | \
+      ((X & 0x0000FF00) << 8 ) | \
+      ((X & 0x000000FF) << 24 ))
+      */
+
+#define l2b64(x) \
+    (((x & 0x00000000000000FFULL) << 56) | \
+     ((x & 0x000000000000FF00ULL) << 40) | \
+     ((x & 0x0000000000FF0000ULL) << 24) | \
+     ((x & 0x00000000FF000000ULL) << 8) | \
+     ((x & 0x000000FF00000000ULL) >> 8) | \
+     ((x & 0x0000FF0000000000ULL) >> 24) | \
+     ((x & 0x00FF000000000000ULL) >> 40) | \
+     ((x & 0xFF00000000000000ULL) >> 56))
+
+#else
+#define l2b16(X) X
+
+#define l2b32(X) X
+#define l2b64(X) X
+
+#endif
+
+
 
 
 GLOBAL OSDEP_Joystick *divjoy;

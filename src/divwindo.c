@@ -4,7 +4,7 @@
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
-
+// #include <netinet/in.h>
 extern SDL_Surface *vga;
 
 void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,int y,int n);
@@ -13,7 +13,6 @@ void wtexc(byte*copia,int an_real_copia,int an_copia,int al_copia,
 
 void wtexn(byte*copia,int an_real_copia,byte*p,int x,int y,byte an,int al,byte c) ;
 
-           
 //═════════════════════════════════════════════════════════════════════════════
 //      Draw a button on a window
 //═════════════════════════════════════════════════════════════════════════════
@@ -333,10 +332,18 @@ rc.y*=2;
   p=graf[n]+8;
 
   al=*((word*)(graf[n]+2));
+//  al = l2b16(al);
   an=*((word*)graf[n]);
+//an = l2b16(an);
 
-  x-=*((word*)(graf[n]+4));
-  y-=*((word*)(graf[n]+6));
+word tmp = *((word*)(graf[n]+4));
+tmp = l2b16(tmp);
+  x-=tmp;
+  //*((word*)(graf[n]+4));
+  tmp = *((word*)(graf[n]+6));
+tmp = l2b16(tmp);
+  y-=tmp;
+  //*((word*)(graf[n]+6));
 
   q=copia+y*an_real_copia+x;
 
@@ -392,8 +399,18 @@ void bwput_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,int x,i
   al=*((word*)(graf[n]+2));
   an=*((word*)graf[n]);
 
-  x-=*((word*)(graf[n]+4)); 
-  y-=*((word*)(graf[n]+6));
+word tmp = *((word*)(graf[n]+4));
+tmp = l2b16(tmp);
+  x-=tmp;
+  //*((word*)(graf[n]+4));
+  tmp = *((word*)(graf[n]+6));
+tmp = l2b16(tmp);
+  y-=tmp;
+  //*((word*)(graf[n]+6));
+
+
+//   x-=*((word*)(graf[n]+4)); 
+//   y-=*((word*)(graf[n]+6));
 
   if (an_copia>0) {
     an_real_copia*=2; an_copia*=2; al_copia*=2; x*=2; y*=2;
@@ -574,7 +591,8 @@ typedef  struct { byte an; word dir; } sscar;
 int char_len(char c) {
 	sscar *car;
 //  struct { byte an; word dir; } * car;
-  car=(sscar *)(text_font+1); return(car[c].an);
+  car=(sscar *)(text_font+1); 
+  return(car[c].an);
 }
 
 int text_len(byte * ptr) {
@@ -657,7 +675,7 @@ extern struct t_listboxbr larchivosbr;
 void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
             int x,int y,int centro,byte * ptr,byte c) {
 
-//	printf("Writing in box: %s\n",ptr);
+	// fprintf(stdout, "Writing in box: %s\n",ptr);
 	
 	int vn=0;
 	SDL_Surface *tsurface;
@@ -876,26 +894,33 @@ void wwrite_in_box(byte*copia,int an_real_copia,int an_copia,int al_copia,
 			}
 			
 			if (*ptr && x<0) {
-				wtexc(copia,an_real_copia,an_copia,al_copia,font+car[*ptr].dir,x,y,car[*ptr].an,al,c);
+				word dir = l2b16(car[*ptr].dir);
+
+				wtexc(copia,an_real_copia,an_copia,al_copia,font+dir ,x,y,car[*ptr].an,al,c);
 				x=x+car[*ptr].an; 
 				ptr++; 
 			}
 			
 			while (*ptr && x+car[*ptr].an<=an_copia) {
-				wtexn(copia,an_real_copia,font+car[*ptr].dir,x,y,car[*ptr].an,al,c);
+				word dir = l2b16(car[*ptr].dir);
+
+				wtexn(copia,an_real_copia,font+dir,x,y,car[*ptr].an,al,c);
 				x=x+car[*ptr].an; 
 				ptr++; 
 			}
 			
-			if (*ptr && x<an_copia)
-				wtexc(copia,an_real_copia,an_copia,al_copia,font+car[*ptr].dir,x,y,car[*ptr].an,al,c);
+			if (*ptr && x<an_copia) {
+				word dir = l2b16(car[*ptr].dir);
+				wtexc(copia,an_real_copia,an_copia,al_copia,font+dir,x,y,car[*ptr].an,al,c);
+			}
 		} else {
 			while (*ptr && x+car[*ptr].an<=0) { 
 				x=x+car[*ptr].an; 
 				ptr++; 
 			}
 			while (*ptr && x<an_copia) {
-				wtexc(copia,an_real_copia,an_copia,al_copia,font+car[*ptr].dir,x,y,car[*ptr].an,al,c);
+				word dir = l2b16(car[*ptr].dir);
+				wtexc(copia,an_real_copia,an_copia,al_copia,font+dir,x,y,car[*ptr].an,al,c);
 				x=x+car[*ptr].an; ptr++; 
 			}
 		}

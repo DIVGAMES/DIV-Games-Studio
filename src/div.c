@@ -31,6 +31,7 @@
 #endif
 
 void mainloop(void);
+
 void heap_dump(void );
 void DebugFile(char *Cadena,char *Nombre);
 void save_prg_buffer(memptrsize);
@@ -463,11 +464,11 @@ int main(int argc, char * argv[]) {
 	if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
 		safe=33;
 		DaniDel("sound.cfg");
-		DaniDel("system/setup.bin");
-		DaniDel("system/session.dtf");
+		DaniDel("system/setup.bin"TARGET);
+		DaniDel("system/session.dtf"TARGET);
 	} else {
 
-		if ((f=fopen("system/setup.bin","rb"))!=NULL) {
+		if ((f=fopen("system/setup.bin"TARGET,"rb"))!=NULL) {
 			fclose(f);
 			primera_vez=0;
 	} else {
@@ -499,7 +500,7 @@ int main(int argc, char * argv[]) {
 	for (n=0;n<24;n++) 
 		tipo[n].defecto=0; tipo[n].inicial=0; 
 
-printf("inicializa_textos\n");
+  printf("inicializa_textos\n");
 	inicializa_textos((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
 
 	if(compilemode==1) {	
@@ -768,7 +769,13 @@ fprintf(stdout,"User info: %s %s\n", user1,user2);
   }
 
   DaniDel("*.swp");
-  _chdir("system"); DaniDel("exec.*"); _chdir("..");
+  _chdir("system"); 
+  DaniDel("exec.*"); 
+#ifdef AMIGA
+_chdir("/");
+#else
+  _chdir("..");
+#endif
 
   if (primera_vez) {
     //v_tipo=13; strcpy(input,"system/div.txt");
@@ -911,6 +918,8 @@ void mainloop(void) {
 	//  Arrastrar hacia el tapiz
 	//─────────────────────────────────────────────────────────────────────────
 
+FUNCLOG;
+
 	if (arrastrar==4 && (n==max_windows || ventana[n].tipo==2)) {
 		arrastrar=5; 
 		free_drag=0;
@@ -969,6 +978,7 @@ void mainloop(void) {
 	// Si antes estábamos en una ventana en la que hemos dejado de estar
 	// debemos repintar esta última (para borrar posibles "hi-lite")
 	//─────────────────────────────────────────────────────────────────────────
+FUNCLOG;
 
 	if (arrastrar!=4) {
 
@@ -1002,6 +1012,7 @@ void mainloop(void) {
 	///////////////////////////////////////////////////////////////////////////
 	// Determine the shape of the cursor (mouse pointer)
 	///////////////////////////////////////////////////////////////////////////
+FUNCLOG;
 
 	if (n>=max_windows || n<0) {
 		mouse_graf=1;
@@ -1029,7 +1040,8 @@ void mainloop(void) {
 				break;
 		}
 	}
-	
+	FUNCLOG;
+
 	//─────────────────────────────────────────────────────────────────────────
 	// If we are on a window that is not the first ...
 	//─────────────────────────────────────────────────────────────────────────
@@ -1071,12 +1083,18 @@ void mainloop(void) {
 
 	} else if (n==0 && (mouse_b&1) && v.tipo>=100 && v.primer_plano<2 && !v.estado && mouse_graf!=4 && mouse_graf!=5) { 
 		activar(); 
+    	FUNCLOG;
+
 		vuelca_ventana(0); 
 	}
+
+	FUNCLOG;
 
 	//─────────────────────────────────────────────────────────────────────────
 	//  Suelta algo sobre una ventana que esta en segundo plano
 	//─────────────────────────────────────────────────────────────────────────
+
+	FUNCLOG;
 
 	if (n<max_windows && ventana[n].primer_plano==0 && arrastrar==4 && v.tipo>=100 && ventana[n].tipo!=2) {
 		move(0,n); n=0;
@@ -1115,6 +1133,8 @@ void mainloop(void) {
 	//─────────────────────────────────────────────────────────────────────────
 	// If we are within the contents of a window ...
 	//─────────────────────────────────────────────────────────────────────────
+
+	FUNCLOG;
 
 	if (n==0 && v.primer_plano==1) 
 		if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
@@ -1291,6 +1311,7 @@ void mainloop(void) {
 			oldn=-1;
 
 		}
+	FUNCLOG;
 
 	//─────────────────────────────────────────────────────────────────────────
 	// Estamos sobre un icono
@@ -1321,10 +1342,14 @@ void mainloop(void) {
 	///////////////////////////////////////////////////////////////////////////
 	// Type windows control timer
 	///////////////////////////////////////////////////////////////////////////
+	FUNCLOG;
 
 	fin_bucle_entorno:
+	FUNCLOG;
 
 	for (m=0;m<max_windows;m++) {
+    	// FUNCLOG;
+
 		if ( m==0 &&
 			mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2) &&
 			ventana[m].tipo!=107 ) 
@@ -1379,6 +1404,8 @@ void mainloop(void) {
 	///////////////////////////////////////////////////////////////////////////
 	//  Hotkey del menu programas
 	///////////////////////////////////////////////////////////////////////////
+
+	FUNCLOG;
 
 	for (m=0;m<max_windows;m++)
 		if (ventana[m].tipo==102 && ventana[m].estado && ventana[m].prg!=NULL) 
@@ -1582,6 +1609,8 @@ void mainloop(void) {
 	// Comprobación de beta
 	//─────────────────────────────────────────────────────────────────────────
 
+	FUNCLOG;
+
 	if (rndb()>200) {
 		switch(beta_status) {
 			case 1: 
@@ -1601,7 +1630,8 @@ void mainloop(void) {
 			break;
 		}
 	}
-	
+		FUNCLOG;
+
 	//─────────────────────────────────────────────────────────────────────────
 	// Otros hotkey
 	//─────────────────────────────────────────────────────────────────────────
@@ -1622,6 +1652,8 @@ void mainloop(void) {
 			}
 		}
 	}
+
+	FUNCLOG;
 
 	if (scan_code==59) { // F1 Help
 		determina_prg2();
@@ -1698,6 +1730,8 @@ void mainloop(void) {
 	// Finaliza el bucle central
 	//─────────────────────────────────────────────────────────────────────────
 
+	FUNCLOG;
+
 	volcado_copia();
 
 	if (restore_button==1) {
@@ -1725,6 +1759,7 @@ void mainloop(void) {
 	if (key(_ESC) && key(_L_CTRL)) 
 		salir_del_entorno=1;
 
+	FUNCLOG;
 
 }
 
@@ -1736,16 +1771,23 @@ void entorno(void) {
 
 	char cwork[256],*p;
 	//  check_free();
+  FUNCLOG;
+
 
 	do {
+    FUNCLOG;
 		mainloop();
 	} while (!salir_del_entorno);
+	FUNCLOG;
 
 	do { 
 		read_mouse();
+    FUNCLOG;
 	} while(mouse_b&1);
 
-	printf("env end\n");
+	FUNCLOG;
+
+	fprintf(stdout,"env end\n");
 
 }
 
@@ -2427,6 +2469,7 @@ void mueve_ventana_completa(void) {
 
 void actualiza_caja(int x, int y, int an, int al) {
 
+  // fprintf(stdout, "Update a window at %d %d %d %d\n", x, y, an, al);
   int n=0;
   byte * _ptr=NULL;
   int _x=0,_y=0,_an=0,_al=0;
@@ -2505,6 +2548,7 @@ div_version=texto[safe];
 }
 
 void actualiza_dialogos(int x, int y, int an, int al) {
+  FUNCLOG;
   int n;
   byte * _ptr;
   int _x,_y,_an,_al;
@@ -2932,18 +2976,31 @@ int leer_mouse=1;
 
 void volcado_copia(void) {
 
+FUNCLOG;
+
   if (leer_mouse) read_mouse();
+
+FUNCLOG;
+
   if (modo<100) {
+
+FUNCLOG;
+
     salvaguarda(fondo_raton,mouse_shift_x,mouse_shift_y,mouse_graf,0);
     put(mouse_shift_x,mouse_shift_y,mouse_graf);
     volcado(copia);
     salvaguarda(fondo_raton,mouse_shift_x,mouse_shift_y,mouse_graf,1);
   } else {
+
+FUNCLOG;
+
     salvaguarda(fondo_raton,mouse_x,mouse_y,mouse_graf,0);
     put(mouse_x,mouse_y,mouse_graf);
     volcado(copia);
     salvaguarda(fondo_raton,mouse_x,mouse_y,mouse_graf,1);
   }
+FUNCLOG;
+
 }
 
 void window_surface(int an, int al, byte type) {
@@ -3108,7 +3165,16 @@ void nueva_ventana(voidReturnType init_handler) {
           if (ventana[m].click_handler==v.click_handler) n=m;
     }
 
-    if (!n) ptr=(byte *)malloc(an*al); else ptr=NULL;
+    if (!n) {
+      ptr=(byte *)malloc(an*al); 
+      if(!ptr) {
+        fprintf("Failed to allocate an*al bytes %d\n", an*al);
+        error(0);
+      }
+    } else {
+      ptr=NULL;
+    }
+    	FUNCLOG;
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
 		window_surface(an,al,0);
@@ -3357,12 +3423,14 @@ void extrude(int x,int y,int an,int al,int x2,int y2,int an2,int al2) {
 
 void dialogo(voidReturnType init_handler) {
 
+FUNCLOG;
   int vtipo,_get_pos;
   byte * ptr;
   int n,m,x,y,an,al;
 uint32_t colorkey=0;
 
   if (!ventana[max_windows-1].tipo) {
+FUNCLOG;
 
     _get_pos=get_pos;
 
@@ -3371,6 +3439,7 @@ uint32_t colorkey=0;
       call((voidReturnType )v.click_handler); mouse_b=m;
       if (v.volcar) { vuelca_ventana(0); v.volcar=0; }
     }
+FUNCLOG;
 
     addwindow();
 
@@ -3399,6 +3468,7 @@ uint32_t colorkey=0;
     v.selected_item=-1;
     v.prg=NULL;
     v.aux=NULL;
+FUNCLOG;
 
     call((voidReturnType )init_handler);
 
@@ -3411,7 +3481,10 @@ uint32_t colorkey=0;
     if (v.click_handler==err2) ptr=error_window; else ptr=(byte *)malloc(an*al);
 
     if (ptr!=NULL) { // Ventana, free en cierra_ventana
+    FUNCLOG;
+
 		memset(ptr,0,an*al);
+FUNCLOG;
 
 		window_surface(an,al,1);
 
@@ -3484,6 +3557,8 @@ uint32_t colorkey=0;
       divdelete(0);
     }
   }
+  FUNCLOG;
+
 }
 
 void refrescadialogo(void)
@@ -3566,11 +3641,11 @@ fprintf(stdout, "Initialising Help Indexes\n");
 
 	load_index();   // *** Carga el glosario del hipertexto ***
 
-fprintf(stdout, "Initialising Graphc buffers\n");
+fprintf(stdout, "Initialising Graphic buffers\n");
 
-	if(!Interpretando)
-		fprintf(stdout, "%s",(char *)texto[6]); // *** Init buffers gráficos ***
-
+	if(!Interpretando) {
+		// fprintf(stdout, "%s",(char *)texto[6]); // *** Init buffers gráficos ***
+  }
 	undo=(byte*)malloc(undo_memory);
 	tundo=(struct tipo_undo *)malloc(sizeof(struct tipo_undo)*max_undos);
 
@@ -3645,9 +3720,12 @@ fprintf(stdout,"Opening font..");
 	fseek(f,0,SEEK_END);
 	n=ftell(f);
 	
+  fprintf(stdout, "File is %d bytes long\n", n);
 	if ((text_font=(byte *)malloc(n))!=NULL) {
 		fseek(f,0,SEEK_SET);
-		fread(text_font,1,n,f); 
+		n = fread(text_font,1,n,f); 
+    fprintf(stdout, "Read %d bytes\n", n);
+
 		fclose(f);
 	} else { 
 		fclose(f); 
@@ -3687,10 +3765,13 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 	fseek(f,0,SEEK_END); 
 	n=ftell(f);
-	
+	  fprintf(stdout, "File is %d bytes long\n", n);
+
 	if ((font=(byte *)malloc(n))!=NULL) {
 		fseek(f,0,SEEK_SET); 
-		fread(font,1,n,f); 
+		n = fread(font,1,n,f); 
+    fprintf(stdout, "Read %d bytes\n", n);
+
 		fclose(f);
 	} else { 
 		fclose(f); 
@@ -3762,28 +3843,66 @@ mouse_surface = IMG_Load("system/cursor.png");
 			memset(graf,0,sizeof(graf));
 			ptr=graf_ptr; 
 			fseek(f,1352,SEEK_SET);
-			fread(graf_ptr,1,n,f); 
+
+			int l = fread(graf_ptr,1,n,f); 
+      fprintf(stdout, "Read %d bytes\n", l);
 			fclose(f);
 
-			while (graf_ptr<ptr+n && *((int*)graf_ptr)<256) {
-				if (*(int*)(graf_ptr+60)) {
-					graf[*((int*)graf_ptr)]=graf_ptr+60;
-					*(word*)(graf_ptr+60)=*(int*)(graf_ptr+52);
-					*(word*)(graf_ptr+62)=*(int*)(graf_ptr+56);
-					graf_ptr+=*(word*)(graf_ptr+60)**(word*)(graf_ptr+62)+68;
-				} else {
-					graf[*((int*)graf_ptr)]=graf_ptr+56;
-					*(word*)(graf_ptr+58)=*(int*)(graf_ptr+56);
-					*(word*)(graf_ptr+56)=*(int*)(graf_ptr+52);
-					*(int*)(graf_ptr+60)=0;
-					graf_ptr+=*(word*)(graf_ptr+56)**(word*)(graf_ptr+58)+64;
-				}
-			} 
-			graf_ptr=ptr;
-		} else { 
+  // while (graf_ptr < ptr + n && l2b32(graf_ptr) < 256) {
+  //     fprintf(stdout,"graf_ptr: %X\n", graf_ptr);
+  //     int data_offset = l2b32(graf_ptr);
+      
+  //     if (l2b32(graf_ptr+60)) {
+  //         // If data at offset 60 is non-zero, store the value
+  //         // and move the pointer accordingly
+  //         graf[data_offset] = graf_ptr + 60;
+  //         *(word*)(graf_ptr + 60) = l2b16(*(int*)(graf_ptr + 52));
+  //         *(word*)(graf_ptr + 62) = l2b16(*(int*)(graf_ptr + 56));
+  //         graf_ptr += l2b16(*(word*)(graf_ptr + 60)) * l2b16(*(word*)(graf_ptr + 62)) + 68;
+  //     } else {
+  //         // If data at offset 60 is zero, store the value
+  //         // and move the pointer accordingly
+  //         graf[data_offset] = graf_ptr + 56;
+  //         *(word*)(graf_ptr + 58) = l2b16(*(int*)(graf_ptr + 56));
+  //         *(word*)(graf_ptr + 56) = l2b16(*(int*)(graf_ptr + 52));
+  //         *(int*)(graf_ptr + 60) = 0;
+  //         graf_ptr += l2b16(*(word*)(graf_ptr + 56)) * l2b16(*(word*)(graf_ptr + 58)) + 64;
+  //     }
+  // }
+  int *igraf_ptr = (int *)graf_ptr;
+word *wgraf_ptr = (word *)graf_ptr;
+
+while (graf_ptr < ptr + n && l2b32(igraf_ptr[0]) < 256) {
+    // fprintf(stdout,"graf_ptr: %X\n", graf_ptr);
+
+    if (l2b32(igraf_ptr[15])) {
+      graf[l2b32(*igraf_ptr)] = graf_ptr + 60;
+      wgraf_ptr[30] = l2b32(igraf_ptr[13]);
+      wgraf_ptr[31] = l2b32(igraf_ptr[14]);
+      // fprintf(stdout,"30: %X 31: %X \n", wgraf_ptr[30], wgraf_ptr[31]);
+
+      graf_ptr += wgraf_ptr[30] * wgraf_ptr[31] + 68;
+    } else {
+      graf[l2b32(igraf_ptr[0])] = graf_ptr + 56;
+      wgraf_ptr[28] = l2b32(igraf_ptr[14]);
+      wgraf_ptr[29] = l2b32(igraf_ptr[13]);
+      // fprintf(stdout,"28: %X 29: %X \n", wgraf_ptr[28], wgraf_ptr[29]);
+
+      igraf_ptr[15] = 0;
+      graf_ptr += wgraf_ptr[28] * wgraf_ptr[29] + 64;
+      }
+    igraf_ptr = (int *)graf_ptr;
+    wgraf_ptr = (word *)graf_ptr;
+  }
+
+  //  fprintf(stdout, "graf_ptr: %X ptr: %X ptr+n: %X n: %X, calc: %X\n", graf_ptr, ptr, ptr+n, n, l2b32(*((int*)graf_ptr))); 
+    graf_ptr=ptr;
+  } else { 
 			fclose(f); 
 			error(0); 
 		}
+    // error(0);
+
 	}
 
   // HYPERLINK
@@ -3796,6 +3915,8 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 	else {
 		fseek(f,0,SEEK_END); 
 		n=ftell(f);
+    fprintf(stdout, "File is %d bytes long\n", n);
+
 #ifndef __EMSCRIPTEN__
 //n=1352;
 #endif
@@ -3803,6 +3924,8 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 			memset(graf_help,0,sizeof(graf_help));
 			ptr=ptr2; fseek(f,0,SEEK_SET);
 			fread(ptr2,1,n,f); 
+      fprintf(stdout, "3927 Read %d bytes\n", n);
+
 #ifndef __EMSCRIPTEN__
 			fclose(f);
 #endif
@@ -3813,9 +3936,14 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 // alloc each graph	
 #ifdef NOTYET
 
-fseek(f,0,SEEK_END); file_len=ftell(es);
+fseek(f,0,SEEK_END); 
+file_len=ftell(es);
+fprintf(stdout, "File is %d bytes long\n", file_len);
+
 fseek(f,1352,SEEK_SET);
 	
+
+error(0);
 while(ftell(f)<file_len && len_>0 && num_>0) {
 	int pos = ftell(f);
 	int an = 0;
@@ -3823,11 +3951,17 @@ while(ftell(f)<file_len && len_>0 && num_>0) {
 	int pts = 0;
 	byte *mptr=NULL;//s&ptr[pos];
 	fread(&num_,4,1,f);
+  num_ = l2b32(num_);
 	fread(&len_,4,1,f);
+  len_ = l2b32(len_);
 	fseek(f,44,SEEK_CUR):
 	fread(&an,4,1,f);
+  an = l2b32(an);
 	fread(&al,4,1,f);
+  al = l2b32(al);
 	fread(&pts,4,1,f);
+  pts = l2b32(pts);
+
 	fseek(f,pts*4,SEEK_CUR);
 	
 	pos = ftell(f);
@@ -3853,11 +3987,33 @@ while(ftell(f)<file_len && len_>0 && num_>0) {
 fclose(f);
 
 #else
-      while (ptr2<ptr+n && *((int*)ptr2)<384) {
-        graf_help[*(int*)ptr2].an=*(int*)(ptr2+52);
-        graf_help[*(int*)ptr2].al=*(int*)(ptr2+56);
-        graf_help[*(int*)ptr2].offset=(ptr2-ptr)+64+4*(*(int*)(ptr2+60));
-        ptr2+=*(int*)(ptr2+52)**(int*)(ptr2+56)+64+4*(*(int*)(ptr2+60));
+      int tmp = *((int*)ptr2);
+      tmp = l2b32(tmp);
+      while (ptr2<ptr+n && tmp<384) {
+        tmp = *(int*)ptr2;
+        tmp = l2b32(tmp);
+
+        int tmp52 = *(int*)(ptr2+52);
+        // fprintf(stdout, "Help graf num: %d\n", tmp);
+
+        tmp52 = l2b32(tmp52);
+        // fprintf(stdout, "Width: %d\n", tmp52);
+        graf_help[tmp].an=tmp52;
+
+        int tmp56 = *(int*)(ptr2+56);
+        tmp56 = l2b32(tmp56);
+        // fprintf(stdout, "Height: %d\n", tmp56);
+
+        graf_help[tmp].al=tmp56;
+        int tmp60 = *(int*)(ptr2+60);
+        tmp60 = l2b32(tmp60);
+        // fprintf(stdout, "Offset: %d\n", tmp60);
+
+        graf_help[tmp].offset=(ptr2-ptr)+64+4*tmp60;
+        ptr2+=tmp52 * tmp56 + 64 + 4 * tmp60;
+        tmp = *(int*)ptr2;
+        tmp = l2b32(tmp);
+        // *(int*)(ptr2+52) * *(int*)(ptr2+56)+64+4 * (*(int*)(ptr2+60));
       } free(ptr);
     } else { fclose(f); error(0); }
 #endif
@@ -3871,8 +4027,21 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
   if (auto_save_session || Interpretando) CopiaDesktop=Can_UpLoad_Desktop();
 
   if(!CopiaDesktop) { //Carga paleta comun
-    if (!Interpretando) cprintf("%s",(char *)texto[11]); // *** Cálculos sobre la paleta ***
+    if (!Interpretando) {
+      cprintf("%s",(char *)texto[11]); // *** Cálculos sobre la paleta ***
+    }
+
+    FUNCLOG;
+
     memcpy(dac,system_dac,768);
+
+    for (int _x = 0; _x < 768; _x++) {
+      if (dac[_x] != system_dac[_x]) {
+        fprintf(stdout, "memcpy failed!\n");
+        error(0);
+      }
+    }
+    // error(0);
     init_ghost();
     crear_ghost(1);
   }
@@ -3891,9 +4060,11 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
   quien_arrastra=0; free_drag=1;
   memset(mask,0,256); mask_on=0; v_pausa=0;
   get=get_buffer;
+
 fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   determina_unidades();
+
 fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   inicializa_compilador(); // *** Compilador *** espacios de lower a 00
@@ -4097,9 +4268,15 @@ void _fwrite(char * s, byte * buf, int n) {
 void error(int n) {
   fprintf(stdout, "WHOOPS! %d\n",n);
 	// debugprintf("WHOOPS!\n");
+    fprintf(stdout,"Long size: %d\n", sizeof(long));
+    fprintf(stdout,"Int size: %d\n", sizeof(int));
+    fprintf(stdout,"Word size: %d\n", sizeof(word));
+    fprintf(stdout,"Byte size: %d\n", sizeof(byte));
+
     finalizacion();
     fprintf(stdout,(char *)texto[14],n);
     fprintf(stdout,"\n");
+    
     exit(0);
 }
 
@@ -4738,7 +4915,7 @@ FILE *file;
         Setupfile.coloreador=coloreador;
         memcpy(&Setupfile.colors_rgb[0],&colors_rgb[0],12*3);
 
-        file=fopen("system/setup.bin","wb");
+        file=fopen("system/setup.bin"TARGET,"wb");
         fwrite(&Setupfile,1,sizeof(Setupfile),file);
         fclose(file);
 }
@@ -4815,7 +4992,7 @@ void Load_Cfgbin() {
   strcpy(Setupfile.Dir_mod,cWork);
   strcpy(tipo[16].path,cWork);
 
-  file=fopen("system/setup.bin","rb");
+  file=fopen("system/setup.bin"TARGET,"rb");
   if(file==NULL) {
     if (primera_vez) {
       strcpy(Setupfile.Desktop_Image,(char *)texto[487]); // Informacion del tapiz
@@ -5125,7 +5302,7 @@ void DaniDel(char *name) {
     strcat(cwork3,ft.name);
     if (_fullpath(cwork1, cwork3, _MAX_PATH)==NULL) strcpy(cwork1,ft.name);
     _dos_setfileattr(cwork1,_A_NORMAL);
-//    printf("deleting %s\n",cwork1);
+    printf("deleting %s\n",cwork1);
     remove(cwork1);
     rc=_dos_findnext(&ft);
   }

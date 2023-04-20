@@ -105,8 +105,16 @@ void make_helpidx(void) {
       fseek(f,0,SEEK_SET); fread(help,1,len,f); fclose(f);
       help_end=help+len; i=help;
       do {
-        if (*(word*)i=='{'+('.'*256)) { 
-			len=(long)(i-help);
+        word tmp = *(word*)i;
+        // error(0);
+        // fprintf(stdout, "i as word: %d\n", tmp);
+
+        tmp = l2b16(tmp);
+        // fprintf(stdout, "i as word: %d\n", tmp);
+        
+        if (tmp=='{'+('.'*256)) { 
+          len=(long)(i-help);
+          // fprintf(stdout, "len: %d\n",len);
           n=0; 
           i+=2; 
           while (*i>='0' && *i<='9') 
@@ -128,6 +136,7 @@ void make_helpidx(void) {
   } else {
         fprintf(stdout,"Fail!\n");
   }
+  // error(0);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -565,6 +574,7 @@ int determina_help(void) {
 int determina_calc(void);
 
 void help(int n){
+  fprintf(stdout, "Help function\n");
   FILE * f;
   byte * p;
   int m,m_back;
@@ -606,9 +616,28 @@ void help(int n){
 
   }
 
+  fprintf(stdout, "helpidx\n");
+
+  fprintf(stdout, "helpidx[n*2]: %d helpidx[n*2+1]: %d\n", helpidx[n*2], helpidx[n*2+1]);
   if (helpidx[n*2] && helpidx[n*2+1]) {
-    if((f=fopen("help/help.div","rb"))!=NULL) {
+    fprintf(stdout, "index ok\n");
+
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        fprintf(stdout,"Current working dir: %s\n", cwd);
+    } else {
+        perror("getcwd() error");
+        // return 1;
+    }
+
+  f=fopen("help/help.div","rb");
+
+  if(f!=NULL) {
+      fprintf(stdout, "Opened help file\n");
+
       fseek(f,helpidx[n*2],SEEK_SET);
+      fprintf(stdout, "seeked to %d in help\n",f);
+
       if ((h_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
         if ((help_buffer=(byte*)malloc(helpidx[n*2+1]+2048))!=NULL) {
 
@@ -636,6 +665,8 @@ void help(int n){
         }
         //free(h_buffer);
       } fclose(f);
+    } else {
+      fprintf(stdout, "Failed to open help/help.div\n");
     }
   }
 }
@@ -682,6 +713,8 @@ void help_paint0(void) { // En help_item se indica sobre que término se pide ay
 }
 
 void help_paint(memptrsize n){
+  fprintf(stdout, "Help Paint\n");
+
   FILE * f;
   byte * p;
   int m_back;
@@ -950,6 +983,9 @@ void tabula_help(byte *si,byte *di,int lon) {
               } si++;
               if (imagen<384 && graf_help[imagen].offset) {
                 if ((f=fopen("help/help.fig","rb"))!=NULL) {
+                  fprintf(stdout,"Trying to load help image\n");
+                  fprintf(stdout,"An: %d Al: %d\n", graf_help[imagen].an, graf_help[imagen].al);
+
                   if ((ptr=(byte*)malloc(graf_help[imagen].an*graf_help[imagen].al))!=NULL) {
                     fseek(f,graf_help[imagen].offset,SEEK_SET);
                     fread(ptr,graf_help[imagen].an,graf_help[imagen].al,f);

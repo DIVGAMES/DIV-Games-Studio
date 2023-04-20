@@ -86,7 +86,7 @@ chdir(path);
 int a=0;
 char init[255];
 strcpy(init,ide);
-strcat(init," INIT");
+// strcat(init," INIT");
 
 while(a++<argc-1) {
 	strcat(init," ");

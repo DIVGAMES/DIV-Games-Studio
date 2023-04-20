@@ -8,6 +8,9 @@ INCLUDE ( ${CMAKE_CURRENT_LIST_DIR}/tools/defaults.cmake )
 
 find_package(Git)
 
+# set(CMAKE_OSX_ARCHITECTURES arm64 x86_64)
+# set(ONLY_ACTIVE_ARCH NO)
+
 if(Git_FOUND)
   execute_process(
     COMMAND ${GIT_EXECUTABLE} log -1 --format=%h

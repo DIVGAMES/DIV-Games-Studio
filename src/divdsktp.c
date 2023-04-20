@@ -199,7 +199,7 @@ modinfo *mymodinfo;
 fflush(lst);
 #endif
         // Pone una cabecera de identificación
-        desktop=fopen("system/session.dtf","wb");
+        desktop=fopen("system/session.dtf"TARGET,"wb");
         n=fwrite("dtf\x1a\x0d\x0a\x0",8,1,desktop);
 #ifdef SLST
         fprintf(lst,"header %d elementos escritos <<<\n",n);
@@ -429,7 +429,7 @@ int Can_UpLoad_Desktop()
 char cWork[8];
 int iWork;
         VidModeChanged=0;
-        desktop=fopen("system/session.dtf","rb");
+        desktop=fopen("system/session.dtf"TARGET,"rb");
         if(desktop==NULL)
                 return(0);
         // read the header id
@@ -458,29 +458,36 @@ char *          baux;
 
 int UpLoad_Desktop()
 {
-        fprintf(stdout,"%d %s %s\n", __LINE__, __FILE__, __FUNCTION__);
-        
+        FUNCLOG;
+
 	int iWork,iWork2,iWork3,x,numvent;
 	FILE *f;
 	
-	int dtime = getFileCreationTime("system/session.dtf");
+	int dtime = getFileCreationTime("system/session.dtf"TARGET);
 		
-        desktop=fopen("system/session.dtf","rb");
+        desktop=fopen("system/session.dtf"TARGET,"rb");
         if(desktop==NULL)
                 return(0);
 		
 		
-	//	printf("loading saved session\n");
+		fprintf(stdout,"loading saved session\n");
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
         fseek(desktop,8+4+4+768+65536,SEEK_SET);
         // Load each of the windows one by one
+        fprintf(stdout, "Num windows: %d\n", numvent);
+        // error(0);
         for(x=0;x<numvent;x++)
         {
                 // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
+                // ventana_aux.tipo = l2b32(ventana_aux.tipo);
+                fprintf(stdout, "Window Type: %d\n", ventana_aux.tipo);
                 switch(ventana_aux.tipo)
                 {
+                        case 0:
+                        error(0);
+
                         case    2: //menu
                                 fread(&iWork,1,4,desktop);
                                 switch(iWork)
@@ -594,6 +601,8 @@ int UpLoad_Desktop()
                                 fread(&faux,1,sizeof(FPG),desktop);
                                 strcpy(input,(char *)faux.NombreFpg);
                                 strcpy(full,(char *)faux.ActualFile);
+                                fprintf(stdout,"Trying to open: %s\n", full);
+
                                 if ((f=fopen(full,"rb"))!=NULL) {
                                   fclose(f);
                                   v_aux=(byte *)malloc(sizeof(FPG));
