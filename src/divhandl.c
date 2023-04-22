@@ -170,12 +170,15 @@ void menu_programas2(void) {
     switch (v.estado) {
 
       case 1: // Nuevo ...
-        v_modo=1; v_texto=(char *)texto[186];
+        v_modo=1; 
+        v_texto=(char *)texto[186];
       	dialogo(browser0);
         if (v_terminado) {
-          if (!v_existe) v_aceptar=1;
-          else {
-            v_titulo=(char *)texto[187]; v_texto=input;
+          if (!v_existe) {
+            v_aceptar=1;
+          } else {
+            v_titulo=(char *)texto[187];
+            v_texto=input;
             dialogo(aceptar0);
           }
           if(v_aceptar) {
@@ -2568,7 +2571,7 @@ void analizar_input(void) {
 //    getcwd(full,PATH_MAX);
     if ( true || (full[0]==drive[0])) {
       if (strlen(dir)>1) if (dir[strlen(dir)-1]=='/') dir[strlen(dir)-1]=0;
-      if (!strlen(dir) || !chdir(dir)) {
+      if (!strlen(dir) || !_chdir(dir)) {
 #ifdef DOS		
         strcpy(input,fname); strcat(input,ext);
 #endif
@@ -2589,16 +2592,16 @@ void analizar_input(void) {
 
 
           if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) { // Wildcards
-
+            fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
             if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) { // If any... ?
 
               if (_dos_findnext(&fileinfo)) { // si SOLO hay uno ...
                 strcpy(input,fileinfo.name);
 
               } else {
-		strcpy(mascara,input); // si hay MAS de uno ...
-		printf("input: %s\n",input);
-		}
+              strcpy(mascara,input); // si hay MAS de uno ...
+              printf("input: %s\n",input);
+            }
             } else { // si no encontró ninguno ...
 
               // si no tenia extensión y la máscara si la tiene ...
@@ -2606,6 +2609,7 @@ void analizar_input(void) {
 
                 strcat(input,strchr(mascara,'.')); // le añade la máscara
 
+                fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
         	      if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) { // si hay alguno ...
               		if (_dos_findnext(&fileinfo)) { // si SOLO hay uno
                     strcpy(input,fileinfo.name);
@@ -2616,33 +2620,54 @@ void analizar_input(void) {
             }
 
           } else // No wildcards ...
-          if (_dos_findfirst(input,_A_SUBDIR,&fileinfo) == 0)
+          fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
+          if (_dos_findfirst(input,_A_SUBDIR,&fileinfo) == 0) {
+            fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
             if (fileinfo.attrib&16) {
+              fprintf(stdout,"%d %s chdir input: %s\n",__LINE__,__FILE__,input);
               debugprintf("chdir %s\n",input);
-              chdir(input); 
+              _chdir(input); 
               strcpy(input,mascara);
             } else {
-		v_terminado=1; 
-		v_existe=1;
-	    } // Fichero encontrado
-          else if (strchr(input,'.')==NULL && strchr(mascara,'.')!=NULL) {
+              v_terminado=1; 
+              v_existe=1;
+            } // Fichero encontrado
+          } else {
+            fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
+            if (strchr(input,'.')==NULL && strchr(mascara,'.')!=NULL) {
             strcat(input,strchr(mascara,'.'));
-           if (!_dos_findfirst(input,_A_NORMAL,&fileinfo))
+            fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
+            if (!_dos_findfirst(input,_A_NORMAL,&fileinfo)) {
+              fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
           		if (_dos_findnext(&fileinfo)) {
+                fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
                 strcpy(input,fileinfo.name);
               } else {
-			strcpy(mascara,input);
-			printf("2584 input %s\n",input);
-		}
-            else if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) {
-              strcpy(mascara,input);
-            } else {v_terminado=1; v_existe=0; } // Fichero no encontrado (con extensión añadida)
-          } else {v_terminado=1; v_existe=0; } // Fichero no encontrado (sin extensión añadida)
-        } 
-        else {
-		strcpy(input,mascara); // Mantiene la máscara vieja
-	}
-        getcwd(tipo[v_tipo].path,PATH_MAX+1); 
+                fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
+                strcpy(mascara,input);
+                fprintf(stdout,"2584 input %s\n",input);
+              }
+            } else {
+              fprintf(stderr,"%d %s input: %s\n",__LINE__,__FILE__,input);
+              if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) {
+                fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
+                strcpy(mascara,input);
+              } else {
+                fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
+                v_terminado=1; 
+                v_existe=0; 
+              }
+            } // Fichero no encontrado (con extensión añadida)
+          } else {
+            fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,input);
+            v_terminado=1; 
+            v_existe=0; 
+          } // Fichero no encontrado (sin extensión añadida)
+        }
+        } else {
+          strcpy(input,mascara); // Mantiene la máscara vieja
+        }
+        _getcwd(tipo[v_tipo].path,PATH_MAX+1); 
         imprime_rutabr();
         
         larchivos.creada=0; 

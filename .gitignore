@@ -28,6 +28,8 @@ system/session.dtf*
 system/setup.bin*
 system/user.nfo
 system/xec.pgm
+help/*.cmp
+div*-*
 *.tar.gz
 *.zip
 *.prg
@@ -53,3 +55,5 @@ d-*
 *.info
 *.uaem
 *.exe
+examples
+SDL_DEBUG.TXT

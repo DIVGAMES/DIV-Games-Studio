@@ -430,7 +430,7 @@ int main(int argc, char * argv[]) {
 	if(argc>1 && !strcmp(argv[1],"-c")) 
 		compilemode=1;
 
-	getcwd(tipo[0].path,PATH_MAX+1);
+	_getcwd(tipo[0].path,PATH_MAX+1);
 
 	if (argc<1) 
 	exit(0);
@@ -459,7 +459,7 @@ int main(int argc, char * argv[]) {
 
 	if (cpu_type==3) chdir("..");
 
-	getcwd(tipo[1].path,PATH_MAX+1);
+	_getcwd(tipo[1].path,PATH_MAX+1);
 
 	if(argc>2&&(!strcmp(argv[2],"/safe") || !strcmp(argv[2],"/SAFE"))) {
 		safe=33;
@@ -710,7 +710,7 @@ extern char user1[];
 extern char user2[];
 
 void inicializa_entorno() {
-  fprintf(stdout,"%d %s\n", __LINE__, __FUNCTION__);
+  // fprintf(stdout,"%d %s\n", __LINE__, __FUNCTION__);
   
   FILE * f;
   int n;
@@ -722,7 +722,7 @@ void inicializa_entorno() {
     fclose(f);
   }
 
-fprintf(stdout,"User info: %s %s\n", user1,user2);
+// fprintf(stdout,"User info: %s %s\n", user1,user2);
 
 	actualiza_caja(0,0,vga_an,vga_al);
     volcado_completo=1; volcado(copia);
@@ -3596,7 +3596,7 @@ void end_lexcolor(void);
 //                 SV_cpu586,SV_cpu586p} SV_cpuType;
 
 void inicializacion(void) {
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 	FILE *f;
 	int n;
@@ -3625,7 +3625,7 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 		big2=big+1;
 	}
 */
-fprintf(stdout, "Initialising keyboard\n");
+  fprintf(stdout, "Initialising keyboard\n");
 	kbdInit();
 
 
@@ -3634,14 +3634,14 @@ fprintf(stdout, "Initialising keyboard\n");
 		check_oldpif();
 	}
 
-fprintf(stdout, "Initialising Help\n");
+// fprintf(stdout, "Initialising Help\n");
 
 	make_helpidx(); // *** Crea el índice del hipertexto ***
-fprintf(stdout, "Initialising Help Indexes\n");
+// fprintf(stdout, "Initialising Help Indexes\n");
 
 	load_index();   // *** Carga el glosario del hipertexto ***
 
-fprintf(stdout, "Initialising Graphic buffers\n");
+// fprintf(stdout, "Initialising Graphic buffers\n");
 
 	if(!Interpretando) {
 		// fprintf(stdout, "%s",(char *)texto[6]); // *** Init buffers gráficos ***
@@ -3702,29 +3702,29 @@ fprintf(stdout, "Initialising Graphic buffers\n");
 
   }
 
-fprintf(stdout,"Opening font..");
+// fprintf(stdout,"Opening font..");
 	if (big) {
-  fprintf(stdout,"BIG ..");
+  // fprintf(stdout,"BIG ..");
 		f=fopen("system/grande.fon","rb");
   }
 	else {
-    fprintf(stdout,"Small ..");
+    // fprintf(stdout,"Small ..");
 		f=fopen("system/pequeno.fon","rb");
   }
 	if (f==NULL) {
-      fprintf(stdout,"Fail!\n");
+      // fprintf(stdout,"Fail!\n");
 		error(0);
   } else {
-      fprintf(stdout,"Success!\n");
+      // fprintf(stdout,"Success!\n");
   }	
 	fseek(f,0,SEEK_END);
 	n=ftell(f);
 	
-  fprintf(stdout, "File is %d bytes long\n", n);
+  // fprintf(stdout, "File is %d bytes long\n", n);
 	if ((text_font=(byte *)malloc(n))!=NULL) {
 		fseek(f,0,SEEK_SET);
 		n = fread(text_font,1,n,f); 
-    fprintf(stdout, "Read %d bytes\n", n);
+    // fprintf(stdout, "Read %d bytes\n", n);
 
 		fclose(f);
 	} else { 
@@ -3758,19 +3758,19 @@ fprintf(stdout,"Opening font..");
 		break;
 	} char_size=font_an*font_al;
 
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 	if (f==NULL) 
 		error(0);
 
 	fseek(f,0,SEEK_END); 
 	n=ftell(f);
-	  fprintf(stdout, "File is %d bytes long\n", n);
+	  // fprintf(stdout, "File is %d bytes long\n", n);
 
 	if ((font=(byte *)malloc(n))!=NULL) {
 		fseek(f,0,SEEK_SET); 
 		n = fread(font,1,n,f); 
-    fprintf(stdout, "Read %d bytes\n", n);
+    // fprintf(stdout, "Read %d bytes\n", n);
 
 		fclose(f);
 	} else { 
@@ -3845,7 +3845,7 @@ mouse_surface = IMG_Load("system/cursor.png");
 			fseek(f,1352,SEEK_SET);
 
 			int l = fread(graf_ptr,1,n,f); 
-      fprintf(stdout, "Read %d bytes\n", l);
+      // fprintf(stdout, "Read %d bytes\n", l);
 			fclose(f);
 
   // while (graf_ptr < ptr + n && l2b32(graf_ptr) < 256) {
@@ -3908,14 +3908,14 @@ while (graf_ptr < ptr + n && l2b32(igraf_ptr[0]) < 256) {
   // HYPERLINK
 
   // *** Inicializa graf_help[384].offset/an/al/ptr=0
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 	if ((f=fopen("help/help.fig","rb"))==NULL) 
 		error(0); 
 	else {
 		fseek(f,0,SEEK_END); 
 		n=ftell(f);
-    fprintf(stdout, "File is %d bytes long\n", n);
+    // fprintf(stdout, "File is %d bytes long\n", n);
 
 #ifndef __EMSCRIPTEN__
 //n=1352;
@@ -3924,7 +3924,7 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 			memset(graf_help,0,sizeof(graf_help));
 			ptr=ptr2; fseek(f,0,SEEK_SET);
 			fread(ptr2,1,n,f); 
-      fprintf(stdout, "3927 Read %d bytes\n", n);
+      // fprintf(stdout, "3927 Read %d bytes\n", n);
 
 #ifndef __EMSCRIPTEN__
 			fclose(f);
@@ -4018,7 +4018,7 @@ fclose(f);
     } else { fclose(f); error(0); }
 #endif
 
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   }
 
@@ -4045,7 +4045,7 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
     init_ghost();
     crear_ghost(1);
   }
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   if (!Interpretando) printf("%s",(char *)texto[12]); // *** Miscelánea ***
   find_colors(); memset(copia,c0,vga_an*vga_al);
@@ -4061,14 +4061,14 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
   memset(mask,0,256); mask_on=0; v_pausa=0;
   get=get_buffer;
 
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   determina_unidades();
 
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   inicializa_compilador(); // *** Compilador *** espacios de lower a 00
-  fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+  // fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   init_lexcolor();
 
@@ -4100,7 +4100,7 @@ fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 /*
   if(judascfg_device!=DEV_NOSOUND) set_init_mixer();
 */
-fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
+// fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
 }
 
@@ -5295,6 +5295,7 @@ void DaniDel(char *name) {
     if(x==-1) { cwork2[0]=0; break; }
     if(cwork2[x]=='/') { cwork2[x+1]=0; break; }
   }
+  fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,name);
 
   rc=_dos_findfirst(name,_A_NORMAL,&ft);
   while(!rc) {

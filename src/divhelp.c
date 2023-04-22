@@ -623,7 +623,7 @@ void help(int n){
     fprintf(stdout, "index ok\n");
 
     char cwd[PATH_MAX];
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+    if (_getcwd(cwd, sizeof(cwd)) != NULL) {
         fprintf(stdout,"Current working dir: %s\n", cwd);
     } else {
         perror("getcwd() error");
@@ -1500,7 +1500,7 @@ void Print_Help(void) {
 
     if (f_ar) {
       _dos_setdrive(toupper(*tipo[1].path)-'A'+1,&u);
-      chdir(tipo[1].path);
+      _chdir(tipo[1].path);
       g=fopen(h_ar,"rb");
       if (g!=NULL) {
         fclose(g);

@@ -351,11 +351,17 @@ void inicializacion (void) {
 
   memcpy(&mem[id_init],&mem[iloc],iloc_pub_len<<2); // *** Init
   mem[id_init+_Id]=id_init;
+  while(mem[id_init]!=id_init) {
+    mem[id_init] = id_init;
+  }
   mem[id_init+_IdScan]=id_init;
   mem[id_init+_Status]=2;
 
   memcpy(&mem[id_start],&mem[iloc],iloc_pub_len<<2); // *** Main
   mem[id_start+_Id]=id_start;
+  while(mem[id_start]!=id_start) {
+    mem[id_start] = id_start;
+  }
   mem[id_start+_IdScan]=id_start;
   mem[id_start+_Status]=2;
   mem[id_start+_IP]=mem[1];
@@ -704,7 +710,11 @@ void exec_process(void) {
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
-        mem[id+_Id]=id; mem[id+_Status]=2;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+           mem[id] = id;
+        }
+        mem[id+_Status]=2;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id2+_Son]=id; mem[id+_Father]=id2; break;
       case lret: elimina_proceso(id);
@@ -781,7 +791,11 @@ void exec_process(void) {
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[id2],iloc_len<<2);
-        mem[id+_Id]=id; mem[id+_IP]=ip+1;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+          mem[id] = id;
+        }
+        mem[id+_IP]=ip+1;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id+_SmallBro]=0; mem[id+_Son]=0;
         mem[id2+_Son]=id; mem[id+_Father]=id2;
@@ -935,7 +949,11 @@ void trace_process(void) {
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
-        mem[id+_Id]=id; mem[id+_Status]=2;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+          mem[id] = id;
+        }
+        mem[id+_Status]=2;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id2+_Son]=id; mem[id+_Father]=id2; break;
       case lret: elimina_proceso(id);
@@ -982,7 +1000,11 @@ void trace_process(void) {
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[id2],iloc_len<<2);
-        mem[id+_Id]=id; mem[id+_IP]=ip+1;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+          mem[id] = id;
+        }
+        mem[id+_IP]=ip+1;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id+_SmallBro]=0; mem[id+_Son]=0;
         mem[id2+_Son]=id; mem[id+_Father]=id2;

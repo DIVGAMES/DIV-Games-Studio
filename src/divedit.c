@@ -2514,7 +2514,8 @@ void abrir_programa(void) {
   struct tprg * pr;
   int  num;
 
-  if(!v_terminado) return;
+  if(!v_terminado) 
+    return;
 
   if(!num_taggeds) {
     strcpy(full,tipo[v_tipo].path);

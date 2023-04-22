@@ -1461,7 +1461,7 @@ return;
 
 #endif
 
-fprintf(stdout, "Trying to load %s\n", Setupfile.Desktop_Image);
+// fprintf(stdout, "Trying to load %s\n", Setupfile.Desktop_Image);
 
   if ((f=fopen(Setupfile.Desktop_Image,"rb"))==NULL) return;
   fseek(f,0,SEEK_END); lon=ftell(f); fseek(f,0,SEEK_SET);
@@ -1478,7 +1478,7 @@ fprintf(stdout, "Trying to load %s\n", Setupfile.Desktop_Image);
 
   tap_an=map_an; tap_al=map_al;
 
-  fprintf(stdout,"map_an: %d map_al: %d \n",map_an, map_al);
+  // fprintf(stdout,"map_an: %d map_al: %d \n",map_an, map_al);
   if (es_MAP(temp2)) x=1;
   else if (es_PCX(temp2)) x=2;
   else if (es_BMP(temp2)) x=3;

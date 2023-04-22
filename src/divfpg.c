@@ -1124,7 +1124,8 @@ void Print_List(void) {
 
 		if (num>0) {
 			if (f_ar) {
-				_dos_setdrive(toupper(*tipo[1].path)-'A'+1,&u); chdir(tipo[1].path);
+				_dos_setdrive(toupper(*tipo[1].path)-'A'+1,&u); 
+				_chdir(tipo[1].path);
 				f=fopen(n_ar,"rb");
 
 				if (f!=NULL) {

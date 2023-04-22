@@ -3136,8 +3136,8 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 		y /= mem[id + _Resolution];
 	}
 
-	word wptr32 = *((word *)ptr + 32);
-	word wptr33 = *((word *)ptr + 33);
+	word wptr32 = l2b16(*((word *)ptr + 32));
+	word wptr33 = l2b16(*((word *)ptr + 33));
 
 	fprintf(stdout,"wptr32: %d\n", wptr32);
 	fprintf(stdout,"wptr33: %d\n", wptr33);

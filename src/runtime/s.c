@@ -11,7 +11,7 @@ void process_paint(int id, int n);
 void function_exec(int id, int n);
 #endif
 
-int line_fx, color;
+int line_fx, draw_colour;
 
 void line(int x0, int y0, int x1, int y1);
 void caja(int x, int y, int an, int al);
@@ -1103,8 +1103,8 @@ void put_sprite(
 		int lptr13 = l2b32(ptr[13]);
 		int lptr14 = l2b32(ptr[14]);
 		int lptr15 = l2b32(ptr[15]);
-		word wptr32 = *((word *)ptr + 32);
-		word wptr33 = *((word *)ptr + 33);
+		word wptr32 = l2b16(*((word *)ptr + 32));
+		word wptr33 = l2b16(*((word *)ptr + 33));
 
 		an = lptr13;
 		al = lptr14;
@@ -1132,7 +1132,7 @@ void put_sprite(
 				yg = al - 1 - yg;
 			y -= yg;
 			if (x >= clipx0 && x + an <= clipx1 && y >= clipy0 && y + al <= clipy1) { // Draw sprite without clipping
-				fprintf(stdout, "%d\n", __LINE__);				
+				// fprintf(stdout,"%d %s\n", __LINE__, __FUNCTION__);				
 				sp_normal(si, x, y, an, al, flags);
 			}
 			else if (x < clipx1 && y < clipy1 && x + an > clipx0 && y + al > clipy0) // Draw clipped sprite
@@ -2215,7 +2215,11 @@ void pinta_drawings(void) {
 				continue;
 
 			line_fx = drawing[n].porcentaje;
-			color = drawing[n].color;
+			draw_colour = drawing[n].color;
+
+
+			// fprintf(stdout,"Transparency: %d\nColour: %d\n", line_fx, color);
+
 
 			switch (drawing[n].tipo) {
 				case 1: line(drawing[n].x0, drawing[n].y0, drawing[n].x1, drawing[n].y1); break;
@@ -2512,11 +2516,13 @@ void line_pixel(int x, int y) {
 
 		p = copia + x + y * vga_an;
 
+		// fprintf(stdout,"FX: %d Colour: %d\n", line_fx, color);
+
 		switch (line_fx) {
 
 			case 0:
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + n + a);
 				c = *(ghost + n + b);
 				d = *(ghost + n + c);
@@ -2529,12 +2535,12 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 1:
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + n + a);
 				c = *(ghost + n + b);
 				if (c != *p)
@@ -2544,12 +2550,12 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 2:
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + n + a);
 				c = *(ghost + n + b);
 				d = *(ghost + b + c * 256);
@@ -2562,24 +2568,24 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 3: // *** 25% ****
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + n + a);
 				if (b != *p)
 					*p = b;
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 4:
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + n + a);
 				c = *(ghost + a + b * 256);
 				d = *(ghost + b + c * 256);
@@ -2592,12 +2598,12 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 5:
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + n + a);
 				c = *(ghost + a + b * 256);
 				if (c != *p)
@@ -2607,12 +2613,12 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 6:
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + n + a);
 				c = *(ghost + a + b * 256);
 				d = *(ghost + a + c * 256);
@@ -2625,22 +2631,22 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 7: // *** 50% ****
 				n = (int)*p * 256;
-				a = *(ghost + n + color);
+				a = *(ghost + n + draw_colour);
 				if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 8:
 				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
+				color256 = draw_colour * 256;
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + color256 + a);
 				c = *(ghost + a + b * 256);
 				d = *(ghost + a + c * 256);
@@ -2653,13 +2659,13 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 9:
 				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
+				color256 = draw_colour * 256;
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + color256 + a);
 				c = *(ghost + a + b * 256);
 				if (c != *p)
@@ -2669,13 +2675,13 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 10:
 				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
+				color256 = draw_colour * 256;
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + color256 + a);
 				c = *(ghost + a + b * 256);
 				d = *(ghost + b + c * 256);
@@ -2688,26 +2694,26 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 11: // *** 75% ****
 				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
+				color256 = draw_colour * 256;
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + color256 + a);
 				if (b != *p)
 					*p = b;
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 12:
 				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
+				color256 = draw_colour * 256;
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + color256 + a);
 				c = *(ghost + color256 + b);
 				d = *(ghost + b + c * 256);
@@ -2720,13 +2726,13 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 13:
 				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
+				color256 = draw_colour * 256;
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + color256 + a);
 				c = *(ghost + color256 + b);
 				if (c != *p)
@@ -2736,13 +2742,13 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 14:
 				n = (int)*p * 256;
-				color256 = color * 256;
-				a = *(ghost + n + color);
+				color256 = draw_colour * 256;
+				a = *(ghost + n + draw_colour);
 				b = *(ghost + color256 + a);
 				c = *(ghost + color256 + b);
 				d = *(ghost + color256 + c);
@@ -2755,11 +2761,12 @@ void line_pixel(int x, int y) {
 				else if (a != *p)
 					*p = a;
 				else
-					*p = color;
+					*p = draw_colour;
 				break;
 
 			case 15: // Put color
-				*p = color;
+				// fprintf(stdout,"Direct blit\n");		
+				*p = draw_colour;
 				break;
 		}
 	}
@@ -3051,18 +3058,30 @@ void texc(byte *p, int x, int y, byte an, int al) {
 void pinta_sprites_m7(int n, int cx, int cy, float ang);
 
 void pinta_m7(int n) {
+
+	fprintf(stdout, "Attempting to draw the mode 7 (%d) plane\n",n);
 	int x, y;
 #ifdef DEBUG
 	int oreloj = get_ticks();
 #endif
-	int id = (m7 + n)->camera;
-	int height = (m7 + n)->height;
-	int distance = (m7 + n)->distance;
+
+	// struct _m7 *mm7 = m7;
+
+	int id = (m7+n)->camera;
+	int height = (m7+n)->height;
+	int distance = (m7+n)->distance;
 	int angle = mem[id + _Angle];
 
-	if (!im7[n].on || !id || id != mem[id])
-		return;
+	fprintf(stdout," Mode7 Info (%d) id: %d height: %d distance: %d angle: %d\n", n, id, height, distance, angle);
 
+	fprintf(stdout,"im7 on: %d\n", im7[n].on);
+
+	fprintf(stdout,"Id: %d mem[id]: %d\n", id, mem[id]);
+
+	if (!im7[n].on || !id || id != mem[id]) {	
+		// exit(0);
+		return;
+	}
 	while (mem[id + _Angle] > 2 * pi)
 		mem[id + _Angle] -= 2 * pi;
 	while (mem[id + _Angle] < 0)
@@ -3281,6 +3300,9 @@ int get_disty(int a, int d) {
 
 void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 
+	fprintf(stdout,"Drawing the mode7 plane (%d)\n",n);
+	fprintf(stdout,"Camera Y: %d\n", camara_y);
+
 	int y, u, du, vv, dv, pos_x, pos_y;
 	int ancho_m, alto_m, ancho_e, alto_e;
 	int proyeccion_y, sint, cost;
@@ -3288,7 +3310,9 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 	int mediox_modo7_16;
 	int distancia = ((im7[n].an * (m7 + n)->focus) / 320) << 16;
 	int divisor;
-	byte *di = copia + im7[n].y * vga_an + im7[n].x, *di_end, color = (m7 + n)->color;
+	byte *di = copia + im7[n].y * vga_an + im7[n].x;
+	byte *di_end;
+	byte color = (m7 + n)->color;
 
 	mediox_modo7_16 = mediox_modo7 << 16;
 
@@ -3297,6 +3321,16 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 	ancho_e = im7[n].ext_an - 1;
 	alto_e = im7[n].ext_al - 1;
 
+
+	fprintf(stdout,"M7 deets:\n");
+
+	fprintf(stdout,"distancia: %d\n", distancia);
+	fprintf(stdout,"mediox_modo7_16: %d\n", mediox_modo7_16);
+	fprintf(stdout,"ancho_m: %d\n", ancho_m);
+	fprintf(stdout,"alto_m: %d\n", alto_m);
+	fprintf(stdout,"ancho_e: %d\n", ancho_e);
+	fprintf(stdout,"alto_e: %d\n", alto_e);
+	
 	if (!camara_y)
 		return;
 

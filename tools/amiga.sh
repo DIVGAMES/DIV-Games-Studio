@@ -2,4 +2,4 @@
 mkdir -p amiga
 cd amiga
 cmake .. -DUSE_SDL=1 -DTARGETOS=AMIGA
-make
+make d-AMIGA divdbg-AMIGA div-AMIGA

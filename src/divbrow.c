@@ -157,7 +157,8 @@ void imprime_rutabr(void) {
 
   strcpy(full,tipo[v_tipo].path);
   if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
-    strcat(full,"/"); strcat(full,mascara);
+    strcat(full,"/"); 
+    strcat(full,mascara);
 
   wwrite_in_box(v.ptr,an,wbox_ancho+2,al,5,12,0,(byte *)full,c1);
   wwrite_in_box(v.ptr,an,wbox_ancho+2,al,4,12,0,(byte *)full,c3);
@@ -1459,7 +1460,8 @@ void browser0(void) {
 
   if (tipo[v_tipo].defecto>=0 && tipo[v_tipo].defecto<lextbr.maximo)
     strcpy(input,&ext[an_ext*tipo[v_tipo].defecto]);
-  else strcpy(input,&ext[0]);
+  else 
+    strcpy(input,&ext[0]);
 
   strcpy(mascara,input);
   v_terminado=0;
@@ -1469,10 +1471,11 @@ void browser0(void) {
   _button(100,v.an-12-text_len(texto[101]),v.al-14,2);
   _button(101,v.an-8,v.al-14,2);
 
-  if (v_thumb) _flag(419,v.an-12-text_len(texto[419]),12,&opc_img[v_thumb]);
+  if (v_thumb) 
+    _flag(419,v.an-12-text_len(texto[419]),12,&opc_img[v_thumb]);
 
   _dos_setdrive(toupper(*tipo[v_tipo].path)-'A'+1,&n);
-  chdir(tipo[v_tipo].path);
+  _chdir(tipo[v_tipo].path);
 
   dir_abrirbr(); // Crea la lista de ficheros y directorios
 
@@ -1525,7 +1528,8 @@ void browser0(void) {
 void browser1(void) {
   int an=v.an/big2,al=v.al/big2;
 
-  _show_items(); imprime_rutabr();
+  _show_items(); 
+  imprime_rutabr();
 
   wwrite(v.ptr,an,al,77, 20,0,texto[127],c3); // Archivos
   wwrite(v.ptr,an,al, 3, 20,0,texto[128],c3);
@@ -1634,7 +1638,8 @@ void browser2(void) {
 */
       if(num_taggeds)
       {
-        v_terminado=1; v_existe=1;
+        v_terminado=1; 
+        v_existe=1;
         return;
       }
       analizar_input();
@@ -1788,8 +1793,9 @@ void browser2(void) {
         strcat(tipo[v_tipo].path,"/");
       strcat(tipo[v_tipo].path,directorio+(ldirectoriosbr.zona-10+
         ldirectoriosbr.inicial)*an_directorio);
-      chdir(tipo[v_tipo].path);
-      getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      _chdir(tipo[v_tipo].path);
+      _getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      fprintf(stdout,"CWD: %s\n",tipo[v_tipo].path);
       imprime_rutabr();
       larchivosbr.creada=0;
       ldirectoriosbr.creada=0;
@@ -1800,7 +1806,9 @@ void browser2(void) {
       crear_listbox(&ldirectoriosbr);
     } else if (lunidadesbr.zona>=10) {
       _dos_setdrive(unidades[lunidadesbr.zona-10+lunidadesbr.inicial]-'A'+1,&n);
-      getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      _getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      fprintf(stdout,"CWD: %s\n",tipo[v_tipo].path);
+
       if (tipo[v_tipo].path[0]==unidades[lunidadesbr.zona-10+lunidadesbr.inicial]) {
         imprime_rutabr(); v.volcar=1;
         larchivosbr.creada=0;
@@ -1848,7 +1856,8 @@ void browser3(void) {
 */
   }
 
-  _dos_setdrive(toupper(*tipo[1].path)-'A'+1,&n); chdir(tipo[1].path);
+  _dos_setdrive(toupper(*tipo[1].path)-'A'+1,&n); 
+  _chdir(tipo[1].path);
   tipo[v_tipo].inicial=larchivosbr.inicial;
 
   for (n=0;n<max_archivos;n++) if (thumb[n].ptr!=NULL) {
@@ -1881,14 +1890,18 @@ void dir_abrirbr(void) {
   unsigned n,m;
   struct find_t fileinfo;
 
-  n=0; m=_dos_findfirst(mascara,_A_NORMAL,&fileinfo);
+  n=0; 
+  fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,mascara);
+  m=_dos_findfirst(mascara,_A_NORMAL,&fileinfo);
   while (m==0 && n<max_archivos) {
     strcpy(archivo+n++*an_archivo,fileinfo.name);
     m=_dos_findnext(&fileinfo);
   } larchivosbr.maximo=n;
   qsort(archivo,larchivosbr.maximo,(size_t)an_archivo,(int (*)(const void *, const void *))strcmp);
 
-  n=0; m=_dos_findfirst("*.*",_A_SUBDIR,&fileinfo);
+  n=0; 
+  fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,"*.*");
+  m=_dos_findfirst("*.*",_A_SUBDIR,&fileinfo);
   while (m==0 && n<max_directorios) {
     if (strcmp(fileinfo.name,".") && (fileinfo.attrib&16)) {
       strcpy(directorio+n++*an_directorio,fileinfo.name);

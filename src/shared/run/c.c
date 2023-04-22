@@ -178,16 +178,32 @@ void collision(void) {
 
   bloque=pila[sp]; pila[sp]=0; // Por defecto no colisiona
 
-  if (mem[id+_Ctype]==2) { e(139); return; }
+  if (mem[id+_Ctype]==2) { 
+    e(139); return; 
+  }
 
   if (mem[id+_IdScan]==0 || bloque!=mem[id+_BlScan]) {
-    mem[id+_BlScan]=bloque; i=id_start;
-  } else if (mem[id+_IdScan]>id_end) { pila[sp]=0; return; }
-         else i=mem[id+_IdScan];
+    mem[id+_BlScan]=bloque; 
+    i=id_start;
+  } else {
+    if (mem[id+_IdScan]>id_end) { 
+      pila[sp]=0; 
+      return; 
+    } else {
+      i=mem[id+_IdScan];
+    }
+  }
 
-  file=mem[id+_File]; graph=mem[id+_Graph]; angle=mem[id+_Angle];
+  file=mem[id+_File]; 
+  graph=mem[id+_Graph]; 
+  angle=mem[id+_Angle];
 
-  if (file<0 || file>max_fpgs) { e(109); return; }
+  fprintf(stdout,"collision ID: %d %d %d %d\n",id, file,graph,angle);
+
+  if (file<0 || file>max_fpgs) { 
+    e(109); 
+    return; 
+  }
 
   if ((n=mem[id+_XGraph])>0) {
     m=mem[n]; if (m<1 || m>256) return;
@@ -216,14 +232,25 @@ void collision(void) {
 
 
 
-  if (iptr15==0 || wptr32==65535) { xg=iptr13/2; yg=iptr14/2;
-  } else { xg=wptr32; yg=wptr33; }
+  if (iptr15==0 || wptr32==65535) { 
+    xg=iptr13/2; 
+    yg=iptr14/2;
+  } else { 
+    xg=wptr32; 
+    yg=wptr33; 
+  }
 
   if (angle) {
-    clipx0=x; clipy0=y; clipx1=iptr13; clipy1=iptr14;
+    clipx0=x; 
+    clipy0=y; 
+    clipx1=iptr13; 
+    clipy1=iptr14;
     sp_size(&clipx0,&clipy0,&clipx1,&clipy1,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
   } else if (mem[id+_Size]!=100) {
-    clipx0=x; clipy0=y; clipx1=iptr13; clipy1=iptr14;
+    clipx0=x; 
+    clipy0=y; 
+    clipx1=iptr13; 
+    clipy1=iptr14;
     sp_size_scaled(&clipx0,&clipy0,&clipx1,&clipy1,xg,yg,mem[id+_Size],mem[id+_Flags]);
   } else {
     if (mem[id+_Flags]&1) clipx0=x-(iptr13-1-xg); else clipx0=x-xg;
@@ -231,8 +258,17 @@ void collision(void) {
     clipx1=clipx0+iptr13-1; clipy1=clipy0+iptr14-1;
   }
 
-  buffer_an=clipx1-clipx0+1; buffer_al=clipy1-clipy0+1;
-  if ((buffer=(byte *)malloc(buffer_an*buffer_al))==NULL) { e(100); return; }
+  buffer_an=clipx1-clipx0+1; 
+  buffer_al=clipy1-clipy0+1;
+
+  fprintf(stdout,"buffer_an: %d buffer_al: %d\n",buffer_an,buffer);
+  fprintf(stdout,"clipx0: %d clipy0: %d clipx1: %d clipy1: %d\n", clipx0,clipy0,clipx1,clipy1);
+
+  // sleep(1);
+  if ((buffer=(byte *)malloc(buffer_an*buffer_al))==NULL) { 
+    e(100); 
+    return; 
+  }
   memset(buffer,0,buffer_an*buffer_al);
 
   // Ahora se tiene que pintar el sprite en el buffer(clip...)
@@ -246,9 +282,15 @@ void collision(void) {
       xg=iscroll[n].x-iscroll[n].map1_x;
       yg=iscroll[n].y-iscroll[n].map1_y;
       clipx0+=xg; clipx1+=xg; clipy0+=yg; clipy1+=yg;
-      pila[sp]=comprobar_colisiones(i,bloque,n); break;
+      pila[sp]=comprobar_colisiones(i,bloque,n); 
+      break;
     }
-  } else pila[sp]=comprobar_colisiones(i,bloque,-1);
+  } else {
+    int ret = comprobar_colisiones(i,bloque,-1);
+    while (pila[sp]!=ret) { 
+      pila[sp]=ret;
+    }
+  }
 
   free(buffer);
 }
@@ -271,6 +313,8 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
   }
 
   for (;i<=id_end;i+=iloc_len) {
+
+    fprintf(stdout,"ID: %d\n", i);
 
     if (i!=id && mem[i+_Bloque]==bloque && (mem[i+_Status]==2 ||
       	mem[i+_Status]==4) && mem[i+_Ctype]<2) {
@@ -368,14 +412,16 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
         colisiona=0;
         test_collision(buffer,ptr,x,y,xg,yg,angle,mem[i+_Size],mem[i+_Flags]);
         if (colisiona) {
-      	  mem[id+_IdScan]=i+iloc_len; return(i);
+      	  mem[id+_IdScan]=i+iloc_len; 
+          return(i);
         }
       }
 
     }
   }
 
-  mem[id+_IdScan]=i; return(0);
+  mem[id+_IdScan]=i; 
+  return(0);
 }
 
 //�����������������������������������������������������������������������������

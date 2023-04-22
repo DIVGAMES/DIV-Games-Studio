@@ -252,12 +252,20 @@ void _makepath(char* Path,const char* Drive,const char* Directory,
 
 int _chdir(const char* Directory)
 {
-//	printf("Chdir %s\n",Directory);
+  int res =0;
+//	fprintf(stdout,"OSDEP Chdir %s\n",Directory);
 
-	if(Directory!=NULL && strlen(Directory)>0)
-		chdir(Directory);
+	if(Directory!=NULL && strlen(Directory)>0) {
+		res = chdir(Directory);
+  }
+  return res;
+}
 
-  return 0;
+int _getcwd(char* Buffer,int Size) {
+  if(getcwd(Buffer,Size)!=NULL)
+    return 0;
+  else
+    return -1;
 }
 
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
@@ -283,6 +291,8 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 	strcpy(findmask,name);
 	strlwr(findmask);
 
+  // fprintf(stdout,"Current Directory: %s\n", getcwd(NULL,0));
+
   if(namelist!=NULL) {
   	while(++np<nummatch) {
       // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
@@ -293,12 +303,7 @@ unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result
 	  namelist=NULL;
   }
 
-#ifdef AMIGA
-  nummatch = scandir("", &namelist, 0, alphasort); 
-#else
   nummatch = scandir(".", &namelist, 0, alphasort); 
-#endif
-
 
   fprintf(stdout,"Num Matches for working dir: %d\n", nummatch);
 
@@ -324,9 +329,12 @@ unsigned int _dos_findnext(struct find_t *result) {
     // fprintf(stdout,"Flags: %b\n", namelist[np]->d_type);
 
     result->attrib=0;
+    // If the match is ".." or it is not ".".
   	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
+      // Are we looking for a director, and is the type of the match _A_SUBDIR
 		  if((namelist[np]->d_type & DT_DIR) && type == _A_SUBDIR) {
-			  if(strchr(findmask,'*')) {
+        // Does the mask match '*', or is it an exact match
+			  if(strchr(findmask,'*') || !strcmp(findmask,namelist[np]->d_name)) {
           // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
   				free(namelist[np]);
           namelist[np] = NULL;

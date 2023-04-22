@@ -81,9 +81,15 @@ case lcal:
   #ifdef DEBUG
   process_exec(id,get_ticks()-oreloj); oreloj=get_ticks();
   #endif
-  mem[id+_IP]=ip+1; id2=id; if (sp>long_pila) exer(3);
-  procesos++; ip=mem[ip]; id=id_start;
+  mem[id+_IP]=ip+1; 
+  id2=id; 
+  if (sp>long_pila) 
+    exer(3);
+  procesos++; 
+  ip=mem[ip]; 
+  id=id_start;
 dirtylist = true;
+/*
 printf("Processes: %d  id:%d p*len:%d id_end: %d\n",
 procesos,
 id,
@@ -91,7 +97,7 @@ id,
 (id_start)+((procesos-2)*iloc_len),
 id_end);
 
-
+*/
 if((id_start+((procesos-2)*iloc_len)) == id_end)
 	id=id_end+iloc_len;
 
@@ -117,6 +123,11 @@ if((id_start+((procesos-2)*iloc_len)) == id_end)
   }
   memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
   mem[id+_Id]=id;
+  while(mem[id]!=id) {
+    mem[id] = id;
+  }
+  // fprintf(stdout, "kernel.cpp 126 ID: %d mem[id]: %d _Id: %d\n", id, mem[id],_Id);
+
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
   mem[id2+_Son]=id; mem[id+_Father]=mem[id+_Caller]=id2;
   if (mem[ip+2]==lnop) mem[id+_FCount]=mem[id2+_FCount]+1; // Función
@@ -244,7 +255,16 @@ case lclo:
   while (mem[id+_Status] && id<=id_end) id+=iloc_len;
   if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
   memcpy(&mem[id],&mem[id2],iloc_len<<2);
-  mem[id+_Id]=id; mem[id+_IP]=ip+1; mem[id+_Caller]=0;
+  mem[id+_Id]=id; 
+  mem[id] = id;
+  while(mem[id]!=id) {
+    mem[id] = id;
+  }
+
+  // fprintf(stdout, "kernel.cpp 256 ID: %d mem[id]: %d _Id: %d\n", id, mem[id],_Id);
+
+  mem[id+_IP]=ip+1; 
+  mem[id+_Caller]=0;
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
   mem[id+_SmallBro]=0; mem[id+_Son]=0;
   mem[id2+_Son]=id; mem[id+_Father]=id2;

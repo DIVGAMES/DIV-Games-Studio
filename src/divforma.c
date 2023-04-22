@@ -121,7 +121,7 @@ int es_MAP (byte * buffer) {
 
 void descomprime_MAP (byte * buffer, byte * mapa, int vent) {
 	
-  fprintf(stdout,"dmap: %d\n", vent);
+  // fprintf(stdout,"dmap: %d\n", vent);
 	short npuntos;
 	if (vent) {
 		memcpy(&Codigo,buffer+12,4);
@@ -134,7 +134,7 @@ void descomprime_MAP (byte * buffer, byte * mapa, int vent) {
 
   npuntos = l2b16(npuntos);
 	
-  fprintf(stdout, "npuntos: %d\n", npuntos);
+  // fprintf(stdout, "npuntos: %d\n", npuntos);
 
 	if (vent) {
 		memcpy(reglas,buffer+816,sizeof(reglas));
@@ -198,17 +198,17 @@ typedef struct _pcx_header {
 	char version;
 	char encoding;
 	char bits_per_pixel;
-	short  xmin,ymin;
-	short  xmax,ymax;
-	short  hres;
-	short  vres;
+	unsigned short  xmin,ymin;
+	unsigned short  xmax,ymax;
+	unsigned short  hres;
+	unsigned short  vres;
 	char   palette16[48];
 	char   reserved;
 	char   color_planes;
-	short  bytes_per_line;
-	short  palette_type;
-	short  Hresol;
-	short  Vresol;
+	unsigned short  bytes_per_line;
+	unsigned short  palette_type;
+	unsigned short  Hresol;
+	unsigned short  Vresol;
 	char  filler[54];
 }pcx_header;
 

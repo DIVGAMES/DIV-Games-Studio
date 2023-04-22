@@ -40,17 +40,17 @@ printf("OSDEP INIT");
 
 void OSDEP_Quit(void) {
 	printf("%s\n",__FUNCTION__ );
-	if(OSDEP_screen != NULL) {
-		SDL_FreeSurface(OSDEP_screen);
-		OSDEP_screen = NULL;
-	}
+	// if(OSDEP_screen != NULL) {
+	// 	SDL_FreeSurface(OSDEP_screen);
+	// 	OSDEP_screen = NULL;
+	// }
 
-	if(OSDEP_surface != NULL) {
-		SDL_FreeSurface(OSDEP_surface);
-		OSDEP_surface = NULL;
-	}
+	// if(OSDEP_surface != NULL) {
+	// 	SDL_FreeSurface(OSDEP_surface);
+	// 	OSDEP_surface = NULL;
+	// }
 	
-	SDL_Quit();
+	// SDL_Quit();
 }
 
 // Timer
@@ -126,7 +126,6 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 
 	while(SDL_PollEvent(&event)) {
 		fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
-
 		fs=fs;
 	}
 
@@ -143,7 +142,7 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 	// vwidth = width;
 	// vheight = height;
 
-	fprintf(stdout,"FS: %d\n",fs);
+	// fprintf(stdout,"FS: %d\n",fs);
 
 	if(OSDEP_surface !=NULL) {
 		SDL_FreeSurface(OSDEP_surface);
@@ -222,14 +221,14 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 }
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
-printf("%s\n",__FUNCTION__ );
+// printf("%s\n",__FUNCTION__ );
 
 	memcpy(OSDEP_pal, colors, 256*sizeof(OSDEP_Color));
 	SDL_SetPalette(OSDEP_screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0,256);
 
 
 	int res = SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
-printf("REsult: %d\n", res);
+// printf("REsult: %d\n", res);
 
 return res;
 
@@ -419,24 +418,41 @@ const _c_center=76
 // Mixer
 
 void OSDEP_Mix_HaltChannel(int n) {
+	#ifdef MIXER
 	Mix_HaltChannel(n);
+	#endif
 }
 
 unsigned short OSDEP_Mix_VolumeMusic(int n) {
+
+	#ifdef MIXER
 	return OSDEP_Mix_VolumeMusic(n);
+	#endif
+
 }
 
 
 unsigned short OSDEP_Mix_Volume(int n ,int m) {
+	#ifdef MIXER
 	return Mix_Volume(n,m);
+	#endif
+
 }
 int OSDEP_Mix_PlayingMusic(void) {
+	#ifdef MIXER
 	return Mix_PlayingMusic();
+	#endif
+
 }
 void OSDEP_Mix_HaltMusic(void) {
+	#ifdef MIXER
 	Mix_HaltMusic();
+	#endif
+
 }
 void OSDEP_Mix_SetPostMix(int n, int m) {
+	#ifdef MIXER
 	Mix_SetPostMix(n,m);
+	#endif
 }
 void OSDEP_Mix_HaltChannel(int);

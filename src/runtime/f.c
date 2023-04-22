@@ -116,25 +116,45 @@ extern int dirtylist;
 void _signal(void) {
   int i;
   bp=pila[sp-1];
+  fprintf(stdout,"Signal started: process target is: %d\n", bp);
+  fprintf(stdout,"Current status: %d\n", mem[bp+_Status]);
+  fprintf(stdout,"mem[bp] = %d\n", mem[bp]);
+
   if ((bp&1) && bp>=id_init && bp<=id_end && bp==mem[bp]) {
-    if (mem[bp+_Status])
-      if (pila[sp]<100) mem[bp+_Status]=pila[sp--]+1;
-      else {
+    if (mem[bp+_Status]) {
+      if (pila[sp]<100) {
+        mem[bp+_Status]=pila[sp--]+1;
+        fprintf(stdout,"New status (139): %d\n", mem[bp+_Status]);
+      }  else {
         mem[bp+_Status]=pila[sp--]-99;
-        if (mem[bp+_Son]) signal_tree(mem[bp+_Son],pila[sp+1]-99);
+        fprintf(stdout,"New status (127): %d\n", mem[bp+_Status]);
+
+        if (mem[bp+_Son]) 
+          signal_tree(mem[bp+_Son],pila[sp+1]-99);
       }
-    else pila[--sp]=0; // Returns 0 if the process was dead
+   } else {
+    pila[--sp]=0; // Returns 0 if the process was dead
+   }
   } else {
-    for (i=id_start; i<=id_end; i+=iloc_len)
+    for (i=id_start; i<=id_end; i+=iloc_len) {
       if (mem[i+_Status] && mem[i+_Bloque]==bp) {
-        if (pila[sp]<100) mem[i+_Status]=pila[sp]+1;
-        else {
+        if (pila[sp]<100) {
+          mem[i+_Status]=pila[sp]+1;
+          fprintf(stdout,"New status (137): %d\n", mem[bp+_Status]);
+        } else {
           mem[i+_Status]=pila[sp]-99;
-          if (mem[i+_Son]) signal_tree(mem[i+_Son],pila[sp]-99);
+          fprintf(stdout,"New status (143): %d\n", mem[bp+_Status]);
+
+          if (mem[i+_Son]) {
+            signal_tree(mem[i+_Son],pila[sp]-99);
+          }
         }
       }
+    }
     pila[--sp]=0;
   }
+
+  // fprintf(stdout, "_signal() called.\nProcess %d changed to ")
 //  printf("Status changed for id %d, setting dirty flag\n", bp);
   dirtylist = true;
 }
@@ -614,17 +634,17 @@ typedef struct _pcx_header {
   char version;
   char encoding;
   char bits_per_pixel;
-  short  xmin,ymin;
-  short  xmax,ymax;
-  short  hres;
-  short  vres;
+  unsigned short  xmin,ymin;
+  unsigned short  xmax,ymax;
+  unsigned short  hres;
+  unsigned short  vres;
   char   palette16[48];
   char   reserved;
   char   color_planes;
-  short  bytes_per_line;
-  short  palette_type;
-  short  Hresol;
-  short  Vresol;
+  unsigned short  bytes_per_line;
+  unsigned short  palette_type;
+  unsigned short  Hresol;
+  unsigned short  Vresol;
   char  filler[54];
 }pcx_header;
 
@@ -658,8 +678,35 @@ void descomprime_PCX(byte *buffer, byte *mapa)
   memcpy((byte *)&header,buffer,sizeof(pcx_header));
   buffer+=128;                                  // Comienzo de la imagen
 
+  header.xmax = l2b16(header.xmax);
+  header.xmin = l2b16(header.xmin);
+
+  header.ymax = l2b16(header.ymax);
+  header.ymin = l2b16(header.ymin);
+
+  header.bytes_per_line = l2b16(header.bytes_per_line);
+  header.color_planes = l2b16(header.color_planes);
+
+
+
+  fprintf(stdout,"Header. manufacturer: %d\n", header.manufacturer);
+  fprintf(stdout,"Header.version: %d\n", header.version);
+  fprintf(stdout,"Header.encoding: %d\n", header.encoding);
+  fprintf(stdout,"Header.bits_per_pixel: %d\n", header.bits_per_pixel);
+  fprintf(stdout,"Header.xmin: %d ymin: %d\n", header.xmin, header.ymin);
+  fprintf(stdout,"Header.xmax: %d ymax: %d\n", header.xmax, header.ymax);
+  fprintf(stdout,"Header.hres: %d\n", header.hres);
+  fprintf(stdout,"Header.vres: %d\n", header.vres);
+  fprintf(stdout,"Header.vres: %d\n", header.vres);
+  
+  fprintf(stdout,"Size of pcx header: %d\n", sizeof(pcx_header));
+  fprintf(stdout,"Size of short: %d\n", sizeof(short));
+
   map_an = header.xmax - header.xmin + 1;
   map_al = header.ymax - header.ymin + 1;
+
+
+  fprintf(stdout,"Ancho: %d ALto: %d\n", map_an, map_al);
 
   memset (mapa, 0, map_an * map_al);
 
@@ -741,17 +788,22 @@ void load_map(void) {
       } paleta_cargada=1;
     }
 
-    ancho=*(word*)(ptr+8);
-    alto=*(word*)(ptr+10);
-    npuntos=*(word*)(ptr+1392);
+    word wptr8 = l2b16(*(word*)(ptr+8));
+    word wptr10 = l2b16(*(word*)(ptr+10));
+    word wptr1392 = l2b16(*(word*)(ptr+1392));
+
+
+    ancho = wptr8;
+    alto = wptr10;
+    npuntos= wptr1392;
 
     adaptar(ptr+1394+npuntos*4,ancho*alto,ptr+48,NULL);
 
     ptr=ptr+1394-64;
 
-    *((int*)ptr+13)=ancho;
-    *((int*)ptr+14)=alto;
-    *((int*)ptr+15)=npuntos;
+    *((int*)ptr+13)=l2b32(ancho);
+    *((int*)ptr+14)=l2b32(alto);
+    *((int*)ptr+15)=l2b32(npuntos);
 
     while(g[0].grf[next_map_code]) {
       if (next_map_code++==1999) next_map_code=1000;
@@ -761,26 +813,74 @@ void load_map(void) {
   } else if (es_PCX(ptr)) {
 
     memcpy((byte *)&header,ptr,sizeof(pcx_header));
+
+    /*
+    typedef struct _pcx_header {
+      char manufacturer;
+      char version;
+      char encoding;
+      char bits_per_pixel;
+      short  xmin,ymin;
+      short  xmax,ymax;
+      short  hres;
+      short  vres;
+      char   palette16[48];
+      char   reserved;
+      char   color_planes;
+      short  bytes_per_line;
+      short  palette_type;
+      short  Hresol;
+      short  Vresol;
+      char  filler[54];
+    }
+    pcx_header;
+*/
+
+    fprintf(stdout,"Header. manufacturer: %d\n", header.manufacturer);
+    fprintf(stdout,"Header.version: %d\n", header.version);
+    fprintf(stdout,"Header.encoding: %d\n", header.encoding);
+    fprintf(stdout,"Header.bits_per_pixel: %d\n", header.bits_per_pixel);
+    fprintf(stdout,"Header.xmin: %d ymin: %d\n", header.xmin, header.ymin);
+    fprintf(stdout,"Header.xmax: %d ymax: %d\n", header.xmax, header.ymax);
+    fprintf(stdout,"Header.hres: %d\n", header.hres);
+    fprintf(stdout,"Header.vres: %d\n", header.vres);
+    fprintf(stdout,"Header.vres: %d\n", header.vres);
+    
+    fprintf(stdout,"Size of pcx header: %d\n", sizeof(pcx_header));
+    fprintf(stdout,"Size of short: %d\n", sizeof(short));
+
+    
+    header.xmax = l2b16(header.xmax);
+    header.xmin = l2b16(header.xmin);
+
+    header.ymax = l2b16(header.ymax);
+    header.ymin = l2b16(header.ymin);
+
     ancho   = header.xmax - header.xmin + 1;
     alto    = header.ymax - header.ymin + 1;
     npuntos = 0;
 
-    if((!ancho&& !alto) || ancho<0 || alto<0) {
-      e(144); free(ptr); return;
+    fprintf(stdout,"Ancho: %d ALto: %d\n", ancho, alto);
+
+
+    if((!ancho && !alto) || ancho<0 || alto<0) {
+      e(144); 
+      free(ptr); 
+      return;
     }
 
     buffer=(byte *)malloc(1394+ancho*alto);
-    descomprime_PCX(ptr, &buffer[1394]);
-
+    //descomprime_PCX(ptr, &buffer[1394]);
+    memset(buffer, 64, 1394+ancho*alto);
     adaptar(buffer+1394,ancho*alto,pcxdac,NULL);
 
     free(ptr);
 
     buffer=buffer+1394-64;
 
-    *((int*)buffer+13)=ancho;
-    *((int*)buffer+14)=alto;
-    *((int*)buffer+15)=npuntos;
+    *((int*)buffer+13)=l2b32(ancho);
+    *((int*)buffer+14)=l2b32(alto);
+    *((int*)buffer+15)=l2b32(npuntos);
 
     while(g[0].grf[next_map_code]) {
       if (next_map_code++==1999) next_map_code=1000;
@@ -990,11 +1090,11 @@ iptr3 = l2b32(iptr3);
 
     // fprintf(stdout, "len: %d \n", len);
 
-	 printf("ptr_4 is %x\n",iptr);
+	//  printf("ptr_4 is %x\n",iptr);
 
     lst[num]=iptr=ptr_4;
 
-	 printf("iptr is %x\n",iptr);
+	//  printf("iptr is %x\n",iptr);
 
     if (m!=palcrc) {
       adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
@@ -2096,6 +2196,14 @@ void load(void) {
     if(lon>0) {
       if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
       memcpy(&mem[offset],packptr,lon);
+      // Byte swap the ints???
+
+      
+      // int * imem = (int *)&mem[offset];
+
+      for(int i=offset;i<(offset+lon);i++) {
+        mem[i]=l2b32(mem[i]);
+      }
       max_reloj+=get_reloj()-old_reloj;
       return;
     }
@@ -2109,6 +2217,7 @@ void load(void) {
 
   //fprintf(stdout, "File loaded: %s\n", full);
 
+  fprintf(stdout,"Unit size: %d\n", unit_size);
   fseek(es,0,SEEK_END); lon=ftell(es);///4; 
   printf("file len: %d\n",ftell(es));
   fseek(es,0,SEEK_SET);
@@ -2119,6 +2228,18 @@ void load(void) {
     //fprintf(stdout,"Bytes read: %d bytes wanted: %d len: %d unit_size: %d\n",fbytes, lon*unit_size, lon, unit_size);
     e(127); 
   }
+
+  // byteswap ints? maybe ok...
+
+#ifdef AMIGA // should be ifdef big endian
+  // int * imem = (int *)&mem[offset];
+
+  for(int i=offset;i<(offset+lon);i++) {
+    mem[i]=l2b32(mem[i]);
+  }
+
+#endif
+
   fclose(es);
   max_reloj+=get_reloj()-old_reloj;
 }
@@ -2227,6 +2348,9 @@ void load_pcm(void) {
 
   loop=pila[sp--];
 
+#ifndef MIXER
+  pila[sp]=0;
+#else
   if (npackfiles) {
     m=read_packfile((byte*)&mem[pila[sp]]);
     if (m==-1) goto pcmfuera;
@@ -2250,6 +2374,7 @@ void load_pcm(void) {
   pila[sp]=LoadSound(ptr,file_len,loop);
 
   free(ptr);
+#endif
 
   max_reloj+=get_reloj()-old_reloj;
 }
@@ -2699,7 +2824,9 @@ void start_mode7(void) {
   else 
    im7[n].ext=NULL;
 
-  im7[n].on=1; // Al final si no ha habido errores, fija la variable m7
+  while (!im7[n].on) {
+    im7[n].on=1; // Al final si no ha habido errores, fija la variable m7
+  }
 }
 
 //����������������������������������������������������������������������������
@@ -3117,9 +3244,12 @@ void convert_palette(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
 
 
-  n=ptr[13]*ptr[14]; si=(byte*)ptr+64+ptr[15]*4;
+  n=iptr13*iptr14; si=(byte*)ptr+64+iptr15*4;
   do { *si=(byte)mem[pal_ofs+*si]; si++; } while (--n);
 }
 
@@ -3273,7 +3403,7 @@ void __strset(void) {
   sp--;
 }
 
-byte strupper[270]=
+byte _strupper[270]=
   "                                                                "
   " ABCDEFGHIJKLMNOPQRSTUVWXYZ      ABCDEFGHIJKLMNOPQRSTUVWXYZ     "
   "   A AA EEEIII A   O OUUY       AIOU                            "
@@ -3284,11 +3414,11 @@ void __strupr(void) {
   if ((unsigned)pila[sp]>255) {
     n=strlen((char*)&mem[pila[sp]]);
     while (n--) {
-      if (strupper[memb[pila[sp]*4+n]]!=' ')
-        memb[pila[sp]*4+n]=strupper[memb[pila[sp]*4+n]];
+      if (_strupper[memb[pila[sp]*4+n]]!=' ')
+        memb[pila[sp]*4+n]=_strupper[memb[pila[sp]*4+n]];
     }
   } else {
-    if (strupper[(char)pila[sp]]!=' ') pila[sp]=(int)strupper[(char)pila[sp]];
+    if (_strupper[(char)pila[sp]]!=' ') pila[sp]=(int)_strupper[(char)pila[sp]];
   }
 }
 
@@ -4045,6 +4175,12 @@ void draw(void) {
   drawing[x].color  = pila[sp--];
   drawing[x].tipo   = pila[sp];
 
+
+  // fprintf(stdout,"Draw details: %d\n", x);
+  // fprintf(stdout,"Color: %d (should be %d)\n", drawing[x].color, pila[sp+1]);
+  // fprintf(stdout,"FX: %d\n (should be %d)\n", drawing[x].porcentaje, pila[sp+2]);
+  
+
   if (drawing[x].tipo<1 || drawing[x].tipo>tipo_mayor) { drawing[x].tipo=0; e(173); }
   if (drawing[x].color<0 || drawing[x].color>255) { drawing[x].tipo=0; e(154); }
   if (drawing[x].porcentaje<0 || drawing[x].porcentaje>15) { drawing[x].tipo=0; e(174); }
@@ -4196,9 +4332,11 @@ void write_in_map(void) {
 
   if ((ptr=(byte *)malloc(1330+64+4+an*al))!=NULL) {
     ptr+=1330; // fix load_map/unload_map
-    *((int*)ptr+13)=an; *((int*)ptr+14)=al;
-    *((int*)ptr+15)=1; // Se define un punto de control (el centro)
-    *((word*)ptr+32)=cx; *((word*)ptr+33)=cy;
+    *((int*)ptr+13)=l2b32(an); 
+    *((int*)ptr+14)=l2b32(al);
+    *((int*)ptr+15)=l2b32(1); // Se define un punto de control (el centro)
+    *((word*)ptr+32)=l2b16(cx); 
+    *((word*)ptr+33)=l2b16(cy);
     memset(ptr+4+64,0,an*al);
 
     while(g[0].grf[next_map_code]) {

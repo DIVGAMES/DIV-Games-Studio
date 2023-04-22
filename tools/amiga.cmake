@@ -30,8 +30,11 @@ set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}-g++)
 set(CMAKE_RC_COMPILER ${TOOLCHAIN_PREFIX}-windres)
 
 # set the target CPU to 68020
+# set(M68K_CPU "68020" CACHE STRING "Target CPU model")
+# set(M68K_CRT "ixemul" CACHE STRING "Target std lib")
 set(M68K_CPU "68020" CACHE STRING "Target CPU model")
-set(M68K_CRT "ixemul" CACHE STRING "Target std lib")
+set(M68K_CRT "nix20" CACHE STRING "Target std lib")
+set(M68K_FPU "hard" CACHE STRING "FPU type")
 # find AmigaOS
 #find_package(AmigaOS REQUIRED)
 
@@ -68,6 +71,6 @@ set(EXTRA_LIBS ${EXTRA_LIBS} SDL_mixer_nomad pthread )
 #FILE(GLOB OSX_SOURCES "src/osx/*.c")
 # SET(OSDEP ${OSDEP} ${OSX_SOURCES} "src/shared/osdep.c" "src/shared/unzip.c")
 # INCLUDE_DIRECTORIES("src/osx")
-SET(OSDEP "src/shared/osdep.c"  "src/shared/osdep/amiga.c" )
+SET(OSDEP "src/shared/osdep/amiga.c" )
 #  "src/osx/fmemopen.c")
 

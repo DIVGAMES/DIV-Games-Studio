@@ -2,7 +2,7 @@ FROM amigadev/crosstools:m68k-amigaos
 RUN apt-get update && apt install -y vim-nox ack
 WORKDIR /tmp
 RUN wget http://aminet.net/dev/lib/SDL_Mixer-Amiga-1_2_12.lha
-RUN lha xw=mixer SDL_Mixer-Amiga-1_2_12.lha
+RUN lha x SDL_Mixer-Amiga-1_2_12.lha
 RUN cp -r mixer/include mixer/lib /opt/m68k-amigaos/
 
 # RUN wget http://aminet.net/dev/gg/zlib-bin.lha

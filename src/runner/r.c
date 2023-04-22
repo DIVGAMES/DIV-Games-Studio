@@ -112,7 +112,8 @@ sleep_ms(1000);
 #ifdef DEBUG
 printf("%d\n",ret);
 #endif
-  
+
+fprintf(stdout,"Ret: %d\n",ret);
 #ifndef WIN32
 #ifndef PSP
 sleep_ms(1000);

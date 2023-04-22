@@ -487,11 +487,23 @@ insert_process(id_start);
 
   memcpy(&mem[id_init],&mem[iloc],iloc_pub_len<<2); // *** Init
   mem[id_init+_Id]=id_init;
+  while(mem[id_init]!=id_init) {
+    mem[id_init] = id_init;
+  }
+
+// fprintf(stdout, "i.c 490 ID: %d mem[id]: %d _Id: %d\n", id_init, mem[id_init],_Id);
+
   mem[id_init+_IdScan]=id_init;
   mem[id_init+_Status]=2;
 
   memcpy(&mem[id_start],&mem[iloc],iloc_pub_len<<2); // *** Main
   mem[id_start+_Id]=id_start;
+while(mem[id_start]!=id_start) {
+    mem[id_start] = id_start;
+  }
+
+// fprintf(stdout, "i.c 497 ID: %d mem[id]: %d _Id: %d\n", id_start, mem[id_start],_Id);
+
   mem[id_start+_IdScan]=id_start;
   mem[id_start+_Status]=2;
   mem[id_start+_IP]=mem[1];
@@ -944,7 +956,7 @@ void mainloop(void) {
 void interprete (void)
 {
   inicializacion();
-  fprintf(stdout,"%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 #ifndef DEBUG
 //#ifndef __EMSCRIPTEN__
@@ -1615,6 +1627,8 @@ void frame_end(void) {
 				if (im7[n].on && (m7+n)->z>=max && !im7[n].painted) {
 					m7ide=n+1; 
 					max=(m7+n)->z;
+					// fprintf(stdout,"Mode7 ready to paint %d %d\n", m7ide, max);
+
 				}
 
 				for (n=0;n<10;n++)
@@ -1636,13 +1650,13 @@ void frame_end(void) {
 					max=draw_z;
 					otheride=3;
 				}
-/*
-				printf("Max draw: %d\n", max);
-				printf("OtherIDE: %d\n", otheride);
-				printf("ScrollIDE: %d\n", scrollide);
-				printf("M7IDE: %d\n", m7ide);
-				printf("IDE: %d\n", ide);
-*/
+
+				// printf("Max draw: %d\n", max);
+				// printf("OtherIDE: %d\n", otheride);
+				// printf("ScrollIDE: %d\n", scrollide);
+				// printf("M7IDE: %d\n", m7ide);
+				// printf("IDE: %d\n", ide);
+
 
 				if (otheride) {
 					if (otheride==1) {
@@ -2014,6 +2028,7 @@ void finalizacion (void) {
 #endif
 
 #if defined (WIN32) || defined (PSP)
+# || defined (AMIGA)
 
 	closefiles();
 
@@ -2072,7 +2087,7 @@ void exer(int e) {
 	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
 #endif
 
-	chdir(divpath);
+	_chdir(divpath);
 
 #ifdef STDOUTLOG
 	printf("exited %d\n",e);
@@ -2123,7 +2138,7 @@ void e(int texto) {
 #if defined (DOS) || defined (WIN32)
 	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
 #endif
-	chdir(divpath);
+	_chdir(divpath);
 
 	exit(26);
 }
@@ -2189,9 +2204,9 @@ for(int i=0;i<argc;i++) {
 
   remove("DEBUGSRC.TXT");
   
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   getcwd(divpath,PATH_MAX+1);
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	fprintf(stdout,"Path: %s\n", divpath);
 
 #ifdef DOS
@@ -2201,7 +2216,7 @@ for(int i=0;i<argc;i++) {
 if(true) {
 //	printf("searching for magic\n");
 // search for magic..
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	f=fopen(argv[0],"rb");
   fprintf(stdout, "%s\n", argv[0]);
@@ -2237,7 +2252,7 @@ if(true) {
     fprintf(stdout,"Error: Needs a DIV executable to load.\n");
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-    chdir(divpath);
+    _chdir(divpath);
 
     exit(26);
   }
@@ -2250,12 +2265,12 @@ if(true) {
   _harderr(critical_error);
 #endif
 
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	vga_an=320; vga_al=200; 
 	ireloj=1000.0/24.0; // 24 fps
 	max_saltos = 0; // 0 skips
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 #ifdef __EMSCRIPTEN__
 
@@ -2279,23 +2294,23 @@ if(argc>1 && exesize==0) {
     #endif
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-    chdir(divpath);
+    _chdir(divpath);
 
     exit(26);
   }
 }
 //#endif
 #endif
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	if(argc==1) {
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
-		chdir("resources");
+		_chdir("resources");
 		f = fopen("EXEC.EXE","rb");
 	} else {
 			
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 		fprintf(stdout, "Opening binary: %s\n", argv[1]);
 
@@ -2314,25 +2329,25 @@ if(argc>1 && exesize==0) {
 	}
 	
 	//printf("%x %s\n",f,argv[1]);
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	if(!f) {
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifndef DEBUG
 		printf("Error: Needs a DIV executable to load!\n");
 #endif
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
-		chdir(divpath);
-			  fprintf(stdout, "%d\n", __LINE__);
+		_chdir(divpath);
+			  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 		exit(26);
-			  fprintf(stdout, "%d\n", __LINE__);
+			  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	}
 #endif
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifdef DEBUG
 // check for full screen
-  fprintf(stdout, "%d\n", __LINE__);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
   fsf=fopen("system/exec.fs","rb");
   
@@ -2341,30 +2356,30 @@ if(argc>1 && exesize==0) {
 	fclose(fsf);
   }
   
-fprintf(stdout, "%d\n", __LINE__);
+fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
   fsf = fopen("system/exec.path","rb");
   if(fsf) {
 	fgets(prgpath, _MAX_PATH,fsf);
 	fclose(fsf);
 }
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   inicializa_textos((byte *)"system/lenguaje.int");
 #else
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   inicializa_textos((byte *)argv[0]);
 #endif
 
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 // check if div1 or div2 exe
   fseek(f,0,SEEK_END);
   len=ftell(f);
 //  printf("pack len: %d\n",len);
-  	  fprintf(stdout, "%d\n", __LINE__);
+  	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   if(exesize>0)
 	exestart=len-exesize-datsize-10;
 
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifdef ZLIB
 if(datsize>0) {	
 	datastartpos=exestart+exesize;
@@ -2372,10 +2387,10 @@ if(datsize>0) {
 }
 #endif
   
-  	  fprintf(stdout, "%d\n", __LINE__);
+  	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 fseek(f,0x2+exestart,SEEK_SET);
 fread(&DIV_VER,1,1,f);
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 //printf("%s\n",DIV_VER=='D'?"DIV 1":"DIV 2");
 //  if(exesize==0) {
 //} else {
@@ -2384,7 +2399,7 @@ fread(&DIV_VER,1,1,f);
 
 //printf("div ver: [%d] [%c]\n",DIV_VER,DIV_VER);
 
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	  	  fprintf(stdout, "DIV VER: %c\n",DIV_VER);
 switch(DIV_VER) {
@@ -2504,30 +2519,30 @@ for(a=0;a<10;a++){
 
   if ((mem=(int*)malloc(4*imem_max+1032*5+16*1025+3))!=NULL){
 
-	fprintf(stdout, "%d\n", __LINE__);
+	fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
     mem=(int*)((((memptrsize)mem+3)/4)*4);
 
     filenames=(char*)&mem[imem_max+258*5]; // Buffer de 16*1025 para dirinfo[].name
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
     memset(mem,0,4*imem_max+1032*5);
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
     // To add strings (on the fly?) "in the air"
     nullstring[0]=imem_max+1+258*0; mem[nullstring[0]-1]=0xDAD00402;
     nullstring[1]=imem_max+1+258*1; mem[nullstring[1]-1]=0xDAD00402;
     nullstring[2]=imem_max+1+258*2; mem[nullstring[2]-1]=0xDAD00402;
     nullstring[3]=imem_max+1+258*3; mem[nullstring[3]-1]=0xDAD00402;
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
     memcpy(mem,mimem,40);
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
     if ((ptr=(byte*)malloc(len))!=NULL) {
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
       fread(ptr,1,len,f);
       fclose(f);
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
       len_descomp=mem[9];
 	  fprintf(stdout, "len_Descomp: %d\n", mem[9]);
@@ -2560,7 +2575,7 @@ for(a=0;a<10;a++){
 	if(false)
 #endif
 {
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 // exit(0);
 #ifdef DUMP_BYTECODE
 FILE *m = fopen("exec.m","wb");
@@ -2570,10 +2585,10 @@ if(m) {
 	fclose(m);
 }
 #endif
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
         free(ptr);
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	  
 	//   mem[0] = l2b32(mem[0]);
 
@@ -2586,40 +2601,40 @@ if(m) {
           #endif
           mem[0]-=1024;
         }
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         i=imem_max+258*4;
         if ((_argc=argc-1)>10) _argc=10;
         for (n=0;n<_argc && n<argc-1;n++) {
           memcpy(&mem[i],argv[n+1],strlen(argv[n+1])+1);
           _argv(n)=i; i+=(strlen(argv[n+1])+4)/4;
         } for (;n<10;n++) _argv(n)=0;
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         memb=(byte*)mem;
         memw=(word*)mem;
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         if (mem[0]!=0 && mem[0]!=1) {
           #ifndef DEBUG
           printf("Error: Needs a DIV executable to load.\n");
           #endif
 
           _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-          chdir(divpath);
+          _chdir(divpath);
 
           exit(26);
         }
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         kbdInit();
-			  fprintf(stdout, "%d\n", __LINE__);
+			  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 			  	//   exit(0);
 
 #ifdef DEBUG
   printf("Looking for joysticks\n"	);
 #endif
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	if(OSDEP_NumJoysticks() > 0) { 
 		divjoy = (OSDEP_Joystick*)OSDEP_JoystickOpen(0);
 		joy_status=1;
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifdef DEBUG
 		printf("Joystick ID: %d\n", divjoy);
 		printf("Joyname:    %s\n", OSDEP_JoystickName(divjoy));
@@ -2637,50 +2652,50 @@ if(m) {
 		joy_status = 0;
 	}
 
-	  fprintf(stdout, "%d\n", __LINE__);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	interprete();        
 
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifndef __EMSCRIPTEN__
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
-	chdir(divpath);
-		  fprintf(stdout, "%d\n", __LINE__);
+	_chdir(divpath);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	exit(26); // Exit without clearing screen
 #endif
 
 	} else {
-		fprintf(stdout, "%d\n", __LINE__);
+		fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 		free(ptr);
-		fprintf(stdout, "%d\n", __LINE__);
+		fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 		exer(1);
 	}
 
 } else {
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
       fclose(f);
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
       exer(1);
     }
 
   } else { 
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	fclose(f); 
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	exer(1); 
-		  fprintf(stdout, "%d\n", __LINE__);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	}
 }
 
-		 		  fprintf(stdout, "%d\n", __LINE__);
+		 		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 return 0;
 
@@ -2834,7 +2849,7 @@ void GetFree4kBlocks(void)
   }
 
   _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-  chdir(divpath);
+  _chdir(divpath);
 
   exit(0);
 #endif

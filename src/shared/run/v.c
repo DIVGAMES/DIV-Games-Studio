@@ -648,17 +648,17 @@ typedef struct _pcx_header {
   char version;
   char encoding;
   char bits_per_pixel;
-  short  xmin,ymin;
-  short  xmax,ymax;
-  short  hres;
-  short  vres;
+  unsigned short  xmin,ymin;
+  unsigned short  xmax,ymax;
+  unsigned short  hres;
+  unsigned short  vres;
   char   palette16[48];
   char   reserved;
   char   color_planes;
-  short  bytes_per_line;
-  short  palette_type;
-  short  Hresol;
-  short  Vresol;
+  unsigned short  bytes_per_line;
+  unsigned short  palette_type;
+  unsigned short  Hresol;
+  unsigned short  Vresol;
   char  filler[54];
 }pcx_header;
 

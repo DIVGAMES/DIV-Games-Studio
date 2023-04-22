@@ -156,7 +156,7 @@ extern char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes);
 
 // dos directory stuff
 
-#include <dirent.h>
+// #include <dirent.h>
 
 struct find_t {
   char reserved[21];
@@ -218,6 +218,7 @@ void _makepath(
 
 extern void compilar(void);
 extern int _chdir(const char* Directory);
+extern int _getcwd(char* buf, int len);
 
 //#define SoundInfo SDL_AudioSpec
 

@@ -470,19 +470,19 @@ int UpLoad_Desktop()
                 return(0);
 		
 		
-		fprintf(stdout,"loading saved session\n");
+        // fprintf(stdout,"loading saved session\n");
         fseek(desktop,8+4,SEEK_SET);
         fread(&numvent,1,4,desktop);
         fseek(desktop,8+4+4+768+65536,SEEK_SET);
         // Load each of the windows one by one
-        fprintf(stdout, "Num windows: %d\n", numvent);
+        // fprintf(stdout, "Num windows: %d\n", numvent);
         // error(0);
         for(x=0;x<numvent;x++)
         {
                 // Window struct data
                 fread(&ventana_aux,1,sizeof(struct tventana),desktop);
                 // ventana_aux.tipo = l2b32(ventana_aux.tipo);
-                fprintf(stdout, "Window Type: %d\n", ventana_aux.tipo);
+//                fprintf(stdout, "Window Type: %d\n", ventana_aux.tipo);
                 switch(ventana_aux.tipo)
                 {
                         case 0:
@@ -635,30 +635,34 @@ int UpLoad_Desktop()
                                                 if(!Interpretando)
                                                         actualiza_caja(0,0,vga_an,vga_al);
                                         }                                        
-										// check if prg on disk is newer than session
-										strcpy(pathtmp,v_prg->path);
-										strcat(pathtmp,"/");
-										strcat(pathtmp,v_prg->filename);
+                                        // check if prg on disk is newer than session
+                                        strcpy(pathtmp,v_prg->path);
+                                        strcat(pathtmp,"/");
+                                        strcat(pathtmp,v_prg->filename);
 
-										if(dtime < getFileCreationTime(&pathtmp[0])) {
-											v_titulo=v_prg->filename;
-											//(char *)texto[75];
-											v_texto="File on disk is newer, reload?";
-											//(char *)texto[76];
-											dialogo(aceptar0);
+                                        // disabled checking of file 
+                                        if(dtime < getFileCreationTime(&pathtmp[0]) && false) {
+                                                v_titulo=v_prg->filename;
+                                                //(char *)texto[75];
+                                                v_texto="File on disk is newer, reload?";
+                                                //(char *)texto[76];
+                                                dialogo(aceptar0);
 
-											if(v_aceptar) {
-												strcpy(tipo[0].path,v_prg->path);
-												strcpy(input,v_prg->filename);
-												
-												// close old prg
-												cierra_ventana();
-												v_terminado = 1;
-												
-												// load replacement prg							
-												abrir_programa();
-											}
-										}
+                                                if(v_aceptar) {
+                                                        strcpy(tipo[0].path,v_prg->path);
+                                                        strcpy(input,v_prg->filename);
+                                                        
+                                                        // close old prg
+                                                        cierra_ventana();
+                                                        v_terminado = 1;
+                                                        fprintf(stdout,"File to replace (v_titulo): %s\n", v_titulo);
+                                                        fprintf(stdout,"File to replace (tipo[0].path): %s\n", tipo[0].path);
+                                                        fprintf(stdout,"File to replace (input): %s\n", input);
+
+                                                        // load replacement prg							
+                                                        abrir_programa();
+                                                }
+                                        }
                                         break;
                                 }
                                 else
