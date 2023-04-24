@@ -61,7 +61,7 @@ fprintf(stdout, "%s\n", __FUNCTION__);
 }
 
 void OSDEP_WarpMouse(int x, int y) {
-	SDL_WarpMouseInWindow(OSDEP_window, x, y);
+	// SDL_WarpMouseInWindow(OSDEP_window, x, y);
 }
 
 int OSDEP_IsFullScreen(void) {

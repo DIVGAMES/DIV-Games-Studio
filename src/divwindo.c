@@ -527,7 +527,7 @@ void wvolcado_oscuro(byte*copia,int an_copia,int al_copia,
 //	printf("copia: %x %x\n",copia,p);
 
 	for (vn=0;vn<max_windows;vn++) {
-		if(ventana[vn].ptr>0)
+		if(ventana[vn].ptr)
 	//		printf("copia: %x\n",ventana[vn].ptr);
 
 		if(ventana[vn].ptr==p) {

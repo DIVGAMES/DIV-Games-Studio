@@ -1213,7 +1213,7 @@ void Preview20()
 }
 /////////////////////////////////////////////////////////////////////////////
 
-char pletras[5*8+1]="01234567ABCDEFGHabcdefgh!?$*/+()Ññçáéíóú";
+char pletras[]="01234567ABCDEFGHabcdefgh!?$*/+()Ññçáéíóú";
 
 void crear_texto_prueba(char * s, char flags) {
   int numbits=0;

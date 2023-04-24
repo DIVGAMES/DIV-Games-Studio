@@ -2657,7 +2657,7 @@ void programa0_nuevo(void) {
           strcpy(v_prg->filename,input);
           strcpy(v_prg->path,tipo[v_tipo].path);
 //        n-=buffer_grow;
-        n=strlen(buffer);
+        n=strlen((const char *)buffer);
         v_prg->file_lon=n;
         v_prg->buffer=buffer;
         v_prg->lptr=buffer;
@@ -2665,11 +2665,11 @@ void programa0_nuevo(void) {
         v_prg->num_lineas=1;
         nueva_ventana(programa0);
         // Add the template
-        strcpy(buffer,"PROGRAM yourprg;");
+        strcpy((char *)buffer,"PROGRAM yourprg;");
         read_line();
         f_enter();
             // Add the template
-        strcat(buffer,"BEGIN");
+        strcat((char *)buffer,"BEGIN");
          // Your code here\n\n END");
         f_enter();
         

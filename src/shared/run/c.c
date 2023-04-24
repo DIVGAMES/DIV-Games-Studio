@@ -7,7 +7,7 @@
 // Cabeceras
 //����������������������������������������������������������������������������
 int  comprobar_colisiones(int i,int bloque,int scroll);
-void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags);
+void test_collision(byte * c_buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags);
 void sp_rotado_p(byte * si, int an, int al, int flags);
 void test_normal(byte * p, int x, int y, int an, int al, int flags);
 void test_cortado(byte * p, int x, int y, int an, int al, int flags);
@@ -168,6 +168,8 @@ void graphic_info(void) {
 // Pero los gr�ficos que est�n en scroll detectan colisiones s�lo en el primer
 // scroll en el que est�n (aunque est�n en varios)
 
+byte * collision_buffer = NULL;
+
 void collision(void) {
 
   int i,bloque; // Recorre procesos de _IdScan en adelante, si _IdScan=0 desde start
@@ -176,8 +178,10 @@ void collision(void) {
   int64_t xg,yg;  // Centro gravitatorio del gr�fico del proceso actual
   int * ptr;
 
-  bloque=pila[sp]; pila[sp]=0; // Por defecto no colisiona
+  bloque=pila[sp]; 
+  pila[sp]=0; // Por defecto no colisiona
 
+  
   if (mem[id+_Ctype]==2) { 
     e(139); return; 
   }
@@ -198,7 +202,7 @@ void collision(void) {
   graph=mem[id+_Graph]; 
   angle=mem[id+_Angle];
 
-  fprintf(stdout,"collision ID: %d %d %d %d\n",id, file,graph,angle);
+  // fprintf(stdout,"collision ID: %d %d %d %d\n",id, file,graph,angle);
 
   if (file<0 || file>max_fpgs) { 
     e(109); 
@@ -206,22 +210,53 @@ void collision(void) {
   }
 
   if ((n=mem[id+_XGraph])>0) {
-    m=mem[n]; if (m<1 || m>256) return;
-    while (angle>=2*pi) angle-=2*pi;
-    while (angle<0) angle+=2*pi;
+    m=mem[n];
+     if (m<1 || m>256) {
+      return;
+     }
+    while (angle>=2*pi) {
+      angle-=2*pi;
+    }
+    while (angle<0) {
+      angle+=2*pi;
+    }
     mem[id+_Flags]&=254;
-    graph=((angle+(2*pi)/(m*2))*m)/(2*pi); angle=0;
-    if (graph>=m) graph=0;
-    if ((graph=mem[n+1+graph])<0) { graph=-graph; mem[id+_Flags]|=1; }
+    graph=((angle+(2*pi)/(m*2))*m)/(2*pi); 
+    angle=0;
+    if (graph>=m) {
+      graph=0;
+    }
+    if ((graph=mem[n+1+graph])<0) { 
+      graph=-graph; 
+      mem[id+_Flags]|=1; 
+    }
   }
 
-  if (file) max_grf=1000; else max_grf=2000;
-  if (graph<=0 || graph>=max_grf) { e(110); return; }
-  if (g[file].grf==NULL) { e(111); return; }
-  if ((ptr=g[file].grf[graph])==NULL) { e(121); return; }
+  if (file) {
+    max_grf=1000; 
+  } else { 
+    max_grf=2000;
+  }
+  if (graph<=0 || graph>=max_grf) { 
+    e(110); 
+    return; 
+  }
+  if (g[file].grf==NULL) { 
+    e(111); 
+    return; 
+  }
+  if ((ptr=g[file].grf[graph])==NULL) { 
+    e(121); 
+    return; 
+  }
 
-  x=mem[id+_X]; y=mem[id+_Y];
-  if (mem[id+_Resolution]>0) { x/=mem[id+_Resolution]; y/=mem[id+_Resolution]; }
+  x=mem[id+_X]; 
+  y=mem[id+_Y];
+
+  if (mem[id+_Resolution]>0) { 
+    x/=mem[id+_Resolution]; 
+    y/=mem[id+_Resolution]; 
+  }
 
   int iptr13 = l2b32(ptr[13]);
   int iptr14 = l2b32(ptr[14]);
@@ -229,8 +264,6 @@ void collision(void) {
 
   word wptr32 = l2b16(*((word*)ptr+32));
   word wptr33 = l2b16(*((word*)ptr+33));
-
-
 
   if (iptr15==0 || wptr32==65535) { 
     xg=iptr13/2; 
@@ -261,42 +294,69 @@ void collision(void) {
   buffer_an=clipx1-clipx0+1; 
   buffer_al=clipy1-clipy0+1;
 
-  fprintf(stdout,"buffer_an: %d buffer_al: %d\n",buffer_an,buffer);
-  fprintf(stdout,"clipx0: %d clipy0: %d clipx1: %d clipy1: %d\n", clipx0,clipy0,clipx1,clipy1);
+  // fprintf(stdout,"buffer_an: %d buffer_al: %d\n",buffer_an,buffer_al);
+  // fprintf(stdout,"clipx0: %d clipy0: %d clipx1: %d clipy1: %d\n", clipx0,clipy0,clipx1,clipy1);
 
+  int memsize = buffer_an*buffer_al;
+
+  // fprintf(stdout,"memsize: %d\n",memsize);
+
+  if(buffer_an > 2000 || buffer_al > 2000) {
+    // return;
+  }
   // sleep(1);
-  if ((buffer=(byte *)malloc(buffer_an*buffer_al))==NULL) { 
+  if ((collision_buffer=(byte *)malloc(memsize))==NULL) { 
     e(100); 
     return; 
   }
-  memset(buffer,0,buffer_an*buffer_al);
+  memset(collision_buffer,0,memsize);
 
-  // Ahora se tiene que pintar el sprite en el buffer(clip...)
+  // Ahora se tiene que pintar el sprite en el collision_buffer(clip...)
 
-  put_collision(buffer,ptr,x,y,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
+  // fprintf(stdout,"Puting Collision\n");
+
+  put_collision(collision_buffer,ptr,x,y,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
+  // return;
 
   // Ya tiene region del sprite clipx0..clipy1 (si es en pantalla)
 
+  // fprintf(stdout,"Checking Ctype\n");
+  
   if (mem[id+_Ctype]==1) {
     for(n=0;n<10;n++)if(iscroll[n].on&&(mem[id+_Cnumber]==0||(mem[id+_Cnumber]&(1<<n)))) {
       xg=iscroll[n].x-iscroll[n].map1_x;
       yg=iscroll[n].y-iscroll[n].map1_y;
       clipx0+=xg; clipx1+=xg; clipy0+=yg; clipy1+=yg;
+      // fprintf(stdout,"comparing collision %d\n", __LINE__);
       pila[sp]=comprobar_colisiones(i,bloque,n); 
       break;
     }
   } else {
+    // fprintf(stdout,"comparing collision %d\n", __LINE__);
     int ret = comprobar_colisiones(i,bloque,-1);
     while (pila[sp]!=ret) { 
       pila[sp]=ret;
     }
   }
 
-  free(buffer);
+  // fprintf(stdout,"Freeing collision_buffer... \n");
+
+  // fprintf(stdout,"Buffer pointer: %d\n", buffer);
+  
+// #ifndef AMIGA
+  if(collision_buffer) {
+    free(collision_buffer);
+  }
+// #endif
+
+  collision_buffer = NULL;
+
+  // fprintf(stdout,"Free'd memory\n");
+
 }
 
 //����������������������������������������������������������������������������
-// Comprueba colisiones del sprite id (en buffer) con el resto (i..id_end)
+// Comprueba colisiones del sprite id (en collision_buffer) con el resto (i..id_end)
 //����������������������������������������������������������������������������
 
 int comprobar_colisiones(int i,int bloque,int scroll) {
@@ -308,13 +368,13 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
 
   if (bloque==0) { // collision(type mouse)
     if (mouse->x>=clipx0 && mouse->x<=clipx1 && mouse->y>=clipy0 && mouse->y<=clipy1) {
-      if (*(buffer+buffer_an*(mouse->y-clipy0)+(mouse->x-clipx0))) return(id); else return(0);
+      if (*(collision_buffer+buffer_an*(mouse->y-clipy0)+(mouse->x-clipx0))) return(id); else return(0);
     } else return(0);
   }
 
   for (;i<=id_end;i+=iloc_len) {
 
-    fprintf(stdout,"ID: %d\n", i);
+    // fprintf(stdout,"ID: %d\n", i);
 
     if (i!=id && mem[i+_Bloque]==bloque && (mem[i+_Status]==2 ||
       	mem[i+_Status]==4) && mem[i+_Ctype]<2) {
@@ -365,8 +425,13 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
       word wptr33 = l2b16(*((word*)ptr+33));
 
 
-      if (iptr15==0 || wptr32==65535) { xg=iptr13/2; yg=iptr14/2;
-      } else { xg=wptr32; yg=wptr33; }
+      if (iptr15==0 || wptr32==65535) { 
+        xg=iptr13/2; 
+        yg=iptr14/2;
+      } else { 
+        xg=wptr32; 
+        yg=wptr33; 
+      }
 
       colisiona=0;
 
@@ -410,7 +475,7 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
 
       if (colisiona==1) {
         colisiona=0;
-        test_collision(buffer,ptr,x,y,xg,yg,angle,mem[i+_Size],mem[i+_Flags]);
+        test_collision(collision_buffer,ptr,x,y,xg,yg,angle,mem[i+_Size],mem[i+_Flags]);
         if (colisiona) {
       	  mem[id+_IdScan]=i+iloc_len; 
           return(i);
@@ -499,7 +564,7 @@ void sp_size_scaled( int *x, int *y, int *xx, int *yy, int xg, int yg,
 //      Funcion externa para pintar gr�ficos (para las colisiones)
 //����������������������������������������������������������������������������
 
-void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
+void put_collision(byte * c_buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
 
   byte * si;
   int an,al; // Informaci�n respecto a pantalla del grafico
@@ -522,7 +587,8 @@ void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int a
 
   ix=clipx0; iy=clipy0;
 
-  _copia=copia; copia=buffer;
+  _copia=copia; 
+  copia=c_buffer;
   _vga_an=vga_an; vga_an=buffer_an;
   _vga_al=vga_al; vga_al=buffer_al;
   clipx0=0; clipx1-=ix-1;
@@ -640,8 +706,16 @@ void sp_rotado_p(byte * si, int an, int al, int flags) {
      kk=g0y.l; g0y.l=g1y.l; g1y.l=kk;
     }
 
-    if (h<clipy1 && h>=clipy0 && x0.w[1]<clipx1 && x1.w[1]>=clipx0 && x1.w[1]>x0.w[1])
-      sp_scan(ptrcopia+x0.w[1],x1.w[1]-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+#ifdef AMIGA
+#define x0w1 x0.w[0]
+#define x1w1 x1.w[0]
+#else
+#define x0w1 x0.w[1]
+#define x1w1 x1.w[1]
+#endif
+
+    if (h<clipy1 && h>=clipy0 && x0w1<clipx1 && x1w1>=clipx0 && x1w1>x0w1)
+      sp_scan(ptrcopia+x0w1,x1w1-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
 
     if ((flags&3)==1 || (flags&3)==2) {
       kk=x0.l; x0.l=x1.l; x1.l=kk;
@@ -661,7 +735,7 @@ void sp_rotado_p(byte * si, int an, int al, int flags) {
 //      Funcion externa para comprobar gr�ficos (para las colisiones)
 //����������������������������������������������������������������������������
 
-void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
+void test_collision(byte * col_buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
 
   byte * si;
   int an,al; // Informaci�n respecto a pantalla del grafico
@@ -678,7 +752,7 @@ void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int 
 
   ix=clipx0; iy=clipy0;
 
-  _copia=copia; copia=buffer;
+  _copia=copia; copia=col_buffer;
   _vga_an=vga_an; vga_an=buffer_an;
   _vga_al=vga_al; vga_al=buffer_al;
   clipx0=0; clipx1-=ix-1;
@@ -956,13 +1030,21 @@ void test_rotado(byte * si, int an, int al, int flags) {
      kk=g0y.l; g0y.l=g1y.l; g1y.l=kk;
     }
 
-    if (h<clipy1 && h>=clipy0 && x0.w[1]<clipx1 && x1.w[1]>=clipx0 && x1.w[1]>x0.w[1])
-    if (x0.w[1]<clipx0) if (x1.w[1]>=clipx1)
-      test_scanc(ptrcopia+clipx0,x1.w[1]-x0.w[1],clipx1-clipx0-1,clipx0-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
-    else test_scanc(ptrcopia+clipx0,x1.w[1]-x0.w[1],x1.w[1]-clipx0,clipx0-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
-    else if (x1.w[1]>=clipx1)
-      test_scanc(ptrcopia+x0.w[1],x1.w[1]-x0.w[1],clipx1-1-x0.w[1],0,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
-    else test_scan(ptrcopia+x0.w[1],x1.w[1]-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+#ifdef AMIGA
+#define x0w1 x0.w[0]
+#define x1w1 x1.w[0]
+#else
+#define x0w1 x0.w[1]
+#define x1w1 x1.w[1]
+#endif
+
+    if (h<clipy1 && h>=clipy0 && x0w1<clipx1 && x1w1>=clipx0 && x1w1>x0w1)
+    if (x0w1<clipx0) if (x1w1>=clipx1)
+      test_scanc(ptrcopia+clipx0,x1w1-x0w1,clipx1-clipx0-1,clipx0-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+    else test_scanc(ptrcopia+clipx0,x1w1-x0w1,x1w1-clipx0,clipx0-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+    else if (x1w1>=clipx1)
+      test_scanc(ptrcopia+x0w1,x1w1-x0w1,clipx1-1-x0w1,0,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+    else test_scan(ptrcopia+x0w1,x1w1-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
 
     if ((flags&3)==1 || (flags&3)==2) {
       kk=x0.l; x0.l=x1.l; x1.l=kk;

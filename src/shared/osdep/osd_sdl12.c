@@ -2,7 +2,13 @@
 // CONFIGURED FOR SDL1.2
 
 #include "osd_sdl12.h"
+
+#ifdef EDITOR
 #include "global.h"
+#else
+#include "inter.h"
+#endif
+
 
 // key buffer
 uint8_t OSDEP_key[2048];
@@ -26,8 +32,17 @@ void OSDEP_ShowCursor(int show) {
 	SDL_ShowCursor(show);
 }
 
+void AMIGA_Init(void);
+
+
 void OSDEP_Init(void) {
 printf("OSDEP INIT");
+
+#ifdef AMIGA
+
+Amiga_Init();
+
+#endif
 
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
@@ -69,7 +84,7 @@ void OSDEP_SetCaption(char *title, char *icon) {
 }
 
 OSDEP_VMode ** OSDEP_ListModes(void) {
-		printf("%s\n",__FUNCTION__ );
+	printf("%s\n",__FUNCTION__ );
 return 0;
 	SDL_Rect **modes;
 	int i;
@@ -82,7 +97,7 @@ return 0;
 	}
 
 	if(modes == (SDL_Rect **)-1) {
-		return -1;
+		return NULL;
 	}
 
 	for(i=0;modes[i];++i) {
@@ -118,7 +133,7 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 // width = 640;
 // height = 480;
 
-// fs = 1;
+fs = 1;
 	fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
 	// clear event queue
 
@@ -288,7 +303,7 @@ void OSDEP_JoystickClose(OSDEP_Joystick *joy) {
 char * OSDEP_JoystickName(int n) {
 	printf("%s\n",__FUNCTION__ );
 
-	return SDL_JoystickName(n);
+	return (char *)SDL_JoystickName(n);
 }
 
 void OSDEP_keyInit(void) {
@@ -452,7 +467,7 @@ void OSDEP_Mix_HaltMusic(void) {
 }
 void OSDEP_Mix_SetPostMix(int n, int m) {
 	#ifdef MIXER
-	Mix_SetPostMix(n,m);
+	// Mix_SetPostMix((void *)n,m);
 	#endif
 }
 void OSDEP_Mix_HaltChannel(int);

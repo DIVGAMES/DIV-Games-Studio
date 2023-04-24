@@ -116,18 +116,18 @@ extern int dirtylist;
 void _signal(void) {
   int i;
   bp=pila[sp-1];
-  fprintf(stdout,"Signal started: process target is: %d\n", bp);
-  fprintf(stdout,"Current status: %d\n", mem[bp+_Status]);
-  fprintf(stdout,"mem[bp] = %d\n", mem[bp]);
+  // fprintf(stdout,"Signal started: process target is: %d\n", bp);
+  // fprintf(stdout,"Current status: %d\n", mem[bp+_Status]);
+  // fprintf(stdout,"mem[bp] = %d\n", mem[bp]);
 
   if ((bp&1) && bp>=id_init && bp<=id_end && bp==mem[bp]) {
     if (mem[bp+_Status]) {
       if (pila[sp]<100) {
         mem[bp+_Status]=pila[sp--]+1;
-        fprintf(stdout,"New status (139): %d\n", mem[bp+_Status]);
+        // fprintf(stdout,"New status (139): %d\n", mem[bp+_Status]);
       }  else {
         mem[bp+_Status]=pila[sp--]-99;
-        fprintf(stdout,"New status (127): %d\n", mem[bp+_Status]);
+        // fprintf(stdout,"New status (127): %d\n", mem[bp+_Status]);
 
         if (mem[bp+_Son]) 
           signal_tree(mem[bp+_Son],pila[sp+1]-99);
@@ -140,10 +140,10 @@ void _signal(void) {
       if (mem[i+_Status] && mem[i+_Bloque]==bp) {
         if (pila[sp]<100) {
           mem[i+_Status]=pila[sp]+1;
-          fprintf(stdout,"New status (137): %d\n", mem[bp+_Status]);
+          // fprintf(stdout,"New status (137): %d\n", mem[bp+_Status]);
         } else {
           mem[i+_Status]=pila[sp]-99;
-          fprintf(stdout,"New status (143): %d\n", mem[bp+_Status]);
+          // fprintf(stdout,"New status (143): %d\n", mem[bp+_Status]);
 
           if (mem[i+_Son]) {
             signal_tree(mem[i+_Son],pila[sp]-99);
@@ -210,7 +210,7 @@ FILE *__fpopen (byte *file, char *mode) {
 	
 }
 
-FILE * fpopen ( byte * file, char *mode) {
+FILE * fpopen ( unsigned char * file, char *mode) {
 	return __fpopen(file,mode);
 }
 
@@ -235,7 +235,7 @@ FILE * open_multi(char *file, char *mode) {
   strcpy(full,(char*)file); // full filename
 //fprintf(stdout,"Trying to open %s\n",file);
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -266,7 +266,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG  
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -278,7 +278,7 @@ FILE * open_multi(char *file, char *mode) {
   return f;
 
 #ifdef DEBUG
-  if ( f=fpopen(full, mode) )
+  if ( f=fpopen((unsigned char *)full, mode) )
     return f;
 #endif
     
@@ -291,7 +291,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -303,7 +303,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -315,7 +315,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif    
 
@@ -334,7 +334,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -344,14 +344,14 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
 #ifdef ZLIB
 //  fprintf(stdout,"Trying to open from zip %s\n",file);
     if(mode[0]!='w')
-      if(f=memz_open_file(file))
+      if(f=memz_open_file((unsigned char *)file))
         return f;
 #endif
 
@@ -373,7 +373,7 @@ FILE * div_open_file(char * file) {
   if(strlen((char *)file)==0) 
     return NULL;
 
-  f=open_multi(file,"rb");
+  f=open_multi((char *)file,"rb");
 
   if(!f)
   	strcpy(full,"");
@@ -462,7 +462,7 @@ while (*ff!=0) {
         if ((f=fopen(packfile,"rb"))==NULL) {
 #ifndef DEBUG
 #ifdef ZLIB
-          f=memz_open_file(packfile);
+          f=memz_open_file((unsigned char *)packfile);
 #endif
 #endif
         }
@@ -518,7 +518,7 @@ void load_pal(void) {
     free(packptr);
   } else {
     palfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char *)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(102); return;
     } else {
       fread(pal,1,1352,es); fclose(es);
@@ -542,7 +542,7 @@ void load_pal(void) {
               free(packptr);
             } else {
               palfuera2:
-              if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+              if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
                 pila[sp]=0; e(102); return;
               } else {
                 fseek(es,-768,SEEK_END);
@@ -762,7 +762,7 @@ void load_map(void) {
     ptr=packptr; file_len=m;
   } else {
     mapfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(143); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -871,7 +871,7 @@ void load_map(void) {
 
     buffer=(byte *)malloc(1394+ancho*alto);
     //descomprime_PCX(ptr, &buffer[1394]);
-    memset(buffer, 64, 1394+ancho*alto);
+    //memset(buffer, 64, 1394+ancho*alto);
     adaptar(buffer+1394,ancho*alto,pcxdac,NULL);
 
     free(ptr);
@@ -975,7 +975,7 @@ void load_fpg(void) {
 #ifdef STDOUTLOG
     printf("fpg wanted is [%s]\n",&mem[pila[sp]]);
 #endif
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(105); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1004,7 +1004,10 @@ fclose(es);
     }
   }
 
-  if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { e(106); free(ptr); return; }
+  if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { 
+    e(106); 
+    free(ptr); 
+    return; }
 
   if (process_fpg!=NULL) process_fpg((char *)ptr,file_len);
 //#ifdef STDOUTLOG
@@ -1385,7 +1388,8 @@ void fade(void) {
   if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b)
     fading=1;
 
-  sp-=3; pila[sp]=0;
+  sp-=3; 
+  pila[sp]=0;
 }
 
 //����������������������������������������������������������������������������
@@ -1420,7 +1424,7 @@ void load_fnt(void) {
     fonts[ifonts]=ptr;
   } else {
     fntfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(114); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1501,7 +1505,7 @@ void checkpal_font(int ifonts) {
         free(packptr);
       } else {
         fntfuera:
-        if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) return; else {
+        if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) return; else {
           fseek(es,0,SEEK_END); file_len=ftell(es);
           if (file_len!=f_i[ifonts].len) return;
           fseek(es,0,SEEK_SET);
@@ -1828,6 +1832,10 @@ void map_block_copy(void) {
       int iptrd14 = l2b32(ptrd[14]);
       int iptrd15 = l2b32(ptrd[15]);
 
+      int iptr13 = l2b32(ptr[13]);
+      int iptr14 = l2b32(ptr[14]);
+      int iptr15 = l2b32(ptr[15]);
+
       vga_an=iptrd13; vga_al=iptrd14;
       copia=(byte*)ptrd+64+iptrd15*4;
 
@@ -1839,10 +1847,6 @@ void map_block_copy(void) {
       if (clipx0>=vga_an || clipx1<=0) goto no;
       if (clipy0>=vga_al || clipy1<=0) goto no;
       if (clipx0>=clipx1 || clipy0>=clipy1) goto no;
-
-      int iptr13 = l2b32(ptr[13]);
-      int iptr14 = l2b32(ptr[14]);
-      int iptr15 = l2b32(ptr[15]);
 
       an=iptr13; 
       al=iptr14;
@@ -2068,7 +2072,31 @@ void get_point(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (n>=0 || n<ptr[15]) { p=(short*)&ptr[16]; mem[dx]=p[n*2]; mem[dy]=p[n*2+1]; }
+  if (n>=0 || n<ptr[15]) { 
+    uint16_t* sptr16 = (uint16_t*)&ptr[16];
+
+    p=sptr16; 
+
+    uint16_t spx=p[n*2]; 
+    uint16_t spy=p[n*2+1];
+
+    // fprintf(stdout,"Real point for %d is %d,%d\n",n,spx,spy);
+
+    int px = l2b16(spx);
+    int py = l2b16(spy);
+
+#ifdef AMIGA
+
+px = px & 0x7FFF;
+py = py & 0x7FFF;
+#endif
+
+    // p=(short*)&ptr[16]; 
+    mem[dx]=px; 
+    //l2b32(p[n*2]); 
+    mem[dy]=py;
+    //l2b32(p[n*2+1]); 
+    }
 
 }
 
@@ -2094,7 +2122,7 @@ FILE * open_save_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
-  f = open_multi(file,"wb");
+  f = open_multi((char *)file,"wb");
   return f;
 }
 
@@ -2117,7 +2145,7 @@ FILE * open_save_file(byte * file) {
   
   printf("Looking for save file: %s\n",file);
 
-  f=open_multi(file,"wb");
+  f=open_multi((char *)file,"wb");
   return f;
 }
 
@@ -2187,7 +2215,7 @@ void load(void) {
   if (!capar(offset)) { pila[sp]=0; e(125); return; }
   //fprintf(stdout, "loading data from: %s\n",(byte*)&mem[pila[sp]]);
 
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+  if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
   
     // if not found, check pak
     // this way files override paks
@@ -2359,7 +2387,7 @@ void load_pcm(void) {
     ptr=(char *)packptr; file_len=m;
   } else {
     pcmfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(128); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2479,7 +2507,7 @@ void load_song(void) {
     ptr=(char *)packptr; file_len=m;
   } else {
     songfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(167); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2593,7 +2621,7 @@ void start_fli(void) {
   y=pila[sp--]; x=pila[sp--];
 
 #ifdef USE_FLI
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+  if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
     pila[sp]=0; e(147);
   } else {
     fclose(es);
@@ -3028,7 +3056,9 @@ void get_real_point(void) {
   float ang,dis;
   short * p;
 
-  dy=pila[sp--]; dx=pila[sp--]; n=pila[sp];
+  dy=pila[sp--]; 
+  dx=pila[sp--]; 
+  n=pila[sp];
 
   if (mem[id+_File]>max_fpgs || mem[id+_File]<0) { e(109); return; }
   if (mem[id+_File]) max_grf=1000; else max_grf=2000;
@@ -3039,15 +3069,39 @@ void get_real_point(void) {
   int iptr13 = l2b32(ptr[13]);
   int iptr14 = l2b32(ptr[14]);
   int iptr15 = l2b32(ptr[15]);
-  short sptr16 = l2b16(ptr[16]);
+  // Cast the pointer to a short pointer
+  uint16_t* sptr16 = (uint16_t*)&ptr[16];
+
+  // Swap the byte order of each short in the array
+  // for (int i = 0; i <iptr15; i++) {
+  //     sptr16[i] = (sptr16[i] << 8) | (sptr16[i] >> 8);
+  //     fprintf(stdout,"I: %d, p: %x, x: %d, y: %d\n",i,sptr16[i],sptr16[)
+
+  // }
+  // sptr16 = l2b16(ptr[16]);
   word wptr32 = l2b16(*((word*)ptr+32));
   word wptr33 = l2b16(*((word*)ptr+33));
 
 
   if (n>=0 || n<iptr15) {
     p=sptr16; 
-    px=p[n*2]; 
-    py=p[n*2+1];
+
+    uint16_t spx=p[n*2]; 
+    uint16_t spy=p[n*2+1];
+
+    // fprintf(stdout,"Real point for %d is %d,%d\n",n,spx,spy);
+
+    px = l2b16(spx);
+    py = l2b16(spy);
+
+#ifdef AMIGA
+
+px = px & 0x7FFF;
+py = py & 0x7FFF;
+#endif
+
+    // fprintf(stdout,"Real point for is now %d is %d,%d\n",n,px,py);
+
 
     x=mem[id+_X]; y=mem[id+_Y];
     if (mem[id+_Resolution]>0) { 
@@ -3602,7 +3656,7 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
 
 #ifdef DEBUG
 // check for file in prg dir
-	f=__fpopen(full,modo);
+	f=__fpopen((unsigned char *)full,modo);
 #endif
 
   if(f==NULL) {

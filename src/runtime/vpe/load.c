@@ -109,14 +109,17 @@ void LoadZone(char *Buffer)
     new_region->Stamp=-1;
     new_region->Idx=n;
   }
+  uintptr_t ut1;
+  uintptr_t ut2;
+// t1 = (uintptr_t)new_region->Above;
   for(n=0;n<Header->NumRegions;n++)
   {
     new_region=(struct Region *)Regions.ptr[n];
-    t1=(int)new_region->Above;
-    t2=(int)new_region->Below;
-    if (t1<0) new_region->Above=NULL;
+    ut1=(uintptr_t)new_region->Above;
+    ut2=(uintptr_t)new_region->Below;
+    if (ut1<0) new_region->Above=NULL;
     else new_region->Above=(struct Region *)Regions.ptr[t1];
-    if (t2<0) new_region->Below=NULL;
+    if (ut2<0) new_region->Below=NULL;
     else new_region->Below=(struct Region *)Regions.ptr[t2];
   }
 
@@ -350,7 +353,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
     if( piccode<1000 && piccode>0 )
     {
       sprintf(combo_error,"%s %d %s %d",text[177], piccode, text[178], num_fpg);
-      text[176]=combo_error;
+      text[176]=(unsigned char *)combo_error;
       error_vpe=176;
       return(NULL);
     }

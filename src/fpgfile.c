@@ -138,7 +138,7 @@ int Abrir_FPG(FPG *Fpg,char *Name) {
 	Fpg->nIndex=0;
         printf("Name: %s\n", Name);
         printf("FPG->ActualFile: %s\n", (char *)FPG->ActualFile);
-        if(Name != Fpg->ActualFile) {
+        if(strcmp(Name, (const char *)Fpg->ActualFile)) {
                 strcpy((char *)Fpg->ActualFile,Name);
         }
 	fread(newdac,768,1,fpg);

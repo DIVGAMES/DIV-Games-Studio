@@ -760,7 +760,11 @@ oldhatval = hatval;
 		}	
 	}
 
-	if ((shift_status&8) && scan_code==_x) 
+	// fprintf(stdout,"shift_status: %d\n",shift_status);
+	// fprintf(stdout,"kbdFLAGS[_x]: %d\n",kbdFLAGS[_x]);
+	// fprintf(stdout,"scan_code: %d\n",scan_code);
+
+	if ((shift_status&8) && kbdFLAGS[_x]) 
 		alt_x=1; 
 
 	} // end while

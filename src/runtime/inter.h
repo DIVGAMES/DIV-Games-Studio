@@ -5,6 +5,13 @@
 #define true 1
 #endif
 
+#ifdef AMIGA2
+#define FUNCLOG fprintf(stdout, "%d %s %s\n", __LINE__, __FILE__, __FUNCTION__)
+#else
+
+#define FUNCLOG
+#endif
+
 
 
 //#include "include.div"
@@ -42,6 +49,20 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 #endif
 
 
+#ifdef AMIGA2
+#include <exec/memory.h>
+void * AmigaMalloc(size_t size);
+
+#define malloc(X) AmigaMalloc(X)
+// fprintf(stdout, "Trying to allocated %d bytes via AllocMem\n", X ); \
+// AllocMem(X,MEMF_PUBLIC); 
+
+// #define free(X) FreeMem(X,MEMF_PUBLIC)
+#endif
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 //#include <bios.h>
 //#include <dos.h>
 //#include <i86.h>
@@ -110,7 +131,7 @@ void call(const voidReturnType func); // void funcion(void); int n=(int)funcion;
 #ifdef DEBUG
 #define debugprintf(...) printf ( __VA_ARGS__)
 #else
-#define printf(...)
+// #define printf(...)
 // debugprintf
 #define debugprintf(...) 
 #endif

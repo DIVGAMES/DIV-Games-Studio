@@ -1023,7 +1023,7 @@ void New_DownLoad_Desktop();
 //      Compiler functions
 //─────────────────────────────────────────────────────────────────────────────
 
-extern byte lower[256];
+extern byte lower[512];
 
 GLOBAL_DATA byte * source_ptr;
 GLOBAL_DATA int source_len;

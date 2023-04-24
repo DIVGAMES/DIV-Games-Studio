@@ -238,7 +238,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 		strcpy(filename,l->lista+(l->lista_an*num));
 		strupr(filename);
 		
-      if (strchr(l->lista+(l->lista_an*num),'.')>0 &&
+      if (strchr(l->lista+(l->lista_an*num),'.') !=NULL &&
 	  strcmp(strchr(filename,'.'),".MAP") &&
           strcmp(strchr(filename,'.'),".PCX") &&
           strcmp(strchr(filename,'.'),".BMP") &&

@@ -12,8 +12,8 @@ int SoundActive=0;
 
 void InitSound(void)
 {
-//	SDL_Init(SDL_INIT_AUDIO);
-//	printf("Sound system initialised\n");
+	SDL_Init(SDL_INIT_AUDIO);
+	fprintf(stdout,"Sound system initialised\n");
 
 
 //SDL_InitSubSystem( SDL_INIT_AUDIO );
@@ -27,7 +27,7 @@ int audio_buffers = 4096;
 
  
 if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
-	fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
+	fprintf(stdout, "Unable to initialize audio: %s\n", Mix_GetError());
 //	exit(1);
 }
 
@@ -118,6 +118,8 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
 
   }
 #endif
+
+fprintf(stdout,"Init Sound system finished\n");
 }
 
 void EndSound(void)

@@ -107,8 +107,8 @@ void DrawBuffer(struct View *v)
 	VPEDword Dest;
 
 	Dest=ScrBase+v->ScrX+v->ScrY*ScrWidth;
-	draw_buffer((VPEDword)v->Buffer,Dest,(VPEDword)v->Width>>2,(VPEDword)v->Height,
-		(VPEDword)(ScrWidth-v->Width));
+	// draw_buffer((VPEDword)v->Buffer,Dest,(VPEDword)v->Width>>2,(VPEDword)v->Height,
+		// (VPEDword)(ScrWidth-v->Width));
 }
 
 /****************************************************************************

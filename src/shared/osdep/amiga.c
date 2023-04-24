@@ -2,7 +2,13 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <fnmatch.h>
+
+#ifdef EDITOR
 #include "global.h"
+#else
+#include "inter.h"
+#endif
+
 #include <sys/dir.h>
 #include <string.h>
 
@@ -15,6 +21,103 @@ extern int alphasort(const void*,const void*);
 
 char *tmpnames[255];
 int tmpcount=0;
+
+#include <exec/memory.h>
+#include <exec/exec.h>
+#include <libraries/dos.h>
+
+#define BUFFER_SIZE 1024
+#define PRINT_SIZE 20
+
+void Amiga_Init(void) {
+
+
+  return;
+
+    // Open libraries
+    if (OpenLibrary("exec.library", 37) == NULL || OpenLibrary("dos.library", 37) == NULL)
+    {
+        printf("Error: Unable to open libraries\n");
+        return RETURN_ERROR;
+    }
+
+    // Allocate memory
+    UBYTE *buffer = (UBYTE *)AllocMem(BUFFER_SIZE, MEMF_PUBLIC);
+
+    if (buffer == NULL)
+    {
+        printf("Error: Unable to allocate memory\n");
+        CloseLibrary("dos.library");
+        CloseLibrary("exec.library");
+        return RETURN_ERROR;
+    }
+
+    // Fill with random data
+    srand(time(NULL));
+
+    for (int i = 0; i < BUFFER_SIZE; i++)
+    {
+        buffer[i] = rand() % 256;
+    }
+
+    // Print first 20 bytes to stdout
+    for (int i = 0; i < PRINT_SIZE; i++)
+    {
+        printf("%02X ", buffer[i]);
+    }
+
+    printf("\n");
+
+    // Free memory
+    FreeMem(buffer, BUFFER_SIZE);
+
+    // Close libraries
+    CloseLibrary("dos.library");
+    CloseLibrary("exec.library");
+
+
+  // return;
+    // Open the required libraries
+    fprintf(stdout, "Amiga_Init()\n");
+
+    fprintf(stdout, "Opening exec library\n");
+    struct Library* ExecBase = OpenLibrary("exec.library", 0);
+    fprintf(stdout, "Opening dos library\n");
+    struct Library* DosBase = OpenLibrary("dos.library", 0);
+
+
+    // Check that the libraries were opened successfully
+    if (!ExecBase || !DosBase) {
+        fprintf(stdout, "Amiga_Init(): Failed to open exec.library or dos.library\n");
+        exit(1);
+        // Handle the error
+        return 1;
+    }
+
+    fprintf(stdout, "Attempting to allocate 1024 bytes\n");
+
+    // Allocate memory using AllocMem
+    void* mem = AllocMem(1024, MEMF_PUBLIC);
+
+    // Use the memory...
+
+    // Free the memory when you're done with it
+    fprintf(stdout, "Attempting to free memory\n");
+    FreeMem(mem, 1024);
+
+    // Close the libraries
+    // CloseLibrary(DosBase);
+    // CloseLibrary(ExecBase);
+
+}
+
+
+void * AmigaMalloc(size_t size) {
+  // return malloc(size);
+  fprintf(stdout,"Trying to allocated %d bytes via AllocMem\n",size);
+  return AllocMem(size,MEMF_PUBLIC);
+  // "malloc(%d) failed\n",size);
+}
 
 FILE *fmemopen (void *buf, size_t size, const char *opentype)
 {

@@ -25,6 +25,14 @@
 #endif
 
 
+#ifdef AMIGA
+#define _DBG_KEY _F9
+#else
+#define _DBG_KEY _F12
+#endif
+
+
+
 #ifndef PS2
 #include <stdint.h>
 #else

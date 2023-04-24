@@ -772,7 +772,7 @@ while(SDL_PollEvent(&event) ) {
 		svmode();
 		preparar_tapiz();
 	
-		if(strcmp(v.titulo, (char *)texto[35])) {
+		if(strcmp((const char *)v.titulo, (char *)texto[35])) {
 
 		for(n=max_windows;n>=0;n--) {
 			if(ventana[n].tipo) {

@@ -7493,7 +7493,7 @@ FILE * open_multi(char *file, char *mode) {
 
   strcpy(full,(char*)file); // full filename
 //fprintf(stdout,"Trying to open %s\n",file);
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 
   if ((f=fopen(full,mode))) // "paz\fixero.est"
@@ -7518,7 +7518,7 @@ FILE * open_multi(char *file, char *mode) {
   if ((f=fopen(full,mode))) // "est\paz\fixero.est"
     return f;
 
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 
   strupr(full);
@@ -7526,7 +7526,7 @@ FILE * open_multi(char *file, char *mode) {
   if ((f=fopen(full,mode))) // "est\paz\fixero.est"
   return f;
 
-  if ( f=fpopen(full) )
+  if ( f=fpopen((byte *)full) )
     return f;
     
   strcpy(full,fname);
@@ -7535,7 +7535,7 @@ FILE * open_multi(char *file, char *mode) {
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
 
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 
   strupr(full);
@@ -7543,7 +7543,7 @@ FILE * open_multi(char *file, char *mode) {
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
 
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 
   strlwr(full);
@@ -7551,7 +7551,7 @@ FILE * open_multi(char *file, char *mode) {
   if ((f=fopen(full,mode))) // "fixero.est"
     return f;
 
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 
   if (strchr(ext,'.')==NULL)
@@ -7565,10 +7565,10 @@ FILE * open_multi(char *file, char *mode) {
   strcat(full,fname);
   strcat(full,ext);
 
-  if ((f=fopen(full,mode))) // "est\fixero.est"
+  if ((f=fopen((const char *)full,mode))) // "est\fixero.est"
     return f;
 
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 
   strlwr(full);
@@ -7576,7 +7576,7 @@ FILE * open_multi(char *file, char *mode) {
   if ((f=fopen(full,mode))) // "est\fixero.est"
     return f;
 
-  if ( f = fpopen(full))
+  if ( f = fpopen((byte *)full))
     return f;
 
 

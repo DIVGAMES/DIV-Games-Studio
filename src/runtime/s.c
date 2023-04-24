@@ -3059,7 +3059,7 @@ void pinta_sprites_m7(int n, int cx, int cy, float ang);
 
 void pinta_m7(int n) {
 
-	fprintf(stdout, "Attempting to draw the mode 7 (%d) plane\n",n);
+	// fprintf(stdout, "Attempting to draw the mode 7 (%d) plane\n",n);
 	int x, y;
 #ifdef DEBUG
 	int oreloj = get_ticks();
@@ -3072,11 +3072,11 @@ void pinta_m7(int n) {
 	int distance = (m7+n)->distance;
 	int angle = mem[id + _Angle];
 
-	fprintf(stdout," Mode7 Info (%d) id: %d height: %d distance: %d angle: %d\n", n, id, height, distance, angle);
+	// fprintf(stdout," Mode7 Info (%d) id: %d height: %d distance: %d angle: %d\n", n, id, height, distance, angle);
 
-	fprintf(stdout,"im7 on: %d\n", im7[n].on);
+	// fprintf(stdout,"im7 on: %d\n", im7[n].on);
 
-	fprintf(stdout,"Id: %d mem[id]: %d\n", id, mem[id]);
+	// fprintf(stdout,"Id: %d mem[id]: %d\n", id, mem[id]);
 
 	if (!im7[n].on || !id || id != mem[id]) {	
 		// exit(0);
@@ -3300,8 +3300,8 @@ int get_disty(int a, int d) {
 
 void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 
-	fprintf(stdout,"Drawing the mode7 plane (%d)\n",n);
-	fprintf(stdout,"Camera Y: %d\n", camara_y);
+	// fprintf(stdout,"Drawing the mode7 plane (%d)\n",n);
+	// fprintf(stdout,"Camera Y: %d\n", camara_y);
 
 	int y, u, du, vv, dv, pos_x, pos_y;
 	int ancho_m, alto_m, ancho_e, alto_e;
@@ -3322,14 +3322,14 @@ void pinta_modo7(int n, int camara_x, int camara_y, int camara_z, int angulo) {
 	alto_e = im7[n].ext_al - 1;
 
 
-	fprintf(stdout,"M7 deets:\n");
+	// fprintf(stdout,"M7 deets:\n");
 
-	fprintf(stdout,"distancia: %d\n", distancia);
-	fprintf(stdout,"mediox_modo7_16: %d\n", mediox_modo7_16);
-	fprintf(stdout,"ancho_m: %d\n", ancho_m);
-	fprintf(stdout,"alto_m: %d\n", alto_m);
-	fprintf(stdout,"ancho_e: %d\n", ancho_e);
-	fprintf(stdout,"alto_e: %d\n", alto_e);
+	// fprintf(stdout,"distancia: %d\n", distancia);
+	// fprintf(stdout,"mediox_modo7_16: %d\n", mediox_modo7_16);
+	// fprintf(stdout,"ancho_m: %d\n", ancho_m);
+	// fprintf(stdout,"alto_m: %d\n", alto_m);
+	// fprintf(stdout,"ancho_e: %d\n", ancho_e);
+	// fprintf(stdout,"alto_e: %d\n", alto_e);
 	
 	if (!camara_y)
 		return;

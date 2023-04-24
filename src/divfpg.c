@@ -527,7 +527,7 @@ void abrir_fichero(void) {
 				sum=0; 
 
 				do { 
-					sum+=abs((memptrsize)pal[x]-(memptrsize)dac4[x]); 
+					sum+=abs((int)((memptrsize)pal[x]-(memptrsize)dac4[x])); 
 				} while (++x<768);
 
 				if (sum) {
@@ -563,7 +563,7 @@ void abrir_fichero(void) {
 	x=0; 
 	sum=0; 
 	do { 
-		sum+=abs((memptrsize)pal[x]-(memptrsize)dac[x]); 	
+		sum+=abs((int)((memptrsize)pal[x]-(memptrsize)dac[x])); 	
 	} while (++x<768);
 
 	if (sum) {
@@ -715,7 +715,7 @@ int RemapAllFiles(int vent) {
 		x=0; sum=0;
 
 		do {
-			sum+=abs((memptrsize)dac[x]-(memptrsize)p[x]); 
+			sum+=abs((int)((memptrsize)dac[x]-(memptrsize)p[x])); 
 		} while (++x<768);
 
 		if (!sum)

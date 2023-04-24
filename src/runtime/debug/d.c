@@ -457,20 +457,24 @@ void init_big(void) {
 			int *igraf_ptr = (int *)graf_ptr;
 			word *wgraf_ptr = (word *)graf_ptr;
 
-			while (graf_ptr < ptr + n && l2b32(igraf_ptr[0]) < 256) {
+			int iptr0 = l2b32(igraf_ptr[0]);
+			while (graf_ptr < ptr + n && iptr0 < 256) {
 				// fprintf(stdout,"graf_ptr: %X\n", graf_ptr);
-
-				if (l2b32(igraf_ptr[15])) {
-					graf[l2b32(*igraf_ptr)] = graf_ptr + 60;
-					wgraf_ptr[30] = l2b32(igraf_ptr[13]);
-					wgraf_ptr[31] = l2b32(igraf_ptr[14]);
+				int iptr15 = l2b32(igraf_ptr[15]);
+				int iptr13 = l2b32(igraf_ptr[13]);
+				int iptr14 = l2b32(igraf_ptr[14]);
+				
+				if (iptr15) {
+					graf[iptr0] = graf_ptr + 60;
+					wgraf_ptr[30] = iptr13;
+					wgraf_ptr[31] = iptr14;
 					// fprintf(stdout,"30: %X 31: %X \n", wgraf_ptr[30], wgraf_ptr[31]);
 
 					graf_ptr += wgraf_ptr[30] * wgraf_ptr[31] + 68;
 				} else {
-					graf[l2b32(igraf_ptr[0])] = graf_ptr + 56;
-					wgraf_ptr[28] = l2b32(igraf_ptr[14]);
-					wgraf_ptr[29] = l2b32(igraf_ptr[13]);
+					graf[iptr0] = graf_ptr + 56;
+					wgraf_ptr[28] = iptr14;
+					wgraf_ptr[29] = iptr13;
 					// fprintf(stdout,"28: %X 29: %X \n", wgraf_ptr[28], wgraf_ptr[29]);
 
 					igraf_ptr[15] = 0;
@@ -478,6 +482,7 @@ void init_big(void) {
 				}
 				igraf_ptr = (int *)graf_ptr;
 				wgraf_ptr = (word *)graf_ptr;
+				iptr0 = l2b32(igraf_ptr[0]);
 			}
 
 			// exit(0);
@@ -1150,14 +1155,16 @@ static void wrectangle(byte *copia, int an_copia, int al_copia, byte c, int x, i
 //      Put a graphic
 //═════════════════════════════════════════════════════════════════════════════
 
-static void put(int x, int y, int n) { wput_in_box(copia, vga_an, vga_an, vga_al, x, y, n); }
+static void put(int x, int y, int n) { 
+	wput_in_box(copia, vga_an, vga_an, vga_al, x, y, n); 
+}
 
 static void wput(byte *copia, int an_copia, int al_copia, int x, int y, int n) {
 	wput_in_box(copia, an_copia, an_copia, al_copia, x, y, n);
 }
 
 static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_copia, int x, int y, int n) {
-
+	// return;
 	int al, an;
 	int block;
 	byte *p, *q;
@@ -1181,8 +1188,20 @@ static void wput_in_box(byte *copia, int an_real_copia, int an_copia, int al_cop
 	al = *((word *)(graf[n] + 2));
 	an = *((word *)graf[n]);
 
-	x -= *((word *)(graf[n] + 4));
-	y -= *((word *)(graf[n] + 6));
+	word tmp = *((word*)(graf[n]+4));
+	tmp = l2b16(tmp);
+	x-=tmp;
+	//*((word*)(graf[n]+4));
+	tmp = *((word*)(graf[n]+6));
+	tmp = l2b16(tmp);
+	y-=tmp;
+
+
+	// x -= *((word *)(graf[n] + 4));
+	// y -= *((word *)(graf[n] + 6));
+
+
+	// fprintf(stdout,"AL: %d, AN: %d, x: %d, y: %d\n",al,an,x,y);
 
 	q = copia + y * an_real_copia + x;
 
@@ -1261,8 +1280,16 @@ static void bwput_in_box(byte *copia, int an_real_copia, int an_copia, int al_co
 	al = *((word *)(graf[n] + 2));
 	an = *((word *)graf[n]);
 
-	x -= *((word *)(graf[n] + 4));
-	y -= *((word *)(graf[n] + 6));
+	word tmp = *((word*)(graf[n]+4));
+	tmp = l2b16(tmp);
+	x-=tmp;
+	//*((word*)(graf[n]+4));
+	tmp = *((word*)(graf[n]+6));
+	tmp = l2b16(tmp);
+	y-=tmp;
+
+	// x -= *((word *)(graf[n] + 4));
+	// y -= *((word *)(graf[n] + 6));
 
 	if (an_copia > 0) {
 		an_real_copia *= 2;
@@ -2521,10 +2548,11 @@ static void dread_mouse(void) {
 		n++;
 	}
 
-//	fprintf(stdout, "%d %d %d %d\n", mouse_x, vga_an, mouse_y, vga_al);
+	// fprintf(stdout, "Mouse: x:%d y: %d vgaw:%d vgah: %d\n", mouse_x, mouse_y, vga_an,  vga_al);
 
 
-	if (n) set_mouse(mouse_x, mouse_y);
+	if (n) 
+	set_mouse(mouse_x, mouse_y);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -2558,6 +2586,7 @@ static void blit_copy(void) {
 //═════════════════════════════════════════════════════════════════════════════
 
 static void save_restore(byte *p, int x, int y, int n, int flag) {
+	// fprintf(stdout,"P: %x, x: %d, y: %d, n: %d, flag: %d\n", p, x, y, n, flag);
 	byte *q;
 	int an, al;
 	int salta_x, long_x, resto_x;
@@ -2566,10 +2595,21 @@ static void save_restore(byte *p, int x, int y, int n, int flag) {
 	al = *((word *)(graf[n] + 2));
 	an = *((word *)graf[n]);
 
-	x -= *((word *)(graf[n] + 4));
-	y -= *((word *)(graf[n] + 6));
+	word tmp = *((word*)(graf[n]+4));
+	tmp = l2b16(tmp);
+	x-=tmp;
+	//*((word*)(graf[n]+4));
+	tmp = *((word*)(graf[n]+6));
+	tmp = l2b16(tmp);
+	y-=tmp;
 
-	if (x >= vga_an || y >= vga_al || x + an <= 0 || y + al <= 0) return;
+	// x -= *((word *)(graf[n] + 4));
+	// y -= *((word *)(graf[n] + 6));
+
+	// fprintf(stdout,"Calling Volcado Parcial: VGA_AN: %d, VGA_AL: %d, X: %d, Y: %d, AN: %d, AL: %d\n", vga_an, vga_al, x, y, an, al);
+
+	if (x >= vga_an || y >= vga_al || x + an <= 0 || y + al <= 0) 
+		return;
 
 	volcado_parcial(x, y, an, al);
 
@@ -3092,9 +3132,9 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 	graph = mem[id + _Graph];
 	angle = mem[id + _Angle];
 
-	fprintf(stdout,"File: %d\n", file);
-	fprintf(stdout,"Graph: %d\n", graph);
-	fprintf(stdout,"Angle: %d\n", angle);
+	// fprintf(stdout,"File: %d\n", file);
+	// fprintf(stdout,"Graph: %d\n", graph);
+	// fprintf(stdout,"Angle: %d\n", angle);
 	
 
 
@@ -3127,7 +3167,7 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 
 	// ptr = l2b32(ptr);
 
-	fprintf(stdout,"Graf pointer: %d\n", ptr);
+	// fprintf(stdout,"Graf pointer: %d\n", ptr);
 
 	x = mem[id + _X];
 	y = mem[id + _Y];
@@ -3139,15 +3179,15 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 	word wptr32 = l2b16(*((word *)ptr + 32));
 	word wptr33 = l2b16(*((word *)ptr + 33));
 
-	fprintf(stdout,"wptr32: %d\n", wptr32);
-	fprintf(stdout,"wptr33: %d\n", wptr33);
+	// fprintf(stdout,"wptr32: %d\n", wptr32);
+	// fprintf(stdout,"wptr33: %d\n", wptr33);
 
 
 	wptr32 = l2b16(wptr32);
 	wptr33 = l2b16(wptr33);
 	
-	fprintf(stdout,"wptr32: %d\n", wptr32);
-	fprintf(stdout,"wptr33: %d\n", wptr33);
+	// fprintf(stdout,"wptr32: %d\n", wptr32);
+	// fprintf(stdout,"wptr33: %d\n", wptr33);
 	
 
 	int iptr13 = l2b32(ptr[13]);
@@ -3193,7 +3233,7 @@ static void process_graph(int id, byte *q, int van, int an, int al) {
 	buffer_al = clipy1 - clipy0 + 1;
 
 
-	fprintf(stdout, "Buffer_an: %d Buffer_al: %d\n", buffer_an, buffer_al);
+	// fprintf(stdout, "Buffer_an: %d Buffer_al: %d\n", buffer_an, buffer_al);
 
 	// exit(0);
 
@@ -4863,7 +4903,7 @@ static void debug2(void) {
 	if (scan_code == _F9) goto set_break;
 	if (scan_code == _F10) goto step_proc;
 	if (scan_code == 32 || kbdFLAGS[_F11]) goto profile_window;
-	if (scan_code == 33 || kbdFLAGS[_F12]) goto next_frame;
+	if (scan_code == 33 || kbdFLAGS[_DBG_KEY]) goto next_frame;
 
 	switch (v.active_item) {
 		case 0: // Next frame
@@ -6304,7 +6344,7 @@ static void profile2(void) {
 		v.volcar = 1;
 	}
 
-	if (scan_code == 33 || kbdFLAGS[_F12]) goto profiler_next_frame;
+	if (scan_code == 33 || kbdFLAGS[_DBG_KEY]) goto profiler_next_frame;
 
 	switch (v.active_item) {
 		case 0:

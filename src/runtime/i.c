@@ -772,7 +772,7 @@ void guarda_pila(int id, int sp1, int sp2) {
   printf("using stack: %d\n",stacks);
   //if(stacks>=65535)
   	//exit("out of memory");
-  stack[stacks]=p;
+  stack[stacks]=(memptrsize)p;
   
   if (p!=NULL) {
     mem[id+_SP]=stacks;
@@ -786,7 +786,7 @@ void carga_pila(int id) {
   int n;
   int32_t * p;
   if (mem[id+_SP]) {
-    p=stack[mem[id+_SP]];
+    p=(int32_t *)&stack[mem[id+_SP]];
     
     for (n=0;n<=p[1]-p[0];n++) 
     	pila[p[0]+n]=p[n+2];
@@ -802,7 +802,7 @@ void carga_pila(int id) {
 void actualiza_pila(int id, int valor) {
   int32_t * p;
   if (mem[id+_SP]) {
-    p=stack[mem[id+_SP]];
+    p=(int32_t *)&stack[mem[id+_SP]];
     p[p[1]-p[0]+2]=valor;
   }
 }
@@ -929,7 +929,7 @@ void mainloop(void) {
 
 	init_exec();
 #ifdef DEBUG
-    if (kbdFLAGS[_F12] || trace_program) {
+    if (kbdFLAGS[_DBG_KEY] || trace_program) {
       trace_program=0;
       if (debug_active) call_to_debug=1;
     }
@@ -2018,7 +2018,9 @@ void finalizacion (void) {
   free(sys06x08);
 #ifdef MIXER
   Mix_CloseAudio();
+  #ifndef AMIGA
   Mix_Quit();
+  #endif
 #endif
 
 #ifdef DEBUG
@@ -2636,11 +2638,11 @@ if(m) {
 		joy_status=1;
 	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifdef DEBUG
-		printf("Joystick ID: %d\n", divjoy);
-		printf("Joyname:    %s\n", OSDEP_JoystickName(divjoy));
-		printf("NumAxes: %x\n",OSDEP_JoystickNumAxes(divjoy));
-		printf("Numhats: %x\n",OSDEP_JoystickNumHats(divjoy));
-		printf("NumButtons: %x\n",OSDEP_JoystickNumButtons(divjoy));
+		// printf("Joystick ID: %d\n", divjoy);
+		// printf("Joyname:    %s\n", OSDEP_JoystickName(divjoy));
+		// printf("NumAxes: %x\n",OSDEP_JoystickNumAxes(divjoy));
+		// printf("Numhats: %x\n",OSDEP_JoystickNumHats(divjoy));
+		// printf("NumButtons: %x\n",OSDEP_JoystickNumButtons(divjoy));
 #endif		
 /* What?
 	if (OSDEP_JoystickNumHats(divjoy)==0)  {
@@ -2775,14 +2777,14 @@ void busca_packfile(void) {
 #ifdef ZLIB
   // look for paks in embedded zip
   if(datastartpos>0) {
-    zip = unzOpen(exebin);
+    zip = (unzFile *)unzOpen(exebin);
     fprintf(stdout,"%x\n",zip);
     // found zip. search for .pak files
     if(unzGoToFirstFile(zip)==UNZ_OK) {
       do {
         if (unzGetCurrentFileInfo(zip, &fileInfo, szCurrentFileName, sizeof(szCurrentFileName)-1, NULL, 0, NULL, 0) == UNZ_OK) {
           fprintf(stdout,"found file: %s\n",szCurrentFileName);
-          f = memz_open_file(szCurrentFileName);
+          f = memz_open_file((unsigned char *)szCurrentFileName);
           fprintf(stdout,"TESTING %s\n",szCurrentFileName);
           if(f) {
             if(is_pak(f,szCurrentFileName)) {

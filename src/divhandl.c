@@ -2848,7 +2848,9 @@ void abrir_mapa(void) {
         if (n++==0) {
           memcpy(pal,dac4,768);
         } else {
-          x=0; sum=0; do { sum+=abs((memptrsize)pal[x]-(memptrsize)dac4[x]); } while (++x<768);
+          x=0; sum=0; do { 
+            sum+=abs((int)((memptrsize)pal[x]-(memptrsize)dac4[x])); 
+            } while (++x<768);
           if (sum) {
             if (muestra==NULL) {
               muestra=(byte*)malloc(32768);
@@ -2875,11 +2877,15 @@ void abrir_mapa(void) {
 
   // Tenemos en pal[] la paleta de los mapas a cargar
 
-  x=0; sum=0; do { sum+=abs((memptrsize)pal[x]-(memptrsize)dac[x]); } while (++x<768);
+  x=0; sum=0; do { 
+    sum+=abs((int)((memptrsize)pal[x]-(memptrsize)dac[x])); 
+    } while (++x<768);
   memcpy(paltratar,pal,768);
 
   if (sum && n==1) {
-    x=0; sum=0; do { sum+=abs((memptrsize)paleta_original[x]-(memptrsize)dac[x]); } while (++x<768);
+    x=0; sum=0; do { 
+      sum+=abs((int)((memptrsize)paleta_original[x]-(memptrsize)dac[x])); 
+      } while (++x<768);
     memcpy(paltratar,paleta_original,768);
   }
 
@@ -2962,7 +2968,9 @@ void abrir_mapa(void) {
 
                   ExternUseBufferMap=(char	 *)v_mapa->map;
 
-                  x=0; sum=0; do { sum+=abs((memptrsize)dac4[x]-(memptrsize)dac[x]); } while (++x<768);
+                  x=0; sum=0; do { 
+                    sum+=abs((int)((memptrsize)dac4[x]-(memptrsize)dac[x])); 
+                    } while (++x<768);
 
                   if (sum) {
                     memcpy(pal,dac4,768); create_dac4();

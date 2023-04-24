@@ -1,4 +1,8 @@
+#ifdef EDITOR
 #include "global.h"
+#else
+#include "inter.h"
+#endif
 
 #include "osdep.h"
 #include <ctype.h>
@@ -32,7 +36,7 @@ char * _strupr(char *string)
 {
 	int x=0;
 	char *st = string;
-	if(string>0 && strlen(string)>0) {
+	if(string[0] && strlen(string)>0) {
 	st = (char *)malloc(strlen(string));
 	
 //printf("string: [%s]\n",string);

@@ -18,7 +18,7 @@ int pack(char *runtime, char *exefile, char *datafile, char *outfile) {
 
 	char buf[1024];
 	int n=0;
-	char DX[2]="DX";
+	char DX[]="DX";
 
 	int32_t exesize = 0;
 	int32_t datsize=0;

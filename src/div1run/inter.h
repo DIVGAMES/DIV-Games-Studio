@@ -8,6 +8,21 @@
 #endif
 
 
+#ifdef AMIGA2
+#define FUNCLOG fprintf(stdout, "%d %s %s\n", __LINE__, __FILE__, __FUNCTION__)
+#else
+
+#define FUNCLOG
+#endif
+
+#ifdef DEBUG
+#define debugprintf(...) printf ( __VA_ARGS__)
+#else
+// #define printf(...)
+// debugprintf
+#define debugprintf(...) 
+#endif
+
 
 typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);

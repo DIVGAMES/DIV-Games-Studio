@@ -16,13 +16,14 @@ SET(HAS_RAYLIB 0)
 SET(HAS_SDLTTF 0)
 SET(HAS_SDLIMAGE 0)
 SET(HAS_ZLIB 1)
-SET(HAS_SDLMIXER 1)
+SET(HAS_SDLMIXER 0)
 SET(HAS_DLL 0)
 SET(HAS_JPEG 0)
 SET(HAS_FLI 1)
-SET(HAS_MODE8 0)
+SET(HAS_MODE8 1)
 SET(HAS_GIT 0)
 SET(HAS_NET 0)
+# SET(HAS_NEWMODE8 1)
 
 # cross compilers to use for C and C++
 set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
@@ -64,9 +65,12 @@ ADD_DEFINITIONS( -DAMIGAOS -I/opt/m68k-amigaos/include)
 #-DGCW_SOFTSTRETCH)	
 #-DMIXER) 
 
-set ( CMAKE_EXE_LINKER_FLAGS "-L/opt/m68k-amigaos/lib -Wl,-rpath,/opt/m68k-amigaos/lib")
+SET(SDL_MIXER_LIBRARIES SDL_mixer)
+
+
+set ( CMAKE_EXE_LINKER_FLAGS "-L/opt/m68k-amigaos/lib -L/opt/m68k-amigaos/usr/lib -Wl,-rpath,/opt/m68k-amigaos/lib")
 #  -lSDL -lpthread -lSDL_mixer_nomad")
-set(EXTRA_LIBS ${EXTRA_LIBS} SDL_mixer_nomad pthread )
+set(EXTRA_LIBS ${EXTRA_LIBS}  pthread )
 
 #FILE(GLOB OSX_SOURCES "src/osx/*.c")
 # SET(OSDEP ${OSDEP} ${OSX_SOURCES} "src/shared/osdep.c" "src/shared/unzip.c")

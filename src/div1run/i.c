@@ -108,7 +108,7 @@ void mainloop(void) {
   }
   frame_start();
 #ifdef DEBUG
-  if (kbdFLAGS[_F12] || trace_program) { trace_program=0; call_to_debug=1; }
+  if (kbdFLAGS[_DBG_KEY] || trace_program) { trace_program=0; call_to_debug=1; }
 #endif
   old_dump_type=dump_type;
   old_restore_type=restore_type;
@@ -786,7 +786,11 @@ void exec_process(void) {
       case lrtf: elimina_proceso(id);
         bp=--sp; sp-=mem[ip]+1; ip=pila[bp--];
         if (!ip) { id=pila[bp]; pila[sp]=pila[bp+2]; goto next_process1; }
-        else { mem[id+_Executed]=1; id=pila[bp]; pila[sp]=pila[bp+2]; } break;
+        else { 
+          mem[id+_Executed]=1; 
+        id=pila[bp]; 
+        pila[sp]=pila[bp+2]; 
+        } break;
       case lclo: procesos++; id2=id; id=id_start;
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }

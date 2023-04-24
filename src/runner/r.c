@@ -116,7 +116,7 @@ printf("%d\n",ret);
 fprintf(stdout,"Ret: %d\n",ret);
 #ifndef WIN32
 #ifndef PSP
-sleep_ms(1000);
+ sleep_ms(1000);
 #endif
 #endif
 	if(ret == 2 || ret==512) {

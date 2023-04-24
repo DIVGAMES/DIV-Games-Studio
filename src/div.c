@@ -108,7 +108,7 @@ int fin_ventana=0,mover_ventana=0;
 int cierra_rapido=0;
 int no_volcar_ventanas=0;
 
-byte lower[256]=
+byte lower[512]=
   "                                   #$           0123456789      "
   " abcdefghijklmnopqrstuvwxyz    _ abcdefghijklmnopqrstuvwxyz     "
   "�ueaaaa�eeeiiiaae��ooouuyou�����aiou����                        "
@@ -2500,9 +2500,9 @@ div_version=texto[safe];
 
   restaura_tapiz(x,y,an,al);
 
-  if (y<vga_al && y+al>vga_al-8*big2 && x<vga_an && x+an>=vga_an-(text_len(div_version)+2)*big2) {
-    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-1-x,vga_al-1-y,18,div_version,c0);
-    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-2-x,vga_al-1-y,18,div_version,c2);
+  if (y<vga_al && y+al>vga_al-8*big2 && x<vga_an && x+an>=vga_an-(text_len((byte *)div_version)+2)*big2) {
+    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-1-x,vga_al-1-y,18,(byte *)div_version,c0);
+    wwrite_in_box(copia+y*vga_an+x,vga_an,an,al,vga_an-2-x,vga_al-1-y,18,(byte *)div_version,c2);
   }
 
   for (n=max_windows-1;n>=0;n--) if (ventana[n].tipo) if (colisiona_con(n,x,y,an,al)) {
@@ -3168,7 +3168,7 @@ void nueva_ventana(voidReturnType init_handler) {
     if (!n) {
       ptr=(byte *)malloc(an*al); 
       if(!ptr) {
-        fprintf("Failed to allocate an*al bytes %d\n", an*al);
+        fprintf(stdout,"Failed to allocate an*al bytes %d\n", an*al);
         error(0);
       }
     } else {
