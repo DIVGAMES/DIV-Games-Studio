@@ -1330,6 +1330,9 @@ void frame_start(void) {
 	if (get_reloj()>ultimo_reloj) {
 		ffps=(ffps*9.0f+1000.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
 		fps=(int)(ffps+0.5f);
+		// fprintf(stdout,"FPS: %d\n", fps);
+		// fprintf(stdout,"Reloj: %d\n", get_reloj());
+		// fprintf(stdout,"Reloj: %d\n", ultimo_reloj);
 	}
 
 	ultimo_reloj=get_reloj();
@@ -1367,8 +1370,8 @@ void frame_start(void) {
 #ifdef WIN32
 			SDL_Delay(((int)freloj-old_reloj)-1);
 #else
-			sched_yield();			
-//			usleep(((int)freloj-old_reloj)-1); 
+			// sched_yield();			
+			usleep(((int)freloj-old_reloj)-1); 
 #endif			
 		} while (get_reloj()<(int)freloj); // TO keep FPS
 		}
@@ -1702,7 +1705,9 @@ void frame_end(void) {
 						drawings_pintados=1;
 					}
 				} else if (scrollide) {
-					iscroll[snum=scrollide-1].painted=1;
+					snum=scrollide-1;
+					// fprintf(stdout,"Scroll %d\n", snum);
+					iscroll[snum].painted=1;
 					
 					if (iscroll[snum].on==1)
 						scroll_simple();

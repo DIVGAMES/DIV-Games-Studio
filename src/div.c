@@ -3679,12 +3679,15 @@ void inicializacion(void) {
       fprintf(stdout,"Could not allocate %d bytes\n", 65536);
   }
 
+  fprintf(stdout,"Creating barra (vga_an=%d, big2=%d) %d\n",vga_an,big2,vga_an*19*big2);
+
 	barra=(byte*)malloc(vga_an*19*big2); //OJO
   if(!barra) {
-
       fprintf(stdout,"barra: Could not allocate %d bytes\n", vga_an*19*big2);
       fprintf(stdout,"vga_an: %d big2:%d\n", vga_an, big2);
   }
+
+  fprintf(stdout,"Barra pointer: %x\n",barra);
 	fill_dac=(byte*)malloc(256);
   if(!fill_dac) {
       fprintf(stdout,"Could not allocate %d bytes\n", 256);
@@ -4048,7 +4051,8 @@ fclose(f);
 // fprintf(stdout,"%d %s\n",__LINE__, __FUNCTION__);
 
   if (!Interpretando) printf("%s",(char *)texto[12]); // *** Miscelánea ***
-  find_colors(); memset(copia,c0,vga_an*vga_al);
+  find_colors(); 
+  memset(copia,c0,vga_an*vga_al);
   zoom=0; zoom_x=0; zoom_y=0; zoom_cx=vga_an/2; zoom_cy=vga_al/2; zoom_move=c3;
   barra_x=8*big2; barra_y=vga_al-27*big2; regla=0; actual_mouse=21; sel_status=0;
   iundo=0; for (a=0;a<max_undos;a++) tundo[a].modo=-1;

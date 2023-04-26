@@ -179,7 +179,8 @@ Uint32 SDL_framerateDelay(FPSmanager * manager)
 
 	if (current_ticks <= target_ticks) {
 		the_delay = target_ticks - current_ticks;
-		SDL_Delay(the_delay);
+		usleep(the_delay); 
+///		SDL_Delay(the_delay);
 	} else {
 		manager->framecount = 0;
 		manager->baseticks = _getTicks();

@@ -18,10 +18,9 @@ char marcavga[128];
 //═════════════════════════════════════════════════════════════════════════════
 
 int compare_mode(void const *aa, void const *bb) {
-	short *a,*b;
-	a=(short*)aa;
-	b=(short*)bb;
-	return((int)(*a)*10000+*(a+1)>(int)(*b)*10000+*(b+1));
+	struct _modos m1 = *(struct _modos *)aa;
+	struct _modos m2 = *(struct _modos *)bb;
+	return (m1.alto * m1.ancho - m2.alto * m2.ancho);
 }
 
 void detectar_vesa(void) { // Detects available video modes
@@ -48,19 +47,22 @@ void detectar_vesa(void) { // Detects available video modes
 		modos[5].ancho=1920; modos[5].alto=1080; modos[5].modo=1;
 		modos[6].ancho=1280; modos[6].alto=720; modos[6].modo=1;
 		modos[7].ancho=376; modos[7].alto=282; modos[7].modo=1;
-		vga_an = 640;
-		vga_al = 480;
-		big = 1;
-		big2 = 2;
+		// vga_an = 640;
+		// vga_al = 480;
+		// big = 1;
+		// big2 = 2;
+		num_modos = 8;
 	} else {
 		for(i=0;modes[i];++i) {
 			modos[i].ancho=modes[i]->w; modos[i].alto=modes[i]->h; modos[i].modo=1;
 		}
 		num_modos=i-1;
+		free(modes);
 
 	}
 	
 	sprintf(marcavga,"SDL Video Driver");
 
+	fprintf(stdout, "Detected %d video modes:\n", num_modos);
 	qsort((void*)&(modos[0].ancho),num_modos,sizeof(struct _modos),compare_mode);
 }

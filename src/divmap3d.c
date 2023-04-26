@@ -1174,15 +1174,36 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       else
       {
         fclose(FPG_F);
-        if (prog) Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
+        if (prog) {
+          Progress((char *)texto[93], FPG_progress.total, FPG_progress.total);
+        }
         v_texto=(char *)texto[44];
         dialogo(err0);
         return;
       }
     }
+    /*
+    typedef struct {
+    int  cod;
+    int  tam;
+    char descrip[32];
+    char filename[12];
+    int  ancho;
+    int  alto;
+    int  puntos;
+  } FPG_info;
+*/
+    FPG_D.info.cod = l2b32(FPG_D.info.cod);
+    FPG_D.info.tam = l2b32(FPG_D.info.tam);
+    FPG_D.info.ancho = l2b32(FPG_D.info.ancho);
+    FPG_D.info.alto = l2b32(FPG_D.info.alto);
+    FPG_D.info.puntos = l2b32(FPG_D.info.puntos);
+
     fseek( FPG_F, sizeof(FPG_points)*FPG_D.info.puntos, SEEK_CUR );
     FPG_progress.pos+=(64+4*FPG_D.info.puntos+FPG_D.info.ancho*FPG_D.info.alto);
-    if (prog) Progress((char *)texto[93], FPG_progress.pos, FPG_progress.total);
+    if (prog) {
+      Progress((char *)texto[93], FPG_progress.pos, FPG_progress.total);
+    }
 
     thumb_tex[n].Cuad=0;
     for(con=0; con<11; con++)
@@ -1193,11 +1214,11 @@ void M3D_crear_thumbs(struct t_listboxbr * l, int prog)
       }
     }
 
-    thumb_tex[n].an   = l2b32(FPG_D.info.ancho);
-    thumb_tex[n].al   = l2b32(FPG_D.info.alto);
-    thumb_tex[n].Code = l2b32(FPG_D.info.cod);
+    thumb_tex[n].an   = FPG_D.info.ancho;
+    thumb_tex[n].al   = FPG_D.info.alto;
+    thumb_tex[n].Code = FPG_D.info.cod;
 
-    sprintf(cwork, "%03d", l2b32(FPG_D.info.cod));
+    sprintf(cwork, "%03d", FPG_D.info.cod);
     if(thumb_tex[n].Cuad)
     {
       strcpy(textura+t_maximo*an_textura, cwork);
@@ -3473,10 +3494,21 @@ void map_read(M3D_info *m3d_aux)
   }
 
   fread(m3d_aux->m3d_path,256,1,fichero);
+  fprintf(stdout,"M3D PATH: %s\n",m3d_aux->m3d_path);
+
   fread(m3d_aux->m3d_name,16,1,fichero);
+  
+  fprintf(stdout,"M3D Name: %s\n",m3d_aux->m3d_name);
+
   fread(&m3d_aux->numero,4,1,fichero);
+  fprintf(stdout,"M3D Numero: %d\n",m3d_aux->numero);
+
   fread(m3d_aux->fpg_path,256,1,fichero);
+  fprintf(stdout,"M3D FPG PATH: %s\n",m3d_aux->fpg_path);
+
   fread(m3d_aux->fpg_name,16,1,fichero);
+
+  fprintf(stdout,"M3D FPG NAME: %s\n",m3d_aux->fpg_name);
 
   strcpy((char *)m3d_aux->m3d_path,full);
   strcpy((char *)m3d_aux->m3d_name,input);
@@ -3505,45 +3537,45 @@ void map_read(M3D_info *m3d_aux)
 
   fread(&my_map->num_points,4,1,fichero);
   
-	printf("Num points: %d\n point size: %d\n",my_map->num_points,sizeof(tpoint));
+	fprintf(stdout,"Num points: %d\n point size: %d\n",my_map->num_points,sizeof(tpoint));
 
 
   for (i=0;i<my_map->num_points;i++) {
     my_map->points[i]=(lptpoint)malloc(sizeof(tpoint));
     fread(my_map->points[i],sizeof(tpoint),1,fichero);
- //   printf("point[%d]: %d x %d\n",i,my_map->points[i]->x,my_map->points[i]->y);
+   fprintf(stdout,"point[%d]: %d x %d\n",i,my_map->points[i]->x,my_map->points[i]->y);
   }
 
   fread(&my_map->num_walls,4,1,fichero);
 
-//	printf("walls: %d wall size: %d\n",my_map->num_walls,sizeof(twall));
+	fprintf(stdout,"walls: %d wall size: %d\n",my_map->num_walls,sizeof(twall));
 
   for (i=0;i<my_map->num_walls;i++) {
     my_map->walls[i]=(lptwall)malloc(sizeof(twall));
     fread(my_map->walls[i],sizeof(twall),1,fichero);
-     debugprintf("walls[%d]= %d <-> %d - fregion =%d bregion = %d\n",i, my_map->walls[i]->p1,my_map->walls[i]->p2,my_map->walls[i]->front_region,my_map->walls[i]->back_region);
+     fprintf(stdout,"walls[%d]= %d <-> %d - fregion =%d bregion = %d\n",i, my_map->walls[i]->p1,my_map->walls[i]->p2,my_map->walls[i]->front_region,my_map->walls[i]->back_region);
   }
 
   fread(&my_map->num_regions,4,1,fichero);
-//	printf("regions: %d region size: %d\n",my_map->num_regions,sizeof(tregion));
+	fprintf(stdout,"regions: %d region size: %d\n",my_map->num_regions,sizeof(tregion));
 
   for (i=0;i<my_map->num_regions;i++) {
     my_map->regions[i]=(lptregion)malloc(sizeof(tregion));
     fread(my_map->regions[i],sizeof(tregion),1,fichero);
-//	printf("regions[%d]= floor: %d - ceil:%d\n",i, my_map->regions[i]->floor_height,my_map->regions[i]->ceil_height);
+	fprintf(stdout,"regions[%d]= floor: %d - ceil:%d\n",i, my_map->regions[i]->floor_height,my_map->regions[i]->ceil_height);
   }
   
   fread(&my_map->num_flags,4,1,fichero);
-//  printf("nume flags: %d flag size: %d\n",my_map->num_flags,sizeof(tflag));
+  fprintf(stdout,"nume flags: %d flag size: %d\n",my_map->num_flags,sizeof(tflag));
 
   for (i=0;i<my_map->num_flags;i++) {
     my_map->flags[i]=(lptflag)malloc(sizeof(tflag));
     fread(my_map->flags[i],sizeof(tflag),1,fichero);
-//   	printf("flags[%d]= x: %d - y:%d\n",i, my_map->flags[i]->x,my_map->flags[i]->y);
+   	fprintf(stdout,"flags[%d]= x: %d - y:%d\n",i, my_map->flags[i]->x,my_map->flags[i]->y);
 
   }
   fread(&my_map->fondo,4,1,fichero);
-
+  fprintf(stdout,"fondo: %d\n",my_map->fondo);
   map_off();
 
   fclose(fichero);

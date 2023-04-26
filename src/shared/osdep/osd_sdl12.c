@@ -84,30 +84,34 @@ void OSDEP_SetCaption(char *title, char *icon) {
 }
 
 OSDEP_VMode ** OSDEP_ListModes(void) {
-	printf("%s\n",__FUNCTION__ );
-return 0;
+	fprintf(stdout,"%s\n",__FUNCTION__ );
+// return 0;
 	SDL_Rect **modes;
 	int i;
-	static OSDEP_VMode *smodes[1024];
-	modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+	OSDEP_VMode **smodes;
+	// static OSDEP_VMode *smodes[1024];
+	modes = SDL_ListModes(NULL,NULL);
 	
-
 	if(modes == (SDL_Rect **)0) {
+		fprintf(stdout,"No modes available!\n");
 		return NULL;
 	}
 
 	if(modes == (SDL_Rect **)-1) {
+		fprintf(stdout,"All resolutions available.\n");
 		return NULL;
 	}
 
-	for(i=0;modes[i];++i) {
-		if(modes[i]) {
-			smodes[i]=(OSDEP_VMode*)malloc(sizeof(OSDEP_VMode));
-			smodes[i]->w = modes[i]->w;
-			smodes[i]->h = modes[i]->h;
-		} else {
-			smodes[i]=NULL;
-		}
+	// for(i=0;modes[i];++i) {
+	// 	if(modes[i]) {
+	smodes = calloc(1024, sizeof(OSDEP_VMode *));
+	for(i = 0; i < 1023 && modes[i]; ++i) {
+		smodes[i]=(OSDEP_VMode*)malloc(sizeof(OSDEP_VMode));
+		smodes[i]->w = modes[i]->w;
+		smodes[i]->h = modes[i]->h;
+		// } else {
+		// 	smodes[i]=NULL;
+		// }
 	}
 
 	return smodes;
@@ -133,7 +137,7 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 // width = 640;
 // height = 480;
 
-fs = 1;
+// fs = 1;
 	fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
 	// clear event queue
 
@@ -147,7 +151,7 @@ fs = 1;
 	if(fs) {
 		flags = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
 	} else {
-		flags = SDL_HWSURFACE |  SDL_HWPALETTE;
+		flags = SDL_HWSURFACE |  SDL_HWPALETTE | SDL_RESIZABLE;
 	}
 
 	if(bpp == 8 && fs == 0) {
@@ -206,10 +210,41 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 		// fprintf(stdout,"Full blit surface\n");
 		SDL_BlitSurface(s, NULL, OSDEP_screen, NULL);
 	} else {
-		OSDEP_zoomsurface = zoomSurface(s, (float)vwidth/vga_an, (float)vheight/vga_al, 1);
+		// calculate scaling factors for width and height
+// calculate the aspect ratio of the original surface
+float aspect_ratio = (float)vga_an / vga_al;
+
+// calculate the new dimensions for the zoomed surface while maintaining aspect ratio
+int zoomed_width, zoomed_height;
+if ((float)vwidth / vheight > aspect_ratio) {
+    zoomed_width = (int)(vheight * aspect_ratio);
+    zoomed_height = vheight;
+} else {
+    zoomed_width = vwidth;
+    zoomed_height = (int)(vwidth / aspect_ratio);
+}
+
+// calculate the scaling factors based on the new dimensions
+float scale_w = (float)zoomed_width / vga_an;
+float scale_h = (float)zoomed_height / vga_al;
+
+OSDEP_zoomsurface = zoomSurface(s, scale_w, scale_h, 1);
+
+		// OSDEP_zoomsurface = zoomSurface(s, zw,zh, 1);
+		// fprintf(stdout,"Zoom blit surface\n");
 		// Clear screen
 		SDL_FillRect(OSDEP_screen, NULL, 0);
-		SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, NULL);
+		// calculate the position of the top-left corner of the zoomed surface
+		int x = (vwidth - zoomed_width) / 2;
+		int y = (vheight - zoomed_height) / 2;
+
+		// create a destination rectangle with the calculated position and dimensions
+		SDL_Rect dest_rect = {x, y, zoomed_width, zoomed_height};
+
+		// blit the zoomed surface to the center of the target surface
+		SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, &dest_rect);
+
+		// SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, NULL);
 		SDL_FreeSurface(OSDEP_zoomsurface);
 
 		if(sw !=vwidth || sh !=vheight) {

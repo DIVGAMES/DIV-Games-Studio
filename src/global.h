@@ -703,7 +703,7 @@ GLOBAL_DATA int sel_x0, sel_x1, sel_y0, sel_y1; // Para selecciones tipo caja
 GLOBAL_DATA word * fss, * fsp, * fsp_max; // Fill stack segment, Fill stack pointer
 GLOBAL_DATA byte * original;
 
-GLOBAL_DATA int bar[16]; // Dibujo de la barra
+GLOBAL_DATA int bar[18]; // Dibujo de la barra
 
 GLOBAL_DATA int modo_caja; // Indica si pintamos rectángulos o cajas
 GLOBAL_DATA int modo_circulo; // Indica si pintamos círculos o redondeles

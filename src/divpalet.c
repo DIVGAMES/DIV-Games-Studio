@@ -169,9 +169,11 @@ byte fast_find_color(byte fr,byte fg,byte fb) {
   else if (g3<7*8) if (b3>0) crear_ghost_vc(vcubo+8-1);
             else { if (b3<7) crear_ghost_vc(vcubo+8+1); }
 
-  if (find_min==65536) crear_ghost_slow();
+  if (find_min==65536) 
+    crear_ghost_slow();
 
-  fast_find: return(find_col);
+  fast_find: 
+    return(find_col);
 }
 
 //═════════════════════════════════════════════════════════════════════════════

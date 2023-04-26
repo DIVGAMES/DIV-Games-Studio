@@ -194,9 +194,8 @@ void svmode(void) {
 
 SDL_initFramerate(&fpsman);
 SDL_setFramerate(&fpsman, 60);
-
  
-  fprintf(stdout,"full screen: %d\n",fsmode);
+fprintf(stdout,"full screen: %d\n",fsmode);
 
 #if defined (GCW_SOFTSTRETCH) || defined(AMIGA2)
 
@@ -477,6 +476,7 @@ return;
 
 void volcadosdl(byte *p) {
 
+SDL_framerateDelay(&fpsman);
 FUNCLOG;
   // fprintf(stdout, "%d %s\n", __LINE__, __FUNCTION__);
 

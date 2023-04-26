@@ -962,12 +962,16 @@ void barra_bloque(int n) {
       dibuja_barra(22); dibuja_regla();
       break;
     case 1:
-      bar[0]=101+zoom; bar[1]=121; for (a=2;a<11;a++) bar[a]=1;
+      bar[0]=101+zoom; 
+      bar[1]=121; 
+      for (a=2;a<11;a++) 
+        bar[a]=1;
       bar[11]=166; // Cuentagotas
       bar[12]=139; // Mover
       bar[13]=171; // Fx
       bar[14]=172; // Ventana
-      bar[15]=0; bar[16]=0;
+      bar[15]=0; 
+      bar[16]=0;
       dibuja_barra(22); dibuja_regla(); break;
   }
 }
@@ -4769,7 +4773,7 @@ void dibuja_barra(int _an) {
 
   n=0; while (bar[n]) n++;
   barra_an=2+8+38+n*16+1+_an;
-  memset(barra,c0,vga_an*19*big2);
+  // memset(barra,c0,vga_an*19*big2);
   wrectangulo(barra,vga_an/big2,19,c2,0,0,barra_an,19);
 //  for (a=0;a<barra_an;a++) { barra[a]=c2; barra[a+vga_an*18]=c2; }
 //  for (a=1;a<18;a++) { barra[a*vga_an]=c2; barra[a*vga_an+barra_an-1]=c2; }
