@@ -71,9 +71,9 @@ extern int reloj;
 
 void errhlp0(void);
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Sounds Window
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void PCM1(void) {
   int length;
@@ -206,9 +206,9 @@ void PCM0(void) {
   v.nombre=(byte *)mypcminfo->name;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Song (mod/s3m/xm) window
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void MOD1(void) {
   modinfo *mymodinfo=(modinfo *)v.aux;
@@ -221,7 +221,7 @@ void MOD1(void) {
   wrectangulo(v.ptr, an, al, c0, 1, 38, an-2,       11);
   wrectangulo(v.ptr, an, al, c0, 1, 38,   21,       11);
 
-  if(Mix_PlayingMusic() && mymodinfo->SongCode == SongCode) {
+  if(OSDEP_Mix_PlayingMusic() && mymodinfo->SongCode == SongCode) {
     if(ModButton && ModWindow==v.orden) wput(v.ptr, an, al, 2, 39, -214);
     else                                wput(v.ptr, an, al, 2, 39, -234);
   } else {
@@ -250,7 +250,7 @@ void MOD2(void) {
       ModWindow=v.orden;
       need_refresh=1;
 #ifdef MIXER
-      if(Mix_PlayingMusic() && mymodinfo->SongCode==SongCode) {
+      if(OSDEP_Mix_PlayingMusic() && mymodinfo->SongCode==SongCode) {
         FreeMOD();
         Mix_FreeMusic(mymodinfo->music);
       } else {
@@ -302,8 +302,8 @@ void MOD0(void) {
 
 void FreeMOD(void)
 {
-  Mix_HaltMusic();
-  Mix_SetPostMix(NULL, NULL);
+  OSDEP_Mix_HaltMusic();
+  OSDEP_Mix_SetPostMix(NULL, NULL);
 /*  switch(SongType)
   {
     case XM:   judas_freexm();  break;
@@ -360,7 +360,7 @@ void mostrar_mod_meters(void)
 
   if(mymodinfo->SongCode == SongCode)
   {
-    if(Mix_PlayingMusic())
+    if(OSDEP_Mix_PlayingMusic())
     {
       wbox(v.ptr, an, al, c1,  2, 10,    an-4, al-12-10);
       wbox(v.ptr, an, al, c2, 22, 39, an-4-20,        9);
@@ -368,15 +368,15 @@ void mostrar_mod_meters(void)
 //      wbox(v.ptr, an, al, c1, 22, 39, 6, 9);
 //      wbox(v.ptr, an, al, c1, 44, 39, 6, 9);
 
-      wwrite(v.ptr, an, al, 29, 40, 2, "L ", c1);
-      wwrite(v.ptr, an, al, 28, 40, 2, "L ", c4);
+      wwrite(v.ptr, an, al, 29, 40, 2, (byte *)"L ", c1);
+      wwrite(v.ptr, an, al, 28, 40, 2, (byte *)"L ", c4);
       sprintf(cwork,"%03d",GetSongLine());
-      wwrite(v.ptr, an, al, 42, 40, 2, cwork, c3);
+      wwrite(v.ptr, an, al, 42, 40, 2, (byte *)cwork, c3);
 
-      wwrite(v.ptr, an, al, 52, 40, 2, "P ", c1);
-      wwrite(v.ptr, an, al, 51, 40, 2, "P ", c4);
+      wwrite(v.ptr, an, al, 52, 40, 2, (byte *)"P ", c1);
+      wwrite(v.ptr, an, al, 51, 40, 2, (byte *)"P ", c4);
       sprintf(cwork,"%03d",GetSongPos());
-      wwrite(v.ptr, an, al, 64, 40, 2, cwork, c3);
+      wwrite(v.ptr, an, al, 64, 40, 2, (byte *)cwork, c3);
 
       ancho_barra = (v.an-4*big2)/SongChannels;
 
@@ -412,11 +412,11 @@ void mostrar_mod_meters(void)
   
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Funciones de sonidos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-#define max_archivos 512 // ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Listbox de archivos
+#define max_archivos 512 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Listbox de archivos
 extern struct t_listboxbr larchivosbr;
 extern t_thumb thumb[max_archivos];
 extern int num_taggeds;
@@ -468,7 +468,7 @@ Mix_Chunk *DIVMIX_LoadPCM(char *path) {
     iLen = Len + 50;
 
     if(dst==NULL)
-      return(-1);
+      return(NULL);
 
     memset(dst,0,(int)Len+40);
     fread(ptr,1,Len,f);
@@ -502,8 +502,8 @@ Mix_Chunk *DIVMIX_LoadPCM(char *path) {
 
 void OpenSound(void) {
   pcminfo   *mypcminfo;
-  Uint32 wav_length;
-  Uint8 *wav_buffer;
+  uint32_t wav_length;
+  uint8_t *wav_buffer;
 
 #ifdef MIXER
 
@@ -911,9 +911,9 @@ void CloseSound(char *snd_path)
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Funciones de canciones
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void OpenSong(void) {
   int num;
@@ -1015,7 +1015,7 @@ debugprintf("TODO - divpcm.cpp OpenDesktopSong\n");
 
 int songposcount=0;
 // make a passthru processor function that does nothing...
-void noEffect(void *udata, Uint8 *stream, int len)
+void noEffect(void *udata, uint8_t *stream, int len)
 {
   songposcount++;
   if(songposcount==32) {
@@ -1055,7 +1055,7 @@ void PlaySong(char *pathname)
 		v_texto=strdup((char *)Mix_GetError());//texto[46];
     if(strlen(v_texto)==0) {
       free(v_texto);
-      v_texto=strdup(texto[46]);
+      v_texto=strdup((const char *)texto[46]);
     }
 		dialogo(err0);
     free(v_texto);
@@ -1114,9 +1114,9 @@ void PlaySong(char *pathname)
 
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Editor de sonidos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int ancho_ventana, alto_ventana;
 int sel_1, sel_2;
@@ -1217,7 +1217,7 @@ void EditSound1(void)
   int     x, y, y0, y1, p0, p1;
   int     Ancho, Alto, First=1, lx, ly;
   short   muestra;
-  char    cwork[6];
+  char    cwork[10];
 
   _show_items();
 
@@ -1360,15 +1360,15 @@ void EditSound2(void)
 void EditSound3(void)
 {
 //	printf("TODO - divpcm.cpp EditSound3\n");
-Mix_HaltChannel(-1);
+OSDEP_Mix_HaltChannel(-1);
 #ifdef NOTYET
   if(judas_channel[0].smp) judas_stopsample(0);
 #endif
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Grabador de sonidos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void RecSound0(void)
 {
@@ -1520,7 +1520,7 @@ void ModifySound(int option)
   fin = (float)final*tam_rel;
   if(final==ancho_ventana) fin=mypcminfo->SoundSize;
 
-	Mix_HaltChannel(-1);
+	OSDEP_Mix_HaltChannel(-1);
 	
 //  if(judas_channel[0].smp) judas_stopsample(0);
 

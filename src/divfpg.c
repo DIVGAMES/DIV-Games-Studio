@@ -431,7 +431,7 @@ int nuevo_fichero(void) {
 	return 0;
 }
 
-#define max_archivos 512 // ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ Listbox de archivos
+#define max_archivos 512 // โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€ Listbox de archivos
 extern struct t_listboxbr larchivosbr;
 extern t_thumb thumb[max_archivos];
 extern int num_taggeds;
@@ -467,6 +467,9 @@ void abrir_fichero(void) {
 
 		strcat(full, input);
 
+
+		fprintf(stdout,"471 Trying to open: %s\n", full);
+
 		if ((f=fopen(full,"rb"))!=NULL) {
 			fclose(f);
 			v_existe=1;
@@ -482,7 +485,7 @@ void abrir_fichero(void) {
 	////////////////////
 	// *** Juanjo *** //
 
-	n=0; // Nฃmero de paletas distintas
+	n=0; // Nรบmero de paletas distintas
 	muestra=NULL;
 	memcpy(pal,dac,768);
 
@@ -496,6 +499,8 @@ void abrir_fichero(void) {
 				strcat(full,"/");
 
 			strcat(full, input);
+
+			fprintf(stdout,"503 Trying to open: %s\n", full);
 
 			if((f=fopen(full,"rb"))==NULL) {
 				v_texto=(char *)texto[44];
@@ -522,7 +527,7 @@ void abrir_fichero(void) {
 				sum=0; 
 
 				do { 
-					sum+=abs((memptrsize)pal[x]-(memptrsize)dac4[x]); 
+					sum+=abs((int)((memptrsize)pal[x]-(memptrsize)dac4[x])); 
 				} while (++x<768);
 
 				if (sum) {
@@ -558,12 +563,12 @@ void abrir_fichero(void) {
 	x=0; 
 	sum=0; 
 	do { 
-		sum+=abs((memptrsize)pal[x]-(memptrsize)dac[x]); 	
+		sum+=abs((int)((memptrsize)pal[x]-(memptrsize)dac[x])); 	
 	} while (++x<768);
 
 	if (sum) {
 		memcpy(paltratar,pal,768);
-		dialogo(TratarPaleta0); // จCargar paleta?
+		dialogo(TratarPaleta0); // ยฟCargar paleta?
 
 		switch(v_aceptar) {
 			case 0: // Cancelar (no cargar)
@@ -599,6 +604,8 @@ void abrir_fichero(void) {
 				strcat(full,"/");
 
 			strcat(full, input);
+
+			fprintf(stdout,"608 Trying to open: %s\n", full);
 
 			if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
 				if (fread(cwork,1,8,f)==8) {
@@ -678,7 +685,7 @@ void Warning2(void) {
 	}
 }
 void Warning0(void) {
-	v.tipo=1; // Di logo
+	v.tipo=1; // Diรกlogo
 	v.an=200;
 	v.al=60;
 	v.titulo=texto[171];
@@ -708,7 +715,7 @@ int RemapAllFiles(int vent) {
 		x=0; sum=0;
 
 		do {
-			sum+=abs((memptrsize)dac[x]-(memptrsize)p[x]); 
+			sum+=abs((int)((memptrsize)dac[x]-(memptrsize)p[x])); 
 		} while (++x<768);
 
 		if (!sum)
@@ -818,7 +825,7 @@ void GetCode3(void) {
 }
 
 void GetCode0(void) {
-	v.tipo=1; // Di logo
+	v.tipo=1; // Diรกlogo
 	v.an=180+25;
 	v.al=100-12;
 	v.titulo=texto[68];
@@ -1020,7 +1027,7 @@ void Delete_Taggeds() {
 	if ((array_del=(int *)malloc(taggeds*4))==NULL) 
 		return;
 
-	if((fpg=fopen((char *)MiFPG->ActualFile,"rb"))==NULL) { // No deberกa fallar esto
+	if((fpg=fopen((char *)MiFPG->ActualFile,"rb"))==NULL) { // No deberรญa fallar esto
 		free(array_del); return;
 	}
 
@@ -1051,9 +1058,9 @@ void Delete_Taggeds() {
 	vuelca_ventana(vent);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Opciขn de impresiขn de la lista de gr ficos de un fichero
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//  Opciรณn de impresiรณn de la lista de grรกficos de un fichero
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 int f_im=1,f_ar=0;
 char n_ar[16]="";
@@ -1117,7 +1124,8 @@ void Print_List(void) {
 
 		if (num>0) {
 			if (f_ar) {
-				_dos_setdrive(toupper(*tipo[1].path)-'A'+1,&u); chdir(tipo[1].path);
+				_dos_setdrive(toupper(*tipo[1].path)-'A'+1,&u); 
+				_chdir(tipo[1].path);
 				f=fopen(n_ar,"rb");
 
 				if (f!=NULL) {
@@ -1142,7 +1150,7 @@ void Print_List(void) {
 			}
 
 			g=fopen((char *)MiFPG->ActualFile,"rb");
-			if (g==NULL) { // No deberกa pasar nunca
+			if (g==NULL) { // No deberรญa pasar nunca
 			
 				if(f_ar) 
 					fclose(f);
@@ -1154,10 +1162,19 @@ void Print_List(void) {
 					Progress((char *)texto[437],++_num,num);
 					fseek(g,MiFPG->OffsGrf[n],SEEK_SET);
 					fread(&cab,1,sizeof(cab),g);
+					cab.COD = l2b32(cab.COD);
+					cab.LONG = l2b32(cab.LONG);
+					cab.Ancho = l2b32(cab.Ancho);
+					cab.Alto = l2b32(cab.Alto);
+					cab.nPuntos = l2b32(cab.nPuntos);
+
 					memset(cwork2,0,13);
 					memcpy(cwork2,cab.Filename,12);
 					sprintf(cwork,"[%03d] %s (%s, %dx%d)",
 					cab.COD,cab.Descrip,cwork2,cab.Ancho,cab.Alto);
+
+					fprintf(stdout, "CWORK: %s\n", cwork);
+
 					if (f_ar) {
 						fwrite(cwork,1,strlen(cwork),f);
 						fwrite("\xd\xa",1,2,f);
@@ -1179,9 +1196,9 @@ void Print_List(void) {
 	}
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Funciones del browser de FPG
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 extern int num;
 
@@ -1568,6 +1585,7 @@ void crear_un_thumb_FPG(struct t_listboxbr * l){
 			if ((f=fopen((char *)MiFPG->ActualFile,"rb"))!=NULL) {
 				fseek(f,MiFPG->OffsGrf[MiFPG->DesIndex[num]],SEEK_SET);
 				ReadHead(&(MiFPG->MiHeadFPG), f);
+
 				fseek(f,MiFPG->MiHeadFPG.nPuntos*4,SEEK_CUR);
 				MiFPG->thumb[num].an=MiFPG->MiHeadFPG.Ancho;
 				MiFPG->thumb[num].al=MiFPG->MiHeadFPG.Alto;
@@ -1601,7 +1619,7 @@ void crear_un_thumb_FPG(struct t_listboxbr * l){
 				estado=0; MiFPG->thumb[num].status=-1;
 			}
 			return;
-		} else if (estado==2 && MiFPG->thumb[num].status!=MiFPG->thumb[num].filesize) { // Se continฃa leyendo un thumbnail
+		} else if (estado==2 && MiFPG->thumb[num].status!=MiFPG->thumb[num].filesize) { // Se continรบa leyendo un thumbnail
 
 			if ((f=fopen((char *)MiFPG->ActualFile,"rb"))!=NULL) {
 				fseek(f,MiFPG->OffsGrf[MiFPG->DesIndex[num]],SEEK_SET);
@@ -1632,7 +1650,7 @@ void crear_un_thumb_FPG(struct t_listboxbr * l){
 			return;
 		}
 
-		// Y ahora crea el thumbnail si el fichero se cargข ya completo
+		// Y ahora crea el thumbnail si el fichero se cargรณ ya completo
 		if (estado==2 && MiFPG->thumb[num].status==MiFPG->thumb[num].filesize && abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0) {
 
 			MiFPG->thumb[num].status=0;
@@ -1716,9 +1734,9 @@ void crear_un_thumb_FPG(struct t_listboxbr * l){
 	}
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Funciones para importar mapas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void MAPtoFPG(struct tmapa * mapa) {
 	int  x, y;
@@ -1823,9 +1841,9 @@ void GetGrafMAP(struct tmapa *mapa, byte *imagen, int x, int y, int ancho, int a
 	free(buffer);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Funciones para exportar mapas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 struct {
 	int x,y,an,al;
@@ -1950,9 +1968,9 @@ void PutGrafMAP(byte *imagen, byte *mapa, int num) {
 	}
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Algoritmo de emplazamiento de una imagen en el MAP
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void emplazar_map(void) { // Emplaza grafico lnum
 	
@@ -1987,7 +2005,7 @@ void emplazar_map(void) { // Emplaza grafico lnum
 	//    }
 	}
 
-	// Segundo ... algoritmo de colocaciขn ...
+	// Segundo ... algoritmo de colocaciรณn ...
 	for(n=0; n<scans; n++) {
 		y = scan[n];
 		new_x = 0;
@@ -2017,9 +2035,9 @@ int colisiona_con_map(int n, int x, int y, int an, int al) {
   else return(0);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Cierra un FPG duplicado
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void cierra_fpg(char *fpg_path) {
   FPG *MiFPG;
@@ -2040,9 +2058,9 @@ void cierra_fpg(char *fpg_path) {
   }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Selecciona un fichero para abrir o sobreescribir
-//อออออออออออออออออออออออออออออออออออออออÝอออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•ยฆโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 int selecciona_fichero(void) {
 	FPG *MiFPG;
@@ -2102,9 +2120,9 @@ int selecciona_fichero(void) {
 	return 0;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Sustituir o aคadir FPG
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//      Sustituir o aรฑadir FPG
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void sustituir_FPG_1(void) {
 	int an=v.an/big2,al=v.al/big2;
@@ -2148,7 +2166,7 @@ void sustituir_FPG_0(void) {
 	v.click_handler=sustituir_FPG_2;
 
 	_button(510, 7,v.al-14,0); // Reemplazar
-	_button(511,x2,v.al-14,0); // Aคadir
+	_button(511,x2,v.al-14,0); // Aรฑadir
 	_button(101,x3,v.al-14,0); // Cancelar
 
 	v_aceptar=3;

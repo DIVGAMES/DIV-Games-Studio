@@ -1,7 +1,7 @@
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      M¢dulo que contiene el c¢digo de los handler de ventanas thumbnail
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      MÃ³dulo que contiene el cÃ³digo de los handler de ventanas thumbnail
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #include "global.h"
 #include "divsound.h"
@@ -42,24 +42,24 @@ Mix_Chunk * smp=NULL;
 
 #endif
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Variables del m¢dulo
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Variables del mÃ³dulo
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /*struct t_listboxbr{
-  int x,y;              // Posici¢n del listbox en la ventana
+  int x,y;              // PosiciÃ³n del listbox en la ventana
   char * lista;         // El puntero a la lista
-  int lista_an;         // N§ de car cteres de cada registro
-  int columnas;         // N§ de columnas del listbox browser
-  int lineas;           // N§ de lineas
-  int an,al;            // Tama¤o en pixels de cada casilla
+  int lista_an;         // NÂº de carÃ¡cteres de cada registro
+  int columnas;         // NÂº de columnas del listbox browser
+  int lineas;           // NÂº de lineas
+  int an,al;            // TamaÃ±o en pixels de cada casilla
 
   int inicial;          // Registro inicial visualizado (desde 0)
-  int maximo;           // N§ total de registros existentes (0 n/a)
-  int s0,s1,slide;      // Posici¢n inicial, final y actual de la "slide bar"
+  int maximo;           // NÂº total de registros existentes (0 n/a)
+  int s0,s1,slide;      // PosiciÃ³n inicial, final y actual de la "slide bar"
   int zona;             // Zona seleccionada
-  int botones;          // Indica si esta pulsado el bot¢n up(1) o down(2)
-  int creada;           // Indica si ya est  creada la lista en pantalla
+  int botones;          // Indica si esta pulsado el botÃ³n up(1) o down(2)
+  int creada;           // Indica si ya estÃ¡ creada la lista en pantalla
 };*/
 
 
@@ -83,24 +83,24 @@ struct t_listbox lextbr={40,121,ext,an_ext,4,28};
 #define ancho_br 297
 #define alto_br  180
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Estructura para guardar las reducciones de los mapas
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 t_thumb thumb[max_archivos];
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Estructura de sonido WAV
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 struct _WAV_info {
   byte *buffer;
   int length;
 } WAV_info;
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Prototipos
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void analizar_input(void);
 void dir_abrirbr(void);
@@ -135,9 +135,9 @@ TABLAIFS tifs[256];
 FILE *fifs;
 void carga_letra(uint8_t letra);
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Imprime la ruta del directorio o fichero actual
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int wbox_ancho;
 
@@ -157,16 +157,17 @@ void imprime_rutabr(void) {
 
   strcpy(full,tipo[v_tipo].path);
   if (tipo[v_tipo].path[strlen(tipo[v_tipo].path)-1]!='/')
-    strcat(full,"/"); strcat(full,mascara);
+    strcat(full,"/"); 
+    strcat(full,mascara);
 
   wwrite_in_box(v.ptr,an,wbox_ancho+2,al,5,12,0,(byte *)full,c1);
   wwrite_in_box(v.ptr,an,wbox_ancho+2,al,4,12,0,(byte *)full,c3);
 
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Crea los thumbnail
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int _omx,_omy,omx,omy,oclock=0;
 int num;
@@ -237,7 +238,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 		strcpy(filename,l->lista+(l->lista_an*num));
 		strupr(filename);
 		
-      if (strchr(l->lista+(l->lista_an*num),'.')>0 &&
+      if (strchr(l->lista+(l->lista_an*num),'.') !=NULL &&
 	  strcmp(strchr(filename,'.'),".MAP") &&
           strcmp(strchr(filename,'.'),".PCX") &&
           strcmp(strchr(filename,'.'),".BMP") &&
@@ -269,7 +270,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
         fclose(f);
       } else { estado=0; thumb[num].status=-1; }
       return;
-    } else if (estado==2 && thumb[num].status!=thumb[num].filesize) { // Se contin£a leyendo un thumbnail
+    } else if (estado==2 && thumb[num].status!=thumb[num].filesize) { // Se continÃºa leyendo un thumbnail
 
       if ((f=fopen(l->lista+(l->lista_an*num),"rb"))!=NULL) {
         fseek(f,thumb[num].status,SEEK_SET);
@@ -292,7 +293,7 @@ void crear_un_thumb_MAP(struct t_listboxbr * l){
 
     }
 
-    // Y ahora crea el thumbnail si el fichero se carg¢ ya completo
+    // Y ahora crea el thumbnail si el fichero se cargÃ³ ya completo
 
     if (estado==2 && thumb[num].status==thumb[num].filesize &&
         abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0) {
@@ -650,7 +651,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       fclose(f);
     }
 
-    // Se contin£a leyendo un thumbnail
+    // Se continÃºa leyendo un thumbnail
     else if (estado==2 && thumb[num].status!=thumb[num].filesize)
     {
       if ((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
@@ -689,7 +690,7 @@ void crear_un_thumb_FNT(struct t_listboxbr * l)
       return;
     }
 
-    // Now create the thumbnail if the file is complete ¢ Loaded
+    // Now create the thumbnail if the file is complete Ã³ Loaded
     if (estado==2 && thumb[num].status==thumb[num].filesize &&
         abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0)
     {
@@ -1080,7 +1081,7 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
       fclose(f);
     }
 
-    // Se contin£a leyendo un thumbnail
+    // Se continÃºa leyendo un thumbnail
     else if (estado==2 && thumb[num].status!=thumb[num].filesize)
     {
       if ((f=fopen(l->lista+(l->lista_an*num),"rb"))==NULL)
@@ -1119,7 +1120,7 @@ void crear_un_thumb_PCM(struct t_listboxbr * l)
       return;
     }
 
-    // Y ahora crea el thumbnail si el fichero se carg¢ ya completo
+    // Y ahora crea el thumbnail si el fichero se cargÃ³ ya completo
     if (estado==2 && thumb[num].status==thumb[num].filesize &&
         abs(_omx-mouse_x)+abs(_omy-mouse_y)+mouse_b+ascii==0)
     {
@@ -1336,9 +1337,9 @@ void carga_letra(uint8_t letra) {
   map_an=pixels;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Muestra un thumbnail en la ventana
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void muestra_thumb(struct t_listboxbr * l, int num) {
   byte * ptr=v.ptr;
@@ -1389,14 +1390,14 @@ void muestra_thumb(struct t_listboxbr * l, int num) {
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Codigo principal del browser
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void browser0(void) {
   unsigned n,m,x;
 
-  v.tipo=1; // Di logo
+  v.tipo=1; // DiÃ¡logo
   v.titulo=(byte *)v_texto;
   v_thumb=v_tipo;
 
@@ -1459,7 +1460,8 @@ void browser0(void) {
 
   if (tipo[v_tipo].defecto>=0 && tipo[v_tipo].defecto<lextbr.maximo)
     strcpy(input,&ext[an_ext*tipo[v_tipo].defecto]);
-  else strcpy(input,&ext[0]);
+  else 
+    strcpy(input,&ext[0]);
 
   strcpy(mascara,input);
   v_terminado=0;
@@ -1469,10 +1471,11 @@ void browser0(void) {
   _button(100,v.an-12-text_len(texto[101]),v.al-14,2);
   _button(101,v.an-8,v.al-14,2);
 
-  if (v_thumb) _flag(419,v.an-12-text_len(texto[419]),12,&opc_img[v_thumb]);
+  if (v_thumb) 
+    _flag(419,v.an-12-text_len(texto[419]),12,&opc_img[v_thumb]);
 
   _dos_setdrive(toupper(*tipo[v_tipo].path)-'A'+1,&n);
-  chdir(tipo[v_tipo].path);
+  _chdir(tipo[v_tipo].path);
 
   dir_abrirbr(); // Crea la lista de ficheros y directorios
 
@@ -1525,7 +1528,8 @@ void browser0(void) {
 void browser1(void) {
   int an=v.an/big2,al=v.al/big2;
 
-  _show_items(); imprime_rutabr();
+  _show_items(); 
+  imprime_rutabr();
 
   wwrite(v.ptr,an,al,77, 20,0,texto[127],c3); // Archivos
   wwrite(v.ptr,an,al, 3, 20,0,texto[128],c3);
@@ -1634,7 +1638,8 @@ void browser2(void) {
 */
       if(num_taggeds)
       {
-        v_terminado=1; v_existe=1;
+        v_terminado=1; 
+        v_existe=1;
         return;
       }
       analizar_input();
@@ -1788,8 +1793,9 @@ void browser2(void) {
         strcat(tipo[v_tipo].path,"/");
       strcat(tipo[v_tipo].path,directorio+(ldirectoriosbr.zona-10+
         ldirectoriosbr.inicial)*an_directorio);
-      chdir(tipo[v_tipo].path);
-      getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      _chdir(tipo[v_tipo].path);
+      _getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      fprintf(stdout,"CWD: %s\n",tipo[v_tipo].path);
       imprime_rutabr();
       larchivosbr.creada=0;
       ldirectoriosbr.creada=0;
@@ -1800,7 +1806,9 @@ void browser2(void) {
       crear_listbox(&ldirectoriosbr);
     } else if (lunidadesbr.zona>=10) {
       _dos_setdrive(unidades[lunidadesbr.zona-10+lunidadesbr.inicial]-'A'+1,&n);
-      getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      _getcwd(tipo[v_tipo].path,PATH_MAX+1);
+      fprintf(stdout,"CWD: %s\n",tipo[v_tipo].path);
+
       if (tipo[v_tipo].path[0]==unidades[lunidadesbr.zona-10+lunidadesbr.inicial]) {
         imprime_rutabr(); v.volcar=1;
         larchivosbr.creada=0;
@@ -1848,7 +1856,8 @@ void browser3(void) {
 */
   }
 
-  _dos_setdrive(toupper(*tipo[1].path)-'A'+1,&n); chdir(tipo[1].path);
+  _dos_setdrive(toupper(*tipo[1].path)-'A'+1,&n); 
+  _chdir(tipo[1].path);
   tipo[v_tipo].inicial=larchivosbr.inicial;
 
   for (n=0;n<max_archivos;n++) if (thumb[n].ptr!=NULL) {
@@ -1873,22 +1882,26 @@ void browser3(void) {
 #endif
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Read directories and files
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void dir_abrirbr(void) {
   unsigned n,m;
   struct find_t fileinfo;
 
-  n=0; m=_dos_findfirst(mascara,_A_NORMAL,&fileinfo);
+  n=0; 
+  fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,mascara);
+  m=_dos_findfirst(mascara,_A_NORMAL,&fileinfo);
   while (m==0 && n<max_archivos) {
     strcpy(archivo+n++*an_archivo,fileinfo.name);
     m=_dos_findnext(&fileinfo);
   } larchivosbr.maximo=n;
   qsort(archivo,larchivosbr.maximo,(size_t)an_archivo,(int (*)(const void *, const void *))strcmp);
 
-  n=0; m=_dos_findfirst("*.*",_A_SUBDIR,&fileinfo);
+  n=0; 
+  fprintf(stdout,"%d %s input: %s\n",__LINE__,__FILE__,"*.*");
+  m=_dos_findfirst("*.*",_A_SUBDIR,&fileinfo);
   while (m==0 && n<max_directorios) {
     if (strcmp(fileinfo.name,".") && (fileinfo.attrib&16)) {
       strcpy(directorio+n++*an_directorio,fileinfo.name);
@@ -1914,9 +1927,9 @@ void dir_abrirbr(void) {
 */
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Crea la ventana de listbox tipo browser
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void pinta_listboxbr(struct t_listboxbr * l) {
   byte * ptr=v.ptr;
@@ -1998,9 +2011,9 @@ void crear_listboxbr(struct t_listboxbr * l) {
 
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Actualiza el listbox del browser
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void actualiza_listboxbr(struct t_listboxbr * l) {
   byte * ptr=v.ptr, *p;
@@ -2092,5 +2105,5 @@ void actualiza_listboxbr(struct t_listboxbr * l) {
   }
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 

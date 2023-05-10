@@ -8,8 +8,8 @@
 #include "SDL_image.h"
 #endif
 
-SDL_Surface * DIV_IMG_Load(char *file);
-SDL_Surface *DIV_IMG_Load_Mem(void *ptr, byte len);
+OSDEP_Surface * DIV_IMG_Load(char *file);
+OSDEP_Surface *DIV_IMG_Load_Mem(void *ptr, byte len);
 
 
 

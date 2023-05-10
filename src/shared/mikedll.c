@@ -3,7 +3,12 @@
 // 27Feb 2003
 // Big thanks to Slainte for spending some time explaining Fenix DLL routines.
 
+#ifdef EDITOR
 #include "global.h"
+#else
+#include "inter.h"
+#endif
+
 #include "divdll.h"
 
 #ifdef __cplusplus

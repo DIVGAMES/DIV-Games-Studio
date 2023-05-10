@@ -1,7 +1,7 @@
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-// Nucleo de la ejecuci¢n de los programas en DIV
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// Nucleo de la ejecuciÃ³n de los programas en DIV
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 case lnop: break;
 case lcar: pila[++sp]=mem[ip++]; break;
@@ -81,12 +81,23 @@ case lcal:
   #ifdef DEBUG
   process_exec(id,get_ticks()-oreloj); oreloj=get_ticks();
   #endif
-  mem[id+_IP]=ip+1; id2=id; if (sp>long_pila) exer(3);
-  procesos++; ip=mem[ip]; id=id_start;
+  mem[id+_IP]=ip+1; 
+  id2=id; 
+  if (sp>long_pila) 
+    exer(3);
+  procesos++; 
+  ip=mem[ip]; 
+  id=id_start;
+dirtylist = true;
+/*
+printf("Processes: %d  id:%d p*len:%d id_end: %d\n",
+procesos,
+id,
+// id_end-id,
+(id_start)+((procesos-2)*iloc_len),
+id_end);
 
-//printf("Processes: %d  id:%d p*len:%d id_end: %d\n",procesos,id_end-id,(id_start)+((procesos-2)*iloc_len),id_end);
-
-
+*/
 if((id_start+((procesos-2)*iloc_len)) == id_end)
 	id=id_end+iloc_len;
 
@@ -99,12 +110,27 @@ if((id_start+((procesos-2)*iloc_len)) == id_end)
 #ifdef LLPROC
   insert_process(id);
 #endif
-  if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; if(id_end>id_max) id_max = id_end;}
+//  printf("Spawning new process, setting dirty flag\n");
+//  dirtylist = true;
+
+  if (id>id_end) { 
+    if (id>imem_max-iloc_len) 
+      exer(2); 
+    id_end=id; 
+    if(id_end>id_max) {
+      id_max = id_end;
+    }
+  }
   memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
   mem[id+_Id]=id;
+  while(mem[id]!=id) {
+    mem[id] = id;
+  }
+  // fprintf(stdout, "kernel.cpp 126 ID: %d mem[id]: %d _Id: %d\n", id, mem[id],_Id);
+
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
   mem[id2+_Son]=id; mem[id+_Father]=mem[id+_Caller]=id2;
-  if (mem[ip+2]==lnop) mem[id+_FCount]=mem[id2+_FCount]+1; // Funci¢n
+  if (mem[ip+2]==lnop) mem[id+_FCount]=mem[id2+_FCount]+1; // FunciÃ³n
   #ifdef DEBUG
   else process_level++;
   #endif
@@ -218,17 +244,27 @@ case lrtf:
   bp=id; id=mem[id+_Caller];
   elimina_proceso(bp);
   if (!(id&1)) {
-    if (id) actualiza_pila(id-1,pila[sp]); // Un return de funci¢n (tras frame)
+    if (id) actualiza_pila(id-1,pila[sp]); // Un return de funciÃ³n (tras frame)
     goto next_process1;
   }
   ip=mem[id+_IP];
   break;
 case lclo:
   procesos++; id2=id; id=id_start;
+  dirtylist = true;
   while (mem[id+_Status] && id<=id_end) id+=iloc_len;
   if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
   memcpy(&mem[id],&mem[id2],iloc_len<<2);
-  mem[id+_Id]=id; mem[id+_IP]=ip+1; mem[id+_Caller]=0;
+  mem[id+_Id]=id; 
+  mem[id] = id;
+  while(mem[id]!=id) {
+    mem[id] = id;
+  }
+
+  // fprintf(stdout, "kernel.cpp 256 ID: %d mem[id]: %d _Id: %d\n", id, mem[id],_Id);
+
+  mem[id+_IP]=ip+1; 
+  mem[id+_Caller]=0;
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
   mem[id+_SmallBro]=0; mem[id+_Son]=0;
   mem[id2+_Son]=id; mem[id+_Father]=id2;
@@ -279,6 +315,8 @@ if(ExternDirs[mem[ip]])
 case lchk:
   #ifdef DEBUG
     if (pila[sp]<id_init || pila[sp]>id_max || pila[sp]!=mem[pila[sp]]) {
+      // fprintf(stdout, "pila[sp]=%d id_init=%d id_max=%d mem[pila[sp]]=%d\n", pila[sp], id_init, id_max, mem[pila[sp]]);
+      // fprintf(stdout, " if (pila[sp]<id_init || pila[sp]>id_max || pila[sp]!=mem[pila[sp]])\n");
       v_function=-2; e(141);
       if (call_to_debug) { process_stoped=id; return; }
     }
@@ -289,7 +327,7 @@ case ldbg:
     if (debug_active) {
       for (ibreakpoint=0;ibreakpoint<max_breakpoint;ibreakpoint++)
         if (breakpoint[ibreakpoint].line>-1 && abs(breakpoint[ibreakpoint].offset)==ip-1) break;
-      if (ibreakpoint<max_breakpoint) { // Se lleg¢ a un breakpoint
+      if (ibreakpoint<max_breakpoint) { // Se llegÃ³ a un breakpoint
         mem[--ip]=breakpoint[ibreakpoint].code;
         breakpoint[ibreakpoint].line=-1;
         call_to_debug=1; process_stoped=id;
@@ -319,7 +357,16 @@ case lcaraid:
 
 	pila[++sp]=mem[ip++]+id; 
 	break;
-case lcarptr: pila[++sp]=mem[mem[ip++]]; break;
+case lcarptr:
+// fprintf(stdout,"lcarptr\n");
+// fprintf(stdout,"SP: %d\n", sp);
+// fprintf(stdout,"IP: %d\n", ip);
+// fprintf(stdout,"mem[ip]: %d\n", mem[ip]);
+// fprintf(stdout,"mem[mem[ip]]: %d\n", mem[mem[ip]]);
+
+  pila[++sp]=mem[mem[ip++]]; 
+  break;
+
 case laidptr: pila[sp]=mem[pila[sp]+id]; break;
 case lcaraidptr: pila[++sp]=mem[mem[ip++]+id]; break;
 case lcaraidcpa: mem[mem[ip++]+id]=pila[mem[id+_Param]++]; break;
@@ -344,7 +391,14 @@ case lcarasiasp:
 		dirty(id);
 	} else
 #endif
-	  mem[pila[sp]]=mem[ip++]; sp--;
+  // fprintf(stdout,"lcarasiasp\n");
+  // fprintf(stdout,"SP: %d\n", sp);
+  // fprintf(stdout,"IP: %d\n", ip);
+  // fprintf(stdout,"pila[sp]: %d\n", pila[sp]);
+  // fprintf(stdout,"mem[ip]: %d\n", mem[ip]);
+  // fprintf(stdout,"mem[mem[ip]]: %d\n", mem[mem[ip]]);
+
+  mem[pila[sp]]=mem[ip++]; sp--;
   break;
 case lcarsub: pila[sp]-=mem[ip++]; break;
 case lcardiv: pila[sp]/=mem[ip++]; break; // No hay nunca "cardiv 0"
@@ -484,14 +538,14 @@ case lstradd: // Strcat "en el aire" (ojo, el aire tiene tambien 0xDAD00402)
   nstring=((nstring+1)&3);
   break;
 
-case lstrdec: // cambio de tama¤o "en el aire" (no da error, hace lo que puede)
+case lstrdec: // cambio de tamaÃ±o "en el aire" (no da error, hace lo que puede)
   oo=strlen((char*)&mem[pila[sp-1]]);
   if (oo<1028) {
     strcpy((char*)&mem[nullstring[nstring]],(char*)&mem[pila[sp-1]]);
     if (pila[sp]>0) { // Quitar caracteres
       if (pila[sp]>=oo) memb[nullstring[nstring]*4]=0;
       else memb[nullstring[nstring]*4+oo-pila[sp]]=0;
-    } else if (pila[sp]<0) { // A¤adir (?) caracteres (por homogeneidad)
+    } else if (pila[sp]<0) { // AÃ±adir (?) caracteres (por homogeneidad)
       pila[sp]=oo-pila[sp]; // Nueva longitud
       if (pila[sp]>1025) pila[sp]=1025;
       for (;oo<pila[sp];oo++) {
@@ -503,7 +557,7 @@ case lstrdec: // cambio de tama¤o "en el aire" (no da error, hace lo que puede)
   nstring=((nstring+1)&3);
   break;
 
-case lstrsub: // cambio de tama¤o a un string
+case lstrsub: // cambio de tamaÃ±o a un string
   oo=strlen((char*)&mem[pila[sp-1]]);
   #ifdef DEBUG
     if ((mem[pila[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
@@ -520,7 +574,7 @@ case lstrsub: // cambio de tama¤o a un string
   if (pila[sp]>0) { // Quitar caracteres
     if (pila[sp]>=oo) memb[pila[sp-1]*4]=0;
     else memb[pila[sp-1]*4+oo-pila[sp]]=0;
-  } else if (pila[sp]<0) { // A¤adir (?) caracteres (por homogeneidad)
+  } else if (pila[sp]<0) { // AÃ±adir (?) caracteres (por homogeneidad)
     pila[sp]=oo-pila[sp]; // Nueva longitud
     for (;oo<pila[sp];oo++) {
       memb[pila[sp-1]*4+oo]=' ';
@@ -719,9 +773,9 @@ case lnul:
   #endif
   break;
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  Cases no utilizados (hasta el 255)
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 case 127: case 128: case 129:
 case 130: case 131: case 132: case 133: case 134: case 135: case 136: case 137: case 138: case 139:

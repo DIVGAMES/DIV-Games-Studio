@@ -23,9 +23,9 @@ int tex_size;
 #define COPY(ptr,size)  {memcpy(ptr,&Buffer[Pos],size);Pos+=size;}
 #define PI 3.141592f
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Carga una zona
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void LoadZone(char *Buffer)
 {
@@ -66,12 +66,70 @@ void LoadZone(char *Buffer)
   //---------------------------------------------------------------------------
   READ(Header,struct ZF_Header);
 
+  fprintf(stdout,"Header size: %d\n",sizeof(struct ZF_Header));
+// exit(0);
+
   //---------------------------------------------------------------------------
   // Lee los puntos
   //---------------------------------------------------------------------------
+
+/*
+struct ZF_Header {    // Zone file header
+  char  IDStr[4];     // Zone file ID string
+  VPEShort NumPoints;    // Number of points
+  VPEShort NumRegions;   // Number of floors
+  VPEShort NumWalls;     // Number of walls
+  VPEShort NumFlags;     // Number of flags
+};
+*/
+
+
+#ifdef AMIGA2
+fprintf(stdout,"NumPoints: %d\n",Header->NumPoints);
+fprintf(stdout,"NumRegions: %d\n",Header->NumRegions);
+fprintf(stdout,"NumWalls: %d\n",Header->NumWalls);
+fprintf(stdout,"NumFlags: %d\n\n",Header->NumFlags);
+
+  Header->NumPoints=l2b16(Header->NumPoints);
+  // Header->NumPoints = Header->NumPoints & 0x7fff;
+  Header->NumRegions=l2b16(Header->NumRegions);
+  // Header->NumRegions = Header->NumRegions & 0x7fff;
+  Header->NumWalls=l2b16(Header->NumWalls);
+  // Header->NumWalls = Header->NumWalls & 0x7fff;
+  Header->NumFlags=l2b16(Header->NumFlags);
+  // Header->NumFlags = Header->NumFlags & 0x7fff;
+#endif
+fprintf(stdout,"NumPoints: %d\n",Header->NumPoints);
+fprintf(stdout,"NumRegions: %d\n",Header->NumRegions);
+fprintf(stdout,"NumWalls: %d\n",Header->NumWalls);
+fprintf(stdout,"NumFlags: %d\n",Header->NumFlags);
+
+// exit(0);
+
+  //---------------------------------------------------------------------------
+  // Lee los registros
+  //---------------------------------------------------------------------------
+
   for(n=0;n<Header->NumPoints;n++)
   {
     READ(zp,struct ZF_Point);
+    /*
+struct ZF_Point {   // Point struture
+  VPEDword Type;     // Type
+  VPELong  x,y;      // Point coordinates
+  VPEShort path;     // Path index
+  VPEShort link;     // Index of the next point in the link
+};
+*/
+
+#ifdef AMIGA2
+  zp->Type=l2b32(zp->Type);
+  zp->x=l2b32(zp->x);
+  zp->y=l2b32(zp->y);
+  zp->path=l2b16(zp->path);
+  zp->link=l2b16(zp->link);
+#endif
+
     point=(struct Point *)AddEntry(&Points);
     point->Type=zp->Type;
     point->x=INT_FIX(zp->x);
@@ -95,6 +153,33 @@ void LoadZone(char *Buffer)
   for(n=0;n<Header->NumRegions;n++)
   {
     READ(zr,struct ZF_Region);
+/*
+
+struct ZF_Region {  // Region structure
+  VPEDword Type;       // Type
+  VPEShort FloorH;     // Floor height
+  VPEShort CeilH;      // Ceiling height
+  VPEShort Below;      // Region below
+  VPEShort Above;      // Region above
+  int   FloorTex;   // Floor texture name
+  int   CeilTex;    // Ceiling texture name
+  char  Eff[9];     // Eff program
+  VPEShort Fade;       // Luminosidad de la region 0-65535
+  VPEShort Tag;        // Tag ID
+};
+*/
+#ifdef AMIGA2
+  zr->Type=l2b32(zr->Type);
+  zr->FloorH=l2b16(zr->FloorH);
+  zr->CeilH=l2b16(zr->CeilH);
+  zr->Below=l2b16(zr->Below);
+  zr->Above=l2b16(zr->Above);
+  zr->FloorTex=l2b32(zr->FloorTex);
+  zr->CeilTex=l2b32(zr->CeilTex);
+  zr->Fade=l2b16(zr->Fade);
+  zr->Tag=l2b16(zr->Tag);
+#endif
+
     new_region=(struct Region *)AddEntry(&Regions);
     new_region->Type=zr->Type;
     new_region->FloorH=INT_FIX(zr->FloorH);
@@ -109,14 +194,17 @@ void LoadZone(char *Buffer)
     new_region->Stamp=-1;
     new_region->Idx=n;
   }
+  uintptr_t ut1;
+  uintptr_t ut2;
+// t1 = (uintptr_t)new_region->Above;
   for(n=0;n<Header->NumRegions;n++)
   {
     new_region=(struct Region *)Regions.ptr[n];
-    t1=(int)new_region->Above;
-    t2=(int)new_region->Below;
-    if (t1<0) new_region->Above=NULL;
+    ut1=(uintptr_t)new_region->Above;
+    ut2=(uintptr_t)new_region->Below;
+    if (ut1<0) new_region->Above=NULL;
     else new_region->Above=(struct Region *)Regions.ptr[t1];
-    if (t2<0) new_region->Below=NULL;
+    if (ut2<0) new_region->Below=NULL;
     else new_region->Below=(struct Region *)Regions.ptr[t2];
   }
 
@@ -126,6 +214,45 @@ void LoadZone(char *Buffer)
   for(n=0;n<Header->NumWalls;n++)
   {
     READ(zw,struct ZF_Wall);
+    /*
+    struct ZF_Wall {    // Wall structure
+  VPEDword Type;       // Wall type
+  VPEShort p1, p2;     // Point indeces
+  VPEShort Front;      // Front Region
+  VPEShort Back;       // Back Region
+  int   TopTex;     // Top texture name
+  int   MidTex;     // Middle texture name
+  int   BotTex;     // Bottom texture name
+  char  Eff[9];     // Eff program
+  VPEShort Fade;       // Luminosidad de la pared 0-65535
+  VPEShort TexX, TexY; // Texture adjusting
+  VPEShort Mass;       // Mass for movable walls
+  VPEShort Tag;        // Tag ID
+};
+*/
+#ifdef AMIGA2
+  zw->Type=l2b32(zw->Type);
+  fprintf(stdout,"zw->p1: %d\n",zw->p1);
+  fprintf(stdout,"zw->p2: %d\n",zw->p2);
+
+  zw->p1=l2b16(zw->p1);
+  zw->p2=l2b16(zw->p2);
+  fprintf(stdout,"zw->p1: %d\n",zw->p1);
+  fprintf(stdout,"zw->p2: %d\n",zw->p2);
+  
+  zw->Front=l2b16(zw->Front);
+  zw->Back=l2b16(zw->Back);
+  zw->TopTex=l2b32(zw->TopTex);
+  zw->MidTex=l2b32(zw->MidTex);
+  zw->BotTex=l2b32(zw->BotTex);
+  zw->Fade=l2b16(zw->Fade);
+  zw->TexX=l2b16(zw->TexX);
+  zw->TexY=l2b16(zw->TexY);
+  zw->Tag=l2b16(zw->Tag);
+  zw->Mass=l2b16(zw->Mass);
+  #endif
+  
+
     wall=(struct Wall *)AddEntry(&Walls);
     wall->Type=zw->Type;
     wall->Fade=zw->Fade;
@@ -155,6 +282,20 @@ void LoadZone(char *Buffer)
   num_flags=Header->NumFlags;
   for(n=0;n<Header->NumFlags;n++) {
     READ(zf,struct ZF_Flag);
+    /*
+    struct ZF_Flag {   // Point struture
+  VPELong  x,y;      // Point coordinates
+  int   number;
+};
+*/
+#ifdef AMIGA2
+    zf->x=l2b32(zf->x);
+    zf->y=l2b32(zf->y);
+    zf->number=l2b32(zf->number);
+#endif
+
+
+    fprintf(stdout,"Loading flag %d\n",n);
     flags[n]=(struct ZF_Flag *)MemAlloc(sizeof(struct ZF_Flag));
     flags[n]->x=INT_FIX(zf->x);
     flags[n]->y=INT_FIX(zf->y);
@@ -185,6 +326,27 @@ void LoadZone(char *Buffer)
   // Lee los datos de caracter general
   //---------------------------------------------------------------------------
   READ(zgen,struct ZF_General);
+
+/*
+struct ZF_General {     // General information
+  char  Title[24];      // Zone name
+  char  Palette[9];     // Palette filename
+  int   ScrTex;         // Name of screen texture
+  int   BackTex;        // Background texture name
+  char  BackEff[9];     // Background Eff program
+  VPEShort BackAngle;      // Angle of view covered by BackTex
+  VPEShort ActView;        // Index of view which gets kbd input
+  struct ZF_Move Force; // Global force
+};
+*/
+
+#ifdef AMIGA2
+  zgen->ScrTex=l2b32(zgen->ScrTex);
+  zgen->BackTex=l2b32(zgen->BackTex);
+  zgen->BackAngle=l2b16(zgen->BackAngle);
+  zgen->ActView=l2b16(zgen->ActView);
+#endif
+
   strcpy(Gen.Title,zgen->Title);
   //  Cargo el fondo
   TexAlloc2(&Gen.BackTC,zgen->BackTex,num_fpg_aux);
@@ -231,9 +393,9 @@ void LoadZone(char *Buffer)
   }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Reservo memoria para cargar una tipo textura (grupo de texturas)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void TexAlloc(struct TexCon *ptc, int texcode, int num_fpg)
 {
@@ -270,9 +432,9 @@ int i;
   ptc->pPic=GetPic(texcode,num_fpg);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Leo la informacion de la textura sin cargarla
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 struct PicInfo *GetPic(int piccode, int num_fpg)
 {
@@ -289,13 +451,22 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
   while (i<1000) {
     if (fpg_grf[i]!=NULL) {
       n=*(fpg_grf[i]+15);           // Numero de puntos de control
-      if (piccode==*fpg_grf[i]) {   // Si lo encuentra termina
+      n = l2b32(n);
+      // fprintf(stdout,"nptr15: %d\n",n);
+
+      int pc = *fpg_grf[i];
+      pc = l2b32(pc);
+
+      // fprintf(stdout,"pc: %d piccode: %d\n",pc,piccode);
+
+      if (piccode==pc) {   // Si lo encuentra termina
         correcto=1;
         break;
       }
     }
     i++;
   }
+  // fprintf(stdout,"Correcto: %d\n",correcto);
   //---------------------------------------------------------------------------
   // Si ha encontrado la textura
   //---------------------------------------------------------------------------
@@ -303,8 +474,13 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
     pic=(struct PicInfo *)AddEntry(&Pics);
     pic->code=piccode;
     pic->fpg=num_fpg;
-    pic->Width=*(fpg_grf[i]+13);
-    pic->Height=*(fpg_grf[i]+14);
+
+    int tmp = *(fpg_grf[i]+13); 
+    pic->Width=l2b32(tmp);
+
+    tmp = *(fpg_grf[i]+14); 
+    pic->Height=l2b32(tmp);
+
     pic->Raw=NULL;
     if (n==0) {
       pic->InsX=pic->Width-1;
@@ -316,6 +492,9 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
       pic->InsY=*ptr;
     }
     pic->Used=0;
+
+    // fprintf(stdout,"%d Pic Width: %d\n", __LINE__, pic->Width);
+
     switch(pic->Width) {
       case  2:  pic->Width2=1;
                 break;
@@ -342,24 +521,25 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
       default:  error_vpe=158;
                 return(NULL);
     }
-  }
-  //---------------------------------------------------------------------------
-  // Si no encuentra la textura devuelve null
-  //---------------------------------------------------------------------------
-  else
+  } else {
+    //---------------------------------------------------------------------------
+    // Si no encuentra la textura devuelve null
+    //---------------------------------------------------------------------------
+    // fprintf(stdout,"piccode %d failed; correcto: %d\n", piccode, correcto);
     if( piccode<1000 && piccode>0 )
     {
       sprintf(combo_error,"%s %d %s %d",text[177], piccode, text[178], num_fpg);
-      text[176]=combo_error;
+      text[176]=(unsigned char *)combo_error;
       error_vpe=176;
       return(NULL);
     }
+  }
   return(pic);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Cargo una textura del fichero fpg abierto
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void LoadPic(struct PicInfo *pic)
 {
@@ -384,7 +564,10 @@ void LoadPic(struct PicInfo *pic)
     while (i<1000) {
       if (fpg_grf[i]!=NULL) {
         n=*(fpg_grf[i]+15);             // Numero de puntos de control
-        if (pic->code==*fpg_grf[i]) {   // Si lo encuentra termina
+        n = l2b32(n);
+        int pc = *fpg_grf[i];
+        pc = l2b32(pc);
+        if (pic->code==pc) {   // Si lo encuentra termina
           correcto=1;
           break;
         }
@@ -395,8 +578,13 @@ void LoadPic(struct PicInfo *pic)
     // Si ha encontrado la textura
     //-------------------------------------------------------------------------
     if (correcto) {
-      pic->Width=*(fpg_grf[i]+13);
-      pic->Height=*(fpg_grf[i]+14);
+      int tmp = *(fpg_grf[i]+13); 
+      pic->Width=l2b32(tmp);
+
+      tmp = *(fpg_grf[i]+14); 
+      pic->Height=l2b32(tmp);
+      
+      // fprintf(stdout,"%d Pic Width: %d\n", __LINE__, pic->Width);
       switch(pic->Width) {
         case  2:  pic->Width2=1;
                   break;
@@ -460,9 +648,9 @@ void LoadPic(struct PicInfo *pic)
   pic->Used++;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Reservo memoria para cargar una tipo textura (grupo de texturas)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void TexAlloc2(struct TexCon *ptc, int texcode, int num_fpg)
 {
@@ -497,9 +685,9 @@ void TexAlloc2(struct TexCon *ptc, int texcode, int num_fpg)
   ptc->pPic=GetPic2(texcode,num_fpg);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Leo la informacion de la textura de cualquier ancho,alto sin cargarla
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 struct PicInfo *GetPic2(int piccode, int num_fpg)
 {
@@ -517,7 +705,13 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
   while (i<1000) {
     if (fpg_aux[i]!=NULL) {
       n=*(fpg_aux[i]+15);           // Numero de puntos de control
-      if (piccode==*fpg_aux[i]) {   // Si lo encuentra termina
+      n = l2b32(n);
+      int pc = *fpg_aux[i];
+      pc = l2b32(pc);
+
+      // fprintf(stdout,"GetPic2 pc: %d piccode: %d\n",pc,piccode);
+
+      if (piccode==pc) {   // Si lo encuentra termina
         correcto=1;
         break;
       }
@@ -531,8 +725,12 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
     pic=(struct PicInfo *)AddEntry(&Pics);
     pic->code=piccode;
     pic->fpg=num_fpg;
-    pic->Width=*(fpg_aux[i]+14);
-    pic->Height=*(fpg_aux[i]+13);
+    int tmp = *(fpg_grf[i]+13); 
+    pic->Width=l2b32(tmp);
+
+    tmp = *(fpg_grf[i]+14); 
+    pic->Height=l2b32(tmp);
+
     pic->Raw=NULL;
     pic->InsX=pic->Width-1;
     pic->InsY=pic->Height/2;
@@ -567,9 +765,9 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
   return(pic);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Cargo una textura del fichero fpg abierto de cualquier ancho,alto
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void LoadPic2(struct PicInfo *pic)
 {
@@ -596,7 +794,10 @@ void LoadPic2(struct PicInfo *pic)
     while (i<1000) {
       if (fpg_aux[i]!=NULL) {
         n=*(fpg_aux[i]+15);             // Numero de puntos de control
-        if (pic->code==*fpg_aux[i]) {   // Si lo encuentra termina
+        n= l2b32(n);
+        int pc = *fpg_aux[i];
+        pc = l2b32(pc);
+        if (pic->code==pc) {   // Si lo encuentra termina
           correcto=1;
           break;
         }
@@ -608,7 +809,9 @@ void LoadPic2(struct PicInfo *pic)
     //-------------------------------------------------------------------------
     if (correcto) {
       pic->Width=*(fpg_aux[i]+14);
+      pic->Width=l2b16(pic->Width);
       pic->Height=*(fpg_aux[i]+13);
+      pic->Height=l2b16(pic->Height);
       size=pic->Width*pic->Height;
       buffer=(char *)(fpg_aux[i]+16+n);
       //-----------------------------------------------------------------------
@@ -640,9 +843,9 @@ void LoadPic2(struct PicInfo *pic)
   pic->Used++;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Carga la paleta
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void LoadPalette(char *palname)
 {
@@ -674,9 +877,9 @@ void LoadPalette(char *palname)
   Pal.Trans=ghost;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Crea la tabla de fog
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void set_fog_table(int intensidad,int r,int g, int b)
 {
@@ -723,9 +926,9 @@ void set_fog_table(int intensidad,int r,int g, int b)
     ghost[i]=i;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Creo las tablas de senos y cosenos y tangentes
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void LoadMath(void)
 {

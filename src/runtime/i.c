@@ -13,14 +13,16 @@
 // Libraries used
 ///////////////////////////////////////////////////////////////////////////////
 
-#define DEFINIR_AQUI
+#define DEFINIR_AQUI // DEFINED HERE - see global.h
 
 #include "inter.h"
 
 #include "cdrom.h"
 #include "divsound.h"
 #include "divmixer.hpp"
+#ifdef NETPLAY
 #include "netlib.h"
+#endif
 #include <time.h>
 #include <sched.h>
 
@@ -42,7 +44,7 @@ int DetectGUS(int*,int*,int*,int*,int*);
 void system_font(void);
 void interprete (void);
 void crea_cuad(void);
-void exec_process(void);
+void exec_process(int fast);
 void finalizacion (void);
 void elimina_proceso(int id);
 void nucleo_exec(void);
@@ -402,8 +404,10 @@ int DPMIalloc4k(void);
 void check_mouse(void);
 int _mouse_x,_mouse_y;
 
+#ifdef NETPLAY
 void MAINSRV_Packet(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
 void MAINNOD_Packet(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
+#endif
 
 extern int find_status;
 
@@ -483,11 +487,23 @@ insert_process(id_start);
 
   memcpy(&mem[id_init],&mem[iloc],iloc_pub_len<<2); // *** Init
   mem[id_init+_Id]=id_init;
+  while(mem[id_init]!=id_init) {
+    mem[id_init] = id_init;
+  }
+
+// fprintf(stdout, "i.c 490 ID: %d mem[id]: %d _Id: %d\n", id_init, mem[id_init],_Id);
+
   mem[id_init+_IdScan]=id_init;
   mem[id_init+_Status]=2;
 
   memcpy(&mem[id_start],&mem[iloc],iloc_pub_len<<2); // *** Main
   mem[id_start+_Id]=id_start;
+while(mem[id_start]!=id_start) {
+    mem[id_start] = id_start;
+  }
+
+// fprintf(stdout, "i.c 497 ID: %d mem[id]: %d _Id: %d\n", id_start, mem[id_start],_Id);
+
   mem[id_start+_IdScan]=id_start;
   mem[id_start+_Status]=2;
   mem[id_start+_IP]=mem[1];
@@ -756,7 +772,7 @@ void guarda_pila(int id, int sp1, int sp2) {
   printf("using stack: %d\n",stacks);
   //if(stacks>=65535)
   	//exit("out of memory");
-  stack[stacks]=p;
+  stack[stacks]=(memptrsize)p;
   
   if (p!=NULL) {
     mem[id+_SP]=stacks;
@@ -770,7 +786,7 @@ void carga_pila(int id) {
   int n;
   int32_t * p;
   if (mem[id+_SP]) {
-    p=stack[mem[id+_SP]];
+    p=(int32_t *)&stack[mem[id+_SP]];
     
     for (n=0;n<=p[1]-p[0];n++) 
     	pila[p[0]+n]=p[n+2];
@@ -786,9 +802,100 @@ void carga_pila(int id) {
 void actualiza_pila(int id, int valor) {
   int32_t * p;
   if (mem[id+_SP]) {
-    p=stack[mem[id+_SP]];
+    p=(int32_t *)&stack[mem[id+_SP]];
     p[p[1]-p[0]+2]=valor;
   }
+}
+
+// Iterate over ALL processes and sort them by priority.
+
+typedef struct {
+    int id;
+	int status;
+    int priority;
+    int completion;
+} ProcPriority;
+
+typedef struct {
+    ProcPriority* heap;
+    int size;
+    int capacity;
+} PriorityQueue;
+
+PriorityQueue *pq;
+
+int compare_processes(const void* a, const void* b) {
+    ProcPriority* p1 = (ProcPriority*)a;
+    ProcPriority* p2 = (ProcPriority*)b;
+    if (p1->priority != p2->priority) {
+        return p2->priority - p1->priority; // Higher priority first
+    }
+    return p1->completion - p2->completion; // Lower completion first
+}
+
+void end_exec(void) {
+	free(pq);
+}
+void init_exec(void) {
+	int num_processes = 0;
+	for (ide=id_start; ide<=id_end; ide+=iloc_len) {
+		num_processes++;
+	}
+	// printf("Expected: %d\n", procesos);
+	// printf("Number of processes: %d\n", num_processes);
+	// if(procesos != num_processes) {
+	// 	exit(-1);
+	// }
+
+	// Number of processes in var "procesos"
+
+	
+	// Initialise process queue
+    pq = (PriorityQueue*)malloc(sizeof(PriorityQueue));
+    pq->heap = (ProcPriority*)malloc(num_processes * sizeof(ProcPriority));
+    pq->size = 0;
+    pq->capacity = num_processes;
+	int pqid = 0;
+
+	// Iterate over all processes and insert them into the queue
+	for (id=id_start; id<=id_end; id+=iloc_len) {
+		if(mem[id+_Status] == 2 && mem[id+_Executed] == 0) {
+			ProcPriority p = {
+				id,
+				mem[id+_Status],
+				mem[id+_Priority],
+				mem[id+_Executed]
+			};
+
+			pq->heap[pqid] = p;
+			pqid++;
+			pq->size++;
+		}
+	}
+
+//	printf("pqid: %d\n", pqid);
+//	printf("Queue size: %d\n", pq->size);
+
+	// Now sort the queue
+
+    qsort(pq->heap, pq->size, sizeof(ProcPriority), compare_processes);
+
+	// Dump the queue
+
+/*
+	printf("Queue data:\n");
+	for(int a=pq->size-1; a>=0;a--) {
+		ProcPriority *p = &pq->heap[a];
+		printf("ID: %d\n", p->id);
+		printf("Priority: %d\n", p->priority);
+		printf("Executed: %d\n", p->completion);
+	}
+
+*/
+
+//	free(pq);
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -820,8 +927,9 @@ void mainloop(void) {
 	error_vpe=0;
   frame_start();
 
+	init_exec();
 #ifdef DEBUG
-    if (kbdFLAGS[_F12] || trace_program) {
+    if (kbdFLAGS[_DBG_KEY] || trace_program) {
       trace_program=0;
       if (debug_active) call_to_debug=1;
     }
@@ -833,8 +941,9 @@ void mainloop(void) {
 #ifdef DEBUG
       if (call_to_debug) { call_to_debug=0; debug(); }
 #endif
-      exec_process();
+      exec_process(1);
     } while (ide);
+	end_exec();
     frame_end();
     if (error_vpe!=0) {
       v_function=-2; e(error_vpe);
@@ -847,6 +956,8 @@ void mainloop(void) {
 void interprete (void)
 {
   inicializacion();
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
 #ifndef DEBUG
 //#ifndef __EMSCRIPTEN__
 //  madewith();
@@ -857,6 +968,8 @@ void interprete (void)
   emscripten_set_main_loop(mainloop, 0, 1);
 #else
   while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
+	// fprintf(stdout,"%d\n", __LINE__);
+  
 	mainloop();
   }
   finalizacion();
@@ -876,13 +989,17 @@ void es_fps(byte f) {
 int oreloj;
 #endif
 
+int dirtylist;
+
 #ifndef DEBUG
 inline 
 #endif
 
-void exec_process(void) {
-
-	ide=0; max=0x80000000;
+void exec_process(int fast) {
+	fast = 0;
+//	int count = 0;
+	ide=0; 
+	max=0x80000000;
 
 #ifdef DEBUG
 
@@ -896,13 +1013,49 @@ void exec_process(void) {
 
 #endif
 
+	if(fast) {
+		if(dirtylist) {
+		// if(procesos != pq->capacity) {
+			// printf("incorrect process count!. Was %d now %d\n", pq->capacity, procesos);
+//			printf("Dirty flag set. rehashing process ids\n");
+			free(pq);
+			init_exec();
+			dirtylist = false;
+		}
+		do {
+
+			if(pq->size <= 0) {
+				return;
+			}
+
+			ProcPriority *p = &pq->heap[pq->size-1];
+			id = p->id;
+			
+			// printf("ID: %d\n");
+			// printf("Status: %d\n", mem[id+_Status]);
+			// printf("Executed: %d\n", mem[id+_Executed]);
+
+			if(	mem[id+_Status] == 2 && !mem[id+_Executed]) {
+				// printf("Found ID to execute: %d\n", id);
+				ide = id;
+			} else {
+				pq->size--;
+			}
+		} while (ide == 0);
+	} else {
+
+	// printf("ID: %d\n", pq->size-1);
+	// printf("Executing ID: %d\n", ide);
 	id=id_old;
+
 	
-	do {	  
+//	printf("Searching for next process to execute: %d\n",id);
+	do {
 		if (mem[id+_Status]==2 && !mem[id+_Executed] &&
 			mem[id+_Priority]>max) { 
 		
-			ide=id; max=mem[id+_Priority]; 
+			ide=id;  // this is our best candidate for execution
+			max=mem[id+_Priority];  // current priority process
 		}
 
 		if (id==id_end) 
@@ -910,8 +1063,13 @@ void exec_process(void) {
 		else 
 			id+=iloc_len;
 
+//		count++;
+//		printf("Current ID: %d\n", id);
 	} while (id!=id_old);
 
+	}
+//	printf("Searched %d processes to find next pid\n", count);
+//	printf("Processing ID: %d\n", ide);
 
 	if (ide) {
 		if (mem[ide+_Frame]>=100) {
@@ -941,6 +1099,22 @@ void exec_process(void) {
 
 		}
 	}
+	if(fast) {
+		if(mem[ide+_Executed] == 1) {
+			pq->size--;
+		}
+
+		if (pq->size == 0) {
+			// free(pq);
+			// init_exec();
+			// if(pq->size!=0) {
+			// 	printf("PQ Size: %d\n", pq->size);
+			// } else {
+			// if(pq->size==0) {
+				ide = 0;
+			// } 
+		}
+	}
 }
 
 //�����������������������������������������������������������������������������
@@ -950,8 +1124,8 @@ void exec_process(void) {
 int oo; // Para usos internos en el kernel
 
 void nucleo_exec() {
-
 	do {
+//		fprintf(stdout,"Opcode: %d %x\n", (byte)mem[ip]);
 		switch ((byte)mem[ip++]){
 #include "debug/kernel.cpp"
 		}
@@ -1024,6 +1198,8 @@ void trace_process(void) {
 //�����������������������������������������������������������������������������
 
 void nucleo_trace(void) {
+
+//	fprintf(stdout,"Trace Opcode: %d %x\n", (byte)mem[ip]);
 
 	switch ((byte)mem[ip++]) {
 #define TRACE
@@ -1154,6 +1330,9 @@ void frame_start(void) {
 	if (get_reloj()>ultimo_reloj) {
 		ffps=(ffps*9.0f+1000.0f/(float)(get_reloj()-ultimo_reloj))/10.0f;
 		fps=(int)(ffps+0.5f);
+		// fprintf(stdout,"FPS: %d\n", fps);
+		// fprintf(stdout,"Reloj: %d\n", get_reloj());
+		// fprintf(stdout,"Reloj: %d\n", ultimo_reloj);
 	}
 
 	ultimo_reloj=get_reloj();
@@ -1191,8 +1370,8 @@ void frame_start(void) {
 #ifdef WIN32
 			SDL_Delay(((int)freloj-old_reloj)-1);
 #else
-			sched_yield();			
-//			usleep(((int)freloj-old_reloj)-1); 
+			// sched_yield();			
+			usleep(((int)freloj-old_reloj)-1); 
 #endif			
 		} while (get_reloj()<(int)freloj); // TO keep FPS
 		}
@@ -1428,6 +1607,8 @@ void frame_end(void) {
 
 #ifndef NOTYET
 
+{
+
     do {
 
 #ifdef DEBUG
@@ -1449,6 +1630,8 @@ void frame_end(void) {
 				if (im7[n].on && (m7+n)->z>=max && !im7[n].painted) {
 					m7ide=n+1; 
 					max=(m7+n)->z;
+					// fprintf(stdout,"Mode7 ready to paint %d %d\n", m7ide, max);
+
 				}
 
 				for (n=0;n<10;n++)
@@ -1470,6 +1653,13 @@ void frame_end(void) {
 					max=draw_z;
 					otheride=3;
 				}
+
+				// printf("Max draw: %d\n", max);
+				// printf("OtherIDE: %d\n", otheride);
+				// printf("ScrollIDE: %d\n", scrollide);
+				// printf("M7IDE: %d\n", m7ide);
+				// printf("IDE: %d\n", ide);
+
 
 				if (otheride) {
 					if (otheride==1) {
@@ -1515,7 +1705,9 @@ void frame_end(void) {
 						drawings_pintados=1;
 					}
 				} else if (scrollide) {
-					iscroll[snum=scrollide-1].painted=1;
+					snum=scrollide-1;
+					// fprintf(stdout,"Scroll %d\n", snum);
+					iscroll[snum].painted=1;
 					
 					if (iscroll[snum].on==1)
 						scroll_simple();
@@ -1541,6 +1733,8 @@ void frame_end(void) {
 			);
 */
 		} while (ide || m7ide || scrollide || otheride);
+
+}
 
 #else // IFDEFNOTYET
 
@@ -1583,6 +1777,9 @@ void frame_end(void) {
 #endif
 				} 
 				textos_pintados=1;
+
+
+
 #endif // NDEFNOTYET
 
 				if (demo)
@@ -1694,7 +1891,8 @@ void frame_end(void) {
 
 void elimina_proceso(int id) {
 	int id2;
-
+	// printf("Process %d killed. Setting dirtylist flag\n", id);
+	// dirtylist = true;
 #ifdef LLPROC
 	remove_process(id);
 #endif
@@ -1825,7 +2023,9 @@ void finalizacion (void) {
   free(sys06x08);
 #ifdef MIXER
   Mix_CloseAudio();
+  #ifndef AMIGA
   Mix_Quit();
+  #endif
 #endif
 
 #ifdef DEBUG
@@ -1835,6 +2035,7 @@ void finalizacion (void) {
 #endif
 
 #if defined (WIN32) || defined (PSP)
+# || defined (AMIGA)
 
 	closefiles();
 
@@ -1893,7 +2094,7 @@ void exer(int e) {
 	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
 #endif
 
-	chdir(divpath);
+	_chdir(divpath);
 
 #ifdef STDOUTLOG
 	printf("exited %d\n",e);
@@ -1944,7 +2145,7 @@ void e(int texto) {
 #if defined (DOS) || defined (WIN32)
 	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
 #endif
-	chdir(divpath);
+	_chdir(divpath);
 
 	exit(26);
 }
@@ -1983,6 +2184,12 @@ int main(int argc,char * argv[]) {
   uint32_t exestart = 0;
   uint32_t datstart = 0;
 
+
+fprintf(stdout,"Args: %d\n",argc);
+for(int i=0;i<argc;i++) {
+	fprintf(stdout, "Arg %d = %s\n", i,argv[i]);
+}
+
 // fix stderr / stdout
 #ifdef WIN32
 //	freopen( "CON", "w", stdout );
@@ -2004,7 +2211,10 @@ int main(int argc,char * argv[]) {
 
   remove("DEBUGSRC.TXT");
   
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   getcwd(divpath,PATH_MAX+1);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+	fprintf(stdout,"Path: %s\n", divpath);
 
 #ifdef DOS
   numfiles=flushall();
@@ -2013,8 +2223,10 @@ int main(int argc,char * argv[]) {
 if(true) {
 //	printf("searching for magic\n");
 // search for magic..
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	f=fopen(argv[0],"rb");
+  fprintf(stdout, "%s\n", argv[0]);
 
 	memset(buf,0,55);
 	
@@ -2043,11 +2255,11 @@ if(true) {
 #ifndef __EMSCRIPTEN__
 #ifndef DROID
   if (argc<2 && exesize==0) {
-    printf("DIV2015 Run time library - version 2.02a - http://div-arena.co.uk\n");
-    printf("Error: Needs a DIV executable to load.\n");
+    fprintf(stdout,"DIV2015 Run time library - version 2.02a - http://div-arena.co.uk\n");
+    fprintf(stdout,"Error: Needs a DIV executable to load.\n");
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-    chdir(divpath);
+    _chdir(divpath);
 
     exit(26);
   }
@@ -2060,10 +2272,12 @@ if(true) {
   _harderr(critical_error);
 #endif
 
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	vga_an=320; vga_al=200; 
 	ireloj=1000.0/24.0; // 24 fps
 	max_saltos = 0; // 0 skips
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 #ifdef __EMSCRIPTEN__
 
@@ -2087,19 +2301,32 @@ if(argc>1 && exesize==0) {
     #endif
 
     _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-    chdir(divpath);
+    _chdir(divpath);
 
     exit(26);
   }
 }
 //#endif
 #endif
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
 	if(argc==1) {
-		chdir("resources");
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+		_chdir("resources");
 		f = fopen("EXEC.EXE","rb");
 	} else {
-		f=fopen(argv[1],"rb");
+			
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+		fprintf(stdout, "Opening binary: %s\n", argv[1]);
+
+		f=fopen(argv[1],"rb+");
+
+		if(!f) {
+			fprintf(stdout,"Failed to open %s\n", argv[1]);
+		
+		}
 	}
 	
 	if(exesize>0) {
@@ -2109,19 +2336,26 @@ if(argc>1 && exesize==0) {
 	}
 	
 	//printf("%x %s\n",f,argv[1]);
-	
-	if(!f) {
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
+	if(!f) {
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifndef DEBUG
 		printf("Error: Needs a DIV executable to load!\n");
 #endif
-		chdir(divpath);
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+		_chdir(divpath);
+			  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 		exit(26);
+			  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 	}
 #endif
-
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifdef DEBUG
 // check for full screen
+  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
   fsf=fopen("system/exec.fs","rb");
   
   if(fsf) {
@@ -2129,24 +2363,30 @@ if(argc>1 && exesize==0) {
 	fclose(fsf);
   }
   
+fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
   fsf = fopen("system/exec.path","rb");
   if(fsf) {
 	fgets(prgpath, _MAX_PATH,fsf);
 	fclose(fsf);
 }
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   inicializa_textos((byte *)"system/lenguaje.int");
 #else
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   inicializa_textos((byte *)argv[0]);
 #endif
 
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 // check if div1 or div2 exe
   fseek(f,0,SEEK_END);
   len=ftell(f);
 //  printf("pack len: %d\n",len);
-  
+  	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
   if(exesize>0)
 	exestart=len-exesize-datsize-10;
 
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifdef ZLIB
 if(datsize>0) {	
 	datastartpos=exestart+exesize;
@@ -2154,8 +2394,10 @@ if(datsize>0) {
 }
 #endif
   
+  	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 fseek(f,0x2+exestart,SEEK_SET);
 fread(&DIV_VER,1,1,f);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 //printf("%s\n",DIV_VER=='D'?"DIV 1":"DIV 2");
 //  if(exesize==0) {
 //} else {
@@ -2164,6 +2406,9 @@ fread(&DIV_VER,1,1,f);
 
 //printf("div ver: [%d] [%c]\n",DIV_VER,DIV_VER);
 
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+	  	  fprintf(stdout, "DIV VER: %c\n",DIV_VER);
 switch(DIV_VER) {
 	case 'j':
 	break;
@@ -2275,32 +2520,70 @@ for(a=0;a<10;a++){
   }
 
 
+  printf("Imem_max = %d\n", imem_max);
+  
+//  imem_max *= 4;
+
   if ((mem=(int*)malloc(4*imem_max+1032*5+16*1025+3))!=NULL){
 
+	fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
     mem=(int*)((((memptrsize)mem+3)/4)*4);
 
     filenames=(char*)&mem[imem_max+258*5]; // Buffer de 16*1025 para dirinfo[].name
-
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
     memset(mem,0,4*imem_max+1032*5);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
     // To add strings (on the fly?) "in the air"
     nullstring[0]=imem_max+1+258*0; mem[nullstring[0]-1]=0xDAD00402;
     nullstring[1]=imem_max+1+258*1; mem[nullstring[1]-1]=0xDAD00402;
     nullstring[2]=imem_max+1+258*2; mem[nullstring[2]-1]=0xDAD00402;
     nullstring[3]=imem_max+1+258*3; mem[nullstring[3]-1]=0xDAD00402;
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
     memcpy(mem,mimem,40);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
     if ((ptr=(byte*)malloc(len))!=NULL) {
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
       fread(ptr,1,len,f);
       fclose(f);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
       len_descomp=mem[9];
+	  fprintf(stdout, "len_Descomp: %d\n", mem[9]);
+	//   len_descomp = l2b32(len_descomp);
+	//   fprintf(stdout, "len_Descomp: %d\n",len_descomp);
+
+	  fprintf(stdout, "len: %d\n",len);
+
+	  fprintf(stdout, "memptrsize: %d\n", sizeof(memptrsize));
+
+
+		char * ztmp = (char *)malloc(len_descomp);
+
+
 #ifdef ZLIB
-      if (!uncompress((unsigned char *)&mem[9],&len_descomp,ptr,len)) 
+	fprintf(stdout, "Trying to decompress binary\n");
+
+	// int zres = uncompress(ztmp,&len_descomp,ptr,len);
+	int zres = uncompress((unsigned char *)&mem[9],&len_descomp,ptr,len);
+
+	fprintf(stdout, "Result: %d\n", zres);
+
+    	// exit(0);
+
+	//   if (!uncompress((unsigned char *)&mem[9],&len_descomp,ptr,len)) 
+
+    //   if (!uncompress(ztmp,&len_descomp,ptr,len)) 
+	if(!zres) 	  
 #else
 	if(false)
 #endif
 {
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+// exit(0);
 #ifdef DUMP_BYTECODE
 FILE *m = fopen("exec.m","wb");
 if(m) {
@@ -2309,7 +2592,12 @@ if(m) {
 	fclose(m);
 }
 #endif
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
         free(ptr);
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+	  
+	//   mem[0] = l2b32(mem[0]);
 
         if ((mem[0]&128)==128) { trace_program=1; mem[0]-=128; }
         if ((mem[0]&512)==512) { ignore_errors=1; mem[0]-=512; }
@@ -2320,69 +2608,102 @@ if(m) {
           #endif
           mem[0]-=1024;
         }
-
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         i=imem_max+258*4;
         if ((_argc=argc-1)>10) _argc=10;
         for (n=0;n<_argc && n<argc-1;n++) {
           memcpy(&mem[i],argv[n+1],strlen(argv[n+1])+1);
           _argv(n)=i; i+=(strlen(argv[n+1])+4)/4;
         } for (;n<10;n++) _argv(n)=0;
-
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         memb=(byte*)mem;
         memw=(word*)mem;
-
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         if (mem[0]!=0 && mem[0]!=1) {
           #ifndef DEBUG
           printf("Error: Needs a DIV executable to load.\n");
           #endif
 
           _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-          chdir(divpath);
+          _chdir(divpath);
 
           exit(26);
         }
-
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
         kbdInit();
+			  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+			  	//   exit(0);
+
 #ifdef DEBUG
-  printf("Looking for joysticks\n");
+  printf("Looking for joysticks\n"	);
 #endif
-  if(OSDEP_NumJoysticks() > 0) { 
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+	if(OSDEP_NumJoysticks() > 0) { 
 		divjoy = (OSDEP_Joystick*)OSDEP_JoystickOpen(0);
 		joy_status=1;
-
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifdef DEBUG
-		printf("Joyname:    %s\n", OSDEP_JoystickName(0));
-		printf("NumAxes: %d: Numhats: %d : NumButtons: %d\n",OSDEP_JoystickNumAxes(divjoy), OSDEP_JoystickNumHats(divjoy),OSDEP_JoystickNumButtons(divjoy));
+		// printf("Joystick ID: %d\n", divjoy);
+		// printf("Joyname:    %s\n", OSDEP_JoystickName(divjoy));
+		// printf("NumAxes: %x\n",OSDEP_JoystickNumAxes(divjoy));
+		// printf("Numhats: %x\n",OSDEP_JoystickNumHats(divjoy));
+		// printf("NumButtons: %x\n",OSDEP_JoystickNumButtons(divjoy));
 #endif		
+/* What?
 	if (OSDEP_JoystickNumHats(divjoy)==0)  {
 		OSDEP_JoystickClose(divjoy);
 		divjoy=NULL;
 	}
-		
+*/
 	} else {
 		joy_status = 0;
 	}
 
+	  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+	interprete();        
 
-        interprete();        
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 #ifndef __EMSCRIPTEN__
-        _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-        chdir(divpath);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
 
-        exit(26); // Exit without clearing screen
+	_dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+	_chdir(divpath);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+	exit(26); // Exit without clearing screen
 #endif
-      } else {
-        free(ptr);
-        exer(1);
-      }
 
-    } else {
+	} else {
+		fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+		free(ptr);
+		fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
+		exer(1);
+	}
+
+} else {
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
       fclose(f);
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
       exer(1);
     }
 
-  } else { fclose(f); exer(1); }
+  } else { 
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+	fclose(f); 
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+	exer(1); 
+		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+	}
 }
+
+		 		  fprintf(stdout,"%s %d\n", __FILE__, __LINE__);
+
 return 0;
 
 }
@@ -2461,14 +2782,14 @@ void busca_packfile(void) {
 #ifdef ZLIB
   // look for paks in embedded zip
   if(datastartpos>0) {
-    zip = unzOpen(exebin);
+    zip = (unzFile *)unzOpen(exebin);
     fprintf(stdout,"%x\n",zip);
     // found zip. search for .pak files
     if(unzGoToFirstFile(zip)==UNZ_OK) {
       do {
         if (unzGetCurrentFileInfo(zip, &fileInfo, szCurrentFileName, sizeof(szCurrentFileName)-1, NULL, 0, NULL, 0) == UNZ_OK) {
           fprintf(stdout,"found file: %s\n",szCurrentFileName);
-          f = memz_open_file(szCurrentFileName);
+          f = memz_open_file((unsigned char *)szCurrentFileName);
           fprintf(stdout,"TESTING %s\n",szCurrentFileName);
           if(f) {
             if(is_pak(f,szCurrentFileName)) {
@@ -2535,7 +2856,7 @@ void GetFree4kBlocks(void)
   }
 
   _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
-  chdir(divpath);
+  _chdir(divpath);
 
   exit(0);
 #endif

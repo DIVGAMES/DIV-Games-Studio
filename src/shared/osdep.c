@@ -1,4 +1,8 @@
+#ifdef EDITOR
 #include "global.h"
+#else
+#include "inter.h"
+#endif
 
 #include "osdep.h"
 #include <ctype.h>
@@ -7,6 +11,10 @@
 
 #include <fnmatch.h>
 
+#include <sys/dir.h>
+#if defined(AMIGA)
+extern int alphasort(const void*,const void*);
+#endif
 
 #ifdef __EMSCRIPTEN__
 #include <string.h>
@@ -28,7 +36,7 @@ char * _strupr(char *string)
 {
 	int x=0;
 	char *st = string;
-	if(string>0 && strlen(string)>0) {
+	if(string[0] && strlen(string)>0) {
 	st = (char *)malloc(strlen(string));
 	
 //printf("string: [%s]\n",string);
@@ -47,6 +55,7 @@ else return " ";
 
 
  
+#if !defined (AMIGA)
 char * strlwr(char *s)
 {
 char *ucs = (char *) s;
@@ -57,6 +66,7 @@ char *ucs = (char *) s;
   return ucs;
 }
 
+#endif
 
 char * _strlwr(char *string)
 {
@@ -93,7 +103,7 @@ void _dos_setdrive( unsigned __drivenum, unsigned *__drives )
 }
 
 
-
+#if !defined (AMIGA)
 char * itoa(long n, char *buf, int len)
 {
 //    int len = n==0 ? 1 : floor(log10l(abs(n)))+1;
@@ -103,6 +113,8 @@ char * itoa(long n, char *buf, int len)
     snprintf(buf, len+1, "%ld", n);
     return   buf;
 }
+
+#endif
 
 void call(const voidReturnType func) {	
 	func();
@@ -244,12 +256,20 @@ void _makepath(char* Path,const char* Drive,const char* Directory,
 
 int _chdir(const char* Directory)
 {
-//	printf("Chdir %s\n",Directory);
+  int res =0;
+//	fprintf(stdout,"OSDEP Chdir %s\n",Directory);
 
-	if(Directory!=NULL && strlen(Directory)>0)
-		chdir(Directory);
+	if(Directory!=NULL && strlen(Directory)>0) {
+		res = chdir(Directory);
+  }
+  return res;
+}
 
-  return 0;
+int _getcwd(char* Buffer,int Size) {
+  if(getcwd(Buffer,Size)!=NULL)
+    return 0;
+  else
+    return -1;
 }
 
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
@@ -269,88 +289,89 @@ char findname[2048];
 struct dirent **namelist=NULL;
 
 unsigned int _dos_findfirst(char *name, unsigned int attr, struct find_t *result) {
-//printf("TODO - findfirst\n");
+	unsigned int ret =0;
 
+  fprintf(stdout,"Find First: %s\n", name);
+	strcpy(findmask,name);
+	strlwr(findmask);
 
- unsigned int ret =0;
+  // fprintf(stdout,"Current Directory: %s\n", getcwd(NULL,0));
 
-//printf("name is %s\n",name);
+  if(namelist!=NULL) {
+  	while(++np<nummatch) {
+      // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+	  	free(namelist[np]);
+    	namelist[np] = NULL;
+	  }
+  	// free(namelist);
+	  namelist=NULL;
+  }
 
-strcpy(findmask,name);
-strlwr(findmask);
+  nummatch = scandir(".", &namelist, 0, alphasort); 
 
+  fprintf(stdout,"Num Matches for working dir: %d\n", nummatch);
 
+	np=-1;
+	type = attr;
 
+	ret =_dos_findnext(result);
 
-  //  int n;
+	// fprintf(stdout,"matches: %d\n",nummatch);
+  // fprintf(stdout, "Ret: %d\n",ret);
+	return (ret);
 
-if(namelist!=NULL) {
-	while(++np<nummatch) {
-		free(namelist[np]);
-	}
-	free(namelist);
-	namelist=NULL;
 }
 
-    nummatch = scandir(".", &namelist, 0, alphasort); 
-np=-1;
-type = attr;
-
-//n--;
-ret =_dos_findnext(result);
-
-//printf("matches: %d\n",nummatch);
-
-return (ret);
-
-
-/*result->attrib=0;
-	strcpy(result->name,namelist[0]->d_name);
-	if(namelist[0]->d_type == DT_DIR) {
-		result->attrib=16;
-	}
-	
-///	result->
-								return 0;
-								* */
-							}
 unsigned int _dos_findnext(struct find_t *result) {
-//	printf("TODO - findnext\n");
-	
-while(++np<nummatch) {
-	strcpy(result->name,namelist[np]->d_name);
-	result->attrib=0;
-	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
-		if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
-			
-			// only if searching via wildcard - fixes "new"
-			if(strchr(findmask,'*')) {
-				free(namelist[np]);
-				result->attrib=16;
-				return 0;
-			}
-		} 
-		strcpy(findname, result->name);
-//		strlwr(findname);
+  memset(result, 0, sizeof(*result));
+  result->attrib = _A_NORMAL;
+  // fprintf(stdout, "NP: %d, Num matches: %d\n", np, nummatch);
 
-//printf("Matching %s to %s\n",findmask,findname);
+  while(++np<nummatch) {
+	  strcpy(result->name,namelist[np]->d_name);
+    // fprintf(stdout,"Found File: %s\n", result->name);
+    // fprintf(stdout,"Flags: %b\n", namelist[np]->d_type);
 
-	if (fnmatch(findmask, findname, FNM_PATHNAME | FNM_CASEFOLD)==0){
+    result->attrib=0;
+    // If the match is ".." or it is not ".".
+  	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
+      // Are we looking for a director, and is the type of the match _A_SUBDIR
+		  if((namelist[np]->d_type & DT_DIR) && type == _A_SUBDIR) {
+        // Does the mask match '*', or is it an exact match
+			  if(strchr(findmask,'*') || !strcmp(findmask,namelist[np]->d_name)) {
+          // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+  				free(namelist[np]);
+          namelist[np] = NULL;
+	  			result->attrib=16;
+		  		return 0;
+			  }
+		  }
+
+  		strcpy(findname, result->name);
+
+	  	if (fnmatch(findmask, findname, FNM_PATHNAME | FNM_CASEFOLD)==0){
 		
-		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
-			//printf("free'ing np [%d] [FILE]\n",np,result->name);
-			free(namelist[np]);
-			result->attrib=0;
-			return 0;
-		} 
+        if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
+          // fprintf(stdout, "free'ing np [%d] [FILE]\n",np,result->name);
+          // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+          if(namelist[np]!=NULL) {
+            free(namelist[np]);
+            namelist[np]=NULL;
+          }
+          result->attrib=0;
+          return 0;
+        } 
+      }
+	  }
+    // fprintf(stdout, "free'ing np [%d] *not matched* %s (num matches: %d) %X\n",np, namelist[np]->d_name, nummatch, namelist[np]);
+    if(np<nummatch) {
+      if(namelist[np]!=NULL) {
+        // fprintf(stdout,"Freeing %s %d\n", namelist[np]->d_name, np);
+//        free(namelist[np]);
+        namelist[np] = NULL;
+      }
+    }
 	}
-}
-//printf("free'ing np [%d] *not matched* %s\n",np, namelist[np]->d_name);
-if(np<nummatch)
-	free(namelist[np]);
-}
-//free(namelist);
-//namelist=NULL;
 	return 1;
 }
 

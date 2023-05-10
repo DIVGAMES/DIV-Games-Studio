@@ -1,13 +1,13 @@
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Cขdigo de las funciones de detecciขn de colisiขn
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+// C๏ฟฝdigo de las funciones de detecci๏ฟฝn de colisi๏ฟฝn
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 #include "inter.h"
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 // Cabeceras
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 int  comprobar_colisiones(int i,int bloque,int scroll);
-void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags);
+void test_collision(byte * c_buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags);
 void sp_rotado_p(byte * si, int an, int al, int flags);
 void test_normal(byte * p, int x, int y, int an, int al, int flags);
 void test_cortado(byte * p, int x, int y, int an, int al, int flags);
@@ -16,16 +16,16 @@ void test_rotado(byte * si, int an, int al, int flags);
 void test_scanc(byte * p,short n,short m,short o,byte * si,int an,int x0,int y0,int x1,int y1);
 void test_scan(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1);
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables definidas a nivel de mขdulo
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+// Variables definidas a nivel de m๏ฟฝdulo
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 int colisiona;
 int p[24];
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Out_region(id,region) - solo para gr ficos de pantalla o scroll
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//      Out_region(id,region) - solo para gr๏ฟฝficos de pantalla o scroll
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void out_region(void) {
 
@@ -33,7 +33,7 @@ void out_region(void) {
   int xg,yg,xg1,yg1,x,y,an,al;
   int * ptr,n,m;
 
-  reg=pila[sp--]; id=pila[sp]; pila[sp]=1; // Por defecto no est  en la region
+  reg=pila[sp--]; id=pila[sp]; pila[sp]=1; // Por defecto no est๏ฟฝ en la region
 
   if (mem[id+_Ctype]==2) { e(137); return; }
 
@@ -59,12 +59,25 @@ void out_region(void) {
   if ((ptr=g[file].grf[graph])==NULL) { e(121); return; }
 
   x=mem[id+_X]; y=mem[id+_Y];
-  if (mem[id+_Resolution]>0) { x/=mem[id+_Resolution]; y/=mem[id+_Resolution]; }
+  
+  if (mem[id+_Resolution]>0) { 
+    x/=mem[id+_Resolution]; 
+    y/=mem[id+_Resolution]; 
+  }
 
-  if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-  } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
 
-  an=ptr[13]; al=ptr[14];
+  word wptr32 = l2b16(*((word*)ptr+32));
+  word wptr33 = l2b16(*((word*)ptr+33));
+
+
+  if (iptr15==0 || wptr32==65535) { xg=iptr13/2; yg=iptr14/2;
+  } else { xg=wptr32; yg=wptr33; }
+
+  an=iptr13; 
+  al=iptr14;
 
   if (angle) {
     sp_size(&x,&y,&an,&al,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
@@ -83,34 +96,34 @@ void out_region(void) {
 
     for (n=0;n<10;n++)if(iscroll[n].on&&(mem[id+_Cnumber]==0||(mem[id+_Cnumber]&(1<<n)))) {
 
-      xg=x+iscroll[n].x-iscroll[n].map1_x; // Posiciขn del sprite en el scroll
+      xg=x+iscroll[n].x-iscroll[n].map1_x; // Posici๏ฟฝn del sprite en el scroll
       yg=y+iscroll[n].y-iscroll[n].map1_y;
 
-      xg1=xg+an; yg1=yg+al; // 1ง Intersecciขn de xg,yg,an,al e iscroll[n]
+      xg1=xg+an; yg1=yg+al; // 1๏ฟฝ Intersecci๏ฟฝn de xg,yg,an,al e iscroll[n]
 
       if (iscroll[n].x>xg) xg=iscroll[n].x;
       if (iscroll[n].y>yg) yg=iscroll[n].y;
       if (iscroll[n].x+iscroll[n].an<xg1) xg1=iscroll[n].x+iscroll[n].an;
       if (iscroll[n].y+iscroll[n].al<yg1) yg1=iscroll[n].y+iscroll[n].al;
 
-      if (xg>=xg1 || yg>=yg1) continue; // Si no hay intersecciขn, continua
+      if (xg>=xg1 || yg>=yg1) continue; // Si no hay intersecci๏ฟฝn, continua
 
       if (xg<region[reg].x1 && yg<region[reg].y1 && xg1>region[reg].x0 &&
-        yg1>region[reg].y0) { pila[sp]=0; return; } // Si est  en la regiขn
+        yg1>region[reg].y0) { pila[sp]=0; return; } // Si est๏ฟฝ en la regi๏ฟฝn
 
     }
 
   } else if (mem[id+_Ctype]==0) {
 
     if (x<region[reg].x1 && y<region[reg].y1 && x+an>region[reg].x0 &&
-        y+al>region[reg].y0) pila[sp]=0; // Si est  en la regiขn
+        y+al>region[reg].y0) pila[sp]=0; // Si est๏ฟฝ en la regi๏ฟฝn
 
   }
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 //      Graphic_info(file,graph,info)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void graphic_info(void) {
 
@@ -126,105 +139,225 @@ void graphic_info(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graph])==NULL) { e(121); return; }
 
-  if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-  } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+
+  word wptr32 = l2b16(*((word*)ptr+32));
+  word wptr33 = l2b16(*((word*)ptr+33));
+
+
+
+  if (iptr15==0 || wptr32==65535) { xg=iptr13/2; yg=iptr14/2;
+  } else { xg=wptr32; yg=wptr33; }
 
   switch(pila[sp+2]) {
-    case 0: pila[sp]=ptr[13]; break;                    //g_an (original)
-    case 1: pila[sp]=ptr[14]; break;                    //g_al (original)
+    case 0: pila[sp]=iptr13; break;                    //g_an (original)
+    case 1: pila[sp]=iptr14; break;                    //g_al (original)
     case 2: pila[sp]=xg; break;                         //g_x_centro
     case 3: pila[sp]=yg; break;                         //g_y_centro
     default: e(138);
   }
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 // Funcion principal del lenguaje collision(tipo de proceso)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 // *** OJO, Detecta choques pantalla-pantalla, scroll-scroll y pantalla-scroll
-// Pero los gr ficos que est n en scroll detectan colisiones sขlo en el primer
-// scroll en el que est n (aunque estn en varios)
+// Pero los gr๏ฟฝficos que est๏ฟฝn en scroll detectan colisiones s๏ฟฝlo en el primer
+// scroll en el que est๏ฟฝn (aunque est๏ฟฝn en varios)
+
+byte * collision_buffer = NULL;
 
 void collision(void) {
 
   int i,bloque; // Recorre procesos de _IdScan en adelante, si _IdScan=0 desde start
   int file,graph,angle;
   int x,y,n,m;  // Coordenadas del proceso actual
-  int64_t xg,yg;  // Centro gravitatorio del gr fico del proceso actual
+  int64_t xg,yg;  // Centro gravitatorio del gr๏ฟฝfico del proceso actual
   int * ptr;
 
-  bloque=pila[sp]; pila[sp]=0; // Por defecto no colisiona
+  bloque=pila[sp]; 
+  pila[sp]=0; // Por defecto no colisiona
 
-  if (mem[id+_Ctype]==2) { e(139); return; }
+  
+  if (mem[id+_Ctype]==2) { 
+    e(139); return; 
+  }
 
   if (mem[id+_IdScan]==0 || bloque!=mem[id+_BlScan]) {
-    mem[id+_BlScan]=bloque; i=id_start;
-  } else if (mem[id+_IdScan]>id_end) { pila[sp]=0; return; }
-         else i=mem[id+_IdScan];
+    mem[id+_BlScan]=bloque; 
+    i=id_start;
+  } else {
+    if (mem[id+_IdScan]>id_end) { 
+      pila[sp]=0; 
+      return; 
+    } else {
+      i=mem[id+_IdScan];
+    }
+  }
 
-  file=mem[id+_File]; graph=mem[id+_Graph]; angle=mem[id+_Angle];
+  file=mem[id+_File]; 
+  graph=mem[id+_Graph]; 
+  angle=mem[id+_Angle];
 
-  if (file<0 || file>max_fpgs) { e(109); return; }
+  // fprintf(stdout,"collision ID: %d %d %d %d\n",id, file,graph,angle);
+
+  if (file<0 || file>max_fpgs) { 
+    e(109); 
+    return; 
+  }
 
   if ((n=mem[id+_XGraph])>0) {
-    m=mem[n]; if (m<1 || m>256) return;
-    while (angle>=2*pi) angle-=2*pi;
-    while (angle<0) angle+=2*pi;
+    m=mem[n];
+     if (m<1 || m>256) {
+      return;
+     }
+    while (angle>=2*pi) {
+      angle-=2*pi;
+    }
+    while (angle<0) {
+      angle+=2*pi;
+    }
     mem[id+_Flags]&=254;
-    graph=((angle+(2*pi)/(m*2))*m)/(2*pi); angle=0;
-    if (graph>=m) graph=0;
-    if ((graph=mem[n+1+graph])<0) { graph=-graph; mem[id+_Flags]|=1; }
+    graph=((angle+(2*pi)/(m*2))*m)/(2*pi); 
+    angle=0;
+    if (graph>=m) {
+      graph=0;
+    }
+    if ((graph=mem[n+1+graph])<0) { 
+      graph=-graph; 
+      mem[id+_Flags]|=1; 
+    }
   }
 
-  if (file) max_grf=1000; else max_grf=2000;
-  if (graph<=0 || graph>=max_grf) { e(110); return; }
-  if (g[file].grf==NULL) { e(111); return; }
-  if ((ptr=g[file].grf[graph])==NULL) { e(121); return; }
+  if (file) {
+    max_grf=1000; 
+  } else { 
+    max_grf=2000;
+  }
+  if (graph<=0 || graph>=max_grf) { 
+    e(110); 
+    return; 
+  }
+  if (g[file].grf==NULL) { 
+    e(111); 
+    return; 
+  }
+  if ((ptr=g[file].grf[graph])==NULL) { 
+    e(121); 
+    return; 
+  }
 
-  x=mem[id+_X]; y=mem[id+_Y];
-  if (mem[id+_Resolution]>0) { x/=mem[id+_Resolution]; y/=mem[id+_Resolution]; }
+  x=mem[id+_X]; 
+  y=mem[id+_Y];
 
-  if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-  } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+  if (mem[id+_Resolution]>0) { 
+    x/=mem[id+_Resolution]; 
+    y/=mem[id+_Resolution]; 
+  }
+
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+
+  word wptr32 = l2b16(*((word*)ptr+32));
+  word wptr33 = l2b16(*((word*)ptr+33));
+
+  if (iptr15==0 || wptr32==65535) { 
+    xg=iptr13/2; 
+    yg=iptr14/2;
+  } else { 
+    xg=wptr32; 
+    yg=wptr33; 
+  }
 
   if (angle) {
-    clipx0=x; clipy0=y; clipx1=ptr[13]; clipy1=ptr[14];
+    clipx0=x; 
+    clipy0=y; 
+    clipx1=iptr13; 
+    clipy1=iptr14;
     sp_size(&clipx0,&clipy0,&clipx1,&clipy1,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
   } else if (mem[id+_Size]!=100) {
-    clipx0=x; clipy0=y; clipx1=ptr[13]; clipy1=ptr[14];
+    clipx0=x; 
+    clipy0=y; 
+    clipx1=iptr13; 
+    clipy1=iptr14;
     sp_size_scaled(&clipx0,&clipy0,&clipx1,&clipy1,xg,yg,mem[id+_Size],mem[id+_Flags]);
   } else {
-    if (mem[id+_Flags]&1) clipx0=x-(ptr[13]-1-xg); else clipx0=x-xg;
-    if (mem[id+_Flags]&2) clipy0=y-(ptr[14]-1-yg); else clipy0=y-yg;
-    clipx1=clipx0+ptr[13]-1; clipy1=clipy0+ptr[14]-1;
+    if (mem[id+_Flags]&1) clipx0=x-(iptr13-1-xg); else clipx0=x-xg;
+    if (mem[id+_Flags]&2) clipy0=y-(iptr14-1-yg); else clipy0=y-yg;
+    clipx1=clipx0+iptr13-1; clipy1=clipy0+iptr14-1;
   }
 
-  buffer_an=clipx1-clipx0+1; buffer_al=clipy1-clipy0+1;
-  if ((buffer=(byte *)malloc(buffer_an*buffer_al))==NULL) { e(100); return; }
-  memset(buffer,0,buffer_an*buffer_al);
+  buffer_an=clipx1-clipx0+1; 
+  buffer_al=clipy1-clipy0+1;
 
-  // Ahora se tiene que pintar el sprite en el buffer(clip...)
+  // fprintf(stdout,"buffer_an: %d buffer_al: %d\n",buffer_an,buffer_al);
+  // fprintf(stdout,"clipx0: %d clipy0: %d clipx1: %d clipy1: %d\n", clipx0,clipy0,clipx1,clipy1);
 
-  put_collision(buffer,ptr,x,y,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
+  int memsize = buffer_an*buffer_al;
+
+  // fprintf(stdout,"memsize: %d\n",memsize);
+
+  if(buffer_an > 2000 || buffer_al > 2000) {
+    // return;
+  }
+  // sleep(1);
+  if ((collision_buffer=(byte *)malloc(memsize))==NULL) { 
+    e(100); 
+    return; 
+  }
+  memset(collision_buffer,0,memsize);
+
+  // Ahora se tiene que pintar el sprite en el collision_buffer(clip...)
+
+  // fprintf(stdout,"Puting Collision\n");
+
+  put_collision(collision_buffer,ptr,x,y,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
+  // return;
 
   // Ya tiene region del sprite clipx0..clipy1 (si es en pantalla)
 
+  // fprintf(stdout,"Checking Ctype\n");
+  
   if (mem[id+_Ctype]==1) {
     for(n=0;n<10;n++)if(iscroll[n].on&&(mem[id+_Cnumber]==0||(mem[id+_Cnumber]&(1<<n)))) {
       xg=iscroll[n].x-iscroll[n].map1_x;
       yg=iscroll[n].y-iscroll[n].map1_y;
       clipx0+=xg; clipx1+=xg; clipy0+=yg; clipy1+=yg;
-      pila[sp]=comprobar_colisiones(i,bloque,n); break;
+      // fprintf(stdout,"comparing collision %d\n", __LINE__);
+      pila[sp]=comprobar_colisiones(i,bloque,n); 
+      break;
     }
-  } else pila[sp]=comprobar_colisiones(i,bloque,-1);
+  } else {
+    // fprintf(stdout,"comparing collision %d\n", __LINE__);
+    int ret = comprobar_colisiones(i,bloque,-1);
+    while (pila[sp]!=ret) { 
+      pila[sp]=ret;
+    }
+  }
 
-  free(buffer);
+  // fprintf(stdout,"Freeing collision_buffer... \n");
+
+  // fprintf(stdout,"Buffer pointer: %d\n", buffer);
+  
+// #ifndef AMIGA
+  if(collision_buffer) {
+    free(collision_buffer);
+  }
+// #endif
+
+  collision_buffer = NULL;
+
+  // fprintf(stdout,"Free'd memory\n");
+
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Comprueba colisiones del sprite id (en buffer) con el resto (i..id_end)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+// Comprueba colisiones del sprite id (en collision_buffer) con el resto (i..id_end)
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 int comprobar_colisiones(int i,int bloque,int scroll) {
   int file,graph,angle;
@@ -235,11 +368,13 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
 
   if (bloque==0) { // collision(type mouse)
     if (mouse->x>=clipx0 && mouse->x<=clipx1 && mouse->y>=clipy0 && mouse->y<=clipy1) {
-      if (*(buffer+buffer_an*(mouse->y-clipy0)+(mouse->x-clipx0))) return(id); else return(0);
+      if (*(collision_buffer+buffer_an*(mouse->y-clipy0)+(mouse->x-clipx0))) return(id); else return(0);
     } else return(0);
   }
 
   for (;i<=id_end;i+=iloc_len) {
+
+    // fprintf(stdout,"ID: %d\n", i);
 
     if (i!=id && mem[i+_Bloque]==bloque && (mem[i+_Status]==2 ||
       	mem[i+_Status]==4) && mem[i+_Ctype]<2) {
@@ -249,7 +384,7 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
       	  for(n=0;n<10;n++)
       	    if(iscroll[n].on&&(mem[i+_Cnumber]==0||(mem[i+_Cnumber]&(1<<n)))) break;
       	  if (n==10) continue;
-        } else { // Choque de scroll con scroll - simpre que coincidan en el 1ง
+        } else { // Choque de scroll con scroll - simpre que coincidan en el 1๏ฟฝ
       	  if (mem[i+_Cnumber] && !(mem[i+_Cnumber]&(1<<scroll))) continue;
       	  else n=scroll;
       	}
@@ -282,8 +417,21 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
       	y+=iscroll[n].y-iscroll[n].map1_y;
       }
 
-      if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-      } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+      int iptr13 = l2b32(ptr[13]);
+      int iptr14 = l2b32(ptr[14]);
+      int iptr15 = l2b32(ptr[15]);
+
+      word wptr32 = l2b16(*((word*)ptr+32));
+      word wptr33 = l2b16(*((word*)ptr+33));
+
+
+      if (iptr15==0 || wptr32==65535) { 
+        xg=iptr13/2; 
+        yg=iptr14/2;
+      } else { 
+        xg=wptr32; 
+        yg=wptr33; 
+      }
 
       colisiona=0;
 
@@ -292,14 +440,14 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
         // Distancia de seguridad
 
         if (dist==0) dist=(int)sqrt((buffer_an*buffer_an+buffer_al*buffer_al)/4);
-        an=((int)sqrt(ptr[13]*ptr[13]+ptr[14]*ptr[14])*mem[i+_Size])/100+dist;
+        an=((int)sqrt(iptr13*iptr13+iptr14*iptr14)*mem[i+_Size])/100+dist;
 
         // Distancia real
 
         xx=(clipx0+clipx1)/2-x; yy=(clipy0+clipy1)/2-y; al=(int)sqrt(xx*xx+yy*yy);
 
         if (al<=an) {
-          xx=x; yy=y; an=ptr[13]; al=ptr[14];
+          xx=x; yy=y; an=iptr13; al=iptr14;
           sp_size(&xx,&yy,&an,&al,xg,yg,angle,mem[i+_Size],mem[i+_Flags]);
 
           if (clipx1>=xx && clipx0<=an)
@@ -309,7 +457,7 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
 
       } else if (mem[i+_Size]!=100) {
 
-        xx=x; yy=y; an=ptr[13]; al=ptr[14];
+        xx=x; yy=y; an=iptr13; al=iptr14;
         sp_size_scaled(&xx,&yy,&an,&al,xg,yg,mem[i+_Size],mem[i+_Flags]);
 
         if (clipx1>=xx && clipx0<=an)
@@ -317,7 +465,7 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
 
       } else {
 
-        an=ptr[13]; al=ptr[14];
+        an=iptr13; al=iptr14;
         if (mem[i+_Flags]&1) xxg=an-1-xg; else xxg=xg; xx=x-xxg;
         if (mem[i+_Flags]&2) yyg=al-1-yg; else yyg=yg; yy=y-yyg;
         if (clipx1>=xx && clipx0<xx+an)
@@ -327,21 +475,23 @@ int comprobar_colisiones(int i,int bloque,int scroll) {
 
       if (colisiona==1) {
         colisiona=0;
-        test_collision(buffer,ptr,x,y,xg,yg,angle,mem[i+_Size],mem[i+_Flags]);
+        test_collision(collision_buffer,ptr,x,y,xg,yg,angle,mem[i+_Size],mem[i+_Flags]);
         if (colisiona) {
-      	  mem[id+_IdScan]=i+iloc_len; return(i);
+      	  mem[id+_IdScan]=i+iloc_len; 
+          return(i);
         }
       }
 
     }
   }
 
-  mem[id+_IdScan]=i; return(0);
+  mem[id+_IdScan]=i; 
+  return(0);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Devuelve la caja en la que se encuentra un gr fico rotado y escalado
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//      Devuelve la caja en la que se encuentra un gr๏ฟฝfico rotado y escalado
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void sp_size( int *x, int *y, int *xx, int *yy, int xg, int yg,
               int ang, int size, int flags) {
@@ -388,9 +538,9 @@ void sp_size( int *x, int *y, int *xx, int *yy, int xg, int yg,
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Devuelve la caja en la que se encuentra un gr fico rotado y/o escalado
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//      Devuelve la caja en la que se encuentra un gr๏ฟฝfico rotado y/o escalado
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void sp_size_scaled( int *x, int *y, int *xx, int *yy, int xg, int yg,
                      int size, int flags) {
@@ -410,23 +560,35 @@ void sp_size_scaled( int *x, int *y, int *xx, int *yy, int xg, int yg,
 
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funcion externa para pintar gr ficos (para las colisiones)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//      Funcion externa para pintar gr๏ฟฝficos (para las colisiones)
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
-void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
+void put_collision(byte * c_buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
 
   byte * si;
-  int an,al; // Informaciขn respecto a pantalla del grafico
+  int an,al; // Informaci๏ฟฝn respecto a pantalla del grafico
   byte * _copia;
   int _vga_an,_vga_al;
   int ix,iy;
 
-  an=ptr[13]; al=ptr[14]; si=(byte*)ptr+64+ptr[15]*4;
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+
+  // word wptr32 = l2b16(*((word*)ptr+32));
+  // word wptr33 = l2b16(*((word*)ptr+33));
+
+
+
+  an=iptr13;
+  al=iptr14;
+  si=(byte*)ptr+64+iptr15*4;
 
   ix=clipx0; iy=clipy0;
 
-  _copia=copia; copia=buffer;
+  _copia=copia; 
+  copia=c_buffer;
   _vga_an=vga_an; vga_an=buffer_an;
   _vga_al=vga_al; vga_al=buffer_al;
   clipx0=0; clipx1-=ix-1;
@@ -441,8 +603,10 @@ void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int a
   } else {
     if (flags&1) xg=an-1-xg; x-=xg+ix;
     if (flags&2) yg=al-1-yg; y-=yg+iy;
-    if (x>=clipx0 && x+an<=clipx1 && y>=clipy0 && y+al<=clipy1) // Pinta sprite sin cortar
+    if (x>=clipx0 && x+an<=clipx1 && y>=clipy0 && y+al<=clipy1) {// Pinta sprite sin cortar
+      // fprintf(stdout, "%d\n", __LINE__);				
       sp_normal(si,x,y,an,al,flags);
+    }
     else if (x<clipx1 && y<clipy1 && x+an>clipx0 && y+al>clipy0) // Pinta sprite cortado
       sp_cortado(si,x,y,an,al,flags);
   }
@@ -454,9 +618,9 @@ void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int a
   clipy0=iy; clipy1+=iy-1;
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 // Sprite - rotado [escalado] [cortado] [espejado] [ghost]
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void sp_rotado_p(byte * si, int an, int al, int flags) {
 
@@ -542,8 +706,16 @@ void sp_rotado_p(byte * si, int an, int al, int flags) {
      kk=g0y.l; g0y.l=g1y.l; g1y.l=kk;
     }
 
-    if (h<clipy1 && h>=clipy0 && x0.w[1]<clipx1 && x1.w[1]>=clipx0 && x1.w[1]>x0.w[1])
-      sp_scan(ptrcopia+x0.w[1],x1.w[1]-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+#ifdef AMIGA
+#define x0w1 x0.w[0]
+#define x1w1 x1.w[0]
+#else
+#define x0w1 x0.w[1]
+#define x1w1 x1.w[1]
+#endif
+
+    if (h<clipy1 && h>=clipy0 && x0w1<clipx1 && x1w1>=clipx0 && x1w1>x0w1)
+      sp_scan(ptrcopia+x0w1,x1w1-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
 
     if ((flags&3)==1 || (flags&3)==2) {
       kk=x0.l; x0.l=x1.l; x1.l=kk;
@@ -559,23 +731,28 @@ void sp_rotado_p(byte * si, int an, int al, int flags) {
 
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funcion externa para comprobar gr ficos (para las colisiones)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//      Funcion externa para comprobar gr๏ฟฝficos (para las colisiones)
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
-void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
+void test_collision(byte * col_buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
 
   byte * si;
-  int an,al; // Informaciขn respecto a pantalla del grafico
+  int an,al; // Informaci๏ฟฝn respecto a pantalla del grafico
   byte * _copia;
   int _vga_an,_vga_al;
   int ix,iy;
 
-  an=ptr[13]; al=ptr[14]; si=(byte*)ptr+64+ptr[15]*4;
+
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+
+  an=iptr13; al=iptr14; si=(byte*)ptr+64+iptr15*4;
 
   ix=clipx0; iy=clipy0;
 
-  _copia=copia; copia=buffer;
+  _copia=copia; copia=col_buffer;
   _vga_an=vga_an; vga_an=buffer_an;
   _vga_al=vga_al; vga_al=buffer_al;
   clipx0=0; clipx1-=ix-1;
@@ -603,9 +780,9 @@ void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int 
   clipy0=iy; clipy1+=iy-1;
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 // Test sprite - [espejado] [ghost]
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void test_normal(byte * p, int x, int y, int an, int al, int flags) {
 
@@ -651,9 +828,9 @@ void test_normal(byte * p, int x, int y, int an, int al, int flags) {
   }
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 // Test sprite - cortado [espejado] [ghost]
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void test_cortado(byte * p, int x, int y, int an, int al, int flags) {
 
@@ -713,9 +890,9 @@ void test_cortado(byte * p, int x, int y, int an, int al, int flags) {
   }
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 // Test sprite - escalado [cortado] [espejado] [ghost]
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void test_escalado(byte * old_si, int x, int y, int an, int al, int xg, int yg,
                    int size, int flags) {
@@ -765,9 +942,9 @@ void test_escalado(byte * old_si, int x, int y, int an, int al, int xg, int yg,
 
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 // Test sprite - rotado [escalado] [cortado] [espejado] [ghost]
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void test_rotado(byte * si, int an, int al, int flags) {
 
@@ -853,13 +1030,21 @@ void test_rotado(byte * si, int an, int al, int flags) {
      kk=g0y.l; g0y.l=g1y.l; g1y.l=kk;
     }
 
-    if (h<clipy1 && h>=clipy0 && x0.w[1]<clipx1 && x1.w[1]>=clipx0 && x1.w[1]>x0.w[1])
-    if (x0.w[1]<clipx0) if (x1.w[1]>=clipx1)
-      test_scanc(ptrcopia+clipx0,x1.w[1]-x0.w[1],clipx1-clipx0-1,clipx0-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
-    else test_scanc(ptrcopia+clipx0,x1.w[1]-x0.w[1],x1.w[1]-clipx0,clipx0-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
-    else if (x1.w[1]>=clipx1)
-      test_scanc(ptrcopia+x0.w[1],x1.w[1]-x0.w[1],clipx1-1-x0.w[1],0,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
-    else test_scan(ptrcopia+x0.w[1],x1.w[1]-x0.w[1],si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+#ifdef AMIGA
+#define x0w1 x0.w[0]
+#define x1w1 x1.w[0]
+#else
+#define x0w1 x0.w[1]
+#define x1w1 x1.w[1]
+#endif
+
+    if (h<clipy1 && h>=clipy0 && x0w1<clipx1 && x1w1>=clipx0 && x1w1>x0w1)
+    if (x0w1<clipx0) if (x1w1>=clipx1)
+      test_scanc(ptrcopia+clipx0,x1w1-x0w1,clipx1-clipx0-1,clipx0-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+    else test_scanc(ptrcopia+clipx0,x1w1-x0w1,x1w1-clipx0,clipx0-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+    else if (x1w1>=clipx1)
+      test_scanc(ptrcopia+x0w1,x1w1-x0w1,clipx1-1-x0w1,0,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
+    else test_scan(ptrcopia+x0w1,x1w1-x0w1,si,an,g0x.l,g0y.l,g1x.l,g1y.l);
 
     if ((flags&3)==1 || (flags&3)==2) {
       kk=x0.l; x0.l=x1.l; x1.l=kk;

@@ -5,9 +5,9 @@
 #include "global.h"
 #include "ifs.h"
 
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-//  Tabla de conversi¢n de chars Windows a chars MSDOS
-//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  Tabla de conversiÃ³n de chars Windows a chars MSDOS
+//â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 char OEM2ANSI[256]={
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,164,0,0,0,0,182,167,0,0,0,0,0,0,0,0,0,0,
@@ -163,8 +163,8 @@ short escalar()
     short cx=0,cy=0,flag=0;
     char *ptr=Buffer, *p;
 
-    ancho2= (float) ancho * ifs.tamX / sizeIFS;    // ancho real en relaci¢n
-                                                     // al tama¤o original
+    ancho2= (float) ancho * ifs.tamX / sizeIFS;    // ancho real en relaciÃ³n
+                                                     // al tamaÃ±o original
     alto2= (float) alto * ifs.tamY / sizeIFS;
 
     if (ifs.tamX==sizeIFS && ifs.tamY==sizeIFS)         // no hace falta escalar
@@ -624,7 +624,7 @@ void texturarSombra()
 }
 
 
-void unirOutlineConBody(void) { // Le a¤ade el body al outline
+void unirOutlineConBody(void) { // Le aÃ±ade el body al outline
   char *ptr, *ptr2, c, color, realcolor;
   short x,y,n;
 

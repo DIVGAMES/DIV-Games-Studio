@@ -171,9 +171,11 @@ void set_dac (void) {
           colors[i].g=dac[b+1]*4;
           colors[i].b=dac[b+2]*4;
           b+=3;
-    }
-	if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
-		printf("Failed to set palette :(\n"); 
+  }
+  
+	if(!OSDEP_SetPalette(vga, colors, 0, 256)) {
+		// printf("Failed to set palette :(\n"); 
+  }
 	
 	retrazo();
 #else
@@ -245,7 +247,7 @@ printf("setting new video mode %d %d %x\n",vga_an,vga_al,vga);
 //#endif
 
 //hide the mouse
-SDL_ShowCursor(SDL_DISABLE);
+OSDEP_ShowCursor(SDL_DISABLE);
 //	if(vga)
 //		SDL_FreeSurface(vga);	
 	vga=NULL;
@@ -259,6 +261,12 @@ SDL_ShowCursor(SDL_DISABLE);
 		vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 1);
 #else
 
+#ifdef AMIGA
+// fsmode = 1;
+#endif
+
+
+
 #ifdef PSP
 	fsmode=1;
 //		if(!vga)
@@ -271,7 +279,7 @@ SDL_ShowCursor(SDL_DISABLE);
 #endif
 
 		if(!vga || fsmode==0)
-			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, 0);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
+			vga=OSDEP_SetVideoMode(vga_an, vga_al, 8, fsmode);//, SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
 #ifdef GCW
     
@@ -304,9 +312,9 @@ SDL_ShowCursor(SDL_DISABLE);
 #endif
 
 
-#ifdef STDOUTLOG
+// #ifdef STDOUTLOG
 	printf("SET VIDEO MODE %x\n",vga);
-#endif
+// #endif
 	OSDEP_SetCaption( "DIVDX 3.01", "" );
 
 	modovesa=1;
@@ -640,17 +648,17 @@ typedef struct _pcx_header {
   char version;
   char encoding;
   char bits_per_pixel;
-  short  xmin,ymin;
-  short  xmax,ymax;
-  short  hres;
-  short  vres;
+  unsigned short  xmin,ymin;
+  unsigned short  xmax,ymax;
+  unsigned short  hres;
+  unsigned short  vres;
   char   palette16[48];
   char   reserved;
   char   color_planes;
-  short  bytes_per_line;
-  short  palette_type;
-  short  Hresol;
-  short  Vresol;
+  unsigned short  bytes_per_line;
+  unsigned short  palette_type;
+  unsigned short  Hresol;
+  unsigned short  Vresol;
   char  filler[54];
 }pcx_header;
 
@@ -1166,20 +1174,26 @@ void crear_ghost_slow (void) {
   find_col=(color-dac4)/3;
 }
 
-void find_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
 
-  int dmin,dif;
-  byte *pal,*endpal,*color;
+byte ffind_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
 
-  pal=paleta+3; endpal=paleta+768; dmin=65536;
+  byte *color;
+
+  byte* pal=paleta+3; 
+  byte* endpal=paleta+768; 
+  int dmin=65536;
   do {
     if (((pal-paleta)/3)==last_c1) pal+=3;
-    dif=(int)(r-*pal)*(int)(r-*pal); pal++;
+    int dif=(int)(r-*pal)*(int)(r-*pal); pal++;
     dif+=(int)(g-*pal)*(int)(g-*pal); pal++;
     dif+=(int)(b-*pal)*(int)(b-*pal); pal++;
     if (dif<dmin) { dmin=dif; color=pal-3; }
   } while (pal<endpal);
-  find_col=(color-paleta)/3;
+  return (color-paleta)/3;
+}
+
+void find_color(byte r, byte g,byte b) { // Encuentra un color (que no sea el 0)
+	find_col = ffind_color(r,g,b);
 }
 
 byte media(byte a,byte b) {

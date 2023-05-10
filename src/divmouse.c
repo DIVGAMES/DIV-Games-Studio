@@ -1,7 +1,7 @@
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      M¢dulo de acceso al rat¢n
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      MÃ³dulo de acceso al ratÃ³n
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #include "global.h"
 
@@ -18,9 +18,9 @@ void EndSound(void);
 int div_started = 0;
 
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Comprueba si el rat¢n est  en una caja
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//      Comprueba si el ratÃ³n estÃ¡ en una caja
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 int mouse_in(int x, int y, int x2, int y2) {
 	return(mouse_x>=x && mouse_x<=x2 && mouse_y>=y && mouse_y<=y2);
@@ -31,20 +31,21 @@ int wmouse_in(int x, int y, int an, int al) {
 		wmouse_y>=y && wmouse_y<=y+al-1);
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Place your mouse in the indicated position
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void set_mouse(word x, word y) {
 	m_x=(float)x;
 	m_y=(float)y;
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //      Read mouse button and position
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 void read_mouse(void) {
+	FUNCLOG;
 	int n=0;
 	int s,shift=0;
 
@@ -98,7 +99,7 @@ void read_mouse(void) {
 #endif
 
 
-	} else if (modo<100 && hotkey && !help_paint_active) { // Las teclas est n solo activas en edici¢n
+	} else if (modo<100 && hotkey && !help_paint_active) { // Las teclas estÃ¡n solo activas en ediciÃ³n
 
 		if (!(shift_status&4)) {
 
@@ -237,6 +238,7 @@ void read_mouse(void) {
 			break;
 		}
 	}
+	// fprintf(stdout, "READ MOUSE END\n");
 }
 
 void libera_drag(void) {
@@ -266,9 +268,9 @@ void libera_drag(void) {
 	}
 }
 
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  New mouse routines ( without interruption )
-//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 #define JOY_DEADZONE 500
 #ifdef GCW
@@ -304,28 +306,28 @@ int soundstopped=0;
 
 
 #ifdef SDL2
-#include <SDL2/SDL_events.h>
+#include <SDL_events.h>
 
 void PrintEvent(const SDL_Event * event)
 {
     if (event->type == SDL_WINDOWEVENT) {
         switch (event->window.event) {
         case SDL_WINDOWEVENT_SHOWN:
-            SDL_Log("Window %d shown", event->window.windowID);
+            fprintf(stdout, "Window %d shown", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_HIDDEN:
-            SDL_Log("Window %d hidden", event->window.windowID);
+            fprintf(stdout, "Window %d hidden", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_EXPOSED:
-            SDL_Log("Window %d exposed", event->window.windowID);
+            fprintf(stdout, "Window %d exposed", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_MOVED:
-            SDL_Log("Window %d moved to %d,%d",
+            fprintf(stdout, "Window %d moved to %d,%d",
                     event->window.windowID, event->window.data1,
                     event->window.data2);
             break;
         case SDL_WINDOWEVENT_RESIZED:
-            SDL_Log("Window %d resized to %dx%d",
+            fprintf(stdout, "Window %d resized to %dx%d",
                     event->window.windowID, event->window.data1,
                     event->window.data2);
             vga_an = event->window.data1;
@@ -338,48 +340,53 @@ void PrintEvent(const SDL_Event * event)
             //vheight = event->window.data2;
             break;
         case SDL_WINDOWEVENT_SIZE_CHANGED:
-            SDL_Log("Window %d size changed to %dx%d",
+            fprintf(stdout, "Window %d size changed to %dx%d",
                     event->window.windowID, event->window.data1,
                     event->window.data2);
             break;
         case SDL_WINDOWEVENT_MINIMIZED:
-            SDL_Log("Window %d minimized", event->window.windowID);
+            fprintf(stdout, "Window %d minimized", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_MAXIMIZED:
-            SDL_Log("Window %d maximized", event->window.windowID);
+            fprintf(stdout, "Window %d maximized", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_RESTORED:
-            SDL_Log("Window %d restored", event->window.windowID);
+            fprintf(stdout, "Window %d restored", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_ENTER:
-            SDL_Log("Mouse entered window %d",
+            fprintf(stdout, "Mouse entered window %d",
                     event->window.windowID);
             break;
         case SDL_WINDOWEVENT_LEAVE:
-            SDL_Log("Mouse left window %d", event->window.windowID);
+            fprintf(stdout, "Mouse left window %d", event->window.windowID);
             break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-            SDL_Log("Window %d gained keyboard focus",
+            fprintf(stdout, "Window %d gained keyboard focus",
                     event->window.windowID);
             break;
         case SDL_WINDOWEVENT_FOCUS_LOST:
-            SDL_Log("Window %d lost keyboard focus",
+            fprintf(stdout, "Window %d lost keyboard focus",
                     event->window.windowID);
             break;
         case SDL_WINDOWEVENT_CLOSE:
-            SDL_Log("Window %d closed", event->window.windowID);
+            fprintf(stdout, "Window %d closed", event->window.windowID);
             break;
         default:
-            SDL_Log("Window %d got unknown event %d",
+            fprintf(stdout, "Window %d got unknown event %d",
                     event->window.windowID, event->window.event);
             break;
         }
     }
+
+	if(event->type == SDL_MOUSEMOTION) {
+		fprintf(stdout, "Mouse Coordinates: (%d, %d)\n", event->motion.x, event->motion.y);
+	}
 }
 #endif
 
 void read_mouse2(void) {
 
+#if defined(SDL) || (SDL2)
 	scan_code  =0;
 	ascii=0;
 
@@ -503,12 +510,14 @@ while(SDL_PollEvent(&event))
 }
 #else
 
-while(SDL_PollEvent(&event) )
+while(SDL_PollEvent(&event) ) {
 #ifdef SDL2
 	PrintEvent(&event);
 #endif
 //	while(0)
-        {
+        
+
+//fprintf(stdout, "Event received: %d\n", event.type);
 
 #ifndef SDL2
 			if (event.type == SDL_VIDEORESIZE) {
@@ -585,7 +594,7 @@ while(SDL_PollEvent(&event) )
                 /* Quit the application */
                 salir_del_entorno=1;
             }
-              if (event.type == SDL_MOUSEMOTION)
+            if (event.type == SDL_MOUSEMOTION)
             {
 				if(fsmode==1) {
 					m_x += event.motion.xrel*(1+(Setupfile.mouse_ratio/2));
@@ -647,7 +656,9 @@ while(SDL_PollEvent(&event) )
 			if( event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL ) 
 				shift_status |=4; 
 			else { // don't set scan code when lctrl pressed 
+				//fprintf(stdout,"key event: 0x%x\n", event.key.keysym.sym);
 				scan_code = OSDEP_key[event.key.keysym.sym<2048?event.key.keysym.sym:event.key.keysym.sym-0x3FFFFD1A];
+				//fprintf(stdout,"key event: 0x%x\n", event.key.keysym.sym);
 			}
 		//		ascii = scan_code;
 #ifndef DROID
@@ -763,7 +774,7 @@ while(SDL_PollEvent(&event) )
 		svmode();
 		preparar_tapiz();
 	
-		if(strcmp(v.titulo, (char *)texto[35])) {
+		if(strcmp((const char *)v.titulo, (char *)texto[35])) {
 
 		for(n=max_windows;n>=0;n--) {
 			if(ventana[n].tipo) {
@@ -797,4 +808,6 @@ while(SDL_PollEvent(&event) )
 		InitSound();
 		soundstopped=0;
 	}
+
+#endif
 }

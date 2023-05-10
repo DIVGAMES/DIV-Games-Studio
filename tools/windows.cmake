@@ -61,10 +61,18 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 #SET(OS_LINK_FLAGS " -static-libgcc -static-libstdc++ -mwindows ")
 
+#-I/usr/local/cross-tools/i686-w64-mingw32/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main
+
+set(SDL_INCLUDE_DIR /usr/${TOOLCHAIN_PREFIX}/include/SDL)
+set(SDL_LIBRARY -L/usr/local/cross-tools/i686-w64-mingw32/lib -lmingw32 -lSDLmain -lSDL -mwindows)
+set(SDL_MIXER_INCLUDE_DIR ${CMAKE_INCLUDE_PATH}/SDL)
+set(SDL_MIXER_LIBRARY SDL_mixer)
+
+
 
 SET(EXT ".exe")
 
-#TARGET_LINK_LIBRARIES ("mingw32 SDLmain  SDL SDL_Mixer")
+#TARGET_LINK_LIBRARIES ("mingw32 SDLmain  SDL SDL_Mixer windows")
 #-mwindows /usr/i686-w64-mingw32/lib/x64/SDL_mixer.lib")
 #set ( CMAKE_EXE_LINKER_FLAGS "-lmingw32 -lSDLmain  -lSDL -static-libgcc -static-libstdc++ -mwindows " )
 

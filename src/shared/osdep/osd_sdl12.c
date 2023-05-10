@@ -3,6 +3,12 @@
 
 #include "osd_sdl12.h"
 
+#ifdef EDITOR
+#include "global.h"
+#else
+#include "inter.h"
+#endif
+
 
 // key buffer
 uint8_t OSDEP_key[2048];
@@ -20,7 +26,23 @@ static uint32_t flags;
 
 // startup / shutdown
 
+void OSDEP_ShowCursor(int show) {
+	printf("%s\n",__FUNCTION__ );
+
+	SDL_ShowCursor(show);
+}
+
+void AMIGA_Init(void);
+
+
 void OSDEP_Init(void) {
+printf("OSDEP INIT");
+
+#ifdef AMIGA
+
+Amiga_Init();
+
+#endif
 
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
@@ -28,91 +50,119 @@ void OSDEP_Init(void) {
 
 	SDL_Init( SDL_INIT_EVERYTHING);
 
+	printf("SDL INIT EVERYTHING");
 }
 
 void OSDEP_Quit(void) {
-	if(OSDEP_screen != NULL) {
-		SDL_FreeSurface(OSDEP_screen);
-		OSDEP_screen = NULL;
-	}
+	printf("%s\n",__FUNCTION__ );
+	// if(OSDEP_screen != NULL) {
+	// 	SDL_FreeSurface(OSDEP_screen);
+	// 	OSDEP_screen = NULL;
+	// }
 
-	if(OSDEP_surface != NULL) {
-		SDL_FreeSurface(OSDEP_surface);
-		OSDEP_surface = NULL;
-	}
+	// if(OSDEP_surface != NULL) {
+	// 	SDL_FreeSurface(OSDEP_surface);
+	// 	OSDEP_surface = NULL;
+	// }
 	
-	SDL_Quit();
+	// SDL_Quit();
 }
 
 // Timer
 uint32_t OSDEP_GetTicks(void) {
+		// printf("%s\n",__FUNCTION__ );
+
 	return SDL_GetTicks();
 }
 
 // Display
 void OSDEP_SetCaption(char *title, char *icon) {
+	printf("%s\n",__FUNCTION__ );
+
 	SDL_WM_SetCaption((const char *)title, (const char *)icon);
 
 }
 
 OSDEP_VMode ** OSDEP_ListModes(void) {
+	fprintf(stdout,"%s\n",__FUNCTION__ );
+// return 0;
 	SDL_Rect **modes;
 	int i;
-	OSDEP_VMode *smodes[1024];
-	modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+	OSDEP_VMode **smodes;
+	// static OSDEP_VMode *smodes[1024];
+	modes = SDL_ListModes(NULL,NULL);
 	
-
 	if(modes == (SDL_Rect **)0) {
+		fprintf(stdout,"No modes available!\n");
 		return NULL;
 	}
 
 	if(modes == (SDL_Rect **)-1) {
-		return -1;
+		fprintf(stdout,"All resolutions available.\n");
+		return NULL;
 	}
 
-	for(i=0;modes[i];++i) {
-		if(modes[i]) {
-			smodes[i]=(OSDEP_VMode*)malloc(sizeof(OSDEP_VMode));
-			smodes[i]->w = modes[i]->w;
-			smodes[i]->h = modes[i]->h;
-		} else {
-			smodes[i]=NULL;
-		}
+	// for(i=0;modes[i];++i) {
+	// 	if(modes[i]) {
+	smodes = calloc(1024, sizeof(OSDEP_VMode *));
+	for(i = 0; i < 1023 && modes[i]; ++i) {
+		smodes[i]=(OSDEP_VMode*)malloc(sizeof(OSDEP_VMode));
+		smodes[i]->w = modes[i]->w;
+		smodes[i]->h = modes[i]->h;
+		// } else {
+		// 	smodes[i]=NULL;
+		// }
 	}
 
 	return smodes;
 }
 
 void OSDEP_WarpMouse(int x, int y) {
+		printf("%s\n",__FUNCTION__ );
+
 	SDL_WarpMouse(x, y);
 }
 
 int OSDEP_IsFullScreen(void) {
-	if (OSDEP_screen->flags & SDL_FULLSCREEN) return 1; // return true if surface is fullscreen
+		printf("%s\n",__FUNCTION__ );
+
+	if (OSDEP_screen->flags & SDL_FULLSCREEN) 
+	return 1; // return true if surface is fullscreen
     return 0; // Return false if surface is windowed
 
 }
 
 OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
-//	fprintf(stdout,"%s %d %d\n",__FUNCTION__,width, height);
+		// printf("%s\n",__FUNCTION__ );
+// width = 640;
+// height = 480;
+
+// fs = 1;
+	fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
 	// clear event queue
 
 	SDL_Event event;
 
 	while(SDL_PollEvent(&event)) {
+		fprintf(stdout,"%s %d %d %d %d\n",__FUNCTION__,width, height, bpp, fs);
 		fs=fs;
 	}
 
 	if(fs) {
 		flags = SDL_FULLSCREEN | SDL_HWSURFACE | SDL_DOUBLEBUF;
 	} else {
-		flags = SDL_SWSURFACE | SDL_RESIZABLE;
+		flags = SDL_HWSURFACE |  SDL_HWPALETTE | SDL_RESIZABLE;
 	}
 
+	if(bpp == 8 && fs == 0) {
+		flags |= SDL_HWPALETTE;
+	}
 	fullscreen = fs;
 	// vwidth = width;
 	// vheight = height;
-	
+
+	// fprintf(stdout,"FS: %d\n",fs);
+
 	if(OSDEP_surface !=NULL) {
 		SDL_FreeSurface(OSDEP_surface);
 	}
@@ -129,7 +179,12 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 #endif
 	sw = width;
 	sh = height;	
-#ifdef __EMSCRIPTEN__
+
+
+	SDL_WM_GrabInput(SDL_GRAB_QUERY);
+	// return OSDEP_screen;
+
+#if defined (__EMSCRIPTEN__) || defined (AMIGA)
 	return OSDEP_screen;
 #endif
 	return OSDEP_surface;
@@ -137,23 +192,57 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 
 
 void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h) {
+		printf("%s\n",__FUNCTION__ );
+
 	SDL_UpdateRect(screen, x, y, w, h);
 }
 
 void OSDEP_Flip(OSDEP_Surface *s) {
 
-#ifdef __EMSCRIPTEN__
+	FUNCLOG;
+
+#if defined( __EMSCRIPTEN__) || defined (AMIGA)
 		SDL_Flip(OSDEP_screen);
 		return;
 #endif	
 
 	if((vwidth == vga_an && vheight == vga_al) || (vwidth == 0 && vheight == 0)) {
+		// fprintf(stdout,"Full blit surface\n");
 		SDL_BlitSurface(s, NULL, OSDEP_screen, NULL);
 	} else {
-		OSDEP_zoomsurface = zoomSurface(s, (float)vwidth/vga_an, (float)vheight/vga_al, 1);
+		// calculate the aspect ratio of the original surface
+		float aspect_ratio = (float)vga_an / vga_al;
+
+		// calculate the new dimensions for the zoomed surface while maintaining aspect ratio
+		int zoomed_width, zoomed_height;
+		if ((float)vwidth / vheight > aspect_ratio) {
+			zoomed_width = (int)(vheight * aspect_ratio);
+			zoomed_height = vheight;
+		} else {
+			zoomed_width = vwidth;
+			zoomed_height = (int)(vwidth / aspect_ratio);
+		}
+
+		// calculate the scaling factors based on the new dimensions
+		float scale_w = (float)zoomed_width / vga_an;
+		float scale_h = (float)zoomed_height / vga_al;
+
+		OSDEP_zoomsurface = zoomSurface(s, scale_w, scale_h, 1);
+
 		// Clear screen
 		SDL_FillRect(OSDEP_screen, NULL, 0);
-		SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, NULL);
+
+		// calculate the position of the top-left corner of the zoomed surface
+		int x = (vwidth - zoomed_width) / 2;
+		int y = (vheight - zoomed_height) / 2;
+
+		// create a destination rectangle with the calculated position and dimensions
+		SDL_Rect dest_rect = {x, y, zoomed_width, zoomed_height};
+
+		// blit the zoomed surface to the center of the target surface
+		SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, &dest_rect);
+
+		// SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, NULL);
 		SDL_FreeSurface(OSDEP_zoomsurface);
 
 		if(sw !=vwidth || sh !=vheight) {
@@ -175,51 +264,79 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 		}
 	}
 	SDL_Flip(OSDEP_screen);
+	// printf("%d %s %s completed\n",__LINE__, __FILE__, __FUNCTION__ );
+
 }
 
 int OSDEP_SetPalette(OSDEP_Surface *surface, OSDEP_Color *colors, int firstcolor, int ncolors) {
+// printf("%s\n",__FUNCTION__ );
 
 	memcpy(OSDEP_pal, colors, 256*sizeof(OSDEP_Color));
 	SDL_SetPalette(OSDEP_screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0,256);
-	return SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
+
+
+	int res = SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
+// printf("REsult: %d\n", res);
+
+return res;
+
 }
 
 // Joysticks
 int32_t OSDEP_NumJoysticks(void) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_NumJoysticks();
 }
 
-int OSDEP_JoystickNumButtons(int n) {
+int OSDEP_JoystickNumButtons(OSDEP_Joystick *n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickNumButtons(n);
+
 }
 
-int OSDEP_JoystickNumHats(int n) {
+int OSDEP_JoystickNumHats(OSDEP_Joystick *n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickNumHats(n);
 }
 
-int OSDEP_JoystickNumAxes(int n) {
+int OSDEP_JoystickNumAxes(OSDEP_Joystick *n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickNumAxes(n);
 }
 
 uint8_t OSDEP_JoystickGetButton(OSDEP_Joystick *joystick, int button) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickGetButton(joystick, button);
 }
 
 int16_t OSDEP_JoystickGetAxis(OSDEP_Joystick *joystick, int axis) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickGetAxis(joystick, axis);
 
 }
 OSDEP_Joystick * OSDEP_JoystickOpen(int n) {
+	printf("%s\n",__FUNCTION__ );
+
 	return SDL_JoystickOpen(n);
 }
 
 void OSDEP_JoystickClose(OSDEP_Joystick *joy) {
+	printf("%s\n",__FUNCTION__ );
+
 	SDL_JoystickClose(joy);
 	return;
 }
 
 char * OSDEP_JoystickName(int n) {
-	return SDL_JoystickName(n);
+	printf("%s\n",__FUNCTION__ );
+
+	return (char *)SDL_JoystickName(n);
 }
 
 void OSDEP_keyInit(void) {
@@ -338,10 +455,52 @@ void OSDEP_keyInit(void) {
 
 
 //OSDEP_key[SDLK_LSHIFT]=43;
-
 #ifdef NOTYET
 //const _wave=41
 const _c_center=76
 #endif
 
 }
+
+
+// Mixer
+
+void OSDEP_Mix_HaltChannel(int n) {
+	#ifdef MIXER
+	Mix_HaltChannel(n);
+	#endif
+}
+
+unsigned short OSDEP_Mix_VolumeMusic(int n) {
+
+	#ifdef MIXER
+	return Mix_VolumeMusic(n);
+	#endif
+
+}
+
+
+unsigned short OSDEP_Mix_Volume(int n ,int m) {
+	#ifdef MIXER
+	return Mix_Volume(n,m);
+	#endif
+
+}
+int OSDEP_Mix_PlayingMusic(void) {
+	#ifdef MIXER
+	return Mix_PlayingMusic();
+	#endif
+
+}
+void OSDEP_Mix_HaltMusic(void) {
+	#ifdef MIXER
+	Mix_HaltMusic();
+	#endif
+
+}
+void OSDEP_Mix_SetPostMix(int n, int m) {
+	#ifdef MIXER
+	// Mix_SetPostMix((void *)n,m);
+	#endif
+}
+void OSDEP_Mix_HaltChannel(int);

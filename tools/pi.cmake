@@ -62,7 +62,7 @@
 #
 ## You should now be able to cross compile / build for pi!
 
-SET(CROSS_DIR "/home/mike/raspidev/")
+SET(CROSS_DIR "/raspidev/")
 
 set(CMAKE_SYSTEM_NAME PI)
 SET(PLATFORM "PI")
@@ -79,6 +79,7 @@ SET(HAS_DLL 1)
 SET(HAS_FLI 1)
 SET(HAS_MODE8 1)
 
+SET(CMAKE_FIND_ROOT_PATH ${CROSS_DIR})
 SET(OS_DEFINITIONS " -D_GNU_SOURCE=1 -D_REENTRANT ")
 set(TOOLCHAIN_PREFIX ${CROSS_DIR}tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin/arm-bcm2708hardfp-linux-gnueabi)
 
@@ -87,9 +88,13 @@ set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
 set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}-g++)
 set(CMAKE_RC_COMPILER ${TOOLCHAIN_PREFIX}-windres)
 
+set(SDL_INCLUDE_DIR ${CROSS_DIR}/SDL_cross/include/SDL)
+set(SDL_MIXER_INCLUDE_DIR ${CROSS_DIR}/SDL_mixer-1.2.12/)
+set(SDL_MIXER_LIBRARY SDL_mixer)
+
 # target environment on the build host system
 #   set 1st to dir with the cross compiler's C/C++ headers/libs
-set(CMAKE_FIND_ROOT_PATH ~/raspidev/ )
+set(CMAKE_FIND_ROOT_PATH ${CROSS_DIR} )
 set(CMAKE_SYSTEM_LIBRARY_PATH ${CROSS_DIR}tools/arm-bcm2708/arm-bcm2708-linux-gnueabi/arm-bcm2708-linux-gnueabi/sysroot/usr/ )
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)

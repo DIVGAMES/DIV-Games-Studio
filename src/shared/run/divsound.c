@@ -21,6 +21,7 @@ void print_init_flags(int flags)
 #ifndef GP2X
 #ifndef PS2
 #ifndef PSP
+#ifndef AMIGA
 #ifdef MIXER
 
 #define PFLAG(a) if(flags&MIX_INIT_##a) printf(#a " ")
@@ -33,6 +34,7 @@ void print_init_flags(int flags)
                 printf("None");
         
         printf("\n");
+#endif
 #endif
 #endif
 #endif
@@ -53,6 +55,7 @@ void InitSound(void)
 #ifndef GP2X
 #ifndef PS2
 #ifndef PSP
+#ifndef AMIGA
   int flags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG ;
   
   initted=Mix_Init(flags);
@@ -62,6 +65,7 @@ void InitSound(void)
   if((initted&flags) != flags) {
 	  printf("Mix_Init error: %s\n",Mix_GetError());
    }
+#endif
 #endif
 #endif
 #endif
@@ -622,6 +626,8 @@ int IsPlayingSound(int NumChannel)
 
   if (pos >= smp->end || pos < smp->start) return(0);
 
+#else
+  return 0;
 #endif
 
   return(1);

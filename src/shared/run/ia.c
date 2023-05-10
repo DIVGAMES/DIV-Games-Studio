@@ -1,25 +1,25 @@
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Cขdigo de las funciones de IA (o relacionadas con ella)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//  C๏ฟฝdigo de las funciones de IA (o relacionadas con ella)
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
-//  en un principio ser n las siguientes funciones:
-//    path_find() (principal de bฃsqueda)
-//    path_line() (determina si se puede ir en lกnea recta)
-//    path_free() (r pida, determina si un punto est  libre)
+//  en un principio ser๏ฟฝn las siguientes funciones:
+//    path_find() (principal de b๏ฟฝsqueda)
+//    path_line() (determina si se puede ir en l๏ฟฝnea recta)
+//    path_free() (r๏ฟฝpida, determina si un punto est๏ฟฝ libre)
 //    new_map()  (para crear los mapas en el propio prg, similar a load_map)
 
 #include "inter.h"
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Datos del mขdulo
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//  Datos del m๏ฟฝdulo
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 #define max_map_size 254 // 128
 
 int find_status;    // Indica si han sido inicializadas las estructuras
 
-int modo;           // 0 R pido, 1 Exacto
+int modo;           // 0 R๏ฟฝpido, 1 Exacto
 
 word * distancias;  // Tabla con las distancias del origen a cada casilla
 word * distancias2; // Tabla con las distancias del destino a cada casilla
@@ -34,18 +34,18 @@ int an,al;          // Ancho y alto del mapa
 
 #define m(x,y) (*(map+(x)+((y)*an)))
 
-word cx,cy,c;       // Casilla actualmente en exploraciขn (x,y y nฃmero)
+word cx,cy,c;       // Casilla actualmente en exploraci๏ฟฝn (x,y y n๏ฟฝmero)
 int ax,ay,bx,by;    // Casillas inicial y final
-word b;             // Casilla final (nฃmero)
-int fin;            // Indica si se alcanzข ya el destino
+word b;             // Casilla final (n๏ฟฝmero)
+int fin;            // Indica si se alcanz๏ฟฝ ya el destino
 int tile;           // Tilesize del mapa (entero, de 1 en adelante)
 int choque_linea;   // Para determinar si se puede ir de un punto a otro
 
-int cas_inicial;    // Si la primera casilla est  ocupada .. la desocupa
+int cas_inicial;    // Si la primera casilla est๏ฟฝ ocupada .. la desocupa
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 //  path_find(modo,file,code,tilesize,x,y,offset tabla,sizeof tabla)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 int init_find(void);
 int calcula_vertices(int * ptr, int max_ver, int x0, int y0, int x1, int y1);
@@ -58,10 +58,10 @@ void add(int x, int y, word bnew, word step);
 void add2(word bnew, word step);
 
 void path_find(void) {
-  int file,code,x,y,offset,size;  // Par metros de entrada
+  int file,code,x,y,offset,size;  // Par๏ฟฝmetros de entrada
   int *ptr;                       // Puntero al registro del mapa
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
   size=pila[sp--];
   offset=pila[sp--];
@@ -74,7 +74,7 @@ void path_find(void) {
 
   pila[sp]=0; // Por defecto, y hasta que se demuestre lo contrario
 
-  // Comprueba lกmites de offset y size ...
+  // Comprueba l๏ฟฝmites de offset y size ...
 #ifdef DIV2
   if (!capar(offset) || !capar(offset+size)) { e(122); return; }
 #else
@@ -82,7 +82,7 @@ void path_find(void) {
   if (offset<long_header || offset+size>imem_max) { e(e122); return; }
 #endif
 
-  // Lกmites tilesize
+  // L๏ฟฝmites tilesize
 
   if (tile<1 || tile>256) { e(151); return; }
 
@@ -96,11 +96,18 @@ void path_find(void) {
 
   // Toma puntero al mapa, ancho y alto
 
-  an=ptr[13]; al=ptr[14]; map=(byte*)ptr+64+ptr[15]*4;
+
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+  an=iptr13; 
+  al=iptr14;
+  map=(byte*)ptr+64+iptr15*4;
 
   if (an<1 || al<1 || an>max_map_size || al>max_map_size) { e(152); return; }
 
-  // Comprueba lกmites de coordenadas (si est n fuera del mapa retorna 0)
+  // Comprueba l๏ฟฝmites de coordenadas (si est๏ฟฝn fuera del mapa retorna 0)
 
   if (x<0 || y<0 || x>=an*tile || y>=al*tile) return;
   ax=mem[id+_X]; ay=mem[id+_Y];
@@ -110,9 +117,9 @@ void path_find(void) {
 
   ax/=tile; ay/=tile; bx=x/tile; by=y/tile;
 
-  if (m(bx,by)) { // Caso en el que la casilla final est ocupada
+  if (m(bx,by)) { // Caso en el que la casilla final est๏ฟฝ ocupada
 
-    x=0; // Si la casilla final no est  libre, prueba con una adyacente
+    x=0; // Si la casilla final no est๏ฟฝ libre, prueba con una adyacente
 
     if (ax<bx) {
       if (ay<by) {
@@ -150,7 +157,7 @@ void path_find(void) {
     }
   }
 
-  // Si las casillas inicial y final son idnticas ...
+  // Si las casillas inicial y final son id๏ฟฝnticas ...
 
   if (ax==bx && ay==by) {
     if (size<2) return;
@@ -158,9 +165,9 @@ void path_find(void) {
     pila[sp]=1; return;
   }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
-  // Inicializa el sistema de bฃsqueda, si esta es la primera bฃsqueda
+  // Inicializa el sistema de b๏ฟฝsqueda, si esta es la primera b๏ฟฝsqueda
 
   if (!find_status) if (init_find()) { e(100); return; }
 
@@ -169,36 +176,36 @@ void path_find(void) {
   // Prepara (limpia) los buffer ...
 
   memset(distancias,0,max_map_size*max_map_size*2); // Distancias si hace falta limpiarlo, para ver
-                              // que casillas est n ya visitadas en el "fill"
+                              // que casillas est๏ฟฝn ya visitadas en el "fill"
 
   cx=ax; cy=ay; c=cx+cy*max_map_size; b=bx+by*max_map_size;
 
   sig(c)=65535; // No hay una siguiente
   dis(c)=1;     // No hay una distancia (1 para marcarla como visitada)
-  fin=0;        // No se encontrข un camino
+  fin=0;        // No se encontr๏ฟฝ un camino
 
   if (!modo) do {
     expand();
     c=sig(c);
     if (c==65535) break;
-    cy=c/max_map_size; cx=c%max_map_size; // Hace falta por comprobar los lกmites (y el mapa)
+    cy=c/max_map_size; cx=c%max_map_size; // Hace falta por comprobar los l๏ฟฝmites (y el mapa)
   } while (!fin);
   else do {
     expand2();
     c=sig(c);
     if (c==65535) break;
-    cy=c/max_map_size; cx=c%max_map_size; // Hace falta por comprobar los lกmites (y el mapa)
+    cy=c/max_map_size; cx=c%max_map_size; // Hace falta por comprobar los l๏ฟฝmites (y el mapa)
   } while (!fin);
 
-  // Si (fin==1) se alcanzข la casilla (bx,by), y el camino se saca de dis()
+  // Si (fin==1) se alcanz๏ฟฝ la casilla (bx,by), y el camino se saca de dis()
 
-  if (!fin) { // ญญญ No se encontrข (no hay) un camino hasta bx,by !!!
+  if (!fin) { // ๏ฟฝ๏ฟฝ๏ฟฝ No se encontr๏ฟฝ (no hay) un camino hasta bx,by !!!
     m(ax,ay)=cas_inicial; return;
   }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
-  // Hay un camino, ahora obtiene los vrtices en la tabla pasada como par metro
+  // Hay un camino, ahora obtiene los v๏ฟฝrtices en la tabla pasada como par๏ฟฝmetro
 
   pila[sp]=calcula_vertices(&mem[offset],size/2,mem[id+_X],mem[id+_Y],x,y);
 
@@ -206,21 +213,21 @@ void path_find(void) {
 
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 //  Expande una casilla
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
-void expand(void) { // Versiขn r pida
+void expand(void) { // Versi๏ฟฝn r๏ฟฝpida
   int n=0;
 
-  // Examina los limites del mapa y aคade los cuatro laterales
+  // Examina los limites del mapa y a๏ฟฝade los cuatro laterales
 
   if (cx)      if (!m(cx-1,cy)) { n|=1; if (!dis(c-1))   add(cx-1,cy,c-1,10); }
   if (cx<an-1) if (!m(cx+1,cy)) { n|=2; if (!dis(c+1))   add(cx+1,cy,c+1,10); }
   if (cy)      if (!m(cx,cy-1)) { n|=4; if (!dis(c-max_map_size)) add(cx,cy-1,c-max_map_size,10); }
   if (cy<al-1) if (!m(cx,cy+1)) { n|=8; if (!dis(c+max_map_size)) add(cx,cy+1,c+max_map_size,10); }
 
-  // Ahora aคade las cuatro diagonales (no se si ser  necesario ...)
+  // Ahora a๏ฟฝade las cuatro diagonales (no se si ser๏ฟฝ necesario ...)
 
   if ((n&5)==5)   if (!dis(c-1-max_map_size)) if (!m(cx-1,cy-1)) add(cx-1,cy-1,c-1-max_map_size,14);
   if ((n&9)==9)   if (!dis(c-1+max_map_size)) if (!m(cx-1,cy+1)) add(cx-1,cy+1,c-1+max_map_size,14);
@@ -229,17 +236,17 @@ void expand(void) { // Versiขn r pida
 
 }
 
-void expand2(void) { // Versiขn exacta
+void expand2(void) { // Versi๏ฟฝn exacta
   int n=0;
 
-  // Examina los limites del mapa y aคade los cuatro laterales
+  // Examina los limites del mapa y a๏ฟฝade los cuatro laterales
 
   if (cx)      if (!m(cx-1,cy)) { n|=1; if (!dis(c-1))   add2(c-1,10); }
   if (cx<an-1) if (!m(cx+1,cy)) { n|=2; if (!dis(c+1))   add2(c+1,10); }
   if (cy)      if (!m(cx,cy-1)) { n|=4; if (!dis(c-max_map_size)) add2(c-max_map_size,10); }
   if (cy<al-1) if (!m(cx,cy+1)) { n|=8; if (!dis(c+max_map_size)) add2(c+max_map_size,10); }
 
-  // Ahora aคade las cuatro diagonales (no se si ser  necesario ...)
+  // Ahora a๏ฟฝade las cuatro diagonales (no se si ser๏ฟฝ necesario ...)
 
   if ((n&5)==5)   if (!dis(c-1-max_map_size)) if (!m(cx-1,cy-1)) add2(c-1-max_map_size,14);
   if ((n&9)==9)   if (!dis(c-1+max_map_size)) if (!m(cx-1,cy+1)) add2(c-1+max_map_size,14);
@@ -248,11 +255,11 @@ void expand2(void) { // Versiขn exacta
 
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Aคade una nueva casilla
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//  A๏ฟฝade una nueva casilla
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
-void add(int x, int y, word bnew, word step) { // Versiขn r pida
+void add(int x, int y, word bnew, word step) { // Versi๏ฟฝn r๏ฟฝpida
   word cdis;    // Distancia
   word i,a;     // Siguiente y anterior
 
@@ -271,7 +278,7 @@ void add(int x, int y, word bnew, word step) { // Versiขn r pida
   if (bnew==b) fin=1;
 }
 
-void add2(word bnew, word step) { // Versiขn exacta
+void add2(word bnew, word step) { // Versi๏ฟฝn exacta
   word i,a;     // Siguiente y anterior
 
   dis(bnew)=dis(c)+step; // Guarda su distancia
@@ -287,9 +294,9 @@ void add2(word bnew, word step) { // Versiขn exacta
   if (bnew==b) fin=1;
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Inicializa las estructuras de bฃsqueda - Retorna 1 si fallข algฃn alloc
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//  Inicializa las estructuras de b๏ฟฝsqueda - Retorna 1 si fall๏ฟฝ alg๏ฟฝn alloc
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 int init_find(void) {
 
@@ -305,14 +312,14 @@ int init_find(void) {
   return(0);
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Calcula todos los vrtices por los que debe pasar, de (x1,y1) a (x0,y0)
-//  Devuelve el nฃmero de vrtices o 0 si salen demasiados vrtices ...
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//  Calcula todos los v๏ฟฝrtices por los que debe pasar, de (x1,y1) a (x0,y0)
+//  Devuelve el n๏ฟฝmero de v๏ฟฝrtices o 0 si salen demasiados v๏ฟฝrtices ...
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 int calcula_vertices(int * ptr, int max_ver, int x0, int y0, int x1, int y1) {
-  int * p=ptr+max_ver*2;  // Del ฃltimo al primero, y luego memmove
-  int num=max_ver;        // Para contar los vrtices que lleva metidos en *ptr
+  int * p=ptr+max_ver*2;  // Del ๏ฟฝltimo al primero, y luego memmove
+  int num=max_ver;        // Para contar los v๏ฟฝrtices que lleva metidos en *ptr
   int d;                  // Distancia de la casilla actual al inicio
   int x,y;                // Siguiente punto
   int xx,yy;              // Punto actual (hasta el que SI puede ir seguro)
@@ -320,10 +327,10 @@ int calcula_vertices(int * ptr, int max_ver, int x0, int y0, int x1, int y1) {
   int dir;                // Direcciones en las que puede ir ...
   int cas;                // Casilla actual (bx+by*max_map_size)
   int n;                  // Un simple contador
-  int nextx[8],nexty[8];  // Las prขximas ocho casillas (ix,iy desde bx,by)
+  int nextx[8],nexty[8];  // Las pr๏ฟฝximas ocho casillas (ix,iy desde bx,by)
 
   if (num<1) return(0);
-  *(--p)=y1; *(--p)=x1; num--; // Mete el ฃltimo vrtice
+  *(--p)=y1; *(--p)=x1; num--; // Mete el ๏ฟฝltimo v๏ฟฝrtice
 
   x=bx*tile+tile/2; y=by*tile+tile/2; cas=bx+by*max_map_size; fin=0;
 
@@ -416,7 +423,7 @@ int calcula_vertices(int * ptr, int max_ver, int x0, int y0, int x1, int y1) {
 
     } while (!choque_linea);
 
-    if (choque_linea) { // Aคade un nuevo vrtice a la ruta
+    if (choque_linea) { // A๏ฟฝade un nuevo v๏ฟฝrtice a la ruta
       if (!num) return(0);
       *(--p)=yy; *(--p)=xx; num--;
       x1=xx; y1=yy;
@@ -424,7 +431,7 @@ int calcula_vertices(int * ptr, int max_ver, int x0, int y0, int x1, int y1) {
 
   } while (!fin);
 
-  if (x!=x0 || y!=y0) { // จes necesario ir al centro de la primera casilla?
+  if (x!=x0 || y!=y0) { // ๏ฟฝes necesario ir al centro de la primera casilla?
     puede_ir(x1,y1,x0,y0);
     if (choque_linea) {
       if (!num) return(0);
@@ -437,9 +444,9 @@ int calcula_vertices(int * ptr, int max_ver, int x0, int y0, int x1, int y1) {
   } return(max_ver-num);
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Determina si puede ir a un punto en lกnea recta (pathline/calcula_vertices)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+//  Determina si puede ir a un punto en l๏ฟฝnea recta (pathline/calcula_vertices)
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void puede_ir(int x0,int y0,int x1,int y1) {
   int tilesize;
@@ -447,7 +454,7 @@ void puede_ir(int x0,int y0,int x1,int y1) {
 
   choque_linea=0;
 /*
-  if (tile>3) { // Tamaคo del tile ... si es muy grande lo divide entre 2
+  if (tile>3) { // Tama๏ฟฝo del tile ... si es muy grande lo divide entre 2
     x0=x0/2; y0=y0/2;
     x1=x1/2; y1=y1/2;
     tilesize=tile/2;
@@ -488,9 +495,9 @@ void puede_ir(int x0,int y0,int x1,int y1) {
   }
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 //  path_line(file,code,tilesize,x,y)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void path_line(void) {
   int file,code,x,y;
@@ -504,7 +511,7 @@ void path_line(void) {
 
   pila[sp]=0; // Por defecto, y hasta que se demuestre lo contrario
 
-  if (tile<1 || tile>256) { e(151); return; } // Lกmites tilesize
+  if (tile<1 || tile>256) { e(151); return; } // L๏ฟฝmites tilesize
 
   // Comprueba limites de file y code
 
@@ -516,10 +523,16 @@ void path_line(void) {
 
   // Toma puntero al mapa, ancho y alto
 
-  an=ptr[13]; al=ptr[14]; map=(byte*)ptr+64+ptr[15]*4;
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+  an=iptr13; 
+  al=iptr14; 
+  map=(byte*)ptr+64+iptr15*4;
   if (an<1 || al<1 || an>max_map_size || al>max_map_size) { e(152); return; }
 
-  // Comprueba lกmites de coordenadas (si est n fuera del mapa retorna 0)
+  // Comprueba l๏ฟฝmites de coordenadas (si est๏ฟฝn fuera del mapa retorna 0)
 
   if (x<0 || y<0 || x>=an*tile || y>=al*tile) return;
   ax=mem[id+_X]; ay=mem[id+_Y];
@@ -530,9 +543,9 @@ void path_line(void) {
   puede_ir(ax,ay,x,y); if (!choque_linea) pila[sp]=1;
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 //  path_free(file,code,tilesize,x,y)
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
 
 void path_free(void) {
   int file,code,x,y;
@@ -546,7 +559,7 @@ void path_free(void) {
 
   pila[sp]=0; // Por defecto, y hasta que se demuestre lo contrario
 
-  if (tile<1 || tile>256) { e(151); return; } // Lกmites tilesize
+  if (tile<1 || tile>256) { e(151); return; } // L๏ฟฝmites tilesize
 
   // Comprueba limites de file y code
 
@@ -558,16 +571,22 @@ void path_free(void) {
 
   // Toma puntero al mapa, ancho y alto
 
-  an=ptr[13]; al=ptr[14]; map=(byte*)ptr+64+ptr[15]*4;
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+  an=iptr13; 
+  al=iptr14; 
+  map=(byte*)ptr+64+iptr15*4;
   if (an<1 || al<1 || an>max_map_size || al>max_map_size) { e(152); return; }
 //printf("got to 559\n");
 
-  // Comprueba lกmites de coordenadas (si est n fuera del mapa retorna 0)
+  // Comprueba l๏ฟฝmites de coordenadas (si est๏ฟฝn fuera del mapa retorna 0)
   if (x<0 || y<0 || x>=an*tile || y>=al*tile) return;
 //printf("m is %d %d %d\n",m(x/tile,y/tile),x,y);
-  // Determina si la casilla destino est  libre
+  // Determina si la casilla destino est๏ฟฝ libre
 
   if (!m(x/tile,y/tile)) pila[sp]=1;
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ

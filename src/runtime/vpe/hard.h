@@ -16,7 +16,7 @@ typedef unsigned char   VPEByte;
 typedef unsigned short  VPEWord;
 typedef uint32_t        VPEDword;
 typedef int32_t         VPELong;
-typedef int16_t           VPEShort;
+typedef int16_t         VPEShort;
 typedef int32_t         VPEFixed;
 
 

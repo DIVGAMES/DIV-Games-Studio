@@ -7,7 +7,8 @@
 #include <errno.h>
 
 void readmouse(void);
-#include "netlib.h"
+
+// #include "netlib.h"
 
 #include "cdrom.h"
 #include "divmixer.hpp"
@@ -110,29 +111,52 @@ int get_reloj(void) {
 //      Signal(proceso,se�al)
 //����������������������������������������������������������������������������
 
+extern int dirtylist;
+
 void _signal(void) {
   int i;
   bp=pila[sp-1];
+  // fprintf(stdout,"Signal started: process target is: %d\n", bp);
+  // fprintf(stdout,"Current status: %d\n", mem[bp+_Status]);
+  // fprintf(stdout,"mem[bp] = %d\n", mem[bp]);
+
   if ((bp&1) && bp>=id_init && bp<=id_end && bp==mem[bp]) {
-    if (mem[bp+_Status])
-      if (pila[sp]<100) mem[bp+_Status]=pila[sp--]+1;
-      else {
+    if (mem[bp+_Status]) {
+      if (pila[sp]<100) {
+        mem[bp+_Status]=pila[sp--]+1;
+        // fprintf(stdout,"New status (139): %d\n", mem[bp+_Status]);
+      }  else {
         mem[bp+_Status]=pila[sp--]-99;
-        if (mem[bp+_Son]) signal_tree(mem[bp+_Son],pila[sp+1]-99);
+        // fprintf(stdout,"New status (127): %d\n", mem[bp+_Status]);
+
+        if (mem[bp+_Son]) 
+          signal_tree(mem[bp+_Son],pila[sp+1]-99);
       }
-    else pila[--sp]=0; // Returns 0 if the process was dead
+   } else {
+    pila[--sp]=0; // Returns 0 if the process was dead
+   }
   } else {
-    for (i=id_start; i<=id_end; i+=iloc_len)
+    for (i=id_start; i<=id_end; i+=iloc_len) {
       if (mem[i+_Status] && mem[i+_Bloque]==bp) {
-        if (pila[sp]<100) mem[i+_Status]=pila[sp]+1;
-        else {
+        if (pila[sp]<100) {
+          mem[i+_Status]=pila[sp]+1;
+          // fprintf(stdout,"New status (137): %d\n", mem[bp+_Status]);
+        } else {
           mem[i+_Status]=pila[sp]-99;
-          if (mem[i+_Son]) signal_tree(mem[i+_Son],pila[sp]-99);
+          // fprintf(stdout,"New status (143): %d\n", mem[bp+_Status]);
+
+          if (mem[i+_Son]) {
+            signal_tree(mem[i+_Son],pila[sp]-99);
+          }
         }
       }
+    }
     pila[--sp]=0;
   }
 
+  // fprintf(stdout, "_signal() called.\nProcess %d changed to ")
+//  printf("Status changed for id %d, setting dirty flag\n", bp);
+  dirtylist = true;
 }
 
 void signal_tree(int p, int s) {
@@ -186,7 +210,7 @@ FILE *__fpopen (byte *file, char *mode) {
 	
 }
 
-FILE * fpopen ( byte * file, char *mode) {
+FILE * fpopen ( unsigned char * file, char *mode) {
 	return __fpopen(file,mode);
 }
 
@@ -211,7 +235,7 @@ FILE * open_multi(char *file, char *mode) {
   strcpy(full,(char*)file); // full filename
 //fprintf(stdout,"Trying to open %s\n",file);
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -242,7 +266,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG  
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -254,7 +278,7 @@ FILE * open_multi(char *file, char *mode) {
   return f;
 
 #ifdef DEBUG
-  if ( f=fpopen(full, mode) )
+  if ( f=fpopen((unsigned char *)full, mode) )
     return f;
 #endif
     
@@ -267,7 +291,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -279,7 +303,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -291,7 +315,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif    
 
@@ -310,7 +334,7 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
@@ -320,14 +344,14 @@ FILE * open_multi(char *file, char *mode) {
     return f;
 
 #ifdef DEBUG
-  if ( f = fpopen(full, mode))
+  if ( f = fpopen((unsigned char *)full, mode))
     return f;
 #endif
 
 #ifdef ZLIB
 //  fprintf(stdout,"Trying to open from zip %s\n",file);
     if(mode[0]!='w')
-      if(f=memz_open_file(file))
+      if(f=memz_open_file((unsigned char *)file))
         return f;
 #endif
 
@@ -349,7 +373,7 @@ FILE * div_open_file(char * file) {
   if(strlen((char *)file)==0) 
     return NULL;
 
-  f=open_multi(file,"rb");
+  f=open_multi((char *)file,"rb");
 
   if(!f)
   	strcpy(full,"");
@@ -438,7 +462,7 @@ while (*ff!=0) {
         if ((f=fopen(packfile,"rb"))==NULL) {
 #ifndef DEBUG
 #ifdef ZLIB
-          f=memz_open_file(packfile);
+          f=memz_open_file((unsigned char *)packfile);
 #endif
 #endif
         }
@@ -494,7 +518,7 @@ void load_pal(void) {
     free(packptr);
   } else {
     palfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char *)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(102); return;
     } else {
       fread(pal,1,1352,es); fclose(es);
@@ -518,7 +542,7 @@ void load_pal(void) {
               free(packptr);
             } else {
               palfuera2:
-              if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+              if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
                 pila[sp]=0; e(102); return;
               } else {
                 fseek(es,-768,SEEK_END);
@@ -610,17 +634,17 @@ typedef struct _pcx_header {
   char version;
   char encoding;
   char bits_per_pixel;
-  short  xmin,ymin;
-  short  xmax,ymax;
-  short  hres;
-  short  vres;
+  unsigned short  xmin,ymin;
+  unsigned short  xmax,ymax;
+  unsigned short  hres;
+  unsigned short  vres;
   char   palette16[48];
   char   reserved;
   char   color_planes;
-  short  bytes_per_line;
-  short  palette_type;
-  short  Hresol;
-  short  Vresol;
+  unsigned short  bytes_per_line;
+  unsigned short  palette_type;
+  unsigned short  Hresol;
+  unsigned short  Vresol;
   char  filler[54];
 }pcx_header;
 
@@ -654,8 +678,35 @@ void descomprime_PCX(byte *buffer, byte *mapa)
   memcpy((byte *)&header,buffer,sizeof(pcx_header));
   buffer+=128;                                  // Comienzo de la imagen
 
+  header.xmax = l2b16(header.xmax);
+  header.xmin = l2b16(header.xmin);
+
+  header.ymax = l2b16(header.ymax);
+  header.ymin = l2b16(header.ymin);
+
+  header.bytes_per_line = l2b16(header.bytes_per_line);
+  header.color_planes = l2b16(header.color_planes);
+
+
+
+  fprintf(stdout,"Header. manufacturer: %d\n", header.manufacturer);
+  fprintf(stdout,"Header.version: %d\n", header.version);
+  fprintf(stdout,"Header.encoding: %d\n", header.encoding);
+  fprintf(stdout,"Header.bits_per_pixel: %d\n", header.bits_per_pixel);
+  fprintf(stdout,"Header.xmin: %d ymin: %d\n", header.xmin, header.ymin);
+  fprintf(stdout,"Header.xmax: %d ymax: %d\n", header.xmax, header.ymax);
+  fprintf(stdout,"Header.hres: %d\n", header.hres);
+  fprintf(stdout,"Header.vres: %d\n", header.vres);
+  fprintf(stdout,"Header.vres: %d\n", header.vres);
+  
+  fprintf(stdout,"Size of pcx header: %d\n", sizeof(pcx_header));
+  fprintf(stdout,"Size of short: %d\n", sizeof(short));
+
   map_an = header.xmax - header.xmin + 1;
   map_al = header.ymax - header.ymin + 1;
+
+
+  fprintf(stdout,"Ancho: %d ALto: %d\n", map_an, map_al);
 
   memset (mapa, 0, map_an * map_al);
 
@@ -711,7 +762,7 @@ void load_map(void) {
     ptr=packptr; file_len=m;
   } else {
     mapfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(143); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -737,17 +788,22 @@ void load_map(void) {
       } paleta_cargada=1;
     }
 
-    ancho=*(word*)(ptr+8);
-    alto=*(word*)(ptr+10);
-    npuntos=*(word*)(ptr+1392);
+    word wptr8 = l2b16(*(word*)(ptr+8));
+    word wptr10 = l2b16(*(word*)(ptr+10));
+    word wptr1392 = l2b16(*(word*)(ptr+1392));
+
+
+    ancho = wptr8;
+    alto = wptr10;
+    npuntos= wptr1392;
 
     adaptar(ptr+1394+npuntos*4,ancho*alto,ptr+48,NULL);
 
     ptr=ptr+1394-64;
 
-    *((int*)ptr+13)=ancho;
-    *((int*)ptr+14)=alto;
-    *((int*)ptr+15)=npuntos;
+    *((int*)ptr+13)=l2b32(ancho);
+    *((int*)ptr+14)=l2b32(alto);
+    *((int*)ptr+15)=l2b32(npuntos);
 
     while(g[0].grf[next_map_code]) {
       if (next_map_code++==1999) next_map_code=1000;
@@ -757,26 +813,74 @@ void load_map(void) {
   } else if (es_PCX(ptr)) {
 
     memcpy((byte *)&header,ptr,sizeof(pcx_header));
+
+    /*
+    typedef struct _pcx_header {
+      char manufacturer;
+      char version;
+      char encoding;
+      char bits_per_pixel;
+      short  xmin,ymin;
+      short  xmax,ymax;
+      short  hres;
+      short  vres;
+      char   palette16[48];
+      char   reserved;
+      char   color_planes;
+      short  bytes_per_line;
+      short  palette_type;
+      short  Hresol;
+      short  Vresol;
+      char  filler[54];
+    }
+    pcx_header;
+*/
+
+    fprintf(stdout,"Header. manufacturer: %d\n", header.manufacturer);
+    fprintf(stdout,"Header.version: %d\n", header.version);
+    fprintf(stdout,"Header.encoding: %d\n", header.encoding);
+    fprintf(stdout,"Header.bits_per_pixel: %d\n", header.bits_per_pixel);
+    fprintf(stdout,"Header.xmin: %d ymin: %d\n", header.xmin, header.ymin);
+    fprintf(stdout,"Header.xmax: %d ymax: %d\n", header.xmax, header.ymax);
+    fprintf(stdout,"Header.hres: %d\n", header.hres);
+    fprintf(stdout,"Header.vres: %d\n", header.vres);
+    fprintf(stdout,"Header.vres: %d\n", header.vres);
+    
+    fprintf(stdout,"Size of pcx header: %d\n", sizeof(pcx_header));
+    fprintf(stdout,"Size of short: %d\n", sizeof(short));
+
+    
+    header.xmax = l2b16(header.xmax);
+    header.xmin = l2b16(header.xmin);
+
+    header.ymax = l2b16(header.ymax);
+    header.ymin = l2b16(header.ymin);
+
     ancho   = header.xmax - header.xmin + 1;
     alto    = header.ymax - header.ymin + 1;
     npuntos = 0;
 
-    if((!ancho&& !alto) || ancho<0 || alto<0) {
-      e(144); free(ptr); return;
+    fprintf(stdout,"Ancho: %d ALto: %d\n", ancho, alto);
+
+
+    if((!ancho && !alto) || ancho<0 || alto<0) {
+      e(144); 
+      free(ptr); 
+      return;
     }
 
     buffer=(byte *)malloc(1394+ancho*alto);
-    descomprime_PCX(ptr, &buffer[1394]);
-
+    //descomprime_PCX(ptr, &buffer[1394]);
+    //memset(buffer, 64, 1394+ancho*alto);
     adaptar(buffer+1394,ancho*alto,pcxdac,NULL);
 
     free(ptr);
 
     buffer=buffer+1394-64;
 
-    *((int*)buffer+13)=ancho;
-    *((int*)buffer+14)=alto;
-    *((int*)buffer+15)=npuntos;
+    *((int*)buffer+13)=l2b32(ancho);
+    *((int*)buffer+14)=l2b32(alto);
+    *((int*)buffer+15)=l2b32(npuntos);
 
     while(g[0].grf[next_map_code]) {
       if (next_map_code++==1999) next_map_code=1000;
@@ -794,7 +898,9 @@ void load_map(void) {
 //����������������������������������������������������������������������������
 
 void new_map(void) {
-  int ancho,alto,cx,cy,color;
+  int ancho,alto;
+  word cx,cy;
+  int color;
   byte * ptr;
 
   color=pila[sp--]; cy=pila[sp--]; cx=pila[sp--];
@@ -807,10 +913,13 @@ void new_map(void) {
   if (cx<0 || cy<0 || cx>=ancho || cy>=alto) { e(155); return; }
 
   if ((ptr=(byte *)malloc(1330+64+4+ancho*alto))!=NULL) {
+    memset(ptr,0,1330+64+4+ancho*alto);
     ptr+=1330; // fix load_map/unload_map
-    *((int*)ptr+13)=ancho; *((int*)ptr+14)=alto;
-    *((int*)ptr+15)=1; // Se define un punto de control (el centro)
-    *((word*)ptr+32)=cx; *((word*)ptr+33)=cy;
+    *((int*)ptr+13)=l2b32(ancho); 
+    *((int*)ptr+14)=l2b32(alto);
+    *((int*)ptr+15)=l2b32(1); // Se define un punto de control (el centro)
+    *((word*)ptr+32)=l2b16(cx); 
+    *((word*)ptr+33)=l2b16(cy);
     memset(ptr+4+64,color,ancho*alto);
 
     while(g[0].grf[next_map_code]) {
@@ -866,11 +975,11 @@ void load_fpg(void) {
 #ifdef STDOUTLOG
     printf("fpg wanted is [%s]\n",&mem[pila[sp]]);
 #endif
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(105); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
-      //printf("file_len is %d\n",file_len);
+      printf("file_len is %d\n",file_len);
       
 #ifdef __EMSCRIPTEN__ 
 file_len=1352;
@@ -895,7 +1004,10 @@ fclose(es);
     }
   }
 
-  if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { e(106); free(ptr); return; }
+  if (strcmp((char *)ptr,"fpg\x1a\x0d\x0a")) { 
+    e(106); 
+    free(ptr); 
+    return; }
 
   if (process_fpg!=NULL) process_fpg((char *)ptr,file_len);
 //#ifdef STDOUTLOG
@@ -958,24 +1070,61 @@ ptr+=1352; // Longitud cabecera fpg
 ptr2=ptr;
 ptr3=ptr;
 
-  while (ptr<=(ptr2+file_len) && *(int*)ptr3<1000 && *(int*)ptr3>0 ) {
+int iptr3 = *(int*)ptr3;
 
-int *ptr_4=(int *)ptr3;
-int *ptr_8=(int*)ptr3;
-	int num = *ptr_4;
-	int len = *(ptr_8+1);
- 
+// fprintf(stdout, "iptr3: %d\n", iptr3);
+
+iptr3 = l2b32(iptr3);
+
+  while (ptr<=(ptr2+file_len) && iptr3<1000 && iptr3>0 ) {
+    // fprintf(stdout, "iptr3: %d \n", iptr3);
+
+    int *ptr_4=(int *)ptr3;
+    int *ptr_8=(int*)ptr3;
+    int num = *ptr_4;
+    num = l2b32(num);
+    
+    // fprintf(stdout, "num: %d \n", num);
+
+
+    int len = *(ptr_8+1);
+
+    len = l2b32(len);
+
+    // fprintf(stdout, "len: %d \n", len);
+
+	//  printf("ptr_4 is %x\n",iptr);
+
     lst[num]=iptr=ptr_4;
-    if (m!=palcrc) adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+
+	//  printf("iptr is %x\n",iptr);
+
+    if (m!=palcrc) {
+      adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+    }
     ptr=(byte *)&ptr2[len];//(int*)(ptr[4]);
     //if(num<=0 || num>1000) break;
     ptr3=ptr;
     ptr2=ptr;
+    iptr3 = *(int*)ptr3;
+
+    // fprintf(stdout, "iptr3: %d\n", iptr3);
+
+    iptr3 = l2b32(iptr3);
+    // fprintf(stdout, "iptr3: %d\n", iptr3);
+
   }
 #endif
 #ifdef STDOUTLOG
 printf("fpg search ended, %x: ptr: %x\n",(byte *)g[num].fpg+file_len,ptr);
 #endif
+
+// exit(0);
+    fprintf(stdout, "num: %d \n", num);
+
+  fprintf(stdout, "FPG Graphs: %x\n", g[num].grf);
+  fprintf(stdout, "LST: %x\n", lst);
+
   pila[sp]=num;
   max_reloj+=get_reloj()-old_reloj;
 }
@@ -1019,11 +1168,38 @@ void start_scroll(void) {
 
   if (ptr2==NULL) s=1; else s=2; // Tipo de scroll, normal(1) o parallax(2)
 
-  iscroll[snum].map1_an=ptr1[13]; iscroll[snum].map1_al=ptr1[14]; iscroll[snum].map1=(byte*)ptr1+64+ptr1[15]*4;
+  int iptr1_13 = l2b32(ptr1[13]);
+  int iptr1_14 = l2b32(ptr1[14]);
+  int iptr1_15 = l2b32(ptr1[15]);
+  word wptr1_32 = l2b16(*((word*)ptr1+32));
+  word wptr1_33 = l2b16(*((word*)ptr1+33));
+
+  int iptr2_13 = 0;
+  int iptr2_14 = 0;
+  int iptr2_15 = 0;
+  word wptr2_32 = 0;
+  word wptr2_33 = 0;
+
+if(ptr2 != NULL) {
+  iptr2_13 = l2b32(ptr2[13]);
+  iptr2_14 = l2b32(ptr2[14]);
+  iptr2_15 = l2b32(ptr2[15]);
+  wptr2_32 = l2b16(*((word*)ptr2+32));
+  wptr2_33 = l2b16(*((word*)ptr2+33));
+}
+
+
+
+  iscroll[snum].map1_an=iptr1_13; iscroll[snum].map1_al=iptr1_14; iscroll[snum].map1=(byte*)ptr1+64+iptr1_15*4;
   if (iscroll[snum].an>iscroll[snum].map1_an) iscroll[snum].map_flags|=1;
   if (iscroll[snum].al>iscroll[snum].map1_al) iscroll[snum].map_flags|=2;
-  if (ptr1[15]==0) { iscroll[snum].map1_x=0; iscroll[snum].map1_y=0; }
-  else { iscroll[snum].map1_x=*((word*)ptr1+32); iscroll[snum].map1_y=*((word*)ptr1+33); }
+  if (iptr1_15==0) { 
+    iscroll[snum].map1_x=0;
+    iscroll[snum].map1_y=0; 
+  } else { 
+    iscroll[snum].map1_x=wptr1_32; 
+  iscroll[snum].map1_y=wptr1_33; 
+  }
   if ((iscroll[snum]._sscr1=(byte*)malloc(iscroll[snum].an*(iscroll[snum].al+1)))==NULL) { e(100); return; }
   if ((iscroll[snum].fast=(tfast*)malloc(iscroll[snum].al*sizeof(tfast)))==NULL) { e(100); return; }
   iscroll[snum].sscr1=iscroll[snum]._sscr1; iscroll[snum].block1=iscroll[snum].al;
@@ -1031,11 +1207,11 @@ void start_scroll(void) {
   iscroll[snum].on=0; // Si hay alg�n error (malloc), no habr� scroll
 
   if (s==2) {
-    iscroll[snum].map2_an=ptr2[13]; iscroll[snum].map2_al=ptr2[14]; iscroll[snum].map2=(byte*)ptr2+64+ptr2[15]*4;
+    iscroll[snum].map2_an=iptr2_13; iscroll[snum].map2_al=iptr2_14; iscroll[snum].map2=(byte*)ptr2+64+iptr2_15*4;
     if (iscroll[snum].an>iscroll[snum].map2_an) iscroll[snum].map_flags|=4;
     if (iscroll[snum].al>iscroll[snum].map2_al) iscroll[snum].map_flags|=8;
     if (ptr2[15]==0) { iscroll[snum].map2_x=0; iscroll[snum].map2_y=0; }
-    else { iscroll[snum].map2_x=*((word*)ptr2+32); iscroll[snum].map2_y=*((word*)ptr2+33); }
+    else { iscroll[snum].map2_x=wptr2_32; iscroll[snum].map2_y=wptr2_33; }
     if ((iscroll[snum]._sscr2=(byte*)malloc(iscroll[snum].an*(iscroll[snum].al+1)))==NULL) {
       free(iscroll[snum]._sscr1); free(iscroll[snum].fast); e(100); return;
     }
@@ -1131,7 +1307,10 @@ void kill_invisible(void) {
 			}
 		}
 	}
-    if (n==10) elimina_proceso(i);
+    if (n==10) {
+      fprintf(stdout,"Eliminating process id: %d for being in a dead scroll\n",i);
+      elimina_proceso(i);
+    }
   }
 }
 
@@ -1212,7 +1391,8 @@ void fade(void) {
   if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b)
     fading=1;
 
-  sp-=3; pila[sp]=0;
+  sp-=3; 
+  pila[sp]=0;
 }
 
 //����������������������������������������������������������������������������
@@ -1247,7 +1427,7 @@ void load_fnt(void) {
     fonts[ifonts]=ptr;
   } else {
     fntfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=0; e(114); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -1265,9 +1445,17 @@ void load_fnt(void) {
   if (process_fnt!=NULL) process_fnt((char*)ptr,file_len);
   an=0; al=0; nan=0; fnt=(TABLAFNT*)((byte*)ptr+1356);
   for (n=0;n<256;n++) {
-    if (fnt[n].ancho) { an+=fnt[n].ancho; nan++; }
+    fnt[n].ancho = l2b32(fnt[n].ancho);
+    fnt[n].alto = l2b32(fnt[n].alto);
+    fnt[n].incY = l2b32(fnt[n].incY);
+    fnt[n].offset = l2b32(fnt[n].offset);
+    if (fnt[n].ancho) { 
+      an+=fnt[n].ancho; nan++;
+    }
     if (fnt[n].alto) {
-      if (fnt[n].alto+fnt[n].incY>al) al=fnt[n].alto+fnt[n].incY;
+      if (fnt[n].alto+fnt[n].incY>al) {
+        al=fnt[n].alto+fnt[n].incY;
+      }
     }
   }
 
@@ -1320,7 +1508,7 @@ void checkpal_font(int ifonts) {
         free(packptr);
       } else {
         fntfuera:
-        if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) return; else {
+        if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) return; else {
           fseek(es,0,SEEK_END); file_len=ftell(es);
           if (file_len!=f_i[ifonts].len) return;
           fseek(es,0,SEEK_SET);
@@ -1582,7 +1770,11 @@ void map_xput(void) {
   if (g[file].grf==NULL) { e(111); return; }
 
   if ((ptr=g[file].grf[graf1])!=NULL) {
-    put_sprite(file,graf2,x,y,angle,size,flags,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
+    int iptr13 = l2b32(ptr[13]);
+    int iptr14 = l2b32(ptr[14]);
+    int iptr15 = l2b32(ptr[15]);
+
+    put_sprite(file,graf2,x,y,angle,size,flags,-1,(byte*)ptr+64+iptr15*4,iptr13,iptr13);
   } else e(121);
 
 }
@@ -1603,8 +1795,13 @@ void map_put(void) {
   if (graf1<=0 || graf1>=max_grf) { e(110); return; }
   if (g[file].grf==NULL) { e(111); return; }
 
+
   if ((ptr=g[file].grf[graf1])!=NULL) {
-    put_sprite(file,graf2,x,y,0,100,0,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
+    int iptr13 = l2b32(ptr[13]);
+    int iptr14 = l2b32(ptr[14]);
+    int iptr15 = l2b32(ptr[15]);
+
+    put_sprite(file,graf2,x,y,0,100,0,-1,(byte*)ptr+64+iptr15*4,iptr13,iptr14);
   } else e(121);
 
 }
@@ -1634,8 +1831,16 @@ void map_block_copy(void) {
   if ((ptrd=g[file].grf[grafd])!=NULL) {
     if ((ptr=g[file].grf[graf])!=NULL) {
 
-      vga_an=ptrd[13]; vga_al=ptrd[14];
-      copia=(byte*)ptrd+64+ptrd[15]*4;
+      int iptrd13 = l2b32(ptrd[13]);
+      int iptrd14 = l2b32(ptrd[14]);
+      int iptrd15 = l2b32(ptrd[15]);
+
+      int iptr13 = l2b32(ptr[13]);
+      int iptr14 = l2b32(ptr[14]);
+      int iptr15 = l2b32(ptr[15]);
+
+      vga_an=iptrd13; vga_al=iptrd14;
+      copia=(byte*)ptrd+64+iptrd15*4;
 
       if (xd>0) clipx0=xd; else clipx0=0;
       if (yd>0) clipy0=yd; else clipy0=0;
@@ -1646,12 +1851,13 @@ void map_block_copy(void) {
       if (clipy0>=vga_al || clipy1<=0) goto no;
       if (clipx0>=clipx1 || clipy0>=clipy1) goto no;
 
-      an=ptr[13]; al=ptr[14];
-      si=(byte*)ptr+64+ptr[15]*4;
+      an=iptr13; 
+      al=iptr14;
+      si=(byte*)ptr+64+iptr15*4;
       x=xd-x; y=yd-y;
 
       if (x>=clipx0 && x+an<=clipx1 && y>=clipy0 && y+al<=clipy1) // Pinta sprite sin cortar
-        sp_normal(si,x,y,an,al,0);
+        sp_normal(si,x,y,an,al,0);  
       else if (x<clipx1 && y<clipy1 && x+an>clipx0 && y+al>clipy0) // Pinta sprite cortado
         sp_cortado(si,x,y,an,al,0);
 
@@ -1689,12 +1895,17 @@ void screen_copy(void) {
 
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
+
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
   if (xr<0) xr=0; if (yr<0) yr=0;
-  if (xr+divand>ptr[13]) divand=ptr[13]-xr;
-  if (yr+ald>ptr[14]) ald=ptr[14]-yr;
+  if (xr+divand>iptr13) divand=iptr13-xr;
+  if (yr+ald>iptr14) ald=iptr14-yr;
   if (divand<=0 || ald<=0 || an<=0 || al<=0) return;
 
-  di=(byte*)ptr+64+ptr[15]*4+xr+yr*ptr[13];
+  di=(byte*)ptr+64+iptr15*4+xr+yr*iptr13;
   old_si=copia+region[reg].x0+region[reg].y0*vga_an;
 
   ixr=(float)(an*256)/(float)divand;
@@ -1708,7 +1919,7 @@ void screen_copy(void) {
       *di=*(si+(xr>>8));
       di++; xr+=ixr;
     } while (--an);
-    yr+=iyr; di+=ptr[13]-(an=divand);
+    yr+=iyr; di+=iptr13-(an=divand);
   } while (--ald);
 
 }
@@ -1744,8 +1955,20 @@ void put_screen(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-  } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+
+  word wptr32 = l2b16(*((word*)ptr+32));
+  word wptr33 = l2b16(*((word*)ptr+33));
+
+  if (iptr15==0 || wptr32==65535) { 
+    xg=iptr13/2; 
+    yg=iptr14/2;
+  } else { 
+    xg=wptr32;
+    yg=wptr33; 
+  }
 
   memset(copia2,0,vga_an*vga_al);
   put_sprite(file,graf,xg,yg,0,100,0,0,copia2,vga_an,vga_al);
@@ -1796,9 +2019,13 @@ void map_put_pixel(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (x>=0 && y>=0 && x<ptr[13] && y<ptr[14]) {
-    si=(byte*)ptr+64+ptr[15]*4;
-    *(si+x+y*ptr[13])=color;
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+  if (x>=0 && y>=0 && x<iptr13 && y<iptr14) {
+    si=(byte*)ptr+64+iptr15*4;
+    *(si+x+y*iptr13)=color;
   }
 }
 
@@ -1820,9 +2047,13 @@ void map_get_pixel(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (x>=0 && y>=0 && x<ptr[13] && y<ptr[14]) {
-    si=(byte*)ptr+64+ptr[15]*4;
-    pila[sp]=(int)(*(si+x+y*ptr[13]));
+	int iptr13 = l2b32(ptr[13]);
+	int iptr14 = l2b32(ptr[14]);
+	int iptr15 = l2b32(ptr[15]);
+
+  if (x>=0 && y>=0 && x<iptr13 && y<iptr14) {
+    si=(byte*)ptr+64+iptr15*4;
+    pila[sp]=(int)(*(si+x+y*iptr13));
   } else pila[sp]=0;
 }
 
@@ -1844,7 +2075,31 @@ void get_point(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  if (n>=0 || n<ptr[15]) { p=(short*)&ptr[16]; mem[dx]=p[n*2]; mem[dy]=p[n*2+1]; }
+  if (n>=0 || n<ptr[15]) { 
+    uint16_t* sptr16 = (uint16_t*)&ptr[16];
+
+    p=sptr16; 
+
+    uint16_t spx=p[n*2]; 
+    uint16_t spy=p[n*2+1];
+
+    // fprintf(stdout,"Real point for %d is %d,%d\n",n,spx,spy);
+
+    int px = l2b16(spx);
+    int py = l2b16(spy);
+
+#ifdef AMIGA
+
+px = px & 0x7FFF;
+py = py & 0x7FFF;
+#endif
+
+    // p=(short*)&ptr[16]; 
+    mem[dx]=px; 
+    //l2b32(p[n*2]); 
+    mem[dy]=py;
+    //l2b32(p[n*2+1]); 
+    }
 
 }
 
@@ -1870,7 +2125,7 @@ FILE * open_save_file(byte * file) {
   char fname[_MAX_FNAME+1];
   char ext[_MAX_EXT+1];
 
-  f = open_multi(file,"wb");
+  f = open_multi((char *)file,"wb");
   return f;
 }
 
@@ -1893,7 +2148,7 @@ FILE * open_save_file(byte * file) {
   
   printf("Looking for save file: %s\n",file);
 
-  f=open_multi(file,"wb");
+  f=open_multi((char *)file,"wb");
   return f;
 }
 
@@ -1963,7 +2218,7 @@ void load(void) {
   if (!capar(offset)) { pila[sp]=0; e(125); return; }
   //fprintf(stdout, "loading data from: %s\n",(byte*)&mem[pila[sp]]);
 
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+  if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
   
     // if not found, check pak
     // this way files override paks
@@ -1972,6 +2227,14 @@ void load(void) {
     if(lon>0) {
       if (!capar(offset+lon)) { pila[sp]=0; e(125); return; }
       memcpy(&mem[offset],packptr,lon);
+      // Byte swap the ints???
+
+      
+      // int * imem = (int *)&mem[offset];
+
+      for(int i=offset;i<(offset+lon);i++) {
+        mem[i]=l2b32(mem[i]);
+      }
       max_reloj+=get_reloj()-old_reloj;
       return;
     }
@@ -1985,6 +2248,7 @@ void load(void) {
 
   //fprintf(stdout, "File loaded: %s\n", full);
 
+  fprintf(stdout,"Unit size: %d\n", unit_size);
   fseek(es,0,SEEK_END); lon=ftell(es);///4; 
   printf("file len: %d\n",ftell(es));
   fseek(es,0,SEEK_SET);
@@ -1995,6 +2259,18 @@ void load(void) {
     //fprintf(stdout,"Bytes read: %d bytes wanted: %d len: %d unit_size: %d\n",fbytes, lon*unit_size, lon, unit_size);
     e(127); 
   }
+
+  // byteswap ints? maybe ok...
+
+#ifdef AMIGA // should be ifdef big endian
+  // int * imem = (int *)&mem[offset];
+
+  for(int i=offset;i<(offset+lon);i++) {
+    mem[i]=l2b32(mem[i]);
+  }
+
+#endif
+
   fclose(es);
   max_reloj+=get_reloj()-old_reloj;
 }
@@ -2103,6 +2379,9 @@ void load_pcm(void) {
 
   loop=pila[sp--];
 
+#ifndef MIXER
+  pila[sp]=0;
+#else
   if (npackfiles) {
     m=read_packfile((byte*)&mem[pila[sp]]);
     if (m==-1) goto pcmfuera;
@@ -2111,7 +2390,7 @@ void load_pcm(void) {
     ptr=(char *)packptr; file_len=m;
   } else {
     pcmfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(128); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2126,6 +2405,7 @@ void load_pcm(void) {
   pila[sp]=LoadSound(ptr,file_len,loop);
 
   free(ptr);
+#endif
 
   max_reloj+=get_reloj()-old_reloj;
 }
@@ -2230,7 +2510,7 @@ void load_song(void) {
     ptr=(char *)packptr; file_len=m;
   } else {
     songfuera:
-    if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+    if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
       pila[sp]=-1; e(167); return;
     } else {
       fseek(es,0,SEEK_END); file_len=ftell(es);
@@ -2344,7 +2624,7 @@ void start_fli(void) {
   y=pila[sp--]; x=pila[sp--];
 
 #ifdef USE_FLI
-  if ((es=div_open_file((byte*)&mem[pila[sp]]))==NULL) {
+  if ((es=div_open_file((char*)&mem[pila[sp]]))==NULL) {
     pila[sp]=0; e(147);
   } else {
     fclose(es);
@@ -2533,10 +2813,32 @@ void start_mode7(void) {
   if (ptr1==NULL && ptr2==NULL) { e(132); return; }
   if (ptr1==NULL) { ptr1=ptr2; ptr2=NULL; }
 
-  im7[n].map_an=ptr1[13]; im7[n].map_al=ptr1[14];
-  im7[n].map=(byte*)ptr1+64+ptr1[15]*4;
+  int iptr1_13 = l2b32(ptr1[13]);
+  int iptr1_14 = l2b32(ptr1[14]);
+  int iptr1_15 = l2b32(ptr1[15]);
 
-  if (ptr2!=NULL) { im7[n].ext_an=ptr2[13]; im7[n].ext_al=ptr2[14]; } else im7[n].ext_an=0;
+  int iptr2_13 = 0;
+  int iptr2_14 = 0;
+  int iptr2_15 = 0;
+
+  // word wptr32 = l2b16(*((word*)ptr+32));
+  // word wptr33 = l2b16(*((word*)ptr+33));
+
+
+
+  im7[n].map_an=iptr1_13; 
+  im7[n].map_al=iptr1_14 ;
+  im7[n].map=(byte*)ptr1+64+iptr1_15*4;
+
+  if (ptr2!=NULL) { 
+    iptr2_13 = l2b32(ptr2[13]);
+    iptr2_14 = l2b32(ptr2[14]);
+    iptr2_15 = l2b32(ptr2[15]);
+
+    im7[n].ext_an=iptr2_13; 
+    im7[n].ext_al=iptr2_14; 
+  } 
+  else im7[n].ext_an=0;
 
   switch(im7[n].ext_an) {
     case 1: case 2: case 4: case 8: case 16: case 32: case 64: case 128:
@@ -2548,9 +2850,14 @@ void start_mode7(void) {
     case 256: case 512: case 1024: case 2048: case 4096: case 8192: break;
     default: im7[n].ext_al=0; }
 
-  if (im7[n].ext_an && im7[n].ext_al) im7[n].ext=(byte*)ptr2+64+ptr2[15]*4; else im7[n].ext=NULL;
+  if (im7[n].ext_an && im7[n].ext_al) 
+    im7[n].ext=(byte*)ptr2+64+iptr2_15*4;
+  else 
+   im7[n].ext=NULL;
 
-  im7[n].on=1; // Al final si no ha habido errores, fija la variable m7
+  while (!im7[n].on) {
+    im7[n].on=1; // Al final si no ha habido errores, fija la variable m7
+  }
 }
 
 //����������������������������������������������������������������������������
@@ -2752,7 +3059,9 @@ void get_real_point(void) {
   float ang,dis;
   short * p;
 
-  dy=pila[sp--]; dx=pila[sp--]; n=pila[sp];
+  dy=pila[sp--]; 
+  dx=pila[sp--]; 
+  n=pila[sp];
 
   if (mem[id+_File]>max_fpgs || mem[id+_File]<0) { e(109); return; }
   if (mem[id+_File]) max_grf=1000; else max_grf=2000;
@@ -2760,16 +3069,53 @@ void get_real_point(void) {
   if (g[mem[id+_File]].grf==NULL) { e(111); return; }
   if ((ptr=g[mem[id+_File]].grf[mem[id+_Graph]])==NULL) { e(121); return; }
 
-  if (n>=0 || n<ptr[15]) {
-    p=(short*)&ptr[16]; px=p[n*2]; py=p[n*2+1];
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+  // Cast the pointer to a short pointer
+  uint16_t* sptr16 = (uint16_t*)&ptr[16];
+
+  // Swap the byte order of each short in the array
+  // for (int i = 0; i <iptr15; i++) {
+  //     sptr16[i] = (sptr16[i] << 8) | (sptr16[i] >> 8);
+  //     fprintf(stdout,"I: %d, p: %x, x: %d, y: %d\n",i,sptr16[i],sptr16[)
+
+  // }
+  // sptr16 = l2b16(ptr[16]);
+  word wptr32 = l2b16(*((word*)ptr+32));
+  word wptr33 = l2b16(*((word*)ptr+33));
+
+
+  if (n>=0 || n<iptr15) {
+    p=sptr16; 
+
+    uint16_t spx=p[n*2]; 
+    uint16_t spy=p[n*2+1];
+
+    // fprintf(stdout,"Real point for %d is %d,%d\n",n,spx,spy);
+
+    px = l2b16(spx);
+    py = l2b16(spy);
+
+#ifdef AMIGA
+
+px = px & 0x7FFF;
+py = py & 0x7FFF;
+#endif
+
+    // fprintf(stdout,"Real point for is now %d is %d,%d\n",n,px,py);
+
 
     x=mem[id+_X]; y=mem[id+_Y];
-    if (mem[id+_Resolution]>0) { x/=mem[id+_Resolution]; y/=mem[id+_Resolution]; }
+    if (mem[id+_Resolution]>0) { 
+      x/=mem[id+_Resolution]; 
+      y/=mem[id+_Resolution]; 
+    }
 
-    an=ptr[13]; al=ptr[14];
+    an=iptr13; al=iptr14;
 
-    if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
-    } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
+    if (iptr15==0 || wptr32==65535) { xg=iptr13/2; yg=iptr14/2;
+    } else { xg=wptr32; yg=wptr33; }
 
     if (mem[id+_Angle]!=0) {
       px-=xg; py-=yg;
@@ -2955,7 +3301,12 @@ void convert_palette(void) {
   if (g[file].grf==NULL) { e(111); return; }
   if ((ptr=g[file].grf[graf])==NULL) { e(121); return; }
 
-  n=ptr[13]*ptr[14]; si=(byte*)ptr+64+ptr[15]*4;
+  int iptr13 = l2b32(ptr[13]);
+  int iptr14 = l2b32(ptr[14]);
+  int iptr15 = l2b32(ptr[15]);
+
+
+  n=iptr13*iptr14; si=(byte*)ptr+64+iptr15*4;
   do { *si=(byte)mem[pal_ofs+*si]; si++; } while (--n);
 }
 
@@ -3109,7 +3460,7 @@ void __strset(void) {
   sp--;
 }
 
-byte strupper[270]=
+byte _strupper[270]=
   "                                                                "
   " ABCDEFGHIJKLMNOPQRSTUVWXYZ      ABCDEFGHIJKLMNOPQRSTUVWXYZ     "
   "   A AA EEEIII A   O OUUY       AIOU                            "
@@ -3120,11 +3471,11 @@ void __strupr(void) {
   if ((unsigned)pila[sp]>255) {
     n=strlen((char*)&mem[pila[sp]]);
     while (n--) {
-      if (strupper[memb[pila[sp]*4+n]]!=' ')
-        memb[pila[sp]*4+n]=strupper[memb[pila[sp]*4+n]];
+      if (_strupper[memb[pila[sp]*4+n]]!=' ')
+        memb[pila[sp]*4+n]=_strupper[memb[pila[sp]*4+n]];
     }
   } else {
-    if (strupper[(char)pila[sp]]!=' ') pila[sp]=(int)strupper[(char)pila[sp]];
+    if (_strupper[(char)pila[sp]]!=' ') pila[sp]=(int)_strupper[(char)pila[sp]];
   }
 }
 
@@ -3308,7 +3659,7 @@ void _fopen(void) { // Busca el archivo, ya que puede haber sido incluido en la 
 
 #ifdef DEBUG
 // check for file in prg dir
-	f=__fpopen(full,modo);
+	f=__fpopen((unsigned char *)full,modo);
 #endif
 
   if(f==NULL) {
@@ -3881,6 +4232,12 @@ void draw(void) {
   drawing[x].color  = pila[sp--];
   drawing[x].tipo   = pila[sp];
 
+
+  // fprintf(stdout,"Draw details: %d\n", x);
+  // fprintf(stdout,"Color: %d (should be %d)\n", drawing[x].color, pila[sp+1]);
+  // fprintf(stdout,"FX: %d\n (should be %d)\n", drawing[x].porcentaje, pila[sp+2]);
+  
+
   if (drawing[x].tipo<1 || drawing[x].tipo>tipo_mayor) { drawing[x].tipo=0; e(173); }
   if (drawing[x].color<0 || drawing[x].color>255) { drawing[x].tipo=0; e(154); }
   if (drawing[x].porcentaje<0 || drawing[x].porcentaje>15) { drawing[x].tipo=0; e(174); }
@@ -4032,9 +4389,11 @@ void write_in_map(void) {
 
   if ((ptr=(byte *)malloc(1330+64+4+an*al))!=NULL) {
     ptr+=1330; // fix load_map/unload_map
-    *((int*)ptr+13)=an; *((int*)ptr+14)=al;
-    *((int*)ptr+15)=1; // Se define un punto de control (el centro)
-    *((word*)ptr+32)=cx; *((word*)ptr+33)=cy;
+    *((int*)ptr+13)=l2b32(an); 
+    *((int*)ptr+14)=l2b32(al);
+    *((int*)ptr+15)=l2b32(1); // Se define un punto de control (el centro)
+    *((word*)ptr+32)=l2b16(cx); 
+    *((word*)ptr+33)=l2b16(cy);
     memset(ptr+4+64,0,an*al);
 
     while(g[0].grf[next_map_code]) {
@@ -4322,7 +4681,7 @@ void calculate(void) {
 extern int nullstring[4];
 extern int nstring;
 
-void __itoa(void) {
+void ___itoa(void) {
   itoa(pila[sp],(char*)&mem[nullstring[nstring]],10);
   pila[sp]=nullstring[nstring];
   nstring=((nstring+1)&3);
@@ -4859,7 +5218,7 @@ void function(void) {
     case 151: save_mapcx(0); break;
     case 152: write_in_map(); break;
     case 153: calculate(); break;
-    case 154: __itoa(); break;
+    case 154: ___itoa(); break;
     case 155: change_channel(); break;
     case 156: _malloc(); break;
     case 157: _free(); break;

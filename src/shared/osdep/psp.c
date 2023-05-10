@@ -296,6 +296,13 @@ int _chdir(const char* Directory)
   return 0;
 }
 
+int _getcwd(char* Buffer,int Size) {
+  if(getcwd(Buffer,Size)!=NULL)
+    return 0;
+  else
+    return -1;
+}
+
 char *_fullpath(char *_FullPath,const char *_Path,size_t _SizeInBytes) {
 //	realpath(_Path, _FullPath);
 strcpy(_FullPath, _Path);

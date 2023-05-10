@@ -86,7 +86,7 @@ chdir(path);
 int a=0;
 char init[255];
 strcpy(init,ide);
-strcat(init," INIT");
+// strcat(init," INIT");
 
 while(a++<argc-1) {
 	strcat(init," ");
@@ -112,10 +112,11 @@ sleep_ms(1000);
 #ifdef DEBUG
 printf("%d\n",ret);
 #endif
-  
+
+fprintf(stdout,"Ret: %d\n",ret);
 #ifndef WIN32
 #ifndef PSP
-sleep_ms(1000);
+ sleep_ms(1000);
 #endif
 #endif
 	if(ret == 2 || ret==512) {

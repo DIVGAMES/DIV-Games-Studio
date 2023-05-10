@@ -1,9 +1,9 @@
 // *** OJO *** Que el usuario pueda determinar de alguna forma imem_max
-//             (o bien el nฃmero de procesos m ximo)
+//             (o bien el nรบmero de procesos mรกximo)
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Librerias utilizadas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #define DEFINIR_AQUI
 
@@ -55,9 +55,9 @@ int old_restore_type;
 int last_key_check,key_check,last_joy_check,joy_check; // Llamar al screensaver
 int last_mou_check,mou_check;
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Critical error handler
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 unsigned c_e_0,c_e_1;
 unsigned far * c_e_2;
@@ -65,7 +65,7 @@ unsigned far * c_e_2;
 int __far critical_error(unsigned deverr,unsigned errcode,unsigned far*devhdr)
   { c_e_0=deverr; c_e_1=errcode; c_e_2=devhdr; return(_HARDERR_IGNORE); }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 void CMP_export(char *name,void *dir,int nparms)
 {
 #ifdef DIVDLL
@@ -83,11 +83,11 @@ void CNT_export(char *name,void *dir,int nparms)
   name=name;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Programa principal
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 int splashtime=5000;
 int oldticks = 0;
   int exesize;
@@ -108,7 +108,7 @@ void mainloop(void) {
   }
   frame_start();
 #ifdef DEBUG
-  if (kbdFLAGS[_F12] || trace_program) { trace_program=0; call_to_debug=1; }
+  if (kbdFLAGS[_DBG_KEY] || trace_program) { trace_program=0; call_to_debug=1; }
 #endif
   old_dump_type=dump_type;
   old_restore_type=restore_type;
@@ -285,9 +285,9 @@ printf("exesize: %d datasize: %d exestart: %d datstart: %d filepos:%d\n ",exesiz
   } else exer(1);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Inicializaciขn
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Inicializaciรณn
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 int _mouse_x,_mouse_y;
 
@@ -319,11 +319,11 @@ void inicializacion (void) {
   }
 
   iloc=mem[2];          // Inicio de la imagen de las variables locales
-  iloc_len=mem[6]+mem[5]; // Longitud de las locales (pฃblicas y privadas)
-  iloc_pub_len=mem[6];	// Longitud de las variables locales pฃblicas
+  iloc_len=mem[6]+mem[5]; // Longitud de las locales (pรบblicas y privadas)
+  iloc_pub_len=mem[6];	// Longitud de las variables locales pรบblicas
   inicio_privadas=iloc_pub_len;
   itxt=mem[7];          // Inicio de la zona de textos
-  imem=itxt+mem[8];     // Final de cขdigo, locales y textos (longitud del cmp)
+  imem=itxt+mem[8];     // Final de cรณdigo, locales y textos (longitud del cmp)
 
   if (iloc_len&1) iloc_len++; if (!(imem&1)) imem++;
 
@@ -351,11 +351,17 @@ void inicializacion (void) {
 
   memcpy(&mem[id_init],&mem[iloc],iloc_pub_len<<2); // *** Init
   mem[id_init+_Id]=id_init;
+  while(mem[id_init]!=id_init) {
+    mem[id_init] = id_init;
+  }
   mem[id_init+_IdScan]=id_init;
   mem[id_init+_Status]=2;
 
   memcpy(&mem[id_start],&mem[iloc],iloc_pub_len<<2); // *** Main
   mem[id_start+_Id]=id_start;
+  while(mem[id_start]!=id_start) {
+    mem[id_start] = id_start;
+  }
   mem[id_start+_IdScan]=id_start;
   mem[id_start+_Status]=2;
   mem[id_start+_IP]=mem[1];
@@ -436,7 +442,7 @@ max_saltos=2;
   init_volcado();
 
 #ifdef DIVDLL
-  // DLL_3 Exportaciขn de funciones y variables (para utilizarlas en las DLL)
+  // DLL_3 Exportaciรณn de funciones y variables (para utilizarlas en las DLL)
 
 // Exportadas desde 'C'
 // files
@@ -495,9 +501,9 @@ max_saltos=2;
   find_status=0;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //  Crea la tabla de cuadrados
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void crea_cuad(void) {
   int a,b;
@@ -511,9 +517,9 @@ void crea_cuad(void) {
   } while (++a<64);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Carga el font del systema
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #include "06x08.h"
 
@@ -549,11 +555,11 @@ void system_font(void) {
   f_i[0].alto=8;
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Intrprete del cขdigo generado
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Intรฉrprete del cรณdigo generado
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-int max,max_reloj;        // Para procesar segฃn _Priority y pintar segฃn _Z
+int max,max_reloj;        // Para procesar segรบn _Priority y pintar segรบn _Z
 extern int alt_x;
 void interprete (void) {
 
@@ -567,9 +573,9 @@ void interprete (void) {
 #endif
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Procesa el siguiente proceso
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void exec_process(void) {
   ide=0; max=0x80000000;
@@ -704,7 +710,11 @@ void exec_process(void) {
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
-        mem[id+_Id]=id; mem[id+_Status]=2;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+           mem[id] = id;
+        }
+        mem[id+_Status]=2;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id2+_Son]=id; mem[id+_Father]=id2; break;
       case lret: elimina_proceso(id);
@@ -776,12 +786,20 @@ void exec_process(void) {
       case lrtf: elimina_proceso(id);
         bp=--sp; sp-=mem[ip]+1; ip=pila[bp--];
         if (!ip) { id=pila[bp]; pila[sp]=pila[bp+2]; goto next_process1; }
-        else { mem[id+_Executed]=1; id=pila[bp]; pila[sp]=pila[bp+2]; } break;
+        else { 
+          mem[id+_Executed]=1; 
+        id=pila[bp]; 
+        pila[sp]=pila[bp+2]; 
+        } break;
       case lclo: procesos++; id2=id; id=id_start;
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[id2],iloc_len<<2);
-        mem[id+_Id]=id; mem[id+_IP]=ip+1;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+          mem[id] = id;
+        }
+        mem[id+_IP]=ip+1;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id+_SmallBro]=0; mem[id+_Son]=0;
         mem[id2+_Son]=id; mem[id+_Father]=id2;
@@ -826,7 +844,7 @@ printf("lext\n");
         #ifdef DEBUG
         for (ibreakpoint=0;ibreakpoint<max_breakpoint;ibreakpoint++)
           if (breakpoint[ibreakpoint].line>-1 && breakpoint[ibreakpoint].offset==ip-1) break;
-        if (ibreakpoint<max_breakpoint) { // Se llegข a un breakpoint
+        if (ibreakpoint<max_breakpoint) { // Se llegรณ a un breakpoint
           mem[--ip]=breakpoint[ibreakpoint].code;
           breakpoint[ibreakpoint].line=-1;
           call_to_debug=1; process_stoped=id; return;
@@ -845,9 +863,9 @@ printf("lext\n");
   id=ide; if (post_process!=NULL) post_process();
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Procesa la siguiente instruccion del siguiente proceso
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 #ifdef DEBUG
 
@@ -935,7 +953,11 @@ void trace_process(void) {
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
-        mem[id+_Id]=id; mem[id+_Status]=2;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+          mem[id] = id;
+        }
+        mem[id+_Status]=2;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id2+_Son]=id; mem[id+_Father]=id2; break;
       case lret: elimina_proceso(id);
@@ -982,7 +1004,11 @@ void trace_process(void) {
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[id2],iloc_len<<2);
-        mem[id+_Id]=id; mem[id+_IP]=ip+1;
+        mem[id+_Id]=id; 
+        while(mem[id]!=id) {
+          mem[id] = id;
+        }
+        mem[id+_IP]=ip+1;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id+_SmallBro]=0; mem[id+_Son]=0;
         mem[id2+_Son]=id; mem[id+_Father]=id2;
@@ -1027,7 +1053,7 @@ printf("lext\n");
       case ldbg:
         for (ibreakpoint=0;ibreakpoint<max_breakpoint;ibreakpoint++)
           if (breakpoint[ibreakpoint].line>-1 && breakpoint[ibreakpoint].offset==ip-1) break;
-        if (ibreakpoint<max_breakpoint) { // Se llegข a un breakpoint
+        if (ibreakpoint<max_breakpoint) { // Se llegรณ a un breakpoint
           mem[--ip]=breakpoint[ibreakpoint].code;
           breakpoint[ibreakpoint].line=-1;
         } call_to_debug=1; process_stoped=id; return;
@@ -1044,9 +1070,9 @@ printf("lext\n");
 
 #endif
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Inicia un frame, prepara variables vuelca y espera timer
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 float ffps=18.2;
 
@@ -1081,12 +1107,11 @@ void frame_start(void) {
     }
   }
 
-  // Elimina los procesos muertos
-
+  // Kill dead processes
   for (ide=id_start; ide<=id_end; ide+=iloc_len)
     if (mem[ide+_Status]==1) elimina_proceso(ide);
 
-  // Si se est  haciendo un fade lo continฃa
+  // If a (palette) fade is being made, continue it
 
   if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
     set_paleta();
@@ -1126,7 +1151,7 @@ void frame_start(void) {
       saltar_volcado=0;
     }
   } else {
-    do { } while (get_reloj()<(int)freloj); // Espera para no dar m s de "n" fps
+    do { } while (get_reloj()<(int)freloj); // Espera para no dar mรกs de "n" fps
     volcados_saltados=0;
     saltar_volcado=0;
     freloj+=ireloj;
@@ -1136,11 +1161,11 @@ void frame_start(void) {
 
   for (ide=id_start; ide<=id_end; ide+=iloc_len) mem[ide+_Executed]=0;
 
-  // Fija la prioridad m xima, para ejecutar procesos segฃn _Priority
+  // Fija la prioridad mรกxima, para ejecutar procesos segรบn _Priority
 
   id_old=id_start; // El siguiente a procesar
 
-  // Posiciona las variables del ratขn
+  // Posiciona las variables del ratรณn
 
 //  if (cbd.mouse_action) {
     readmouse();
@@ -1186,9 +1211,9 @@ void frame_start(void) {
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Finaliza un frame e imprime los gr ficos
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Finaliza un frame e imprime los grรกficos
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void dprocess_active_palette(void);
 void dset_video_mode(void);
@@ -1244,7 +1269,7 @@ emscripten_run_script (buf);
 #endif
     ss_time_counter=get_reloj()+ss_time;
 
-    // DLL_1 Aquก se llama a uno.
+    // DLL_1 Aquรญ se llama a uno.
 
     #ifdef DEBUG
     if (process_palette!=NULL)
@@ -1254,7 +1279,7 @@ emscripten_run_script (buf);
     #endif
   }
 
-  // Si el usuario modificข mouse.x o mouse.y, posiciona el ratขn debidamente
+  // Si el usuario modificรณ mouse.x o mouse.y, posiciona el ratรณn debidamente
   if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) set_mouse(mouse->x,mouse->y);
 
   if (!saltar_volcado) {
@@ -1274,7 +1299,7 @@ emscripten_run_script (buf);
 
     for (ide=id_start; ide<=id_end; ide+=iloc_len) {
       mem[ide+_Executed]=0; // Sin ejecutar
-      mem[ide+_x1]=-1; // Sin regiขn de volcado
+      mem[ide+_x1]=-1; // Sin regiรณn de volcado
     }
 
     for (n=0;n<10;n++) { im7[n].painted=0; iscroll[n].painted=0; }
@@ -1347,7 +1372,7 @@ emscripten_run_script (buf);
 
         volcado_completo=0;
 
-        // Aคade los volcados de este frame a los restore del anterior
+        // Aรฑade los volcados de este frame a los restore del anterior
 
         for (n=id_start; n<=id_end; n+=iloc_len)
           if (mem[n+_x1]!=-1) volcado_parcial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
@@ -1384,9 +1409,9 @@ emscripten_run_script (buf);
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 // Elimina un proceso
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void elimina_proceso(int id) {
   int id2;
@@ -1408,9 +1433,9 @@ void elimina_proceso(int id) {
   }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Finalizaciขn
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Finalizaciรณn
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void finalizacion (void) {
 
@@ -1431,14 +1456,14 @@ void finalizacion (void) {
   mouse_off();
   kbdReset();
 
-//  printf("Ejecuciขn correcta:\n\n\tnง actual de procesos = %u\n\tnง m ximo de procesos = %u",
+//  printf("Ejecuciรณn correcta:\n\n\tnยบ actual de procesos = %u\n\tnยบ mรกximo de procesos = %u",
 //    procesos,(id_end-id_start)/iloc_len+1);
 
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Error de ejecuciขn
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+// Error de ejecuciรณn
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void exer(int e) {
 
@@ -1470,7 +1495,7 @@ void exer(int e) {
 
   #endif
 
-  //printf("*** Error de ejecuciขn:\n\n\tnง actual de procesos = %u\n\tnง m ximo de procesos = %u",
+  //printf("*** Error de ejecuciรณn:\n\n\tnยบ actual de procesos = %u\n\tnยบ mรกximo de procesos = %u",
   //procesos,(id_end-id_start)/iloc_len+1);
 
 #ifdef NETLIB
@@ -1485,9 +1510,9 @@ void exer(int e) {
   exit(0);
 }
 
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Mensajes de error - Versiขn con debugger
-//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//      Mensajes de error - Versiรณn con debugger
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 char * fname[]={
 "signal","key","load_pal","load_fpg","start_scroll","stop_scroll","out_region",

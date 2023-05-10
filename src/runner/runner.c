@@ -1,7 +1,7 @@
 
 //#include <dos.h>
 #include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 ///#include <process.h>
 #include <errno.h>
 #include <string.h>
@@ -71,7 +71,7 @@ void main(int argc,char *argv[]) {
 
   putenv("DOS4G=QUIET");
 
-  // La siguiente l¡nea daba problemas de arranque en algunos equipos ...
+  // La siguiente lÃ­nea daba problemas de arranque en algunos equipos ...
   // putenv("DOS4GVM=VIRTUALSIZE#65536 MINMEM#2048 MAXMEM#65536");
 
   while(retval>0 && retval<128) {

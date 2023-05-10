@@ -70,6 +70,9 @@
 #define _9              0x0A
 #define _0              0x0B
 
+#define _MINUS          0x0C
+#define _EQUALS         0x0D
+
 #define _Q              0x10
 #define _W              0x11
 #define _T              0x14

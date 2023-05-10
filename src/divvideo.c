@@ -6,8 +6,10 @@
 #include "global.h"
 //#include "inc\svga.h"
 //#include "inc\vesa.h"
-#include "lib/sdlgfx/SDL_framerate.h"
 
+#if defined (SDL) || (SDL2)
+#include "lib/sdlgfx/SDL_framerate.h"
+#endif
 
 #ifdef TTF
 #define CDEPTH 32
@@ -35,18 +37,19 @@ void volcadosdl(byte *p);
 
 //byte * vga = (byte *) 0xA0000; // Pantalla fisica
 
-SDL_Surface *vga;
+OSDEP_Surface *vga;
 #ifdef SDL2
 SDL_Window *divWindow;
 SDL_Renderer *divRender;
 #endif
 
-int IsFullScreen(SDL_Surface *surface)
+int IsFullScreen(OSDEP_Surface *surface)
 {
+  return 1;
 	return OSDEP_IsFullScreen();
 }
 
-void SDL_ToggleFS(SDL_Surface *surface)
+void SDL_ToggleFS(OSDEP_Surface *surface)
 {
     if (IsFullScreen(surface))
 		fsmode=0;
@@ -55,11 +58,15 @@ void SDL_ToggleFS(SDL_Surface *surface)
 	
 	svmode();
 	set_dac(dac);
+  fprintf(stdout,"%d %s Hello!\n", __LINE__, __FUNCTION__);
+
 }
 
-int nothing(SDL_Surface *surface) {
+int nothing(OSDEP_Surface *surface) {
+
+#if defined SDL || SDL2
         // Switch to WINDOWED mode
-     Uint32 flags = surface->flags; // Get the video surface flags
+     uint32_t flags = surface->flags; // Get the video surface flags
 
    if (IsFullScreen(surface)) {
         if ((vga = OSDEP_SetVideoMode(vga_an, vga_al, CDEPTH, 0)) == NULL) 
@@ -77,7 +84,8 @@ int nothing(SDL_Surface *surface) {
 		fsmode=1;
 	}
 	set_dac(dac);
-    
+
+#endif
     return 1;
 }
 
@@ -114,7 +122,7 @@ FPSmanager fpsman;
 
 void retrazo(void) {
 
-//printf("retrazo (vsync)\n");
+// fprintf(stdout, "retrazo (vsync)\n");
 SDL_framerateDelay(&fpsman);
 
 #ifdef NOTYET
@@ -138,6 +146,7 @@ void set_dac(byte *_dac) {
           colors[i].b=_dac[b+2]*4;
           b+=3;
     }
+    printf("Setting Palette\n");
 //	if(vga->format->BitsPerPixel==8) {
 		if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
 			printf("Failed to set palette :(\n"); 
@@ -145,9 +154,9 @@ void set_dac(byte *_dac) {
 	retrazo();
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Set Video Mode (vga_an y vga_al se definen en shared.h)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 int LinealMode;
 int modovesa;
@@ -185,14 +194,22 @@ void svmode(void) {
 
 SDL_initFramerate(&fpsman);
 SDL_setFramerate(&fpsman, 60);
-
  
-  fprintf(stdout,"full screen: %d\n",fsmode);
+fprintf(stdout,"full screen: %d\n",fsmode);
 
-#ifdef GCW_SOFTSTRETCH
+#if defined (GCW_SOFTSTRETCH) || defined(AMIGA2)
+
+#if defined (AMIGA)
+#define GCW_W 640
+#define GCW_H 480
+	vga=OSDEP_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
+
+#else
+
 	vga=OSDEP_SetVideoMode(GCW_W,GCW_H, 8,  SDL_HWSURFACE | SDL_DOUBLEBUF);//SDL_HWPALETTE|SDL_SRCCOLORKEY|SDL_HWSURFACE|SDL_DOUBLEBUF);
 	w_ratio = vga_an / (float)(GCW_W*1.0);
 	h_ratio = vga_al / (float)(GCW_H*1.0);
+#endif
 #else
 
 	if(fsmode==0)
@@ -253,8 +270,14 @@ SDL_setFramerate(&fpsman, 60);
 #endif
 
 	modovesa=1;
-	
+
+  FUNCLOG;
+  // fprintf(stdout,"%d %s Hello!\n", __LINE__, __FUNCTION__);
+
 	set_dac(dac);
+
+  // fprintf(stdout,"Hello!\n");
+
 
 #ifdef NOTYET
 
@@ -342,20 +365,21 @@ void svmodex(int m) {
 #endif
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Reset Video Mode
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void rvmode(void) {
+  printf(__FUNCTION__);
 	if(IsFullScreen(vga))
 		SDL_ToggleFS(vga);
 //	SDL_FreeSurface(copia_surface);
 	
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Dump buffer to vga (screen)
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 #ifdef GCW_SOFTSTRETCH
 
 void volcadogcw(byte *p) {
@@ -389,6 +413,8 @@ void vgacpy(byte * q, byte * p, int n) ;
 
 
 void volcadosdlp(byte *p) {
+  FUNCLOG;
+
 volcadosdl(p);
 return;
 
@@ -449,6 +475,11 @@ return;
 }
 
 void volcadosdl(byte *p) {
+
+SDL_framerateDelay(&fpsman);
+FUNCLOG;
+  // fprintf(stdout, "%d %s\n", __LINE__, __FUNCTION__);
+
 	int vy;
 	int vx;
 
@@ -472,6 +503,7 @@ void volcadosdl(byte *p) {
 	if(SDL_MUSTLOCK(vga))
 		SDL_LockSurface(vga);
 
+// fprintf(stdout,"Locking vga surface\n");
 	byte *q = (byte *)vga->pixels;
 	uint32_t *q32 = (uint32_t *)vga->pixels;
 
@@ -656,9 +688,9 @@ void snapshot(byte *p) {
   fclose(f);
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Dump mode 320x200
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void volcadop320200(byte *p) { // PARTIAL
 //printf("partial dump\n");
@@ -690,9 +722,9 @@ void volcadoc320200(byte *p) { // COMPLETE
 #endif
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      SVGA DUMP
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void volcadopsvga(byte *p) {
 //	printf("divvideo.cpp - volcadopsvga\n");
@@ -760,9 +792,9 @@ void volcadocsvga(byte *p) {
 //#endif
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Volcado en un modo-x
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void volcadopx(byte * p) {
 debugprintf("divvideo.cpp volcadopx\n");
@@ -806,9 +838,9 @@ void volcadocx(byte * p) {
 }
 
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Subrutinas de volcado genricas
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+//      Subrutinas de volcado genรฉricas
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void vgacpy(byte * q, byte * p, int n) {
   int m;
@@ -824,9 +856,9 @@ return;
   }
 }
 
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 //      Select a window for subsequent dump
-//อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
 void init_volcado(void) { 
 	memset(&scan[0],0,MAX_YRES*8); volcado_completo=0; 
@@ -851,7 +883,7 @@ void volcado_parcial(int x,int y,int an,int al) {
     }
 
     while (y<=ymax) { n=y*4;
-      if (scan[n+1]==0) {         // Caso 1, el scan estaba vacกo ...
+      if (scan[n+1]==0) {         // Caso 1, el scan estaba vacรญo ...
         scan[n]=x; scan[n+1]=an;
       } else if (scan[n+3]==0) {  // Caso 2, ya hay un scan definido ...
         if (x>scan[n]+scan[n+1] || x+an<scan[n]) { // ... hueco entre medias
@@ -873,10 +905,10 @@ void volcado_parcial(int x,int y,int an,int al) {
           if (x+an>scan[n+2]+scan[n+3]) scan[n+1]=x+an-scan[n]; else scan[n+1]=scan[n+2]+scan[n+3]-scan[n];
           scan[n+2]=0; scan[n+3]=0;
         } else {
-          if (x>scan[n]+scan[n+1] || x+an<scan[n]) { // No choca con 1ง
-            if (x>scan[n+2]+scan[n+3] || x+an<scan[n+2]) { // No choca con 2ง
+          if (x>scan[n]+scan[n+1] || x+an<scan[n]) { // No choca con 1ยบ
+            if (x>scan[n+2]+scan[n+3] || x+an<scan[n+2]) { // No choca con 2ยบ
               // Caso 3.4, el nuevo no colisiona con ninguno, se calcula el espacio
-              // hasta ambos, y se fusiona con el m s cercano
+              // hasta ambos, y se fusiona con el mรกs cercano
               if (x+an<scan[n]) d1=scan[n]-(x+an); else d1=x-(scan[n]+scan[n+1]);
               if (x+an<scan[n+2]) d2=scan[n+2]-(x+an); else d2=x-(scan[n+2]+scan[n+3]);
               if (d1<=d2) {
@@ -891,13 +923,13 @@ void volcado_parcial(int x,int y,int an,int al) {
                 else scan[n+3]=x2+scan[n+3]-scan[n+2];
               }
             } else {
-              // Caso 3.3, el nuevo colisiona con el 2ง, se fusionan
+              // Caso 3.3, el nuevo colisiona con el 2ยบ, se fusionan
               if (x<(x2=scan[n+2])) scan[n+2]=x;
               if (x+an>x2+scan[n+3]) scan[n+3]=x+an-scan[n+2];
               else scan[n+3]=x2+scan[n+3]-scan[n+2];
             }
           } else {
-            // Caso 3.2, el nuevo colisiona con el 1ง, se fusionan
+            // Caso 3.2, el nuevo colisiona con el 1ยบ, se fusionan
             if (x<(x2=scan[n])) scan[n]=x;
             if (x+an>x2+scan[n+1]) scan[n+1]=x+an-scan[n];
             else scan[n+1]=x2+scan[n+1]-scan[n];

@@ -30,16 +30,21 @@ void DrawView(struct View *pv)
 // Render all VDraws
     while( CurLevel->ClipCount < CurView->Width && pVDraw!=NULL)
     {
-      if ( (pVDraw->Type&VD_OBJECT) !=0 )
+      if ( (pVDraw->Type&VD_OBJECT) !=0 ) {
         DrawObject(pVDraw);
-      else if ( (pVDraw->Type&VD_COMPLEX) !=0 )
+      } else {
+        if ( (pVDraw->Type&VD_COMPLEX) !=0 ) {
         DrawComplexWall( pVDraw );
-      else
-        DrawSimpleWall(pVDraw);
+        } else {
+         DrawSimpleWall(pVDraw);
+        }
+      }
     // Get next VDraw to render
       pVDraw=FindVDraw();
     }
   }
+
+  return;
 
 // Draw masked stuff
   DrawMasked();
@@ -407,5 +412,6 @@ void SetActiveView(int altura,int objeto,int w,int h,VPEByte *buf_ptr,int buf_wi
   ptr=pv->Buffer;
   for(i=0;i<pv->Height;i++,ptr+=buf_width)
     pv->BufScan[i]=ptr;
+    // memset(ptr,i,pv->Width);
 }
 
