@@ -1,4 +1,17 @@
-// ZX SPECTRUM DLL
+/*
+ ZX SPECTRUM DLL
+
+ This is an "autoload" dll, which converts the screen to look as if it were
+ rendered on a zx spectrum.
+
+ To compile:
+
+ gcc zx.c -o zx.so -fPIC -funsigned-char -shared -O3 `sdl-config --cflags` \ 
+ `sdl-config --libs` spectrum/libscrplus.c spectrum/bits.c \ 
+ spectrum/colourspace.c sdlgfx/SDL_rotozoom.c
+
+*/
+
 #include <math.h>
 #include <stdio.h>
 //#include <mem.h>

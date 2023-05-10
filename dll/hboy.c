@@ -5,7 +5,7 @@
 #define GLOBALS
 #include "div.h"
 
-#include "SDL/SDL.h" // to render screen
+#include "SDL.h" // to render screen
 
 // This is the picture of the screen, compressed with RLE (like on PCX's)
 
@@ -509,7 +509,7 @@ void process_palette()
 void set_video_mode(){
   // Leaves unchanged the 320x200 mode, which is the default mode.
   if(screen==NULL)
-	screen = SDL_SetVideoMode(320,200,8,0);
+	screen = SDL_SetVideoMode(320,200,8,SDL_HWSURFACE |  SDL_HWPALETTE | SDL_RESIZABLE);
 
 }
 
