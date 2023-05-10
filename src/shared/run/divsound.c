@@ -83,7 +83,7 @@ fprintf(stdout, "Opening Audio Device \n");
 #ifndef __EMSCRIPTEN__
 SDL_version compile_version;
 const SDL_version *link_version=Mix_Linked_Version();
-// SDL_MIXER_VERSION(&compile_version);
+SDL_MIXER_VERSION(&compile_version);
 fprintf(stdout,"compiled with SDL_mixer version: %d.%d.%d\n", 
         compile_version.major,
         compile_version.minor,

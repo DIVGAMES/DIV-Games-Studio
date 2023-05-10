@@ -210,30 +210,28 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 		// fprintf(stdout,"Full blit surface\n");
 		SDL_BlitSurface(s, NULL, OSDEP_screen, NULL);
 	} else {
-		// calculate scaling factors for width and height
-// calculate the aspect ratio of the original surface
-float aspect_ratio = (float)vga_an / vga_al;
+		// calculate the aspect ratio of the original surface
+		float aspect_ratio = (float)vga_an / vga_al;
 
-// calculate the new dimensions for the zoomed surface while maintaining aspect ratio
-int zoomed_width, zoomed_height;
-if ((float)vwidth / vheight > aspect_ratio) {
-    zoomed_width = (int)(vheight * aspect_ratio);
-    zoomed_height = vheight;
-} else {
-    zoomed_width = vwidth;
-    zoomed_height = (int)(vwidth / aspect_ratio);
-}
+		// calculate the new dimensions for the zoomed surface while maintaining aspect ratio
+		int zoomed_width, zoomed_height;
+		if ((float)vwidth / vheight > aspect_ratio) {
+			zoomed_width = (int)(vheight * aspect_ratio);
+			zoomed_height = vheight;
+		} else {
+			zoomed_width = vwidth;
+			zoomed_height = (int)(vwidth / aspect_ratio);
+		}
 
-// calculate the scaling factors based on the new dimensions
-float scale_w = (float)zoomed_width / vga_an;
-float scale_h = (float)zoomed_height / vga_al;
+		// calculate the scaling factors based on the new dimensions
+		float scale_w = (float)zoomed_width / vga_an;
+		float scale_h = (float)zoomed_height / vga_al;
 
-OSDEP_zoomsurface = zoomSurface(s, scale_w, scale_h, 1);
+		OSDEP_zoomsurface = zoomSurface(s, scale_w, scale_h, 1);
 
-		// OSDEP_zoomsurface = zoomSurface(s, zw,zh, 1);
-		// fprintf(stdout,"Zoom blit surface\n");
 		// Clear screen
 		SDL_FillRect(OSDEP_screen, NULL, 0);
+
 		// calculate the position of the top-left corner of the zoomed surface
 		int x = (vwidth - zoomed_width) / 2;
 		int y = (vheight - zoomed_height) / 2;
@@ -476,7 +474,7 @@ void OSDEP_Mix_HaltChannel(int n) {
 unsigned short OSDEP_Mix_VolumeMusic(int n) {
 
 	#ifdef MIXER
-	return OSDEP_Mix_VolumeMusic(n);
+	return Mix_VolumeMusic(n);
 	#endif
 
 }

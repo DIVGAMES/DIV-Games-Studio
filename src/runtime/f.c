@@ -1307,7 +1307,10 @@ void kill_invisible(void) {
 			}
 		}
 	}
-    if (n==10) elimina_proceso(i);
+    if (n==10) {
+      fprintf(stdout,"Eliminating process id: %d for being in a dead scroll\n",i);
+      elimina_proceso(i);
+    }
   }
 }
 

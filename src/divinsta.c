@@ -826,7 +826,7 @@ strcpy(cWork,full);
   }
 
   if (!include_setup) x=0;
-  if ((__ins=_ins=ins=(char *) malloc(n+x+(_MAX_FNAME)))==NULL) {
+  if ((__ins=_ins=ins=(char *) malloc(n+x+(_MAX_FNAME * 2)))==NULL) {
     v_texto=(char *)texto[357]; dialogo(err0);
     fclose(fin); return;
   } 
@@ -915,7 +915,13 @@ fflush(stdout);
         continue;
       } else {
         ins+=strlen(ins)+1;
-        strcpy((char *)__ins,(char *)chr);
+        fprintf(stdout,"Adding file [%s] %d of %d file(s)\n",chr, x, nfiles);
+        fprintf(stdout, "Pointer: %x max: %x\n", _ins, _ins+n);
+
+        for(int y=0;y<x;y++) {
+          __ins[y]=chr[y];
+        }
+//        strcpy((char *)__ins,(char *)chr);
         //strupr(__ins);
         __ins+=strlen(__ins)+1;
         if (topack) dirhead.nfiles++;

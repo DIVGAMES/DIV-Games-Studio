@@ -656,7 +656,9 @@ while(SDL_PollEvent(&event) ) {
 			if( event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL ) 
 				shift_status |=4; 
 			else { // don't set scan code when lctrl pressed 
+				//fprintf(stdout,"key event: 0x%x\n", event.key.keysym.sym);
 				scan_code = OSDEP_key[event.key.keysym.sym<2048?event.key.keysym.sym:event.key.keysym.sym-0x3FFFFD1A];
+				//fprintf(stdout,"key event: 0x%x\n", event.key.keysym.sym);
 			}
 		//		ascii = scan_code;
 #ifndef DROID

@@ -2060,17 +2060,28 @@ void edit_mode_13(void) {
     ayuda_dibujo(1295);
     read_mouse(); select_zoom(); test_mouse();
 
-    switch(scan_code) {
-      case 0x4A: num_punto--;   break; // -
-      case 0x4E: num_punto++;   break; // +
-      case 0x49: num_punto-=10; break; // RePag
-      case 0x51: num_punto+=10; break; // AvPag
-      case 0x47: num_punto=0;   break; // Inicio
-      case 0x4F:                       // Fin
-        for(m=0;m<512;m+=2) if(v.mapa->puntos[m]!=-1) num_punto=m/2;
-        break;
+    if(scan_code > 0) {
+      fprintf(stdout,"Scancode: 0x%x\n",scan_code);
+      switch(scan_code) {
+        case 0x4A: 
+        case _MINUS:
+        case 0x1A:
+          num_punto--;   
+          break; // -
+        case 0x4E:
+        case 0x1B:
+        case _EQUALS:
+          num_punto++;   
+          break; // +
+        case _PGUP: num_punto-=10; break; // RePag   (PGUP)
+        case _PGDN: num_punto+=10; break; // AvPag   (PGDN)
+        case _HOME: num_punto=0;   break; // Inicio  (HOME)
+        case _END:                       // Fin     (END)
+          for(m=0;m<512;m+=2) if(v.mapa->puntos[m]!=-1) num_punto=m/2;
+          break;
+      }
     }
-
+    
     if (mouse_b&1) switch (selected_icon) {
       case 1: num_punto--; do {read_mouse();} while(mouse_b&1); break;
       case 3: num_punto++; do {read_mouse();} while(mouse_b&1); break;

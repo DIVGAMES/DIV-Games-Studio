@@ -560,7 +560,8 @@ void load_fpg(void) {
   memset(lst,0,sizeof(int*)*1000);
 
   if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
-    pila[sp]=0; e(e105);
+    pila[sp]=0; 
+    e(e105);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
 #ifdef __EMSCRIPTEN__ 
@@ -765,12 +766,42 @@ void elimina_proceso(int);
 
 void kill_invisible(void) {
   int i,n;
+  /*
   for (i=id_start; i<=id_end; i+=iloc_len) if (mem[i+_Status]) { n=0;
     if (mem[i+_Ctype]==1) for(n=0;n<10;n++)
       if (iscroll[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) break;
     if (mem[i+_Ctype]==2) for(n=0;n<10;n++)
       if (im7[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) break;
-    if (n==10) elimina_proceso(i);
+    if (n==10) {
+      fprintf("Eliminating process id: %d for being in a dead scroll\n",i);
+      elimina_proceso(i);
+    }
+  }
+  */
+  for (i=id_start; i<=id_end; i+=iloc_len) {
+    if (mem[i+_Status]) {
+      n=0;
+      if (mem[i+_Ctype]==1) {
+        for(n=0;n<10;n++) {
+          if (iscroll[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) {
+            break;
+          }
+        }
+      }
+
+      if (mem[i+_Ctype]==2) {
+        for(n=0;n<10;n++) {
+          if (im7[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) {
+            break; 
+          }
+        }
+      }
+
+      if (n==10) {
+        fprintf("Eliminating process id: %d for being in a dead scroll\n",i);
+        elimina_proceso(i);
+      }
+    }
   }
 }
 
@@ -1980,7 +2011,9 @@ void get_real_point(void) {
   if ((ptr=g[mem[id+_File]].grf[mem[id+_Graph]])==NULL) { e(e121); return; }
 
   if (n>=0 || n<ptr[15]) {
-    p=(short*)&ptr[16]; px=p[n*2]; py=p[n*2+1];
+    p=(short*)&ptr[16]; 
+    px=p[n*2]; 
+    py=p[n*2+1];
 
     x=mem[id+_X]; y=mem[id+_Y];
     if (mem[id+_Resolution]>0) { x/=mem[id+_Resolution]; y/=mem[id+_Resolution]; }
