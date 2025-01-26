@@ -3434,7 +3434,7 @@ void _fwrite(void) {
 //      fseek(handle,offset,where)
 //����������������������������������������������������������������������������
 
-void _fseek(void) {
+void div_fseek(void) {
   int handle,offset,where;
   FILE * f;
 
@@ -3456,7 +3456,7 @@ void _fseek(void) {
 //      ftell(handle)
 //����������������������������������������������������������������������������
 
-void _ftell(void) {
+void div_ftell(void) {
 
   if (unit_size<1) unit_size=1;
 
@@ -4831,8 +4831,8 @@ void function(void) {
     case 123: _fclose(); break;
     case 124: _fread(); break;
     case 125: _fwrite(); break;
-    case 126: _fseek(); break;
-    case 127: _ftell(); break;
+    case 126: div_fseek(); break;
+    case 127: div_ftell(); break;
     case 128: __filelength(); break;
     case 129: flush(); break;
     case 130: get_dirinfo(); break;

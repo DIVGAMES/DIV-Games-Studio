@@ -5,6 +5,10 @@
 
 #include <stdio.h>
 
+#ifdef __HAIKU__
+#include <sys/stat.h>
+#endif
+
 #include <fnmatch.h>
 
 
@@ -320,8 +324,24 @@ unsigned int _dos_findnext(struct find_t *result) {
 while(++np<nummatch) {
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
+
+	int isdir = 0;
+#ifndef __HAIKU__
+	if (namelist[np]->d_type == DT_DIR) {
+		isdir = 1;
+	}
+#else
+	// Haiku has no d_type.
+	// NOTE: even on Linux, d_type may not be reliably filled on all filesystem types.
+	struct stat statbuf;
+	if (stat(namelist[np]->d_name, &statbuf) == 0) {
+		isdir = S_ISDIR(statbuf.st_mode);
+	}
+#endif
+
 	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
-		if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
+
+		if(isdir && type == _A_SUBDIR) {
 			
 			// only if searching via wildcard - fixes "new"
 			if(strchr(findmask,'*')) {
@@ -337,7 +357,7 @@ while(++np<nummatch) {
 
 	if (fnmatch(findmask, findname, FNM_PATHNAME | FNM_CASEFOLD)==0){
 		
-		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
+		if(!isdir && type == _A_NORMAL) {
 			//printf("free'ing np [%d] [FILE]\n",np,result->name);
 			free(namelist[np]);
 			result->attrib=0;

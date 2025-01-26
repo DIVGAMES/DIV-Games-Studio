@@ -18,17 +18,20 @@ char marcavga[128];
 //═════════════════════════════════════════════════════════════════════════════
 
 int compare_mode(void const *aa, void const *bb) {
-	short *a,*b;
-	a=(short*)aa;
-	b=(short*)bb;
-	return((int)(*a)*10000+*(a+1)>(int)(*b)*10000+*(b+1));
+	struct _modos *a,*b;
+	a=(struct _modos*)aa;
+	b=(struct _modos*)bb;
+	if (a->ancho == b->ancho)
+		return a->alto - b->alto;
+	else
+		return a->ancho - b->ancho;
 }
 
 void detectar_vesa(void) { // Detects available video modes
 	short *modelist;
 	int n;
 
-	OSDEP_VMode **modes;
+	OSDEP_VMode *modes;
 	int i;
 
 	num_modos=0;
@@ -48,10 +51,10 @@ void detectar_vesa(void) { // Detects available video modes
 		modos[6].ancho=1280; modos[6].alto=720; modos[6].modo=1;
 		modos[7].ancho=376; modos[7].alto=282; modos[7].modo=1;
 	} else {
-		for(i=0;modes[i];++i) {
-			modos[i].ancho=modes[i]->w; modos[i].alto=modes[i]->h; modos[i].modo=1;
+		for(i = 0; (modes[i].w != 0) && (i < 32); ++i) {
+			modos[i].ancho = modes[i].w; modos[i].alto = modes[i].h; modos[i].modo = 1;
 		}
-		num_modos=i-1;
+		num_modos = i - 1;
 
 	}
 	

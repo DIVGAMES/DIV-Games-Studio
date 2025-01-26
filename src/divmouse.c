@@ -378,6 +378,15 @@ void PrintEvent(const SDL_Event * event)
 }
 #endif
 
+int something_happened;
+
+void idle() {
+	if (!something_happened) {
+		SDL_Delay(10);
+	}
+	something_happened = 0;
+}
+
 void read_mouse2(void) {
 
 	scan_code  =0;
@@ -509,6 +518,7 @@ while(SDL_PollEvent(&event) )
 #endif
 //	while(0)
         {
+			something_happened = 1;
 
 #ifndef SDL2
 			if (event.type == SDL_VIDEORESIZE) {

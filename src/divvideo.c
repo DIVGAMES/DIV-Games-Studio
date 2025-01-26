@@ -112,6 +112,8 @@ struct {
 
 FPSmanager fpsman;
 
+extern int something_happened;
+
 void retrazo(void) {
 
 //printf("retrazo (vsync)\n");
@@ -122,6 +124,7 @@ SDL_framerateDelay(&fpsman);
   while ((inp(0x3da)&8)==0);
 #endif
 
+  something_happened = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -45,4 +45,6 @@ ELSE() # Default 32 bits
 ENDIF()
 
 #include maths and dl libs
+IF (NOT HAIKU)
 SET(OS_LIBS m dl)
+ENDIF()

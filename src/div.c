@@ -1731,6 +1731,7 @@ void entorno(void) {
 
 	do {
 		mainloop();
+		idle();
 	} while (!salir_del_entorno);
 
 	do { 
@@ -2017,6 +2018,7 @@ void entorno_dialogo(void) {
 #else
 	do { 
 		dialog_loop();
+		idle();
 	}
 	while (!salir_del_dialogo); 
 		fin_dialogo=0;

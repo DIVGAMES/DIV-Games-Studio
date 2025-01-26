@@ -43,7 +43,7 @@ void OSDEP_SetCaption(char *title, char *icon) {
 	//SDL_WM_SetCaption((const char *)title, (const char *)icon);
 }
 
-OSDEP_VMode ** OSDEP_ListModes(void) {
+OSDEP_VMode * OSDEP_ListModes(void) {
 fprintf(stdout, "%s\n", __FUNCTION__);
 //	SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
 	return NULL;

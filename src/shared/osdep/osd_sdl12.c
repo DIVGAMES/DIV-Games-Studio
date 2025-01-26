@@ -55,10 +55,10 @@ void OSDEP_SetCaption(char *title, char *icon) {
 
 }
 
-OSDEP_VMode ** OSDEP_ListModes(void) {
+OSDEP_VMode * OSDEP_ListModes(void) {
 	SDL_Rect **modes;
 	int i;
-	static OSDEP_VMode *smodes[1024];
+	static OSDEP_VMode smodes[32];
 	modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
 	
 
@@ -70,17 +70,17 @@ OSDEP_VMode ** OSDEP_ListModes(void) {
 		return -1;
 	}
 
-	for(i=0;modes[i];++i) {
+	for(i=0; i < 32 && modes[i]; ++i) {
 		if(modes[i]) {
-			smodes[i]=(OSDEP_VMode*)malloc(sizeof(OSDEP_VMode));
-			smodes[i]->w = modes[i]->w;
-			smodes[i]->h = modes[i]->h;
+			smodes[i].w = modes[i]->w;
+			smodes[i].h = modes[i]->h;
 		} else {
-			smodes[i]=NULL;
+			smodes[i].w = 0;
+			smodes[i].h = 0;
 		}
 	}
 
-	return smodes;
+	return &smodes;
 }
 
 void OSDEP_WarpMouse(int x, int y) {
