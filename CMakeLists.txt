@@ -99,6 +99,10 @@ MESSAGE(STATUS "CMAKE_SYSTEM_INCLUDE_PATH: "  ${CMAKE_SYSTEM_INCLUDE_PATH} )
 # SETUP SDL ADDONS
 
 IF(HAS_SDL EQUAL 1)
+	if(LIBRETRO)
+		MESSAGE(STATUS "Libretro uses the SDL 1.2 shim (no libSDL)")
+		ADD_DEFINITIONS( -DSDL=1)
+	else()
 	MESSAGE(STATUS "Adding SDL Library")
 	Include(FindSDL)
 	include_directories(${SDL_INCLUDE_DIR})
@@ -144,6 +148,8 @@ IF(HAS_SDL EQUAL 1)
 		ADD_DEFINITIONS( -DTTF )
 
 	ENDIF()
+
+	endif()
 
 	SET(OSDEP ${OSDEP} "src/shared/osdep/osd_sdl12.c")
 
@@ -361,7 +367,7 @@ ADD_DEFINITIONS( ${BUILD_LEVEL} -fpermissive -fno-omit-frame-pointer -funsigned-
 #ENDIF()
 
 IF(APPLE)
-ADD_DEFINITIONS( -ferror-limit=1 -D__WORDSIZE=64 )
+ADD_DEFINITIONS( -Wno-int-conversion -Wno-incompatible-pointer-types -Wno-incompatible-function-pointer-types -D__WORDSIZE=64 )
 SET( CMAKE_EXE_LINKER_FLAGS  "-lSDLmain -framework Cocoa" )
 ELSE()
 ADD_DEFINITIONS( -Wfatal-errors )
@@ -400,17 +406,31 @@ ADD_EXECUTABLE(
 #)
 
 
-ADD_EXECUTABLE(
-	${RUNTIME} 
+set(RUNTIME_BUILD_SOURCES
 	src/runtime/inter.h
-	${RUNTIME_SOURCES} 
-	${VPE_SOURCES} 
+	${RUNTIME_SOURCES}
+	${VPE_SOURCES}
 	${JUDAS_SOURCES}
 	${OSDEP}
 	${DLLSRC}
 	${SHARED_RUN}
 	${SDLGFX_SOURCES}
 )
+
+if(LIBRETRO)
+	list(APPEND RUNTIME_BUILD_SOURCES src/libretro/libretro.c src/libretro/sdl/sdl_shim.c)
+	ADD_LIBRARY(${RUNTIME} SHARED ${RUNTIME_BUILD_SOURCES})
+	set_target_properties(${RUNTIME} PROPERTIES
+		PREFIX ""
+		OUTPUT_NAME "div_libretro"
+		LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/system
+	)
+else()
+ADD_EXECUTABLE(
+	${RUNTIME} 
+	${RUNTIME_BUILD_SOURCES}
+)
+endif()
 
 ADD_EXECUTABLE(
 	${D1RUNTIME} 

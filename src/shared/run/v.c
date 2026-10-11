@@ -160,6 +160,9 @@ void set_dac (void) {
 #endif
 	if(vga==NULL) 
 		return;
+	/* An FLI frame already installed its palette. set_dac2 restores dac after the blit. */
+	if (fli_palette_update)
+		return;
 #ifndef DOS
 
 	SDL_Color colors[512];
@@ -179,7 +182,6 @@ void set_dac (void) {
 #else
   union REGS regs;
   word n=0;
-  if (fli_palette_update) return;
   //retrazo();
   outp(0x3c8,0);
   do {
@@ -202,6 +204,8 @@ void set_dac2 (void) {
     outp(0x3c9,dac[n++]);
     outp(0x3c9,dac[n++]);
   } while (n<768);
+#else
+  set_dac();
 #endif
 }
 
