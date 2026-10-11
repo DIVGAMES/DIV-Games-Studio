@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 //#include <conio.h>
 //#include <mem.h>
@@ -145,6 +146,7 @@ int StartFLI(char *flinombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int
 	flc.membufSize=0;
 	flc.mainscreen=vga;//Buffer;
 	flc.buffer=(byte *)Buffer;
+	memset(flc.colors, 0, sizeof(flc.colors));
 	
 	strcpy(nombre,flinombre);
 	
@@ -209,31 +211,58 @@ static void Palette_Update() {
 
 #endif
 
-void COLORS256()
-{ Uint8 *pSrc;
+/* FLC chunk 4 is 8-bit RGB. FLI chunk 11 is VGA 6-bit (shift 2).
+   Packets are (skip, count) from the current index, not from 0.
+   The colors also become the DIV palette, so later set_dac calls
+   do not paint the film with the game's palette. */
+static void apply_fli_colors(int shift)
+{
+  Uint8 *pSrc;
   Uint16 NumColorPackets;
-  Uint16 NumColors;
-  Uint8 NumColorsSkip;
-  int i;
+  int index = 0;
 
   pSrc=flc.pChunk+6;
   ReadU16(&NumColorPackets, pSrc);
   pSrc+=2;
   while(NumColorPackets--) {
-    NumColorsSkip=*(pSrc++);
-    if(!(NumColors=*(pSrc++))) {
-      NumColors=256;
+    int skip = *(pSrc++);
+    int count = *(pSrc++);
+    if(!count)
+      count=256;
+    index += skip;
+    while(count--) {
+      int r = *(pSrc++);
+      int g = *(pSrc++);
+      int b = *(pSrc++);
+      if(shift) {
+        r <<= shift;
+        g <<= shift;
+        b <<= shift;
+      }
+      if(index >= 0 && index < 256) {
+        flc.colors[index].r=(Uint8)r;
+        flc.colors[index].g=(Uint8)g;
+        flc.colors[index].b=(Uint8)b;
+        paleta[index*3]=(byte)(r>>2);
+        paleta[index*3+1]=(byte)(g>>2);
+        paleta[index*3+2]=(byte)(b>>2);
+      }
+      index++;
     }
-    i=0;
-    while(NumColors--) {
-      flc.colors[i].r=*(pSrc++);
-      flc.colors[i].g=*(pSrc++);
-      flc.colors[i].b=*(pSrc++);
-      i++;
-    }
-//    Palette_Update();
-    OSDEP_SetPalette(flc.mainscreen, flc.colors, NumColorsSkip, i);
   }
+
+  fli_palette_update=1;
+  dr=now_dacout_r=dacout_r=0;
+  dg=now_dacout_g=dacout_g=0;
+  db=now_dacout_b=dacout_b=0;
+  nueva_paleta();
+  paleta_cargada=1;
+  OSDEP_SetPalette(flc.mainscreen, flc.colors, 0, 256);
+}
+
+void COLORS256()
+{
+  apply_fli_colors(0);
 } /* COLORS256 */
 
 void SS2()
@@ -297,29 +326,8 @@ void SS2()
 } /* SS2 */
 
 void DECODE_COLOR()
-{ Uint8 *pSrc;
-  Uint16 NumColors, NumColorPackets;
-  Uint8 NumColorsSkip;
-  int i;
-
-  pSrc=flc.pChunk+6;
-  ReadU16(&NumColorPackets, pSrc);
-  pSrc+=2;
-  while(NumColorPackets--) {
-    NumColorsSkip=*(pSrc++);
-    if(!(NumColors=*(pSrc++))) {
-      NumColors=256;
-    }
-    i=0;
-    while(NumColors--) {
-      flc.colors[i].r=*(pSrc++)<<2;
-      flc.colors[i].g=*(pSrc++)<<2;
-      flc.colors[i].b=*(pSrc++)<<2;
-      i++;
-    }
-//    Palette_Update();
-    OSDEP_SetPalette(flc.mainscreen, flc.colors, NumColorsSkip, i);
-  }
+{
+  apply_fli_colors(2);
 } /* DECODE_COLOR  */
 
 

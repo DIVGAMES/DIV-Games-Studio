@@ -36,3 +36,5 @@ zipdiv
 *.a
 *.dll
 *.o
+obj/
+div_libretro.dylib

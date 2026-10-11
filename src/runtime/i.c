@@ -16,6 +16,9 @@
 #define DEFINIR_AQUI
 
 #include "inter.h"
+#ifdef LIBRETRO
+#include "div_lr.h"
+#endif
 
 #include "cdrom.h"
 #include "divsound.h"
@@ -78,6 +81,12 @@ void process_paint(int id,int n); // Id, ciclos
 
 int get_ticks(void);
 
+#ifndef DEBUG
+int get_ticks(void) {
+	return (int)OSDEP_GetTicks();
+}
+#endif
+
 int tiempo_restore=0;
 int tiempo_volcado=0;
 
@@ -88,7 +97,11 @@ int nstring=0;
 
 int max,max_reloj;        // Process in order or _Priority and _Z 
 extern int alt_x;
+#ifdef LIBRETRO
+int splashtime = 0;
+#else
 int splashtime = 5000; // 5 seconds
+#endif
 #ifdef EMSCRIPTEN
 byte running = 0;
 #endif
@@ -768,25 +781,24 @@ void guarda_pila(int id, int sp1, int sp2) {
 
 void carga_pila(int id) {
   int n;
-  int32_t * p;
+  memptrsize *p;
   if (mem[id+_SP]) {
-    p=stack[mem[id+_SP]];
-    
-    for (n=0;n<=p[1]-p[0];n++) 
-    	pila[p[0]+n]=p[n+2];
+    p=(memptrsize *)stack[mem[id+_SP]];
 
-//    free(stack[mem[id+_SP]]);
+    for (n=0;n<=(int)p[1]-(int)p[0];n++)
+    	pila[(int)p[0]+n]=(int)p[n+2];
+
     stack[mem[id+_SP]]=0;
-    mem[id+_SP]=0; 
-    sp=p[1];
+    mem[id+_SP]=0;
+    sp=(int)p[1];
     free(p);
   } else sp=0;
 }
 
 void actualiza_pila(int id, int valor) {
-  int32_t * p;
+  memptrsize *p;
   if (mem[id+_SP]) {
-    p=stack[mem[id+_SP]];
+    p=(memptrsize *)stack[mem[id+_SP]];
     p[p[1]-p[0]+2]=valor;
   }
 }
@@ -853,7 +865,9 @@ void interprete (void)
 //#endif
 #endif
 
-#ifdef __EMSCRIPTEN__
+#ifdef LIBRETRO
+  return;
+#elif defined(__EMSCRIPTEN__)
   emscripten_set_main_loop(mainloop, 0, 1);
 #else
   while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !alt_x) {
@@ -1184,7 +1198,7 @@ void frame_start(void) {
 		n=0; 
 		old_reloj=get_reloj();
 
-#ifndef EMSCRIPTEN
+#if !defined(EMSCRIPTEN) && !defined(LIBRETRO)
 		if(old_reloj<(int)freloj) {
 
 		do {
@@ -1196,7 +1210,7 @@ void frame_start(void) {
 #endif			
 		} while (get_reloj()<(int)freloj); // TO keep FPS
 		}
-#else
+#elif !defined(LIBRETRO)
 		do {
 			retrazo();
 		} while (get_reloj()<(int)freloj);
@@ -2366,10 +2380,14 @@ if(m) {
 
         interprete();        
 #ifndef __EMSCRIPTEN__
+#ifndef LIBRETRO
         _dos_setdrive((int)toupper(*divpath)-'A'+1,&divnum);
         chdir(divpath);
 
         exit(26); // Exit without clearing screen
+#else
+        return 0;
+#endif
 #endif
       } else {
         free(ptr);
@@ -2386,6 +2404,21 @@ if(m) {
 return 0;
 
 }
+
+#ifdef LIBRETRO
+int div_lr_boot(const char *path) {
+	char arg0[] = "divrun";
+	char *argv[3];
+	argv[0] = arg0;
+	argv[1] = (char *)path;
+	argv[2] = NULL;
+	return main(2, argv);
+}
+
+void div_lr_frame(void) {
+	mainloop();
+}
+#endif
 
 int is_pak(FILE *f, char *name) {
 

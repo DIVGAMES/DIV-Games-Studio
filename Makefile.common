@@ -1,0 +1,22 @@
+CORE_DIR := .
+
+INCFLAGS := \
+	-I$(CORE_DIR)/src/libretro/sdl \
+	-I$(CORE_DIR)/src/libretro \
+	-I$(CORE_DIR)/src/shared \
+	-I$(CORE_DIR)/src \
+	-I$(CORE_DIR)/src/runtime \
+	-I$(CORE_DIR)/src/runtime/vpe \
+	-I$(CORE_DIR)/src/shared/lib/sdlgfx
+
+SOURCES_C := \
+	$(wildcard $(CORE_DIR)/src/runtime/*.c) \
+	$(wildcard $(CORE_DIR)/src/runtime/vpe/*.c) \
+	$(wildcard $(CORE_DIR)/src/shared/run/*.c) \
+	$(CORE_DIR)/src/shared/unzip.c \
+	$(CORE_DIR)/src/shared/osdep.c \
+	$(CORE_DIR)/src/shared/osdep/osd_sdl12.c \
+	$(CORE_DIR)/src/shared/lib/sdlgfx/SDL_framerate.c \
+	$(CORE_DIR)/src/shared/lib/sdlgfx/SDL_rotozoom.c \
+	$(CORE_DIR)/src/libretro/sdl/sdl_shim.c \
+	$(CORE_DIR)/src/libretro/libretro.c

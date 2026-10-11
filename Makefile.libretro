@@ -1,0 +1,81 @@
+# Libretro build. Produces div_libretro.so / .dylib / .dll.
+#
+#   make -f Makefile.libretro
+#   make -f Makefile.libretro platform=osx
+#   make -f Makefile.libretro clean
+#
+# Needs zlib. SDL is a shim in src/libretro/sdl and is not linked.
+
+STATIC_LINKING = 0
+CORE_DIR := .
+
+ifeq ($(platform),)
+  UNAME := $(shell uname -s)
+  ifneq ($(findstring Darwin,$(UNAME)),)
+    platform = osx
+  else ifneq ($(findstring MINGW,$(UNAME)),)
+    platform = win
+  else ifneq ($(findstring MSYS,$(UNAME)),)
+    platform = win
+  else
+    platform = unix
+  endif
+endif
+
+TARGET_NAME := div
+
+WORDSIZE := $(shell echo | $(CC) -dM -E - 2>/dev/null | awk '/__SIZEOF_POINTER__/ { printf "%d", $$3 * 8 }')
+ifeq ($(WORDSIZE),)
+  WORDSIZE := 64
+endif
+
+CFLAGS += -O2 -DNDEBUG -fPIC -funsigned-char -fno-strict-aliasing -fwrapv
+CFLAGS += -D_GNU_SOURCE -DLIBRETRO -DSDL=1 -DMIXER -DMODE8 -DUSE_FLI -DZLIB -DDIV2 -DRUNTIME
+CFLAGS += -D__WORDSIZE=$(WORDSIZE)
+CFLAGS += -w -Wno-int-conversion -Wno-incompatible-pointer-types -Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration
+
+ifneq (,$(findstring osx,$(platform))$(findstring Darwin,$(platform)))
+  TARGET := $(TARGET_NAME)_libretro.dylib
+  SHARED := -dynamiclib -Wl,-undefined,error
+  ifeq ($(CROSS_COMPILE),1)
+    TARGET_RULE = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
+    CFLAGS  += $(TARGET_RULE)
+    LDFLAGS += $(TARGET_RULE)
+  endif
+else ifneq (,$(findstring win,$(platform))$(findstring mingw,$(platform))$(findstring MINGW,$(platform)))
+  TARGET := $(TARGET_NAME)_libretro.dll
+  SHARED := -shared -static-libgcc -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,--no-undefined
+  CFLAGS += -DWIN32
+else ifeq ($(platform),unix)
+  TARGET := $(TARGET_NAME)_libretro.so
+  SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,--no-undefined
+else
+  $(error platform "$(platform)" is not supported yet. unix, osx and windows are the desktop targets.)
+endif
+
+ifeq ($(DEBUG),1)
+  CFLAGS += -O0 -g
+endif
+
+include $(CORE_DIR)/Makefile.common
+
+# Shim headers must win over a system SDL include from the environment.
+override CFLAGS := -I$(CORE_DIR)/src/libretro/sdl $(CFLAGS) $(INCFLAGS)
+LIBS += -lm -lz
+
+OBJDIR := obj
+OBJECTS := $(addprefix $(OBJDIR)/,$(SOURCES_C:.c=.o))
+
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) -o $@ $(OBJECTS) $(SHARED) $(LDFLAGS) $(LIBS)
+
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	rm -rf $(OBJDIR) $(TARGET_NAME)_libretro.so $(TARGET_NAME)_libretro.dylib $(TARGET_NAME)_libretro.dll
+
+.PHONY: all clean

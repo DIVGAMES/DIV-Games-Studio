@@ -2353,9 +2353,9 @@ void start_fli(void) {
   }
 //  pila[sp]=StartFLI((byte*)&mem[pila[sp]],copia2,vga_an,vga_al,x,y);
 //  if (pila[sp]==0) e(130);
+#else
+  pila[sp]=0;
 #endif
-
-pila[sp]=0;
 
 }
 

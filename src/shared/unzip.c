@@ -21,7 +21,7 @@ char exebin[255];
 #include "osdep.h"
 
 #ifdef __APPLE__
-#include "fmemopen.h"
+/* macOS provides fmemopen. The local src/osx header is not on this include path. */
 #endif
 
 #ifdef STDC

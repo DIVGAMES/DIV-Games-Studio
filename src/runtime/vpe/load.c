@@ -1,6 +1,6 @@
 #include "internal.h"
-#include "atan.h"
 #include "inter.h"
+#include <math.h>
 
 void set_fog_table(int intensidad,int r,int g, int b);
 
@@ -730,6 +730,7 @@ void set_fog_table(int intensidad,int r,int g, int b)
 void LoadMath(void)
 {
   int i;
+  static VPEFixed itan_table[1024];
 
   //---------------------------------------------------------------------------
   // Creo las tablas de senos y cosenos
@@ -739,10 +740,15 @@ void LoadMath(void)
     CosTable[i]=(VPEFixed)(65536.0*cos((2.0*PI*(float)i)/(float)DEG360));
     //printf("sini %05lu.%05lu cosi: %lu\n",((SinTable[i]<<16) & 0xFFFF0000), SinTable[i]&0xFFFF,CosTable[i]);
   }
-//  printf("tantable: %d\n",sizeof(itangente));
-  
-  ITanTable=(VPEFixed *)itangente;
-//  printf("tantable: %d\n",sizeof(ITanTable));
-  
+
+  /* Index 0 is atan(-1), 512 is atan(0), 1023 is atan(511/512).
+     Angles are 2048 units per turn, stored 16.16. The old itangente
+     table lived in a header that is not in the tree. */
+  for (i=0;i<1024;i++) {
+    double t = ((double)i - 512.0) / 512.0;
+    double units = atan(t) * (1024.0 / (double)PI);
+    itan_table[i] = (VPEFixed)(units * 65536.0);
+  }
+  ITanTable = itan_table;
 }
 

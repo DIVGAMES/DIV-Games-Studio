@@ -2,6 +2,12 @@
 // CONFIGURED FOR SDL1.2
 
 #include "osd_sdl12.h"
+#ifdef LIBRETRO
+#include "div_lr.h"
+#include <stdio.h>
+#include <stdlib.h>
+extern double ireloj;
+#endif
 
 
 // key buffer
@@ -20,7 +26,98 @@ static uint32_t flags;
 
 // startup / shutdown
 
+void OSDEP_ShowCursor(int show) {
+	printf("%s\n",__FUNCTION__ );
+
+	SDL_ShowCursor(show);
+}
+
+void AMIGA_Init(void);
+
+
+#ifdef LIBRETRO
+uint32_t div_lr_pixels[DIV_LR_MAX_W * DIV_LR_MAX_H];
+int div_lr_width;
+int div_lr_height;
+static uint32_t div_lr_ticks;
+static uint32_t div_lr_usec_frac;
+static double div_lr_frame_frac;
+
+void div_lr_add_usec(int64_t usec) {
+	uint64_t sum;
+	if (usec <= 0)
+		return;
+	sum = (uint64_t)div_lr_usec_frac + (uint64_t)usec;
+	div_lr_ticks += (uint32_t)(sum / 1000);
+	div_lr_usec_frac = (uint32_t)(sum % 1000);
+}
+
+void div_lr_advance_time(void) {
+	double step_us = (ireloj > 1.0 ? ireloj : (1000.0 / 24.0)) * 1000.0;
+	div_lr_frame_frac += step_us;
+	if (div_lr_frame_frac >= 1.0) {
+		int64_t whole = (int64_t)div_lr_frame_frac;
+		div_lr_frame_frac -= (double)whole;
+		div_lr_add_usec(whole);
+	}
+}
+
+static void div_lr_publish(SDL_Surface *s) {
+	int x, y, w, h;
+	SDL_Color *colors = NULL;
+	if (!s || !s->pixels)
+		return;
+	w = s->w;
+	h = s->h;
+	if (w < 1 || h < 1 || w > DIV_LR_MAX_W || h > DIV_LR_MAX_H)
+		return;
+	if (s->format && s->format->palette)
+		colors = s->format->palette->colors;
+	for (y = 0; y < h; y++) {
+		Uint8 *row = (Uint8 *)s->pixels + y * s->pitch;
+		uint32_t *dst = div_lr_pixels + y * w;
+		for (x = 0; x < w; x++) {
+			Uint8 i = row[x];
+			Uint8 r = i, g = i, b = i;
+			if (colors) {
+				r = colors[i].r;
+				g = colors[i].g;
+				b = colors[i].b;
+			}
+			dst[x] = 0xff000000u | ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
+		}
+	}
+	div_lr_width = w;
+	div_lr_height = h;
+	if (getenv("DIV_LR_DUMP")) {
+		FILE *ppm = fopen("/tmp/div-lr-frame.ppm", "wb");
+		if (ppm) {
+			fprintf(ppm, "P6\n%d %d\n255\n", w, h);
+			for (y = 0; y < h; y++) {
+				uint32_t *src = div_lr_pixels + y * w;
+				for (x = 0; x < w; x++) {
+					unsigned char rgb[3];
+					rgb[0] = (src[x] >> 16) & 255;
+					rgb[1] = (src[x] >> 8) & 255;
+					rgb[2] = src[x] & 255;
+					fwrite(rgb, 1, 3, ppm);
+				}
+			}
+			fclose(ppm);
+		}
+	}
+}
+#endif
+
 void OSDEP_Init(void) {
+
+#ifdef LIBRETRO
+	setenv("SDL_VIDEODRIVER", "dummy", 1);
+	setenv("SDL_AUDIODRIVER", "dummy", 1);
+	SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
+	printf("SDL INIT LIBRETRO");
+	return;
+#endif
 
 #if !defined (GP2X) && !defined (PS2) && !defined (PSP) 
   SDL_putenv("SDL_VIDEO_WINDOW_POS=center"); 
@@ -46,7 +143,11 @@ void OSDEP_Quit(void) {
 
 // Timer
 uint32_t OSDEP_GetTicks(void) {
+#ifdef LIBRETRO
+	return div_lr_ticks;
+#else
 	return SDL_GetTicks();
+#endif
 }
 
 // Display
@@ -112,16 +213,22 @@ OSDEP_Surface * OSDEP_SetVideoMode(int width, int height, int bpp, char fs) {
 	fullscreen = fs;
 	// vwidth = width;
 	// vheight = height;
-	
-	if(OSDEP_surface !=NULL) {
-		SDL_FreeSurface(OSDEP_surface);
-	}
 
-	if(OSDEP_screen !=NULL) {
+	if (OSDEP_screen && OSDEP_screen != OSDEP_surface)
 		SDL_FreeSurface(OSDEP_screen);
-	}
+	if (OSDEP_surface)
+		SDL_FreeSurface(OSDEP_surface);
+	OSDEP_screen = NULL;
+	OSDEP_surface = NULL;
 
-
+#ifdef LIBRETRO
+	(void)flags;
+	OSDEP_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
+	OSDEP_screen = OSDEP_surface;
+	sw = width;
+	sh = height;
+	return OSDEP_surface;
+#endif
 	OSDEP_screen = SDL_SetVideoMode(width, height, bpp, flags);
 #ifndef __EMSCRIPTEN__
 	OSDEP_surface = SDL_CreateRGBSurface(0, width, height, 8,
@@ -141,6 +248,11 @@ void OSDEP_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 
 }
 
 void OSDEP_Flip(OSDEP_Surface *s) {
+
+#ifdef LIBRETRO
+	div_lr_publish(s);
+	return;
+#endif
 
 #ifdef __EMSCRIPTEN__
 		SDL_Flip(OSDEP_screen);
