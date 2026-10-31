@@ -8,8 +8,8 @@ void hlrender_create(hlrender *hlrender_struct,sprite3d *newcamera)
 {
   llrender_create(&hlrender_struct->llrender_struct,newcamera);
 
-  hlrender_struct->centro_pantalla_x=newcamera->ancho/2.0;
-  hlrender_struct->centro_pantalla_y=newcamera->alto/2.0;
+  hlrender_struct->center_screen_x=newcamera->width/2.0;
+  hlrender_struct->center_screen_y=newcamera->height/2.0;
   hlrender_struct->nobjects=0;
   hlrender_struct->oldppf=0;
   hlrender_setcamera(hlrender_struct,newcamera);
@@ -32,9 +32,9 @@ void hlrender_destroy(hlrender *hlrender_struct)
 //---------------------------------------------------------------------------
 //  Transformo todos los puntos en el espacio
 //---------------------------------------------------------------------------
-void hlrender_transformar(hlrender *hlrender_struct,lptobject obj)
+void hlrender_transform(hlrender *hlrender_struct,lptobject obj)
 {
-lptvertex vertice;
+lptvertex vertex;
 //lptvertex ini;
 //lptvertex fin;
 tmatrix   wmat;
@@ -43,9 +43,9 @@ tmatrix   wmat2;
 int i;
 float aux_x,aux_y,aux_z;
 float wlx,wly,wlz;
-float ilum;
+float illum;
   wmat2=*obj->matrix;
-  if (obj->Faces[0].tipo_map==GOURAUD || obj->Faces[0].tipo_map==TEXT_GOUR)
+  if (obj->Faces[0].map_type==GOURAUD || obj->Faces[0].map_type==TEXT_GOUR)
   {
     wlx=hlrender_struct->lgtx*wmat2._00+hlrender_struct->lgty*wmat2._01+hlrender_struct->lgtz*wmat2._02;
     wly=hlrender_struct->lgtx*wmat2._10+hlrender_struct->lgty*wmat2._11+hlrender_struct->lgtz*wmat2._12;
@@ -56,57 +56,57 @@ float ilum;
     wmat2._32-=hlrender_struct->ccamera->cz;
     MatMult(&wmat,&wmat2,&hlrender_struct->ccamera->cmatrix);
 
-    hlrender_rotar(hlrender_struct,&obj->Centro,&wmat);
-    obj->z=schop(obj->Centro.sz*16.0);
+    hlrender_rotate(hlrender_struct,&obj->Center,&wmat);
+    obj->z=schop(obj->Center.sz*16.0);
 
     for (i=0;i<obj->nVertex;i++) {
-      vertice=&obj->Vertices[i];
-      vertice->estado=0;
+      vertex=&obj->Vertices[i];
+      vertex->state=0;
       // Rotar vertices
-      aux_x = vertice->rx*wmat._00+
-              vertice->ry*wmat._10+
-              vertice->rz*wmat._20+wmat._30;
-      aux_y = vertice->rx*wmat._01+
-              vertice->ry*wmat._11+
-              vertice->rz*wmat._21+wmat._31;
-      aux_z = vertice->rx*wmat._02+
-              vertice->ry*wmat._12+
-              vertice->rz*wmat._22+wmat._32;
-      ilum=obj->lambiente;
-      ilum+=vertice->rnx*wlx+vertice->rny*wly+vertice->rnz*wlz;
+      aux_x = vertex->rx*wmat._00+
+              vertex->ry*wmat._10+
+              vertex->rz*wmat._20+wmat._30;
+      aux_y = vertex->rx*wmat._01+
+              vertex->ry*wmat._11+
+              vertex->rz*wmat._21+wmat._31;
+      aux_z = vertex->rx*wmat._02+
+              vertex->ry*wmat._12+
+              vertex->rz*wmat._22+wmat._32;
+      illum=obj->lambient;
+      illum+=vertex->rnx*wlx+vertex->rny*wly+vertex->rnz*wlz;
 
-      if(ilum<-0.6) ilum=-0.6;
-      else if(ilum>1) ilum=1;
+      if(illum<-0.6) illum=-0.6;
+      else if(illum>1) illum=1;
 
-      if (ilum>0) {
-        vertice->r=1.0;
-        vertice->g=1.0;
-        vertice->b=1.0;
-        vertice->intensidad=ilum*.5;
+      if (illum>0) {
+        vertex->r=1.0;
+        vertex->g=1.0;
+        vertex->b=1.0;
+        vertex->intensity=illum*.5;
       }
       else {
-        vertice->r=0.0;
-        vertice->g=0.0;
-        vertice->b=0.0;
-        vertice->intensidad=0; // -ilum;
+        vertex->r=0.0;
+        vertex->g=0.0;
+        vertex->b=0.0;
+        vertex->intensity=0; // -ilum;
       }
 
       // Proyecto el punto en pantalla
 
-      vertice->fpx=(hlrender_struct->centro_pantalla_x)+((aux_x*hlrender_struct->llrender_struct.proyeccion_x)/aux_z);
-      vertice->fpy=(hlrender_struct->centro_pantalla_y)-((aux_y*hlrender_struct->llrender_struct.proyeccion_y)/aux_z);
-      vertice->fpz=aux_z;
+      vertex->fpx=(hlrender_struct->center_screen_x)+((aux_x*hlrender_struct->llrender_struct.projection_x)/aux_z);
+      vertex->fpy=(hlrender_struct->center_screen_y)-((aux_y*hlrender_struct->llrender_struct.projection_y)/aux_z);
+      vertex->fpz=aux_z;
 
-      vertice->sx=aux_x;
-      vertice->sy=aux_y;
-      vertice->sz=aux_z;
+      vertex->sx=aux_x;
+      vertex->sy=aux_y;
+      vertex->sz=aux_z;
 
       obj->Vertices[i].sutherland_cohen=0;
-      if (vertice->fpx<0.0) vertice->sutherland_cohen+=1;
-      if (vertice->fpx>hlrender_struct->llrender_struct.fancho_pantalla) vertice->sutherland_cohen+=4;
-      if (vertice->fpy<0.0) vertice->sutherland_cohen+=16;
-      if (vertice->fpy>hlrender_struct->llrender_struct.falto_pantalla) vertice->sutherland_cohen+=64;
-      if (vertice->fpz<1.0) vertice->sutherland_cohen+=256;
+      if (vertex->fpx<0.0) vertex->sutherland_cohen+=1;
+      if (vertex->fpx>hlrender_struct->llrender_struct.screen_fwidth) vertex->sutherland_cohen+=4;
+      if (vertex->fpy<0.0) vertex->sutherland_cohen+=16;
+      if (vertex->fpy>hlrender_struct->llrender_struct.screen_fheight) vertex->sutherland_cohen+=64;
+      if (vertex->fpz<1.0) vertex->sutherland_cohen+=256;
     }
   }
   else {
@@ -114,37 +114,37 @@ float ilum;
     wmat2._31-=hlrender_struct->ccamera->cy;
     wmat2._32-=hlrender_struct->ccamera->cz;
     MatMult(&wmat,&wmat2,&hlrender_struct->ccamera->cmatrix);
-    hlrender_rotar(hlrender_struct,&obj->Centro,&wmat);
-    obj->z=schop(obj->Centro.sz*16.0);
+    hlrender_rotate(hlrender_struct,&obj->Center,&wmat);
+    obj->z=schop(obj->Center.sz*16.0);
 
     for (i=0;i<obj->nVertex;i++) {
-      vertice=&obj->Vertices[i];
-      vertice->estado=0;
+      vertex=&obj->Vertices[i];
+      vertex->state=0;
       // Rotar vertices
-      aux_x = vertice->rx*wmat._00+
-              vertice->ry*wmat._10+
-              vertice->rz*wmat._20+wmat._30;
-      aux_y = vertice->rx*wmat._01+
-              vertice->ry*wmat._11+
-              vertice->rz*wmat._21+wmat._31;
-      aux_z = vertice->rx*wmat._02+
-              vertice->ry*wmat._12+
-              vertice->rz*wmat._22+wmat._32;
+      aux_x = vertex->rx*wmat._00+
+              vertex->ry*wmat._10+
+              vertex->rz*wmat._20+wmat._30;
+      aux_y = vertex->rx*wmat._01+
+              vertex->ry*wmat._11+
+              vertex->rz*wmat._21+wmat._31;
+      aux_z = vertex->rx*wmat._02+
+              vertex->ry*wmat._12+
+              vertex->rz*wmat._22+wmat._32;
       // Proyecto el punto en pantalla
-      vertice->fpx=(hlrender_struct->centro_pantalla_x)+((aux_x*hlrender_struct->llrender_struct.proyeccion_x)/aux_z);
-      vertice->fpy=(hlrender_struct->centro_pantalla_y)-((aux_y*hlrender_struct->llrender_struct.proyeccion_y)/aux_z);
-      vertice->fpz=aux_z;
+      vertex->fpx=(hlrender_struct->center_screen_x)+((aux_x*hlrender_struct->llrender_struct.projection_x)/aux_z);
+      vertex->fpy=(hlrender_struct->center_screen_y)-((aux_y*hlrender_struct->llrender_struct.projection_y)/aux_z);
+      vertex->fpz=aux_z;
 
-      vertice->sx=aux_x;
-      vertice->sy=aux_y;
-      vertice->sz=aux_z;
+      vertex->sx=aux_x;
+      vertex->sy=aux_y;
+      vertex->sz=aux_z;
 
-      vertice->sutherland_cohen=0;
-      if (vertice->fpx<0.0) vertice->sutherland_cohen+=1;
-      if (vertice->fpx>hlrender_struct->llrender_struct.fancho_pantalla) vertice->sutherland_cohen+=4;
-      if (vertice->fpy<0.0) vertice->sutherland_cohen+=16;
-      if (vertice->fpy>hlrender_struct->llrender_struct.falto_pantalla) vertice->sutherland_cohen+=64;
-      if (vertice->fpz<1.0) vertice->sutherland_cohen+=256;
+      vertex->sutherland_cohen=0;
+      if (vertex->fpx<0.0) vertex->sutherland_cohen+=1;
+      if (vertex->fpx>hlrender_struct->llrender_struct.screen_fwidth) vertex->sutherland_cohen+=4;
+      if (vertex->fpy<0.0) vertex->sutherland_cohen+=16;
+      if (vertex->fpy>hlrender_struct->llrender_struct.screen_fheight) vertex->sutherland_cohen+=64;
+      if (vertex->fpz<1.0) vertex->sutherland_cohen+=256;
 
     }
   }
@@ -153,9 +153,9 @@ float ilum;
 //---------------------------------------------------------------------------
 //  Transformo todos los puntos en el espacio proyectando sobre el suelo
 //---------------------------------------------------------------------------
-void hlrender_transformar_sombra(hlrender *hlrender_struct,lptobject obj)
+void hlrender_transform_shadow(hlrender *hlrender_struct,lptobject obj)
 {
-lptvertex vertice;
+lptvertex vertex;
 //lptvertex ini;
 //lptvertex fin;
 tmatrix   wmat;
@@ -165,20 +165,20 @@ float aux,aux_x,aux_y,aux_z;
 
   wmat=*obj->matrix;
   wmat2=hlrender_struct->ccamera->cmatrix;
-  hlrender_rotar(hlrender_struct,&obj->Centro,&wmat);
+  hlrender_rotate(hlrender_struct,&obj->Center,&wmat);
   for (i=0;i<obj->nVertex;i++) {
-    vertice=&obj->Vertices[i];
-    vertice->estado=0;
+    vertex=&obj->Vertices[i];
+    vertex->state=0;
     // Roto en función de la matriz de giro del objeto
-    aux_x = vertice->rx*wmat._00+
-            vertice->ry*wmat._10+
-            vertice->rz*wmat._20+wmat._30;
-    aux_y = vertice->rx*wmat._01+
-            vertice->ry*wmat._11+
-            vertice->rz*wmat._21+wmat._31;
-    aux_z = vertice->rx*wmat._02+
-            vertice->ry*wmat._12+
-            vertice->rz*wmat._22+wmat._32;
+    aux_x = vertex->rx*wmat._00+
+            vertex->ry*wmat._10+
+            vertex->rz*wmat._20+wmat._30;
+    aux_y = vertex->rx*wmat._01+
+            vertex->ry*wmat._11+
+            vertex->rz*wmat._21+wmat._31;
+    aux_z = vertex->rx*wmat._02+
+            vertex->ry*wmat._12+
+            vertex->rz*wmat._22+wmat._32;
 
     // Traslado en función de la cámara
     aux=-obj->Shadow*aux_y/2;
@@ -187,58 +187,58 @@ float aux,aux_x,aux_y,aux_z;
     aux_z=aux_z-hlrender_struct->ccamera->cz+aux;
 
     // Roto en función de la matriz de giro de la camara
-    vertice->sx = aux_x*wmat2._00+
+    vertex->sx = aux_x*wmat2._00+
                   aux_y*wmat2._10+
                   aux_z*wmat2._20+wmat2._30;
-    vertice->sy = aux_x*wmat2._01+
+    vertex->sy = aux_x*wmat2._01+
                   aux_y*wmat2._11+
                   aux_z*wmat2._21+wmat2._31;
-    vertice->sz = aux_x*wmat2._02+
+    vertex->sz = aux_x*wmat2._02+
                   aux_y*wmat2._12+
                   aux_z*wmat2._22+wmat2._32;
 
     // Proyecto el punto en pantalla
-    vertice->fpx=(hlrender_struct->llrender_struct.fancho_pantalla/2)+((vertice->sx*hlrender_struct->llrender_struct.proyeccion_x)/vertice->sz);
-    vertice->fpy=(hlrender_struct->llrender_struct.falto_pantalla/2)-((vertice->sy*hlrender_struct->llrender_struct.proyeccion_y)/vertice->sz);
-    vertice->fpz=vertice->sz;
+    vertex->fpx=(hlrender_struct->llrender_struct.screen_fwidth/2)+((vertex->sx*hlrender_struct->llrender_struct.projection_x)/vertex->sz);
+    vertex->fpy=(hlrender_struct->llrender_struct.screen_fheight/2)-((vertex->sy*hlrender_struct->llrender_struct.projection_y)/vertex->sz);
+    vertex->fpz=vertex->sz;
 
-    vertice->sutherland_cohen=0;
-    if (vertice->fpx<0.0) vertice->sutherland_cohen+=1;
-    if (vertice->fpx>hlrender_struct->llrender_struct.fancho_pantalla) vertice->sutherland_cohen+=4;
-    if (vertice->fpy<0.0) vertice->sutherland_cohen+=16;
-    if (vertice->fpy>hlrender_struct->llrender_struct.falto_pantalla) vertice->sutherland_cohen+=64;
-    if (vertice->fpz<1.0) vertice->sutherland_cohen+=256;
+    vertex->sutherland_cohen=0;
+    if (vertex->fpx<0.0) vertex->sutherland_cohen+=1;
+    if (vertex->fpx>hlrender_struct->llrender_struct.screen_fwidth) vertex->sutherland_cohen+=4;
+    if (vertex->fpy<0.0) vertex->sutherland_cohen+=16;
+    if (vertex->fpy>hlrender_struct->llrender_struct.screen_fheight) vertex->sutherland_cohen+=64;
+    if (vertex->fpz<1.0) vertex->sutherland_cohen+=256;
 
   }
-  hlrender_rotar(hlrender_struct,&obj->Centro,&wmat2);
-  obj->z=schop(obj->Centro.sz*16.0);
+  hlrender_rotate(hlrender_struct,&obj->Center,&wmat2);
+  obj->z=schop(obj->Center.sz*16.0);
 
 }
 
-void hlrender_rotar(hlrender *hlrender_struct,lptvertex v,lptmatrix matriz)
+void hlrender_rotate(hlrender *hlrender_struct,lptvertex v,lptmatrix matrix)
 {
-  v->sx =v->rx*matriz->_00+v->ry*matriz->_10+v->rz*matriz->_20+matriz->_30;
-  v->sy =v->rx*matriz->_01+v->ry*matriz->_11+v->rz*matriz->_21+matriz->_31;
-  v->sz =v->rx*matriz->_02+v->ry*matriz->_12+v->rz*matriz->_22+matriz->_32;
+  v->sx =v->rx*matrix->_00+v->ry*matrix->_10+v->rz*matrix->_20+matrix->_30;
+  v->sy =v->rx*matrix->_01+v->ry*matrix->_11+v->rz*matrix->_21+matrix->_31;
+  v->sz =v->rx*matrix->_02+v->ry*matrix->_12+v->rz*matrix->_22+matrix->_32;
 
-  v->fpx=(hlrender_struct->centro_pantalla_x)+((v->sx*hlrender_struct->llrender_struct.proyeccion_x)/v->sz);
-  v->fpy=(hlrender_struct->centro_pantalla_y)-((v->sy*hlrender_struct->llrender_struct.proyeccion_y)/v->sz);
+  v->fpx=(hlrender_struct->center_screen_x)+((v->sx*hlrender_struct->llrender_struct.projection_x)/v->sz);
+  v->fpy=(hlrender_struct->center_screen_y)-((v->sy*hlrender_struct->llrender_struct.projection_y)/v->sz);
   v->fpz=v->sz;
 }
 
-void hlrender_rotar_normales(lptvertex v,lptmatrix matriz)
+void hlrender_rotate_normals(lptvertex v,lptmatrix matrix)
 {
-  v->snx=v->rnx*matriz->_00+v->rny*matriz->_10+v->rnz*matriz->_20;
-  v->sny=v->rnx*matriz->_01+v->rny*matriz->_11+v->rnz*matriz->_21;
-  v->snz=v->rnx*matriz->_02+v->rny*matriz->_12+v->rnz*matriz->_22;
+  v->snx=v->rnx*matrix->_00+v->rny*matrix->_10+v->rnz*matrix->_20;
+  v->sny=v->rnx*matrix->_01+v->rny*matrix->_11+v->rnz*matrix->_21;
+  v->snz=v->rnx*matrix->_02+v->rny*matrix->_12+v->rnz*matrix->_22;
 }
 
 //---------------------------------------------------------------------------
 //  Transformo el centro del objeto en el espacio
 //---------------------------------------------------------------------------
-void hlrender_transformar_centro(hlrender *hlrender_struct,lptobject obj)
+void hlrender_transform_center(hlrender *hlrender_struct,lptobject obj)
 {
-  hlrender_rotar(hlrender_struct,&obj->Centro,obj->matrix);
+  hlrender_rotate(hlrender_struct,&obj->Center,obj->matrix);
 }
 
 //---------------------------------------------------------------------------
@@ -246,7 +246,7 @@ void hlrender_transformar_centro(hlrender *hlrender_struct,lptobject obj)
 
 int hlrender_addobject(hlrender *hlrender_struct,lptobject object)
 {
-  object->activo=1;
+  object->active=1;
   hlrender_struct->objects[hlrender_struct->nobjects]=object;
   if(hlrender_struct->nobjects>N_OBJECTS-1) {ERROR=(char *)ERR12;exit(1);};
 return(hlrender_struct->nobjects++);
@@ -303,9 +303,9 @@ void  hlrender_transformobjects(hlrender *hlrender_struct)
 {
 int i;
   for(i=0;i<hlrender_struct->nobjects;i++)
-    if (hlrender_struct->objects[i]->activo) {
-      if (hlrender_struct->objects[i]->Shadow) hlrender_transformar_sombra(hlrender_struct,hlrender_struct->objects[i]);
-      else hlrender_transformar(hlrender_struct,hlrender_struct->objects[i]);
+    if (hlrender_struct->objects[i]->active) {
+      if (hlrender_struct->objects[i]->Shadow) hlrender_transform_shadow(hlrender_struct,hlrender_struct->objects[i]);
+      else hlrender_transform(hlrender_struct,hlrender_struct->objects[i]);
     }
 }
 
@@ -313,8 +313,8 @@ void  hlrender_transdrawobjects(hlrender *hlrender_struct)
 {
 int i;
   for(i=0;i<hlrender_struct->nobjects;i++)
-    if (hlrender_struct->objects[i]->Shadow) hlrender_transformar_sombra(hlrender_struct,hlrender_struct->objects[i]);
-    else hlrender_transformar(hlrender_struct,hlrender_struct->objects[i]);
+    if (hlrender_struct->objects[i]->Shadow) hlrender_transform_shadow(hlrender_struct,hlrender_struct->objects[i]);
+    else hlrender_transform(hlrender_struct,hlrender_struct->objects[i]);
 
   hlrender_sort(hlrender_struct);
 
@@ -349,23 +349,23 @@ void hlrender_setcamera(hlrender *hlrender_struct,sprite3d *newcamera)
 {
 // Datos cambiantes
     hlrender_struct->ccamera=newcamera;
-    hlrender_struct->llrender_struct.ancho_pantalla=hlrender_struct->ccamera->ancho;
-    hlrender_struct->llrender_struct.alto_pantalla=hlrender_struct->ccamera->alto;
-    hlrender_struct->llrender_struct.fancho_pantalla=hlrender_struct->llrender_struct.ancho_pantalla;
-    hlrender_struct->llrender_struct.falto_pantalla = hlrender_struct->llrender_struct.alto_pantalla;
-    hlrender_struct->llrender_struct.copia=hlrender_struct->ccamera->buffer;
-    hlrender_struct->llrender_struct.vancho=hlrender_struct->ccamera->ancho*2;
-    hlrender_struct->llrender_struct.fin_copia=hlrender_struct->llrender_struct.copia+hlrender_struct->llrender_struct.vancho*hlrender_struct->llrender_struct.alto_pantalla;
-    hlrender_struct->llrender_struct.proyeccion_x=hlrender_struct->ccamera->proyeccion_x;
-    hlrender_struct->llrender_struct.proyeccion_y=hlrender_struct->ccamera->proyeccion_y;
+    hlrender_struct->llrender_struct.screen_width=hlrender_struct->ccamera->width;
+    hlrender_struct->llrender_struct.screen_height=hlrender_struct->ccamera->height;
+    hlrender_struct->llrender_struct.screen_fwidth=hlrender_struct->llrender_struct.screen_width;
+    hlrender_struct->llrender_struct.screen_fheight = hlrender_struct->llrender_struct.screen_height;
+    hlrender_struct->llrender_struct.copy_buffer=hlrender_struct->ccamera->buffer;
+    hlrender_struct->llrender_struct.vwidth=hlrender_struct->ccamera->width*2;
+    hlrender_struct->llrender_struct.end_copy=hlrender_struct->llrender_struct.copy_buffer+hlrender_struct->llrender_struct.vwidth*hlrender_struct->llrender_struct.screen_height;
+    hlrender_struct->llrender_struct.projection_x=hlrender_struct->ccamera->projection_x;
+    hlrender_struct->llrender_struct.projection_y=hlrender_struct->ccamera->projection_y;
 }
 
 void hlrender_setlight(hlrender *hlrender_struct,float x, float y, float z)
 {
-float dis=sqrt((x*x)+(y*y)+(z*z));
-  hlrender_struct->lgtx=x/dis;
-  hlrender_struct->lgty=y/dis;
-  hlrender_struct->lgtz=z/dis;
+float dist=sqrt((x*x)+(y*y)+(z*z));
+  hlrender_struct->lgtx=x/dist;
+  hlrender_struct->lgty=y/dist;
+  hlrender_struct->lgtz=z/dist;
 }
 
 void hlrender_setmovelight(hlrender *hlrender_struct,float x, float y, float z)

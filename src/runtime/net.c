@@ -20,18 +20,18 @@ TCPsocket tcpsock,new_tcpsock;
 char net_games[10][32];
 int net_players[16];
 
-int inicializacion_red=0;
+int network_initialization=0;
 
-net_game partida_red;
+net_game network_game;
 
-extern int reloj;
+extern int clock_ticks;
 
 //=============================================================================
 //  Procedimientos internos
 //=============================================================================
 
 int net_init(int game_id);
-int _net_join_game(int game_id,char *nombre,byte *datos, int longitud);
+int _net_join_game(int game_id,char *name,byte *data, int length);
 int join_game(int num_games);
 void net_end(void);
 void net_exit_game(void);
@@ -43,8 +43,8 @@ void net_send(void);
 void net_recv(void);
 void net_get_games(void);
 
-int net_create_game(int game_id,char *nombre, int num_jugadores);
-int old_net_reloj;
+int net_create_game(int game_id,char *name, int num_players);
+int old_net_clock;
 
 extern void arse(void);
 
@@ -54,12 +54,12 @@ extern void arse(void);
 
 int net_init(int game_id)
 {
-  old_net_reloj=reloj;
+  old_net_clock=clock_ticks;
   fprintf(stdout,"Starting NETPLAY\n");
   
   return(net_init_internet(game_id));
   
-/*  switch (net->dispositivo)
+/*  switch (net->device)
   {
     case IPX:     return(net_init_ipx(game_id));
                   break;
@@ -75,11 +75,11 @@ int net_init(int game_id)
 }
 
 int net_init_internet(int game_id) {
-	inicializacion_red=1;
-	partida_red.game_id=game_id;
-	partida_red.activa=0;
-	partida_red.servidor=0;
-	partida_red.player_id=0;
+	network_initialization=1;
+	network_game.game_id=game_id;
+	network_game.active=0;
+	network_game.server=0;
+	network_game.player_id=0;
 	return SDLNet_Init();
 }
 
@@ -96,7 +96,7 @@ int net_init_ipx(int game_id)
   //---------------------------------------------------------------------------
   // Compruebo si se inició la comunicacion, en caso afirmativo se finaliza
   //---------------------------------------------------------------------------
-  if (inicializacion_red)
+  if (network_initialization)
     net_end();
 
   //---------------------------------------------------------------------------
@@ -111,16 +111,16 @@ int net_init_ipx(int game_id)
   // Selecciona el dispositivo
   //---------------------------------------------------------------------------
   InitECBs();
-  partida_red.dispositivo=IPX;
+  network_game.device=IPX;
 
   //---------------------------------------------------------------------------
   // Inicialización correcta
   //---------------------------------------------------------------------------
-  inicializacion_red=1;
-  partida_red.game_id=game_id;
-  partida_red.activa=0;
-  partida_red.servidor=0;
-  partida_red.player_id=0;
+  network_initialization=1;
+  network_game.game_id=game_id;
+  network_game.active=0;
+  network_game.server=0;
+  network_game.player_id=0;
   return(0);
 }
 
@@ -133,30 +133,30 @@ int net_init_serial(int game_id)
   //---------------------------------------------------------------------------
   // Compruebo si se inició la comunicacion, en caso afirmativo se finaliza
   //---------------------------------------------------------------------------
-  if (inicializacion_red)
+  if (network_initialization)
     net_end();
 
-  partida_red.num_players=2;
+  network_game.num_players=2;
 
   //---------------------------------------------------------------------------
   // Inicializa el puerto
   //---------------------------------------------------------------------------
-  if (InitCOM(net->com,net->velocidad)) {
+  if (InitCOM(net->com,net->speed)) {
     return(NET_BADINIT);
   }
 
   //---------------------------------------------------------------------------
   // Selecciona el dispositivo
   //---------------------------------------------------------------------------
-  partida_red.dispositivo=SERIAL;
+  network_game.device=SERIAL;
 
   //---------------------------------------------------------------------------
   // Inicialización correcta
   //---------------------------------------------------------------------------
-  inicializacion_red=1;
-  partida_red.game_id=game_id;
-  partida_red.activa=0;
-  partida_red.servidor=0;
+  network_initialization=1;
+  network_game.game_id=game_id;
+  network_game.active=0;
+  network_game.server=0;
   COM_Send(1,MSG_SYNC,"SYNC",4);
   return(0);
 }
@@ -170,55 +170,55 @@ int net_init_modem(int timeout)
 char data_aux[64];
 int dial=0;//????????? FERNANDO ?????
 /*
-  if ( net->telefono[0]==NULL )     // OJO //OKFER
+  if ( net->phone[0]==NULL )     // OJO //OKFER
     dial=0;
   else
     dial=1;
 */
-  if (net->tonos)
+  if (net->tones)
     strcpy(data_aux,"ATDT");
   else
     strcpy(data_aux,"ATDP");
 
-//  strcat(data_aux,net->telefono);
+//  strcat(data_aux,net->phone);
 
   //---------------------------------------------------------------------------
   // Compruebo si se inició la comunicacion, en caso afirmativo se finaliza
   //---------------------------------------------------------------------------
-  if (inicializacion_red)
+  if (network_initialization)
     net_end();
 
-  partida_red.num_players=2;
+  network_game.num_players=2;
   timeout*=CLOCKS_PER_SEC;
 
   //---------------------------------------------------------------------------
   // Inicializa el puerto
   //---------------------------------------------------------------------------
-  if (InitCOM(net->com,net->velocidad)) {
+  if (InitCOM(net->com,net->speed)) {
     return(NET_BADINIT);
   }
 
   //---------------------------------------------------------------------------
   // Inicializa el modem
   //---------------------------------------------------------------------------
-  partida_red.servidor=dial;  // El que marca es uno y el que recibe la llamada 0.
+  network_game.server=dial;  // El que marca es uno y el que recibe la llamada 0.
                   // (El servidor espera, el nodo llama)
 /*
 //  InitModem("ATZ", "ATDT5197575");
-  if (InitModem(net->cadena_inicio,data_aux)) {
+  if (InitModem(net->string_start,data_aux)) {
     return(NET_BADINIT);
   }
 */
   //---------------------------------------------------------------------------
   // Selecciona el dispositivo
   //---------------------------------------------------------------------------
-  partida_red.dispositivo=MODEM;
+  network_game.device=MODEM;
 
   //---------------------------------------------------------------------------
   // Inicialización correcta
   //---------------------------------------------------------------------------
-  inicializacion_red=1;
-  return(partida_red.servidor);
+  network_initialization=1;
+  return(network_game.server);
 }
 
 //=============================================================================
@@ -229,30 +229,30 @@ int dial=0;//????????? FERNANDO ?????
 
 void _net_loop(void)
 {
-  static int con_reloj=0;
+  static int with_clock=0;
 
   //---------------------------------------------------------------------------
   // Compruebo si se inició la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
-  if (!inicializacion_red)
+  if (!network_initialization)
     return;
 
   //---------------------------------------------------------------------------
   // Compruebo si hay una partida activa, en caso contrario retorna
   //---------------------------------------------------------------------------
-  if (!partida_red.activa)
+  if (!network_game.active)
     return;
 
   //---------------------------------------------------------------------------
   // Manda un paquete
   //---------------------------------------------------------------------------
-  net->servidor=partida_red.servidor;
-  net->tonos=partida_red.game_id;
-  con_reloj+=(reloj-old_net_reloj);
-  old_net_reloj=reloj;
-//  if(con_reloj>2)
+  net->server=network_game.server;
+  net->tones=network_game.game_id;
+  with_clock+=(clock_ticks-old_net_clock);
+  old_net_clock=clock_ticks;
+//  if(with_clock>2)
 //  {
-//    con_reloj-=2;
+//    with_clock-=2;
     net_send();
   net_recv();
 
@@ -263,7 +263,7 @@ void _net_loop(void)
   //---------------------------------------------------------------------------
   // Chequea los paquetes en la red
   //---------------------------------------------------------------------------
-  if (partida_red.dispositivo==IPX)
+  if (network_game.device==IPX)
   {
     do {
     } while (CheckPackets());
@@ -275,11 +275,11 @@ void _net_loop(void)
   }
   
 #endif
-  net->act_players=partida_red.num_players;
+  net->act_players=network_game.num_players;
   //---------------------------------------------------------------------------
   // Si la partida ya está completa retorna
   //---------------------------------------------------------------------------
-  if (partida_red.num_players==partida_red.max_players) {
+  if (network_game.num_players==network_game.max_players) {
     return;
   }
 }
@@ -290,19 +290,19 @@ void _net_loop(void)
 
 void net_end()
 {
-  if (!inicializacion_red)
+  if (!network_initialization)
     return;
 
   net_exit_game();
 
   SDLNet_Quit();
 #ifdef NOTYET
-  if (partida_red.dispositivo==IPX)
+  if (network_game.device==IPX)
     EndIPX();
   else
     EndCOM();
 #endif
-  inicializacion_red=0;
+  network_initialization=0;
 }
 
 //=============================================================================
@@ -311,41 +311,41 @@ void net_end()
 
 void net_send()
 {
-	int len=partida_red.longitud_datos;
+	int len=network_game.data_length;
 //	byte *msg[len];
 	int result;
 /*
   int i;
 
-  if (partida_red.servidor)
-    printf("Jugadores: %d, NumPlayer: %d, Dir: %s, Soy el Servidor\n",partida_red.num_players,partida_red.player_id,ShowInternalAddress(&IPX_MyAddress));
+  if (network_game.server)
+    printf("Jugadores: %d, NumPlayer: %d, Dir: %s, Soy el Servidor\n",network_game.num_players,network_game.player_id,ShowInternalAddress(&IPX_MyAddress));
   else
-    printf("Jugadores: %d, NumPlayer: %d, Dir: %s, Soy un Nodo\n",partida_red.num_players,partida_red.player_id,ShowInternalAddress(&IPX_MyAddress));
+    printf("Jugadores: %d, NumPlayer: %d, Dir: %s, Soy un Nodo\n",network_game.num_players,network_game.player_id,ShowInternalAddress(&IPX_MyAddress));
 */
-  if (!partida_red.activa || (partida_red.num_players<2 && partida_red.dispositivo==IPX))
+  if (!network_game.active || (network_game.num_players<2 && network_game.device==IPX))
     return;
   
-//  msg[0]=partida_red.player_id;
-//  memcpy(&msg[1],partida_red.datos,partida_red.longitud_datos);
+//  msg[0]=network_game.player_id;
+//  memcpy(&msg[1],network_game.data,network_game.data_length);
   
   // construct the packet
 
 
-  if(partida_red.servidor==1 && new_tcpsock)
-	result = SDLNet_TCP_Send(new_tcpsock,partida_red.datos,partida_red.longitud_datos);
+  if(network_game.server==1 && new_tcpsock)
+	result = SDLNet_TCP_Send(new_tcpsock,network_game.data,network_game.data_length);
   else
-    result = SDLNet_TCP_Send(tcpsock,partida_red.datos,partida_red.longitud_datos);
+    result = SDLNet_TCP_Send(tcpsock,network_game.data,network_game.data_length);
   
   if(result<len) {
     //fprintf(stdout,"SDLNet_TCP_Send: %s\n", SDLNet_GetError());
     // It may be good to disconnect sock because it is likely invalid now.
 }
 #ifdef NOTYET
-  if (partida_red.dispositivo==IPX) {
-    SendPacketToAll(partida_red.player_id,(void *)((int)partida_red.datos+partida_red.player_id*partida_red.longitud_datos),partida_red.longitud_datos);
+  if (network_game.device==IPX) {
+    SendPacketToAll(network_game.player_id,(void *)((int)network_game.data+network_game.player_id*network_game.data_length),network_game.data_length);
   }
   else {
-    COM_Send(partida_red.servidor,0,partida_red.datos,partida_red.longitud_datos);
+    COM_Send(network_game.server,0,network_game.data,network_game.data_length);
   }
 #endif
 
@@ -355,43 +355,43 @@ void net_send()
 // Crea una partida
 //=============================================================================
 
-int net_create_game(int game_id,char *nombre, int num_jugadores)
+int net_create_game(int game_id,char *name, int num_players)
 {
-	fprintf(stdout,"NET_CREATE_GAME %d %s %d\n",game_id,nombre, num_jugadores);
+	fprintf(stdout,"NET_CREATE_GAME %d %s %d\n",game_id,name, num_players);
 	
   //---------------------------------------------------------------------------
   // Compruebo si se inició la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
-  if (!inicializacion_red)
+  if (!network_initialization)
     net_init(game_id);
 
   //---------------------------------------------------------------------------
   // Compruebo si hay una partida activa, en caso afirmativo retorna
   //---------------------------------------------------------------------------
-  if (partida_red.activa)
+  if (network_game.active)
     return(-1);
 
-  if (num_jugadores<0 || num_jugadores>=MAX_USERS)
+  if (num_players<0 || num_players>=MAX_USERS)
     return(NET_BADNUMPLAYERS);
 
   //---------------------------------------------------------------------------
   // Compruebo si el número de jugadores es correcto, en caso contrario retorna
   //---------------------------------------------------------------------------
 #ifdef NOTYET
-  if (partida_red.dispositivo==IPX) {
-    if (num_jugadores<0 || num_jugadores>=MAX_USERS)
+  if (network_game.device==IPX) {
+    if (num_players<0 || num_players>=MAX_USERS)
       return(NET_BADNUMPLAYERS);
   }
   else {
-    if (num_jugadores!=2)
+    if (num_players!=2)
       return(NET_BADNUMPLAYERS);
   }
 #endif
-  strcpy(partida_red.nombre,nombre);
-  partida_red.activa=1;
-  partida_red.servidor=1;
-  net->servidor=1;
-  partida_red.max_players=num_jugadores;
+  strcpy(network_game.name,name);
+  network_game.active=1;
+  network_game.server=1;
+  net->server=1;
+  network_game.max_players=num_players;
   fprintf(stdout,"Starting server\n");
 if(SDLNet_ResolveHost(&ipaddr,NULL,9999)==-1) {
     printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
@@ -404,7 +404,7 @@ if(!tcpsock) {
     return -1;
 }
 
-//  if (partida_red.dispositivo==IPX)
+//  if (network_game.device==IPX)
 //    InsertIn(&IPX_MyAddress,0);
 
   //---------------------------------------------------------------------------
@@ -422,22 +422,22 @@ void net_exit_game()
   //---------------------------------------------------------------------------
   // Compruebo si se inició la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
-  if (!inicializacion_red)
+  if (!network_initialization)
     return;
-  if (!partida_red.activa)
+  if (!network_game.active)
     return;
 
-  partida_red.activa=0;
+  network_game.active=0;
 
   //---------------------------------------------------------------------------
   // Enviar a los otros usuarios el mensaje de salida
   //---------------------------------------------------------------------------
 #ifdef NOTYET
-  if (partida_red.dispositivo==IPX) {
+  if (network_game.device==IPX) {
     ipx_exit_game();
   }
   else {
-    if (partida_red.servidor)
+    if (network_game.server)
       COM_Send(1,MSG_EXIT,"",0);
     else
       COM_Send(0,MSG_EXIT,"",0);
@@ -452,18 +452,18 @@ void net_exit_game()
 int _net_get_games(int game_id)
 {
   int num_games;
-  int valor_retorno;
+  int return_value;
 
   //---------------------------------------------------------------------------
   // Compruebo si se inicio la comunicacion, en caso contrario la inicia
   //---------------------------------------------------------------------------
-  if (!inicializacion_red) {
-    if ((valor_retorno=net_init(game_id))<0)
-      return(valor_retorno);
+  if (!network_initialization) {
+    if ((return_value=net_init(game_id))<0)
+      return(return_value);
   }
 
 #ifdef NOTYET
-  if (partida_red.dispositivo==IPX) {
+  if (network_game.device==IPX) {
     num_games=looking_for_games(1);
     return(num_games);
   }
@@ -480,7 +480,7 @@ int _net_get_games(int game_id)
 		return 0;
 	}
   fprintf(stdout,"connected to %x\n",tcpsock);
-  partida_red.activa=1;
+  network_game.active=1;
   return(1);
 }
 
@@ -488,10 +488,10 @@ int _net_get_games(int game_id)
 // Entra en una de las partidas activas
 //=============================================================================
 
-int _net_join_game(int game_id,char *nombre,byte *datos, int longitud)
+int _net_join_game(int game_id,char *name,byte *data, int length)
 {
 int num_games,i;
-int valor_retorno;
+int return_value;
 fprintf(stdout,"Net Join Game\n");
 int server=0;
   //---------------------------------------------------------------------------
@@ -509,15 +509,15 @@ int server=0;
   for (i=0;i<net->num_players;i++) {
     net_players[i]=0;
   }
-  partida_red.num_players=0;
+  network_game.num_players=0;
 
   //---------------------------------------------------------------------------
   // Comprueba que le paquete no supere los 200 bytes
   //---------------------------------------------------------------------------
 // FER_AQUI
-  longitud*=4;
-//  longitud/=net->num_players;  
-  if (longitud>=200)
+  length*=4;
+//  length/=net->num_players;  
+  if (length>=200)
   {
     e(163);
     return(-6); // Paquete demasiado grande
@@ -526,18 +526,18 @@ int server=0;
   //---------------------------------------------------------------------------
   // Compruebo si se inició la comunicacion, en caso contrario retorna
   //---------------------------------------------------------------------------
-  if (!inicializacion_red) {
-    if ((valor_retorno=net_init(game_id))<0)
-      return(valor_retorno);
+  if (!network_initialization) {
+    if ((return_value=net_init(game_id))<0)
+      return(return_value);
   }
-  if (partida_red.activa) {
+  if (network_game.active) {
     net_exit_game();
     return(0);
   }
 
-  partida_red.datos=datos;
-  partida_red.longitud_datos=longitud;
-server = net_create_game(game_id,nombre,net->num_players);
+  network_game.data=data;
+  network_game.data_length=length;
+server = net_create_game(game_id,name,net->num_players);
 
 if(server==1)
 return 0;
@@ -550,9 +550,9 @@ if(_net_get_games(game_id)>0) {
   //---------------------------------------------------------------------------
   if (num_games=_net_get_games(game_id)) {
     for (i=0;i<num_games;i++) {
-      if (!stricmp(net_games[i],nombre)) {
+      if (!stricmp(net_games[i],name)) {
 #ifdef NOTYET
-        if (partida_red.dispositivo==IPX)
+        if (network_game.device==IPX)
           return(join_game(num_games));
         else
 #endif
@@ -560,7 +560,7 @@ if(_net_get_games(game_id)>0) {
       }
     }
   }
-//  return(net_create_game(game_id,nombre,net->num_players));
+//  return(net_create_game(game_id,name,net->num_players));
 }
 
 
@@ -594,22 +594,22 @@ void net_join_game(void)
 {
 int game_id;
 int c;
-int longitud=pila[sp--];
-int datos   =pila[sp--];
-int nombre  =pila[sp];
+int length=opstack[sp--];
+int data   =opstack[sp--];
+int name  =opstack[sp];
 
-//fprintf(stdout,"datos: %x\n",datos);
+//fprintf(stdout,"data: %x\n",data);
 
-  game_id=net_game_id+nombre+mem[text_offset+nombre];
-  	partida_red.game_id=game_id;
-	//      partida_red.num_players=game_info.num_players;
-//	partida_red.max_players=max_players;
-//	partida_red.player_id=player_id;
-	partida_red.activa=1;
+  game_id=net_game_id+name+mem[text_offset+name];
+  	network_game.game_id=game_id;
+	//      network_game.num_players=game_info.num_players;
+//	network_game.max_players=max_players;
+//	network_game.player_id=player_id;
+	network_game.active=1;
 
 
-  c=_net_join_game( game_id, (char *)&mem[text_offset+nombre], (byte *)&mem[datos], longitud );
-  pila[sp]=c;
+  c=_net_join_game( game_id, (char *)&mem[text_offset+name], (byte *)&mem[data], length );
+  opstack[sp]=c;
   
 }
 
@@ -621,7 +621,7 @@ void net_get_games(void)
 {
 int c;
   c=_net_get_games(net_game_id);
-  pila[++sp]=c;
+  opstack[++sp]=c;
 }
 
 int join_game(int num_games) {
@@ -629,11 +629,11 @@ int join_game(int num_games) {
 }
 
 void net_recv(void) {
-	#define MAXLEN partida_red.longitud_datos
+	#define MAXLEN network_game.data_length
 	int result=0;
 	byte msg[MAXLEN];
 
-	if ( partida_red.servidor) {
+	if ( network_game.server) {
 		
 		if(!new_tcpsock) {
 			new_tcpsock=SDLNet_TCP_Accept(tcpsock);
@@ -659,8 +659,8 @@ void net_recv(void) {
 		}
 	}
 //	fprintf(stdout,"Received: %d %d\"%s\"\n",result,MAXLEN,msg);
-//	memset(partida_red.datos,1,result);
-	memcpy(partida_red.datos,msg,result);
+//	memset(network_game.data,1,result);
+	memcpy(network_game.data,msg,result);
 }
 #endif
 

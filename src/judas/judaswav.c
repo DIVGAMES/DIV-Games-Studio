@@ -18,9 +18,9 @@ extern void safemixer(void *address, int length);
 int JudasProgressRead(int handle, void *buffer, int size);
 
 /*
-#define max_textos 2048
-int Progress(char *titulo,int current,int total);
-extern char *texto[max_textos];
+#define max_texts 2048
+int Progress(char *title,int current,int total);
+extern char *texts[max_texts];
 */
 
 #pragma pack (push, 1);
@@ -165,7 +165,7 @@ SoundInfo *judas_loadwav(char *name)
         WAV_HEADER header;
         unsigned char *SI_aux;
         SoundInfo *SI=NULL;
-//      int con, pasos, resto;
+//      int ctr, steps, rest;
 
         if((SI_aux=(char *)malloc(sizeof(SoundInfo)))==NULL) return(SI);
         SI=(SoundInfo *)SI_aux;
@@ -484,7 +484,7 @@ SoundInfo *judas_loadwav_mem(unsigned char *FileBuffer)
         WAV_HEADER header;
         unsigned char *SI_aux;
         SoundInfo *SI=NULL;
-//      int con, pasos, resto;
+//      int ctr, steps, rest;
         int FilePos=0;
 
         if((SI_aux=(char *)malloc(sizeof(SoundInfo)))==NULL) return(SI);

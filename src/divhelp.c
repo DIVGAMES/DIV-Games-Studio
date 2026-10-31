@@ -5,13 +5,13 @@
 
 #include "global.h"
 
-extern int fin_ventana;
-extern int primera_vez;
+extern int end_window;
+extern int first_time;
 
 int helpidx[4096];              // Por cada término {inicio,longitud}
 int help_item;                  // Indica sobre que término se pide ayuda
 int help_len;                   // Longitud del help_buffer
-int help_an,help_al;            // Ancho y alto de la ventana de ayuda
+int help_width,help_height;            // Ancho y alto de la ventana de ayuda
 int help_l,help_lines;          // Línea actual, y lineas totales
 byte help_title[128];           // Título del término
 byte *help_buffer=NULL;         // Buffer para contener la ayuda
@@ -23,19 +23,19 @@ byte *index_end;                // Final del glosario
 
 int loaded[64],n_loaded=0;      // Imágenes cargadas, hasta un máximo de 32
 
-int determina_prg2(void);
+int determine_prg2(void);
 struct tprg * old_prg;
 extern int help_paint_active;
 
 void read_line(void);
-void vuelca_help(void);
-void help_xref(int n,int linea);
+void blit_help(void);
+void help_xref(int n,int line_num);
 void Print_Help(void);
 void resize_help(void);
 int dtoi(int m);
-void arregla_linea(byte * end,int chars,int help_an);
-void put_chr(byte * ptr, int an, byte c,byte color);
-void put_image_line(int n,int linea,byte * di,int v_an);
+void fix_line(byte * end,int chars,int help_width);
+void put_chr(byte * ptr, int w, byte c,byte color);
+void put_image_line(int n,int line_num,byte * di,int v_width);
 
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -128,60 +128,60 @@ void make_helpidx(void) {
 int forced_helpslider=0;
 
 int get_helpslide_y(void) {
-  return(18+(help_l*(v.al/big2-21-18))/(help_lines-help_al));
+  return(18+(help_l*(v.h/big2-21-18))/(help_lines-help_height));
 }
 
-void barra_vertical(void) {
+void vertical_bar(void) {
   byte *ptr=v.ptr;
   int min,max,slider;
-  int an=v.an/big2,al=v.al/big2;
+  int w=v.w/big2,h=v.h/big2;
 
-  wbox(ptr,an,al,c2,an-9,18,7,al-36);   // Fondo gris del slider
+  wbox(ptr,w,h,c2,w-9,18,7,h-36);   // Fondo gris del slider
 
-  min=18; max=al-21;
+  min=18; max=h-21;
 
-  if (help_lines>help_al) {
+  if (help_lines>help_height) {
     slider=get_helpslide_y();
     if (slider>max) slider=max;
   } else slider=min;
 
   if (forced_helpslider) { slider=forced_helpslider; forced_helpslider=0; }
 
-  wbox(ptr,an,al,c0,an-9,slider-1,7,1);
-  wbox(ptr,an,al,c0,an-9,slider+3,7,1);
-  wput(ptr,an,al,an-9,slider,43);
+  wbox(ptr,w,h,c0,w-9,slider-1,7,1);
+  wbox(ptr,w,h,c0,w-9,slider+3,7,1);
+  wput(ptr,w,h,w-9,slider,43);
 }
 
 void help1(void) {
   byte *ptr=v.ptr;
-  int an=v.an/big2,al=v.al/big2;
+  int w=v.w/big2,h=v.h/big2;
 
   _show_items();
 
-  wbox(ptr,an,al,c0,an-10,10,9,al-12);   // Fondo negro del slider
+  wbox(ptr,w,h,c0,w-10,10,9,h-12);   // Fondo negro del slider
 
-  wput(ptr,an,al,an-9,10,39);           // Arriba
-  wput(ptr,an,al,an-9,al-17,40);        // Abajo
-  wput(ptr,an,al,an-9,al-9,34);         // Resize
-  barra_vertical();
+  wput(ptr,w,h,w-9,10,39);           // Arriba
+  wput(ptr,w,h,w-9,h-17,40);        // Abajo
+  wput(ptr,w,h,w-9,h-9,34);         // Resize
+  vertical_bar();
 
-//  wbox(ptr,an,al,c1,2,10,an-12,15);
-  wbox(ptr,an,al,c0,2,10+15,an-12,1);
+//  wbox(ptr,w,h,c1,2,10,w-12,15);
+  wbox(ptr,w,h,c0,2,10+15,w-12,1);
 
-  vuelca_help();
+  blit_help();
 }
 
 void help2(void) {
-  int an=v.an/big2,al=v.al/big2;
+  int w=v.w/big2,h=v.h/big2;
   int n,mx,my,f2_back,max,min;
   byte *p,*si,*di,c;
-  static int old_estado;
+  static int old_state;
 
-  if (v.estado) {
+  if (v.state) {
 
     _process_items();
 
-    // tecla();
+    // read_key();
 
     if (v.active_item==2 && help_item!=3) help_xref(3,0);
     if (v.active_item==3 && help_item!=4) help_xref(4,0);
@@ -208,70 +208,70 @@ void help2(void) {
       }
     }
 
-    if (wmouse_in(an-9,10,9,al-20)) { // Slider vert
-      if (wmouse_y<18) mouse_graf=7;
-      else if (wmouse_y>=al-17) mouse_graf=9;
-      else mouse_graf=13;
-    } else if (wmouse_in(an-9,al-9,9,9)) { // Resize
-      mouse_graf=12;
+    if (wmouse_in(w-9,10,9,h-20)) { // Slider vert
+      if (wmouse_y<18) mouse_graph=7;
+      else if (wmouse_y>=h-17) mouse_graph=9;
+      else mouse_graph=13;
+    } else if (wmouse_in(w-9,h-9,9,9)) { // Resize
+      mouse_graph=12;
     }
 
-    if (scan_code==72 || (mouse_graf==7 && (mouse_b&1) && wmouse_x!=-1)) {
-      if (scan_code!=72) if (!(v.botones&2)) {
-        wput(v.ptr,an,al,an-9,10,-41); v.botones|=2;
-      } else { retrazo(); retrazo(); }
-      v.volcar++;
+    if (scan_code==72 || (mouse_graph==7 && (mouse_b&1) && wmouse_x!=-1)) {
+      if (scan_code!=72) if (!(v.buttons&2)) {
+        wput(v.ptr,w,h,w-9,10,-41); v.buttons|=2;
+      } else { retrace(); retrace(); }
+      v.blit++;
       if (help_line!=help_buffer+1) {
         help_line--; while (*(--help_line)); help_line++; help_l--;
-      } vuelca_help();
-    } else if (v.botones&2) { wput(v.ptr,an,al,an-9,10,-39); v.botones^=2; v.volcar++; }
+      } blit_help();
+    } else if (v.buttons&2) { wput(v.ptr,w,h,w-9,10,-39); v.buttons^=2; v.blit++; }
     if (scan_code==73 || (mouse_b&8 && wmouse_x!=-1)) {
-      for (n=0;n<(mouse_b&8?3:help_al);n++) {
+      for (n=0;n<(mouse_b&8?3:help_height);n++) {
         if (help_line!=help_buffer+1) {
           help_line--; while (*(--help_line)); help_line++; help_l--;
         }
-      } vuelca_help(); v.volcar++;
+      } blit_help(); v.blit++;
     }
 
-    if (scan_code==80 || (mouse_graf==9 && (mouse_b&1) && wmouse_x!=-1)) {
-      if (scan_code!=80) if (!(v.botones&4)) {
-        wput(v.ptr,an,al,an-9,al-17,-42); v.botones|=4;
-      } else { retrazo(); retrazo(); } v.volcar++;
-      if (help_l+help_al<help_lines) { while (*(help_line++)); help_l++; }
-      vuelca_help();
-    } else if (v.botones&4) { wput(v.ptr,an,al,an-9,al-17,-40); v.botones^=4; v.volcar++; }
+    if (scan_code==80 || (mouse_graph==9 && (mouse_b&1) && wmouse_x!=-1)) {
+      if (scan_code!=80) if (!(v.buttons&4)) {
+        wput(v.ptr,w,h,w-9,h-17,-42); v.buttons|=4;
+      } else { retrace(); retrace(); } v.blit++;
+      if (help_l+help_height<help_lines) { while (*(help_line++)); help_l++; }
+      blit_help();
+    } else if (v.buttons&4) { wput(v.ptr,w,h,w-9,h-17,-40); v.buttons^=4; v.blit++; }
 
     if (scan_code==81 || (mouse_b&4 && wmouse_x!=-1)) {
-      for (n=0;n<(mouse_b&4?3:help_al);n++) {
-        if (help_l+help_al<help_lines) { while (*(help_line++)); help_l++; }
-      } vuelca_help(); v.volcar++;
+      for (n=0;n<(mouse_b&4?3:help_height);n++) {
+        if (help_l+help_height<help_lines) { while (*(help_line++)); help_l++; }
+      } blit_help(); v.blit++;
     }
 
 /*
-    if (mouse_graf==13 && (mouse_b&1) && !(old_mouse_b&1) && wmouse_x!=1) {
+    if (mouse_graph==13 && (mouse_b&1) && !(old_mouse_b&1) && wmouse_x!=1) {
       n=0;
-      if (help_lines>help_al)
-        if (wmouse_y>18+(help_l*(v.al/big2-21-18))/(help_lines-help_al)) n=1;
+      if (help_lines>help_height)
+        if (wmouse_y>18+(help_l*(v.h/big2-21-18))/(help_lines-help_height)) n=1;
       if (n) {
-        for (n=0;n<help_al;n++) {
-          if (help_l+help_al<help_lines) { while (*(help_line++)); help_l++; }
+        for (n=0;n<help_height;n++) {
+          if (help_l+help_height<help_lines) { while (*(help_line++)); help_l++; }
         }
       } else {
-        for (n=0;n<help_al;n++) {
+        for (n=0;n<help_height;n++) {
           if (help_line!=help_buffer+1) {
             help_line--; while (*(--help_line)); help_line++; help_l--;
           }
         }
-      } vuelca_help(); v.volcar++;
+      } blit_help(); v.volcar++;
     }
 */
 
-    if (mouse_graf==13 && (mouse_b&1) && wmouse_x!=-1) {
-      min=18; max=al-21;
+    if (mouse_graph==13 && (mouse_b&1) && wmouse_x!=-1) {
+      min=18; max=h-21;
       forced_helpslider=wmouse_y-1;
       if (forced_helpslider<min) forced_helpslider=min; else if (forced_helpslider>max) forced_helpslider=max;
-      n=((help_lines-help_al)*(forced_helpslider-min))/(max-min);
-      if (n>=help_lines-help_al) n=help_lines-help_al-1;
+      n=((help_lines-help_height)*(forced_helpslider-min))/(max-min);
+      if (n>=help_lines-help_height) n=help_lines-help_height-1;
       if (n<0) n=0;
       while (help_l>n) {
         if (help_line!=help_buffer+1) {
@@ -279,22 +279,22 @@ void help2(void) {
         }
       }
       while (help_l<n) {
-        if (help_l+help_al<help_lines) { while (*(help_line++)); help_l++; }
+        if (help_l+help_height<help_lines) { while (*(help_line++)); help_l++; }
       }
-      v.botones|=128; vuelca_help(); v.volcar++;
+      v.buttons|=128; blit_help(); v.blit++;
     } else {
-      if (v.botones&128) { v.botones^=128; vuelca_help(); v.volcar++; }
+      if (v.buttons&128) { v.buttons^=128; blit_help(); v.blit++; }
     }
 
-    if (mouse_graf==12 && (mouse_b&1)) resize_help();
+    if (mouse_graph==12 && (mouse_b&1)) resize_help();
 
-    barra_vertical();
+    vertical_bar();
 
     // Miramos si estamos sobre una xref
 
     if (wmouse_x!=-1 && wmouse_y>=10+16) {
       mx=mouse_x-v.x-2*big2;
-      my=(mouse_y-v.y-(10+16)*big2)/font_al;
+      my=(mouse_y-v.y-(10+16)*big2)/font_height;
 
       p=help_line; while (p+1<help_end && my) {
         while (*p++); my--;
@@ -309,11 +309,11 @@ void help2(void) {
             case 3: n=dtoi(*(int*)(p+1)); p+=5; break;
             case 5:
               if (dtoi(*(int*)(p+5))%100==0) {
-                mx-=((graf_help[dtoi(*(int*)(p+1))].ran+font_an-1)/font_an)*font_an;
+                mx-=((graph_help[dtoi(*(int*)(p+1))].ran+font_width-1)/font_width)*font_width;
               } p+=9; break;
             case 6: p++; break;
             default:
-              if (*p<32) mx-=*p-6+font_an; else mx-=font_an;
+              if (*p<32) mx-=*p-6+font_width; else mx-=font_width;
               p++; break;
           }
         }
@@ -321,8 +321,8 @@ void help2(void) {
         // Estamos sobre una referencia cruzada en el hipertexto
 
         if (n!=-1) {
-          mouse_graf=2;
-          if ((mouse_b&1) && !(old_mouse_b&1) && old_estado) {
+          mouse_graph=2;
+          if ((mouse_b&1) && !(old_mouse_b&1) && old_state) {
             if (n==9999) { // *** Extrae un ejemplo ***
               if ((di=p=(byte *)malloc(16384))!=NULL) {
 
@@ -336,18 +336,18 @@ void help2(void) {
                 if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
 					memset(v_prg,0,sizeof(struct tprg));
 					
-                  v_prg->buffer_lon=16384;
-                  strcpy(v_prg->filename,(char *)texto[220]);
-                  strcpy(v_prg->path,(char *)tipo[1].path);
-                  v_prg->file_lon=di-p;
+                  v_prg->buffer_len=16384;
+                  strcpy(v_prg->filename,(char *)texts[220]);
+                  strcpy(v_prg->path,(char *)type[1].path);
+                  v_prg->file_len=di-p;
                   v_prg->buffer=p;
                   v_prg->lptr=p;
                   v.prg=v_prg;
                   read_line(); v.prg=NULL;
-                  v_prg->num_lineas=1;
-                  n=v_prg->file_lon;
-                  while (n--) if (*p++==13) v_prg->num_lineas++;
-                  nueva_ventana(programa0);
+                  v_prg->num_lines=1;
+                  n=v_prg->file_len;
+                  while (n--) if (*p++==13) v_prg->num_lines++;
+                  new_window(program0);
                 }
 
               }
@@ -389,14 +389,14 @@ void help2(void) {
 
     if (!help_paint_active) {
       if (key(_ESC) && !key(_L_CTRL)) {
-        if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.an-2*big2,v.y+v.al-2*big2)) {
-          cierra_ventana();
-        } else fin_ventana=2;
+        if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.w-2*big2,v.y+v.h-2*big2)) {
+          close_window();
+        } else end_window=2;
       }
     }
 
   } else old_prg=NULL;
-  old_estado=v.estado;
+  old_state=v.state;
 }
 
 void help3(void) {
@@ -404,8 +404,8 @@ void help3(void) {
   if (help_buffer!=NULL) {
     while (n_loaded) {
       n_loaded--;
-      //free(graf_help[loaded[n_loaded]].ptr);
-      graf_help[loaded[n_loaded]].ptr=NULL;
+      //free(graph_help[loaded[n_loaded]].ptr);
+      graph_help[loaded[n_loaded]].ptr=NULL;
     }
     //free(help_buffer);
     help_buffer=NULL;
@@ -415,36 +415,36 @@ void help3(void) {
 void help0(void) { // En help_item se indica sobre que término se pide ayuda
   int x;
 
-  v.tipo=102;
+  v.type=102;
 
-  v.an=(4+8)*big2+font_an*help_an;
-  v.al=(12+16)*big2+font_al*help_al;
+  v.w=(4+8)*big2+font_width*help_width;
+  v.h=(12+16)*big2+font_height*help_height;
 
   if (big) {
-    if (v.an&1) v.an++;
-    if (v.al&1) v.al++;
-    v.an=-v.an; // Para indicar que no se multiplique la ventana por 2
+    if (v.w&1) v.w++;
+    if (v.h&1) v.h++;
+    v.w=-v.w; // Para indicar que no se multiplique la ventana por 2
   }
 
-  v.titulo=help_title;
-  v.nombre=help_title;
+  v.title=help_title;
+  v.name=help_title;
 
   v.paint_handler=help1;
   v.click_handler=help2;
   v.close_handler=help3;
 
   _button(488,6,14,0);
-  x=6+text_len(texto[488])+2;
+  x=6+text_len(texts[488])+2;
   _button(489,x,14,0);
-  x+=text_len(texto[489])+2+6;
+  x+=text_len(texts[489])+2+6;
   _button(490,x,14,0);
-  x+=text_len(texto[490])+2;
+  x+=text_len(texts[490])+2;
   _button(491,x,14,0);
-  x+=text_len(texto[491])+2;
+  x+=text_len(texts[491])+2;
   _button(492,x,14,0);
-  x+=text_len(texto[492])+2+6;
+  x+=text_len(texts[492])+2+6;
   _button(494,x,14,0);
-  _button(493,abs(v.an)/big2-15,14,2);
+  _button(493,abs(v.w)/big2-15,14,2);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -454,69 +454,69 @@ void help0(void) { // En help_item se indica sobre que término se pide ayuda
 void resize_help(void) {
   int _mx=mouse_x,_my=mouse_y;  // Coordenadas del ratón iniciales
   int my;                       // Coordenadas tabuladas del ratón en cada momento
-  int _al;                      // al original, en chr
-  int old_al;                   // último al
+  int _h;                      // al original, en chr
+  int old_height;                   // último al
   byte *new_block;
-  int an=v.an/big2,al=v.al/big2;
+  int w=v.w/big2,h=v.h/big2;
 
-  _al=help_al;
+  _h=help_height;
 
-  wput(v.ptr,an,al,an-9,al-9,-44);
-  vuelca_ventana(0);
+  wput(v.ptr,w,h,w-9,h-9,-44);
+  blit_window(0);
 
   do {
 
     read_mouse();
-    my=_my+((mouse_y-_my)/font_al)*font_al;
+    my=_my+((mouse_y-_my)/font_height)*font_height;
 
-    old_al=help_al;
-    help_al=_al+(mouse_y-_my)/font_al;
-    if (help_al<4*big2) { help_al=4*big2; my=_my+(help_al-_al)*font_al; }
-    if (help_al>50) { help_al=50; my=_my+(help_al-_al)*font_al; }
+    old_height=help_height;
+    help_height=_h+(mouse_y-_my)/font_height;
+    if (help_height<4*big2) { help_height=4*big2; my=_my+(help_height-_h)*font_height; }
+    if (help_height>50) { help_height=50; my=_my+(help_height-_h)*font_height; }
 
-    al=v.al;
+    h=v.h;
 
-    v.al=(12+16)*big2+font_al*help_al;
+    v.h=(12+16)*big2+font_height*help_height;
 
     if (big) {
-      if (v.al&1) v.al++;
+      if (v.h&1) v.h++;
     }
 
-    if ((new_block=(byte *)realloc(v.ptr,v.an*v.al))!=NULL) {
+    if ((new_block=(byte *)realloc(v.ptr,v.w*v.h))!=NULL) {
 #ifdef TTF
 		SDL_FreeSurface(v.surfaceptr);
 #endif
-		window_surface(v.an,v.al,0);
+		window_surface(v.w,v.h,0);
 		
-      if (modo<100) {
-        fondo_edicion(v.x,v.y,v.an>an?v.an:an,v.al>al?v.al:al);
-        volcar_barras(1);
+      if (mode<100) {
+        edit_background(v.x,v.y,v.w>w?v.w:w,v.h>h?v.h:h);
+        blit_bars(1);
       }
 
       v.ptr=new_block;
-      repinta_ventana();
-      wput(v.ptr,v.an/big2,v.al/big2,v.an/big2-9,v.al/big2-9,-44);
-      se_ha_movido_desde(v.x,v.y,an,al);
+      redraw_window();
+      wput(v.ptr,v.w/big2,v.h/big2,v.w/big2-9,v.h/big2-9,-44);
+      has_moved_from(v.x,v.y,w,h);
 
-      if (modo>=100) {
-        actualiza_caja(v.x,v.y,v.an>an?v.an:an,v.al>al?v.al:al);
+      if (mode>=100) {
+        update_box(v.x,v.y,v.w>w?v.w:w,v.h>h?v.h:h);
       }
 
     } else {
-      help_al=old_al; v.al=al;
+      help_height=old_height; v.h=h;
     }
 
-    al=v.al/big2;
+    h=v.h/big2;
 
-    salvaguarda(fondo_raton,_mx,my,mouse_graf,0);
-    put(_mx,my,mouse_graf);
-    volcado(copia);
-    salvaguarda(fondo_raton,_mx,my,mouse_graf,1);
+    save_restore(mouse_background,_mx,my,mouse_graph,0);
+    put(_mx,my,mouse_graph);
+    blit_screen(copy_buffer);
+    save_restore(mouse_background,_mx,my,mouse_graph,1);
 
   } while (mouse_b&1);
 
-  wput(v.ptr,an,al,an-9,al-9,-34);
-  v.volcar=2;
+  wput(v.ptr,w,h,w-9,h-9,-34);
+  v.blit=2;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -543,55 +543,55 @@ int dtoi(int m) {
 //      Ayuda
 //═════════════════════════════════════════════════════════════════════════════
 
-int determina_help(void) {
+int determine_help(void) {
   int m,n=-1;
 
   for (m=0;m<max_windows;m++) {
-    if (ventana[m].tipo==102 && ventana[m].click_handler==help2) {
+    if (window[m].type==102 && window[m].click_handler==help2) {
       n=m; break;
     }
   } return(n);
 }
 
-int determina_calc(void);
+int determine_calc(void);
 
 void help(int n){
   FILE * f;
   byte * p;
   int m,m_back;
 
-  determina_prg2();
+  determine_prg2();
 
-  if (v_ventana!=-1) {
-    old_prg=ventana[v_ventana].prg;
+  if (v_window!=-1) {
+    old_prg=window[v_window].prg;
   } else {
-    determina_calc();
-    if (v_ventana!=-1) {
-      old_prg=(struct tprg*)ventana[v_ventana].aux;
+    determine_calc();
+    if (v_window!=-1) {
+      old_prg=(struct tprg*)window[v_window].aux;
     }
   }
 
-  if ((m=determina_help())!=-1) {
+  if ((m=determine_help())!=-1) {
 
     if (m) move(0,m);
-    if (v.primer_plano==2) maximiza_ventana();
+    if (v.foreground==2) maximize_window();
 
-    if (m && v.primer_plano==0) { // Si estaba en 2º plano
-      for (m=1;m<max_windows;m++) if (ventana[m].tipo && ventana[m].primer_plano==1)
-        if (colisionan(0,m)) {ventana[m].primer_plano=0; vuelca_ventana(m);}
-      v.primer_plano=1;
+    if (m && v.foreground==0) { // Si estaba en 2º plano
+      for (m=1;m<max_windows;m++) if (window[m].type && window[m].foreground==1)
+        if (collide(0,m)) {window[m].foreground=0; blit_window(m);}
+      v.foreground=1;
     }
 
     if (help_item==n) {
       while (help_line!=help_buffer+1) {
         help_line--; while (*(--help_line)); help_line++; help_l--;
-      } vuelca_help();
+      } blit_help();
     } else {
       help_xref(n,0);
     }
 
-    if (!v.estado) activar();
-    vuelca_ventana(0);
+    if (!v.state) activate();
+    blit_window(0);
 
     return;
 
@@ -618,12 +618,12 @@ void help(int n){
           fread(h_buffer,1,helpidx[n*2+1],f);
           p=h_buffer; while (*p!='}') p++; *p=0;
           strcpy((char *)help_title,(char *)h_buffer);
-          help_an=(vga_an-12*big2-1)/font_an;
-          if (help_an>120) help_an=120;
-          help_al=(vga_al/2-(12+16)*big2-1)/font_al; help_l=0;
-          if (primera_vez) help_al+=5;
-          tabula_help(p+1,help_buffer,helpidx[n*2+1]-(p+1-h_buffer));
-          nueva_ventana(help0);
+          help_width=(vga_width-12*big2-1)/font_width;
+          if (help_width>120) help_width=120;
+          help_height=(vga_height/2-(12+16)*big2-1)/font_height; help_l=0;
+          if (first_time) help_height+=5;
+          tab_help(p+1,help_buffer,helpidx[n*2+1]-(p+1-h_buffer));
+          new_window(help0);
         }
         //free(h_buffer);
       } fclose(f);
@@ -638,38 +638,38 @@ void help(int n){
 void help_paint0(void) { // En help_item se indica sobre que término se pide ayuda
   int x;
 
-  v.tipo=1;
+  v.type=1;
 
-  v.an=(4+8)*big2+font_an*help_an;
-  v.al=(12+16)*big2+font_al*help_al;
+  v.w=(4+8)*big2+font_width*help_width;
+  v.h=(12+16)*big2+font_height*help_height;
 
   if (big) {
-    if (v.an&1) v.an++;
-    if (v.al&1) v.al++;
-    v.an=-v.an; // Para indicar que no se multiplique la ventana por 2
+    if (v.w&1) v.w++;
+    if (v.h&1) v.h++;
+    v.w=-v.w; // Para indicar que no se multiplique la ventana por 2
   }
 
-  v.titulo=help_title;
-  v.nombre=help_title;
+  v.title=help_title;
+  v.name=help_title;
 
   v.paint_handler=help1;
   v.click_handler=help2;
   v.close_handler=help3;
 
-  v.estado=1;
+  v.state=1;
 
   _button(488,6,14,0);
-  x=6+text_len(texto[488])+2;
+  x=6+text_len(texts[488])+2;
   _button(489,x,14,0);
-  x+=text_len(texto[489])+2+6;
+  x+=text_len(texts[489])+2+6;
   _button(490,x,14,0);
-  x+=text_len(texto[490])+2;
+  x+=text_len(texts[490])+2;
   _button(491,x,14,0);
-  x+=text_len(texto[491])+2;
+  x+=text_len(texts[491])+2;
   _button(492,x,14,0);
-  x+=text_len(texto[492])+2+6;
+  x+=text_len(texts[492])+2+6;
   _button(494,x,14,0);
-  _button(493,abs(v.an)/big2-15,14,2);
+  _button(493,abs(v.w)/big2-15,14,2);
 }
 
 void help_paint(memptrsize n){
@@ -698,12 +698,12 @@ void help_paint(memptrsize n){
           fread(h_buffer,1,helpidx[n*2+1],f);
           p=h_buffer; while (*p!='}') p++; *p=0;
           strcpy((char *)help_title,(char *)h_buffer);
-          help_an=(vga_an-12*big2-1)/font_an;
-          if (help_an>120) help_an=120;
-          help_al=(vga_al/2-(12+16)*big2-1)/font_al; help_l=0;
-          tabula_help(p+1,help_buffer,helpidx[n*2+1]-(p+1-h_buffer));
+          help_width=(vga_width-12*big2-1)/font_width;
+          if (help_width>120) help_width=120;
+          help_height=(vga_height/2-(12+16)*big2-1)/font_height; help_l=0;
+          tab_help(p+1,help_buffer,helpidx[n*2+1]-(p+1-h_buffer));
           help_paint_active=1;
-          dialogo(help_paint0);
+          dialog(help_paint0);
           help_paint_active=0;
         }
         //free(h_buffer);
@@ -718,12 +718,12 @@ void help_paint(memptrsize n){
 
 char cerror[128];
 
-extern int linea_error;
+extern int error_line;
 
 void get_error(int n) {
   FILE * f;
   byte * p;
-  sprintf(cerror,"%s",(char *)texto[381]); p=(byte *)cerror+strlen((char *)cerror);
+  sprintf(cerror,"%s",(char *)texts[381]); p=(byte *)cerror+strlen((char *)cerror);
 
   if (helpidx[n*2] && helpidx[n*2+1]) {
     if((f=fopen("help/help.div","rb"))!=NULL) {
@@ -734,7 +734,7 @@ void get_error(int n) {
   }
 
   if (n==502 || n==503 || n==504 || n==507) {
-    sprintf(cerror,"%s (%d).",cerror,linea_error);
+    sprintf(cerror,"%s (%d).",cerror,error_line);
   }
 }
 
@@ -742,15 +742,15 @@ void get_error(int n) {
 //      Accede a otro término a través de una referencia cruzada
 //═════════════════════════════════════════════════════════════════════════════
 
-void help_xref(int n,int linea) {
+void help_xref(int n,int line_num) {
   FILE * f;
   byte * p;
   int m_back;
 
   while (n_loaded) {
     n_loaded--;
-    //free(graf_help[loaded[n_loaded]].ptr);
-    graf_help[loaded[n_loaded]].ptr=NULL;
+    //free(graph_help[loaded[n_loaded]].ptr);
+    graph_help[loaded[n_loaded]].ptr=NULL;
   }
 
   //free(help_buffer);
@@ -776,60 +776,60 @@ void help_xref(int n,int linea) {
           fread(h_buffer,1,helpidx[n*2+1],f);
           p=h_buffer; while (*p!='}') p++; *p=0;
           strcpy((char *)help_title,(char *)h_buffer);
-//          help_an=(vga_an-12*big2-1)/font_an; if (help_an>80) help_an=80;
-//          help_al=(vga_al/2-12*big2-1)/font_al;
+//          help_width=(vga_width-12*big2-1)/font_width; if (help_width>80) help_width=80;
+//          help_height=(vga_height/2-12*big2-1)/font_height;
           help_l=0;
-          tabula_help(p+1,help_buffer,helpidx[n*2+1]-(p+1-h_buffer));
-          if (linea!=-1) while (linea--) { while (*help_line++); help_l++; }
-          repinta_ventana(); vuelca_ventana(0);
+          tab_help(p+1,help_buffer,helpidx[n*2+1]-(p+1-h_buffer));
+          if (line_num!=-1) while (line_num--) { while (*help_line++); help_l++; }
+          redraw_window(); blit_window(0);
         }
         //free(h_buffer);
       } fclose(f);
     }
-  } if (help_buffer==NULL) cierra_ventana();
+  } if (help_buffer==NULL) close_window();
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Tabula la ayuda para un ancho dado (help_an)
+//      Tabula la ayuda para un ancho dado (help_width)
 //═════════════════════════════════════════════════════════════════════════════
 
 // graf[n] puntero a an,al,x0,x1,gráfico... (an..x1 son word)
 
-int ejemplo=0;  // Viene un ejemplo
-int imagen=0;   // Código de la imagen
-int imagen_y;   // Linea actual de la imagen
-int imagen_al;  // alto en chars de la imagen
-int imagen_an;  // ancho en chars de la imagen
-int tipo_imagen; // 0-izquierda, 1-centro, 2-derecha
-int restaurar_help_an=0;
+int example=0;  // Viene un ejemplo
+int image=0;   // Código de la imagen
+int image_y;   // Linea actual de la imagen
+int image_height;  // alto en chars de la imagen
+int image_width;  // ancho en chars de la imagen
+int image_type; // 0-izquierda, 1-centro, 2-derecha
+int restore_help_width=0;
 
-byte * continua_imagen(byte * di) {
+byte * continue_image(byte * di) {
   int n;
 
-  if (restaurar_help_an) { restaurar_help_an=0; help_an+=imagen_an; }
-  if (ejemplo) *di++=6; else if (imagen) {
-    *di++=5; *(int*)di=itod(imagen); di+=4;
-    switch(tipo_imagen) {
+  if (restore_help_width) { restore_help_width=0; help_width+=image_width; }
+  if (example) *di++=6; else if (image) {
+    *di++=5; *(int*)di=itod(image); di+=4;
+    switch(image_type) {
       case 0: n=0; break;
-      case 1: n=help_an/2; break;
-      case 2: n=help_an; break;
-    } n+=imagen_y++*100;
+      case 1: n=help_width/2; break;
+      case 2: n=help_width; break;
+    } n+=image_y++*100;
     *(int*)di=itod(n); di+=4;
-    if (imagen_y==imagen_al) { imagen=0; restaurar_help_an=1; }
+    if (image_y==image_height) { image=0; restore_help_width=1; }
   } return(di);
 }
 
-void tabula_help(byte *si,byte *di,int lon) {
-  byte *old_di2,*end=si+lon,c,*di2,*ptr;
-  int ultimo_cr=1,ultimo_cr_real=1,tex;
-  int estado=0,chars,chars2,nchars,help_an2;
+void tab_help(byte *si,byte *di,int len) {
+  byte *old_di2,*end=si+len,c,*di2,*ptr;
+  int last_cr=1,real_last_cr=1,tex;
+  int state=0,chars,chars2,nchars,help_width2;
   int x,y;
 
   *di++=0;
 
   chars=0; help_lines=1; n_loaded=0;
 
-  ini_tabulador:
+  start_tab:
 
   while (si<end) {
 
@@ -842,48 +842,48 @@ void tabula_help(byte *si,byte *di,int lon) {
     // Salto de línea simple forzado (·)
 
     if (c==250) {
-      *di++=0; help_lines++; ultimo_cr=1; chars=0;
+      *di++=0; help_lines++; last_cr=1; chars=0;
       if (*si==13) si+=2;
-      goto ini_tabulador;
+      goto start_tab;
     }
 
     if (c==0xC3 && *si==0xBA) {
       *di++=0; 
 //      *di++=0;
       help_lines++; 
-      ultimo_cr=1; 
+      last_cr=1; 
       chars=0;
       *si++;
       if (*si==13) si+=2;
-      goto ini_tabulador;
+      goto start_tab;
     }
 
     // Comentarios
 
-    if (c=='#' && ultimo_cr_real && si<end) {
+    if (c=='#' && real_last_cr && si<end) {
       while (*si++!=13); si++;
-      goto ini_tabulador;
+      goto start_tab;
 //      c=*si++;
     } if (si>=end) break;
 
     // Saltos de línea
 
     if (c==13) {
-      if (ejemplo) {
-        ultimo_cr_real=1; ultimo_cr=2;
+      if (example) {
+        real_last_cr=1; last_cr=2;
         si++; *di++=0; help_lines++;
-        di=continua_imagen(di); c=0; chars=0;
+        di=continue_image(di); c=0; chars=0;
       } else {
-        if (ultimo_cr==1) { *di++=0; help_lines++; di=continua_imagen(di); ultimo_cr=2; }
+        if (last_cr==1) { *di++=0; help_lines++; di=continue_image(di); last_cr=2; }
         si++;
-        if (si>=end || *si==13) c=0; else if (!ultimo_cr) c=' '; else c=0;
-        ultimo_cr_real=1;
+        if (si>=end || *si==13) c=0; else if (!last_cr) c=' '; else c=0;
+        real_last_cr=1;
       }
-    } else ultimo_cr_real=0;
+    } else real_last_cr=0;
 
     // Mientras vengan chars o saltos de línea
 
-    if (c!=0 || !ultimo_cr) {
+    if (c!=0 || !last_cr) {
 
       if (c) { // Si viene un carácter
 
@@ -893,12 +893,12 @@ void tabula_help(byte *si,byte *di,int lon) {
           switch(*si) {
 
             case '#': // X-ref
-              estado=0; si++;
+              state=0; si++;
               while (*si>='0' && *si<='9') {
-                estado*=10; estado+=*si-'0'; si++;
-              } estado=-estado; si++;
-              if (estado==-9999) ejemplo=1;
-              *di++=3; *(int*)di=itod(-estado); di+=4;
+                state*=10; state+=*si-'0'; si++;
+              } state=-state; si++;
+              if (state==-9999) example=1;
+              *di++=3; *(int*)di=itod(-state); di+=4;
               continue;
 
             case '{': // '{'
@@ -910,89 +910,89 @@ void tabula_help(byte *si,byte *di,int lon) {
               break;
 
             case '/': // Línea
-              si+=2; if (imagen) {
-                if (!ultimo_cr) { *di++=0; help_lines++; ultimo_cr=1; chars=0; }
+              si+=2; if (image) {
+                if (!last_cr) { *di++=0; help_lines++; last_cr=1; chars=0; }
                 do {
-                  di=continua_imagen(di);
-                  *di++=0; help_lines++; ultimo_cr=1; chars=0;
-                } while(imagen);
+                  di=continue_image(di);
+                  *di++=0; help_lines++; last_cr=1; chars=0;
+                } while(image);
               }
-              if (!ultimo_cr) { *di++=0; help_lines++; ultimo_cr=1; chars=0; }
-              if (restaurar_help_an) { restaurar_help_an=0; help_an+=imagen_an; }
-              *di++=4; *di++=0; help_lines++; ultimo_cr=1; chars=0;
+              if (!last_cr) { *di++=0; help_lines++; last_cr=1; chars=0; }
+              if (restore_help_width) { restore_help_width=0; help_width+=image_width; }
+              *di++=4; *di++=0; help_lines++; last_cr=1; chars=0;
               continue;
 
             case '+': // Imagen
-              if (imagen) {
-                if (!ultimo_cr) { *di++=0; help_lines++; ultimo_cr=1; chars=0; }
+              if (image) {
+                if (!last_cr) { *di++=0; help_lines++; last_cr=1; chars=0; }
                 do {
-                  di=continua_imagen(di);
-                  *di++=0; help_lines++; ultimo_cr=1; chars=0;
-                } while(imagen);
+                  di=continue_image(di);
+                  *di++=0; help_lines++; last_cr=1; chars=0;
+                } while(image);
               }
-              if (!ultimo_cr) { *di++=0; help_lines++; ultimo_cr=1; chars=0; }
-              if (restaurar_help_an) { restaurar_help_an=0; help_an+=imagen_an; }
-              imagen=0; si++;
+              if (!last_cr) { *di++=0; help_lines++; last_cr=1; chars=0; }
+              if (restore_help_width) { restore_help_width=0; help_width+=image_width; }
+              image=0; si++;
               while (*si>='0' && *si<='9') {
-                imagen*=10; imagen+=*si-'0'; si++;
-              } si++; tipo_imagen=0;
+                image*=10; image+=*si-'0'; si++;
+              } si++; image_type=0;
               while (*si>='0' && *si<='9') {
-                tipo_imagen*=10; tipo_imagen+=*si-'0'; si++;
+                image_type*=10; image_type+=*si-'0'; si++;
               } si++;
-              if (imagen<384 && graf_help[imagen].offset) {
+              if (image<384 && graph_help[image].offset) {
                 if ((f=fopen("help/help.fig","rb"))!=NULL) {
-                  if ((ptr=(byte*)malloc(graf_help[imagen].an*graf_help[imagen].al))!=NULL) {
-                    fseek(f,graf_help[imagen].offset,SEEK_SET);
-                    fread(ptr,graf_help[imagen].an,graf_help[imagen].al,f);
+                  if ((ptr=(byte*)malloc(graph_help[image].w*graph_help[image].h))!=NULL) {
+                    fseek(f,graph_help[image].offset,SEEK_SET);
+                    fread(ptr,graph_help[image].w,graph_help[image].h,f);
                     fclose(f);
-                    for (x=graf_help[imagen].an*graf_help[imagen].al-1;x>=0;x--) {
+                    for (x=graph_help[image].w*graph_help[image].h-1;x>=0;x--) {
                       ptr[x]=help_xlat[ptr[x]];
                     }
 
-                    if(vga_an<640 && graf_help[imagen].an>300) {
-                      for(y=0; y<graf_help[imagen].al-1; y+=2) {
-                        for(x=0; x<graf_help[imagen].an-1; x+=2) {
-                          ptr[(y/2)*(graf_help[imagen].an/2)+x/2]=
-                            *(ghost+ptr[y*graf_help[imagen].an+x]*256+
-                              ptr[(y+1)*graf_help[imagen].an+x+1]);
+                    if(vga_width<640 && graph_help[image].w>300) {
+                      for(y=0; y<graph_help[image].h-1; y+=2) {
+                        for(x=0; x<graph_help[image].w-1; x+=2) {
+                          ptr[(y/2)*(graph_help[image].w/2)+x/2]=
+                            *(ghost+ptr[y*graph_help[image].w+x]*256+
+                              ptr[(y+1)*graph_help[image].w+x+1]);
                         }
                       }
-                      graf_help[imagen].ran=graf_help[imagen].an/2;
-                      graf_help[imagen].ral=graf_help[imagen].al/2;
+                      graph_help[image].ran=graph_help[image].w/2;
+                      graph_help[image].ral=graph_help[image].h/2;
                     } else {
-                      graf_help[imagen].ran=graf_help[imagen].an;
-                      graf_help[imagen].ral=graf_help[imagen].al;
+                      graph_help[image].ran=graph_help[image].w;
+                      graph_help[image].ral=graph_help[image].h;
                     }
 
-                    graf_help[imagen].ptr=ptr;
-                    loaded[n_loaded++]=imagen;
-                    imagen_y=0;
-                    imagen_al=(graf_help[imagen].ral+font_al-1)/font_al;
-                    imagen_an=(graf_help[imagen].ran+font_an-1)/font_an;
-                    help_an-=imagen_an; if (help_an<=20) tipo_imagen=1;
+                    graph_help[image].ptr=ptr;
+                    loaded[n_loaded++]=image;
+                    image_y=0;
+                    image_height=(graph_help[image].ral+font_height-1)/font_height;
+                    image_width=(graph_help[image].ran+font_width-1)/font_width;
+                    help_width-=image_width; if (help_width<=20) image_type=1;
 
                     do {
-                      di=continua_imagen(di);
-                      if (tipo_imagen==1) { *di++=0; help_lines++; ultimo_cr=1; chars=0; }
-                    } while (tipo_imagen==1 && imagen);
+                      di=continue_image(di);
+                      if (image_type==1) { *di++=0; help_lines++; last_cr=1; chars=0; }
+                    } while (image_type==1 && image);
 
-                  } else { fclose(f); imagen=0; }
-                } else imagen=0;
-              } else imagen=0;
+                  } else { fclose(f); image=0; }
+                } else image=0;
+              } else image=0;
 
               continue;
 
             case '-': // Fin imagen
               si+=2;
-              if (ejemplo) {
-                ejemplo=0; ultimo_cr=1; if (*(di-1)==6) di--;
+              if (example) {
+                example=0; last_cr=1; if (*(di-1)==6) di--;
                 //*di++=0; help_lines++; chars=0;
-              } else if (imagen) {
-                if (!ultimo_cr) { *di++=0; help_lines++; ultimo_cr=1; chars=0; }
+              } else if (image) {
+                if (!last_cr) { *di++=0; help_lines++; last_cr=1; chars=0; }
                 do {
-                  di=continua_imagen(di);
-                  *di++=0; help_lines++; ultimo_cr=1; chars=0;
-                } while(imagen);
+                  di=continue_image(di);
+                  *di++=0; help_lines++; last_cr=1; chars=0;
+                } while(image);
               }
               continue;
 
@@ -1001,97 +1001,97 @@ void tabula_help(byte *si,byte *di,int lon) {
               while (*si>='0' && *si<='9') {
                 tex*=10; tex+=*si-'0'; si++;
               } si++;
-              if (*texto[tex]=='-') strcpy((char *)di,(char *)texto[tex]+1); else strcpy((char *)di,(char *)texto[tex]);
+              if (*texts[tex]=='-') strcpy((char *)di,(char *)texts[tex]+1); else strcpy((char *)di,(char *)texts[tex]);
               di+=strlen((char *)di);
               continue;
 
             default: // Negrita
-              c=1; estado=1; chars--;
+              c=1; state=1; chars--;
               break;
           }
         } else if (c=='}') {
           c=2; chars--;
-          estado=0;
+          state=0;
         }
 
         chars++;
 
-        if (!ejemplo && chars==help_an+1) {
+        if (!example && chars==help_width+1) {
 
-          chars2=chars; help_an2=help_an; // Arreglar la línea que se truncó
+          chars2=chars; help_width2=help_width; // Arreglar la línea que se truncó
 
           nchars=chars=0; *di=c; old_di2=di+1;
 
           while (*di!=' ') {
             if (*di==1) { // *** No puede venir 4 ***
-              estado=0; chars--; chars2++;
+              state=0; chars--; chars2++;
             } else if (*di==2) {
-              estado=1; chars--; chars2++;
-            } else if (*di==3) { estado=0; chars-=5; chars2+=5; }
+              state=1; chars--; chars2++;
+            } else if (*di==3) { state=0; chars-=5; chars2+=5; }
             di--; chars++; nchars++; chars2--;
           }
 
           di2=di; // Donde termina la línea anterior
 
-          if (estado==0) { // Se corta el texto normal
-            if (imagen) {
+          if (state==0) { // Se corta el texto normal
+            if (image) {
               memmove(di+10,di+1,nchars);
-              *di++=0; help_lines++; di=continua_imagen(di); di=old_di2+9;
+              *di++=0; help_lines++; di=continue_image(di); di=old_di2+9;
             } else {
-              if (restaurar_help_an) { restaurar_help_an=0; help_an+=imagen_an; }
+              if (restore_help_width) { restore_help_width=0; help_width+=image_width; }
               *di++=0; help_lines++; di=old_di2;
             }
-          } else if (estado==1) { // En medio de un texto en negrita
-            if (imagen) {
+          } else if (state==1) { // En medio de un texto en negrita
+            if (image) {
               memmove(di+12,di+1,nchars);
-              *di++=2; *di++=0; help_lines++; di=continua_imagen(di);
+              *di++=2; *di++=0; help_lines++; di=continue_image(di);
               *di=1; di=old_di2+11;
             } else {
-              if (restaurar_help_an) { restaurar_help_an=0; help_an+=imagen_an; }
+              if (restore_help_width) { restore_help_width=0; help_width+=image_width; }
               memmove(di+3,di+1,nchars);
               *di++=2; *di++=0; help_lines++; *di=1; di=old_di2+2;
             }
           } else { // En medio de una x-ref
-            if (imagen) {
+            if (image) {
               memmove(di+16,di+1,nchars);
-              *di++=2; *di++=0; help_lines++; di=continua_imagen(di);
-              *di++=3; *(int*)di=itod(-estado); di=old_di2+15;
+              *di++=2; *di++=0; help_lines++; di=continue_image(di);
+              *di++=3; *(int*)di=itod(-state); di=old_di2+15;
             } else {
-              if (restaurar_help_an) { restaurar_help_an=0; help_an+=imagen_an; }
+              if (restore_help_width) { restore_help_width=0; help_width+=image_width; }
               memmove(di+7,di+1,nchars);
               *di++=2; *di++=0; help_lines++; *di++=3;
-              *(int*)di=itod(-estado); di=old_di2+6;
+              *(int*)di=itod(-state); di=old_di2+6;
             }
           }
 
-          if (!ejemplo) arregla_linea(di2,chars2,help_an2);
+          if (!example) fix_line(di2,chars2,help_width2);
 
         } else {
           *di=c; di++;
-          ultimo_cr=0;
+          last_cr=0;
         }
 
       } else {
 
         chars=0; help_lines++;
 
-        if (estado==0) {
-          *di++=0; di=continua_imagen(di);
-        } else if (estado==1) {
-          *di++=2; *di++=0; di=continua_imagen(di); *di++=1;
+        if (state==0) {
+          *di++=0; di=continue_image(di);
+        } else if (state==1) {
+          *di++=2; *di++=0; di=continue_image(di); *di++=1;
         } else {
-          *di++=2; *di++=0; di=continua_imagen(di); *di++=3;
-          *(int*)di=-estado; di+=4;
+          *di++=2; *di++=0; di=continue_image(di); *di++=3;
+          *(int*)di=-state; di+=4;
         }
 
-        if (!ultimo_cr) ultimo_cr=1;
+        if (!last_cr) last_cr=1;
 
       }
     }
 
   }
 
-  if (restaurar_help_an) { help_an+=imagen_an; restaurar_help_an=0; }
+  if (restore_help_width) { help_width+=image_width; restore_help_width=0; }
   help_line=help_buffer+1; help_end=di; help_lines--;
 
 }
@@ -1100,36 +1100,36 @@ void tabula_help(byte *si,byte *di,int lon) {
 //      Arregla una linea (genera espaciados correctos)
 //═════════════════════════════════════════════════════════════════════════════
 
-void arregla_linea(byte * end,int chars,int help_an) {
-  byte * ini,* i,* _i;
-  int espacios,error,chesp;
-  float nuevo_esp,espacio_acum;
+void fix_line(byte * end,int chars,int help_width) {
+  byte * begin,* i,* _i;
+  int spaces,error,chesp;
+  float new_esp,space_accum;
 
-  ini=end-1; while (*ini) ini--;
+  begin=end-1; while (*begin) begin--;
 
-  _i=ini+1; espacios=0;
+  _i=begin+1; spaces=0;
   while (_i<end) if (*_i==' ') _i++; else break;
   i=_i; while (i<end) {
-    if (*i==' ') { espacios++; i++; }
+    if (*i==' ') { spaces++; i++; }
     else if (*i==1 || *i==2 || *i==6) i++;
     else if (*i==3) i+=5;
     else if (*i==5) i+=9;
     else i++;
   }
 
-  if (espacios) {
-    error=(help_an+1-chars)*font_an;
+  if (spaces) {
+    error=(help_width+1-chars)*font_width;
     if (error) {
-      nuevo_esp=(float)font_an+(float)error/(float)espacios;
-      if (nuevo_esp>font_an+25) nuevo_esp=font_an+25;
-      espacio_acum=0;
+      new_esp=(float)font_width+(float)error/(float)spaces;
+      if (new_esp>font_width+25) new_esp=font_width+25;
+      space_accum=0;
 
       i=_i; while (i<end) {
         if (*i==' ') {
-          espacio_acum+=nuevo_esp;
-          chesp=espacio_acum;
-          espacio_acum-=chesp;
-          if (chesp!=font_an) *i=chesp-font_an+6;
+          space_accum+=new_esp;
+          chesp=space_accum;
+          space_accum-=chesp;
+          if (chesp!=font_width) *i=chesp-font_width+6;
           i++;
         } else if (*i==1 || *i==2 || *i==6) i++;
         else if (*i==3) i+=5;
@@ -1145,24 +1145,24 @@ void arregla_linea(byte * end,int chars,int help_an) {
 //═════════════════════════════════════════════════════════════════════════════
 
 /*
-int help_an,help_al;            // Ancho y alto de la ventana de ayuda
+int help_width,help_height;            // Ancho y alto de la ventana de ayuda
 byte *help_buffer;              // Buffer para contener la ayuda
 byte *help_line;                // Puntero a la línea actual
 byte *help_end;                 // Final de help_buffer;
 */
 
-void vuelca_help(void) {
+void blit_help(void) {
   byte *si,*di,*old_di;
-  int al,n,ch;
+  int h,n,ch;
   byte color=c0,color2=media(c0,c_b_low);
 
-  wbox(v.ptr,v.an/big2,v.al/big2,c12,2,10+16,v.an/big2-12,v.al/big2-12-16);
+  wbox(v.ptr,v.w/big2,v.h/big2,c12,2,10+16,v.w/big2-12,v.h/big2-12-16);
 
-  di=v.ptr+(v.an*(10+16)+2)*big2; // Volcado de la ventana de texto
+  di=v.ptr+(v.w*(10+16)+2)*big2; // Volcado de la ventana de texto
   si=help_line;
-  al=help_al;
+  h=help_height;
 
-  while (al-- && si<help_end) {
+  while (h-- && si<help_end) {
     old_di=di;
     while (*si) {
       if (*si<7) switch(*si) {
@@ -1176,32 +1176,32 @@ void vuelca_help(void) {
           color=c4; si+=4;
           break;
         case 4:
-          color=c0; n=help_an; while (n--) {
-            put_chr(di,v.an,'*',color);
-            di+=font_an;
+          color=c0; n=help_width; while (n--) {
+            put_chr(di,v.w,'*',color);
+            di+=font_width;
           }
           break;
         case 5:
           n=dtoi(*(int*)(si+5));
-          put_image_line(dtoi(*(int*)(si+1)),n/100,old_di+(n%100)*font_an,v.an);
+          put_image_line(dtoi(*(int*)(si+1)),n/100,old_di+(n%100)*font_width,v.w);
           if (n%100==0) { n=dtoi(*(int*)(si+1));
-            di=old_di+((graf_help[n].ran+font_an-1)/font_an)*font_an;
+            di=old_di+((graph_help[n].ran+font_width-1)/font_width)*font_width;
           } si+=8; break;
         case 6:
-          di+=font_an*2; si++; ch=0;
-          while (*si && ch++<help_an-2) {
-            put_chr(di,v.an,*si,color2);
-            di+=font_an;
+          di+=font_width*2; si++; ch=0;
+          while (*si && ch++<help_width-2) {
+            put_chr(di,v.w,*si,color2);
+            di+=font_width;
             si++;
           } while (*si) si++; si--;
       } else if (*si<32) {
-        di+=*si-6+font_an;
+        di+=*si-6+font_width;
       } else {
-        put_chr(di,v.an,*si,color);
-        di+=font_an;
+        put_chr(di,v.w,*si,color);
+        di+=font_width;
       } si++;
     } si++;
-    di=old_di+v.an*font_al;
+    di=old_di+v.w*font_height;
   }
 }
 
@@ -1209,31 +1209,31 @@ void vuelca_help(void) {
 //      Impresión parcial de una imagen
 //═════════════════════════════════════════════════════════════════════════════
 
-void put_image_line(int n,int linea,byte * di,int v_an) {
-  int   an, al, _an;
+void put_image_line(int n,int line_num,byte * di,int v_width) {
+  int   w, h, _w;
   byte  *si;
 
-  if (!graf_help[n].offset) return;
+  if (!graph_help[n].offset) return;
 
-  _an=graf_help[n].ran;
-  al=graf_help[n].ral-linea*font_al; if (al>font_al) al=font_al;
-  si=graf_help[n].ptr+linea*font_al*_an;
+  _w=graph_help[n].ran;
+  h=graph_help[n].ral-line_num*font_height; if (h>font_height) h=font_height;
+  si=graph_help[n].ptr+line_num*font_height*_w;
 
   do {
-    an=_an;
+    w=_w;
     do {
       if (c=*si++) *di=c;
       di++;
-    } while(--an);
-    di+=v_an-_an;
-  } while (--al);
+    } while(--w);
+    di+=v_width-_w;
+  } while (--h);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
 //      Impresión de un carácter
 //═════════════════════════════════════════════════════════════════════════════
 
-void put_chr(byte * ptr, int an, byte c,byte color) {
+void put_chr(byte * ptr, int w, byte c,byte color) {
   int n,m;
 
 #ifdef TTF
@@ -1246,9 +1246,9 @@ void put_chr(byte * ptr, int an, byte c,byte color) {
 	s[1]=0;
 	s[0]=c;
 
-	ptr-=((v.an*(10+16)+2)*big2);
-	x=(ptr-v.ptr)%v.an;
-	y=((ptr-v.ptr)-x)/v.an;
+	ptr-=((v.w*(10+16)+2)*big2);
+	x=(ptr-v.ptr)%v.w;
+	y=((ptr-v.ptr)-x)/v.w;
 	
 	y+=((10+16)+2)*big2;
 	
@@ -1272,13 +1272,13 @@ void put_chr(byte * ptr, int an, byte c,byte color) {
 
   byte *si;
 
-  si=font+c*font_an*font_al;
-  n=font_al; do {
-    m=font_an; do {
+  si=font+c*font_width*font_height;
+  n=font_height; do {
+    m=font_width; do {
       if (*si) *ptr=color;
       si++; ptr++;
     } while (--m);
-    ptr+=an-font_an;
+    ptr+=w-font_width;
   } while (--n);
 }
 
@@ -1286,15 +1286,15 @@ void put_chr(byte * ptr, int an, byte c,byte color) {
 //  Tabula un término de la ayuda para enviarlo a impresora
 //═════════════════════════════════════════════════════════════════════════════
 
-#define ancho_ayuda 70
+#define help_text_width 70
 
-void tabula_help2(byte *si,byte *di,int lon) {
-  byte *old_di,*end=si+lon,c;
-  int ultimo_cr=1,ultimo_cr_real=1,chars=0,n;
+void tab_help2(byte *si,byte *di,int len) {
+  byte *old_di,*end=si+len,c;
+  int last_cr=1,real_last_cr=1,chars=0,n;
 
   *di++=0;
 
-  ini_tabulador:
+  start_tab:
 
   while (si<end) {
 
@@ -1307,16 +1307,16 @@ void tabula_help2(byte *si,byte *di,int lon) {
     // Salto de línea simple forzado (·)
 
     if (c==250) {
-      *di++=0; ultimo_cr=1; chars=0;
+      *di++=0; last_cr=1; chars=0;
       if (*si==13) si+=2;
-      goto ini_tabulador;
+      goto start_tab;
     }
 
     // Comentarios
 
-    if (c=='#' && ultimo_cr_real && si<end) {
+    if (c=='#' && real_last_cr && si<end) {
       while (*si++!=13); si++;
-      goto ini_tabulador;
+      goto start_tab;
     }
 
     if (si>=end) break;
@@ -1324,21 +1324,21 @@ void tabula_help2(byte *si,byte *di,int lon) {
     // Saltos de línea
 
     if (c==13) {
-      if (ejemplo) {
-        ultimo_cr_real=1; ultimo_cr=2;
+      if (example) {
+        real_last_cr=1; last_cr=2;
         si++; *di++=0;
         c=0; chars=0;
       } else {
-        if (ultimo_cr==1) { *di++=0; ultimo_cr=2; }
+        if (last_cr==1) { *di++=0; last_cr=2; }
         si++;
-        if (si>=end || *si==13) c=0; else if (!ultimo_cr) c=' '; else c=0;
-        ultimo_cr_real=1;
+        if (si>=end || *si==13) c=0; else if (!last_cr) c=' '; else c=0;
+        real_last_cr=1;
       }
-    } else ultimo_cr_real=0;
+    } else real_last_cr=0;
 
     // Mientras vengan chars o saltos de línea
 
-    if (c!=0 || !ultimo_cr) {
+    if (c!=0 || !last_cr) {
 
       if (c) { // Si viene un carácter
 
@@ -1352,7 +1352,7 @@ void tabula_help2(byte *si,byte *di,int lon) {
               while (*si>='0' && *si<='9') {
                 n*=10; n+=*si-'0'; si++;
               } si++;
-              if (n==9999) ejemplo=1;
+              if (n==9999) example=1;
               continue;
 
             case '{': // '{'
@@ -1365,14 +1365,14 @@ void tabula_help2(byte *si,byte *di,int lon) {
 
             case '/': // Línea
               si+=2;
-              if (!ultimo_cr) { *di++=0; ultimo_cr=1; chars=0; }
+              if (!last_cr) { *di++=0; last_cr=1; chars=0; }
               strcpy((char *)di,"──────────────────────────────────────────────────────────────────────");
               di+=strlen((char *)di)+1;
-              ultimo_cr=1; chars=0;
+              last_cr=1; chars=0;
               continue;
 
             case '+': // Imagen
-              if (!ultimo_cr) { *di++=0; ultimo_cr=1; chars=0; }
+              if (!last_cr) { *di++=0; last_cr=1; chars=0; }
               si++;
               while (*si>='0' && *si<='9') {
                 si++;
@@ -1384,8 +1384,8 @@ void tabula_help2(byte *si,byte *di,int lon) {
 
             case '-': // Fin imagen
               si+=2;
-              if (ejemplo) {
-                ejemplo=0; ultimo_cr=1;
+              if (example) {
+                example=0; last_cr=1;
               } continue;
 
             case '@': // Texto de lenguaje.div
@@ -1393,7 +1393,7 @@ void tabula_help2(byte *si,byte *di,int lon) {
               while (*si>='0' && *si<='9') {
                 n*=10; n+=*si-'0'; si++;
               } si++;
-              if (*texto[n]=='-') strcpy((char *)di,(char *)texto[n]+1); else strcpy((char *)di,(char *)texto[n]);
+              if (*texts[n]=='-') strcpy((char *)di,(char *)texts[n]+1); else strcpy((char *)di,(char *)texts[n]);
               di+=strlen((char *)di);
               continue;
 
@@ -1406,19 +1406,19 @@ void tabula_help2(byte *si,byte *di,int lon) {
 
         chars++;
 
-        if (!ejemplo && chars==ancho_ayuda+1) {
+        if (!example && chars==help_text_width+1) {
           chars=0; *di=c; old_di=di+1;
           while (*di!=' ') { di--; chars++; }
           *di++=0; di=old_di;
         } else {
           *di=c; di++;
-          ultimo_cr=0;
+          last_cr=0;
         }
 
       } else {
 
         chars=0; *di++=0;
-        if (!ultimo_cr) ultimo_cr=1;
+        if (!last_cr) last_cr=1;
 
       }
     }
@@ -1445,29 +1445,29 @@ void Print_Help(void) {
   unsigned u;
   FILE * f, * g;
 
-  if (!strlen(h_ar)) strcpy(h_ar,(char *)texto[495]);
+  if (!strlen(h_ar)) strcpy(h_ar,(char *)texts[495]);
 
-  v_texto=h_ar;
-  v_titulo=(char *)texto[496];
-  dialogo(printlist0);
+  v_text=h_ar;
+  v_title=(char *)texts[496];
+  dialog(printlist0);
 
-  if (v_aceptar) {
+  if (v_accept) {
 
     if (f_ar) {
-      _dos_setdrive(toupper(*tipo[1].path)-'A'+1,&u);
-      chdir(tipo[1].path);
+      _dos_setdrive(toupper(*type[1].path)-'A'+1,&u);
+      chdir(type[1].path);
       g=fopen(h_ar,"rb");
       if (g!=NULL) {
         fclose(g);
-        sprintf(cwork,"%s/%s",tipo[1].path,h_ar);
+        sprintf(cwork,"%s/%s",type[1].path,h_ar);
         strupr(cwork);
-        v_titulo=(char *)texto[450];
-        v_texto=cwork;
-        dialogo(aceptar0);
-        if (!v_aceptar) return;
+        v_title=(char *)texts[450];
+        v_text=cwork;
+        dialog(accept0);
+        if (!v_accept) return;
       }
       g=fopen(h_ar,"wb");
-      if (g==NULL) { v_texto=(char *)texto[47]; dialogo(err0); return; }
+      if (g==NULL) { v_text=(char *)texts[47]; dialog(err0); return; }
     } else g=stdprn;
 
     if((f=fopen("help/help.div","rb"))!=NULL) {
@@ -1478,12 +1478,12 @@ void Print_Help(void) {
           p=h_buffer; while (*p!='}') p++; *p=0;
 
           _help_end=help_end;
-          tabula_help2(p+1,print_buffer,helpidx[help_item*2+1]-(p+1-h_buffer));
+          tab_help2(p+1,print_buffer,helpidx[help_item*2+1]-(p+1-h_buffer));
 
           // Imprime el título de la página de ayuda
 
           fwrite("\xd\xa",1,2,g);
-          for (n=0;n<(ancho_ayuda-strlen((char *)help_title)-4)/2;n++) fwrite(" ",1,1,g);
+          for (n=0;n<(help_text_width-strlen((char *)help_title)-4)/2;n++) fwrite(" ",1,1,g);
           fwrite("[ ",1,2,g);
           fwrite(help_title,1,strlen((char *)help_title),g);
           fwrite(" ]\xd\xa\xd\xa──────────────────────────────────────────────────────────────────────",1,76,g);
@@ -1491,13 +1491,13 @@ void Print_Help(void) {
           p=print_buffer;
 
           while (p<help_end) {
-            Progress((char *)texto[437],p-print_buffer,help_end-print_buffer);
+            Progress((char *)texts[437],p-print_buffer,help_end-print_buffer);
             fwrite(p,1,strlen((char *)p),g);
             fwrite("\xd\xa",1,2,g);
             p+=strlen((char *)p)+1;
           }
 
-          Progress((char *)texto[437],help_end-print_buffer,help_end-print_buffer);
+          Progress((char *)texts[437],help_end-print_buffer,help_end-print_buffer);
 
           help_end=_help_end;
           //free(print_buffer);

@@ -6,36 +6,36 @@
 #define GLOBALS
 #include "c:\div\dll\source\div.h"
 
-#define ALTURA 20
+#define HEIGHT 20
 
-char    *agua=NULL;
+char    *water=NULL;
 
 void post_process_buffer(void) {
-  static int desp=3000;
+  static int disp=3000;
   static int dec=-1;
-  static int valor=0;
+  static int value=0;
   int    x,inc;
 //  FILE   *f;
 
-  if(valor==0) {
-    valor=1;
-    agua=(char *)div_malloc(ALTURA*wide);
+  if(value==0) {
+    value=1;
+    water=(char *)div_malloc(HEIGHT*wide);
   }
 
-  if(agua==NULL) return;
+  if(water==NULL) return;
 
-  inc=(height-ALTURA-1)*100;
+  inc=(height-HEIGHT-1)*100;
 
-  for(x=0;x<ALTURA;x++) {
-//    memcpy(agua+x*wide,buffer+(inc/100)*wide,wide);
-    inc-=desp/10;
-    desp+=dec;
-    if(desp<2500) dec=1;
-    if(desp>3500) dec=-1;
+  for(x=0;x<HEIGHT;x++) {
+//    memcpy(water+x*wide,buffer+(inc/100)*wide,wide);
+    inc-=disp/10;
+    disp+=dec;
+    if(disp<2500) dec=1;
+    if(disp>3500) dec=-1;
   }
 
-//  memset(agua,0,wide);
-//  memcpy(buffer+(height-ALTURA)*wide,agua,wide*ALTURA);
+//  memset(water,0,wide);
+//  memcpy(buffer+(height-HEIGHT)*wide,water,wide*HEIGHT);
 }
 
 //void __declspec (divlibrary)
@@ -47,6 +47,6 @@ void post_process_buffer(void) {
 }
 
 void __export divend(COMMON_PARAMS) {
-  div_free(agua);
+  div_free(water);
 }*/
 

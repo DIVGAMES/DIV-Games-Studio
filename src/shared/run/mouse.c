@@ -48,10 +48,10 @@ void mouse_window(void) {
 #ifdef DOS
   union REGS inregs, outregs;
   inregs.w.ax = 7;
-  inregs.w.cx = 0; inregs.w.dx = (vga_an*2)-1;
+  inregs.w.cx = 0; inregs.w.dx = (vga_width*2)-1;
   int386 (0x33, &inregs, &outregs);
   inregs.w.ax = 8;
-  inregs.w.cx = 0; inregs.w.dx = vga_al-1;
+  inregs.w.cx = 0; inregs.w.dx = vga_height-1;
   int386 (0x33, &inregs, &outregs);
 #endif
 }
@@ -89,11 +89,11 @@ void readmouse(void) {
   short ix,iy;
   int keymouse=0,n=0;
 
-  tecla();
+  read_key();
 #ifdef DOS
   union REGS regs;
 
-//  tecla();
+//  read_key();
 
   mouse->left=0;
 
@@ -157,9 +157,9 @@ void readmouse(void) {
   _mouse_y=(int)mouse->y;
 
   if (_mouse_x<0) { _mouse_x=0; n++; }
-  else if (_mouse_x>=vga_an) { _mouse_x=vga_an-1; n++; }
+  else if (_mouse_x>=vga_width) { _mouse_x=vga_width-1; n++; }
   if (_mouse_y<0) { _mouse_y=0; n++; }
-  else if (_mouse_y>=vga_al) { _mouse_y=vga_al-1; n++; }
+  else if (_mouse_y>=vga_height) { _mouse_y=vga_height-1; n++; }
 
   if (n) set_mouse(_mouse_x,_mouse_y);
 

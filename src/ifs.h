@@ -16,10 +16,10 @@
 
 
 // ESTRUCTURAS PARA EL FICHERO DE ENTRADA (IFS)
-typedef struct _TABLAIFS{
-    int32_t    desp;
+typedef struct _IFSTABLE{
+    int32_t    disp;
     int32_t    size;
-} TABLAIFS;
+} IFSTABLE;
 
 typedef struct _IFSHEADER{
     uint8_t    id[4];
@@ -31,12 +31,12 @@ typedef struct _IFSHEADER{
 } IFSHEADER;
 
 // ESTRUCTURA PARA EL FICHERO DE SALIDA (FNT)
-typedef struct _TABLAFNT{
-    int    ancho;
-    int    alto;
+typedef struct _FNTTABLE{
+    int    width;
+    int    height;
     int    incY;
     int    offset;
-}TABLAFNT;
+}FNTTABLE;
 
 typedef struct _FNTHEADER{
     char    id[7];
@@ -47,37 +47,37 @@ typedef struct _FNTHEADER{
 typedef struct _IFS {
     char            ifsName[256];
     char            fntName[256];
-    char            tamX;
-    char            tamY;
+    char            sizeX;
+    char            sizeY;
     char            outline;
-    char            brillo; // (0-4) Sin, Arr-Izq, Abj-drcha, Arr-dcha, Abj-izq.
-    short           sombraX;
-    short           sombraY;
-    unsigned short  bodyTexAncho;    // textura de la letra
-    unsigned short  bodyTexAlto;
+    char            brightness; // (0-4) Sin, Arr-Izq, Abj-drcha, Arr-dcha, Abj-izq.
+    short           shadowX;
+    short           shadowY;
+    unsigned short  bodyTexWidth;    // textura de la letra
+    unsigned short  bodyTexHeight;
     char            bodyTexColor;
-    char            bodyTexModo;
-    unsigned short  shadowTexAncho;  // textura de la Sombra
-    unsigned short  shadowTexAlto;
+    char            bodyTexMode;
+    unsigned short  shadowTexWidth;  // textura de la Sombra
+    unsigned short  shadowTexHeight;
     char            shadowTexColor;
-    char            shadowTexModo;
-    unsigned short  outTexAncho;    // textura del Outline
-    unsigned short  outTexAlto;
+    char            shadowTexMode;
+    unsigned short  outTexWidth;    // textura del Outline
+    unsigned short  outTexHeight;
     char            outTexColor;
-    char            outTexModo;
-    char            tabla[256];     // para indicar que letras se generan
-    char            claros[256];    // correspondencias para los brillos
-    char            oscuros[256];   // correspondencias para los brillos
+    char            outTexMode;
+    char            table[256];     // para indicar que letras se generan
+    char            light[256];    // correspondencias para los brillos
+    char            dark[256];   // correspondencias para los brillos
 
 }IFS;
 
 extern char *bodyTexBuffer, *outTexBuffer, *shadowTexBuffer;
 extern IFS ifs;
-int Jorge_Crea_el_font(int GenCode);
-int ShowChar(int WhatChar,int cx,int cy,char *ptr,int an);
-int ShowCharBuffer(int WhatChar,int cx,int cy,char *ptr,int an,char *buffer);
-void GetCharSize(int WhatChar,int *ancho,int *alto);
-void GetCharSizeBuffer(int WhatChar,int *ancho,int *alto,char *buffer);
+int Jorge_Creates_the_font(int GenCode);
+int ShowChar(int WhatChar,int cx,int cy,char *ptr,int w);
+int ShowCharBuffer(int WhatChar,int cx,int cy,char *ptr,int w,char *buffer);
+void GetCharSize(int WhatChar,int *width,int *height);
+void GetCharSizeBuffer(int WhatChar,int *width,int *height,char *buffer);
 void ConvertFntToPal(char *Buffer);
-int Progress(char *titulo,int current,int total);
+int Progress(char *title,int current,int total);
 #endif

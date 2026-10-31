@@ -76,7 +76,7 @@ extern "C" {            /* Use "C" linkage when in C++ mode */
 
 int 	SV_init(void);
 bool 	SV_setMode(int mode);
-int 	SV_getModeName(char *buf,VBE_modeInfo *mi,ushort mode,bool useLinear);
+int 	SV_getModeName(char *buf,VBE_modeInfo *my,ushort mode,bool useLinear);
 void    SV_restoreMode(void);
 bool	SV_set8BitDAC(void);
 bool 	SV_set6BitDAC(void);

@@ -6,23 +6,23 @@
 #include "div.h"
 
 char pal[1024];
-char paleta[256];
-char orden[256];
+char pal_order[256];
+char order[256];
 
 int r,g,b;
 
 char find_ord(char *);
 
-void ord_paleta(void);
+void ord_palette(void);
 void flip(void);
 
 void ss_init(void)
 {
 	//printf("SS INIT\n");
   int n;
-  ord_paleta();
+  ord_palette();
   for (n=0;n<256;n++)
-    orden[paleta[n]]=n;
+    order[pal_order[n]]=n;
 }
 
 void ss_frame(void)
@@ -37,7 +37,7 @@ void ss_frame(void)
       y=div_rand(0,height-2);
       c1=(int)*(buffer+n+y*wide);
       c2=(int)*(buffer+n+(y+1)*wide);
-      if (orden[c1]>orden[c2]) {
+      if (order[c1]>order[c2]) {
         *(buffer+n+(y+1)*wide)=c1;
         *(buffer+n+y*wide)=c2;
         counter++;
@@ -45,7 +45,7 @@ void ss_frame(void)
         if (div_rand(0,1)) {
           if (n>0) {
             c2=(int)*(buffer+n+(y+1)*wide-1);
-            if (orden[c1]>orden[c2]) {
+            if (order[c1]>order[c2]) {
               *(buffer+n+(y+1)*wide-1)=c1;
               *(buffer+n+y*wide)=c2;
             }
@@ -53,7 +53,7 @@ void ss_frame(void)
         } else {
           if (n<wide-1) {
             c2=(int)*(buffer+n+(y+1)*wide+1);
-            if (orden[c1]>orden[c2]) {
+            if (order[c1]>order[c2]) {
               *(buffer+n+(y+1)*wide+1)=c1;
               *(buffer+n+y*wide)=c2;
             }
@@ -65,7 +65,7 @@ void ss_frame(void)
   if (counter<wide/2) flip();
 }
 
-void ord_paleta(void) {
+void ord_palette(void) {
   char c;
   int n;
 
@@ -78,7 +78,7 @@ void ord_paleta(void) {
   n=0; do {
     c=find_ord(pal);
     r=pal[c*4]; g=pal[c*4+1]; b=pal[c*4+2];
-    pal[c*4]=255; paleta[n]=c;
+    pal[c*4]=255; pal_order[n]=c;
   } while (++n<256);
 
 }

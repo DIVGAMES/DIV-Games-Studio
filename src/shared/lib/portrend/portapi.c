@@ -17,7 +17,7 @@ DWORD ScrBase;
 int ScrWidth, ScrHeight;
 int GfxOn=false;
 
-int vpe_inicializada=0;
+int vpe_initialized=0;
 int mode8_list[10];
 int **fpg_grf;
 int num_fpg_aux;
@@ -28,7 +28,7 @@ int    VPE_Working=FALSE;
 int    VPE_fog    =0;
 
 
-void set_fog_table(int intensidad,int r,int g, int b);
+void set_fog_table(int intensity,int r,int g, int b);
 
 extern int **fpg_grf;
 extern int num_fpg_aux;
@@ -72,48 +72,48 @@ void VPE_Update(void) {
 //	printf("VPE UPDATE\n");
 }
 
-void InitGraph(char *buffer,int ancho,int alto)
+void InitGraph(char *buffer,int width,int height)
 {
   GfxOn=true;
   ScrBase=(DWORD)buffer;
-  ScrWidth=ancho;
-  ScrHeight=alto;
+  ScrWidth=width;
+  ScrHeight=height;
 }
 
 
-void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto)
+void _vpe_start(char *file,char *buffer,int width,int height)
 {
 	/*
-  InitGraph(buffer,ancho,alto); // Init gfx system
+  InitGraph(buffer,width,height); // Init gfx system
   VPE_Init(); // Init VPE
-  VPE_Config(ancho,alto);       // Configure VPE
+  VPE_Config(width,height);       // Configure VPE
 */
-  LoadZone(fichero);            // Load zone
+  LoadZone(file);            // Load zone
 /*
   VPE_Start();                  // Start the engine
   * */
 }
 
-void _vpe_fin(void) {
+void _vpe_end(void) {
 	
 }
 
 void load_wld(void)
 {
-  int num_fpg=pila[sp--];
-  int nombre=pila[sp];
+  int num_fpg=opstack[sp--];
+  int name=opstack[sp];
   int i,m;
-  FILE *fichero;
+  FILE *file;
   char *buffer;
   int size;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (vpe_inicializada) {
+  if (vpe_initialized) {
     while (Objects.Number) {
       _object_destroy(0);
     }
-    _vpe_fin();
+    _vpe_end();
   }
 
   num_blocks=0;
@@ -121,32 +121,32 @@ void load_wld(void)
   num_fpg_aux=num_fpg;
 
   if (npackfiles) {
-    m=read_packfile((byte*)&mem[text_offset+nombre]);
-    if (m==-1) goto wldfuera; // not found
-    if (m==-2) { pila[sp]=0; e(100); return; } // not enough memory
-    if (m<=0) { pila[sp]=0; e(200); return; } // bad size
+    m=read_packfile((byte*)&mem[text_offset+name]);
+    if (m==-1) goto wldout; // not found
+    if (m==-2) { opstack[sp]=0; e(100); return; } // not enough memory
+    if (m<=0) { opstack[sp]=0; e(200); return; } // bad size
     buffer=packptr; size=m;
   } else {
-    wldfuera:
-    if ((fichero=div_open_file((byte*)&mem[text_offset+nombre]))==NULL) {
-      e(159); vpe_inicializada=0; return;
+    wldout:
+    if ((file=div_open_file((byte*)&mem[text_offset+name]))==NULL) {
+      e(159); vpe_initialized=0; return;
     } else {
-      fseek(fichero,0,SEEK_END); size=ftell(fichero);
+      fseek(file,0,SEEK_END); size=ftell(file);
       if ((buffer=(byte *)malloc(size))!=NULL) {
-        fseek(fichero,0,SEEK_SET);
-        fread(buffer,1,size,fichero);
-        fclose(fichero);
-      } else { fclose(fichero); e(100); vpe_inicializada=0; return; }
+        fseek(file,0,SEEK_SET);
+        fread(buffer,1,size,file);
+        fclose(file);
+      } else { fclose(file); e(100); vpe_initialized=0; return; }
     }
   }
 
-  _vpe_inicio(buffer,(char *)copia,vga_an,vga_al);
+  _vpe_start(buffer,(char *)copy_buffer,vga_width,vga_height);
 
   for (i=0;i<10;i++) {
     mode8_list[i]=-1;
   }
 
-  vpe_inicializada=1;
+  vpe_initialized=1;
   free(buffer);
 }
 
@@ -163,7 +163,7 @@ void map_read(M3D_info *m3d_aux, char *full)
   int i;
   char cwork[9];
   int total;
-  FILE *fichero, *f;
+  FILE *file, *f;
 
   char full_path[_MAX_PATH+1];
   char drive[_MAX_DRIVE+1];
@@ -180,41 +180,41 @@ void map_read(M3D_info *m3d_aux, char *full)
   my_map->num_regions=0;
   my_map->num_flags=0;
 
-  if((fichero=fopen(full,"rb"))==NULL)
+  if((file=fopen(full,"rb"))==NULL)
   {
-//    v_texto=(char *)texto[43];
-//    dialogo(err0);
+//    v_text=(char *)texts[43];
+//    dialog(err0);
 printf("Failed to load %s\n",full);
 
     return;
   }
 
-  fread(cwork,8,1,fichero);
+  fread(cwork,8,1,file);
   cwork[8]=0;
   if (!strcmp(cwork,"wld\x1a\x0d\x0a\x00\x00"))
   {
-    fclose(fichero);
+    fclose(file);
     map_read_old( m3d_aux , full);
     return;
   }
   if (strcmp(cwork,"wld\x1a\x0d\x0a\x01\x00"))
   {
-    fclose(fichero);
+    fclose(file);
     return;
   }
 
-  fread(&total,4,1,fichero);
+  fread(&total,4,1,file);
   if (!total)
   {
-    fclose(fichero);
+    fclose(file);
     return;
   }
 
-  fread(m3d_aux->m3d_path,256,1,fichero);
-  fread(m3d_aux->m3d_name,16,1,fichero);
-  fread(&m3d_aux->numero,4,1,fichero);
-  fread(m3d_aux->fpg_path,256,1,fichero);
-  fread(m3d_aux->fpg_name,16,1,fichero);
+  fread(m3d_aux->m3d_path,256,1,file);
+  fread(m3d_aux->m3d_name,16,1,file);
+  fread(&m3d_aux->number,4,1,file);
+  fread(m3d_aux->fpg_path,256,1,file);
+  fread(m3d_aux->fpg_name,16,1,file);
 
   strcpy((char *)m3d_aux->m3d_path,full);
 //  strcpy((char *)m3d_aux->m3d_name,input);
@@ -241,76 +241,76 @@ printf("Failed to load %s\n",full);
     }
   }
 
-  fread(&my_map->num_points,4,1,fichero);
+  fread(&my_map->num_points,4,1,file);
 //	printf("Num points: %d\n point size: %d\n",my_map->num_points,sizeof(tpoint));
 	
 	for (i=0;i<my_map->num_points;i++) {
 		my_map->points[i]=(lptpoint)malloc(sizeof(tpoint));
-		fread(my_map->points[i],sizeof(tpoint),1,fichero);
+		fread(my_map->points[i],sizeof(tpoint),1,file);
 		printf("point[%d]: %d x %d\n",i,my_map->points[i]->x,my_map->points[i]->y);
 	}
 
-  fread(&my_map->num_walls,4,1,fichero);
+  fread(&my_map->num_walls,4,1,file);
 //	printf("Num walls: %d wall struct size: %d\n",my_map->num_walls,sizeof(twall));
 
   for (i=0;i<my_map->num_walls;i++) {
     my_map->walls[i]=(lptwall)malloc(sizeof(twall));
-    fread(my_map->walls[i],sizeof(twall),1,fichero);
+    fread(my_map->walls[i],sizeof(twall),1,file);
      printf("walls[%d]= %d <-> %d - fregion =%d bregion = %d\n",i, my_map->walls[i]->p1,my_map->walls[i]->p2,my_map->walls[i]->front_region,my_map->walls[i]->back_region);
   }
   
-  fread(&my_map->num_regions,4,1,fichero);
+  fread(&my_map->num_regions,4,1,file);
 //  printf("Num regions: %d region size: %d\n",my_map->num_regions,sizeof(tregion));
 
   for (i=0;i<my_map->num_regions;i++) {
     my_map->regions[i]=(lptregion)malloc(sizeof(tregion));
-    fread(my_map->regions[i],sizeof(tregion),1,fichero);
+    fread(my_map->regions[i],sizeof(tregion),1,file);
 	printf("regions[%d]= floor: %d - ceil:%d\n",i, my_map->regions[i]->floor_height,my_map->regions[i]->ceil_height);
   }
   
-  fread(&my_map->num_flags,4,1,fichero);
+  fread(&my_map->num_flags,4,1,file);
   printf("Num flags: %d flags struct size: %d\n",my_map->num_flags,sizeof(tflag));
 
   for (i=0;i<my_map->num_flags;i++) {
     my_map->flags[i]=(lptflag)malloc(sizeof(tflag));
-    fread(my_map->flags[i],sizeof(tflag),1,fichero);
+    fread(my_map->flags[i],sizeof(tflag),1,file);
    	printf("flags[%d]= x: %d - y:%d\n",i, my_map->flags[i]->x,my_map->flags[i]->y);
 
   }
-  fread(&my_map->fondo,4,1,fichero);
+  fread(&my_map->background,4,1,file);
 
 //  map_off();
 
-  fclose(fichero);
+  fclose(file);
 }
 
 extern m8camera player;
 
 void start_mode8(void) {
-	 int num_region=pila[sp--];
-  int num_mode8=pila[sp--];
-  int ide_camera=pila[sp];
-  int ancho=0,alto=0;
+	 int num_region=opstack[sp--];
+  int num_mode8=opstack[sp--];
+  int ide_camera=opstack[sp];
+  int width=0,height=0;
   t_region *my_region;
-  pila[sp]=0;
+  opstack[sp]=0;
 
   my_region=(t_region *)((int)region+sizeof(t_region)*num_region);
 
-  ancho=my_region->x1-my_region->x0;
-  alto=my_region->y1-my_region->y0;
-  vpe_inicializada=1;
+  width=my_region->x1-my_region->x0;
+  height=my_region->y1-my_region->y0;
+  vpe_initialized=1;
   mode8_list[num_mode8]=num_region;
   m8[num_mode8].camera=ide_camera;
   
-  printf("Start mode 8 %d %d %d %d %d\n",ide_camera,num_mode8, num_region, ancho, alto);
+  printf("Start mode 8 %d %d %d %d %d\n",ide_camera,num_mode8, num_region, width, height);
 }
 
 void go_to_flag(void) {
-	int flag=pila[sp];
+	int flag=opstack[sp];
 
-	pila[sp]=0;
+	opstack[sp]=0;
 
-	if (!vpe_inicializada)
+	if (!vpe_initialized)
 		return;
 
 	if (id<id_start || id>id_end)
@@ -352,15 +352,15 @@ void get_wall_texture(void) {}
 void set_env_color(void) {}
 
 extern SDL_Surface *vga;
-extern	int ancho,alto;
+extern	int width,height;
 
 void loop_mode8(void) {
 	int i,j;
 	t_region *my_region;
 	struct Object *po;
-	int angulo;
+	int angle;
 	
-	if (!vpe_inicializada)
+	if (!vpe_initialized)
 	return;
 
 	VPE_Update();   // Update zone info
@@ -380,16 +380,16 @@ void loop_mode8(void) {
 				m8[i].height=mem[m8[i].camera+_Height]-8;
 
 			my_region=(t_region *)((int)region+sizeof(t_region)*mode8_list[i]);
-			ancho=my_region->x1-my_region->x0;
-			alto=my_region->y1-my_region->y0;
+			width=my_region->x1-my_region->x0;
+			height=my_region->y1-my_region->y0;
 			//my_map->regions[i]->floor_height;
 	
 			
-//			angulo=((180*mem[m8[i].camera+_Angle])/360000)&(180-1);
-//			 angulo=((DEG360*mem[m8[i].camera+_Angle])/360000)&(DEG360-1);
-//			if (angulo==0 || angulo==512 || angulo==1024 || angulo==1024+512) angulo++;
+//			angle=((180*mem[m8[i].camera+_Angle])/360000)&(180-1);
+//			 angle=((DEG360*mem[m8[i].camera+_Angle])/360000)&(DEG360-1);
+//			if (angle==0 || angle==512 || angle==1024 || angle==1024+512) angle++;
 
-//			if (angulo==0 || angulo==512 || angulo==1024 || angulo==1024+512) angulo++;
+//			if (angle==0 || angle==512 || angle==1024 || angle==1024+512) angle++;
 
 			player.where.x=mem[m8[i].camera+_X];///mem[m8[i].camera+_Resolution];			
 			player.where.y=mem[m8[i].camera+_Y];///mem[m8[i].camera+_Resolution];
@@ -419,13 +419,13 @@ int create_object(int ide) {
   struct Object *object;
   struct Region *new_region;
   int num_object;
-  int angulo;
+  int angle;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return(-1);
 
-  angulo=((DEG360*mem[ide+_Angle])/360000)&(DEG360-1);
-  if (angulo==0 || angulo==512 || angulo==1024 || angulo==1024+512) angulo++;
+  angle=((DEG360*mem[ide+_Angle])/360000)&(DEG360-1);
+  if (angle==0 || angle==512 || angle==1024 || angle==1024+512) angle++;
 
   // Read OBJECT
   object=(struct Object *)AddEntry(&Objects);
@@ -444,17 +444,17 @@ int create_object(int ide) {
   object->pp->link=0;
   object->pp->Stamp=-1;
 
-  object->Angle=angulo;
+  object->Angle=angle;
 
   if (mem[ide+_Resolution]<2) {
     object->H=object->RH=INT_FIX(mem[ide+_Z]);
     object->pp->x=INT_FIX(mem[ide+_X]);
-    object->pp->y=INT_FIX(FIN_GRID-mem[ide+_Y]);
+    object->pp->y=INT_FIX(END_GRID-mem[ide+_Y]);
   }
   else {
     object->H=object->RH=INT_FIX(mem[ide+_Z])/mem[ide+_Resolution];
     object->pp->x=((mem[ide+_X]*256)/mem[ide+_Resolution])*256;
-    object->pp->y=(((FIN_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256;
+    object->pp->y=(((END_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256;
   }
 
   object->Height=INT_FIX(mem[ide+_Height]);

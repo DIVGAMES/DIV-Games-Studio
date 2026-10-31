@@ -6,7 +6,7 @@
 #include "div_lr.h"
 #include <stdio.h>
 #include <stdlib.h>
-extern double ireloj;
+extern double iclock;
 #endif
 
 
@@ -18,7 +18,7 @@ OSDEP_Surface *OSDEP_zoomsurface = NULL;
 OSDEP_Color OSDEP_pal[256];
 
 extern int vwidth, vheight;
-extern int vga_an, vga_al;
+extern int vga_width, vga_height;
 
 int sw, sh;
 int fullscreen = 0;
@@ -53,7 +53,7 @@ void div_lr_add_usec(int64_t usec) {
 }
 
 void div_lr_advance_time(void) {
-	double step_us = (ireloj > 1.0 ? ireloj : (1000.0 / 24.0)) * 1000.0;
+	double step_us = (iclock > 1.0 ? iclock : (1000.0 / 24.0)) * 1000.0;
 	div_lr_frame_frac += step_us;
 	if (div_lr_frame_frac >= 1.0) {
 		int64_t whole = (int64_t)div_lr_frame_frac;
@@ -259,10 +259,10 @@ void OSDEP_Flip(OSDEP_Surface *s) {
 		return;
 #endif	
 
-	if((vwidth == vga_an && vheight == vga_al) || (vwidth == 0 && vheight == 0)) {
+	if((vwidth == vga_width && vheight == vga_height) || (vwidth == 0 && vheight == 0)) {
 		SDL_BlitSurface(s, NULL, OSDEP_screen, NULL);
 	} else {
-		OSDEP_zoomsurface = zoomSurface(s, (float)vwidth/vga_an, (float)vheight/vga_al, 1);
+		OSDEP_zoomsurface = zoomSurface(s, (float)vwidth/vga_width, (float)vheight/vga_height, 1);
 		// Clear screen
 		SDL_FillRect(OSDEP_screen, NULL, 0);
 		SDL_BlitSurface(OSDEP_zoomsurface, NULL, OSDEP_screen, NULL);

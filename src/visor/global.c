@@ -9,12 +9,12 @@ int     red,green,blue;
 
 int num_mallocs=0;
 int mem_mallocs=0;
-void *tabla_mallocs[TOTAL_MALLOCS];
-int tabla_mem_mallocs[TOTAL_MALLOCS];
+void *table_mallocs[TOTAL_MALLOCS];
+int table_mem_mallocs[TOTAL_MALLOCS];
 
 char ERRORSTR[256];
 
-void IniMath()
+void InitMath()
 {
   Identity._00=(float)1.0;Identity._01=(float)0.0;Identity._02=(float)0.0;Identity._03=(float)0.0;
   Identity._10=(float)0.0;Identity._11=(float)1.0;Identity._12=(float)0.0;Identity._13=(float)0.0;
@@ -22,11 +22,11 @@ void IniMath()
   Identity._30=(float)0.0;Identity._31=(float)0.0;Identity._32=(float)0.0;Identity._33=(float)1.0;
 }
 
-void MatMult(lptmatrix matriz_c,lptmatrix matriz_a,lptmatrix matriz_b)
+void MatMult(lptmatrix matrix_c,lptmatrix matrix_a,lptmatrix matrix_b)
 {
-float *result=(float *)matriz_c;
-float *mat1  =(float *)matriz_a;
-float *mat2  =(float *)matriz_b;
+float *result=(float *)matrix_c;
+float *mat1  =(float *)matrix_a;
+float *mat2  =(float *)matrix_b;
 int i,j;
 
   for (i=0; i<4; i++)
@@ -48,7 +48,7 @@ float size=(float)sqrt((*x)*(*x)+(*y)*(*y)+(*z)*(*z));
   }
 }
 
-float producto_escalar(lptvector v, lptvector p)
+float scalar_product(lptvector v, lptvector p)
 {
   return (v->x*p->x+v->y*p->y+v->z*p->z);
 }
@@ -66,9 +66,9 @@ void GetAngs(lptmatrix mat,float *ax,float *ay,float *az,float *x,float *y,float
   *ax=asin((mat->_12/cos(*az)));
 }
 
-void MatShow(lptmatrix matriz_a)
+void MatShow(lptmatrix matrix_a)
 {
-float *mat1  =(float *)matriz_a;
+float *mat1  =(float *)matrix_a;
 int i,j;
   for (i=0; i<4; i++)
   {
@@ -82,14 +82,14 @@ int i,j;
 
 void *lf_malloc(int size)
 {
-  void *puntero;
+  void *pointer;
 
-  if ((puntero=malloc(size))==NULL) {
+  if ((pointer=malloc(size))==NULL) {
     lf_free_all();
     return(NULL);
   }
-  tabla_mallocs[num_mallocs]=puntero;
-  tabla_mem_mallocs[num_mallocs]=size;
+  table_mallocs[num_mallocs]=pointer;
+  table_mem_mallocs[num_mallocs]=size;
   mem_mallocs+=size;
   num_mallocs++;
 //  printf("Reservado: %d, Total: %d\n",size,mem_mallocs);
@@ -97,22 +97,22 @@ void *lf_malloc(int size)
     lf_free_all();
     return(NULL);
   }
-  return(puntero);
+  return(pointer);
 }
 
-void lf_free(void *puntero)
+void lf_free(void *pointer)
 {
   int i;
 
   for (i=0;i<num_mallocs;i++) {
-    if (tabla_mallocs[i]==puntero) {
-      free(puntero);
-      mem_mallocs-=tabla_mem_mallocs[i];
+    if (table_mallocs[i]==pointer) {
+      free(pointer);
+      mem_mallocs-=table_mem_mallocs[i];
       num_mallocs--;
-//      printf("Liberado: %d, Total: %d\n",tabla_mem_mallocs[i],mem_mallocs);
-      tabla_mallocs[i]=tabla_mallocs[num_mallocs];
-      tabla_mem_mallocs[i]=tabla_mem_mallocs[num_mallocs];
-      tabla_mallocs[num_mallocs]=NULL;
+//      printf("Liberado: %d, Total: %d\n",table_mem_mallocs[i],mem_mallocs);
+      table_mallocs[i]=table_mallocs[num_mallocs];
+      table_mem_mallocs[i]=table_mem_mallocs[num_mallocs];
+      table_mallocs[num_mallocs]=NULL;
       return;
     }
   }
@@ -125,8 +125,8 @@ void lf_free_all()
 //  printf("Por liberar: %d, mallocs: %d\n",mem_mallocs,num_mallocs);
 //  printf("Liberado Todo\n");
   for (i=num_mallocs-1;i>=0;i--) {
-    free(tabla_mallocs[i]);
-    tabla_mallocs[i]=NULL;
+    free(table_mallocs[i]);
+    table_mallocs[i]=NULL;
   }
   num_mallocs=0;
   mem_mallocs=0;

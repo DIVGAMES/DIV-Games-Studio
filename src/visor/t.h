@@ -7,19 +7,19 @@
 
 //extern "C" {
 
-void nucleo8_8(int v, int u, int du, int dv, int ancho, short *destino);
-void nucleo8_16(int v, int u, int du, int dv, int ancho, short *destino);
-void nucleo8_32(int v, int u, int du, int dv, int ancho, short *destino);
-void nucleo8_64(int v, int u, int du, int dv, int ancho, short *destino);
-void nucleo8_128(int v, int u, int du, int dv, int ancho, short *destino);
-void nucleo8_256(int v, int u, int du, int dv, int ancho, short *destino);
+void kernel8_8(int v, int u, int du, int dv, int width, short *destination);
+void kernel8_16(int v, int u, int du, int dv, int width, short *destination);
+void kernel8_32(int v, int u, int du, int dv, int width, short *destination);
+void kernel8_64(int v, int u, int du, int dv, int width, short *destination);
+void kernel8_128(int v, int u, int du, int dv, int width, short *destination);
+void kernel8_256(int v, int u, int du, int dv, int width, short *destination);
 
-void mask_nucleo8_8(int v, int u, int du, int dv, int ancho, short *destino);
-void mask_nucleo8_16(int v, int u, int du, int dv, int ancho, short *destino);
-void mask_nucleo8_32(int v, int u, int du, int dv, int ancho, short *destino);
-void mask_nucleo8_64(int v, int u, int du, int dv, int ancho, short *destino);
-void mask_nucleo8_128(int v, int u, int du, int dv, int ancho, short *destino);
-void mask_nucleo8_256(int v, int u, int du, int dv, int ancho, short *destino);
+void mask_kernel8_8(int v, int u, int du, int dv, int width, short *destination);
+void mask_kernel8_16(int v, int u, int du, int dv, int width, short *destination);
+void mask_kernel8_32(int v, int u, int du, int dv, int width, short *destination);
+void mask_kernel8_64(int v, int u, int du, int dv, int width, short *destination);
+void mask_kernel8_128(int v, int u, int du, int dv, int width, short *destination);
+void mask_kernel8_256(int v, int u, int du, int dv, int width, short *destination);
 
 //};
 

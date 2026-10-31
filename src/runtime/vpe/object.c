@@ -30,7 +30,7 @@ void DoObjectUpdate(struct Object *po)
   VPEFixed MoveX,MoveY,AddX,AddY,X,Y,AddRH,RegDist;
   VPEFixed c,s,t,t1,t2,tx,ty,x1,y1,x2,y2,x,y,dist,check;
   VPEByte  Flag,ColFlag,RotateFlag;
-  int i, Steps, hueco;
+  int i, Steps, gap;
 
   //---------------------------------------------------------------------------
   // Destruye un objeto si esta marcado para ser destruido
@@ -271,12 +271,12 @@ void DoObjectUpdate(struct Object *po)
             t1=FixMax(t1,pWall->Back->FloorH);
             t2=FixMin(t2,pWall->Back->CeilH);
           }
-          hueco=t2-t1;
+          gap=t2-t1;
           t1-=po->Step+AddRH;
           //-------------------------------------------------------------------
           // Si entramos por la puerta
           //-------------------------------------------------------------------
-          if ((po->H>=t1) && (po->H+po->Height<=t2) && (po->Height<=hueco))
+          if ((po->H>=t1) && (po->H+po->Height<=t2) && (po->Height<=gap))
           {
             //-----------------------------------------------------------------
             // Actualizamos la region

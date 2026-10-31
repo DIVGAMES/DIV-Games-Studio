@@ -3,7 +3,7 @@
 //───────────────────────────────────────────────────────────────────────────
 //───────────────────────────────────────────────────────────────────────────
 
-void *AllocateDOSMem (uint Tam)
+void *AllocateDOSMem (uint Size)
 {
 union REGS r;
 
@@ -18,7 +18,7 @@ union REGS r;
 	SetMem (&r, sizeof (r), 0);
 
 	r.x.eax = 0x0100;				// Función Reservar Bloque Mem. DOS
-	r.x.ebx = (Tam + 15) >> 4;		// Parrafos a reservar
+	r.x.ebx = (Size + 15) >> 4;		// Parrafos a reservar
 	int386 (0x31, &r, &r);
 
 	// Comprueba error

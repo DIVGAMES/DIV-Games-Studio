@@ -25,9 +25,9 @@ byte *dbuffer;
 
 extern char *background;
 
-byte *palette;
+byte *dll_palette;
 byte  *active_palette;
-extern int   set_palette;        // -1:siempre, 0:nunca, 1:una vez, 2:dos, ...
+extern int   dll_set_palette;        // -1:siempre, 0:nunca, 1:una vez, 2:dos, ...
 extern byte  *ghost;
 //extern char  key[];              // Actual scancodes
 
@@ -902,7 +902,7 @@ extern SDL_Surface *vga;
 
 
 void put_border() {
-	unsigned int con,X=0,RX=0,Y=0; 
+	unsigned int ctr,X=0,RX=0,Y=0; 
 	byte *q = (byte *)vga->pixels;
 
 //printf("printing border\n");
@@ -918,7 +918,7 @@ void put_border() {
 void put_hboy() {
 //#ifdef NOTYET
  
-  unsigned int con,X=0,RX=0,Y=0;
+  unsigned int ctr,X=0,RX=0,Y=0;
   unsigned int fExit=0;
   unsigned int pixel=0;
   char ch,rep;
@@ -927,7 +927,7 @@ void put_hboy() {
 //	if(SDL_MUSTLOCK(vga))
 //		SDL_LockSurface(vga);
 
-palette=(byte *)&paleta[0];
+dll_palette=(byte *)&palette[0];
 active_palette=(byte *)&dac[0];
   while(!fExit) {
     ch=*hboy++;
@@ -935,7 +935,7 @@ active_palette=(byte *)&dac[0];
     if((ch&192)==192) { rep=(ch&63); ch=*hboy++;}
     pixel+=rep;
 //    printf("%d %dx%d|",X,rep,ch);
-	for(con=0;con<rep;con++) {  
+	for(ctr=0;ctr<rep;ctr++) {  
 		hboy_graph[RX]=ch;
 		q[X++]=ch; 
 		RX++; 
@@ -965,10 +965,10 @@ void dprocess_palette()
 {
   int x;
   for (x=0;x<768;x+=3)
-    xlat[x/3]=(palette[x]+palette[x+1]+palette[x+2])/21+0x20;
-  memset(palette,0,768);
-  memcpy(palette,&hboy_palette,16*9);
-  for (x=0;x<768;x++) palette[x]/=4;
+    xlat[x/3]=(dll_palette[x]+dll_palette[x+1]+dll_palette[x+2])/21+0x20;
+  memset(dll_palette,0,768);
+  memcpy(dll_palette,&hboy_palette,16*9);
+  for (x=0;x<768;x++) dll_palette[x]/=4;
 }
 
 void dset_video_mode(){
@@ -982,71 +982,71 @@ void dset_video_mode(){
 
 void dbuffer_to_video1() {
   byte *di,*si;
-  int yr,xr,iyr,ixr,an,al;
+  int yr,xr,iyr,ixr,w,h;
   ixr=(wide<<8)/160; iyr=(height<<8)/100; yr=0;
   di=(byte *)vga->pixels;
   di+=(vga->pitch*50+80); 
-  al=100;
+  h=100;
 
   do {
-    si=dbuffer+(yr>>8)*wide; an=160; xr=0;
+    si=dbuffer+(yr>>8)*wide; w=160; xr=0;
 //    di=(byte*)vga->pixels+
     do {
       *di=xlat[*(si+(xr>>8))];
       di++; xr+=ixr;
-    } while (--an);
+    } while (--w);
     yr+=iyr; di+=160+(vga->pitch-320);
-  } while (--al);
+  } while (--h);
 }
 
 void dbuffer_to_video2() {
   byte *di,*si,*si2;
-  int yr,xr,xr2,iyr,ixr,an,al,c;
+  int yr,xr,xr2,iyr,ixr,w,h,c;
 
   ixr=(wide<<8)/160; iyr=(height<<8)/100; yr=0;
   di=(byte *)vga->pixels;
   di+=(vga->pitch*50+80); 
-  al=100;
+  h=100;
 
   do {
     si=dbuffer+(yr>>8)*wide;
     si2=dbuffer+((yr+iyr/2)>>8)*wide;
-    an=160; xr=0; xr2=ixr/2;
+    w=160; xr=0; xr2=ixr/2;
     do {
       *di=ghost[xlat[*(si+(xr>>8))]*256+xlat[*(si2+(xr2>>8))]];
       di++; xr+=ixr; xr2+=ixr;
-    } while (--an);
+    } while (--w);
     yr+=iyr; di+=160+(vga->pitch-320);
-  } while (--al);
+  } while (--h);
 }
 
 void dbuffer_to_video3() {
    byte *di,*si,*si2;
-  int yr,xr,xr2,iyr,ixr,an,al,c;
+  int yr,xr,xr2,iyr,ixr,w,h,c;
 
   ixr=(wide<<8)/160; iyr=(height<<8)/100; yr=0;
   di=(byte*)vga->pixels;
   di+=(vga->pitch*50+80); 
-  al=100;
+  h=100;
 
   do {
     si=dbuffer+(yr>>8)*wide;
     si2=dbuffer+((yr+iyr/2)>>8)*wide;
-    an=160; xr=0; xr2=ixr/2;
+    w=160; xr=0; xr2=ixr/2;
     do {
       c=ghost[xlat[*(si+(xr>>8))]*256+xlat[*(si+(xr2>>8))]]*256;
       *di=ghost[c+ghost[xlat[*(si2+(xr>>8))]*256+xlat[*(si2+(xr2>>8))]]];
       di++; xr+=ixr; xr2+=ixr;
-    } while (--an);
+    } while (--w);
     yr+=iyr; di+=160+(vga->pitch-320);
-  } while (--al);
+  } while (--h);
 }
  
 
 void dbuffer_to_video() {
-wide=vga_an;
-height=vga_al;
-dbuffer = copia;
+wide=vga_width;
+height=vga_height;
+dbuffer = copy_buffer;
 
 	if(SDL_MUSTLOCK(vga))
 		SDL_LockSurface(vga);
@@ -1098,13 +1098,13 @@ void dpost_process() {
 void dprocess_active_palette() {
   int n,x;
 
-  memcpy(active_palette,palette,0x20*3);
-  memcpy(active_palette+0x2A*3,palette+0x2A*3,21);
+  memcpy(active_palette,dll_palette,0x20*3);
+  memcpy(active_palette+0x2A*3,dll_palette+0x2A*3,21);
   for (n=0x20*3;n<0x2A*3;n+=3) {
     x=active_palette[n]+active_palette[n+1]+active_palette[n+2];
     x=0x20+(x-52+3)*9/54;
     if (x<0x20)x=0x20; else if (x>0x29)x=0x29;
-    memcpy(active_palette+n,palette+x*3,3);
+    memcpy(active_palette+n,dll_palette+x*3,3);
   }
 }
 

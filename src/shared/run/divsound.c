@@ -1,8 +1,8 @@
 #include "inter.h"
 #include "divsound.h"
 
-tSonido  sonido[128];
-tCancion cancion[128];
+tSound  sounds[128];
+tSong songs[128];
 tChannels channels[64];
 
 int SongType=0;
@@ -95,10 +95,10 @@ fprintf(stdout,"running with SDL_mixer version: %d.%d.%d\n",
 
 #ifdef DOS
   FILE *File_Cfg;
-  int con;
+  int ctr;
   int master=10,sound_fx=10,cd_audio=10;
   char Device[8]={DEV_NOSOUND,DEV_SB,DEV_SB,DEV_SBPRO,DEV_SB16,DEV_SB16,DEV_GUS,DEV_GUS};
-  unsigned short Puertos[6]={0x210,0x220,0x230,0x240,0x250,0x260};
+  unsigned short Ports[6]={0x210,0x220,0x230,0x240,0x250,0x260};
   unsigned short IRQS[10]  ={2,3,5,7,10,11,12,13,14,15};
   unsigned short DMAS[10]  ={0,1,2,3,4,5,6,7,8,9};
   unsigned short DMAS2[10] ={0,1,2,3,4,5,6,7,8,9};
@@ -159,7 +159,7 @@ fprintf(stdout,"running with SDL_mixer version: %d.%d.%d\n",
       if(File_Cfg!=NULL) {
         fclose(File_Cfg);
         judascfg_device = Device[cfg_dev];
-        judascfg_port   = Puertos[cfg_port];
+        judascfg_port   = Ports[cfg_port];
         judascfg_irq    = IRQS[cfg_irq];
         judascfg_dma1   = DMAS[cfg_dma1];
         judascfg_dma2   = DMAS2[cfg_dma2];
@@ -224,12 +224,12 @@ fprintf(stdout,"running with SDL_mixer version: %d.%d.%d\n",
     set_mixer();
   }
 
-  for(con=0; con<128; con++) {
-    UnloadSound(con);
-    UnloadSong(con);
+  for(ctr=0; ctr<128; ctr++) {
+    UnloadSound(ctr);
+    UnloadSong(ctr);
   }
-  for(con=16; con<32; con++) judas_channel[con].smp=NULL;
-  for(con= 0; con<32; con++) channel(con)=0;
+  for(ctr=16; ctr<32; ctr++) judas_channel[ctr].smp=NULL;
+  for(ctr= 0; ctr<32; ctr++) channel(ctr)=0;
 
 
 #endif
@@ -243,9 +243,9 @@ fprintf(stdout,"running with SDL_mixer version: %d.%d.%d\n",
 void ResetSound(void)
 {
 #ifdef DOS
-  int con;
+  int ctr;
   char Device[8]={DEV_NOSOUND,DEV_SB,DEV_SB,DEV_SBPRO,DEV_SB16,DEV_SB16,DEV_GUS,DEV_GUS};
-  unsigned short Puertos[6]={0x210,0x220,0x230,0x240,0x250,0x260};
+  unsigned short Ports[6]={0x210,0x220,0x230,0x240,0x250,0x260};
   unsigned short IRQS[10]  ={2,3,5,7,10,11,12,13,14,15};
   unsigned short DMAS[10]  ={0,1,2,3,4,5,6,7,8,9};
   unsigned short DMAS2[10] ={0,1,2,3,4,5,6,7,8,9};
@@ -258,10 +258,10 @@ void ResetSound(void)
   int interpolation = 1;
 
   StopSong();
-  for(con=0; con<32; con++) StopSound(con);
+  for(ctr=0; ctr<32; ctr++) StopSound(ctr);
 
   judascfg_device = Device[setup->card];
-  judascfg_port   = Puertos[setup->port];
+  judascfg_port   = Ports[setup->port];
   judascfg_irq    = IRQS[setup->irq];
   judascfg_dma1   = DMAS[setup->dma];
   judascfg_dma2   = DMAS2[setup->dma2];
@@ -286,8 +286,8 @@ void ResetSound(void)
     set_mixer();
   }
 
-  for(con=16; con<32; con++) judas_channel[con].smp=NULL;
-  for(con= 0; con<32; con++) channel(con)=0;
+  for(ctr=16; ctr<32; ctr++) judas_channel[ctr].smp=NULL;
+  for(ctr= 0; ctr<32; ctr++) channel(ctr)=0;
 
   MusicChannels=0;
 
@@ -308,14 +308,14 @@ int LoadSound(char *ptr, long Len, int Loop)
   char *riff="RIFF";
   char *wavefmt = "WAVEfmt ";
   char *data = "data";
-	int con=0;
+	int ctr=0;
 	byte res=0;
 	int32_t iLen = (int32_t)Len+36;
 
-	while(con<128 && sonido[con].smp!=NULL) 
-		con++;
+	while(ctr<128 && sounds[ctr].smp!=NULL) 
+		ctr++;
 	
-	if(con==128) return(-1);
+	if(ctr==128) return(-1);
 	
   // check if wav or OGG
   if((ptr[0]=='R' && ptr[1]=='I') || (ptr[0]=='O' && ptr[1]=='g')) {
@@ -357,20 +357,20 @@ int LoadSound(char *ptr, long Len, int Loop)
 	 }
   }
 	// all ok. save our data to free() later
-	sonido[con].smp = 1;
-	sonido[con].sound = sound;
-	sonido[con].loop = Loop;
+	sounds[ctr].smp = 1;
+	sounds[ctr].sound = sound;
+	sounds[ctr].loop = Loop;
 
-	return con;
+	return ctr;
 #endif
 
 #ifdef DOS
 
   SoundInfo *SI=NULL;
-  int con=0;
+  int ctr=0;
 
-  while(con<128 && sonido[con].smp!=NULL) con++;
-  if(con==128) return(-1);
+  while(ctr<128 && sounds[ctr].smp!=NULL) ctr++;
+  if(ctr==128) return(-1);
 
   SI = judas_loadwav_mem(ptr);
   if(judas_error != JUDAS_OK && judas_error == JUDAS_WRONG_FORMAT)
@@ -385,30 +385,30 @@ int LoadSound(char *ptr, long Len, int Loop)
   }
 
   if(Loop) (SI->sample)->voicemode |= VM_LOOP;
-  sonido[con].smp  = SI->sample;
-  sonido[con].freq = SI->SoundFreq;
+  sounds[ctr].smp  = SI->sample;
+  sounds[ctr].freq = SI->SoundFreq;
 
   free(SI);
 
-  return(con);
+  return(ctr);
 #endif
   return -1;
 }
 
-int UnloadSound(int NumSonido)
+int UnloadSound(int NumSound)
 {
 #ifdef MIXER
-	if(sonido[NumSonido].sound) {
-		Mix_FreeChunk(sonido[NumSonido].sound);
-		sonido[NumSonido].smp=NULL;
-		sonido[NumSonido].sound=NULL;
+	if(sounds[NumSound].sound) {
+		Mix_FreeChunk(sounds[NumSound].sound);
+		sounds[NumSound].smp=NULL;
+		sounds[NumSound].sound=NULL;
 	}
 #endif
 #ifdef DOS
-  if(sonido[NumSonido].smp)
+  if(sounds[NumSound].smp)
   {
-    judas_freesample(sonido[NumSonido].smp);
-    sonido[NumSonido].smp=NULL;
+    judas_freesample(sounds[NumSound].smp);
+    sounds[NumSound].smp=NULL;
   }
 #endif
   return(1);
@@ -426,7 +426,7 @@ void doneEffect(int chan, void *data) {
 void freqEffect(int chan, void *stream, int len, void *udata)
 {
   float x=0;
-	tSonido *s = &sonido[channels[chan].num];
+	tSound *s = &sounds[channels[chan].num];
 	int pos = channels[chan].pos;
 
   if(!Mix_Playing(chan))
@@ -492,49 +492,49 @@ void channelDone(int channel) {
   // Done!
 }
 
-int DivPlaySound(int NumSonido, int Volumen, int Frec) // Vol y Frec (0..256)
+int DivPlaySound(int NumSound, int Volume, int Frec) // Vol y Frec (0..256)
 {
-  int con=0;
+  int ctr=0;
   int loop=-1;
 //Mix_HaltChannel(-1);
 #ifdef MIXER
 
 #if defined( __EMSCRIPTEN__ ) && !defined (SDL2)
-  loop = sonido[NumSonido].loop?-1:0;
+  loop = sounds[NumSound].loop?-1:0;
 #endif
   // always play as loop, let the freqEffect manage stop_sound when loop is zero
   // this permits slow playing sound to run for the correct length.
-	con = Mix_PlayChannel(-1, sonido[NumSonido].sound, loop);
+	ctr = Mix_PlayChannel(-1, sounds[NumSound].sound, loop);
 
 
   // if unable to play, return 
-  if(con==-1)
+  if(ctr==-1)
     return(0);
   
   // Make sure all old callbacks are cleared
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
-  Mix_UnregisterAllEffects(con);
+  Mix_UnregisterAllEffects(ctr);
 #endif
 
-  channels[con].freq = Frec;
-  channels[con].vol = Volumen;
-  channels[con].pos = 0;
+  channels[ctr].freq = Frec;
+  channels[ctr].vol = Volume;
+  channels[ctr].pos = 0;
 
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
   // Setup our callback to change frequency
-		Mix_RegisterEffect(con, freqEffect, doneEffect,NULL);
+		Mix_RegisterEffect(ctr, freqEffect, doneEffect,NULL);
     Mix_ChannelFinished(channelDone);
 //  Mix_SetPostMix(freq)
 #endif
 	
-	Mix_Volume(con,Volumen/2);
-	channels[con].num=NumSonido;
-	channels[con].con = con;
+	Mix_Volume(ctr,Volume/2);
+	channels[ctr].num=NumSound;
+	channels[ctr].ctr = ctr;
 
-	Freq_original[con]=channels[con].freq;
+	Freq_original[ctr]=channels[ctr].freq;
 
 #endif
-  return(con);
+  return(ctr);
 }
 
 int StopSound(int NumChannel)
@@ -562,11 +562,11 @@ int x=99;
   return(1);
 }
 
-int ChangeSound(int NumChannel,int Volumen,int Frec)
+int ChangeSound(int NumChannel,int Volume,int Frec)
 {
 #ifdef MIXER
 	channels[NumChannel].freq=Frec;
-	Mix_Volume(NumChannel,Volumen/2);
+	Mix_Volume(NumChannel,Volume/2);
 #endif
 
 #ifdef DOS
@@ -576,7 +576,7 @@ int ChangeSound(int NumChannel,int Volumen,int Frec)
 
   chptr = &judas_channel[NumChannel];
 
-  chptr->vol       = 32*Volumen;
+  chptr->vol       = 32*Volume;
   chptr->freq      = (Freq_original[NumChannel]*Frec)/256;
 
 #endif
@@ -584,11 +584,11 @@ int ChangeSound(int NumChannel,int Volumen,int Frec)
   return(1);
 }
 
-int ChangeChannel(int NumChannel,int Volumen,int Panning)
+int ChangeChannel(int NumChannel,int Volume,int Panning)
 {
   // Set the volume
 #ifdef MIXER
-  Mix_Volume(NumChannel,Volumen/2);
+  Mix_Volume(NumChannel,Volume/2);
 
   // set the balance
   Mix_SetPanning(NumChannel, 255-Panning, Panning);
@@ -601,7 +601,7 @@ int ChangeChannel(int NumChannel,int Volumen,int Panning)
 
   chptr = &judas_channel[NumChannel];
 
-  chptr->mastervol = Volumen/2;
+  chptr->mastervol = Volume/2;
   chptr->panning   = Panning;
 #endif
   return(1);
@@ -632,7 +632,7 @@ int LoadSong(char *ptr, int Len, int Loop)
 {
 #if ! defined( __EMSCRIPTEN__ ) || defined (SDL2)
 #ifdef MIXER
-  int con=0;
+  int ctr=0;
 
   // Check we can load the file
   SDL_RWops *rw = SDL_RWFromMem(ptr, Len); 
@@ -648,15 +648,15 @@ int LoadSong(char *ptr, int Len, int Loop)
   Mix_FreeMusic(music);
   SDL_FreeRW(rw);
 
-  while(con<128 && cancion[con].ptr!=NULL) con++;
-  if(con==128) return(-1);
+  while(ctr<128 && songs[ctr].ptr!=NULL) ctr++;
+  if(ctr==128) return(-1);
 
 #ifdef DOS
 
   judas_loadxm_mem(ptr);
   if(judas_error == JUDAS_OK)
   {
-    cancion[con].SongType=XM;
+    songs[ctr].SongType=XM;
     judas_freexm();
   }
   else if(judas_error == JUDAS_WRONG_FORMAT)
@@ -664,7 +664,7 @@ int LoadSong(char *ptr, int Len, int Loop)
     judas_loads3m_mem(ptr);
     if(judas_error == JUDAS_OK)
     {
-      cancion[con].SongType=S3M;
+      songs[ctr].SongType=S3M;
       judas_frees3m();
     }
     else if(judas_error == JUDAS_WRONG_FORMAT)
@@ -672,7 +672,7 @@ int LoadSong(char *ptr, int Len, int Loop)
       judas_loadmod_mem(ptr);
       if(judas_error == JUDAS_OK)
       {
-        cancion[con].SongType=MOD;
+        songs[ctr].SongType=MOD;
         judas_freemod();
       }
     }
@@ -681,23 +681,23 @@ int LoadSong(char *ptr, int Len, int Loop)
   if(judas_error != JUDAS_OK) return(-1);
 #endif
 
-  if((cancion[con].ptr=(char *)malloc(Len))==NULL) 
+  if((songs[ctr].ptr=(char *)malloc(Len))==NULL) 
     return(-1);
 
-  memcpy(cancion[con].ptr, ptr, Len);
-  cancion[con].loop=Loop;
+  memcpy(songs[ctr].ptr, ptr, Len);
+  songs[ctr].loop=Loop;
 
-  rw = SDL_RWFromMem(cancion[con].ptr, Len); 
+  rw = SDL_RWFromMem(songs[ctr].ptr, Len); 
   music = Mix_LoadMUS_RW(rw
 #ifdef SDL2
     ,0
 #endif
     ); 
 
-  cancion[con].music = music;
-  cancion[con].rw = rw;
+  songs[ctr].music = music;
+  songs[ctr].rw = rw;
 
-  return(con);
+  return(ctr);
 #endif
 #endif
 return -1;
@@ -705,40 +705,40 @@ return -1;
 
 int PlaySong(int NumSong)
 {
-  if(NumSong>127 || !cancion[NumSong].ptr) return(-1);
+  if(NumSong>127 || !songs[NumSong].ptr) return(-1);
 
   StopSong();
 
 #ifdef MIXER
-	if(cancion[NumSong].music) {
-		Mix_PlayMusic(cancion[NumSong].music, cancion[NumSong].loop?-1:0);
+	if(songs[NumSong].music) {
+		Mix_PlayMusic(songs[NumSong].music, songs[NumSong].loop?-1:0);
 	}
 #endif
 
 #ifdef DOS
-  switch(cancion[NumSong].SongType)
+  switch(songs[NumSong].SongType)
   {
     case XM:
-      judas_loadxm_mem(cancion[NumSong].ptr);
-      if(cancion[NumSong].loop) judas_playxm(1000000000);
+      judas_loadxm_mem(songs[NumSong].ptr);
+      if(songs[NumSong].loop) judas_playxm(1000000000);
       else                      judas_playxm(1);
       MusicChannels = judas_getxmchannels();
       break;
     case S3M:
-      judas_loads3m_mem(cancion[NumSong].ptr);
-      if(cancion[NumSong].loop) judas_plays3m(1000000000);
+      judas_loads3m_mem(songs[NumSong].ptr);
+      if(songs[NumSong].loop) judas_plays3m(1000000000);
       else                      judas_plays3m(1);
       MusicChannels = judas_gets3mchannels();
       break;
     case MOD:
-      judas_loadmod_mem(cancion[NumSong].ptr);
-      if(cancion[NumSong].loop) judas_playmod(1000000000);
+      judas_loadmod_mem(songs[NumSong].ptr);
+      if(songs[NumSong].loop) judas_playmod(1000000000);
       else                      judas_playmod(1);
       MusicChannels = judas_getmodchannels();
       break;
   }
 
-  SongType = cancion[NumSong].SongType;
+  SongType = songs[NumSong].SongType;
 
 #endif
   return(1);
@@ -766,17 +766,17 @@ Mix_HaltMusic();
 
 void UnloadSong(int NumSong)
 {
-  if(NumSong>127 || !cancion[NumSong].ptr) return;
+  if(NumSong>127 || !songs[NumSong].ptr) return;
 #ifdef MIXER
-Mix_FreeMusic(cancion[NumSong].music);
-  free(cancion[NumSong].ptr);
-  SDL_FreeRW(cancion[NumSong].rw);
+Mix_FreeMusic(songs[NumSong].music);
+  free(songs[NumSong].ptr);
+  SDL_FreeRW(songs[NumSong].rw);
 
-  cancion[NumSong].music=NULL;
-  cancion[NumSong].rw=NULL;
+  songs[NumSong].music=NULL;
+  songs[NumSong].rw=NULL;
 #endif  
-  cancion[NumSong].ptr=NULL;
-  cancion[NumSong].loop=0;
+  songs[NumSong].ptr=NULL;
+  songs[NumSong].loop=0;
 
 }
 

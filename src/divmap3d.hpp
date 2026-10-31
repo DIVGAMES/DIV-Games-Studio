@@ -51,13 +51,13 @@ typedef struct type_map {
   tregion *regions[MAX_REGIONS];
   int32_t num_flags;
   tflag *flags[MAX_FLAGS];
-  int32_t bbox_x_ini,bbox_y_ini;
-  int32_t bbox_x_fin,bbox_y_fin;
-  int32_t fondo;
+  int32_t bbox_x_start,bbox_y_start;
+  int32_t bbox_x_end,bbox_y_end;
+  int32_t background;
 } tmap, *lptmap;
 
 void *lf_malloc(int32_t size);
-void lf_free(void *puntero);
+void lf_free(void *pointer);
 void lf_free_all();
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -151,7 +151,7 @@ struct ZF_Wall {    // Wall structure
 //  Declaracion de funciones
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-void map_saveedit(FILE *fichero, lptmap map_aux);
-void map_readedit(FILE *fichero, lptmap map_aux);
+void map_saveedit(FILE *file, lptmap map_aux);
+void map_readedit(FILE *file, lptmap map_aux);
 
 #endif

@@ -22,7 +22,7 @@ void init_system()
 {
   ERROR=NULL;
 
-  IniMath();
+  InitMath();
   myvideo =new Video(640,480,16);
 
   onexit(end_system);
@@ -38,7 +38,7 @@ void end_system()
 
 void main()
 {
-  tvisor datos_render;
+  tviewer render_data;
 
   //---------------------------------------------------------------------------
   //  Inicializo el sistema
@@ -47,19 +47,19 @@ void main()
 
   //---------------------------------------------------------------------------
   //---------------------------------------------------------------------------
-  datos_render.tipo=0;
-  datos_render.porcentaje=100;
-  datos_render.alfa=1.57;
-  datos_render.beta=0.78;
-  datos_render.animacion="anims\\anim.a3d";
-  datos_render.num_animacion=1;
-  datos_render.frame=7;
-  datos_render.nombre="models\\tenista.o3d";
-  datos_render.dac=NULL;
-  datos_render.textura="data\\tenista.dat";
+  render_data.type=0;
+  render_data.percentage=100;
+  render_data.alpha=1.57;
+  render_data.beta=0.78;
+  render_data.animation="anims\\anim.a3d";
+  render_data.num_animation=1;
+  render_data.frame=7;
+  render_data.name="models\\tenista.o3d";
+  render_data.dac=NULL;
+  render_data.texture="data\\tenista.dat";
 
   //---------------------------------------------------------------------------
   //  Activo el visor
   //---------------------------------------------------------------------------
-  visor(&datos_render);
+  viewer(&render_data);
 }

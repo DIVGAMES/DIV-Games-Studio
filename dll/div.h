@@ -268,7 +268,7 @@ void post_process_m7(void);                 // Apply effect on mode 7 window
 void post_process_buffer(void);             // Apply effect on buffer (video)
 void post_process(void);                    // Modify process variables
 void put_sprite(unsigned char * si, int32_t x,  // Put one sprite
-     int32_t y, int32_t an, int32_t al, int32_t xg, int32_t yg, int32_t ang, int32_t size, int32_t flags);
+     int32_t y, int32_t w, int32_t h, int32_t xg, int32_t yg, int32_t ang, int32_t size, int32_t flags);
 void ss_init(void);                         // Screen Saver initialisation function
 void ss_frame(void);                        // Screen Saver frame function
 void ss_end(void);                          // Screen Saver ending function
@@ -340,7 +340,7 @@ EXTERN FILE *(*div_fopen )(char *,char *);             // Don't use fopen()!!!
 EXTERN void  (*div_fclose)(FILE *);                    // Don't use fclose()!!!
 
 EXTERN int32_t   (*div_rand)(int32_t rang_low,int32_t rang_hi);    // Random between two numbers
-EXTERN void  (*div_text_out)(char *texto,int32_t x,int32_t y); // Screen print function
+EXTERN void  (*div_text_out)(char *texts,int32_t x,int32_t y); // Screen print function
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 // Macros to get parameters and return values in new functions

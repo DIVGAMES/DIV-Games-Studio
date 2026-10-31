@@ -76,16 +76,16 @@ void sbmalloc ( void )
   union    REGS r;
   unsigned char *data;
   unsigned int  physical;
-  unsigned int  Tam;
-  unsigned int  con;
+  unsigned int  Size;
+  unsigned int  ctr;
 
-  Tam=65536*2;
+  Size=65536*2;
 
-  for(con=0; con<2; con++)
+  for(ctr=0; ctr<2; ctr++)
   {
   	memset(&r, 0, sizeof(r));
   	r.w.ax = 0x0100;				  // Función Reservar Bloque Mem. DOS
-  	r.w.bx = (Tam + 15) >> 4; // Parrafos a reservar
+  	r.w.bx = (Size + 15) >> 4; // Parrafos a reservar
   	int386 (0x31, &r, &r);
     if (r.x.cflag)
     {
@@ -93,7 +93,7 @@ void sbmalloc ( void )
       return;
     }
     data              = (unsigned char *)r.w.ax;
-    dma_selector[con] = r.w.dx;
+    dma_selector[ctr] = r.w.dx;
     if(data==NULL)
     {
       sbfree();
@@ -103,24 +103,24 @@ void sbmalloc ( void )
     physical=((unsigned int)data & 0xFFFF) << 4;
     physical+=0x0FFFFL;
     physical&=0xF0000L;
-    aligned_physical[con]=(physical>>16)&15;
-    aligned[con]=(unsigned char *)(((unsigned int)aligned_physical[con]<<16)&0xF0000);
+    aligned_physical[ctr]=(physical>>16)&15;
+    aligned[ctr]=(unsigned char *)(((unsigned int)aligned_physical[ctr]<<16)&0xF0000);
   }
 }
 //------------------------------------------------------------------------------
 void sbfree(void)
 {
 	union	REGS	regs;
-  int         con;
+  int         ctr;
 
-  for(con=0; con<2; con++)
+  for(ctr=0; ctr<2; ctr++)
   {
-    if(aligned[con])
+    if(aligned[ctr])
     {
     	regs.w.ax = 0x101;
-	    regs.w.dx = dma_selector[con];
+	    regs.w.dx = dma_selector[ctr];
   	  int386(0x31,&regs,&regs);
-      aligned[con]=NULL;
+      aligned[ctr]=NULL;
     }
   }
 }

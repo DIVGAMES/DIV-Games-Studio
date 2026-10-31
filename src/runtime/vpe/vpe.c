@@ -9,13 +9,13 @@ int    VPE_fog    =0;
 //  Inicializa la libreria
 //═════════════════════════════════════════════════════════════════════════════
 
-void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto)
+void _vpe_start(char *file,char *buffer,int width,int height)
 {
-  InitGraph(buffer,ancho,alto); // Init gfx system
+  InitGraph(buffer,width,height); // Init gfx system
   VPE_Init(); // Init VPE
-  VPE_Config(ancho,alto);       // Configure VPE
+  VPE_Config(width,height);       // Configure VPE
 
-  LoadZone(fichero);            // Load zone
+  LoadZone(file);            // Load zone
   VPE_Start();                  // Start the engine
 }
 
@@ -23,7 +23,7 @@ void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto)
 //  Finaliza la libreria
 //═════════════════════════════════════════════════════════════════════════════
 
-void _vpe_fin()
+void _vpe_end()
 {
   VPE_Stop();     // Stop the engine
   VPE_Shut();     // Shut down VPE

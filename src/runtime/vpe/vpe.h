@@ -255,7 +255,7 @@ void            SetObjRegion(struct Object *,struct Region *);// Set r. for o.
 void            ClearObjRegion(struct Object *);// Clear reg. from an obj.
 void SetViewSize(struct View *,int,int,VPEByte *,int);// Set view size
 void SetViewDir(struct View *,int,int);   // Set view direction
-void SetActiveView(int altura,int objeto,int w,int h,VPEByte *buf_ptr,int buf_width);
+void SetActiveView(int height,int object,int w,int h,VPEByte *buf_ptr,int buf_width);
 
 //================
 // Math functions
@@ -284,9 +284,9 @@ VPEWord GetPickWatch(void *,VPEFixed *);   // Get result of pick watching
 //  Funciones de movimiento
 //==================
 
-void _object_avance(int num_object,int angulo,int velocidad);
-void _vpe_inicio(char *fichero,char *buffer,int ancho,int alto);
-void _vpe_fin();
-void InitGraph(char *buffer,int ancho,int alto);
+void _object_advance(int num_object,int angle,int speed);
+void _vpe_start(char *file,char *buffer,int width,int height);
+void _vpe_end();
+void InitGraph(char *buffer,int width,int height);
 
 #endif

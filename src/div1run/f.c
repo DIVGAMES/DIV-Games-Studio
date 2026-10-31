@@ -96,7 +96,7 @@ void set_volume(void);
 
 void signal_tree(int p, int s);
 void kill_invisible(void);
-int joy_position(int eje);
+int joy_position(int axis);
 
 // sound prototypes
 int LoadSound(char *ptr, long Len, int Loop);
@@ -203,7 +203,7 @@ void function(void) {
     case 80: _net_init_modem(); break;
     case 81: _net_init_serial(); break;
     case 82: _net_send(); break;
-    case 83: _net_asign(); break;
+    case 83: _net_assign(); break;
 #endif
     case 84: path_find(); break;
     case 85: path_line(); break;
@@ -218,39 +218,39 @@ void function(void) {
 //      Signal(proceso,señal)
 //════════════════════════════════════════════════════════════════════════════
 
-static int n_reloj=0, o_reloj=0;
+static int n_clock=0, o_clock=0;
 
-int get_reloj(void) {
-/*	n_reloj=SDL_GetTicks()/10;
-	reloj+=(n_reloj-o_reloj);
-	o_reloj=n_reloj;
+int get_clock(void) {
+/*	n_clock=SDL_GetTicks()/10;
+	clock_ticks+=(n_clock-o_clock);
+	o_clock=n_clock;
 	*/
-	reloj=SDL_GetTicks()/10;
-	return reloj;
+	clock_ticks=SDL_GetTicks()/10;
+	return clock_ticks;
 	
 }
 
 void _signal(void) {
   int i;
-  bp=pila[sp-1];
+  bp=opstack[sp-1];
   if ((bp&1) && bp>=id_init && bp<=id_end && bp==mem[bp]) {
     if (mem[bp+_Status])
-      if (pila[sp]<100) mem[bp+_Status]=pila[sp--]+1;
+      if (opstack[sp]<100) mem[bp+_Status]=opstack[sp--]+1;
       else {
-        mem[bp+_Status]=pila[sp--]-99;
-        if (mem[bp+_Son]) signal_tree(mem[bp+_Son],pila[sp+1]-99);
+        mem[bp+_Status]=opstack[sp--]-99;
+        if (mem[bp+_Son]) signal_tree(mem[bp+_Son],opstack[sp+1]-99);
       }
-    else pila[--sp]=0; // Devuelve el proceso o 0 si estaba muerto
+    else opstack[--sp]=0; // Devuelve el proceso o 0 si estaba muerto
   } else {
     for (i=id_start; i<=id_end; i+=iloc_len)
-      if (mem[i+_Status] && mem[i+_Bloque]==bp) {
-        if (pila[sp]<100) mem[i+_Status]=pila[sp]+1;
+      if (mem[i+_Status] && mem[i+_Block]==bp) {
+        if (opstack[sp]<100) mem[i+_Status]=opstack[sp]+1;
         else {
-          mem[i+_Status]=pila[sp]-99;
-          if (mem[i+_Son]) signal_tree(mem[i+_Son],pila[sp]-99);
+          mem[i+_Status]=opstack[sp]-99;
+          if (mem[i+_Son]) signal_tree(mem[i+_Son],opstack[sp]-99);
         }
       }
-    pila[--sp]=0;
+    opstack[--sp]=0;
   }
 
 }
@@ -268,9 +268,9 @@ void signal_tree(int p, int s) {
 //════════════════════════════════════════════════════════════════════════════
 
 void _key(void) {
-  if (pila[sp]<=0 || pila[sp]>=128) { e(e101); return; }
-//  printf("Looking for key: %d %d\n",pila[sp],key(pila[sp]));
-  pila[sp]=kbdFLAGS[pila[sp]];
+  if (opstack[sp]<=0 || opstack[sp]>=128) { e(e101); return; }
+//  printf("Looking for key: %d %d\n",opstack[sp],key(opstack[sp]));
+  opstack[sp]=kbdFLAGS[opstack[sp]];
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -391,32 +391,32 @@ FILE * _open_file(char * file) {
 //      Load_pal(fichero)
 //════════════════════════════════════════════════════════════════════════════
 
-int hacer_fade=0;
+int do_fade=0;
 
 void load_pal(void) {
   byte pal[1352];
   int m,offs=8;
 
-  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
-    pila[sp]=0; e(e102);
+  if ((es=div_open_file((byte*)&mem[itxt+opstack[sp]]))==NULL) {
+    opstack[sp]=0; e(e102);
   } else {
     fread(pal,1,1352,es); fclose(es);
     if (strcmp((char *)pal,"pal\x1a\x0d\x0a"))
       if (strcmp((char *)pal,"fpg\x1a\x0d\x0a"))
         if (strcmp((char *)pal,"fnt\x1a\x0d\x0a"))
           if (strcmp((char *)pal,"map\x1a\x0d\x0a")) { e(e103); return; } else offs=48;
-    for (m=0;m<768;m++) if (pal[m+offs]!=paleta[m]) break;
+    for (m=0;m<768;m++) if (pal[m+offs]!=palette[m]) break;
     if (m<768) {
       dr=dacout_r; dg=dacout_g; db=dacout_b;
-      if (dr<63 || dg<63 || db<63) { hacer_fade=1; fade_off(); sp--; }
-      memcpy(paleta,pal+offs,768);
-      nueva_paleta();
-    } paleta_cargada=1;
-    pila[sp]=1;
+      if (dr<63 || dg<63 || db<63) { do_fade=1; fade_off(); sp--; }
+      memcpy(palette,pal+offs,768);
+      update_palette();
+    } loaded_palette=1;
+    opstack[sp]=1;
   }
 }
 
-void nueva_paleta(void) {
+void update_palette(void) {
   byte *p,c0,c1;
   int n;
 
@@ -425,13 +425,13 @@ void nueva_paleta(void) {
     process_palette();
   }
 
-  memcpy(dac,paleta,768);
+  memcpy(dac,palette,768);
   init_ghost();
-  crear_ghost();
+  create_ghost();
 
   find_color(0,0,0); c0=find_col;
   find_color(63,63,63); c1=find_col;
-  p=fonts[0]+1356+sizeof(TABLAFNT)*256;
+  p=fonts[0]+1356+sizeof(FNTTABLE)*256;
 
   for (n=0;n<12288;n++) {
     if (*p==last_c1) {
@@ -439,14 +439,14 @@ void nueva_paleta(void) {
     } else p++;
   } last_c1=c1;
 
-  set_paleta();
+  set_palette();
 
   #ifdef DEBUG
   init_colors();
   new_palette=1;
   #endif
 
-  if (hacer_fade) { hacer_fade=0; dacout_r=dr; dacout_g=dg; dacout_b=db; fade_on(); sp--; }
+  if (do_fade) { do_fade=0; dacout_r=dr; dacout_g=dg; dacout_b=db; fade_on(); sp--; }
 
 }
 
@@ -455,8 +455,8 @@ void nueva_paleta(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void unload_map(void) {
-  if (pila[sp]<1000 || pila[sp]>1999) return;
-  if (g[0].grf[pila[sp]]!=0) { free((byte*)(g[0].grf[pila[sp]])-1394+64); g[0].grf[pila[sp]]=0; }
+  if (opstack[sp]<1000 || opstack[sp]>1999) return;
+  if (g[0].grf[opstack[sp]]!=0) { free((byte*)(g[0].grf[opstack[sp]])-1394+64); g[0].grf[opstack[sp]]=0; }
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -464,12 +464,12 @@ void unload_map(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void load_map(void) {
-  int ancho,alto,npuntos,m;
+  int width,height,npoints,m;
   byte * ptr;
-  int old_reloj=get_reloj();
+  int old_clock=get_clock();
 
-  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
-    pila[sp]=0; e(e143);
+  if ((es=div_open_file((byte*)&mem[itxt+opstack[sp]]))==NULL) {
+    opstack[sp]=0; e(e143);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
     if ((ptr=(byte *)malloc(file_len))!=NULL) {
@@ -480,32 +480,32 @@ void load_map(void) {
 
       if (process_map!=NULL) process_map((char *)ptr,file_len);
 
-      if (!paleta_cargada) {
-        for (m=0;m<768;m++) if (ptr[m+48]!=paleta[m]) break;
+      if (!loaded_palette) {
+        for (m=0;m<768;m++) if (ptr[m+48]!=palette[m]) break;
         if (m<768) {
           dr=dacout_r; dg=dacout_g; db=dacout_b;
-          if (dr<63 || dg<63 || db<63) { hacer_fade=1; fade_off(); sp--; }
-          memcpy(paleta,ptr+48,768);
-          nueva_paleta();
-        } paleta_cargada=1;
+          if (dr<63 || dg<63 || db<63) { do_fade=1; fade_off(); sp--; }
+          memcpy(palette,ptr+48,768);
+          update_palette();
+        } loaded_palette=1;
       }
 
-      ancho=*(word*)(ptr+8);
-      alto=*(word*)(ptr+10);
-      npuntos=*(word*)(ptr+1392);
+      width=*(word*)(ptr+8);
+      height=*(word*)(ptr+10);
+      npoints=*(word*)(ptr+1392);
 
       ptr=ptr+1394-64;
 
-      *((int*)ptr+13)=ancho;
-      *((int*)ptr+14)=alto;
-      *((int*)ptr+15)=npuntos;
+      *((int*)ptr+13)=width;
+      *((int*)ptr+14)=height;
+      *((int*)ptr+15)=npoints;
 
       g[0].grf[next_map_code]=(int*)ptr;
 
-      pila[sp]=next_map_code++;
+      opstack[sp]=next_map_code++;
 
-    } else { fclose(es); pila[sp]=0; e(e100); }
-  } reloj=old_reloj;
+    } else { fclose(es); opstack[sp]=0; e(e100); }
+  } clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -514,25 +514,25 @@ void load_map(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void new_map(void) {
-  int ancho,alto,cx,cy,color;
+  int width,height,cx,cy,color;
   byte * ptr;
 
-  color=pila[sp--]; cy=pila[sp--]; cx=pila[sp--];
-  alto=pila[sp--]; ancho=pila[sp]; pila[sp]=0;
+  color=opstack[sp--]; cy=opstack[sp--]; cx=opstack[sp--];
+  height=opstack[sp--]; width=opstack[sp]; opstack[sp]=0;
 
   // Comprueba límites an/al/color ...
 
-  if (ancho<1 || alto<1 || ancho>32768 || alto>32768) { e(e153); return; }
+  if (width<1 || height<1 || width>32768 || height>32768) { e(e153); return; }
   if (color<0 || color>255) { e(e154); return; }
-  if (cx<0 || cy<0 || cx>=ancho || cy>=alto) { e(e155); return; }
+  if (cx<0 || cy<0 || cx>=width || cy>=height) { e(e155); return; }
 
-  if ((ptr=(byte *)malloc(64+4+ancho*alto))!=NULL) {
-    *((int*)ptr+13)=ancho; *((int*)ptr+14)=alto;
+  if ((ptr=(byte *)malloc(64+4+width*height))!=NULL) {
+    *((int*)ptr+13)=width; *((int*)ptr+14)=height;
     *((int*)ptr+15)=1; // Se define un punto de control (el centro)
     *((word*)ptr+32)=cx; *((word*)ptr+33)=cy;
-    memset(ptr+4+64,color,ancho*alto);
+    memset(ptr+4+64,color,width*height);
     g[0].grf[next_map_code]=(int*)ptr;
-    pila[sp]=next_map_code++;
+    opstack[sp]=next_map_code++;
   } else e(e100);
 }
 
@@ -545,19 +545,19 @@ void load_fpg(void) {
   int n=0,m;
   int * * lst;
   byte * ptr;
-  int old_reloj=get_reloj();
+  int old_clock=get_clock();
  int * iptr;
   while (n<max_fpgs) {
     if (g[n].fpg==0) break; n++;
-  } if (n==max_fpgs) { pila[sp]=0; e(e104); return; }
+  } if (n==max_fpgs) { opstack[sp]=0; e(e104); return; }
 
   if (n) {
-    if ((lst=(int **)malloc(sizeof(int*)*1000))==NULL) { pila[sp]=0; e(e100); return; }
+    if ((lst=(int **)malloc(sizeof(int*)*1000))==NULL) { opstack[sp]=0; e(e100); return; }
   } else lst=g[0].grf;
   memset(lst,0,sizeof(int*)*1000);
 
-  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
-    pila[sp]=0; e(e105);
+  if ((es=div_open_file((byte*)&mem[itxt+opstack[sp]]))==NULL) {
+    opstack[sp]=0; e(e105);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
 #ifdef __EMSCRIPTEN__ 
@@ -572,7 +572,7 @@ file_len=1352; // just palette
 #ifdef STDOUTLOG
 	//printf("fpg pointer is %x\n",(int**)ptr);
 #endif
-      } else { fclose(es); pila[sp]=0; e(e100); return; }
+      } else { fclose(es); opstack[sp]=0; e(e100); return; }
     }
   
 
@@ -580,21 +580,21 @@ file_len=1352; // just palette
 
       if (process_fpg!=NULL) process_fpg((char *)ptr,file_len);
 
-      if (!paleta_cargada) {
-        for (m=0;m<768;m++) if (ptr[m+8]!=paleta[m]) break;
+      if (!loaded_palette) {
+        for (m=0;m<768;m++) if (ptr[m+8]!=palette[m]) break;
         if (m<768) {
           dr=dacout_r; dg=dacout_g; db=dacout_b;
-          if (dr<63 || dg<63 || db<63) { hacer_fade=1; fade_off(); sp--; }
-          memcpy(paleta,ptr+8,768);
-          nueva_paleta();
-        } paleta_cargada=1;
+          if (dr<63 || dg<63 || db<63) { do_fade=1; fade_off(); sp--; }
+          memcpy(palette,ptr+8,768);
+          update_palette();
+        } loaded_palette=1;
       }
 
       g[n].grf=lst; 
 
 #ifdef __EMSCRIPTEN__
 // do something different
-es=div_open_file((byte*)&mem[itxt+pila[sp]]);
+es=div_open_file((byte*)&mem[itxt+opstack[sp]]);
 //printf("File pointer: %x\n",es);
 fseek(es,0,SEEK_END); file_len=ftell(es);
 //printf("File len: %d\n",file_len);
@@ -615,7 +615,7 @@ while(ftell(es)<file_len && len_>0 && num_>0) {
  	lst[num_]=iptr=(int *)mptr;
 // 	 printf("mem ptr is %x\n",iptr);
 // 	  	 if (m!=palcrc) {
-//		 adaptar(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
+//		 adapt(ptr+64+iptr[15]*4, iptr[13]*iptr[14], (byte*)(g[num].fpg)+8,&xlat[0]);
 // 	 } 	
 }
 fclose(es);
@@ -629,71 +629,71 @@ ptr+=1352; // Longitud cabecera fpg
 
 #endif
       
-pila[sp]=n;
-reloj=old_reloj;
+opstack[sp]=n;
+clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Start_scroll(snum,fichero,graf1,graf2,region,flags)
+//      Start_scroll(snum,fichero,graph1,graph2,region,flags)
 //════════════════════════════════════════════════════════════════════════════
 
-void set_scroll(int plano,int x,int y);
+void set_scroll(int plane,int x,int y);
 
 void start_scroll(void) {
 
-  int file,graf1,graf2,reg,s;
+  int file,graph1,graph2,reg,s;
   int *ptr1,*ptr2,mf;
 
-  mf=pila[sp--]; reg=pila[sp--];
-  graf2=pila[sp--]; graf1=pila[sp--];
-  file=pila[sp--]; snum=pila[sp]; pila[sp]=0;
-//printf("Start scroll: %d %d %d %d %d %d\n",snum,file,graf1,graf2,reg,mf);
+  mf=opstack[sp--]; reg=opstack[sp--];
+  graph2=opstack[sp--]; graph1=opstack[sp--];
+  file=opstack[sp--]; snum=opstack[sp]; opstack[sp]=0;
+//printf("Start scroll: %d %d %d %d %d %d\n",snum,file,graph1,graph2,reg,mf);
   if (snum<0||snum>9) { e(e107); return; }
 
   iscroll[snum].map_flags=mf;
 
-  if (iscroll[snum].on) { pila[sp]=snum; stop_scroll(); }
+  if (iscroll[snum].on) { opstack[sp]=snum; stop_scroll(); }
 
   if (reg>=0 && reg<max_region) {
     iscroll[snum].x=region[reg].x0; iscroll[snum].y=region[reg].y0;
-    iscroll[snum].an=region[reg].x1-region[reg].x0;
-    iscroll[snum].al=region[reg].y1-region[reg].y0;
+    iscroll[snum].w=region[reg].x1-region[reg].x0;
+    iscroll[snum].h=region[reg].y1-region[reg].y0;
   } else { e(e108); return; }
 
-  if (iscroll[snum].an==0 || iscroll[snum].al==0) { e(e146); return; }
+  if (iscroll[snum].w==0 || iscroll[snum].h==0) { e(e146); return; }
 
   if (file<0 || file>max_fpgs) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf1<0 || graf1>=max_grf) { e(e110); return; }
-  if (graf2<0 || graf2>=max_grf) { e(e110); return; }
+  if (graph1<0 || graph1>=max_grf) { e(e110); return; }
+  if (graph2<0 || graph2>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
-  ptr1=g[file].grf[graf1]; ptr2=g[file].grf[graf2];
+  ptr1=g[file].grf[graph1]; ptr2=g[file].grf[graph2];
   if (ptr1==NULL && ptr2==NULL) { e(e112); return; }
   if (ptr1==NULL) { ptr1=ptr2; ptr2=NULL; }
 
   if (ptr2==NULL) s=1; else s=2; // Tipo de scroll, normal(1) o parallax(2)
 
-  iscroll[snum].map1_an=ptr1[13]; iscroll[snum].map1_al=ptr1[14]; iscroll[snum].map1=(byte*)ptr1+64+ptr1[15]*4;
-  if (iscroll[snum].an>iscroll[snum].map1_an) iscroll[snum].map_flags|=1;
-  if (iscroll[snum].al>iscroll[snum].map1_al) iscroll[snum].map_flags|=2;
+  iscroll[snum].map1_width=ptr1[13]; iscroll[snum].map1_height=ptr1[14]; iscroll[snum].map1=(byte*)ptr1+64+ptr1[15]*4;
+  if (iscroll[snum].w>iscroll[snum].map1_width) iscroll[snum].map_flags|=1;
+  if (iscroll[snum].h>iscroll[snum].map1_height) iscroll[snum].map_flags|=2;
   if (ptr1[15]==0) { iscroll[snum].map1_x=0; iscroll[snum].map1_y=0; }
   else { iscroll[snum].map1_x=*((word*)ptr1+32); iscroll[snum].map1_y=*((word*)ptr1+33); }
-  if ((iscroll[snum]._scr1=(byte*)malloc(iscroll[snum].an*(iscroll[snum].al+1)))==NULL) { e(e100); return; }
-  if ((iscroll[snum].fast=(tfast*)malloc(iscroll[snum].al*sizeof(tfast)))==NULL) { e(e100); return; }
-  iscroll[snum].scr1=iscroll[snum]._scr1; iscroll[snum].block1=iscroll[snum].al;
+  if ((iscroll[snum]._scr1=(byte*)malloc(iscroll[snum].w*(iscroll[snum].h+1)))==NULL) { e(e100); return; }
+  if ((iscroll[snum].fast=(tfast*)malloc(iscroll[snum].h*sizeof(tfast)))==NULL) { e(e100); return; }
+  iscroll[snum].scr1=iscroll[snum]._scr1; iscroll[snum].block1=iscroll[snum].h;
   iscroll[snum].on=s; set_scroll(0,iscroll[snum].map1_x,iscroll[snum].map1_y);
   iscroll[snum].on=0; // Si hay algún error (malloc), no habrá scroll
 
   if (s==2) {
-    iscroll[snum].map2_an=ptr2[13]; iscroll[snum].map2_al=ptr2[14]; iscroll[snum].map2=(byte*)ptr2+64+ptr2[15]*4;
-    if (iscroll[snum].an>iscroll[snum].map2_an) iscroll[snum].map_flags|=4;
-    if (iscroll[snum].al>iscroll[snum].map2_al) iscroll[snum].map_flags|=8;
+    iscroll[snum].map2_width=ptr2[13]; iscroll[snum].map2_height=ptr2[14]; iscroll[snum].map2=(byte*)ptr2+64+ptr2[15]*4;
+    if (iscroll[snum].w>iscroll[snum].map2_width) iscroll[snum].map_flags|=4;
+    if (iscroll[snum].h>iscroll[snum].map2_height) iscroll[snum].map_flags|=8;
     if (ptr2[15]==0) { iscroll[snum].map2_x=0; iscroll[snum].map2_y=0; }
     else { iscroll[snum].map2_x=*((word*)ptr2+32); iscroll[snum].map2_y=*((word*)ptr2+33); }
-    if ((iscroll[snum]._scr2=(byte*)malloc(iscroll[snum].an*(iscroll[snum].al+1)))==NULL) {
+    if ((iscroll[snum]._scr2=(byte*)malloc(iscroll[snum].w*(iscroll[snum].h+1)))==NULL) {
       free(iscroll[snum]._scr1); free(iscroll[snum].fast); e(e100); return;
     }
-    iscroll[snum].scr2=iscroll[snum]._scr2; iscroll[snum].block2=iscroll[snum].al;
+    iscroll[snum].scr2=iscroll[snum]._scr2; iscroll[snum].block2=iscroll[snum].h;
     iscroll[snum].on=2; set_scroll(1,iscroll[snum].map2_x,iscroll[snum].map2_y);
   }
 
@@ -710,7 +710,7 @@ void start_scroll(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void refresh_scroll(void) {
-  snum=pila[sp];
+  snum=opstack[sp];
   set_scroll(0,iscroll[snum].map1_x,iscroll[snum].map1_y);
   set_scroll(1,iscroll[snum].map2_x,iscroll[snum].map2_y);
 }
@@ -719,13 +719,13 @@ void refresh_scroll(void) {
 //      Move_scroll(snum) - mueve automática o manualmente el scroll
 //════════════════════════════════════════════════════════════════════════════
 
-void mover_scroll(int);
+void advance_scroll(int);
 
 void _move_scroll(void) {
-  snum=pila[sp];
+  snum=opstack[sp];
   if(snum<0||snum>9) { e(e107); return; }
-  if (iscroll[snum].on==1) mover_scroll(0);
-  else if (iscroll[snum].on==2) mover_scroll(1);
+  if (iscroll[snum].on==1) advance_scroll(0);
+  else if (iscroll[snum].on==2) advance_scroll(1);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -734,7 +734,7 @@ void _move_scroll(void) {
 
 void stop_scroll(void) {
 
-  snum=pila[sp];
+  snum=opstack[sp];
 
   if(snum<0||snum>9) { e(e107); return; }
 
@@ -758,7 +758,7 @@ void stop_scroll(void) {
 //      Funcion que mata los procesos de scroll o modo-7 que ya no se ven
 //════════════════════════════════════════════════════════════════════════════
 
-void elimina_proceso(int);
+void delete_process(int);
 
 void kill_invisible(void) {
   int i,n;
@@ -767,7 +767,7 @@ void kill_invisible(void) {
       if (iscroll[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) break;
     if (mem[i+_Ctype]==2) for(n=0;n<10;n++)
       if (im7[n].on && (!mem[i+_Cnumber] || (mem[i+_Cnumber]&(1<<n)))) break;
-    if (n==10) elimina_proceso(i);
+    if (n==10) delete_process(i);
   }
 }
 
@@ -776,19 +776,19 @@ void kill_invisible(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void get_id(void) {
-  int i,bloque;
+  int i,block;
 
-  bloque=pila[sp];
-  if (mem[id+_IdScan]==0 || bloque!=-mem[id+_BlScan]) {
-    mem[id+_BlScan]=-bloque; i=id_init;
-  } else if (mem[id+_IdScan]>id_end) { pila[sp]=0; return; }
+  block=opstack[sp];
+  if (mem[id+_IdScan]==0 || block!=-mem[id+_BlScan]) {
+    mem[id+_BlScan]=-block; i=id_init;
+  } else if (mem[id+_IdScan]>id_end) { opstack[sp]=0; return; }
          else i=mem[id+_IdScan];
   do {
-    if (i!=id && mem[i+_Bloque]==bloque && (mem[i+_Status]==2 || mem[i+_Status]==4))
-      { mem[id+_IdScan]=i+iloc_len; pila[sp]=i; return; }
+    if (i!=id && mem[i+_Block]==block && (mem[i+_Status]==2 || mem[i+_Status]==4))
+      { mem[id+_IdScan]=i+iloc_len; opstack[sp]=i; return; }
     i+=iloc_len;
   } while (i<=id_end);
-  mem[id+_IdScan]=i; pila[sp]=0; return;
+  mem[id+_IdScan]=i; opstack[sp]=0; return;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -796,8 +796,8 @@ void get_id(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void get_disx(void) {
-  angulo=(float)pila[sp-1]/radian;
-  pila[sp-1]=(int)((float)cos(angulo)*pila[sp]); sp--;
+  angle=(float)opstack[sp-1]/radian;
+  opstack[sp-1]=(int)((float)cos(angle)*opstack[sp]); sp--;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -805,8 +805,8 @@ void get_disx(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void get_disy(void) {
-  angulo=(float)pila[sp-1]/radian;
-  pila[sp-1]=-(int)((float)sin(angulo)*pila[sp]); sp--;
+  angle=(float)opstack[sp-1]/radian;
+  opstack[sp-1]=-(int)((float)sin(angle)*opstack[sp]); sp--;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -814,8 +814,8 @@ void get_disy(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void get_angle(void) {
-  bp=pila[sp]; x=mem[bp+_X]-mem[id+_X]; y=mem[id+_Y]-mem[bp+_Y];
-  if (!x && !y) pila[sp]=0; else pila[sp]=(float)atan2(y,x)*radian;
+  bp=opstack[sp]; x=mem[bp+_X]-mem[id+_X]; y=mem[id+_Y]-mem[bp+_Y];
+  if (!x && !y) opstack[sp]=0; else opstack[sp]=(float)atan2(y,x)*radian;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -824,10 +824,10 @@ void get_angle(void) {
 
 void get_dist(void) {
   int n=1;
-  bp=pila[sp]; x=mem[bp+_X]-mem[id+_X]; y=mem[id+_Y]-mem[bp+_Y];
+  bp=opstack[sp]; x=mem[bp+_X]-mem[id+_X]; y=mem[id+_Y]-mem[bp+_Y];
   while (abs(x)+abs(y)>=46000) {
     n*=2; x/=2; y/=2;
-  } pila[sp]=sqrt(x*x+y*y)*n;
+  } opstack[sp]=sqrt(x*x+y*y)*n;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -836,19 +836,19 @@ void get_dist(void) {
 
 void fade(void) {
   int r,g,b;
-  r=pila[sp-3]; g=pila[sp-2]; b=pila[sp-1];
+  r=opstack[sp-3]; g=opstack[sp-2]; b=opstack[sp-1];
   if (r<0) r=0; else if (r>200) r=200;
   if (g<0) g=0; else if (g>200) g=200;
   if (b<0) b=0; else if (b>200) b=200;
   dacout_r=64-r*64/100;
   dacout_g=64-g*64/100;
   dacout_b=64-b*64/100;
-  dacout_speed=pila[sp];
+  dacout_speed=opstack[sp];
 
   if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b)
     fading=1;
 
-  sp-=3; pila[sp]=0;
+  sp-=3; opstack[sp]=0;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -856,10 +856,10 @@ void fade(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void unload_fnt(void) {
-  if (pila[sp]<1 || pila[sp]>=max_fonts) return;
-  if (fonts[pila[sp]]!=NULL) {
-    free(fonts[pila[sp]]);
-    fonts[pila[sp]]=NULL;
+  if (opstack[sp]<1 || opstack[sp]>=max_fonts) return;
+  if (fonts[opstack[sp]]!=NULL) {
+    free(fonts[opstack[sp]]);
+    fonts[opstack[sp]]=NULL;
   }
 }
 
@@ -869,13 +869,13 @@ void unload_fnt(void) {
 
 void load_fnt(void) {
   byte * ptr;
-  int old_reloj=get_reloj();
-  int n,an,al,nan,ifonts;
-//printf("load font %s\n",(byte*)&mem[itxt+pila[sp]]);
+  int old_clock=get_clock();
+  int n,w,h,nan,ifonts;
+//printf("load font %s\n",(byte*)&mem[itxt+opstack[sp]]);
   for (ifonts=1;ifonts<max_fonts;ifonts++) if (!fonts[ifonts]) break;
-  if (ifonts==max_fonts) { pila[sp]=0; e(e113); return; }
-  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
-    pila[sp]=0; e(e114);
+  if (ifonts==max_fonts) { opstack[sp]=0; e(e113); return; }
+  if ((es=div_open_file((byte*)&mem[itxt+opstack[sp]]))==NULL) {
+    opstack[sp]=0; e(e114);
   } else {
     fseek(es,0,SEEK_END); file_len=ftell(es);
     if ((ptr=(byte*)malloc(file_len))!=NULL) {
@@ -885,18 +885,18 @@ void load_fnt(void) {
         fonts[ifonts]=0; e(e115); free(ptr); return;
       }
       if (process_fnt!=NULL) process_fnt((char *)ptr,file_len);
-      an=0; al=0; nan=0; fnt=(TABLAFNT*)((byte*)ptr+1356);
+      w=0; h=0; nan=0; fnt=(FNTTABLE*)((byte*)ptr+1356);
       for (n=0;n<256;n++) {
-        if (fnt[n].ancho) { an+=fnt[n].ancho; nan++; }
-        if (fnt[n].alto+fnt[n].incY>al) al=fnt[n].alto+fnt[n].incY;
+        if (fnt[n].width) { w+=fnt[n].width; nan++; }
+        if (fnt[n].height+fnt[n].incY>h) h=fnt[n].height+fnt[n].incY;
       }
-      f_i[ifonts].ancho=an/nan;
-      f_i[ifonts].espacio=(an/nan)/2;
-      f_i[ifonts].espaciado=0;
-      f_i[ifonts].alto=al;
-      pila[sp]=ifonts;
-    } else { fclose(es); pila[sp]=0; e(e118); }
-  } reloj=old_reloj;
+      f_i[ifonts].width=w/nan;
+      f_i[ifonts].space=(w/nan)/2;
+      f_i[ifonts].spacing=0;
+      f_i[ifonts].height=h;
+      opstack[sp]=ifonts;
+    } else { fclose(es); opstack[sp]=0; e(e118); }
+  } clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -904,20 +904,20 @@ void load_fnt(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void __write(void) {
-  int f=pila[sp-4];
+  int f=opstack[sp-4];
   if (f<0 || f>=max_fonts) { e(e116); f=0; }
   if (fonts[f]==0) { e(e116); f=0; }
-  x=1; while (texto[x].font && x<max_textos) x++;
-  if (x<max_textos) {
-    texto[x].tipo=0;
-    texto[x].ptr=itxt+pila[sp--];
-    if (pila[sp]<0 || pila[sp]>8) e(e117);
-    texto[x].centro=pila[sp--];
-    texto[x].y=pila[sp--];
-    texto[x].x=pila[sp--];
-    texto[x].font=(byte*)fonts[f];
-    pila[sp]=x;
-  } else { sp-=4; pila[sp]=0; e(e118); }
+  x=1; while (texts[x].font && x<max_texts) x++;
+  if (x<max_texts) {
+    texts[x].type=0;
+    texts[x].ptr=itxt+opstack[sp--];
+    if (opstack[sp]<0 || opstack[sp]>8) e(e117);
+    texts[x].center=opstack[sp--];
+    texts[x].y=opstack[sp--];
+    texts[x].x=opstack[sp--];
+    texts[x].font=(byte*)fonts[f];
+    opstack[sp]=x;
+  } else { sp-=4; opstack[sp]=0; e(e118); }
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -925,20 +925,20 @@ void __write(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void write_int(void) {
-  int f=pila[sp-4];
+  int f=opstack[sp-4];
   if (f<0 || f>=max_fonts) { e(e116); f=0; }
   if (fonts[f]==0) { e(e116); f=0; }
-  x=1; while (texto[x].font && x<max_textos) x++;
-  if (x<max_textos) {
-    texto[x].tipo=1;
-    texto[x].ptr=pila[sp--];
-    if (pila[sp]<0 || pila[sp]>8) e(e117);
-    texto[x].centro=pila[sp--];
-    texto[x].y=pila[sp--];
-    texto[x].x=pila[sp--];
-    texto[x].font=(byte*)fonts[f];
-    pila[sp]=x;
-  } else { sp-=4; pila[sp]=0; e(e118); }
+  x=1; while (texts[x].font && x<max_texts) x++;
+  if (x<max_texts) {
+    texts[x].type=1;
+    texts[x].ptr=opstack[sp--];
+    if (opstack[sp]<0 || opstack[sp]>8) e(e117);
+    texts[x].center=opstack[sp--];
+    texts[x].y=opstack[sp--];
+    texts[x].x=opstack[sp--];
+    texts[x].font=(byte*)fonts[f];
+    opstack[sp]=x;
+  } else { sp-=4; opstack[sp]=0; e(e118); }
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -946,9 +946,9 @@ void write_int(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void delete_text(void) {
-  x=pila[sp]; if (x<max_textos && x>0) texto[x].font=0;
+  x=opstack[sp]; if (x<max_texts && x>0) texts[x].font=0;
   else if (x==0) {
-    x=1; do texto[x++].font=0; while (x<max_textos);
+    x=1; do texts[x++].font=0; while (x<max_texts);
   } else e(e119);
 }
 
@@ -957,8 +957,8 @@ void delete_text(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void move_text(void) {
-  x=pila[sp-2]; if (x<max_textos && x>0) {
-    texto[x].x=pila[sp-1]; texto[x].y=pila[sp];
+  x=opstack[sp-2]; if (x<max_texts && x>0) {
+    texts[x].x=opstack[sp-1]; texts[x].y=opstack[sp];
   } else e(e119); sp-=2;
 }
 
@@ -968,7 +968,7 @@ void move_text(void) {
 
 void unload_fpg(void) {
   int c;
-  c=pila[sp]; pila[sp]=0;
+  c=opstack[sp]; opstack[sp]=0;
   if (c<max_fpgs && c>=0) {
     if (g[c].fpg!=0) { free(g[c].fpg); g[c].fpg=0; } else e(e109);
     if (g[c].grf!=0) {
@@ -993,8 +993,8 @@ byte ptr;
 
 void divrandom(void) {
   int min,max;
-  max=pila[sp--]; min=pila[sp];
-  pila[sp]=_random(min,max);
+  max=opstack[sp--]; min=opstack[sp];
+  opstack[sp]=_random(min,max);
 }
 
 int _random(int min,int max) {
@@ -1014,31 +1014,31 @@ void init_rnd(int n){
   for (a=0;a<2048;a++) rnd();
 }
 
-void rand_seed(void) { init_rnd(pila[sp]); }
+void rand_seed(void) { init_rnd(opstack[sp]); }
 
 //════════════════════════════════════════════════════════════════════════════
 //      Define_region(n,x,y,an,al)
 //════════════════════════════════════════════════════════════════════════════
 
 void define_region(void) {
-  int n,x,y,an,al;
+  int n,x,y,w,h;
 
-  al=pila[sp--]; an=pila[sp--];
-  y=pila[sp--]; x=pila[sp--];
+  h=opstack[sp--]; w=opstack[sp--];
+  y=opstack[sp--]; x=opstack[sp--];
 
-  n=pila[sp];
+  n=opstack[sp];
 
-  if (x<0) { an+=x; x=0; }
-  if (y<0) { al+=y; y=0; }
-  if (x+an>vga_an) an=vga_an-x;
-  if (y+al>vga_al) al=vga_al-y;
-  if (an<0 || al<0) { e(e120); return; }
+  if (x<0) { w+=x; x=0; }
+  if (y<0) { h+=y; y=0; }
+  if (x+w>vga_width) w=vga_width-x;
+  if (y+h>vga_height) h=vga_height-y;
+  if (w<0 || h<0) { e(e120); return; }
 
   if (n>=0 && n<max_region) {
     region[n].x0=x; region[n].y0=y;
-    region[n].x1=x+an; region[n].y1=y+al;
-    pila[sp]=1;
-  } else { pila[sp]=0; e(e108); }
+    region[n].x1=x+w; region[n].y1=y+h;
+    opstack[sp]=1;
+  } else { opstack[sp]=0; e(e108); }
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1046,14 +1046,14 @@ void define_region(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void _xput(void) {
-  int file,graf,x,y,angle,size,flags,reg;
+  int file,graph,x,y,angle,size,flags,reg;
 
-  reg=pila[sp--]; flags=pila[sp--];
-  size=pila[sp--]; angle=pila[sp--];
-  y=pila[sp--]; x=pila[sp--];
-  graf=pila[sp--]; file=pila[sp];
+  reg=opstack[sp--]; flags=opstack[sp--];
+  size=opstack[sp--]; angle=opstack[sp--];
+  y=opstack[sp--]; x=opstack[sp--];
+  graph=opstack[sp--]; file=opstack[sp];
 
-  put_sprite(file,graf,x,y,angle,size,flags,reg,copia2,vga_an,vga_al);
+  put_sprite(file,graph,x,y,angle,size,flags,reg,copy_buffer2,vga_width,vga_height);
 
 }
 
@@ -1062,56 +1062,56 @@ void _xput(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void _put(void) {
-  int file,graf,x,y;
+  int file,graph,x,y;
 
-  y=pila[sp--]; x=pila[sp--];
-  graf=pila[sp--]; file=pila[sp];
+  y=opstack[sp--]; x=opstack[sp--];
+  graph=opstack[sp--]; file=opstack[sp];
 
-  put_sprite(file,graf,x,y,0,100,0,0,copia2,vga_an,vga_al);
+  put_sprite(file,graph,x,y,0,100,0,0,copy_buffer2,vga_width,vga_height);
 
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Map_xput(file,graf1,graf2,x,y,angle,size,flags)
+//      Map_xput(file,graph1,graph2,x,y,angle,size,flags)
 //════════════════════════════════════════════════════════════════════════════
 
 void map_xput(void) {
-  int file,graf1,graf2,x,y,angle,size,flags;
+  int file,graph1,graph2,x,y,angle,size,flags;
   int * ptr;
 
-  flags=pila[sp--]; size=pila[sp--]; angle=pila[sp--];
-  y=pila[sp--]; x=pila[sp--];
-  graf2=pila[sp--]; graf1=pila[sp--]; file=pila[sp];
+  flags=opstack[sp--]; size=opstack[sp--]; angle=opstack[sp--];
+  y=opstack[sp--]; x=opstack[sp--];
+  graph2=opstack[sp--]; graph1=opstack[sp--]; file=opstack[sp];
 
   if (file>max_fpgs || file<0) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf1<=0 || graf1>=max_grf) { e(e110); return; }
+  if (graph1<=0 || graph1>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
 
-  if ((ptr=g[file].grf[graf1])!=NULL) {
-    put_sprite(file,graf2,x,y,angle,size,flags,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
+  if ((ptr=g[file].grf[graph1])!=NULL) {
+    put_sprite(file,graph2,x,y,angle,size,flags,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
   } else e(e121);
 
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Map_put(file,graf1,graf2,x,y)
+//      Map_put(file,graph1,graph2,x,y)
 //════════════════════════════════════════════════════════════════════════════
 
 void map_put(void) {
-  int file,graf1,graf2,x,y;
+  int file,graph1,graph2,x,y;
   int * ptr;
 
-  y=pila[sp--]; x=pila[sp--];
-  graf2=pila[sp--]; graf1=pila[sp--]; file=pila[sp];
+  y=opstack[sp--]; x=opstack[sp--];
+  graph2=opstack[sp--]; graph1=opstack[sp--]; file=opstack[sp];
 
   if (file>max_fpgs || file<0) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf1<=0 || graf1>=max_grf) { e(e110); return; }
+  if (graph1<=0 || graph1>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
 
-  if ((ptr=g[file].grf[graf1])!=NULL) {
-    put_sprite(file,graf2,x,y,0,100,0,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
+  if ((ptr=g[file].grf[graph1])!=NULL) {
+    put_sprite(file,graph2,x,y,0,100,0,-1,(byte*)ptr+64+ptr[15]*4,ptr[13],ptr[14]);
   } else e(e121);
 
 }
@@ -1121,48 +1121,48 @@ void map_put(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void map_block_copy(void) {
-  int file,grafd,xd,yd;
-  int graf,x,y,an,al;
+  int file,graphd,xd,yd;
+  int graph,x,y,w,h;
   int * ptrd,* ptr;
-  byte * _copia=copia, * si;
-  int _vga_an=vga_an,_vga_al=vga_al;
+  byte * _copy=copy_buffer, * si;
+  int _vga_width=vga_width,_vga_height=vga_height;
 
-  al=pila[sp--]; an=pila[sp--];
-  y=pila[sp--]; x=pila[sp--]; graf=pila[sp--];
-  yd=pila[sp--]; xd=pila[sp--]; grafd=pila[sp--];
-  file=pila[sp];
+  h=opstack[sp--]; w=opstack[sp--];
+  y=opstack[sp--]; x=opstack[sp--]; graph=opstack[sp--];
+  yd=opstack[sp--]; xd=opstack[sp--]; graphd=opstack[sp--];
+  file=opstack[sp];
 //printf("map block_copy file: %d\n,");
   if (file>max_fpgs || file<0) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (grafd<=0 || grafd>=max_grf) { e(e110); return; }
-  if (graf<=0 || graf>=max_grf) { e(e110); return; }
+  if (graphd<=0 || graphd>=max_grf) { e(e110); return; }
+  if (graph<=0 || graph>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
 
-  if ((ptrd=g[file].grf[grafd])!=NULL) {
-    if ((ptr=g[file].grf[graf])!=NULL) {
+  if ((ptrd=g[file].grf[graphd])!=NULL) {
+    if ((ptr=g[file].grf[graph])!=NULL) {
 
-      vga_an=ptrd[13]; vga_al=ptrd[14];
-      copia=(byte*)ptrd+64+ptrd[15]*4;
+      vga_width=ptrd[13]; vga_height=ptrd[14];
+      copy_buffer=(byte*)ptrd+64+ptrd[15]*4;
 
       if (xd>0) clipx0=xd; else clipx0=0;
       if (yd>0) clipy0=yd; else clipy0=0;
-      if (xd+an<vga_an) clipx1=xd+an; else clipx1=vga_an;
-      if (yd+al<vga_al) clipy1=yd+al; else clipy1=vga_al;
+      if (xd+w<vga_width) clipx1=xd+w; else clipx1=vga_width;
+      if (yd+h<vga_height) clipy1=yd+h; else clipy1=vga_height;
 
-      if (clipx0>=vga_an || clipx1<=0) goto no;
-      if (clipy0>=vga_al || clipy1<=0) goto no;
+      if (clipx0>=vga_width || clipx1<=0) goto no;
+      if (clipy0>=vga_height || clipy1<=0) goto no;
       if (clipx0>=clipx1 || clipy0>=clipy1) goto no;
 
-      an=ptr[13]; al=ptr[14];
+      w=ptr[13]; h=ptr[14];
       si=(byte*)ptr+64+ptr[15]*4;
       x=xd-x; y=yd-y;
 
-      if (x>=clipx0 && x+an<=clipx1 && y>=clipy0 && y+al<=clipy1) // Pinta sprite sin cortar
-        sp_normal(si,x,y,an,al,0);
-      else if (x<clipx1 && y<clipy1 && x+an>clipx0 && y+al>clipy0) // Pinta sprite cortado
-        sp_cortado(si,x,y,an,al,0);
+      if (x>=clipx0 && x+w<=clipx1 && y>=clipy0 && y+h<=clipy1) // Pinta sprite sin cortar
+        sp_normal(si,x,y,w,h,0);
+      else if (x<clipx1 && y<clipy1 && x+w>clipx0 && y+h>clipy0) // Pinta sprite cortado
+        sp_clipped(si,x,y,w,h,0);
 
-      no: copia=_copia; vga_an=_vga_an; vga_al=_vga_al;
+      no: copy_buffer=_copy; vga_width=_vga_width; vga_height=_vga_height;
     } else e(e121);
   } else e(e121);
 
@@ -1173,23 +1173,23 @@ void map_block_copy(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void put_screen(void) {
-  int file,graf;
+  int file,graph;
   short xg,yg;
   int * ptr;
 
-  graf=pila[sp--]; file=pila[sp];
+  graph=opstack[sp--]; file=opstack[sp];
 
   if (file<0 || file>max_fpgs) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf<=0 || graf>=max_grf) { e(e110); return; }
+  if (graph<=0 || graph>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
-  if ((ptr=g[file].grf[graf])==NULL) { e(e121); return; }
+  if ((ptr=g[file].grf[graph])==NULL) { e(e121); return; }
 
   if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
   } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
 
-  memset(copia2,0,vga_an*vga_al);
-  put_sprite(file,graf,xg,yg,0,100,0,0,copia2,vga_an,vga_al);
+  memset(copy_buffer2,0,vga_width*vga_height);
+  put_sprite(file,graph,xg,yg,0,100,0,0,copy_buffer2,vga_width,vga_height);
 
 }
 
@@ -1200,9 +1200,9 @@ void put_screen(void) {
 void put_pixel(void) {
   int x,y,color;
 
-  color=pila[sp--]; y=pila[sp--]; x=pila[sp];
-  if (x>=0 && y>=0 && x<vga_an && y<vga_al) {
-    *(copia2+x+y*vga_an)=color;
+  color=opstack[sp--]; y=opstack[sp--]; x=opstack[sp];
+  if (x>=0 && y>=0 && x<vga_width && y<vga_height) {
+    *(copy_buffer2+x+y*vga_width)=color;
   }
 }
 
@@ -1213,10 +1213,10 @@ void put_pixel(void) {
 void get_pixel(void) {
   int x,y;
 
-  y=pila[sp--]; x=pila[sp];
-  if (x>=0 && y>=0 && x<vga_an && y<vga_al) {
-    pila[sp]=(int)(*(copia2+x+y*vga_an));
-  } else pila[sp]=0;
+  y=opstack[sp--]; x=opstack[sp];
+  if (x>=0 && y>=0 && x<vga_width && y<vga_height) {
+    opstack[sp]=(int)(*(copy_buffer2+x+y*vga_width));
+  } else opstack[sp]=0;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1224,18 +1224,18 @@ void get_pixel(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void map_put_pixel(void) {
-  int file,graf,x,y,color;
+  int file,graph,x,y,color;
   int * ptr;
   byte * si;
 
-  color=pila[sp--]; y=pila[sp--]; x=pila[sp--];
-  graf=pila[sp--]; file=pila[sp]; 
+  color=opstack[sp--]; y=opstack[sp--]; x=opstack[sp--];
+  graph=opstack[sp--]; file=opstack[sp]; 
 
   if (file<0 || file>max_fpgs) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf<=0 || graf>=max_grf) { e(e110); return; }
+  if (graph<=0 || graph>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
-  if ((ptr=g[file].grf[graf])==NULL) { e(e121); return; }
+  if ((ptr=g[file].grf[graph])==NULL) { e(e121); return; }
 
   if (x>=0 && y>=0 && x<ptr[13] && y<ptr[14]) {
     si=(byte*)ptr+64+ptr[15]*4;
@@ -1248,23 +1248,23 @@ void map_put_pixel(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void map_get_pixel(void) {
-  int file,graf,x,y;
+  int file,graph,x,y;
   int * ptr;
   byte * si;
 
-  y=pila[sp--]; x=pila[sp--];
-  graf=pila[sp--]; file=pila[sp];
+  y=opstack[sp--]; x=opstack[sp--];
+  graph=opstack[sp--]; file=opstack[sp];
 
   if (file<0 || file>max_fpgs) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf<=0 || graf>=max_grf) { e(e110); return; }
+  if (graph<=0 || graph>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
-  if ((ptr=g[file].grf[graf])==NULL) { e(e121); return; }
+  if ((ptr=g[file].grf[graph])==NULL) { e(e121); return; }
 
   if (x>=0 && y>=0 && x<ptr[13] && y<ptr[14]) {
     si=(byte*)ptr+64+ptr[15]*4;
-    pila[sp]=(int)(*(si+x+y*ptr[13]));
-  } else pila[sp]=0;
+    opstack[sp]=(int)(*(si+x+y*ptr[13]));
+  } else opstack[sp]=0;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1272,18 +1272,18 @@ void map_get_pixel(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void get_point(void) {
-  int file,graf,n,dx,dy;
+  int file,graph,n,dx,dy;
   int * ptr;
   short * p;
 
-  dy=pila[sp--]; dx=pila[sp--]; n=pila[sp--];
-  graf=pila[sp--]; file=pila[sp]; pila[sp]=0;
+  dy=opstack[sp--]; dx=opstack[sp--]; n=opstack[sp--];
+  graph=opstack[sp--]; file=opstack[sp]; opstack[sp]=0;
 
   if (file<0 || file>max_fpgs) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf<=0 || graf>=max_grf) { e(e110); return; }
+  if (graph<=0 || graph>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
-  if ((ptr=g[file].grf[graf])==NULL) { e(e121); return; }
+  if ((ptr=g[file].grf[graph])==NULL) { e(e121); return; }
 
   if (n>=0 || n<ptr[15]) { p=(short*)&ptr[16]; mem[dx]=p[n*2]; mem[dy]=p[n*2+1]; }
 
@@ -1294,7 +1294,7 @@ void get_point(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void clear_screen(void) {
-  memset(copia2,0,vga_an*vga_al);
+  memset(copy_buffer2,0,vga_width*vga_height);
   sp++;
 }
 
@@ -1349,16 +1349,16 @@ FILE * open_save_file(char * file) {
 }
 
 void save(void) {
-  int offset,lon;
-  int old_reloj=get_reloj();
+  int offset,len;
+  int old_clock=get_clock();
 
-  lon=pila[sp--]; offset=pila[sp--];
-  if (offset<long_header || offset+lon>imem_max) { pila[sp]=0; e(e122); return; }
-  es=open_save_file((byte*)&mem[itxt+pila[sp]]);
-  if (es==NULL) { pila[sp]=0; e(e123); return; }
-  if (fwrite(&mem[offset],4,lon,es)!=lon) e(e124);
+  len=opstack[sp--]; offset=opstack[sp--];
+  if (offset<long_header || offset+len>imem_max) { opstack[sp]=0; e(e122); return; }
+  es=open_save_file((byte*)&mem[itxt+opstack[sp]]);
+  if (es==NULL) { opstack[sp]=0; e(e123); return; }
+  if (fwrite(&mem[offset],4,len,es)!=len) e(e124);
 
-  fclose(es); reloj=old_reloj;
+  fclose(es); clock_ticks=old_clock;
 }
 
 #else         // Versión instalaciones.
@@ -1403,21 +1403,21 @@ FILE * open_save_file(char * file) {
 }
 
 void save(void) {
-  int offset,lon;
-  int old_reloj=get_reloj();
+  int offset,len;
+  int old_clock=get_clock();
 
-  lon=pila[sp--]; offset=pila[sp--];
-  if (offset<long_header || offset+lon>imem_max) { pila[sp]=0; e(e122); return; }
-  es=open_save_file((char*)&mem[itxt+pila[sp]]);
+  len=opstack[sp--]; offset=opstack[sp--];
+  if (offset<long_header || offset+len>imem_max) { opstack[sp]=0; e(e122); return; }
+  es=open_save_file((char*)&mem[itxt+opstack[sp]]);
   if (es==NULL) {
-    pila[sp]=0;
+    opstack[sp]=0;
 //    e(e123); // OJO! Para que no de error en los CD-ROM
     return;
   }
-//  if (fwrite(&mem[offset],4,lon,es)!=lon) e(e124);
-  fwrite(&mem[offset],4,lon,es);
+//  if (fwrite(&mem[offset],4,len,es)!=len) e(e124);
+  fwrite(&mem[offset],4,len,es);
   fclose(es);
-  reloj=old_reloj;
+  clock_ticks=old_clock;
 }
 
 #endif
@@ -1427,16 +1427,16 @@ void save(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void load(void) {
-  int offset,lon;
-  int old_reloj=get_reloj();
+  int offset,len;
+  int old_clock=get_clock();
 
-  offset=pila[sp--];
-  if (offset<long_header) { pila[sp]=0; e(e125); return; }
-  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) { pila[sp]=0; e(e126); return; }
-  fseek(es,0,SEEK_END); lon=ftell(es)/4; fseek(es,0,SEEK_SET);
-  if (offset+lon>imem_max) { pila[sp]=0; e(e125); return; }
-  if (fread(&mem[offset],4,lon,es)!=lon) e(e127); fclose(es);
-  reloj=old_reloj;
+  offset=opstack[sp--];
+  if (offset<long_header) { opstack[sp]=0; e(e125); return; }
+  if ((es=div_open_file((byte*)&mem[itxt+opstack[sp]]))==NULL) { opstack[sp]=0; e(e126); return; }
+  fseek(es,0,SEEK_END); len=ftell(es)/4; fseek(es,0,SEEK_SET);
+  if (offset+len>imem_max) { opstack[sp]=0; e(e125); return; }
+  if (fread(&mem[offset],4,len,es)!=len) e(e127); fclose(es);
+  clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1447,31 +1447,31 @@ void set_mode(void) {
   int n;
 
   #ifdef DEBUG
-  if (v.tipo) new_mode=1; // Avisa al debugger de un cambio de modo de vídeo
+  if (v.type) new_mode=1; // Avisa al debugger de un cambio de modo de vídeo
   #endif
 
-  vga_an=pila[sp]/1000; vga_al=pila[sp]%1000;
+  vga_width=opstack[sp]/1000; vga_height=opstack[sp]%1000;
 
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=8;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
-    set_paleta(); set_dac(); //LoopSound();
+    set_palette(); set_dac(); //LoopSound();
   }
 
-  free(copia); free(copia2);
+  free(copy_buffer); free(copy_buffer2);
 
   #ifdef DEBUG
-  free(copia_debug);
+  free(copy_buffer_debug);
   #endif
 
-  if((copia=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
-  memset(copia,0,vga_an*vga_al);
+  if((copy_buffer=(byte *) malloc(vga_width*vga_height))==NULL) exer(1);
+  memset(copy_buffer,0,vga_width*vga_height);
 
-  if((copia2=(byte *) malloc(vga_an*vga_al))==NULL) exer(1);
-  memset(copia2,0,vga_an*vga_al);
+  if((copy_buffer2=(byte *) malloc(vga_width*vga_height))==NULL) exer(1);
+  memset(copy_buffer2,0,vga_width*vga_height);
 
   #ifdef DEBUG
-  if((copia_debug=(char *) malloc(vga_an*vga_al))==NULL) exer(1);
-  memset(copia_debug,0,vga_an*vga_al);
+  if((copy_buffer_debug=(char *) malloc(vga_width*vga_height))==NULL) exer(1);
+  memset(copy_buffer_debug,0,vga_width*vga_height);
   #endif
 
   if (set_video_mode!=NULL) set_video_mode(); else svmode();
@@ -1481,12 +1481,12 @@ void set_mode(void) {
   dacout_speed=0; set_dac();
 
   for (n=0;n<10;n++) {
-    if (iscroll[n].on) { pila[sp]=n; stop_scroll(); iscroll[n].on=0; }
-    if (im7[n].on) { pila[sp]=n; stop_mode7(); iscroll[n].on=0; }
-  } pila[sp]=0;
+    if (iscroll[n].on) { opstack[sp]=n; stop_scroll(); iscroll[n].on=0; }
+    if (im7[n].on) { opstack[sp]=n; stop_mode7(); iscroll[n].on=0; }
+  } opstack[sp]=0;
 
   region[0].x0=0; region[0].y0=0;
-  region[0].x1=vga_an; region[0].y1=vga_al;
+  region[0].x1=vga_width; region[0].y1=vga_height;
 
   #ifdef DEBUG
   init_big();
@@ -1503,23 +1503,23 @@ void load_pcm(void) {
   FILE * f;
   char *ptr;
   int loop;
-  int old_reloj=get_reloj();
+  int old_clock=get_clock();
 
-  loop=pila[sp--];
-  if ((f=div_open_file((byte*)&mem[itxt+pila[sp]]))!=NULL) {
+  loop=opstack[sp--];
+  if ((f=div_open_file((byte*)&mem[itxt+opstack[sp]]))!=NULL) {
       fseek(f,0,SEEK_END); file_len=ftell(f);
       if ((ptr=(char *)malloc(file_len))!=NULL) {
         fseek(f,0,SEEK_SET);
         fread(ptr,1,file_len,f);
         fclose(f);
        
-		pila[sp]=LoadSound(ptr,file_len,loop);
+		opstack[sp]=LoadSound(ptr,file_len,loop);
 
 		free(ptr);
 
-      } else { fclose(f); pila[sp]=0; e(e128); return; }
+      } else { fclose(f); opstack[sp]=0; e(e128); return; }
   } else e(e128);
-  reloj=old_reloj;
+  clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1527,7 +1527,7 @@ void load_pcm(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void unload_pcm(void) {
-  UnloadSound(pila[sp]);
+  UnloadSound(opstack[sp]);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1536,9 +1536,9 @@ void unload_pcm(void) {
 
 void _sound(void) {
   int vol,fre;
-  fre=pila[sp--]; vol=pila[sp--];
-  if (fre) pila[sp]=DivPlaySound(pila[sp],vol,fre);
-  // if (pila[sp]==-1) e(e129);
+  fre=opstack[sp--]; vol=opstack[sp--];
+  if (fre) opstack[sp]=DivPlaySound(opstack[sp],vol,fre);
+  // if (opstack[sp]==-1) e(e129);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1546,7 +1546,7 @@ void _sound(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void stop_sound(void) {
-  StopSound(pila[sp]);
+  StopSound(opstack[sp]);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1555,9 +1555,9 @@ void stop_sound(void) {
 
 void change_sound(void) {
   int vol,fre;
-  fre=pila[sp--]; vol=pila[sp--];
+  fre=opstack[sp--]; vol=opstack[sp--];
   if (fre<16) fre=16; if (vol<0) vol=0;
-  ChangeSound(pila[sp],vol,fre);
+  ChangeSound(opstack[sp],vol,fre);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1565,17 +1565,17 @@ void change_sound(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void set_fps(void) {
-  max_saltos=pila[sp--];
+  max_skips=opstack[sp--];
 #ifdef __EMSCRIPTEN__
-	max_saltos=2;
+	max_skips=2;
 #endif
-  if (max_saltos<0) max_saltos=0;
-  if (max_saltos>10) max_saltos=10;
-  if (pila[sp]<4) pila[sp]=4;
-  if (pila[sp]>100) pila[sp]=100;
-  printf("setting fps(%d,%d)\n",pila[sp],max_saltos);
-  dfps = pila[sp];
-  ireloj=100.0/(double)pila[sp];
+  if (max_skips<0) max_skips=0;
+  if (max_skips>10) max_skips=10;
+  if (opstack[sp]<4) opstack[sp]=4;
+  if (opstack[sp]>100) opstack[sp]=100;
+  printf("setting fps(%d,%d)\n",opstack[sp],max_skips);
+  dfps = opstack[sp];
+  iclock=100.0/(double)opstack[sp];
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1585,18 +1585,18 @@ void set_fps(void) {
 void start_fli(void) {
 
 	int x,y;
-	y=pila[sp--]; x=pila[sp--];
+	y=opstack[sp--]; x=opstack[sp--];
 #ifdef USE_FLI
 
-  if ((es=div_open_file((byte*)&mem[itxt+pila[sp]]))==NULL) {
-    pila[sp]=0; e(e147);
+  if ((es=div_open_file((byte*)&mem[itxt+opstack[sp]]))==NULL) {
+    opstack[sp]=0; e(e147);
   } else {
     fclose(es);
-    pila[sp]=StartFLI(full,(char *)copia2,vga_an,vga_al,x,y);
-    if (pila[sp]==0) e(e130);
+    opstack[sp]=StartFLI(full,(char *)copy_buffer2,vga_width,vga_height,x,y);
+    if (opstack[sp]==0) e(e130);
   }
-//  pila[sp]=StartFLI((byte*)&mem[itxt+pila[sp]],copia2,vga_an,vga_al,x,y);
-//  if (pila[sp]==0) e(e130);
+//  opstack[sp]=StartFLI((byte*)&mem[itxt+opstack[sp]],copy_buffer2,vga_width,vga_height,x,y);
+//  if (opstack[sp]==0) e(e130);
 #endif
 }
 
@@ -1605,7 +1605,7 @@ void start_fli(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void frame_fli(void) {
-  pila[++sp]=Nextframe();
+  opstack[++sp]=Nextframe();
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1659,7 +1659,7 @@ return;
 
 
   if (system(NULL)) {
-    if (!strcmp(strupr((char*)&mem[itxt+pila[sp]]),"COMMAND.COM")) {
+    if (!strcmp(strupr((char*)&mem[itxt+opstack[sp]]),"COMMAND.COM")) {
 #ifdef DOS
       _setvideomode(_TEXTC80);
 #endif
@@ -1670,8 +1670,8 @@ return;
       mouse_window();
       set_mouse(mouse->x,mouse->y);
       read_mouse();
-      volcado_completo=1;
-    } else system((char*)&mem[itxt+pila[sp]]);
+      blit_full=1;
+    } else system((char*)&mem[itxt+opstack[sp]]);
   }
 }
 
@@ -1681,12 +1681,12 @@ return;
 
 void fget_dist(void) {
   int x0,y0,x1,y1,n=1;
-  y1=pila[sp--]; x1=pila[sp--];
-  y0=pila[sp--]; x0=pila[sp];
+  y1=opstack[sp--]; x1=opstack[sp--];
+  y0=opstack[sp--]; x0=opstack[sp];
   x0=abs(x1-x0); y0=abs(y1-y0);
   while (x0+y0>=46000) {
     n*=2; x0/=2; y0/=2;
-  } pila[sp]=sqrt(x0*x0+y0*y0)*n;
+  } opstack[sp]=sqrt(x0*x0+y0*y0)*n;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1696,21 +1696,21 @@ void fget_dist(void) {
 
 void fget_angle(void) {
   int x0,y0,x1,y1;
-  y1=pila[sp--]; x1=pila[sp--];
-  y0=pila[sp--]; x0=pila[sp];
+  y1=opstack[sp--]; x1=opstack[sp--];
+  y0=opstack[sp--]; x0=opstack[sp];
   x0=x1-x0; y0=y0-y1;
-  if (!x0 && !y0) pila[sp]=0;
-  else pila[sp]=(float)atan2(y0,x0)*radian;
+  if (!x0 && !y0) opstack[sp]=0;
+  else opstack[sp]=(float)atan2(y0,x0)*radian;
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Play_cd(pista,modo);
+//      Play_cd(track,mode);
 //════════════════════════════════════════════════════════════════════════════
 
 void _play_cd(void) {
 #ifdef DOS
   int p,m;
-  m=pila[sp--]; p=pila[sp];
+  m=opstack[sp--]; p=opstack[sp];
   Stop_CD();
   if (p<1) return;
   Play_CD(p,m);
@@ -1737,64 +1737,64 @@ unsigned int get_cd_error(void);
 void _is_playing_cd(void) {
 #ifdef DOS
   if (get_cd_error()&0x200) 
-	pila[++sp]=1; 
+	opstack[++sp]=1; 
   else 
 #endif
-    pila[++sp]=0;
+    opstack[++sp]=0;
 
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Start_mode7(n,fichero,graf1,graf2,region,horizonte)
+//      Start_mode7(n,fichero,graph1,graph2,region,horizonte)
 //════════════════════════════════════════════════════════════════════════════
 
 void start_mode7(void) {
-  int n,m,file,graf1,graf2,reg;
+  int n,m,file,graph1,graph2,reg;
   int *ptr1,*ptr2;
 
-  m=pila[sp--]; reg=pila[sp--];
-  graf2=pila[sp--]; graf1=pila[sp--];
-  file=pila[sp--]; n=pila[sp]; pila[sp]=0;
+  m=opstack[sp--]; reg=opstack[sp--];
+  graph2=opstack[sp--]; graph1=opstack[sp--];
+  file=opstack[sp--]; n=opstack[sp]; opstack[sp]=0;
 
   if (n<0||n>9) { e(e131); return; }
   (m7+n)->horizon=m;
   im7[n].map=NULL; im7[n].ext=NULL;
 
-  if (im7[n].on) { pila[sp]=n; stop_mode7(); }
+  if (im7[n].on) { opstack[sp]=n; stop_mode7(); }
 
   if (reg>=0 && reg<max_region) {
     im7[n].x=region[reg].x0; im7[n].y=region[reg].y0;
-    im7[n].an=region[reg].x1-region[reg].x0;
-    im7[n].al=region[reg].y1-region[reg].y0;
+    im7[n].w=region[reg].x1-region[reg].x0;
+    im7[n].h=region[reg].y1-region[reg].y0;
   } else { e(e108); return; }
 
-  if (im7[n].an==0 || im7[n].al==0) { e(e146); return; }
+  if (im7[n].w==0 || im7[n].h==0) { e(e146); return; }
 
   if (file<0 || file>max_fpgs) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf1<0 || graf1>=max_grf) { e(e110); return; }
-  if (graf2<0 || graf2>=max_grf) { e(e110); return; }
+  if (graph1<0 || graph1>=max_grf) { e(e110); return; }
+  if (graph2<0 || graph2>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
-  ptr1=g[file].grf[graf1]; ptr2=g[file].grf[graf2];
+  ptr1=g[file].grf[graph1]; ptr2=g[file].grf[graph2];
   if (ptr1==NULL && ptr2==NULL) { e(e132); return; }
   if (ptr1==NULL) { ptr1=ptr2; ptr2=NULL; }
 
-  im7[n].map_an=ptr1[13]; im7[n].map_al=ptr1[14];
+  im7[n].map_width=ptr1[13]; im7[n].map_height=ptr1[14];
   im7[n].map=(byte*)ptr1+64+ptr1[15]*4;
 
-  if (ptr2!=NULL) { im7[n].ext_an=ptr2[13]; im7[n].ext_al=ptr2[14]; } else im7[n].ext_an=0;
+  if (ptr2!=NULL) { im7[n].ext_width=ptr2[13]; im7[n].ext_height=ptr2[14]; } else im7[n].ext_width=0;
 
-  switch(im7[n].ext_an) {
+  switch(im7[n].ext_width) {
     case 1: case 2: case 4: case 8: case 16: case 32: case 64: case 128:
     case 256: case 512: case 1024: case 2048: case 4096: case 8192: break;
-    default: im7[n].ext_an=0; }
+    default: im7[n].ext_width=0; }
 
-  switch(im7[n].ext_al) {
+  switch(im7[n].ext_height) {
     case 1: case 2: case 4: case 8: case 16: case 32: case 64: case 128:
     case 256: case 512: case 1024: case 2048: case 4096: case 8192: break;
-    default: im7[n].ext_al=0; }
+    default: im7[n].ext_height=0; }
 
-  if (im7[n].ext_an && im7[n].ext_al) im7[n].ext=(byte*)ptr2+64+ptr2[15]*4; else im7[n].ext=NULL;
+  if (im7[n].ext_width && im7[n].ext_height) im7[n].ext=(byte*)ptr2+64+ptr2[15]*4; else im7[n].ext=NULL;
 
   im7[n].on=1; // Al final si no ha habido errores, fija la variable m7
 }
@@ -1804,7 +1804,7 @@ void start_mode7(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void stop_mode7(void) {
-  int n=pila[sp];
+  int n=opstack[sp];
 
   if (n<0||n>9){ e(e131); return; }
   im7[n].on=0;
@@ -1817,8 +1817,8 @@ void stop_mode7(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void advance(void) {
-  mem[id+_X]+=get_distx(mem[id+_Angle],pila[sp]);
-  mem[id+_Y]+=get_disty(mem[id+_Angle],pila[sp]);
+  mem[id+_X]+=get_distx(mem[id+_Angle],opstack[sp]);
+  mem[id+_Y]+=get_disty(mem[id+_Angle],opstack[sp]);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1826,7 +1826,7 @@ void advance(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void _abs(void) {
-  pila[sp]=abs(pila[sp]);
+  opstack[sp]=abs(opstack[sp]);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1843,11 +1843,11 @@ void fade_on(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void fade_off(void) {
-  int old_reloj=get_reloj();
+  int old_clock=get_clock();
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=8;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
-    set_paleta(); set_dac(); //LoopSound();
-  } fading=0; sp++; reloj=old_reloj;
+    set_palette(); set_dac(); //LoopSound();
+  } fading=0; sp++; clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1855,8 +1855,8 @@ void fade_off(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void _sqrt(void) {
-  int x=abs(pila[sp]);
-  if (x<2147483648) pila[sp]=sqrt(x); else pila[sp]=999999999;
+  int x=abs(opstack[sp]);
+  if (x<2147483648) opstack[sp]=sqrt(x); else opstack[sp]=999999999;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1865,13 +1865,13 @@ void _sqrt(void) {
 
 void _pow(void) {
   int n,m;
-  m=pila[sp--]; n=pila[sp];
+  m=opstack[sp--]; n=opstack[sp];
   if (m>1) {
-    m--; do { pila[sp]*=n; } while (--m);
+    m--; do { opstack[sp]*=n; } while (--m);
   } else if (m==0) {
-    pila[sp]=1;
+    opstack[sp]=1;
   } else if (m<0) {
-    pila[sp]=0;
+    opstack[sp]=0;
   }
 }
 
@@ -1881,14 +1881,14 @@ void _pow(void) {
 
 void near_angle(void) {
   int a1,a2,i;
-  i=abs(pila[sp--]); a2=pila[sp--]; a1=pila[sp];
+  i=abs(opstack[sp--]); a2=opstack[sp--]; a1=opstack[sp];
   while (a1<a2-pi) a1+=2*pi;
   while (a1>a2+pi) a1-=2*pi;
   if (a1<a2) {
     a1+=i; if (a1>a2) a1=a2;
   } else {
     a1-=i; if (a1<a2) a1=a2;
-  } pila[sp]=a1;
+  } opstack[sp]=a1;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1899,7 +1899,7 @@ void let_me_alone(void) {
   int i;
   for (i=id_start; i<=id_end; i+=iloc_len)
     if (i!=id && mem[i+_Status]) mem[i+_Status]=1;
-  pila[++sp]=0;
+  opstack[++sp]=0;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1916,7 +1916,7 @@ void _exit_dos(void) {
 #endif
 
 #ifdef NETLIB
-  if (inicializacion_red) net_end();
+  if (network_initialization) net_end();
 #endif
 
   rvmode();
@@ -1927,15 +1927,15 @@ void _exit_dos(void) {
   #ifdef DEBUG
   if ((f=fopen("system/exec.err","wb"))!=NULL) {
     fwrite("\x0\x0\x0\x0",4,1,f);
-    fwrite(&pila[sp],4,1,f);
-    fwrite(&mem[itxt+pila[sp-1]],1,strlen((char*)(&mem[itxt+pila[sp-1]]))+1,f);
+    fwrite(&opstack[sp],4,1,f);
+    fwrite(&mem[itxt+opstack[sp-1]],1,strlen((char*)(&mem[itxt+opstack[sp-1]]))+1,f);
     fclose(f);
   }
   #else
-  //printf("%s",&mem[itxt+pila[sp-1]]);
+  //printf("%s",&mem[itxt+opstack[sp-1]]);
   #endif
 
-  exit(pila[sp]);
+  exit(opstack[sp]);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1946,15 +1946,15 @@ void roll_palette(void) {
   int c,n,i,x,color;
   char pal[768];
 
-  i=pila[sp--]; n=abs(pila[sp--]); c=abs(pila[sp])%256;
+  i=opstack[sp--]; n=abs(opstack[sp--]); c=abs(opstack[sp])%256;
   if (n+c>256) n=256-c;
   for (x=c;x<c+n;x++) {
     color=x+i-c;
     while (color<0) color+=n;
     while (color>=n) color-=n;
     color+=c;
-    memcpy(&pal[color*3],&paleta[x*3],3);
-  } memcpy(&paleta[c*3],&pal[c*3],n*3);
+    memcpy(&pal[color*3],&palette[x*3],3);
+  } memcpy(&palette[c*3],&pal[c*3],n*3);
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1962,13 +1962,13 @@ void roll_palette(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void get_real_point(void) {
-  int x,y,an,al,xg,yg;
+  int x,y,w,h,xg,yg;
   int n,dx,dy,px,py;
   int * ptr;
-  float ang,dis;
+  float ang,dist;
   short * p;
 
-  dy=pila[sp--]; dx=pila[sp--]; n=pila[sp];
+  dy=opstack[sp--]; dx=opstack[sp--]; n=opstack[sp];
 
   if (mem[id+_File]>max_fpgs || mem[id+_File]<0) { e(e109); return; }
   if (mem[id+_File]) max_grf=1000; else max_grf=2000;
@@ -1982,7 +1982,7 @@ void get_real_point(void) {
     x=mem[id+_X]; y=mem[id+_Y];
     if (mem[id+_Resolution]>0) { x/=mem[id+_Resolution]; y/=mem[id+_Resolution]; }
 
-    an=ptr[13]; al=ptr[14];
+    w=ptr[13]; h=ptr[14];
 
     if (ptr[15]==0 || *((word*)ptr+32)==65535) { xg=ptr[13]/2; yg=ptr[14]/2;
     } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
@@ -1993,9 +1993,9 @@ void get_real_point(void) {
         if (!px) { if (py>0) ang=-1.5708; else ang=1.5708;
         } else ang=atan2(-py,px);
         ang+=((float)mem[id+_Angle])/radian;
-        dis=sqrt(px*px+py*py)*mem[id+_Size]/100;
-        if (mem[id+_Flags]&1) px=x-cos(ang)*dis; else px=x+cos(ang)*dis;
-        if (mem[id+_Flags]&2) py=y+sin(ang)*dis; else py=y-sin(ang)*dis;
+        dist=sqrt(px*px+py*py)*mem[id+_Size]/100;
+        if (mem[id+_Flags]&1) px=x-cos(ang)*dist; else px=x+cos(ang)*dist;
+        if (mem[id+_Flags]&2) py=y+sin(ang)*dist; else py=y-sin(ang)*dist;
       }
     } else if (mem[id+_Size]!=100) {
       if (mem[id+_Flags]&1) px=x+(xg-px)*mem[id+_Size]/100; else px=x+(px-xg)*mem[id+_Size]/100;
@@ -2020,13 +2020,13 @@ void get_real_point(void) {
 #define  TIME_OUT 2000
 
 void get_joy_button(void) {
-   if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(e134); return; }
+   if(opstack[sp]<0 || opstack[sp]>3) { opstack[sp]=0; e(e134); return; }
 #ifdef DOS
-   if(inp(GAME_PORT)&(1<<(4+pila[sp]))) 
-	pila[sp]=0; 
+   if(inp(GAME_PORT)&(1<<(4+opstack[sp]))) 
+	opstack[sp]=0; 
 	else 
 #endif
-   pila[sp]=1;
+   opstack[sp]=1;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -2036,14 +2036,14 @@ void get_joy_button(void) {
 int ej[4]={-1,-1,-1,-1};
 
 void get_joy_position(void) {
-   if(pila[sp]<0 || pila[sp]>3) { pila[sp]=0; e(e134); return; }
-   else pila[sp]=joy_position(pila[sp]);
+   if(opstack[sp]<0 || opstack[sp]>3) { opstack[sp]=0; e(e134); return; }
+   else opstack[sp]=joy_position(opstack[sp]);
 }
 
-int joy_position(int eje) {
+int joy_position(int axis) {
 #ifdef DOS
    unsigned start,finish,result;
-   int i,mask=1<<eje;
+   int i,mask=1<<axis;
 
    _disable();
    outp(TIMER_PORT+3,0);
@@ -2059,12 +2059,12 @@ int joy_position(int eje) {
    for(i=0;i<TIME_OUT/2;i++) if((inp(GAME_PORT)&0x0f)==0) break;
    result=((result&0x1ff0)>>4)*100;
 
-   if (ej[eje]==-1) ej[eje]=result; else {
+   if (ej[axis]==-1) ej[axis]=result; else {
       if (result>0 && result<25600) {
         if (joy_filter<0) joy_filter=0;
         else if (joy_filter>100) joy_filter=100;
-        ej[eje]=(result*(100-joy_filter)+ej[eje]*joy_filter)/100;
-      } result=ej[eje];
+        ej[axis]=(result*(100-joy_filter)+ej[axis]*joy_filter)/100;
+      } result=ej[axis];
    } return(result/100);
 #endif
 printf("get joy pos\n");
@@ -2140,18 +2140,18 @@ void read_joy(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void convert_palette(void) {
-  int file,graf,pal_ofs;
+  int file,graph,pal_ofs;
   int *ptr,n;
   byte *si;
 
-  pal_ofs=pila[sp--]; graf=pila[sp--]; file=pila[sp];
+  pal_ofs=opstack[sp--]; graph=opstack[sp--]; file=opstack[sp];
 
   if (pal_ofs<long_header || pal_ofs+256>=imem_max) { e(e136); return; }
   if (file<0 || file>max_fpgs) { e(e109); return; }
   if (file) max_grf=1000; else max_grf=2000;
-  if (graf<=0 || graf>=max_grf) { e(e110); return; }
+  if (graph<=0 || graph>=max_grf) { e(e110); return; }
   if (g[file].grf==NULL) { e(e111); return; }
-  if ((ptr=g[file].grf[graf])==NULL) { e(e121); return; }
+  if ((ptr=g[file].grf[graph])==NULL) { e(e121); return; }
 
   n=ptr[13]*ptr[14]; si=(byte*)ptr+64+ptr[15]*4;
   do { *si=(byte)mem[pal_ofs+*si]; si++; } while (--n);
@@ -2162,14 +2162,14 @@ void convert_palette(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void EndSound2(void);
-int InitSound2(int Tarj,int Port,int Irq,int Dma,int Dma2,int master,int sound_fx,int cd_audio);
+int InitSound2(int Card,int Port,int Irq,int Dma,int Dma2,int master,int sound_fx,int cd_audio);
 
 void reset_sound(void) {
 #ifdef DOS
   EndSound2();
   InitSound2(setup->card,setup->port,setup->irq,setup->dma,setup->dma2,setup->master,setup->sound_fx,setup->cd_audio);
 #endif
-  pila[++sp]=0;
+  opstack[++sp]=0;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -2192,7 +2192,7 @@ void set_volume(void) {
   SetVocVolume(setup->sound_fx);
   SetCDVolume(setup->cd_audio);
 #endif
-  pila[++sp]=0;
+  opstack[++sp]=0;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -2202,16 +2202,16 @@ void set_volume(void) {
 void set_color(void) {
   int color,r,g,b;
 
-  b=abs(pila[sp--])%64;
-  g=abs(pila[sp--])%64;
-  r=abs(pila[sp--])%64;
-  color=abs(pila[sp])%256;
+  b=abs(opstack[sp--])%64;
+  g=abs(opstack[sp--])%64;
+  r=abs(opstack[sp--])%64;
+  color=abs(opstack[sp])%256;
 
-  paleta[color*3]=r;
-  paleta[color*3+1]=g;
-  paleta[color*3+2]=b;
+  palette[color*3]=r;
+  palette[color*3+1]=g;
+  palette[color*3+2]=b;
 
-  if (!activar_paleta) activar_paleta=1;
+  if (!activate_palette) activate_palette=1;
 }
 
 #ifdef NETLIB
@@ -2221,19 +2221,19 @@ void set_color(void) {
 
 void _net_init_ipx(void) { // Ojo, emitir los errores, e(...)
   int s,j,t;
-  int old_reloj=get_reloj();
+  int old_clock=get_clock();
 
-  t=pila[sp--];
-  j=pila[sp--];
-  s=pila[sp];
+  t=opstack[sp--];
+  j=opstack[sp--];
+  s=opstack[sp];
 
   if (t<1 || t>60) { e(e148); return; } // Límites timeout
   if (j<2 || j>8) { e(e149); return; }  // Límites jugadores
   s^=113838; // Para evitar conflictos en lo posible
 
-  pila[sp]=net_init_ipx(s,j,t);
+  opstack[sp]=net_init_ipx(s,j,t);
 
-  reloj=old_reloj;
+  clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -2241,12 +2241,12 @@ void _net_init_ipx(void) { // Ojo, emitir los errores, e(...)
 //════════════════════════════════════════════════════════════════════════════
 
 void _net_init_modem(void) {
-  int old_reloj=get_reloj();
+  int old_clock=get_clock();
 
   sp-=6;
-  pila[sp]=-1; // ¡¡¡OJO!!! **************************************************
+  opstack[sp]=-1; // ¡¡¡OJO!!! **************************************************
 
-  reloj=old_reloj;
+  clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -2254,12 +2254,12 @@ void _net_init_modem(void) {
 //════════════════════════════════════════════════════════════════════════════
 
 void _net_init_serial(void) {
-  int old_reloj=get_reloj();
+  int old_clock=get_clock();
 
   sp-=2;
-  pila[sp]=-1; // ¡¡¡OJO!!! **************************************************
+  opstack[sp]=-1; // ¡¡¡OJO!!! **************************************************
 
-  reloj=old_reloj;
+  clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -2269,8 +2269,8 @@ void _net_init_serial(void) {
 void _net_send(void) {
   int d,l;
 
-  l=pila[sp--];
-  d=pila[sp];
+  l=opstack[sp--];
+  d=opstack[sp];
 
   if (d<long_header || d+l>id_init) { e(e150); return; } // Sólo GLOBAL
 
@@ -2278,14 +2278,14 @@ void _net_send(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//    Net_asign(offset dato, valor);
+//    Net_asign(offset dato, value);
 //════════════════════════════════════════════════════════════════════════════
 
-void _net_asign(void) {
+void _net_assign(void) {
   int off,val;
 
-  val=pila[sp--];
-  off=pila[sp];
+  val=opstack[sp--];
+  off=opstack[sp];
 
   if (off<long_header || off>=id_init) { e(e150); return; } // Sólo GLOBAL
 
@@ -2297,19 +2297,19 @@ void _net_asign(void) {
 // Función que se ejecuta al recibir un paquete el servidor
 //=============================================================================
 
-void MAINSRV_Packet(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len) {
-  Usuario=Usuario;
-  net_send(Comando,Buffer,Len);
-  memcpy(&mem[Comando],Buffer,Len);
+void MAINSRV_Packet(WORD User,WORD Command,BYTE *Buffer,WORD Len) {
+  User=User;
+  net_send(Command,Buffer,Len);
+  memcpy(&mem[Command],Buffer,Len);
 }
 
 //=============================================================================
 // Función que se ejecuta al recibir un paquete el nodo
 //=============================================================================
 
-void MAINNOD_Packet(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len) {
-  Usuario=Usuario;
-  memcpy(&mem[Comando],Buffer,Len);
+void MAINNOD_Packet(WORD User,WORD Command,BYTE *Buffer,WORD Len) {
+  User=User;
+  memcpy(&mem[Command],Buffer,Len);
 }
 
 //════════════════════════════════════════════════════════════════════════════

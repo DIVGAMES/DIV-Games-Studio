@@ -3,10 +3,10 @@
 #include <math.h>
 #include "complex.hpp"
 
-#define TAPES_ACTIVAS
+#define ACTIVE_TAPES
 
-extern long complex_x_ini,complex_x_fin;
-extern long complex_y_ini,complex_y_fin;
+extern long complex_x_start,complex_x_end;
+extern long complex_y_start,complex_y_end;
 
 void complex_create(complex *complex_struct,hlrender *hlrnd,char *name,Resource *res)
 {
@@ -21,18 +21,18 @@ int     OffsetDummies;
 int     OffsetTapes;
 int     OffsetAnms;
 
-wvertice    wver;
+wvertex    wver;
 wface       wfac;
 wmaterial   wmat;
 
   complex_struct->Clon=0;
   complex_struct->Shadow=0;
-  complex_struct->AIncrustada=1;
+  complex_struct->AEmbedded=1;
   complex_struct->hl_render=hlrnd;    //Motor de render de alto nivel.
   complex_struct->curframe=0;
   complex_struct->angx=0;complex_struct->angy=0;complex_struct->angz=0;
   complex_struct->x=0;complex_struct->y=0;complex_struct->z=0;
-  complex_struct->activo=1;
+  complex_struct->active=1;
 
 
   file=fopen(name,"rb");
@@ -102,12 +102,12 @@ wmaterial   wmat;
 
     fread(&complex_struct->Objects[i]->Bbox,sizeof(complex_struct->Objects[i]->Bbox),1,file);
 
-    complex_struct->Objects[i]->Centro.rx=(complex_struct->Objects[i]->Bbox.x1+complex_struct->Objects[i]->Bbox.x2)/2;
-    complex_struct->Objects[i]->Centro.ry=(complex_struct->Objects[i]->Bbox.y1+complex_struct->Objects[i]->Bbox.y2)/2;
-    complex_struct->Objects[i]->Centro.rz=(complex_struct->Objects[i]->Bbox.z1+complex_struct->Objects[i]->Bbox.z2)/2;
+    complex_struct->Objects[i]->Center.rx=(complex_struct->Objects[i]->Bbox.x1+complex_struct->Objects[i]->Bbox.x2)/2;
+    complex_struct->Objects[i]->Center.ry=(complex_struct->Objects[i]->Bbox.y1+complex_struct->Objects[i]->Bbox.y2)/2;
+    complex_struct->Objects[i]->Center.rz=(complex_struct->Objects[i]->Bbox.z1+complex_struct->Objects[i]->Bbox.z2)/2;
 
     complex_struct->Objects[i]->Shadow=complex_struct->Shadow;
-    complex_struct->Objects[i]->lambiente=0;
+    complex_struct->Objects[i]->lambient=0;
 
     for(j=0;j<complex_struct->Objects[i]->nVertex;j++)
     {
@@ -146,7 +146,7 @@ wmaterial   wmat;
       complex_struct->Materials[i].dr=wmat.dr;
       complex_struct->Materials[i].dg=wmat.dg;
       complex_struct->Materials[i].db=wmat.db;
-      complex_struct->Materials[i].dac_difusa=63;
+      complex_struct->Materials[i].dac_diffuse=63;
 
       complex_struct->Materials[i].ar=wmat.ar*255;
       complex_struct->Materials[i].ag=wmat.ag*255;
@@ -156,32 +156,32 @@ wmaterial   wmat;
       complex_struct->Materials[i].sr=wmat.sr;
       complex_struct->Materials[i].sg=wmat.sg;
       complex_struct->Materials[i].sb=wmat.sb;
-      complex_struct->Materials[i].dac_especular=63;
+      complex_struct->Materials[i].dac_specular=63;
 
-      if(strcmp(wmat.textura,"NULL"))
+      if(strcmp(wmat.texture,"NULL"))
       {
-        strcat(wmat.textura,".PCX");
-        complex_struct->Materials[i].textura=sprite3d_CreateTexture(complex_struct->hl_render->ccamera,res,wmat.textura);
-        if (wmat.transp>0) complex_struct->Materials[i].tipo_map=TRANS_PER;
-        else if (wmat.map_type==TMETAL) complex_struct->Materials[i].tipo_map=TEXT_PER;
-        else complex_struct->Materials[i].tipo_map=TEXTURA;
+        strcat(wmat.texture,".PCX");
+        complex_struct->Materials[i].texture=sprite3d_CreateTexture(complex_struct->hl_render->ccamera,res,wmat.texture);
+        if (wmat.transp>0) complex_struct->Materials[i].map_type=TRANS_PER;
+        else if (wmat.map_type==TMETAL) complex_struct->Materials[i].map_type=TEXT_PER;
+        else complex_struct->Materials[i].map_type=TEXTURE;
       }
       else
       {
-        complex_struct->Materials[i].textura->buffer=NULL;
-        if (wmat.map_type==TFLAT) complex_struct->Materials[i].tipo_map=FLAT;
-        else if (wmat.map_type==TPHONG) complex_struct->Materials[i].tipo_map=GOURAUD;
-        else if (wmat.map_type==TMETAL) complex_struct->Materials[i].tipo_map=FLAT_TRANS;
-        else complex_struct->Materials[i].tipo_map=FLAT;
+        complex_struct->Materials[i].texture->buffer=NULL;
+        if (wmat.map_type==TFLAT) complex_struct->Materials[i].map_type=FLAT;
+        else if (wmat.map_type==TPHONG) complex_struct->Materials[i].map_type=GOURAUD;
+        else if (wmat.map_type==TMETAL) complex_struct->Materials[i].map_type=FLAT_TRANS;
+        else complex_struct->Materials[i].map_type=FLAT;
       }
   }
   for(i=0;i<complex_struct->nObjects;i++)
     for(j=0;j<complex_struct->Objects[i]->nFaces;j++)
-      complex_struct->Objects[i]->Faces[j].tipo_map=complex_struct->Objects[i]->Faces[j].material->tipo_map;
+      complex_struct->Objects[i]->Faces[j].map_type=complex_struct->Objects[i]->Faces[j].material->map_type;
   fread(complex_struct->Dummies,sizeof(tbbox),complex_struct->nDummies,file);
   fread(complex_struct->Tapes,sizeof(ttape),complex_struct->nTapes,file);
 
-#ifdef TAPES_ACTIVAS
+#ifdef ACTIVE_TAPES
   for(i=0;i<complex_struct->nTapes;i++)
   {
     for(j=0;j<complex_struct->Objects[complex_struct->Tapes[i].Obj1]->nFaces;j++)
@@ -233,10 +233,10 @@ int i;
   }
   else
   {
-    if(complex_struct->nFrames>0 && complex_struct->AIncrustada)
+    if(complex_struct->nFrames>0 && complex_struct->AEmbedded)
       lf_free(complex_struct->Anims);
     for(i=0;i<complex_struct->nMaterials;i++)
-      sprite3d_DestroyTexture(complex_struct->hl_render->ccamera,complex_struct->Materials[i].textura);
+      sprite3d_DestroyTexture(complex_struct->hl_render->ccamera,complex_struct->Materials[i].texture);
     if(complex_struct->nMaterials)
       lf_free(complex_struct->Materials);
     for(i=0;i<complex_struct->nObjects;i++)
@@ -289,13 +289,13 @@ void  complex_draw(complex *complex_struct)
 {
   int i;
 
-  complex_x_ini=complex_struct->hl_render->ccamera->ancho;complex_x_fin=0;
-  complex_y_ini=complex_struct->hl_render->ccamera->alto;complex_y_fin=0;
+  complex_x_start=complex_struct->hl_render->ccamera->width;complex_x_end=0;
+  complex_y_start=complex_struct->hl_render->ccamera->height;complex_y_end=0;
   for(i=0;i<complex_struct->nObjects;i++)
     hlrender_drawobject(complex_struct->hl_render,complex_struct->wobjects[i]);
 
-  complex_struct->bbox_x_ini=complex_x_ini;complex_struct->bbox_x_fin=complex_x_fin;
-  complex_struct->bbox_y_ini=complex_y_ini;complex_struct->bbox_y_fin=complex_y_fin;
+  complex_struct->bbox_x_start=complex_x_start;complex_struct->bbox_x_end=complex_x_end;
+  complex_struct->bbox_y_start=complex_y_start;complex_struct->bbox_y_end=complex_y_end;
 }
 
 void  complex_sortdraw(complex *complex_struct)
@@ -358,10 +358,10 @@ void complex_setmaptype(complex *complex_struct,int type)
   int i,j;
 
   for(i=0;i<complex_struct->nMaterials;i++)
-    complex_struct->Materials[i].tipo_map=type;
+    complex_struct->Materials[i].map_type=type;
   for(i=0;i<complex_struct->nObjects;i++)
     for(j=0;j<complex_struct->Objects[i]->nFaces;j++)
-      complex_struct->Objects[i]->Faces[j].tipo_map=complex_struct->Objects[i]->Faces[j].material->tipo_map;
+      complex_struct->Objects[i]->Faces[j].map_type=complex_struct->Objects[i]->Faces[j].material->map_type;
 }
 
 void complex_setcolor(complex *complex_struct,float r, float g, float b)
@@ -375,12 +375,12 @@ void complex_setcolor(complex *complex_struct,float r, float g, float b)
   }
 }
 
-void complex_setambientlight(complex *complex_struct,float intensidad)
+void complex_setambientlight(complex *complex_struct,float intensity)
 {
   int i;
 
   for(i=0;i<complex_struct->nObjects;i++)
-      complex_struct->Objects[i]->lambiente=intensidad;
+      complex_struct->Objects[i]->lambient=intensity;
 }
 
 void complex_makefacenormals(complex *complex_struct)

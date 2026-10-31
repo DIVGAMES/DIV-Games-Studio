@@ -61,10 +61,10 @@ static int ft_fps;
 static int saw_frame_time;
 static int av_fps;
 
-extern double freloj;
+extern double fclock;
 extern int dfps;
-extern int max_saltos;
-extern int get_reloj(void);
+extern int max_skips;
+extern int get_clock(void);
 
 static void fallback_log(enum retro_log_level level, const char *fmt, ...) {
 	va_list ap;
@@ -452,17 +452,17 @@ static void publish_fps(int fps) {
 	info.timing.fps = (double)fps;
 	av_fps = fps;
 	if (environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info))
-		fprintf(stderr, "div_lr: set_fps %d frameskip %d\n", fps, max_saltos);
+		fprintf(stderr, "div_lr: set_fps %d frameskip %d\n", fps, max_skips);
 }
 
 static void run_due_frames(void) {
-	int budget = max_saltos + 1;
+	int budget = max_skips + 1;
 	int ran = 0;
 	if (budget < 1)
 		budget = 1;
 	if (budget > 11)
 		budget = 11;
-	while (ran < budget && get_reloj() >= (int)freloj) {
+	while (ran < budget && get_clock() >= (int)fclock) {
 		div_lr_frame();
 		game_frames++;
 		ran++;
@@ -511,8 +511,8 @@ bool retro_load_game_special(unsigned type, const struct retro_game_info *info, 
 
 void retro_unload_game(void) {
 	fprintf(stderr, "div_lr: ran %d host frames, %d game frames, clock %dms, fps %d skip %d, last %dx%d\n",
-		run_count, game_frames, booted ? get_reloj() : 0,
-		dfps, max_saltos, div_lr_width, div_lr_height);
+		run_count, game_frames, booted ? get_clock() : 0,
+		dfps, max_skips, div_lr_width, div_lr_height);
 	booted = 0;
 	ft_registered = 0;
 	ft_fps = 0;

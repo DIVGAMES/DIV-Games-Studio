@@ -8,18 +8,18 @@
 
 #define VERSION_INPUT 1
 
-#define MARCA_CADENA_TIZO_ASCII 111333
-#define MARCA_CADENA_TIZO_INPUT 333111
+#define MARK_STRING_TIZO_ASCII 111333
+#define MARK_STRING_TIZO_INPUT 333111
 
 // Se guardan rutinas antiguas con 0 al final....
 // Falta load y save multilinea.....
 // Y poner comprobante de que es cadena de dll(de tizo)
 
- int *nuevopunteroascii,mitxt;
- FILE *ficherodisco;
- int nombre;
- char *irnombre;
- FILE *ficherolog;
+ int *newasciipointer,mitxt;
+ FILE *diskfile;
+ int name;
+ char *inname;
+ FILE *logfile;
 
 void ascii_version(){
 
@@ -28,108 +28,108 @@ void ascii_version(){
 
 void ascii_load(){
 
-        char* caracter;
-        int sitioiniciofichero;
-        int nuevoascii;
-        int *realpunteroascii;
+        char* character;
+        int filestartpos;
+        int newascii;
+        int *realasciipointer;
 
-        int numerotextos=getparm();
-        int iniciolinea=getparm();
-        int tablaguarda=getparm();
-        nombre=getparm();
+        int numtexts=getparm();
+        int linestart=getparm();
+        int savetable=getparm();
+        name=getparm();
 
-        if ((ficherodisco=div_fopen(irnombre,"rb"))!=NULL)
+        if ((diskfile=div_fopen(inname,"rb"))!=NULL)
         {
-                int contadorlinea=0;
+                int linecounter=0;
 
                 // Avanzamos a la linea indicada
-                while (contadorlinea<iniciolinea && feof(ficherodisco)==NULL)
+                while (linecounter<linestart && feof(diskfile)==NULL)
                 {
 
-                        while (*caracter!=13 && feof(ficherodisco)==NULL)
+                        while (*character!=13 && feof(diskfile)==NULL)
                                 {
-                                fread(caracter,1,1,ficherodisco);
+                                fread(character,1,1,diskfile);
                                 }
-                        if (feof(ficherodisco)!=NULL)
+                        if (feof(diskfile)!=NULL)
                         {
-                                div_fclose(ficherodisco);
+                                div_fclose(diskfile);
                                 retval(-1);
                         }else
                         {
                                 // Codigo 10 de ascii....
-                                fread(caracter,1,1,ficherodisco);
-                                contadorlinea++;
+                                fread(character,1,1,diskfile);
+                                linecounter++;
                         }
                 }
-                if (feof(ficherodisco)!=NULL){
-                        div_fclose(ficherodisco);
+                if (feof(diskfile)!=NULL){
+                        div_fclose(diskfile);
                         retval(-1);
                 }else
                 {
                         // Hemos situado el fichero.....
                         // Ahora a coger la memoria...
                         // y despues la variable....
-                        int lineasporleer=0;
-                        while (lineasporleer<numerotextos && feof(ficherodisco)==NULL)                        
+                        int linestoread=0;
+                        while (linestoread<numtexts && feof(diskfile)==NULL)                        
                         {
                                 // guardamos la posicion del fichero....
-                                sitioiniciofichero=ftell(ficherodisco);
+                                filestartpos=ftell(diskfile);
 
                                 // Contamos las letras
-                                int cuentacaracteres=0;
+                                int charcount=0;
 
-                                while (*caracter!=13 && feof(ficherodisco)==NULL)
+                                while (*character!=13 && feof(diskfile)==NULL)
                                 {
-                                        fread(caracter,1,1,ficherodisco);                                       
-                                        cuentacaracteres++;
+                                        fread(character,1,1,diskfile);                                       
+                                        charcount++;
                                 }
                                 
                                 // A reservar memoria....
-                                nuevopunteroascii=(int *)div_malloc(cuentacaracteres+9);
-                                mitxt=(int)nuevopunteroascii[0];
+                                newasciipointer=(int *)div_malloc(charcount+9);
+                                mitxt=(int)newasciipointer[0];
 
-                                int *empiezatexto;
+                                int *textstart;
                                 //y calculamos el offset del nuevo puntero
-                                empiezatexto=&mem[text_offset];
-                                int primertxt;
-                                primertxt=(int)empiezatexto[0];
+                                textstart=&mem[text_offset];
+                                int firsttxt;
+                                firsttxt=(int)textstart[0];
                                 mitxt+=3;
                                 mitxt&=-4;
                                 // Guarda valores internos....
-                                realpunteroascii=(int *) mitxt;
+                                realasciipointer=(int *) mitxt;
 
                                 // Ponemos la marca
-                                *realpunteroascii=MARCA_CADENA_TIZO_ASCII;
-                                realpunteroascii++;
-                                mitxt=(int)realpunteroascii[0];
+                                *realasciipointer=MARK_STRING_TIZO_ASCII;
+                                realasciipointer++;
+                                mitxt=(int)realasciipointer[0];
                                 char * ptr;
                                 ptr=(char *)mitxt;      
                 
-                                nuevoascii=(mitxt-primertxt)/4;
+                                newascii=(mitxt-firsttxt)/4;
 
                                 // Guardamos el valor, en el campo de la estructura...                                
-                                mem[tablaguarda+lineasporleer]=nuevoascii;
+                                mem[savetable+linestoread]=newascii;
 
                                 // Colocamos el fichero en su sitio, una vez contado...
-                                fseek(ficherodisco,sitioiniciofichero,SEEK_SET);
+                                fseek(diskfile,filestartpos,SEEK_SET);
 
                                 // Y cogemos toda la linea...
-                                fread(ptr,1,cuentacaracteres,ficherodisco);                                       
+                                fread(ptr,1,charcount,diskfile);                                       
 
                                 // pone un cero al final....
-                                ptr[cuentacaracteres-1]=0;
+                                ptr[charcount-1]=0;
 
                                 // Y otra linea....
-                                lineasporleer++; 
+                                linestoread++; 
                                 // Leemos el enter y el 10....
-                                fread(caracter,1,1,ficherodisco);                                
+                                fread(character,1,1,diskfile);                                
                         }
-                        if (feof(ficherodisco)!=NULL){        
-                                div_fclose(ficherodisco);
+                        if (feof(diskfile)!=NULL){        
+                                div_fclose(diskfile);
                                 retval(1);
                         }else
                         {
-                                div_fclose(ficherodisco);       
+                                div_fclose(diskfile);       
                                 retval(-1);
                         }
                }
@@ -140,20 +140,20 @@ void ascii_load(){
 
 void ascii_free(){
 
-   int pasavalor=getparm();
+   int passvalue=getparm();
 
-   nuevopunteroascii=&mem[text_offset+pasavalor];
-   nuevopunteroascii--;
-   if ( *nuevopunteroascii!=MARCA_CADENA_TIZO_ASCII &&
-        *nuevopunteroascii!=MARCA_CADENA_TIZO_INPUT ) {
+   newasciipointer=&mem[text_offset+passvalue];
+   newasciipointer--;
+   if ( *newasciipointer!=MARK_STRING_TIZO_ASCII &&
+        *newasciipointer!=MARK_STRING_TIZO_INPUT ) {
         retval(-1);
    }else{ 
-        if (*nuevopunteroascii!=MARCA_CADENA_TIZO_INPUT) {
-                nuevopunteroascii--;
-                div_free(nuevopunteroascii);
+        if (*newasciipointer!=MARK_STRING_TIZO_INPUT) {
+                newasciipointer--;
+                div_free(newasciipointer);
                 retval(1);
         }else{
-                div_free(nuevopunteroascii);
+                div_free(newasciipointer);
                 retval(1);
         }
    }
@@ -161,26 +161,26 @@ void ascii_free(){
 
 void ascii_save() {
   char *variable2;
-  char *codigo_enter;
-  int modosave=getparm();
+  char *enter_code;
+  int savemode=getparm();
   int variable=getparm();
-  int nombre=getparm();
-  irnombre=(char *)&mem[nombre+text_offset];
-  if (modosave==0)
+  int name=getparm();
+  inname=(char *)&mem[name+text_offset];
+  if (savemode==0)
   {
         // Se crea el fichero nuevo....
         // ya se tiene el nombre....
         variable2=(char *)&mem[variable+text_offset];
         // Ahora grabamos el fichero.....
-        if ((ficherodisco=div_fopen(irnombre,"ab"))!=NULL)
+        if ((diskfile=div_fopen(inname,"ab"))!=NULL)
         {                
-                fwrite(variable2,1,strlen(variable2),ficherodisco);
+                fwrite(variable2,1,strlen(variable2),diskfile);
                 // Se debe introducir un codigo enter 
-                *codigo_enter=13;
-                fwrite(codigo_enter,1,1,ficherodisco);
-                *codigo_enter=10;
-                fwrite(codigo_enter,1,1,ficherodisco);
-                div_fclose(ficherodisco);
+                *enter_code=13;
+                fwrite(enter_code,1,1,diskfile);
+                *enter_code=10;
+                fwrite(enter_code,1,1,diskfile);
+                div_fclose(diskfile);
                 retval(1);
         }else{ retval(-1);}
   }else{
@@ -188,15 +188,15 @@ void ascii_save() {
         // ya se tiene el nombre....
         variable2=(char *)&mem[variable+text_offset];
         // Ahora grabamos el fichero.....
-        if ((ficherodisco=div_fopen(irnombre,"wb"))!=NULL)
+        if ((diskfile=div_fopen(inname,"wb"))!=NULL)
         {                
-                fwrite(variable2,1,strlen(variable2),ficherodisco);
+                fwrite(variable2,1,strlen(variable2),diskfile);
                 // Se debe introducir un codigo enter 
-                *codigo_enter=13;
-                fwrite(codigo_enter,1,1,ficherodisco);
-                *codigo_enter=10;
-                fwrite(codigo_enter,1,1,ficherodisco);
-                div_fclose(ficherodisco);
+                *enter_code=13;
+                fwrite(enter_code,1,1,diskfile);
+                *enter_code=10;
+                fwrite(enter_code,1,1,diskfile);
+                div_fclose(diskfile);
                 retval(1);
         }else{ retval(-1);}
 
@@ -204,44 +204,44 @@ void ascii_save() {
 }
 
 void ascii_load0() { // Carga fichero formato ascii
-  int contador;
-  int nuevoascii;
-  int *empiezatexto;
+  int counter;
+  int newascii;
+  int *textstart;
 
-  nombre=getparm();
+  name=getparm();
   // ya se tiene el nombre del archivo....
-  irnombre=(char *)&mem[nombre+text_offset];
+  inname=(char *)&mem[name+text_offset];
            
 
    // Ahora cargaremos el fichero.....
-   if ((ficherodisco=div_fopen(irnombre,"rb"))!=NULL)
+   if ((diskfile=div_fopen(inname,"rb"))!=NULL)
         {
                
-                int longitudfichero;
-                int primertxt;
+                int filelength;
+                int firsttxt;
                 // Lo llevamos al final
-                fseek(ficherodisco,0,SEEK_END);
+                fseek(diskfile,0,SEEK_END);
                 // lo medimos
-                longitudfichero=ftell(ficherodisco);
+                filelength=ftell(diskfile);
                 // y lo llevamos al principio
-                fseek(ficherodisco,0,SEEK_SET);
+                fseek(diskfile,0,SEEK_SET);
 
                 // A reservar memoria....
-                nuevopunteroascii=(int *)div_malloc(longitudfichero+4);
-                mitxt=(int)nuevopunteroascii[0];
+                newasciipointer=(int *)div_malloc(filelength+4);
+                mitxt=(int)newasciipointer[0];
 
                 //y calculamos el offset del nuevo puntero
-                empiezatexto=&mem[text_offset];
-                primertxt=(int)empiezatexto[0];
+                textstart=&mem[text_offset];
+                firsttxt=(int)textstart[0];
                 mitxt+=3;
                 mitxt&=-4;
                 char * ptr;
                 ptr=(char*)mitxt;      
-                nuevoascii=(mitxt-primertxt)/4;
-                fread(ptr,1,longitudfichero,ficherodisco);
-                div_fclose(ficherodisco);
-                ptr[longitudfichero]=0;
-                retval(nuevoascii);
+                newascii=(mitxt-firsttxt)/4;
+                fread(ptr,1,filelength,diskfile);
+                div_fclose(diskfile);
+                ptr[filelength]=0;
+                retval(newascii);
         }
    else
         {
@@ -250,199 +250,199 @@ void ascii_load0() { // Carga fichero formato ascii
 }
 
 void ascii_dup(){
-        int primertxt;
-        int nuevoascii;
-        int *empiezatexto;
-        int *realpunteroascii;
+        int firsttxt;
+        int newascii;
+        int *textstart;
+        int *realasciipointer;
 
-        char *texto1;
-        int cantidaddetexto=getparm();
-        int caracterelegido=getparm();
+        char *text1;
+        int textamount=getparm();
+        int chosenchar=getparm();
 
 
         // A reservar memoria....
-        nuevopunteroascii=(int *)div_malloc(cantidaddetexto+8);
-        mitxt=(int)nuevopunteroascii[0];
+        newasciipointer=(int *)div_malloc(textamount+8);
+        mitxt=(int)newasciipointer[0];
         //y calculamos el offset del nuevo puntero
-        empiezatexto=&mem[text_offset];
-        primertxt=(int)empiezatexto[0];
+        textstart=&mem[text_offset];
+        firsttxt=(int)textstart[0];
         mitxt+=3;
         mitxt&=-4;
 
         // puntero colocado....
         // Guarda valores internos....
-        realpunteroascii=(int *) mitxt;
+        realasciipointer=(int *) mitxt;
 
-        *realpunteroascii=MARCA_CADENA_TIZO_ASCII ;
-        realpunteroascii++;
-        mitxt=(int)realpunteroascii[0];
+        *realasciipointer=MARK_STRING_TIZO_ASCII ;
+        realasciipointer++;
+        mitxt=(int)realasciipointer[0];
 
-        nuevoascii=(mitxt-primertxt)/4;
+        newascii=(mitxt-firsttxt)/4;
         char * ptr2;
         ptr2=(char*)mitxt;
-        int contador;
-        for (contador=0;contador<cantidaddetexto;contador++){
-                ptr2[contador]=(char)caracterelegido;
+        int counter;
+        for (counter=0;counter<textamount;counter++){
+                ptr2[counter]=(char)chosenchar;
         }
-        ptr2[cantidaddetexto]=0;
-        retval(nuevoascii);
+        ptr2[textamount]=0;
+        retval(newascii);
 }
 
 void ascii_add()
 {
-        char *texto1;
-        char *texto2;
-        int primertxt;
-        int nuevoascii;
-        int *empiezatexto;
-        int *realpunteroascii;
+        char *text1;
+        char *text2;
+        int firsttxt;
+        int newascii;
+        int *textstart;
+        int *realasciipointer;
 
         int variable2=getparm();
         int variable1=getparm();
         // ya se tiene el nombre....
-        texto1=(char *)&mem[variable1+text_offset];
-        texto2=(char *)&mem[variable2+text_offset];
+        text1=(char *)&mem[variable1+text_offset];
+        text2=(char *)&mem[variable2+text_offset];
         // A reservar memoria....
-        nuevopunteroascii=(int *)div_malloc(strlen(texto1)+strlen(texto2)+4);
-        mitxt=(int)nuevopunteroascii;
+        newasciipointer=(int *)div_malloc(strlen(text1)+strlen(text2)+4);
+        mitxt=(int)newasciipointer;
         //y calculamos el offset del nuevo puntero
-        empiezatexto=&mem[text_offset];
-        primertxt=(int)empiezatexto;
+        textstart=&mem[text_offset];
+        firsttxt=(int)textstart;
         mitxt+=3;
         mitxt&=-4;
 
         // puntero colocado....
         // Guarda valores internos....
-        realpunteroascii=(int *) mitxt;
+        realasciipointer=(int *) mitxt;
 
-        *realpunteroascii=MARCA_CADENA_TIZO_ASCII;
-        realpunteroascii++;
-        mitxt=(int)realpunteroascii;
+        *realasciipointer=MARK_STRING_TIZO_ASCII;
+        realasciipointer++;
+        mitxt=(int)realasciipointer;
 
 
-        nuevoascii=(mitxt-primertxt)/4;
+        newascii=(mitxt-firsttxt)/4;
         char * ptr2;
         ptr2=(char*)mitxt;
-        strcpy(ptr2,texto1);
-        strcat(ptr2,texto2);
-        retval(nuevoascii);
+        strcpy(ptr2,text1);
+        strcat(ptr2,text2);
+        retval(newascii);
 }
 void ascii_paste()
 {
-        char *texto1;
-        char *texto2;
+        char *text1;
+        char *text2;
 
-        int posiciondeltexto=getparm();
+        int textposition=getparm();
         int variable2=getparm();
         int variable1=getparm();
         // ya se tiene el nombre....
-        texto1=(char *)&mem[variable1+text_offset];
-        texto2=(char *)&mem[variable2+text_offset];
+        text1=(char *)&mem[variable1+text_offset];
+        text2=(char *)&mem[variable2+text_offset];
 
-        if (posiciondeltexto<0) retval(-1);
-        if (posiciondeltexto>strlen(texto1)) retval(-1);
-        if (strlen(texto1)<strlen(texto2)) retval(-1);
-        if (strlen(texto2)+posiciondeltexto>strlen(texto1)) retval(-1);
-        int contador;
-        for (contador=0;contador<strlen(texto2);contador++){
-        texto1[posiciondeltexto+contador]=texto2[contador];}
+        if (textposition<0) retval(-1);
+        if (textposition>strlen(text1)) retval(-1);
+        if (strlen(text1)<strlen(text2)) retval(-1);
+        if (strlen(text2)+textposition>strlen(text1)) retval(-1);
+        int counter;
+        for (counter=0;counter<strlen(text2);counter++){
+        text1[textposition+counter]=text2[counter];}
         
         retval(1);
 }
 void ascii_setchar()
 {
-        char *texto1;
+        char *text1;
 
 
 
         int variable2=getparm();
-        int posiciondeltexto=getparm();
+        int textposition=getparm();
         int variable1=getparm();
         // ya se tiene el nombre....
-        texto1=(char *)&mem[variable1+text_offset];
+        text1=(char *)&mem[variable1+text_offset];
 
 
-        if (posiciondeltexto<0) retval(-1);
-        if (posiciondeltexto>strlen(texto1)) retval(-1);
+        if (textposition<0) retval(-1);
+        if (textposition>strlen(text1)) retval(-1);
         
-        texto1[posiciondeltexto]=(char)variable2;
+        text1[textposition]=(char)variable2;
 
         retval(1);
 }
 
 void ascii_getchar()
 {
-        char caracter;
-        int valorfinal;
-        char *texto1;
-        int posicion=getparm();
+        char character;
+        int finalvalue;
+        char *text1;
+        int position=getparm();
         int variable1=getparm();
         // ya se tiene el nombre....
-        texto1=(char *)&mem[variable1+text_offset];
-        if (posicion<0)retval(-1);
-        if (posicion>strlen(texto1))retval(-1);
-        caracter=texto1[posicion];
-        valorfinal=(int)caracter;
-        retval(valorfinal);
+        text1=(char *)&mem[variable1+text_offset];
+        if (position<0)retval(-1);
+        if (position>strlen(text1))retval(-1);
+        character=text1[position];
+        finalvalue=(int)character;
+        retval(finalvalue);
 }
 void ascii_len()
 {
  
-        int valorfinal;
-        char *texto1;
+        int finalvalue;
+        char *text1;
         int variable1=getparm();
         // ya se tiene el nombre....
-        texto1=(char *)&mem[variable1+text_offset];
-        valorfinal=strlen(texto1);
-        retval(valorfinal);
+        text1=(char *)&mem[variable1+text_offset];
+        finalvalue=strlen(text1);
+        retval(finalvalue);
 }
 
 void ascii_copy()
 {
-        int primertxt;
-        int nuevoascii;
-        int *empiezatexto;
-        int *realpunteroascii;
+        int firsttxt;
+        int newascii;
+        int *textstart;
+        int *realasciipointer;
 
-        char *texto1;
-        int longitexto=getparm();
-        int iniciotexto=getparm();
+        char *text1;
+        int textlength=getparm();
+        int firsttext=getparm();
         int variable1=getparm();
         // ya se tiene el nombre....
-        texto1=(char *)&mem[variable1+text_offset];
+        text1=(char *)&mem[variable1+text_offset];
 
-        if (longitexto<0)retval(-1);
-        if (iniciotexto<0)retval(-1);
-        if (iniciotexto>strlen(texto1))retval(-1);
-        if (longitexto>strlen(texto1))retval(-1);
-        if (iniciotexto+longitexto>strlen(texto1))retval(-1);
+        if (textlength<0)retval(-1);
+        if (firsttext<0)retval(-1);
+        if (firsttext>strlen(text1))retval(-1);
+        if (textlength>strlen(text1))retval(-1);
+        if (firsttext+textlength>strlen(text1))retval(-1);
 
         // A reservar memoria....
-        nuevopunteroascii=(int *)div_malloc(longitexto+8);
-        mitxt=(int)nuevopunteroascii;
+        newasciipointer=(int *)div_malloc(textlength+8);
+        mitxt=(int)newasciipointer;
         //y calculamos el offset del nuevo puntero
-        empiezatexto=&mem[text_offset];
-        primertxt=(int)empiezatexto;
+        textstart=&mem[text_offset];
+        firsttxt=(int)textstart;
         mitxt+=3;
         mitxt&=-4;
 
         // puntero colocado....
         // Guarda valores internos....
-        realpunteroascii=(int *) mitxt;
+        realasciipointer=(int *) mitxt;
 
-        *realpunteroascii=MARCA_CADENA_TIZO_ASCII;
-        realpunteroascii++;
-        mitxt=(int)realpunteroascii;
+        *realasciipointer=MARK_STRING_TIZO_ASCII;
+        realasciipointer++;
+        mitxt=(int)realasciipointer;
 
-        nuevoascii=(mitxt-primertxt)/4;
+        newascii=(mitxt-firsttxt)/4;
         char * ptr2;
         ptr2=(char*)mitxt;
-        int contador;
-        for (contador=0;contador<longitexto;contador++){
-                ptr2[contador]=texto1[iniciotexto+contador];
+        int counter;
+        for (counter=0;counter<textlength;counter++){
+                ptr2[counter]=text1[firsttext+counter];
         }
-        ptr2[longitexto]=0;
-        retval(nuevoascii);
+        ptr2[textlength]=0;
+        retval(newascii);
 
 }
 
@@ -455,37 +455,37 @@ void input_version(){
 
 void input_new()
 {
-        int primertxt;
-        int nuevoascii;
-        int *empiezatexto;
-        char *textoameter;
+        int firsttxt;
+        int newascii;
+        int *textstart;
+        char *texttoinsert;
 
-        int *realpunteroascii;
+        int *realasciipointer;
 
         int variable1=getparm();
 
         // A reservar memoria....
-        nuevopunteroascii=(int *)div_malloc(variable1+12);
-        mitxt=(int)nuevopunteroascii;
+        newasciipointer=(int *)div_malloc(variable1+12);
+        mitxt=(int)newasciipointer;
         //y calculamos el offset del nuevo puntero
-        empiezatexto=&mem[text_offset];
-        primertxt=(int)empiezatexto;
+        textstart=&mem[text_offset];
+        firsttxt=(int)textstart;
         mitxt+=3;
         mitxt&=-4;
 
         // puntero colocado....
         // Guarda valores internos....
-        realpunteroascii=(int *) mitxt;
+        realasciipointer=(int *) mitxt;
 
-        *realpunteroascii=variable1;
-        realpunteroascii++;
-        *realpunteroascii=MARCA_CADENA_TIZO_INPUT;
-        realpunteroascii++;
-        mitxt=(int)realpunteroascii;
-        textoameter=(char *)mitxt;
-        textoameter[0]=0;
-        nuevoascii=(mitxt-primertxt)/4;
-        retval(nuevoascii);
+        *realasciipointer=variable1;
+        realasciipointer++;
+        *realasciipointer=MARK_STRING_TIZO_INPUT;
+        realasciipointer++;
+        mitxt=(int)realasciipointer;
+        texttoinsert=(char *)mitxt;
+        texttoinsert[0]=0;
+        newascii=(mitxt-firsttxt)/4;
+        retval(newascii);
 
 }
 void input_free()
@@ -493,41 +493,41 @@ void input_free()
 
        int variable1=getparm();
 
-       nuevopunteroascii=&mem[text_offset+variable1];
-       nuevopunteroascii--;
-       if ( *nuevopunteroascii!= MARCA_CADENA_TIZO_INPUT ){
+       newasciipointer=&mem[text_offset+variable1];
+       newasciipointer--;
+       if ( *newasciipointer!= MARK_STRING_TIZO_INPUT ){
                 retval(-1);
        }else{ 
-                nuevopunteroascii--;       
-                div_free(nuevopunteroascii);
+                newasciipointer--;       
+                div_free(newasciipointer);
                 retval(1);
        }
 }
 void input_add()
 {
-       int memoriareservada;
-       char *textodeinput;
-       int longitudtexto;
+       int reservedmemory;
+       char *inputtext;
+       int textlength;
 
        int variable2=getparm();
        int variable1=getparm();
 
-       nuevopunteroascii=&mem[text_offset+variable1];
-       nuevopunteroascii--;
-       if ( *nuevopunteroascii!= MARCA_CADENA_TIZO_INPUT ){
+       newasciipointer=&mem[text_offset+variable1];
+       newasciipointer--;
+       if ( *newasciipointer!= MARK_STRING_TIZO_INPUT ){
                 retval(-1);
        }else{
-                nuevopunteroascii--;
-                memoriareservada=*nuevopunteroascii;
-                nuevopunteroascii++;
-                nuevopunteroascii++;
-                textodeinput= (char *) nuevopunteroascii;
-                longitudtexto=strlen(textodeinput);
-                if (longitudtexto+1>memoriareservada){
+                newasciipointer--;
+                reservedmemory=*newasciipointer;
+                newasciipointer++;
+                newasciipointer++;
+                inputtext= (char *) newasciipointer;
+                textlength=strlen(inputtext);
+                if (textlength+1>reservedmemory){
                     retval(-1);
                 }else{
-                    textodeinput[longitudtexto]=(char) variable2;
-                    textodeinput[longitudtexto+1]=0;
+                    inputtext[textlength]=(char) variable2;
+                    inputtext[textlength+1]=0;
                     retval(1);
                 }
                 
@@ -535,21 +535,21 @@ void input_add()
 }
 void input_delete()
 {
-       char *textoausar;
-       int longitudtextousado;
+       char *texttouse;
+       int usedtextlength;
        int variable1=getparm();
 
-       nuevopunteroascii=&mem[text_offset+variable1];
-       nuevopunteroascii--;
-       if ( *nuevopunteroascii!= MARCA_CADENA_TIZO_INPUT ){
+       newasciipointer=&mem[text_offset+variable1];
+       newasciipointer--;
+       if ( *newasciipointer!= MARK_STRING_TIZO_INPUT ){
                 retval(-1);
        }else{
-              nuevopunteroascii++;
-              textoausar=(char *) nuevopunteroascii;
-              longitudtextousado=strlen(textoausar);
-              if (longitudtextousado>0){
-                        textoausar[longitudtextousado]=0;
-                        textoausar[longitudtextousado-1]=0;
+              newasciipointer++;
+              texttouse=(char *) newasciipointer;
+              usedtextlength=strlen(texttouse);
+              if (usedtextlength>0){
+                        texttouse[usedtextlength]=0;
+                        texttouse[usedtextlength-1]=0;
                         retval(1);
               }else{
                         retval(-1);

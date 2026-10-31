@@ -4,48 +4,48 @@
 //═════════════════════════════════════════════════════════════════════════════
 
 case lnop: break;
-case lcar: pila[++sp]=mem[ip++]; break;
-case lasi: pila[sp-1]=mem[pila[sp-1]]=pila[sp]; sp--; break;
-case lori: pila[sp-1]|=pila[sp]; sp--; break;
-case lxor: pila[sp-1]^=pila[sp]; sp--; break;
-case land: pila[sp-1]&=pila[sp]; sp--; break;
-case ligu: pila[sp-1]=pila[sp-1]==pila[sp]; sp--; break;
-case ldis: pila[sp-1]=pila[sp-1]!=pila[sp]; sp--; break;
-case lmay: pila[sp-1]=pila[sp-1]>pila[sp]; sp--; break;
-case lmen: pila[sp-1]=pila[sp-1]<pila[sp]; sp--; break;
-case lmei: pila[sp-1]=pila[sp-1]<=pila[sp]; sp--; break;
-case lmai: pila[sp-1]=pila[sp-1]>=pila[sp]; sp--; break;
-case ladd: pila[sp-1]+=pila[sp]; sp--; break;
-case lsub: pila[sp-1]-=pila[sp]; sp--; break;
-case lmul: pila[sp-1]*=pila[sp]; sp--; break;
+case lcar: opstack[++sp]=mem[ip++]; break;
+case lasi: opstack[sp-1]=mem[opstack[sp-1]]=opstack[sp]; sp--; break;
+case lori: opstack[sp-1]|=opstack[sp]; sp--; break;
+case lxor: opstack[sp-1]^=opstack[sp]; sp--; break;
+case land: opstack[sp-1]&=opstack[sp]; sp--; break;
+case ligu: opstack[sp-1]=opstack[sp-1]==opstack[sp]; sp--; break;
+case ldis: opstack[sp-1]=opstack[sp-1]!=opstack[sp]; sp--; break;
+case lmay: opstack[sp-1]=opstack[sp-1]>opstack[sp]; sp--; break;
+case lmen: opstack[sp-1]=opstack[sp-1]<opstack[sp]; sp--; break;
+case lmei: opstack[sp-1]=opstack[sp-1]<=opstack[sp]; sp--; break;
+case lmai: opstack[sp-1]=opstack[sp-1]>=opstack[sp]; sp--; break;
+case ladd: opstack[sp-1]+=opstack[sp]; sp--; break;
+case lsub: opstack[sp-1]-=opstack[sp]; sp--; break;
+case lmul: opstack[sp-1]*=opstack[sp]; sp--; break;
 case ldiv:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      pila[--sp]=0; v_function=-2; e(145);
+    if (opstack[sp]==0) {
+      opstack[--sp]=0; v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
-    } else { pila[sp-1]/=pila[sp]; sp--; }
+    } else { opstack[sp-1]/=opstack[sp]; sp--; }
   #else
-    pila[sp-1]/=pila[sp]; sp--;
+    opstack[sp-1]/=opstack[sp]; sp--;
   #endif
   break;
 case lmod:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      pila[--sp]=0; v_function=-2; e(145);
+    if (opstack[sp]==0) {
+      opstack[--sp]=0; v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
-    } else { pila[sp-1]%=pila[sp]; sp--; }
+    } else { opstack[sp-1]%=opstack[sp]; sp--; }
   #else
-    pila[sp-1]%=pila[sp]; sp--;
+    opstack[sp-1]%=opstack[sp]; sp--;
   #endif
   break;
-case lneg: pila[sp]=-pila[sp]; break;
-case lptr: pila[sp]=mem[pila[sp]]; break;
-case lnot: pila[sp]^=-1; break;
-case laid: pila[sp]+=id; break;
-case lcid: pila[++sp]=id; break;
+case lneg: opstack[sp]=-opstack[sp]; break;
+case lptr: opstack[sp]=mem[opstack[sp]]; break;
+case lnot: opstack[sp]^=-1; break;
+case laid: opstack[sp]+=id; break;
+case lcid: opstack[++sp]=id; break;
 case lrng:
   #ifdef DEBUG
-    if (pila[sp]<0 || pila[sp]>mem[ip]) {
+    if (opstack[sp]<0 || opstack[sp]>mem[ip]) {
       v_function=-2; e(140);
       if (call_to_debug) { ip++; process_stoped=id; return; }
     } ip++;
@@ -56,17 +56,17 @@ case lrng:
 case ljmp:
   ip=mem[ip];
   #ifdef DEBUG
-    if (reloj>max_reloj) {
-      v_function=-2; e(142); max_reloj=max_process_time+reloj;
+    if (clock_ticks>max_clock) {
+      v_function=-2; e(142); max_clock=max_process_time+clock_ticks;
       if (call_to_debug) { process_stoped=id; return; }
     }
   #endif
   break;
 case ljpf:
-  if (pila[sp--]&1) ip++; else ip=mem[ip];
+  if (opstack[sp--]&1) ip++; else ip=mem[ip];
   #ifdef DEBUG
-    if (reloj>max_reloj) {
-      v_function=-2; e(142); max_reloj=max_process_time+reloj;
+    if (clock_ticks>max_clock) {
+      v_function=-2; e(142); max_clock=max_process_time+clock_ticks;
       if (call_to_debug) { process_stoped=id; return; }
     }
   #endif
@@ -79,15 +79,15 @@ case lfun:
   break;
 case lcal:
   #ifdef DEBUG
-  process_exec(id,get_ticks()-oreloj); oreloj=get_ticks();
+  process_exec(id,get_ticks()-oclock); oclock=get_ticks();
   #endif
-  mem[id+_IP]=ip+1; id2=id; if (sp>long_pila) exer(3);
-  procesos++; ip=mem[ip]; id=id_start;
+  mem[id+_IP]=ip+1; id2=id; if (sp>long_stack) exer(3);
+  processes++; ip=mem[ip]; id=id_start;
 
-//printf("Processes: %d  id:%d p*len:%d id_end: %d\n",procesos,id_end-id,(id_start)+((procesos-2)*iloc_len),id_end);
+//printf("Processes: %d  id:%d p*len:%d id_end: %d\n",processes,id_end-id,(id_start)+((processes-2)*iloc_len),id_end);
 
 
-if((id_start+((procesos-2)*iloc_len)) == id_end)
+if((id_start+((processes-2)*iloc_len)) == id_end)
 	id=id_end+iloc_len;
 
 
@@ -112,11 +112,11 @@ if((id_start+((procesos-2)*iloc_len)) == id_end)
 case lret:
   #ifdef DEBUG
   if (mem[id+_FCount]==0) process_level--;
-  process_exec(id,get_ticks()-oreloj); oreloj=get_ticks();
+  process_exec(id,get_ticks()-oclock); oclock=get_ticks();
   #endif
-  sp=mem[id+_Param]-mem[id+_NumPar];
-  pila[sp]=id; id=mem[id+_Caller];
-  elimina_proceso(pila[sp]);
+  sp=mem[id+_Param]-mem[id+_NumParams];
+  opstack[sp]=id; id=mem[id+_Caller];
+  delete_process(opstack[sp]);
   if (!(id&1)) goto next_process1;
   ip=mem[id+_IP];
   break;
@@ -125,106 +125,106 @@ case lasp:
   break;
 case lfrm:
   #ifdef DEBUG
-  process_exec(id,get_ticks()-oreloj); oreloj=get_ticks();
+  process_exec(id,get_ticks()-oclock); oclock=get_ticks();
   #endif
-  sp=mem[id+_Param]-mem[id+_NumPar];
+  sp=mem[id+_Param]-mem[id+_NumParams];
   mem[id+_IP]=ip;
   next_frm:
   mem[id+_IdScan]=0; mem[id+_BlScan]=0;
-  pila[sp]=id; id=mem[id+_Caller];
+  opstack[sp]=id; id=mem[id+_Caller];
   if (!(id&1)) goto next_process1;
   ip=mem[id+_IP];
-  if (mem[pila[sp]+_FCount]>0) { // Si era una funcion, duerme al padre.
-    mem[pila[sp]+_Caller]++; // Caller dormido
+  if (mem[opstack[sp]+_FCount]>0) { // Si era una funcion, duerme al padre.
+    mem[opstack[sp]+_Caller]++; // Caller dormido
     bp=sp; // Deja la pila aparcada en el lugar adecuado
-    sp=mem[id+_Param]-mem[id+_NumPar]; // Y la prerara para retornar al anterior
-    guarda_pila(id,sp,bp);
+    sp=mem[id+_Param]-mem[id+_NumParams]; // Y la prerara para retornar al anterior
+    save_stack(id,sp,bp);
     mem[id+_Status]=3; goto next_frm;
   } else {
     #ifdef DEBUG
     process_level--;
     #endif
-    mem[pila[sp]+_Caller]=0;
-    mem[pila[sp]+_Executed]=1;
+    mem[opstack[sp]+_Caller]=0;
+    mem[opstack[sp]+_Executed]=1;
   } break;
 case lcbp:
-  mem[id+_NumPar]=mem[ip++];
-  mem[id+_Param]=sp-mem[id+_NumPar]+1;
+  mem[id+_NumParams]=mem[ip++];
+  mem[id+_Param]=sp-mem[id+_NumParams]+1;
   break;
-case lcpa: mem[pila[sp--]]=pila[mem[id+_Param]++]; break;
-case ltyp: mem[id+_Bloque]=mem[ip++]; inicio_privadas=mem[6]; break;
+case lcpa: mem[opstack[sp--]]=opstack[mem[id+_Param]++]; break;
+case ltyp: mem[id+_Block]=mem[ip++]; private_start=mem[6]; break;
 case lpri:
-  memcpy(&mem[id+inicio_privadas],&mem[ip+1],(mem[ip]-ip-1)<<2);
-  inicio_privadas+=(mem[ip]-ip-1); ip=mem[ip]; break;
+  memcpy(&mem[id+private_start],&mem[ip+1],(mem[ip]-ip-1)<<2);
+  private_start+=(mem[ip]-ip-1); ip=mem[ip]; break;
 case lcse:
-  if (pila[sp-1]==pila[sp]) ip++; else ip=mem[ip];
+  if (opstack[sp-1]==opstack[sp]) ip++; else ip=mem[ip];
   sp--; break;
 case lcsr:
-  if (pila[sp-2]>=pila[sp-1] && pila[sp-2]<=pila[sp]) ip++;
+  if (opstack[sp-2]>=opstack[sp-1] && opstack[sp-2]<=opstack[sp]) ip++;
   else ip=mem[ip]; sp-=2; break;
-case lshr: pila[sp-1]>>=pila[sp]; sp--; break;
-case lshl: pila[sp-1]<<=pila[sp]; sp--; break;
+case lshr: opstack[sp-1]>>=opstack[sp]; sp--; break;
+case lshl: opstack[sp-1]<<=opstack[sp]; sp--; break;
 case lipt:
-		pila[sp]=++mem[pila[sp]];
+		opstack[sp]=++mem[opstack[sp]];
 	break;
 case lpti:
-		pila[sp]=mem[pila[sp]]++;
+		opstack[sp]=mem[opstack[sp]]++;
 	break;
 case ldpt:
-		pila[sp]=--mem[pila[sp]]; break;
+		opstack[sp]=--mem[opstack[sp]]; break;
 	break;
 case lptd:
-		pila[sp]=mem[pila[sp]]--;
+		opstack[sp]=mem[opstack[sp]]--;
 	break;
-case lada: pila[sp-1]=mem[pila[sp-1]]+=pila[sp]; sp--; break;
-case lsua: pila[sp-1]=mem[pila[sp-1]]-=pila[sp]; sp--; break;
-case lmua: pila[sp-1]=mem[pila[sp-1]]*=pila[sp]; sp--; break;
+case lada: opstack[sp-1]=mem[opstack[sp-1]]+=opstack[sp]; sp--; break;
+case lsua: opstack[sp-1]=mem[opstack[sp-1]]-=opstack[sp]; sp--; break;
+case lmua: opstack[sp-1]=mem[opstack[sp-1]]*=opstack[sp]; sp--; break;
 case ldia:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      mem[pila[sp-1]]=0;
-      pila[--sp]=0; v_function=-2; e(145);
+    if (opstack[sp]==0) {
+      mem[opstack[sp-1]]=0;
+      opstack[--sp]=0; v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  pila[sp-1]=mem[pila[sp-1]]/=pila[sp]; sp--;
+  opstack[sp-1]=mem[opstack[sp-1]]/=opstack[sp]; sp--;
   break;
 case lmoa:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      mem[pila[sp-1]]=0;
-      pila[--sp]=0; v_function=-2; e(145);
+    if (opstack[sp]==0) {
+      mem[opstack[sp-1]]=0;
+      opstack[--sp]=0; v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  pila[sp-1]=mem[pila[sp-1]]%=pila[sp]; sp--;
+  opstack[sp-1]=mem[opstack[sp-1]]%=opstack[sp]; sp--;
   break;
-case lana: pila[sp-1]=mem[pila[sp-1]]&=pila[sp]; sp--; break;
-case lora: pila[sp-1]=mem[pila[sp-1]]|=pila[sp]; sp--; break;
-case lxoa: pila[sp-1]=mem[pila[sp-1]]^=pila[sp]; sp--; break;
-case lsra: pila[sp-1]=mem[pila[sp-1]]>>=pila[sp]; sp--; break;
-case lsla: pila[sp-1]=mem[pila[sp-1]]<<=pila[sp]; sp--; break;
-case lpar: inicio_privadas+=mem[ip++]; break;
+case lana: opstack[sp-1]=mem[opstack[sp-1]]&=opstack[sp]; sp--; break;
+case lora: opstack[sp-1]=mem[opstack[sp-1]]|=opstack[sp]; sp--; break;
+case lxoa: opstack[sp-1]=mem[opstack[sp-1]]^=opstack[sp]; sp--; break;
+case lsra: opstack[sp-1]=mem[opstack[sp-1]]>>=opstack[sp]; sp--; break;
+case lsla: opstack[sp-1]=mem[opstack[sp-1]]<<=opstack[sp]; sp--; break;
+case lpar: private_start+=mem[ip++]; break;
 case lrtf:
   #ifdef DEBUG
   if (mem[id+_FCount]==0) process_level--;
-  process_exec(id,get_ticks()-oreloj); oreloj=get_ticks();
+  process_exec(id,get_ticks()-oclock); oclock=get_ticks();
   #endif
-  bp=pila[sp];
-  sp=mem[id+_Param]-mem[id+_NumPar];
-  pila[sp]=bp;
+  bp=opstack[sp];
+  sp=mem[id+_Param]-mem[id+_NumParams];
+  opstack[sp]=bp;
   bp=id; id=mem[id+_Caller];
-  elimina_proceso(bp);
+  delete_process(bp);
   if (!(id&1)) {
-    if (id) actualiza_pila(id-1,pila[sp]); // Un return de función (tras frame)
+    if (id) update_stack(id-1,opstack[sp]); // Un return de función (tras frame)
     goto next_process1;
   }
   ip=mem[id+_IP];
   break;
 case lclo:
-  procesos++; id2=id; id=id_start;
+  processes++; id2=id; id=id_start;
   while (mem[id+_Status] && id<=id_end) id+=iloc_len;
   if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
   memcpy(&mem[id],&mem[id2],iloc_len<<2);
@@ -235,26 +235,26 @@ case lclo:
   id=id2; ip=mem[ip]; break;
 case lfrf:
   #ifdef DEBUG
-  process_exec(id,get_ticks()-oreloj); oreloj=get_ticks();
+  process_exec(id,get_ticks()-oclock); oclock=get_ticks();
   #endif
-  if ((mem[id+_Frame]+=pila[sp])>=100) {
+  if ((mem[id+_Frame]+=opstack[sp])>=100) {
     mem[id+_Frame]-=100; mem[id+_Executed]=1;
   }
-  sp=mem[id+_Param]-mem[id+_NumPar];
+  sp=mem[id+_Param]-mem[id+_NumParams];
   mem[id+_IP]=ip;
   next_frf:
   mem[id+_IdScan]=0; mem[id+_BlScan]=0;
-  pila[sp]=id; id=mem[id+_Caller];
+  opstack[sp]=id; id=mem[id+_Caller];
   if (!(id&1)) goto next_process2;
   ip=mem[id+_IP];
-  if (mem[pila[sp]+_FCount]>0) { // Si es una funcion, duerme al padre.
-    mem[pila[sp]+_Caller]++; // Caller dormido
+  if (mem[opstack[sp]+_FCount]>0) { // Si es una funcion, duerme al padre.
+    mem[opstack[sp]+_Caller]++; // Caller dormido
     bp=sp; // Deja la pila aparcada en el lugar adecuado
-    sp=mem[id+_Param]-mem[id+_NumPar]; // Y la prerara para retornar al anterior
-    guarda_pila(id,sp,bp);
+    sp=mem[id+_Param]-mem[id+_NumParams]; // Y la prerara para retornar al anterior
+    save_stack(id,sp,bp);
     mem[id+_Status]=3; goto next_frf;
   } else {
-    mem[pila[sp]+_Caller]=0;
+    mem[opstack[sp]+_Caller]=0;
     #ifdef DEBUG
     process_level--;
     #endif
@@ -278,7 +278,7 @@ if(ExternDirs[mem[ip]])
   break;
 case lchk:
   #ifdef DEBUG
-    if (pila[sp]<id_init || pila[sp]>id_max || pila[sp]!=mem[pila[sp]]) {
+    if (opstack[sp]<id_init || opstack[sp]>id_max || opstack[sp]!=mem[opstack[sp]]) {
       v_function=-2; e(141);
       if (call_to_debug) { process_stoped=id; return; }
     }
@@ -303,11 +303,11 @@ case ldbg:
   #endif
   break;
 
-case lcar2: pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; break;
-case lcar3: pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; break;
-case lcar4: pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; pila[++sp]=mem[ip++]; break;
+case lcar2: opstack[++sp]=mem[ip++]; opstack[++sp]=mem[ip++]; break;
+case lcar3: opstack[++sp]=mem[ip++]; opstack[++sp]=mem[ip++]; opstack[++sp]=mem[ip++]; break;
+case lcar4: opstack[++sp]=mem[ip++]; opstack[++sp]=mem[ip++]; opstack[++sp]=mem[ip++]; opstack[++sp]=mem[ip++]; break;
 case lasiasp:
-  mem[pila[sp-1]]=pila[sp]; sp-=2;
+  mem[opstack[sp-1]]=opstack[sp]; sp-=2;
   break;
 case lcaraid: 
 #ifdef LLPROC
@@ -317,13 +317,13 @@ case lcaraid:
 	}
 #endif
 
-	pila[++sp]=mem[ip++]+id; 
+	opstack[++sp]=mem[ip++]+id; 
 	break;
-case lcarptr: pila[++sp]=mem[mem[ip++]]; break;
-case laidptr: pila[sp]=mem[pila[sp]+id]; break;
-case lcaraidptr: pila[++sp]=mem[mem[ip++]+id]; break;
-case lcaraidcpa: mem[mem[ip++]+id]=pila[mem[id+_Param]++]; break;
-case laddptr: pila[sp-1]=mem[pila[sp-1]+pila[sp]]; sp--; break;
+case lcarptr: opstack[++sp]=mem[mem[ip++]]; break;
+case laidptr: opstack[sp]=mem[opstack[sp]+id]; break;
+case lcaraidptr: opstack[++sp]=mem[mem[ip++]+id]; break;
+case lcaraidcpa: mem[mem[ip++]+id]=opstack[mem[id+_Param]++]; break;
+case laddptr: opstack[sp-1]=mem[opstack[sp-1]+opstack[sp]]; sp--; break;
 case lfunasp:
   function();
   sp--;
@@ -331,388 +331,388 @@ case lfunasp:
     if (call_to_debug) { process_stoped=id; return; }
   #endif
   break;
-case lcaradd: pila[sp]+=mem[ip++]; break;
-case lcaraddptr: pila[sp]=mem[pila[sp]+mem[ip++]]; break;
-case lcarmul: pila[sp]*=mem[ip++]; break;
-case lcarmuladd: pila[sp-1]+=pila[sp]*mem[ip++]; sp--; break;
+case lcaradd: opstack[sp]+=mem[ip++]; break;
+case lcaraddptr: opstack[sp]=mem[opstack[sp]+mem[ip++]]; break;
+case lcarmul: opstack[sp]*=mem[ip++]; break;
+case lcarmuladd: opstack[sp-1]+=opstack[sp]*mem[ip++]; sp--; break;
 case lcarasiasp:
 #ifdef LLPROC
-	if(checklist>0 && mem[pila[sp]]!=mem[ip] && id>0) {
-		dtemp=mem[pila[sp]];
+	if(checklist>0 && mem[opstack[sp]]!=mem[ip] && id>0) {
+		dtemp=mem[opstack[sp]];
 		printf("id: %d old val: %d\n",id, dtemp);
-		mem[pila[sp]]=mem[ip++]; sp--;
+		mem[opstack[sp]]=mem[ip++]; sp--;
 		dirty(id);
 	} else
 #endif
-	  mem[pila[sp]]=mem[ip++]; sp--;
+	  mem[opstack[sp]]=mem[ip++]; sp--;
   break;
-case lcarsub: pila[sp]-=mem[ip++]; break;
-case lcardiv: pila[sp]/=mem[ip++]; break; // No hay nunca "cardiv 0"
+case lcarsub: opstack[sp]-=mem[ip++]; break;
+case lcardiv: opstack[sp]/=mem[ip++]; break; // No hay nunca "cardiv 0"
 
 case lptrchr:
-  pila[sp-1]=(unsigned int)memb[pila[sp-1]*4+pila[sp]]; sp--; break;
+  opstack[sp-1]=(unsigned int)memb[opstack[sp-1]*4+opstack[sp]]; sp--; break;
 case lasichr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]=(byte)opstack[sp]); sp-=2; break;
 case liptchr:
-	pila[sp-1]=(unsigned int)++memb[pila[sp-1]*4+pila[sp]]; sp--; break;
+	opstack[sp-1]=(unsigned int)++memb[opstack[sp-1]*4+opstack[sp]]; sp--; break;
 case lptichr:
-	pila[sp-1]=(unsigned int)memb[pila[sp-1]*4+pila[sp]]++;	sp--; break;
+	opstack[sp-1]=(unsigned int)memb[opstack[sp-1]*4+opstack[sp]]++;	sp--; break;
 case ldptchr:
-	pila[sp-1]=(unsigned int)--memb[pila[sp-1]*4+pila[sp]]; sp--; break;
+	opstack[sp-1]=(unsigned int)--memb[opstack[sp-1]*4+opstack[sp]]; sp--; break;
 case lptdchr:
-  pila[sp-1]=(unsigned int)memb[pila[sp-1]*4+pila[sp]]--; sp--; break;
+  opstack[sp-1]=(unsigned int)memb[opstack[sp-1]*4+opstack[sp]]--; sp--; break;
 case ladachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]+=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]+=(byte)opstack[sp]); sp-=2; break;
 case lsuachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]-=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]-=(byte)opstack[sp]); sp-=2; break;
 case lmuachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]*=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]*=(byte)opstack[sp]); sp-=2; break;
 case ldiachr:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      memb[pila[sp-2]*4+pila[sp-1]]=0;
-      sp-=2; pila[sp]=0;
+    if (opstack[sp]==0) {
+      memb[opstack[sp-2]*4+opstack[sp-1]]=0;
+      sp-=2; opstack[sp]=0;
       v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]/=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]/=(byte)opstack[sp]); sp-=2; break;
   break;
 case lmoachr:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      memb[pila[sp-2]*4+pila[sp-1]]=0;
-      sp-=2; pila[sp]=0;
+    if (opstack[sp]==0) {
+      memb[opstack[sp-2]*4+opstack[sp-1]]=0;
+      sp-=2; opstack[sp]=0;
       v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]%=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]%=(byte)opstack[sp]); sp-=2; break;
   break;
 case lanachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]&=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]&=(byte)opstack[sp]); sp-=2; break;
 case lorachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]|=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]|=(byte)opstack[sp]); sp-=2; break;
 case lxoachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]^=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]^=(byte)opstack[sp]); sp-=2; break;
 case lsrachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]>>=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]>>=(byte)opstack[sp]); sp-=2; break;
 case lslachr:
-  pila[sp-2]=(unsigned int)(memb[pila[sp-2]*4+pila[sp-1]]<<=(byte)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memb[opstack[sp-2]*4+opstack[sp-1]]<<=(byte)opstack[sp]); sp-=2; break;
 case lcpachr:
-  if ((unsigned)pila[mem[id+_Param]]<256) {
-    memb[pila[sp-1]*4+pila[sp]]=(byte)pila[mem[id+_Param]];
+  if ((unsigned)opstack[mem[id+_Param]]<256) {
+    memb[opstack[sp-1]*4+opstack[sp]]=(byte)opstack[mem[id+_Param]];
   } else {
-    if (pila[mem[id+_Param]]<imem_max+258*4)
-      memb[pila[sp-1]*4+pila[sp]]=memb[pila[mem[id+_Param]]*4];
+    if (opstack[mem[id+_Param]]<imem_max+258*4)
+      memb[opstack[sp-1]*4+opstack[sp]]=memb[opstack[mem[id+_Param]]*4];
     else
-      memb[pila[sp-1]*4+pila[sp]]=(byte)pila[mem[id+_Param]];
+      memb[opstack[sp-1]*4+opstack[sp]]=(byte)opstack[mem[id+_Param]];
   } sp-=2; mem[id+_Param]++; break;
 
 // Un puntero a cadena menor a 256 se trata siempre como "%c"
 
 case lstrcpy:
   #ifdef DEBUG
-    if ((mem[pila[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
+    if ((mem[opstack[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
       sp--; v_function=-2; e(164);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
-    if ((unsigned)pila[sp]>255) if ((mem[pila[sp-1]-1]&0xFFFFF)+1<strlen((char*)&mem[pila[sp]])) {
+    if ((unsigned)opstack[sp]>255) if ((mem[opstack[sp-1]-1]&0xFFFFF)+1<strlen((char*)&mem[opstack[sp]])) {
       sp--; v_function=-2; e(140);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  if ((unsigned)pila[sp]>255) strcpy((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]]);
-  else sprintf((char*)&mem[pila[sp-1]],"%c\0",pila[sp]);
+  if ((unsigned)opstack[sp]>255) strcpy((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]]);
+  else sprintf((char*)&mem[opstack[sp-1]],"%c\0",opstack[sp]);
   sp--;
   break;
 
 case lstrfix:
-  if (pila[sp-1]>=(oo=strlen((char *)&memb[pila[sp-2]*4]))) {
-    for (;oo<pila[sp-1];oo++) {
-      memb[pila[sp-2]*4+oo]=' ';
-    } memb[pila[sp-2]*4+oo+1]=0;
+  if (opstack[sp-1]>=(oo=strlen((char *)&memb[opstack[sp-2]*4]))) {
+    for (;oo<opstack[sp-1];oo++) {
+      memb[opstack[sp-2]*4+oo]=' ';
+    } memb[opstack[sp-2]*4+oo+1]=0;
   } break;
 
 case lstrcat:
   #ifdef DEBUG
-    if ((mem[pila[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
+    if ((mem[opstack[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
       sp--; v_function=-2; e(164);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
-    if ((unsigned)pila[sp]>255) oo=strlen((char*)&mem[pila[sp]]); else oo=1;
-    if ((mem[pila[sp-1]-1]&0xFFFFF)+1<strlen((char*)&mem[pila[sp-1]])+oo) {
+    if ((unsigned)opstack[sp]>255) oo=strlen((char*)&mem[opstack[sp]]); else oo=1;
+    if ((mem[opstack[sp-1]-1]&0xFFFFF)+1<strlen((char*)&mem[opstack[sp-1]])+oo) {
       sp--; v_function=-2; e(140);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  if ((unsigned)pila[sp]>255) strcat((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]]);
-  else sprintf((char*)&mem[pila[sp-1]],"%s%c\0",(char*)&mem[pila[sp-1]],pila[sp]);
+  if ((unsigned)opstack[sp]>255) strcat((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]]);
+  else sprintf((char*)&mem[opstack[sp-1]],"%s%c\0",(char*)&mem[opstack[sp-1]],opstack[sp]);
   sp--;
   break;
 
 case lstradd: // Strcat "en el aire" (ojo, el aire tiene tambien 0xDAD00402)
   #ifdef DEBUG
-    if ((unsigned)pila[sp-1]>255) oo=strlen((char*)&mem[pila[sp-1]]); else oo=1;
-    if ((unsigned)pila[sp]>255) oo+=strlen((char*)&mem[pila[sp]]); else oo+=1;
+    if ((unsigned)opstack[sp-1]>255) oo=strlen((char*)&mem[opstack[sp-1]]); else oo=1;
+    if ((unsigned)opstack[sp]>255) oo+=strlen((char*)&mem[opstack[sp]]); else oo+=1;
     if (oo>=1028) {
       sp--; v_function=-2; e(140);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  if ((unsigned)pila[sp-1]>255) {
-    if ((unsigned)pila[sp]>255) {
-      sprintf((char*)&mem[nullstring[nstring]],"%s%s\0",(char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]]);
+  if ((unsigned)opstack[sp-1]>255) {
+    if ((unsigned)opstack[sp]>255) {
+      sprintf((char*)&mem[nullstring[nstring]],"%s%s\0",(char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]]);
     } else {
-      sprintf((char*)&mem[nullstring[nstring]],"%s%c\0",(char*)&mem[pila[sp-1]],pila[sp]);
+      sprintf((char*)&mem[nullstring[nstring]],"%s%c\0",(char*)&mem[opstack[sp-1]],opstack[sp]);
     }
   } else {
-    if ((unsigned)pila[sp]>255) {
-      sprintf((char*)&mem[nullstring[nstring]],"%c%s\0",pila[sp-1],(char*)&mem[pila[sp]]);
+    if ((unsigned)opstack[sp]>255) {
+      sprintf((char*)&mem[nullstring[nstring]],"%c%s\0",opstack[sp-1],(char*)&mem[opstack[sp]]);
     } else {
-      sprintf((char*)&mem[nullstring[nstring]],"%c%c\0",pila[sp-1],pila[sp]);
+      sprintf((char*)&mem[nullstring[nstring]],"%c%c\0",opstack[sp-1],opstack[sp]);
     }
   }
-  pila[--sp]=nullstring[nstring];
+  opstack[--sp]=nullstring[nstring];
   nstring=((nstring+1)&3);
   break;
 
 case lstrdec: // cambio de tamaño "en el aire" (no da error, hace lo que puede)
-  oo=strlen((char*)&mem[pila[sp-1]]);
+  oo=strlen((char*)&mem[opstack[sp-1]]);
   if (oo<1028) {
-    strcpy((char*)&mem[nullstring[nstring]],(char*)&mem[pila[sp-1]]);
-    if (pila[sp]>0) { // Quitar caracteres
-      if (pila[sp]>=oo) memb[nullstring[nstring]*4]=0;
-      else memb[nullstring[nstring]*4+oo-pila[sp]]=0;
-    } else if (pila[sp]<0) { // Añadir (?) caracteres (por homogeneidad)
-      pila[sp]=oo-pila[sp]; // Nueva longitud
-      if (pila[sp]>1025) pila[sp]=1025;
-      for (;oo<pila[sp];oo++) {
+    strcpy((char*)&mem[nullstring[nstring]],(char*)&mem[opstack[sp-1]]);
+    if (opstack[sp]>0) { // Quitar caracteres
+      if (opstack[sp]>=oo) memb[nullstring[nstring]*4]=0;
+      else memb[nullstring[nstring]*4+oo-opstack[sp]]=0;
+    } else if (opstack[sp]<0) { // Añadir (?) caracteres (por homogeneidad)
+      opstack[sp]=oo-opstack[sp]; // Nueva longitud
+      if (opstack[sp]>1025) opstack[sp]=1025;
+      for (;oo<opstack[sp];oo++) {
         memb[nullstring[nstring]*4+oo]=' ';
       } memb[nullstring[nstring]*4+oo]=0;
     }
   } else mem[nullstring[nstring]]=0;
-  pila[--sp]=nullstring[nstring];
+  opstack[--sp]=nullstring[nstring];
   nstring=((nstring+1)&3);
   break;
 
 case lstrsub: // cambio de tamaño a un string
-  oo=strlen((char*)&mem[pila[sp-1]]);
+  oo=strlen((char*)&mem[opstack[sp-1]]);
   #ifdef DEBUG
-    if ((mem[pila[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
+    if ((mem[opstack[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
       sp--; v_function=-2; e(164);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
-    if ((mem[pila[sp-1]-1]&0xFFFFF)+1<oo-pila[sp]) {
+    if ((mem[opstack[sp-1]-1]&0xFFFFF)+1<oo-opstack[sp]) {
       sp--; v_function=-2; e(140);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  if (pila[sp]>0) { // Quitar caracteres
-    if (pila[sp]>=oo) memb[pila[sp-1]*4]=0;
-    else memb[pila[sp-1]*4+oo-pila[sp]]=0;
-  } else if (pila[sp]<0) { // Añadir (?) caracteres (por homogeneidad)
-    pila[sp]=oo-pila[sp]; // Nueva longitud
-    for (;oo<pila[sp];oo++) {
-      memb[pila[sp-1]*4+oo]=' ';
-    } memb[pila[sp-1]*4+oo]=0;
+  if (opstack[sp]>0) { // Quitar caracteres
+    if (opstack[sp]>=oo) memb[opstack[sp-1]*4]=0;
+    else memb[opstack[sp-1]*4+oo-opstack[sp]]=0;
+  } else if (opstack[sp]<0) { // Añadir (?) caracteres (por homogeneidad)
+    opstack[sp]=oo-opstack[sp]; // Nueva longitud
+    for (;oo<opstack[sp];oo++) {
+      memb[opstack[sp-1]*4+oo]=' ';
+    } memb[opstack[sp-1]*4+oo]=0;
   } sp--;
   break;
 
 case lstrlen:
-  if ((unsigned)pila[sp]>255) pila[sp]=strlen((char*)&mem[pila[sp]]); else pila[sp]=1;
+  if ((unsigned)opstack[sp]>255) opstack[sp]=strlen((char*)&mem[opstack[sp]]); else opstack[sp]=1;
   break;
 
 case lstrigu:
-  if ((unsigned)pila[sp-1]>255) {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]])) pila[sp-1]=0; else pila[sp-1]=1;
+  if ((unsigned)opstack[sp-1]>255) {
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]])) opstack[sp-1]=0; else opstack[sp-1]=1;
     } else {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&pila[sp])) pila[sp-1]=0; else pila[sp-1]=1;
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&opstack[sp])) opstack[sp-1]=0; else opstack[sp-1]=1;
     }
   } else {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&pila[sp-1],(char*)&mem[pila[sp]])) pila[sp-1]=0; else pila[sp-1]=1;
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&opstack[sp-1],(char*)&mem[opstack[sp]])) opstack[sp-1]=0; else opstack[sp-1]=1;
     } else {
-      pila[sp-1]=(pila[sp-1]==pila[sp]);
+      opstack[sp-1]=(opstack[sp-1]==opstack[sp]);
     }
   } sp--; break;
 
 case lstrdis:
-  if ((unsigned)pila[sp-1]>255) {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]])) pila[sp-1]=1; else pila[sp-1]=0;
+  if ((unsigned)opstack[sp-1]>255) {
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]])) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&pila[sp])) pila[sp-1]=1; else pila[sp-1]=0;
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&opstack[sp])) opstack[sp-1]=1; else opstack[sp-1]=0;
     }
   } else {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&pila[sp-1],(char*)&mem[pila[sp]])) pila[sp-1]=1; else pila[sp-1]=0;
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&opstack[sp-1],(char*)&mem[opstack[sp]])) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      pila[sp-1]=(pila[sp-1]!=pila[sp]);
+      opstack[sp-1]=(opstack[sp-1]!=opstack[sp]);
     }
   } sp--; break;
   break;
 
 case lstrmay:
-  if ((unsigned)pila[sp-1]>255) {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]])>0) pila[sp-1]=1; else pila[sp-1]=0;
+  if ((unsigned)opstack[sp-1]>255) {
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]])>0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&pila[sp])>0) pila[sp-1]=1; else pila[sp-1]=0;
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&opstack[sp])>0) opstack[sp-1]=1; else opstack[sp-1]=0;
     }
   } else {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&pila[sp-1],(char*)&mem[pila[sp]])>0) pila[sp-1]=1; else pila[sp-1]=0;
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&opstack[sp-1],(char*)&mem[opstack[sp]])>0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      pila[sp-1]=(pila[sp-1]>pila[sp]);
+      opstack[sp-1]=(opstack[sp-1]>opstack[sp]);
     }
   } sp--; break;
   break;
 
 case lstrmen:
-  if ((unsigned)pila[sp-1]>255) {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]])<0) pila[sp-1]=1; else pila[sp-1]=0;
+  if ((unsigned)opstack[sp-1]>255) {
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]])<0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&pila[sp])<0) pila[sp-1]=1; else pila[sp-1]=0;
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&opstack[sp])<0) opstack[sp-1]=1; else opstack[sp-1]=0;
     }
   } else {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&pila[sp-1],(char*)&mem[pila[sp]])<0) pila[sp-1]=1; else pila[sp-1]=0;
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&opstack[sp-1],(char*)&mem[opstack[sp]])<0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      pila[sp-1]=(pila[sp-1]<pila[sp]);
+      opstack[sp-1]=(opstack[sp-1]<opstack[sp]);
     }
   } sp--; break;
   break;
 
 case lstrmei:
-  if ((unsigned)pila[sp-1]>255) {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]])<=0) pila[sp-1]=1; else pila[sp-1]=0;
+  if ((unsigned)opstack[sp-1]>255) {
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]])<=0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&pila[sp])<=0) pila[sp-1]=1; else pila[sp-1]=0;
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&opstack[sp])<=0) opstack[sp-1]=1; else opstack[sp-1]=0;
     }
   } else {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&pila[sp-1],(char*)&mem[pila[sp]])<=0) pila[sp-1]=1; else pila[sp-1]=0;
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&opstack[sp-1],(char*)&mem[opstack[sp]])<=0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      pila[sp-1]=(pila[sp-1]<=pila[sp]);
+      opstack[sp-1]=(opstack[sp-1]<=opstack[sp]);
     }
   } sp--; break;
   break;
 
 case lstrmai:
-  if ((unsigned)pila[sp-1]>255) {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&mem[pila[sp]])>=0) pila[sp-1]=1; else pila[sp-1]=0;
+  if ((unsigned)opstack[sp-1]>255) {
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&mem[opstack[sp]])>=0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      if (strcmp((char*)&mem[pila[sp-1]],(char*)&pila[sp])>=0) pila[sp-1]=1; else pila[sp-1]=0;
+      if (strcmp((char*)&mem[opstack[sp-1]],(char*)&opstack[sp])>=0) opstack[sp-1]=1; else opstack[sp-1]=0;
     }
   } else {
-    if ((unsigned)pila[sp]>255) {
-      if (strcmp((char*)&pila[sp-1],(char*)&mem[pila[sp]])>=0) pila[sp-1]=1; else pila[sp-1]=0;
+    if ((unsigned)opstack[sp]>255) {
+      if (strcmp((char*)&opstack[sp-1],(char*)&mem[opstack[sp]])>=0) opstack[sp-1]=1; else opstack[sp-1]=0;
     } else {
-      pila[sp-1]=(pila[sp-1]>=pila[sp]);
+      opstack[sp-1]=(opstack[sp-1]>=opstack[sp]);
     }
   } sp--; break;
   break;
 
 case lcpastr:
   #ifdef DEBUG
-    if ((mem[pila[sp]-1]&0xFFF00000)!=0xDAD00000) {
+    if ((mem[opstack[sp]-1]&0xFFF00000)!=0xDAD00000) {
       sp--; mem[id+_Param]++; v_function=-2; e(164);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
-    if ((unsigned)pila[mem[id+_Param]]>255) {
-      if ((mem[pila[sp]-1]&0xFFFFF)+1<strlen((char*)&mem[pila[mem[id+_Param]]])) {
+    if ((unsigned)opstack[mem[id+_Param]]>255) {
+      if ((mem[opstack[sp]-1]&0xFFFFF)+1<strlen((char*)&mem[opstack[mem[id+_Param]]])) {
         sp--; mem[id+_Param]++; v_function=-2; e(140);
         if (call_to_debug) { process_stoped=id; return; }
         break;
       }
     }
   #endif
-  if ((unsigned)pila[mem[id+_Param]]>255)
-    strcpy((char*)&mem[pila[sp]],(char*)&mem[pila[mem[id+_Param]]]);
-  else sprintf((char*)&mem[pila[sp]],"%c\0",pila[mem[id+_Param]]);
+  if ((unsigned)opstack[mem[id+_Param]]>255)
+    strcpy((char*)&mem[opstack[sp]],(char*)&mem[opstack[mem[id+_Param]]]);
+  else sprintf((char*)&mem[opstack[sp]],"%c\0",opstack[mem[id+_Param]]);
   sp--; mem[id+_Param]++;
   break;
 
 case lptrwor:
-  pila[sp-1]=(unsigned int)memw[pila[sp-1]*2+pila[sp]]; sp--; break;
+  opstack[sp-1]=(unsigned int)memw[opstack[sp-1]*2+opstack[sp]]; sp--; break;
 case lasiwor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]=(word)opstack[sp]); sp-=2; break;
 case liptwor:
-	pila[sp-1]=(unsigned int)++memw[pila[sp-1]*2+pila[sp]]; sp--; break;
+	opstack[sp-1]=(unsigned int)++memw[opstack[sp-1]*2+opstack[sp]]; sp--; break;
 case lptiwor:
-	pila[sp-1]=(unsigned int)memw[pila[sp-1]*2+pila[sp]]++;	sp--; break;
+	opstack[sp-1]=(unsigned int)memw[opstack[sp-1]*2+opstack[sp]]++;	sp--; break;
 case ldptwor:
-	pila[sp-1]=(unsigned int)--memw[pila[sp-1]*2+pila[sp]]; sp--; break;
+	opstack[sp-1]=(unsigned int)--memw[opstack[sp-1]*2+opstack[sp]]; sp--; break;
 case lptdwor:
-  pila[sp-1]=(unsigned int)memw[pila[sp-1]*2+pila[sp]]--; sp--; break;
+  opstack[sp-1]=(unsigned int)memw[opstack[sp-1]*2+opstack[sp]]--; sp--; break;
 case ladawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]+=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]+=(word)opstack[sp]); sp-=2; break;
 case lsuawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]-=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]-=(word)opstack[sp]); sp-=2; break;
 case lmuawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]*=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]*=(word)opstack[sp]); sp-=2; break;
 case ldiawor:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      memw[pila[sp-2]*2+pila[sp-1]]=0;
-      sp-=2; pila[sp]=0;
+    if (opstack[sp]==0) {
+      memw[opstack[sp-2]*2+opstack[sp-1]]=0;
+      sp-=2; opstack[sp]=0;
       v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]/=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]/=(word)opstack[sp]); sp-=2; break;
   break;
 case lmoawor:
   #ifdef DEBUG
-    if (pila[sp]==0) {
-      memw[pila[sp-2]*2+pila[sp-1]]=0;
-      sp-=2; pila[sp]=0;
+    if (opstack[sp]==0) {
+      memw[opstack[sp-2]*2+opstack[sp-1]]=0;
+      sp-=2; opstack[sp]=0;
       v_function=-2; e(145);
       if (call_to_debug) { process_stoped=id; return; }
       break;
     }
   #endif
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]%=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]%=(word)opstack[sp]); sp-=2; break;
   break;
 case lanawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]&=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]&=(word)opstack[sp]); sp-=2; break;
 case lorawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]|=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]|=(word)opstack[sp]); sp-=2; break;
 case lxoawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]^=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]^=(word)opstack[sp]); sp-=2; break;
 case lsrawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]>>=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]>>=(word)opstack[sp]); sp-=2; break;
 case lslawor:
-  pila[sp-2]=(unsigned int)(memw[pila[sp-2]*2+pila[sp-1]]<<=(word)pila[sp]); sp-=2; break;
+  opstack[sp-2]=(unsigned int)(memw[opstack[sp-2]*2+opstack[sp-1]]<<=(word)opstack[sp]); sp-=2; break;
 case lcpawor:
-  if ((unsigned)pila[mem[id+_Param]]<256) {
-    memw[pila[sp-1]*2+pila[sp]]=(word)pila[mem[id+_Param]];
+  if ((unsigned)opstack[mem[id+_Param]]<256) {
+    memw[opstack[sp-1]*2+opstack[sp]]=(word)opstack[mem[id+_Param]];
   } else {
-    if (pila[mem[id+_Param]]<imem_max+258*4)
-      memw[pila[sp-1]*2+pila[sp]]=memw[pila[mem[id+_Param]]*2];
+    if (opstack[mem[id+_Param]]<imem_max+258*4)
+      memw[opstack[sp-1]*2+opstack[sp]]=memw[opstack[mem[id+_Param]]*2];
     else
-      memw[pila[sp-1]*2+pila[sp]]=(word)pila[mem[id+_Param]];
+      memw[opstack[sp-1]*2+opstack[sp]]=(word)opstack[mem[id+_Param]];
   } sp-=2; mem[id+_Param]++; break;
 
 case lnul:
   #ifdef DEBUG
-    if (!pila[sp]) {
+    if (!opstack[sp]) {
       v_function=-2; e(165);
       if (call_to_debug) { process_stoped=id; return; }
     }

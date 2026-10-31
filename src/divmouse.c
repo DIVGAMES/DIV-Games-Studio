@@ -11,8 +11,8 @@ byte m_b;
 float m_x=0.0,m_y=0.0;
 int joymx = 0, joymy=0;
 void read_mouse2(void);
-void libera_drag(void);
-int colisiona_con(int a, int x, int y, int an, int al);
+void release_drag(void);
+int collides_with(int a, int x, int y, int w, int h);
 void InitSound(void);
 void EndSound(void);
 int div_started = 0;
@@ -26,9 +26,9 @@ int mouse_in(int x, int y, int x2, int y2) {
 	return(mouse_x>=x && mouse_x<=x2 && mouse_y>=y && mouse_y<=y2);
 }
 
-int wmouse_in(int x, int y, int an, int al) {
-	return(wmouse_x>=x && wmouse_x<=x+an-1 &&
-		wmouse_y>=y && wmouse_y<=y+al-1);
+int wmouse_in(int x, int y, int w, int h) {
+	return(wmouse_x>=x && wmouse_x<=x+w-1 &&
+		wmouse_y>=y && wmouse_y<=y+h-1);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -51,8 +51,8 @@ void read_mouse(void) {
 	old_mouse_b=mouse_b;
 #ifdef SDL2
 	if(vwidth == 0 && vheight == 0 ) {
-		vwidth = vga_an;
-		vheight = vga_al;
+		vwidth = vga_width;
+		vheight = vga_height;
 	}
 #endif
 	read_mouse2();
@@ -62,8 +62,8 @@ void read_mouse(void) {
 	m_y+=joymy;
 #endif
 
-	if (modo<100 && hotkey && !help_paint_active) 
-		tecla();
+	if (mode<100 && hotkey && !help_paint_active) 
+		read_key();
 
 	real_mouse_x=(int)m_x; 
 	real_mouse_y=(int)m_y;
@@ -77,7 +77,7 @@ void read_mouse(void) {
 
 		shift=1;
 
-		if (modo<100 && hotkey && !help_paint_active) {
+		if (mode<100 && hotkey && !help_paint_active) {
 /*			if (key(_SPC)) {
 				if (mouse_b!=0xfffd) {
 					mouse_b=0xfffd;
@@ -88,17 +88,17 @@ void read_mouse(void) {
 			* */
 		}
 #ifdef SDL2
-	if(vga_an != vwidth || vga_al != vheight) {
-		// mouse_x *= (vga_an / vwidth);
-		// mouse_y *= (vga_al / vheight);
-		mouse_x = (int)(m_x*(float)((float)vga_an / (float)vwidth));// / (float)vga_an);
-		mouse_y = (int)(m_y*(float)((float)vga_al / (float)vheight));// / (float)vga_al);
+	if(vga_width != vwidth || vga_height != vheight) {
+		// mouse_x *= (vga_width / vwidth);
+		// mouse_y *= (vga_height / vheight);
+		mouse_x = (int)(m_x*(float)((float)vga_width / (float)vwidth));// / (float)vga_width);
+		mouse_y = (int)(m_y*(float)((float)vga_height / (float)vheight));// / (float)vga_height);
 
 	}
 #endif
 
 
-	} else if (modo<100 && hotkey && !help_paint_active) { // Las teclas están solo activas en edición
+	} else if (mode<100 && hotkey && !help_paint_active) { // Las teclas están solo activas en edición
 
 		if (!(shift_status&4)) {
 
@@ -170,16 +170,16 @@ void read_mouse(void) {
 		if (mouse_x<0) { 
 			mouse_x=0; 
 			n++; 
-		} else if (mouse_x>=vga_an) { 
-			mouse_x=vga_an-1; 
+		} else if (mouse_x>=vga_width) { 
+			mouse_x=vga_width-1; 
 			n++; 
 		}
 		
 		if (mouse_y<0) {
 			mouse_y=0;
 			n++; 
-		} else if (mouse_y>=vga_al) {
-			mouse_y=vga_al-1; 
+		} else if (mouse_y>=vga_height) {
+			mouse_y=vga_height-1; 
 			n++; 
 		}
 
@@ -197,60 +197,60 @@ void read_mouse(void) {
 	coord_y=zoom_y+(mouse_shift_y-zy)/(1<<zoom);
 
 	if(free_drag) {
-		switch(arrastrar) {
+		switch(drag) {
 			case 0:
 			if ((mouse_b&1) && !(old_mouse_b&1)) {
-				arrastrar=1; arrastrar_x=mouse_x; arrastrar_y=mouse_y;
+				drag=1; drag_x=mouse_x; drag_y=mouse_y;
 			} 
 			break;
 		
 			case 1:
-				arrastrar=0;
+				drag=0;
 				break;
 			
 			case 2:
 				if (mouse_b&1) {
-					if (abs(mouse_x-arrastrar_x)>1 || abs(mouse_y-arrastrar_y)>1) {
-						arrastrar=3;
+					if (abs(mouse_x-drag_x)>1 || abs(mouse_y-drag_y)>1) {
+						drag=3;
 						wmouse_x=-1;
 						wmouse_y=-1;
 						mouse_b &=~1;
 						call((voidReturnType )v.click_handler);
-						quien_arrastra=v.orden;
+						who_drags=v.order;
 						mouse_b |=1;
-						mouse_graf=arrastrar_graf;
+						mouse_graph=drag_graph;
 					}
 				} else {
-					arrastrar=0;
+					drag=0;
 				} 
 			break;
 			
 			case 3:
 				if (!(mouse_b&1)) {
-				arrastrar=4;
+				drag=4;
 				} 
 			break;
 			
 			case 4:
 			case 5:
-				libera_drag();
+				release_drag();
 			break;
 		}
 	}
 }
 
-void libera_drag(void) {
+void release_drag(void) {
 	int n;
-	arrastrar=0;
+	drag=0;
 	for (n=0;n<max_windows;n++) {
-		if (ventana[n].tipo && ventana[n].orden==quien_arrastra) 
+		if (window[n].type && window[n].order==who_drags) 
 			break;
 	}
 	
-	if (n<max_windows && ventana[n].tipo==101 && ventana[n].mapa!=NULL) {
-		free(ventana[n].mapa->map);
-		free(ventana[n].mapa);
-		ventana[n].mapa=NULL;
+	if (n<max_windows && window[n].type==101 && window[n].map!=NULL) {
+		free(window[n].map->map);
+		free(window[n].map);
+		window[n].map=NULL;
 
 		if (n) {
 			wup(n);
@@ -262,7 +262,7 @@ void libera_drag(void) {
 			wdown(n);
 		}
 
-		if(modo>=100) vuelca_ventana(n); ventana[n].volcar=0;
+		if(mode>=100) blit_window(n); window[n].blit=0;
 	}
 }
 
@@ -328,10 +328,10 @@ void PrintEvent(const SDL_Event * event)
             SDL_Log("Window %d resized to %dx%d",
                     event->window.windowID, event->window.data1,
                     event->window.data2);
-            vga_an = event->window.data1;
-			vga_al = event->window.data2;
-			vwidth = vga_an;
-			vheight = vga_al;
+            vga_width = event->window.data1;
+			vga_height = event->window.data2;
+			vwidth = vga_width;
+			vheight = vga_height;
 			EndSound();
 			soundstopped = 1;
 		    //vwidth = event->window.data1;
@@ -392,7 +392,7 @@ while(SDL_PollEvent(&event))
 	switch(event.type)
 	{
 		case SDL_QUIT:
-			salir_del_entorno=1;
+			exit_environment=1;
 		break;
 		case SDL_KEYDOWN:			// Button press
 			switch(event.key.keysym.sym)
@@ -513,13 +513,13 @@ while(SDL_PollEvent(&event) )
 #ifndef SDL2
 			if (event.type == SDL_VIDEORESIZE) {
 //				printf("RESIZING\n");
-				vga_an = event.resize.w;
-				vga_al = event.resize.h;
+				vga_width = event.resize.w;
+				vga_height = event.resize.h;
 				if(div_started) {
 					EndSound();
 					soundstopped=1;
 				}
-//				volcado_parcial(0,0,vga_an-1,vga_al-1);
+//				blit_partial(0,0,vga_width-1,vga_height-1);
 //				SDL_PauseAudio(0);
 				
             }
@@ -583,7 +583,7 @@ while(SDL_PollEvent(&event) )
             if (event.type == SDL_QUIT)
             {
                 /* Quit the application */
-                salir_del_entorno=1;
+                exit_environment=1;
             }
               if (event.type == SDL_MOUSEMOTION)
             {
@@ -729,71 +729,71 @@ while(SDL_PollEvent(&event) )
 		//SDL_SetVideoMode(event.resize.w, event.resize.h, 8,  SDL_HWSURFACE | SDL_RESIZABLE);
 		//				bW = buffer->w; bH = buffer->h;
 		
-		if(vga_an<640)
-			vga_an=640;
+		if(vga_width<640)
+			vga_width=640;
 
 		
-		if(vga_al<480)
-			vga_al=480;
+		if(vga_height<480)
+			vga_height=480;
 		
 		
-		if(vga_an&1)
-			vga_an++;
+		if(vga_width&1)
+			vga_width++;
 
-		if(vga_al&1)
-			vga_al++;
+		if(vga_height&1)
+			vga_height++;
 
-		VS_ANCHO=vga_an;
-		VS_ALTO=vga_al;
+		VS_WIDTH=vga_width;
+		VS_HEIGHT=vga_height;
 
 
-		if(copia) {
-			free(copia-6);
-			copia=NULL;
+		if(copy_buffer) {
+			free(copy_buffer-6);
+			copy_buffer=NULL;
 		}
-		if(barra) {
-			free(barra);
-			barra=NULL;
+		if(toolbar) {
+			free(toolbar);
+			toolbar=NULL;
 		}
 			
-		barra=(byte*)malloc(vga_an*19*big2); //OJO
-		barra_x=8*big2; barra_y=vga_al-27*big2; regla=0; actual_mouse=21; sel_status=0;
+		toolbar=(byte*)malloc(vga_width*19*big2); //OJO
+		bar_x=8*big2; bar_y=vga_height-27*big2; rule=0; current_mouse=21; sel_status=0;
 		
-		copia=(byte*)malloc(vga_an*vga_al+6)+6;
+		copy_buffer=(byte*)malloc(vga_width*vga_height+6)+6;
 		svmode();
-		preparar_tapiz();
+		prepare_desktop();
 	
-		if(strcmp(v.titulo, (char *)texto[35])) {
+		if(strcmp(v.title, (char *)texts[35])) {
 
 		for(n=max_windows;n>=0;n--) {
-			if(ventana[n].tipo) {
+			if(window[n].type) {
 
-				if (ventana[n].x+ventana[n].an>vga_an) 
-					ventana[n].x=vga_an-ventana[n].an;
+				if (window[n].x+window[n].w>vga_width) 
+					window[n].x=vga_width-window[n].w;
 		
 		
-				if (ventana[n].y+ventana[n].al>vga_al) 
-					ventana[n].y=vga_al-ventana[n].al;
+				if (window[n].y+window[n].h>vga_height) 
+					window[n].y=vga_height-window[n].h;
 
 	
-				if(ventana[n].x<=0)
-					ventana[n].y=0;
+				if(window[n].x<=0)
+					window[n].y=0;
 	
-				if(ventana[n].y<=0)
-					ventana[n].y=0;
+				if(window[n].y<=0)
+					window[n].y=0;
 	
 		//	printf("n=%d\n",n);
 
-			if (colisiona_con(n,ventana[n].x,ventana[n].y,ventana[n].an,ventana[n].al))	
-				emplazar(1,&ventana[n].x,&ventana[n].y,ventana[n].an,ventana[n].al);		
+			if (collides_with(n,window[n].x,window[n].y,window[n].w,window[n].h))	
+				place(1,&window[n].x,&window[n].y,window[n].w,window[n].h);		
 
 			}
 		}	
 			
 		}
-		actualiza_caja(0,0,vga_an,vga_al);
-//		volcado_completo=1;
-		volcado(copia);
+		update_box(0,0,vga_width,vga_height);
+//		blit_full=1;
+		blit_screen(copy_buffer);
 		InitSound();
 		soundstopped=0;
 	}

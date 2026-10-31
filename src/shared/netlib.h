@@ -11,13 +11,13 @@
 typedef unsigned short WORD;
 typedef unsigned char  BYTE;
 
-typedef struct { int dispositivo;         // IPX, SERIAL ¢ MODEM
+typedef struct { int device;         // IPX, SERIAL ¢ MODEM
                  int com;                 // 0-3
-                 int velocidad;           // Velocidad del puerto
-                 char telefono[32];
-                 char cadena_inicio[16];  // Defecto: ATZ
-                 int tonos;               // 1-tonos, 0-pulsos
-                 int servidor;            //
+                 int speed;           // Velocidad del puerto
+                 char phone[32];
+                 char string_start[16];  // Defecto: ATZ
+                 int tones;               // 1-tonos, 0-pulsos
+                 int server;            //
                  int num_players;         // Maximo 16
                } net_struct;
 
@@ -42,7 +42,7 @@ typedef struct { int dispositivo;         // IPX, SERIAL ¢ MODEM
 extern char net_games[10][32];
 extern int net_players[16];
 extern net_struct *net_lib;
-extern int inicializacion_red;
+extern int network_initialization;
 
 //-----------------------------------------------------------------------------
 // Definicion de procedimientos
@@ -56,7 +56,7 @@ int _net_get_games(int game_id);
 void net_get_games(void);
 
 // Si la partida no existe la crea en caso contrario se une a ella
-int _net_join_game(int game_id,char *nombre,byte *datos, int longitud);
+int _net_join_game(int game_id,char *name,byte *data, int length);
 void net_join_game(void);
 
 // Chequea la red (manda y recibe paquetes)

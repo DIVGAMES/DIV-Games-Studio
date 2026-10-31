@@ -8,11 +8,11 @@
 /////////////////////////////// Matriz Identidad.
 
 extern tmatrix    Identity;
-void IniMath();
-void MatMult(lptmatrix matriz_c,lptmatrix matriz_a,lptmatrix matriz_b);
+void InitMath();
+void MatMult(lptmatrix matrix_c,lptmatrix matrix_a,lptmatrix matrix_b);
 void normalize(float *x,float *y,float *z);
-float producto_escalar(lptvector v, lptvector p);
-void MatShow(lptmatrix matriz_a);
+float scalar_product(lptvector v, lptvector p);
+void MatShow(lptmatrix matrix_a);
 void GetAngs(lptmatrix mat,float *ax,float *ay,float *az,float *x,float *y,float *z);
 
 /////////////////////////////// Cambio de modo de video (temporal)
@@ -34,7 +34,7 @@ long schop(float);
 */
 
 void *lf_malloc(int size);
-void lf_free(void *puntero);
+void lf_free(void *pointer);
 void lf_free_all();
 
 extern char ERRORSTR[256];

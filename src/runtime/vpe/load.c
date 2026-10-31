@@ -2,7 +2,7 @@
 #include "inter.h"
 #include <math.h>
 
-void set_fog_table(int intensidad,int r,int g, int b);
+void set_fog_table(int intensity,int r,int g, int b);
 
 extern int **fpg_grf;
 extern int num_fpg_aux;
@@ -277,11 +277,11 @@ int i;
 struct PicInfo *GetPic(int piccode, int num_fpg)
 {
   struct PicInfo *pic;
-  int i, n, correcto;
+  int i, n, correct;
   short *ptr;
 
   i=0;
-  correcto=0;
+  correct=0;
   //---------------------------------------------------------------------------
   // Recorro el fichero fpg en busca de la textura
   // La busqueda se realiza por codigo
@@ -290,7 +290,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
     if (fpg_grf[i]!=NULL) {
       n=*(fpg_grf[i]+15);           // Numero de puntos de control
       if (piccode==*fpg_grf[i]) {   // Si lo encuentra termina
-        correcto=1;
+        correct=1;
         break;
       }
     }
@@ -299,7 +299,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
   //---------------------------------------------------------------------------
   // Si ha encontrado la textura
   //---------------------------------------------------------------------------
-  if (correcto) {
+  if (correct) {
     pic=(struct PicInfo *)AddEntry(&Pics);
     pic->code=piccode;
     pic->fpg=num_fpg;
@@ -363,7 +363,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
 
 void LoadPic(struct PicInfo *pic)
 {
-  int size,n,i,j,correcto,ancho;
+  int size,n,i,j,correct,width;
   char *ptr, aux;
 
   //---------------------------------------------------------------------------
@@ -376,7 +376,7 @@ void LoadPic(struct PicInfo *pic)
   //---------------------------------------------------------------------------
   if (pic->Raw==NULL) {
     i=0;
-    correcto=0;
+    correct=0;
     //-------------------------------------------------------------------------
     // Recorro el fichero fpg en busca de la textura
     // La busqueda se realiza por codigo
@@ -385,7 +385,7 @@ void LoadPic(struct PicInfo *pic)
       if (fpg_grf[i]!=NULL) {
         n=*(fpg_grf[i]+15);             // Numero de puntos de control
         if (pic->code==*fpg_grf[i]) {   // Si lo encuentra termina
-          correcto=1;
+          correct=1;
           break;
         }
       }
@@ -394,7 +394,7 @@ void LoadPic(struct PicInfo *pic)
     //-------------------------------------------------------------------------
     // Si ha encontrado la textura
     //-------------------------------------------------------------------------
-    if (correcto) {
+    if (correct) {
       pic->Width=*(fpg_grf[i]+13);
       pic->Height=*(fpg_grf[i]+14);
       switch(pic->Width) {
@@ -440,14 +440,14 @@ void LoadPic(struct PicInfo *pic)
         //---------------------------------------------------------------------
         // Roto la textura 90 grados para uso interno de las VPE
         //---------------------------------------------------------------------
-        ancho=pic->Width;
-        while (ancho) {
-          for (j=0;j<ancho;j++) {
+        width=pic->Width;
+        while (width) {
+          for (j=0;j<width;j++) {
             aux=*(ptr+j*pic->Width);
             *(ptr+j*pic->Width)=*(ptr+j);
             *(ptr+j)=aux;
           }
-          ancho--;
+          width--;
           ptr=ptr+pic->Width+1;
         }
       }
@@ -504,11 +504,11 @@ void TexAlloc2(struct TexCon *ptc, int texcode, int num_fpg)
 struct PicInfo *GetPic2(int piccode, int num_fpg)
 {
   struct PicInfo  *pic;
-  int i, n, correcto;
+  int i, n, correct;
   int **fpg_aux;
 
   i=0;
-  correcto=0;
+  correct=0;
   fpg_aux=g[num_fpg].grf;
   //---------------------------------------------------------------------------
   // Recorro el fichero fpg en busca de la textura
@@ -518,7 +518,7 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
     if (fpg_aux[i]!=NULL) {
       n=*(fpg_aux[i]+15);           // Numero de puntos de control
       if (piccode==*fpg_aux[i]) {   // Si lo encuentra termina
-        correcto=1;
+        correct=1;
         break;
       }
     }
@@ -527,7 +527,7 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
   //---------------------------------------------------------------------------
   // Si ha encontrado la textura
   //---------------------------------------------------------------------------
-  if (correcto) {
+  if (correct) {
     pic=(struct PicInfo *)AddEntry(&Pics);
     pic->code=piccode;
     pic->fpg=num_fpg;
@@ -573,7 +573,7 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
 
 void LoadPic2(struct PicInfo *pic)
 {
-  int size,n,i,j,correcto,ancho,alto;
+  int size,n,i,j,correct,width,height;
   char *ptr, *buffer;
   int **fpg_aux;
 
@@ -587,7 +587,7 @@ void LoadPic2(struct PicInfo *pic)
   //---------------------------------------------------------------------------
   if (pic->Raw==NULL) {
     i=0;
-    correcto=0;
+    correct=0;
     fpg_aux=g[pic->fpg].grf;
     //-------------------------------------------------------------------------
     // Recorro el fichero fpg en busca de la textura
@@ -597,7 +597,7 @@ void LoadPic2(struct PicInfo *pic)
       if (fpg_aux[i]!=NULL) {
         n=*(fpg_aux[i]+15);             // Numero de puntos de control
         if (pic->code==*fpg_aux[i]) {   // Si lo encuentra termina
-          correcto=1;
+          correct=1;
           break;
         }
       }
@@ -606,7 +606,7 @@ void LoadPic2(struct PicInfo *pic)
     //-------------------------------------------------------------------------
     // Si ha encontrado la textura
     //-------------------------------------------------------------------------
-    if (correcto) {
+    if (correct) {
       pic->Width=*(fpg_aux[i]+14);
       pic->Height=*(fpg_aux[i]+13);
       size=pic->Width*pic->Height;
@@ -615,11 +615,11 @@ void LoadPic2(struct PicInfo *pic)
       // Roto la textura 90 grados para uso interno de las VPE
       //-----------------------------------------------------------------------
       ptr=pic->Raw=(char *)MemRealloc(tex_pointer,&tex_size,size);
-      ancho=pic->Width;
-      alto=pic->Height;
-      for (i=0;i<ancho;i++) {
-        for (j=0;j<alto;j++) {
-          *(ptr+i+j*ancho)=*(buffer+j+i*alto);
+      width=pic->Width;
+      height=pic->Height;
+      for (i=0;i<width;i++) {
+        for (j=0;j<height;j++) {
+          *(ptr+i+j*width)=*(buffer+j+i*height);
         }
       }
     }
@@ -654,7 +654,7 @@ void LoadPalette(char *palname)
   //---------------------------------------------------------------------------
   // Copio la paleta
   //---------------------------------------------------------------------------
-  memcpy(Pal.VGAPal,paleta,768);
+  memcpy(Pal.VGAPal,palette,768);
 
   //---------------------------------------------------------------------------
   // Tabla de valores de fade del fondo
@@ -678,19 +678,19 @@ void LoadPalette(char *palname)
 //  Crea la tabla de fog
 //═════════════════════════════════════════════════════════════════════════════
 
-void set_fog_table(int intensidad,int r,int g, int b)
+void set_fog_table(int intensity,int r,int g, int b)
 {
   int i,j;
-  VPEByte *tabla_color=(VPEByte *)Pal.Tables[0];
-//  tabla_color=Pal.Tables[0];
+  VPEByte *color_table=(VPEByte *)Pal.Tables[0];
+//  color_table=Pal.Tables[0];
 
-  if (intensidad==0)
+  if (intensity==0)
   {
     for (i=0;i<256;i++)
     {
       for (j=0;j<16;j++)
       {
-        tabla_color[i+j*256]=i;
+        color_table[i+j*256]=i;
       }
     }
     return;
@@ -698,25 +698,25 @@ void set_fog_table(int intensidad,int r,int g, int b)
 
   find_color(r,g,b);
 
-  memcpy(ghost,ghost_inicial,256);
+  memcpy(ghost,initial_ghost,256);
 
   for (i=0;i<256;i++) {
-    tabla_color[i]=i;
-    tabla_color[i+15*256]=find_col;
-    tabla_color[i+8*256]=*(ghost+i*256+find_col);
-    tabla_color[i+4*256]=*(ghost+i*256+tabla_color[i+8*256]);
-    tabla_color[i+2*256]=*(ghost+i*256+tabla_color[i+4*256]);
-    tabla_color[i+1*256]=*(ghost+i*256+tabla_color[i+2*256]);
-    tabla_color[i+3*256]=*(ghost+tabla_color[i+4*256]*256+tabla_color[i+2*256]);
-    tabla_color[i+6*256]=*(ghost+tabla_color[i+4*256]*256+tabla_color[i+8*256]);
-    tabla_color[i+5*256]=*(ghost+tabla_color[i+4*256]*256+tabla_color[i+6*256]);
-    tabla_color[i+7*256]=*(ghost+tabla_color[i+6*256]*256+tabla_color[i+8*256]);
-    tabla_color[i+12*256]=*(ghost+find_col*256+tabla_color[i+8*256]);
-    tabla_color[i+14*256]=*(ghost+find_col*256+tabla_color[i+12*256]);
-    tabla_color[i+13*256]=*(ghost+tabla_color[i+12*256]*256+tabla_color[i+14*256]);
-    tabla_color[i+10*256]=*(ghost+tabla_color[i+8*256]*256+tabla_color[i+12*256]);
-    tabla_color[i+11*256]=*(ghost+tabla_color[i+10*256]*256+tabla_color[i+12*256]);
-    tabla_color[i+9*256]=*(ghost+tabla_color[i+8*256]*256+tabla_color[i+10*256]);
+    color_table[i]=i;
+    color_table[i+15*256]=find_col;
+    color_table[i+8*256]=*(ghost+i*256+find_col);
+    color_table[i+4*256]=*(ghost+i*256+color_table[i+8*256]);
+    color_table[i+2*256]=*(ghost+i*256+color_table[i+4*256]);
+    color_table[i+1*256]=*(ghost+i*256+color_table[i+2*256]);
+    color_table[i+3*256]=*(ghost+color_table[i+4*256]*256+color_table[i+2*256]);
+    color_table[i+6*256]=*(ghost+color_table[i+4*256]*256+color_table[i+8*256]);
+    color_table[i+5*256]=*(ghost+color_table[i+4*256]*256+color_table[i+6*256]);
+    color_table[i+7*256]=*(ghost+color_table[i+6*256]*256+color_table[i+8*256]);
+    color_table[i+12*256]=*(ghost+find_col*256+color_table[i+8*256]);
+    color_table[i+14*256]=*(ghost+find_col*256+color_table[i+12*256]);
+    color_table[i+13*256]=*(ghost+color_table[i+12*256]*256+color_table[i+14*256]);
+    color_table[i+10*256]=*(ghost+color_table[i+8*256]*256+color_table[i+12*256]);
+    color_table[i+11*256]=*(ghost+color_table[i+10*256]*256+color_table[i+12*256]);
+    color_table[i+9*256]=*(ghost+color_table[i+8*256]*256+color_table[i+10*256]);
   }
 
   for (i=0;i<256;i++)

@@ -1,6 +1,6 @@
 #ifndef __INTER_H_
 #define __INTER_H_
-#ifdef DEFINIR_AQUI
+#ifdef DEFINE_HERE
 
 #define GLOBAL 
 #else
@@ -11,7 +11,7 @@ typedef void(*voidReturnType)(void);
 void call(const voidReturnType func); // void funcion(void); int n=(int)funcion; call(n);
 
 
-//#define DEBUG // Para compilar la versión con debugger
+//#define DEBUG // Para compile la versión ctr debugger
 
 //═════════════════════════════════════════════════════════════════════════════
 // Includes
@@ -71,17 +71,17 @@ void mouse_window(void);
 
 // V-ídeo
 
-void set_paleta (void);
+void set_palette (void);
 void set_dac(void);
-void retrazo(void);
+void retrace(void);
 void svmode(void);
 void rvmode(void);
-void init_volcado(void);
-void volcado_parcial(int,int,int,int);
-void volcado(byte *);
+void init_blit(void);
+void blit_partial(int,int,int,int);
+void blit_screen(byte *);
 void restore(byte *,byte *);
 void init_ghost(void);
-void crear_ghost(void);
+void create_ghost(void);
 void find_color(byte,byte,byte);
 
 // S-prites
@@ -89,22 +89,22 @@ void find_color(byte,byte,byte);
 void scroll_simple(void);
 void scroll_parallax(void);
 void put_sprite(int file, int graph, int x, int y, int size, int angle, int flags, int reg,byte *,int,int);
-void pinta_sprite(void);
-void sp_normal(byte * p, int x, int y, int an, int al, int flags);
-void sp_cortado(byte * p, int x, int y, int an, int al, int flags);
-void sp_escalado(byte*,int,int,int,int,int,int,int,int);
-void sp_rotado(byte*,int,int,int,int,int,int,int,int,int);
-void sp_scan(byte * p,short n,byte * si,int an,int x0,int y0,int x1,int y1);
-void pinta_textos(void);
+void draw_sprite(void);
+void sp_normal(byte * p, int x, int y, int w, int h, int flags);
+void sp_clipped(byte * p, int x, int y, int w, int h, int flags);
+void sp_scaled(byte*,int,int,int,int,int,int,int,int);
+void sp_rotated(byte*,int,int,int,int,int,int,int,int,int);
+void sp_scan(byte * p,short n,byte * si,int w,int x0,int y0,int x1,int y1);
+void draw_texts(void);
 void init_sin_cos(void);
-void pinta_m7(int);
+void draw_m7(int);
 int get_distx(int a,int d);
 int get_disty(int a,int d);
 
 // F-unciones
 
 void function(void);
-void nueva_paleta(void);
+void update_palette(void);
 void init_rnd(int);
 
 // C-olisiones
@@ -132,7 +132,7 @@ void memcpyb(byte * di, byte * si, int n);
 //═════════════════════════════════════════════════════════════════════════════
 
 #define max_exp 512	  // Máximo número de elementos en una expresión
-#define long_pila 2048	  // Longitud de la pila en ejecución
+#define long_stack 2048	  // Longitud de la pila en ejecución
 #define imem_max 256*1024 // Memoria principal de la máquina destino
 
 #define swap(a,b) {a^=b;b^=a;a^=b;}
@@ -168,10 +168,10 @@ void memcpyb(byte * di, byte * si, int n);
 #define ljpf 24 // offset       Salta si un valor es falso a una dirección
 #define lfun 25 // código       Llamada a un proceso interno, ej. signal()
 #define lcal 26 // offset       Crea un nuevo proceso en el programa
-#define lret 27 // num_par      Auto-eliminación del proceso
+#define lret 27 // num_params      Auto-eliminación del proceso
 #define lasp 28 //              Desecha un valor apilado
-#define lfrm 29 // num_par      Detiene por este frame la ejecución del proceso
-#define lcbp 30 // num_par      Inicializa el puntero a los parámetros locales
+#define lfrm 29 // num_params      Detiene por este frame la ejecución del proceso
+#define lcbp 30 // num_params      Inicializa el puntero a los parámetros locales
 #define lcpa 31 //              Saca offset, lee parámetro [offset] y bp++
 #define ltyp 32 // bloque       Define el tipo de proceso actual (colisiones)
 #define lpri 33 // offset       Salta a la dirección, y carga var. privadas
@@ -194,9 +194,9 @@ void memcpyb(byte * di, byte * si, int n);
 #define lsra 50 //              Shr-asignación
 #define lsla 51 //              Shl-asignación
 #define lpar 52 // num_par_pri  Define el número de parámetros privados
-#define lrtf 53 // num_par      Auto-eliminación del proceso, devuelve un valor
+#define lrtf 53 // num_params      Auto-eliminación del proceso, devuelve un valor
 #define lclo 54 // offset       Crea un clon del proceso actual
-#define lfrf 55 // num_par      Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
+#define lfrf 55 // num_params      Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
 #define limp 56 // offset text  Importa una DLL externa
 #define lext 57 // código       Llama a una función externa
 #define lchk 58 //              Comprueba la validez de un identificador
@@ -267,7 +267,7 @@ void read_joy(void);
 
 #define _Id         0  //Para comprobar validez de accesos externos
 #define _IdScan     1  //Recorrido del resto de los procesos (p.ej.colisiones)
-#define _Bloque     2  //Identificador del tipo de proceso (para colisiones)
+#define _Block     2  //Identificador del tipo de proceso (para colisiones)
 #define _BlScan     3  //Ultimo tipo de proceso scaneado en el último recorrido
 #define _Status     4  //Estado (0 dead, 1 killed, 2 alive, 3 sleept, 4 freezed)
 #define _Param      5  //Puntero a los parámetros pasados al proceso (en pila)
@@ -307,12 +307,12 @@ void read_joy(void);
 
 GLOBAL int demo;
 
-GLOBAL byte * ghost_inicial;
+GLOBAL byte * initial_ghost;
 
 GLOBAL int game_fps;
 
 
-GLOBAL int pila[long_pila+max_exp+64]; // cálculo de expresiones (compilación y ejecución)
+GLOBAL int opstack[long_stack+max_exp+64]; // cálculo de expresiones (compilación y ejecución)
 
 GLOBAL int * mem, imem, iloc, iloc_pub_len, iloc_len, itxt;
 
@@ -320,7 +320,7 @@ GLOBAL int * mem, imem, iloc, iloc_pub_len, iloc_len, itxt;
 // Variables globales para la interpretación - VARIABLES DE PROCESO
 //═════════════════════════════════════════════════════════════════════════════
 
-GLOBAL int inicio_privadas; // Inicio de variables privadas (proceso en ejecución)
+GLOBAL int private_start; // Inicio de variables privadas (proceso en ejecución)
 
 GLOBAL int ip;          // Puntero de programa
 
@@ -336,7 +336,7 @@ GLOBAL int id_end;      // Inicio del último proceso hasta el momento
 
 GLOBAL int id_old;      // Para saber por donde se está procesando
 
-GLOBAL int procesos;    // Número de procesos vivos en el programa
+GLOBAL int processes;    // Número de procesos vivos en el programa
 
 GLOBAL int ide,id;      // Proceso en proceso
 
@@ -346,20 +346,20 @@ GLOBAL int id2;         // Identificador extra para las llamadas a procesos (cal
 // Variables globales para la interpretación - VARIABLES GRAFICAS
 //═════════════════════════════════════════════════════════════════════════════
 
-GLOBAL int vga_an,vga_al; // Dimensiones de la pantalla física
+GLOBAL int vga_width,vga_height; // Dimensiones de la pantalla física
 GLOBAL int vwidth, vheight; // Screen window dimensions
-GLOBAL int vvga_an,vvga_al; // Dimensiones de la pantalla física
+GLOBAL int vvga_width,vvga_height; // Dimensiones de la pantalla física
 GLOBAL byte fsmode;
 
-GLOBAL byte *copia;     // Copia virtual de pantalla
+GLOBAL byte *copy_buffer;     // Copia virtual de pantalla
 
-GLOBAL byte *copia2;    // Segunda copia, fondo de sprites fuera del scroll
+GLOBAL byte *copy_buffer2;    // Segunda copia, fondo de sprites fuera del scroll
 
 #ifdef DEBUG
-GLOBAL byte *copia_debug;       // Tercera copia, solo para el debug (dialogos)
+GLOBAL byte *copy_buffer_debug;       // Tercera copia, solo para el debug (dialogos)
 #endif
 
-GLOBAL byte paleta[768]; // Paleta actual del programa
+GLOBAL byte palette[768]; // Paleta actual del programa
 
 GLOBAL byte dac[768];   // Paleta real activa en pantalla
 
@@ -369,11 +369,11 @@ GLOBAL int dacout_r,dacout_g,dacout_b,dacout_speed; // Fade, que restar y a que 
 
 GLOBAL int now_dacout_r,now_dacout_g,now_dacout_b; // Situación actual de dac[]
 
-GLOBAL int paleta_cargada; // Indica si ya se ha cargado alguna paleta
+GLOBAL int loaded_palette; // Indica si ya se ha cargado alguna paleta
 
-GLOBAL int activar_paleta; // Indica si ya se ha cargado alguna paleta
+GLOBAL int activate_palette; // Indica si ya se ha cargado alguna paleta
 
-GLOBAL byte * cuad;
+GLOBAL byte * squares;
 
 //═════════════════════════════════════════════════════════════════════════════
 // Ficheros de gráficos (*.FPG de DIV)
@@ -405,7 +405,7 @@ GLOBAL word * ptr;      // Puntero general para un malloc en ejecución
 
 GLOBAL int x,y;         // Coordenadas genéricas para su uso en funciones internas
 
-GLOBAL float angulo;    // Angulo genérico para su uso en funciones internas
+GLOBAL float angle;    // Angulo genérico para su uso en funciones internas
 
 //═════════════════════════════════════════════════════════════════════════════
 // Sistema de regiones de visualización
@@ -426,25 +426,25 @@ GLOBAL int clipx0,clipx1,clipy0,clipy1; // Región de clipping
 // Sistema de font (*.FNT generados con DIV)
 //═════════════════════════════════════════════════════════════════════════════
 
-typedef struct _TABLAFNT{
-    int ancho;
-    int alto;
+typedef struct _FNTTABLE{
+    int width;
+    int height;
     int incY;
     int offset;
-}TABLAFNT;
+}FNTTABLE;
 
 typedef struct _fnt_info{
-  int ancho;            // Ancho medio del font
-  int espacio;          // Longitud en pixels del espacio en blanco
-  int espaciado;        // Espaciado entre carácteres (además del propio ancho)
-  int alto;             // Altura máxima del font
+  int width;            // Ancho medio del font
+  int space;          // Longitud en pixels del espacio en blanco
+  int spacing;        // Espaciado entre carácteres (además del propio ancho)
+  int height;             // Altura máxima del font
 } fnt_info;
 
 #define max_fonts 32    // Número máximo de fonts en ejecución
 
 GLOBAL byte * fonts[max_fonts]; // Fonts cargados en ejecución (0-no cargado)
 
-GLOBAL TABLAFNT * fnt;
+GLOBAL FNTTABLE * fnt;
 
 GLOBAL fnt_info f_i[max_fonts];
 
@@ -452,26 +452,26 @@ GLOBAL fnt_info f_i[max_fonts];
 // Sistema de impresión de textos
 //═════════════════════════════════════════════════════════════════════════════
 
-#define max_textos 256  // Número máximo de textos en ejecución
+#define max_texts 256  // Número máximo de textos en ejecución
 
-GLOBAL struct t_texto {
-  int tipo;     // Tipo de texto 0-normal, 1-&variable
+GLOBAL struct t_text {
+  int type;     // Tipo de texto 0-normal, 1-&variable
   byte * font;  // Puntero al font (byte h,car[256].an/.dir,data...)
   int x,y;      // Coordenadas del texto
   int ptr;      // Texto
-  int centro;   // Tipo de centrado 0-normal (decha), 1-centrado horiz, ...
+  int center;   // Tipo de centrado 0-normal (decha), 1-centrado horiz, ...
   int region;   // Región de clipping
   int x0,y0;    // Region ocupada por el texto
-  int an,al;    // para los volcados parciales
-} _t_texto;
+  int w,h;    // para los volcados parciales
+} _t_text;
 
-GLOBAL struct t_texto texto[max_textos];
+GLOBAL struct t_text texts[max_texts];
 
 //═════════════════════════════════════════════════════════════════════════════
 // Sistema de volcados parciales (juegos sin scroll) - Aún no implementado
 //═════════════════════════════════════════════════════════════════════════════
 
-GLOBAL int volcado_completo; // Indica si se ha modificado toda la copia de vga
+GLOBAL int blit_full; // Indica si se ha modificado toda la copia de vga
                              // Por ahora se mantiene siempre a 1
 
 // Ya se ha implementado, la variable que controla ahora el tipo de
@@ -483,10 +483,10 @@ GLOBAL int volcado_completo; // Indica si se ha modificado toda la copia de vga
 
 struct _im7 {
   int on,painted;
-  int x,y,an,al;
+  int x,y,w,h;
   byte *map,*ext;
-  int map_an,map_al;
-  int ext_an,ext_al;
+  int map_width,map_height;
+  int ext_width,ext_height;
 };
 
 GLOBAL struct _im7 im7[10];
@@ -504,13 +504,13 @@ typedef struct _tfast { // Tabla de incrementos para el primer plano
 
 struct _iscroll { // x10
   int on,painted;
-  int x,y,an,al;
+  int x,y,w,h;
   byte * _scr1;
   byte * scr1;
   byte *_scr2;
   byte * scr2;
   byte *map1,*map2;
-  int map1_an,map1_al,map2_an,map2_al;
+  int map1_width,map1_height,map2_width,map2_height;
   int map_flags;
   int map1_x,map1_y,map2_x,map2_y;
   int block1,block2;
@@ -519,7 +519,7 @@ struct _iscroll { // x10
 };
 
 // Uso de la tabla fast:
-//   iscroll[snum].fast=(tfast*)malloc(iscroll[snum].al*sizeof(tfast));
+//   iscroll[snum].fast=(tfast*)malloc(iscroll[snum].h*sizeof(tfast));
 //   fast=iscroll[snum].fast;
 //   fast[n].nt; // iscroll[snum].iscan;
 
@@ -533,7 +533,7 @@ GLOBAL int snum; // Variable para indicar sobre que scroll se trata
 //GLOBAL byte *_scr1,*scr1; // Primer plano de scroll, buffer circular
 //GLOBAL byte *_scr2,*scr2; // Segundo plano de scroll, buffer circular
 //GLOBAL byte *map1,*map2;  // Mapas, primer y segundo plano
-//GLOBAL int map1_an,map1_al,map2_an,map2_al; // Dimensiones de los mapas
+//GLOBAL int map1_width,map1_height,map2_width,map2_height; // Dimensiones de los mapas
 //GLOBAL int map_flags;     // Indica si los planos son cíclicos, y en que ejes
 //GLOBAL int map1_x,map1_y,map2_x,map2_y; // Posición del scroll (esq. sup. izda.)
 //GLOBAL int block1,block2; // Nº de scanes de la primera porción de los buffers
@@ -553,20 +553,20 @@ GLOBAL byte last_c1;    // Ultimo color del font del sistema (en paleta cargada)
 // Control de nº máximo de frames
 //═════════════════════════════════════════════════════════════════════════════
 
-GLOBAL int reloj; // Límite de velocidad
-GLOBAL int ultimo_reloj;
-GLOBAL double freloj,ireloj;
+GLOBAL int clock_ticks; // Límite de velocidad
+GLOBAL int last_clock;
+GLOBAL double fclock,iclock;
 
-GLOBAL int max_saltos;                  // Máximo nº de volcados saltados
+GLOBAL int max_skips;                  // Máximo nº de volcados saltados
 GLOBAL int dfps;
-GLOBAL int saltar_volcado,volcados_saltados;
+GLOBAL int skip_blit,skipped_blits;
 
 //═════════════════════════════════════════════════════════════════════════════
 // Buffer de detección de colisiones
 //═════════════════════════════════════════════════════════════════════════════
 
 GLOBAL byte * buffer;                   // Buffer de colisiones
-GLOBAL int buffer_an,buffer_al;         // Ancho y alto del buffer
+GLOBAL int buffer_width,buffer_height;         // Ancho y alto del buffer
 
 //═════════════════════════════════════════════════════════════════════════════
 // Formato de los ficheros gráficos fpg
@@ -576,14 +576,14 @@ GLOBAL int buffer_an,buffer_al;         // Ancho y alto del buffer
 // char   768   dac
 // char 16*36   reglas de color
 // --------------------- 1 ---------------------------
-// int      1   codigo del grafico (000-999)
+// int      1   code del grafico (000-999)
 // int      1   longitud del grafico incluida cabezera
 // char    32   descripcion del grafico
 // char    12   nombre del fichero desde el que se creo
 // int      1   ancho
 // int      1   alto
 // int      1   n - número de puntos
-// short  2*n   puntos {x,y}
+// short  2*n   points {x,y}
 // char an*al   grafico
 // --------------------- N ---------------------------
 
@@ -593,83 +593,83 @@ GLOBAL int buffer_an,buffer_al;         // Ancho y alto del buffer
 //      Include con prototipos y variables relacionadas con el debugger
 //════════════════════════════════════════════════════════════════════════════
 
-#define v ventana[0]
+#define v window[0]
 #define max_items 24    // Nº máximo de objetos en una ventana
 #define max_windows 8   // Nº máximo de ventanas
 
 GLOBAL int big,big2; // big(0,1), big2(1,2)
-GLOBAL int mouse_graf;
+GLOBAL int mouse_graph;
 
 GLOBAL byte c0,c1,c2,c3,c4,text_color; // Colores del entorno
 GLOBAL byte c01,c12,c23,c34; // Colores intermedios
 GLOBAL byte c_r,c_g,c_b,c_r_low,c_g_low,c_b_low;
 
-GLOBAL byte * fondo_raton; // Buffer para guardar el fondo del ratón
+GLOBAL byte * mouse_background; // Buffer para guardar el fondo del ratón
 
-GLOBAL byte * graf_ptr, * graf[256];    // Gráficos del entorno
+GLOBAL byte * graph_ptr, * graph[256];    // Gráficos del entorno
 GLOBAL byte * text_font; // Font estándar, 7 puntos de alto, ancho proporcional
 
 GLOBAL int wmouse_x,wmouse_y; // Ratón dentro de una ventana
 GLOBAL int old_mouse_b;
 
 GLOBAL struct t_item {
-  int tipo;             // 0-ninguno,1-boton,2-get,3-switch
-  int estado;           // Estado del item (raton sobre él, pulsado o no ...)
+  int type;             // 0-ninguno,1-boton,2-get,3-switch
+  int state;           // Estado del item (raton sobre él, pulsado o no ...)
   union {
     struct {
-      byte * texto;
+      byte * texts;
       int x,y,center;
     } button;
     struct {
-      byte * texto;
+      byte * texts;
       byte * buffer;
-      int x,y,an,lon_buffer;
+      int x,y,w,buffer_len;
       int r0,r1;
     } get;
     struct {
-      byte * texto;
-      int * valor;
+      byte * texts;
+      int * value;
       int x,y;
     } flag;
   };
 };
 
-GLOBAL struct tventana {
-  int tipo;                             // 0-n/a, 1-diálogo
-  int primer_plano;                     // 1-si 0-no (oscurecida)
-  byte * titulo;                        // Nombre en la barra de título
+GLOBAL struct twindow {
+  int type;                             // 0-n/a, 1-diálogo
+  int foreground;                     // 1-si 0-no (oscurecida)
+  byte * title;                        // Nombre en la barra de título
   int paint_handler,click_handler,close_handler;
-  int x,y,an,al;                        // Posición y dimensiones de la ventana
+  int x,y,w,h;                        // Posición y dimensiones de la ventana
   byte * ptr;                           // Buffer de la ventana
-  int estado;
-  int volcar;                           // Indica si se debe volcar la ventana
+  int state;
+  int blit;                           // Indica si se debe volcar la ventana
   struct t_item item[max_items];        // Botones, gets, switches, etc...
   int items;                            // Nº de objetos definidos
   int active_item;                      // Cuando algún item produce un efecto
   int selected_item;                    // El item seleccionado (para teclado)
 };
 
-GLOBAL struct tventana ventana[max_windows];
+GLOBAL struct twindow window[max_windows];
 
 struct t_listbox{
   int x,y;              // Posición del listbox en la ventana
-  char * lista;         // El puntero a la lista
-  int lista_an;         // Nº de carácteres de cada registro
-  int lista_al;         // Nº de registros visualizados de una vez
-  int an,al;            // Ancho en pixels de la zona de texto
-  int inicial;          // Registro inicial visualizado (desde 0)
-  int maximo;           // Nº total de registros existentes (0 n/a)
+  char * list;         // El puntero a la lista
+  int list_width;         // Nº de carácteres de cada registro
+  int list_height;         // Nº de registros visualizados de una vez
+  int w,h;            // Ancho en pixels de la zona de texto
+  int initial;          // Registro inicial visualizado (desde 0)
+  int maximum;           // Nº total de registros existentes (0 n/a)
   int s0,s1,slide;      // Posición inicial, final y actual de la "slide bar"
-  int zona;             // Zona seleccionada
-  int botones;          // Indica si esta pulsado el botón up(1) o down(2)
-  int creada;           // Indica si ya está creada la lista en pantalla
+  int zone;             // Zona seleccionada
+  int buttons;          // Indica si esta pulsado el botón up(1) o down(2)
+  int created;           // Indica si ya está creada la lista en pantalla
 };
 
-GLOBAL char * v_titulo;                 // Título de la ventana
-GLOBAL char * v_texto;                  // Texto de la ventana
-GLOBAL int v_aceptar;                   // Acceptar / Cancelar
+GLOBAL char * v_title;                 // Título de la ventana
+GLOBAL char * v_text;                  // Texto de la ventana
+GLOBAL int v_accept;                   // Acceptar / Cancelar
 
-GLOBAL int fin_dialogo;
+GLOBAL int end_dialog;
 
 GLOBAL int debugger_step,call_to_debug,process_stoped;
 
@@ -724,8 +724,8 @@ GLOBAL byte kbdFLAGS[128];
 
 void kbdInit(void);
 void kbdReset(void);
-void tecla(void);
-void vacia_buffer(void);
+void read_key(void);
+void empty_buffer(void);
 
 //════════════════════════════════════════════════════════════════════════════
 
@@ -774,14 +774,14 @@ GLOBAL void (*post_process_buffer)();
 
 GLOBAL void (*post_process)();
 
-GLOBAL void (*putsprite)(byte * si, int x, int y, int an, int al,
+GLOBAL void (*putsprite)(byte * si, int x, int y, int w, int h,
                          int xg, int yg, int ang, int size, int flags);
 
 GLOBAL void (*ss_init)();
 GLOBAL void (*ss_frame)();
 GLOBAL void (*ss_end)();
 
-void text_out(char *texto,int x,int y);
+void text_out(char *texts,int x,int y);
 int _random(int min,int max);
 
 GLOBAL int ss_time;
@@ -793,10 +793,10 @@ GLOBAL int ss_exit;
 //      Mensajes de error en ejecución
 //════════════════════════════════════════════════════════════════════════════
 
-void e(char * texto);
+void e(char * texts);
 
 #ifdef __cplusplus
-void e(int texto);
+void e(int texts);
 #endif
 
 #define e100 "No hay memoria suficiente para ejecutar el juego."
@@ -859,10 +859,10 @@ void e(int texto);
 #define e100 "Not enought memory to run this game."
 #define e101 "Call to Key() with invalid scan code."
 #define e102 "Can't load palette, file not found."
-#define e103 "Trying to load an invalid palette file."
+#define e103 "Trying to load w invalid palette file."
 #define e104 "Too many fpg files open."
 #define e105 "Can't load fpg, file not found."
-#define e106 "Trying to load an invalid fpg file."
+#define e106 "Trying to load w invalid fpg file."
 #define e107 "Invalid scroll number (valid numbers are only 0..9)."
 #define e108 "Invalid region number."
 #define e109 "Invalid file code."
@@ -871,7 +871,7 @@ void e(int texto);
 #define e112 "Need a graphic code to start scroll."
 #define e113 "Too many fonts loaded."
 #define e114 "Can't load font, file not found."
-#define e115 "Trying to load an invalid font file."
+#define e115 "Trying to load w invalid font file."
 #define e116 "Invalid font identifier."
 #define e117 "Invalid auto-center text code."
 #define e118 "Too many texts at the same time."
@@ -897,10 +897,10 @@ void e(int texto);
 #define e138 "Unknown graphic info code."
 #define e139 "Can't check a mode7 sprite for collisions."
 #define e140 "Access out of range."
-#define e141 "Trying to access an invalid process."
+#define e141 "Trying to access w invalid process."
 #define e142 "Process seems locked, waiting for frame."
 #define e143 "Can't load map, file not found."
-#define e144 "Trying to load an invalid map file."
+#define e144 "Trying to load w invalid map file."
 #define e145 "Division by zero."
 #define e146 "Invalid region size."
 #define e147 "Can't load fli/flc, file not found."

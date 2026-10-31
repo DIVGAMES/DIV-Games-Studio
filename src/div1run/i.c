@@ -5,7 +5,7 @@
 // Librerias utilizadas
 //═════════════════════════════════════════════════════════════════════════════
 
-#define DEFINIR_AQUI
+#define DEFINE_HERE
 
 #include "inter.h"
 #include "divsound.h"
@@ -23,12 +23,12 @@
 #endif
 
 // FILE PROTOTYPES
-void interprete (void);
-void crea_cuad(void);
+void interpreter (void);
+void create_squares(void);
 void system_font(void);
 void exec_process(void);
-void finalizacion (void);
-void elimina_proceso(int id);
+void finalization (void);
+void delete_process(int id);
 
 
 
@@ -38,7 +38,7 @@ void InitHandler(int);
 int DetectBlaster(int*,int*,int*,int*,int*);
 int DetectGUS(int*,int*,int*,int*,int*);
 
-extern int get_reloj();
+extern int get_clock();
 
 void deb(void);
 
@@ -99,7 +99,7 @@ void mainloop(void) {
 	
   if(splashtime>0) {
     if(OSDEP_GetTicks()<splashtime) {
-      tecla();
+      read_key();
       return;
     } else {
       splashtime=0;
@@ -198,7 +198,7 @@ int main(int argc,char * argv[]) {
   
   #endif
   #else
-  vga_an=argc; // Para quitar un warning
+  vga_width=argc; // Para quitar un warning
   #endif
 
   
@@ -206,16 +206,16 @@ int main(int argc,char * argv[]) {
   _harderr(critical_error);
 #endif
 
-  vga_an=320; vga_al=200;
-    ireloj=100.0/24.0;
-    max_saltos = 0;
+  vga_width=320; vga_height=200;
+    iclock=100.0/24.0;
+    max_skips = 0;
     game_fps=dfps=24;
 
   if ((mem=(int*)malloc(4*imem_max))!=NULL){
     memset(mem,0,4*imem_max);
 
 #ifdef __EMSCRIPTEN__
-max_saltos=2;
+max_skips=2;
 
 //jschar=emscripten_run_script_string("$('#exename').text()");
 
@@ -280,7 +280,7 @@ printf("exesize: %d datasize: %d exestart: %d datstart: %d filepos:%d\n ",exesiz
 #ifdef DOS
     Init_CD();
 #endif
-    interprete();
+    interpreter();
 
   } else exer(1);
 }
@@ -291,12 +291,12 @@ printf("exesize: %d datasize: %d exestart: %d datstart: %d filepos:%d\n ",exesiz
 
 int _mouse_x,_mouse_y;
 
-void MAINSRV_Packet(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
-void MAINNOD_Packet(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
+void MAINSRV_Packet(WORD User,WORD Command,BYTE *Buffer,WORD Len);
+void MAINNOD_Packet(WORD User,WORD Command,BYTE *Buffer,WORD Len);
 
 extern int find_status;
 
-void inicializacion (void) {
+void initialization (void) {
   FILE * f=NULL;
   int n;
 
@@ -321,31 +321,31 @@ void inicializacion (void) {
   iloc=mem[2];          // Inicio de la imagen de las variables locales
   iloc_len=mem[6]+mem[5]; // Longitud de las locales (públicas y privadas)
   iloc_pub_len=mem[6];	// Longitud de las variables locales públicas
-  inicio_privadas=iloc_pub_len;
+  private_start=iloc_pub_len;
   itxt=mem[7];          // Inicio de la zona de textos
   imem=itxt+mem[8];     // Final de código, locales y textos (longitud del cmp)
 
   if (iloc_len&1) iloc_len++; if (!(imem&1)) imem++;
 
-  if((copia=(byte*)malloc(vga_an*vga_al))==NULL) exer(1);
-  memset(copia,0,vga_an*vga_al);
+  if((copy_buffer=(byte*)malloc(vga_width*vga_height))==NULL) exer(1);
+  memset(copy_buffer,0,vga_width*vga_height);
 
-  if((copia2=(byte*)malloc(vga_an*vga_al))==NULL) exer(1);
-  memset(copia2,0,vga_an*vga_al);
+  if((copy_buffer2=(byte*)malloc(vga_width*vga_height))==NULL) exer(1);
+  memset(copy_buffer2,0,vga_width*vga_height);
 
   #ifdef DEBUG
-  if((copia_debug=(char*)malloc(vga_an*vga_al))==NULL) exer(1);
+  if((copy_buffer_debug=(char*)malloc(vga_width*vga_height))==NULL) exer(1);
   #endif
 
   if((ghost=(byte*)malloc(65536))==NULL) exer(1);
 
-  crea_cuad();
+  create_squares();
 
-//  if((texto=(struct t_texto *)malloc(sizeof(struct t_texto)*max_textos))==NULL) exer(1);
+//  if((texts=(struct t_text *)malloc(sizeof(struct t_text)*max_texts))==NULL) exer(1);
 
   // Crea los dos primeros procesos, init y main
 
-  procesos=1; id_init=imem; imem+=iloc_len; id_start=id_end=imem;
+  processes=1; id_init=imem; imem+=iloc_len; id_start=id_end=imem;
 
   mem[iloc+_x1]=-1;
 
@@ -365,7 +365,7 @@ void inicializacion (void) {
 
   for (n=0;n<max_region;n++) {
     region[n].x0=0; region[n].y0=0;
-    region[n].x1=vga_an; region[n].y1=vga_al;
+    region[n].x1=vga_width; region[n].y1=vga_height;
   }
 
   memset(g,0,sizeof(g));
@@ -374,7 +374,7 @@ void inicializacion (void) {
   memset(g[0].grf,0,sizeof(int32_t*)*2000); next_map_code=1000;
 
   memset(fonts,0,sizeof(fonts));
-  memset(texto,0,sizeof(texto));
+  memset(texts,0,sizeof(texts));
 
   system_font();
 
@@ -389,14 +389,14 @@ void inicializacion (void) {
   mouse_window();
   _mouse_x=mouse->x; _mouse_y=mouse->y;
 
-  memset(&paleta[0],0,768); memset(&dac[0],0,768);
+  memset(&palette[0],0,768); memset(&dac[0],0,768);
   dacout_r=0; dacout_g=0; dacout_b=0; dacout_speed=8;
-  now_dacout_r=64; now_dacout_g=64; now_dacout_b=64; paleta_cargada=0;
+  now_dacout_r=64; now_dacout_g=64; now_dacout_b=64; loaded_palette=0;
   set_dac(); // tabla_ghost();
 
   mouse->z=-512;
-  mouse->x=vga_an/2;
-  mouse->y=vga_al/2;
+  mouse->x=vga_width/2;
+  mouse->y=vga_height/2;
   mouse->size=100;
 
   for (n=0;n<10;n++) { // En un principio no hay sistema de scroll, ni de m7
@@ -411,10 +411,10 @@ void inicializacion (void) {
     (m7+n)->focus=256;
   }
 
-  get_reloj(); ultimo_reloj=0; freloj=ireloj=5.5; max_saltos=0;
+  get_clock(); last_clock=0; fclock=iclock=5.5; max_skips=0;
 	
 #ifdef __EMSCRIPTEN__
-max_saltos=2;
+max_skips=2;
 #endif
 
 	game_fps=24;
@@ -425,7 +425,7 @@ max_saltos=2;
   debugger_step=0; call_to_debug=0; process_stoped=0;
   #endif
 
-  saltar_volcado=0; volcados_saltados=0;
+  skip_blit=0; skipped_blits=0;
 
   init_sin_cos(); // Tablas de seno y coseno para el modo7
 
@@ -433,7 +433,7 @@ max_saltos=2;
   init_debug(); new_palette=0; new_mode=0;
   #endif
 
-  init_volcado();
+  init_blit();
 
 #ifdef DIVDLL
   // DLL_3 Exportación de funciones y variables (para utilizarlas en las DLL)
@@ -448,13 +448,13 @@ max_saltos=2;
   DIV_export("div_text_out",(void *)text_out);
 // variables publicas
 
-  DIV_export("stack",(void *)&pila);
+  DIV_export("stack",(void *)&opstack);
   DIV_export("sp",(void *)&sp);
-  DIV_export("wide",(void *)&vga_an);
-  DIV_export("height",(void *)&vga_al);
-  DIV_export("buffer",(void *)&copia);
+  DIV_export("wide",(void *)&vga_width);
+  DIV_export("height",(void *)&vga_height);
+  DIV_export("buffer",(void *)&copy_buffer);
   
-  DIV_export("background",(void *)&copia2);
+  DIV_export("background",(void *)&copy_buffer2);
   DIV_export("ss_time",(void *)&ss_time);
   DIV_export("ss_status",(void *)&ss_status);
   DIV_export("ss_exit",(void *)&ss_exit);
@@ -464,16 +464,16 @@ max_saltos=2;
   DIV_export("id_init_offset",(void *)&id_init);
   DIV_export("id_start_offset",(void *)&id_start);
   DIV_export("id_end_offset",(void *)&id_end);
-  DIV_export("set_palette",(void *)&activar_paleta);
+  DIV_export("set_palette",(void *)&activate_palette);
   DIV_export("ghost",(void *)&ghost);
 
   DIV_export("mem",(void *)mem);
-  DIV_export("palette",(void *)paleta);
+  DIV_export("palette",(void *)palette);
   DIV_export("active_palette",(void *)dac);
   DIV_export("key",(void *)kbdFLAGS);
 
   ss_time=3000; ss_time_counter=0;
-  ss_status=1; activar_paleta=0;
+  ss_status=1; activate_palette=0;
 
 /////////////////////////////////////////////////////////////
 
@@ -484,7 +484,7 @@ max_saltos=2;
 #endif
 
 #ifdef NETLIB
-  inicializacion_red=0;
+  network_initialization=0;
 
   SRV_Packet=MAINSRV_Packet;
   NOD_Packet=MAINNOD_Packet;
@@ -499,14 +499,14 @@ max_saltos=2;
 //  Crea la tabla de cuadrados
 //═════════════════════════════════════════════════════════════════════════════
 
-void crea_cuad(void) {
+void create_squares(void) {
   int a,b;
 
-  if((cuad=(byte*)malloc(16384))==NULL) exer(1);
+  if((squares=(byte*)malloc(16384))==NULL) exer(1);
 
   a=0; do {
     b=0; do {
-      * (int *) (cuad + a*4*64 + b*4) = (a>b) ? (a-b)*(a-b) : (b-a)*(b-a);
+      * (int *) (squares + a*4*64 + b*4) = (a>b) ? (a-b)*(a-b) : (b-a)*(b-a);
     } while (++b<64);
   } while (++a<64);
 }
@@ -531,7 +531,7 @@ void system_font(void) {
   for (n=0;n<1536;n++) { x=*si++;
     for (m=0;m<8;m++) { if (x&128) *di++=1; else *di++=0; x*=2; } }
 
-  n=1356+sizeof(TABLAFNT)*256+12288;
+  n=1356+sizeof(FNTTABLE)*256+12288;
 
   if ((fonts[0]=(byte*)malloc(n))==NULL) exer(1);
 
@@ -540,30 +540,30 @@ void system_font(void) {
 
   ptr=(int32_t*)(fonts[0]+1356);
   for (n=0;n<256;n++) {
-    *ptr++=6; *ptr++=8; *ptr++=0; *ptr++=1356+sizeof(TABLAFNT)*256+n*48;
+    *ptr++=6; *ptr++=8; *ptr++=0; *ptr++=1356+sizeof(FNTTABLE)*256+n*48;
   } last_c1=1;
 
-  f_i[0].ancho=6;
-  f_i[0].espacio=3;
-  f_i[0].espaciado=0;
-  f_i[0].alto=8;
+  f_i[0].width=6;
+  f_i[0].space=3;
+  f_i[0].spacing=0;
+  f_i[0].height=8;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
 // Intérprete del código generado
 //═════════════════════════════════════════════════════════════════════════════
 
-int max,max_reloj;        // Para procesar según _Priority y pintar según _Z
+int max,max_clock;        // Para procesar según _Priority y pintar según _Z
 extern int alt_x;
-void interprete (void) {
+void interpreter (void) {
 
-  inicializacion();
+  initialization();
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop(mainloop, 0, 0);
 #else
-  while (procesos && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !(alt_x)) {
+  while (processes && !(kbdFLAGS[_ESC] && kbdFLAGS[_L_CTRL]) && !(alt_x)) {
 	  mainloop();
-  } finalizacion();
+  } finalization();
 #endif
 }
 
@@ -595,13 +595,13 @@ void exec_process(void) {
 #ifdef NETLIB
     net_receive(); // Recibe los paquetes justo antes de ejecutar el proceso
 #endif
-    id=ide; ip=mem[id+_IP]; sp=64; pila[64]=0;
+    id=ide; ip=mem[id+_IP]; sp=64; opstack[64]=0;
 
     #ifdef DEBUG
     continue_process:
     #endif
 
-    max_reloj=get_reloj()+max_process_time;
+    max_clock=get_clock()+max_process_time;
 //    printf("running bytecode: %d %d\n",ip+1,mem[ip+1]);
 //printf("process entered at %d \n",ip);
   	do {
@@ -611,63 +611,63 @@ void exec_process(void) {
 //		printf("fucking hell\n");
 		switch ((byte)mem[ip++]) {
       case lnop: break;
-      case lcar: pila[++sp]=mem[ip++]; break;
+      case lcar: opstack[++sp]=mem[ip++]; break;
       case lasi:
-//		printf("LASI: %d %d %d %d\n",ip-1,pila[sp],pila[sp-1],mem[pila[sp-1]]); 
-		pila[sp-1]=mem[pila[sp-1]]=pila[sp]; 
-//		printf("LASI: %d %d %d\n",pila[sp],pila[sp-1],mem[pila[sp-1]]); 
+//		printf("LASI: %d %d %d %d\n",ip-1,opstack[sp],opstack[sp-1],mem[opstack[sp-1]]); 
+		opstack[sp-1]=mem[opstack[sp-1]]=opstack[sp]; 
+//		printf("LASI: %d %d %d\n",opstack[sp],opstack[sp-1],mem[opstack[sp-1]]); 
 		sp--; 
 		break;
-      case lori: pila[sp-1]|=pila[sp]; sp--; break;
-      case lxor: pila[sp-1]^=pila[sp]; sp--; break;
-      case land: pila[sp-1]&=pila[sp]; sp--; break;
-      case ligu: pila[sp-1]=pila[sp-1]==pila[sp]; sp--; break;
-      case ldis: pila[sp-1]=pila[sp-1]!=pila[sp]; sp--; break;
-      case lmay: pila[sp-1]=pila[sp-1]>pila[sp]; sp--; break;
-      case lmen: pila[sp-1]=pila[sp-1]<pila[sp]; sp--; break;
-      case lmei: pila[sp-1]=pila[sp-1]<=pila[sp]; sp--; break;
-      case lmai: pila[sp-1]=pila[sp-1]>=pila[sp]; sp--; break;
-      case ladd: pila[sp-1]+=pila[sp]; sp--; break;
-      case lsub: pila[sp-1]-=pila[sp]; sp--; break;
-      case lmul: pila[sp-1]*=pila[sp]; sp--; break;
+      case lori: opstack[sp-1]|=opstack[sp]; sp--; break;
+      case lxor: opstack[sp-1]^=opstack[sp]; sp--; break;
+      case land: opstack[sp-1]&=opstack[sp]; sp--; break;
+      case ligu: opstack[sp-1]=opstack[sp-1]==opstack[sp]; sp--; break;
+      case ldis: opstack[sp-1]=opstack[sp-1]!=opstack[sp]; sp--; break;
+      case lmay: opstack[sp-1]=opstack[sp-1]>opstack[sp]; sp--; break;
+      case lmen: opstack[sp-1]=opstack[sp-1]<opstack[sp]; sp--; break;
+      case lmei: opstack[sp-1]=opstack[sp-1]<=opstack[sp]; sp--; break;
+      case lmai: opstack[sp-1]=opstack[sp-1]>=opstack[sp]; sp--; break;
+      case ladd: opstack[sp-1]+=opstack[sp]; sp--; break;
+      case lsub: opstack[sp-1]-=opstack[sp]; sp--; break;
+      case lmul: opstack[sp-1]*=opstack[sp]; sp--; break;
       #ifdef DEBUG
       case ldiv:
-        if (pila[sp]==0) {
-          pila[--sp]=0; v_function=-2; e(e145);
+        if (opstack[sp]==0) {
+          opstack[--sp]=0; v_function=-2; e(e145);
           if (call_to_debug) { process_stoped=id; return; }
         } else {
-          pila[sp-1]/=pila[sp]; sp--;
+          opstack[sp-1]/=opstack[sp]; sp--;
         } break;
       #else
       case ldiv: 
-		if(pila[sp]!=0)
-			pila[sp-1]/=pila[sp]; 
+		if(opstack[sp]!=0)
+			opstack[sp-1]/=opstack[sp]; 
 		
 		sp--; 
 		break;
       #endif
       #ifdef DEBUG
       case lmod:
-        if (pila[sp]==0) {
-          pila[--sp]=0; v_function=-2; e(e145);
+        if (opstack[sp]==0) {
+          opstack[--sp]=0; v_function=-2; e(e145);
           if (call_to_debug) { process_stoped=id; return; }
         } else {
-          pila[sp-1]%=pila[sp]; sp--;
+          opstack[sp-1]%=opstack[sp]; sp--;
         } break;
       #else
       case lmod: 
-		if(pila[sp]>0) 
-			pila[sp-1]%=pila[sp]; 
+		if(opstack[sp]>0) 
+			opstack[sp-1]%=opstack[sp]; 
 		sp--; 
 		break;
       #endif
-      case lneg: pila[sp]=-pila[sp]; break;
-      case lptr: pila[sp]=mem[pila[sp]]; break;
-      case lnot: pila[sp]^=-1; break;
-      case laid: pila[sp]+=id; break;
-      case lcid: pila[++sp]=id; break;
+      case lneg: opstack[sp]=-opstack[sp]; break;
+      case lptr: opstack[sp]=mem[opstack[sp]]; break;
+      case lnot: opstack[sp]^=-1; break;
+      case laid: opstack[sp]+=id; break;
+      case lcid: opstack[++sp]=id; break;
       #ifdef DEBUG
-      case lrng: if (pila[sp]<0 || pila[sp]>mem[ip]) {
+      case lrng: if (opstack[sp]<0 || opstack[sp]>mem[ip]) {
           v_function=-2; e(e140);
           if (call_to_debug) { ip++; process_stoped=id; return; }
         } ip++; break;
@@ -676,21 +676,21 @@ void exec_process(void) {
       #endif
       #ifdef DEBUG
       case ljmp: ip=mem[ip];
-        if (get_reloj()>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
+        if (get_clock()>max_clock) {
+          v_function=-2; e(e142); max_clock=max_process_time+get_clock();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
       #else
       case ljmp: ip=mem[ip]; break;
       #endif
       #ifdef DEBUG
-      case ljpf: if (pila[sp--]&1) ip++; else ip=mem[ip];
-        if (get_reloj()>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
+      case ljpf: if (opstack[sp--]&1) ip++; else ip=mem[ip];
+        if (get_clock()>max_clock) {
+          v_function=-2; e(e142); max_clock=max_process_time+get_clock();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
       #else
-      case ljpf: if (pila[sp--]&1) ip++; else ip=mem[ip]; break;
+      case ljpf: if (opstack[sp--]&1) ip++; else ip=mem[ip]; break;
       #endif
       case lfun: function();
         #ifdef DEBUG
@@ -699,85 +699,85 @@ void exec_process(void) {
         break;
       case lcal:
 //		printf("Spawning new process %d\n",ip);
-        pila[++sp]=id2=id; pila[++sp]=ip+1; if (sp>long_pila) exer(3);
-        procesos++; ip=mem[ip]; id=id_start;
+        opstack[++sp]=id2=id; opstack[++sp]=ip+1; if (sp>long_stack) exer(3);
+        processes++; ip=mem[ip]; id=id_start;
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
         mem[id+_Id]=id; mem[id+_Status]=2;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id2+_Son]=id; mem[id+_Father]=id2; break;
-      case lret: elimina_proceso(id);
-        bp=sp; sp-=mem[ip]+1; ip=pila[bp--]; bp=pila[bp]; pila[sp]=id;
+      case lret: delete_process(id);
+        bp=sp; sp-=mem[ip]+1; ip=opstack[bp--]; bp=opstack[bp]; opstack[sp]=id;
         if (!ip) { id=bp; goto next_process1; }
         else { mem[id+_Executed]=1; id=bp; } break;
       case lasp: sp--; break;
       case lfrm: mem[id+_IdScan]=0; mem[id+_BlScan]=0;
-        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=pila[bp--]; bp=pila[bp];
-        pila[sp]=id;
+        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=opstack[bp--]; bp=opstack[bp];
+        opstack[sp]=id;
         if (!ip) { id=bp; goto next_process1; }
         else { mem[id+_Executed]=1; id=bp; } break;
       case lcbp: mem[id+_Param]=sp-mem[ip++]-1; break;
-      case lcpa: mem[pila[sp--]]=pila[mem[id+_Param]++]; break;
-      case ltyp: mem[id+_Bloque]=mem[ip++]; inicio_privadas=mem[6]; break;
-      case lpri: memcpy(&mem[id+inicio_privadas],&mem[ip+1],(mem[ip]-ip-1)<<2);
+      case lcpa: mem[opstack[sp--]]=opstack[mem[id+_Param]++]; break;
+      case ltyp: mem[id+_Block]=mem[ip++]; private_start=mem[6]; break;
+      case lpri: memcpy(&mem[id+private_start],&mem[ip+1],(mem[ip]-ip-1)<<2);
         ip=mem[ip]; break;
-      case lcse: if (pila[sp-1]==pila[sp]) ip++; else ip=mem[ip];
+      case lcse: if (opstack[sp-1]==opstack[sp]) ip++; else ip=mem[ip];
         sp--; break;
-      case lcsr: if (pila[sp-2]>=pila[sp-1] && pila[sp-2]<=pila[sp]) ip++;
+      case lcsr: if (opstack[sp-2]>=opstack[sp-1] && opstack[sp-2]<=opstack[sp]) ip++;
         else ip=mem[ip]; sp-=2; break;
-      case lshr: pila[sp-1]>>=pila[sp]; sp--; break;
-      case lshl: pila[sp-1]<<=pila[sp]; sp--; break;
-      case lipt: pila[sp]=++mem[pila[sp]]; break;
-      case lpti: pila[sp]=mem[pila[sp]]++; break;
-      case ldpt: pila[sp]=--mem[pila[sp]]; break;
-      case lptd: pila[sp]=mem[pila[sp]]--; break;
-      case lada: pila[sp-1]=mem[pila[sp-1]]+=pila[sp]; sp--; break;
-      case lsua: pila[sp-1]=mem[pila[sp-1]]-=pila[sp]; sp--; break;
-      case lmua: pila[sp-1]=mem[pila[sp-1]]*=pila[sp]; sp--; break;
+      case lshr: opstack[sp-1]>>=opstack[sp]; sp--; break;
+      case lshl: opstack[sp-1]<<=opstack[sp]; sp--; break;
+      case lipt: opstack[sp]=++mem[opstack[sp]]; break;
+      case lpti: opstack[sp]=mem[opstack[sp]]++; break;
+      case ldpt: opstack[sp]=--mem[opstack[sp]]; break;
+      case lptd: opstack[sp]=mem[opstack[sp]]--; break;
+      case lada: opstack[sp-1]=mem[opstack[sp-1]]+=opstack[sp]; sp--; break;
+      case lsua: opstack[sp-1]=mem[opstack[sp-1]]-=opstack[sp]; sp--; break;
+      case lmua: opstack[sp-1]=mem[opstack[sp-1]]*=opstack[sp]; sp--; break;
       #ifdef DEBUG
       case ldia:
-        if (pila[sp]==0) {
-          mem[pila[sp-1]]=0;
-          pila[--sp]=0; v_function=-2; e(e145);
+        if (opstack[sp]==0) {
+          mem[opstack[sp-1]]=0;
+          opstack[--sp]=0; v_function=-2; e(e145);
           if (call_to_debug) { process_stoped=id; return; }
         } else {
-          pila[sp-1]=mem[pila[sp-1]]/=pila[sp]; sp--;
+          opstack[sp-1]=mem[opstack[sp-1]]/=opstack[sp]; sp--;
         } break;
       #else
       case ldia: 
-		if(pila[sp]!=0)
-			pila[sp-1]=mem[pila[sp-1]]/=pila[sp]; 
+		if(opstack[sp]!=0)
+			opstack[sp-1]=mem[opstack[sp-1]]/=opstack[sp]; 
 		sp--; 
 		break;
       #endif
       #ifdef DEBUG
       case lmoa:
-        if (pila[sp]==0) {
-          mem[pila[sp-1]]=0;
-          pila[--sp]=0; v_function=-2; e(e145);
+        if (opstack[sp]==0) {
+          mem[opstack[sp-1]]=0;
+          opstack[--sp]=0; v_function=-2; e(e145);
           if (call_to_debug) { process_stoped=id; return; }
         } else {
-          pila[sp-1]=mem[pila[sp-1]]%=pila[sp]; sp--;
+          opstack[sp-1]=mem[opstack[sp-1]]%=opstack[sp]; sp--;
         } break;
       #else
       case lmoa:
-		if(pila[sp]!=0)
-			pila[sp-1]=mem[pila[sp-1]]%=pila[sp]; 
+		if(opstack[sp]!=0)
+			opstack[sp-1]=mem[opstack[sp-1]]%=opstack[sp]; 
 		sp--; 
 		break;
       #endif
-      case lana: pila[sp-1]=mem[pila[sp-1]]&=pila[sp]; sp--; break;
-      case lora: pila[sp-1]=mem[pila[sp-1]]|=pila[sp]; sp--; break;
-      case lxoa: pila[sp-1]=mem[pila[sp-1]]^=pila[sp]; sp--; break;
-      case lsra: pila[sp-1]=mem[pila[sp-1]]>>=pila[sp]; sp--; break;
-      case lsla: pila[sp-1]=mem[pila[sp-1]]<<=pila[sp]; sp--; break;
-      case lpar: inicio_privadas=mem[6]+mem[ip++]; break;
-      case lrtf: elimina_proceso(id);
-        bp=--sp; sp-=mem[ip]+1; ip=pila[bp--];
-        if (!ip) { id=pila[bp]; pila[sp]=pila[bp+2]; goto next_process1; }
-        else { mem[id+_Executed]=1; id=pila[bp]; pila[sp]=pila[bp+2]; } break;
-      case lclo: procesos++; id2=id; id=id_start;
+      case lana: opstack[sp-1]=mem[opstack[sp-1]]&=opstack[sp]; sp--; break;
+      case lora: opstack[sp-1]=mem[opstack[sp-1]]|=opstack[sp]; sp--; break;
+      case lxoa: opstack[sp-1]=mem[opstack[sp-1]]^=opstack[sp]; sp--; break;
+      case lsra: opstack[sp-1]=mem[opstack[sp-1]]>>=opstack[sp]; sp--; break;
+      case lsla: opstack[sp-1]=mem[opstack[sp-1]]<<=opstack[sp]; sp--; break;
+      case lpar: private_start=mem[6]+mem[ip++]; break;
+      case lrtf: delete_process(id);
+        bp=--sp; sp-=mem[ip]+1; ip=opstack[bp--];
+        if (!ip) { id=opstack[bp]; opstack[sp]=opstack[bp+2]; goto next_process1; }
+        else { mem[id+_Executed]=1; id=opstack[bp]; opstack[sp]=opstack[bp+2]; } break;
+      case lclo: processes++; id2=id; id=id_start;
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[id2],iloc_len<<2);
@@ -787,9 +787,9 @@ void exec_process(void) {
         mem[id2+_Son]=id; mem[id+_Father]=id2;
         id=id2; ip=mem[ip]; break;
       case lfrf: mem[id+_IdScan]=0; mem[id+_BlScan]=0;
-        mem[id+_Frame]+=pila[sp--];
-        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=pila[bp--];
-        bp=pila[bp]; pila[sp]=id;
+        mem[id+_Frame]+=opstack[sp--];
+        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=opstack[bp--];
+        bp=opstack[bp]; opstack[sp]=id;
         if (!ip) { id=bp; goto next_process2; }
         else {
           if (mem[id+_Frame]>=100) { mem[id+_Frame]-=100; mem[id+_Executed]=1; }
@@ -815,7 +815,7 @@ printf("lext\n");
 #endif
         break;
       case lchk:
-        if (pila[sp]<id_init || pila[sp]>id_end || pila[sp]!=mem[pila[sp]]) {
+        if (opstack[sp]<id_init || opstack[sp]>id_end || opstack[sp]!=mem[opstack[sp]]) {
           v_function=-2; e(e141);
           #ifdef DEBUG
           if (call_to_debug) { process_stoped=id; return; }
@@ -873,56 +873,56 @@ void trace_process(void) {
 #ifdef NETLIB
     net_receive(); // Recibe los paquetes justo antes de ejecutar el proceso
 #endif
-    id=ide; ip=mem[id+_IP]; sp=64; pila[64]=0;
+    id=ide; ip=mem[id+_IP]; sp=64; opstack[64]=0;
     continue_process:
-    max_reloj=get_reloj()+max_process_time;
+    max_clock=get_clock()+max_process_time;
   	switch ((byte)mem[ip++]) {
       case lnop: break;
-      case lcar: pila[++sp]=mem[ip++]; break;
-      case lasi: pila[sp-1]=mem[pila[sp-1]]=pila[sp]; sp--; break;
-      case lori: pila[sp-1]|=pila[sp]; sp--; break;
-      case lxor: pila[sp-1]^=pila[sp]; sp--; break;
-      case land: pila[sp-1]&=pila[sp]; sp--; break;
-      case ligu: pila[sp-1]=pila[sp-1]==pila[sp]; sp--; break;
-      case ldis: pila[sp-1]=pila[sp-1]!=pila[sp]; sp--; break;
-      case lmay: pila[sp-1]=pila[sp-1]>pila[sp]; sp--; break;
-      case lmen: pila[sp-1]=pila[sp-1]<pila[sp]; sp--; break;
-      case lmei: pila[sp-1]=pila[sp-1]<=pila[sp]; sp--; break;
-      case lmai: pila[sp-1]=pila[sp-1]>=pila[sp]; sp--; break;
-      case ladd: pila[sp-1]+=pila[sp]; sp--; break;
-      case lsub: pila[sp-1]-=pila[sp]; sp--; break;
-      case lmul: pila[sp-1]*=pila[sp]; sp--; break;
+      case lcar: opstack[++sp]=mem[ip++]; break;
+      case lasi: opstack[sp-1]=mem[opstack[sp-1]]=opstack[sp]; sp--; break;
+      case lori: opstack[sp-1]|=opstack[sp]; sp--; break;
+      case lxor: opstack[sp-1]^=opstack[sp]; sp--; break;
+      case land: opstack[sp-1]&=opstack[sp]; sp--; break;
+      case ligu: opstack[sp-1]=opstack[sp-1]==opstack[sp]; sp--; break;
+      case ldis: opstack[sp-1]=opstack[sp-1]!=opstack[sp]; sp--; break;
+      case lmay: opstack[sp-1]=opstack[sp-1]>opstack[sp]; sp--; break;
+      case lmen: opstack[sp-1]=opstack[sp-1]<opstack[sp]; sp--; break;
+      case lmei: opstack[sp-1]=opstack[sp-1]<=opstack[sp]; sp--; break;
+      case lmai: opstack[sp-1]=opstack[sp-1]>=opstack[sp]; sp--; break;
+      case ladd: opstack[sp-1]+=opstack[sp]; sp--; break;
+      case lsub: opstack[sp-1]-=opstack[sp]; sp--; break;
+      case lmul: opstack[sp-1]*=opstack[sp]; sp--; break;
       case ldiv:
-        if (pila[sp]==0) {
-          pila[--sp]=0; v_function=-2; e(e145);
+        if (opstack[sp]==0) {
+          opstack[--sp]=0; v_function=-2; e(e145);
           if (call_to_debug) { process_stoped=id; return; }
         } else {
-          pila[sp-1]/=pila[sp]; sp--;
+          opstack[sp-1]/=opstack[sp]; sp--;
         } break;
       case lmod:
-        if (pila[sp]==0) {
-          pila[--sp]=0; v_function=-2; e(e145);
+        if (opstack[sp]==0) {
+          opstack[--sp]=0; v_function=-2; e(e145);
           if (call_to_debug) { process_stoped=id; return; }
         } else {
-          pila[sp-1]%=pila[sp]; sp--;
+          opstack[sp-1]%=opstack[sp]; sp--;
         } break;
-      case lneg: pila[sp]=-pila[sp]; break;
-      case lptr: pila[sp]=mem[pila[sp]]; break;
-      case lnot: pila[sp]^=-1; break;
-      case laid: pila[sp]+=id; break;
-      case lcid: pila[++sp]=id; break;
-      case lrng: if (pila[sp]<0 || pila[sp]>mem[ip]) {
+      case lneg: opstack[sp]=-opstack[sp]; break;
+      case lptr: opstack[sp]=mem[opstack[sp]]; break;
+      case lnot: opstack[sp]^=-1; break;
+      case laid: opstack[sp]+=id; break;
+      case lcid: opstack[++sp]=id; break;
+      case lrng: if (opstack[sp]<0 || opstack[sp]>mem[ip]) {
           v_function=-2; e(e140);
           if (call_to_debug) { ip++; process_stoped=id; return; }
         } ip++; break;
       case ljmp: ip=mem[ip];
-        if (get_reloj()>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
+        if (get_clock()>max_clock) {
+          v_function=-2; e(e142); max_clock=max_process_time+get_clock();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
-      case ljpf: if (pila[sp--]&1) ip++; else ip=mem[ip];
-        if (get_reloj()>max_reloj) {
-          v_function=-2; e(e142); max_reloj=max_process_time+get_reloj();
+      case ljpf: if (opstack[sp--]&1) ip++; else ip=mem[ip];
+        if (get_clock()>max_clock) {
+          v_function=-2; e(e142); max_clock=max_process_time+get_clock();
           if (call_to_debug) { process_stoped=id; return; }
         } break;
       case lfun: function();
@@ -930,55 +930,55 @@ void trace_process(void) {
         break;
       case lcal:
 //		printf("Spawning new process %d\n",ip);
-        pila[++sp]=id2=id; pila[++sp]=ip+1; if (sp>long_pila) exer(3);
-        procesos++; ip=mem[ip]; id=id_start;
+        opstack[++sp]=id2=id; opstack[++sp]=ip+1; if (sp>long_stack) exer(3);
+        processes++; ip=mem[ip]; id=id_start;
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[iloc],iloc_pub_len<<2);
         mem[id+_Id]=id; mem[id+_Status]=2;
         if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
         mem[id2+_Son]=id; mem[id+_Father]=id2; break;
-      case lret: elimina_proceso(id);
-        bp=sp; sp-=mem[ip]+1; ip=pila[bp--]; bp=pila[bp]; pila[sp]=id;
+      case lret: delete_process(id);
+        bp=sp; sp-=mem[ip]+1; ip=opstack[bp--]; bp=opstack[bp]; opstack[sp]=id;
         if (!ip) { id=bp; goto next_process1; }
         else { mem[id+_Executed]=1; id=bp; } break;
       case lasp: sp--; break;
       case lfrm: mem[id+_IdScan]=0; mem[id+_BlScan]=0;
-        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=pila[bp--]; bp=pila[bp];
-        pila[sp]=id;
+        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=opstack[bp--]; bp=opstack[bp];
+        opstack[sp]=id;
         if (!ip) { id=bp; goto next_process1; }
         else { mem[id+_Executed]=1; id=bp; } break;
       case lcbp: mem[id+_Param]=sp-mem[ip++]-1; break;
-      case lcpa: mem[pila[sp--]]=pila[mem[id+_Param]++]; break;
-      case ltyp: mem[id+_Bloque]=mem[ip++]; inicio_privadas=mem[6]; break;
-      case lpri: memcpy(&mem[id+inicio_privadas],&mem[ip+1],(mem[ip]-ip-1)<<2);
+      case lcpa: mem[opstack[sp--]]=opstack[mem[id+_Param]++]; break;
+      case ltyp: mem[id+_Block]=mem[ip++]; private_start=mem[6]; break;
+      case lpri: memcpy(&mem[id+private_start],&mem[ip+1],(mem[ip]-ip-1)<<2);
         ip=mem[ip]; break;
-      case lcse: if (pila[sp-1]==pila[sp]) ip++; else ip=mem[ip];
+      case lcse: if (opstack[sp-1]==opstack[sp]) ip++; else ip=mem[ip];
         sp--; break;
-      case lcsr: if (pila[sp-2]>=pila[sp-1] && pila[sp-2]<=pila[sp]) ip++;
+      case lcsr: if (opstack[sp-2]>=opstack[sp-1] && opstack[sp-2]<=opstack[sp]) ip++;
         else ip=mem[ip]; sp-=2; break;
-      case lshr: pila[sp-1]>>=pila[sp]; sp--; break;
-      case lshl: pila[sp-1]<<=pila[sp]; sp--; break;
-      case lipt: pila[sp]=++mem[pila[sp]]; break;
-      case lpti: pila[sp]=mem[pila[sp]]++; break;
-      case ldpt: pila[sp]=--mem[pila[sp]]; break;
-      case lptd: pila[sp]=mem[pila[sp]]--; break;
-      case lada: pila[sp-1]=mem[pila[sp-1]]+=pila[sp]; sp--; break;
-      case lsua: pila[sp-1]=mem[pila[sp-1]]-=pila[sp]; sp--; break;
-      case lmua: pila[sp-1]=mem[pila[sp-1]]*=pila[sp]; sp--; break;
-      case ldia: pila[sp-1]=mem[pila[sp-1]]/=pila[sp]; sp--; break;
-      case lmoa: pila[sp-1]=mem[pila[sp-1]]%=pila[sp]; sp--; break;
-      case lana: pila[sp-1]=mem[pila[sp-1]]&=pila[sp]; sp--; break;
-      case lora: pila[sp-1]=mem[pila[sp-1]]|=pila[sp]; sp--; break;
-      case lxoa: pila[sp-1]=mem[pila[sp-1]]^=pila[sp]; sp--; break;
-      case lsra: pila[sp-1]=mem[pila[sp-1]]>>=pila[sp]; sp--; break;
-      case lsla: pila[sp-1]=mem[pila[sp-1]]<<=pila[sp]; sp--; break;
-      case lpar: inicio_privadas=mem[6]+mem[ip++]; break;
-      case lrtf: elimina_proceso(id);
-        bp=--sp; sp-=mem[ip]+1; ip=pila[bp--];
-        if (!ip) { id=pila[bp]; pila[sp]=pila[bp+2]; goto next_process1; }
-        else { mem[id+_Executed]=1; id=pila[bp]; pila[sp]=pila[bp+2]; } break;
-      case lclo: procesos++; id2=id; id=id_start;
+      case lshr: opstack[sp-1]>>=opstack[sp]; sp--; break;
+      case lshl: opstack[sp-1]<<=opstack[sp]; sp--; break;
+      case lipt: opstack[sp]=++mem[opstack[sp]]; break;
+      case lpti: opstack[sp]=mem[opstack[sp]]++; break;
+      case ldpt: opstack[sp]=--mem[opstack[sp]]; break;
+      case lptd: opstack[sp]=mem[opstack[sp]]--; break;
+      case lada: opstack[sp-1]=mem[opstack[sp-1]]+=opstack[sp]; sp--; break;
+      case lsua: opstack[sp-1]=mem[opstack[sp-1]]-=opstack[sp]; sp--; break;
+      case lmua: opstack[sp-1]=mem[opstack[sp-1]]*=opstack[sp]; sp--; break;
+      case ldia: opstack[sp-1]=mem[opstack[sp-1]]/=opstack[sp]; sp--; break;
+      case lmoa: opstack[sp-1]=mem[opstack[sp-1]]%=opstack[sp]; sp--; break;
+      case lana: opstack[sp-1]=mem[opstack[sp-1]]&=opstack[sp]; sp--; break;
+      case lora: opstack[sp-1]=mem[opstack[sp-1]]|=opstack[sp]; sp--; break;
+      case lxoa: opstack[sp-1]=mem[opstack[sp-1]]^=opstack[sp]; sp--; break;
+      case lsra: opstack[sp-1]=mem[opstack[sp-1]]>>=opstack[sp]; sp--; break;
+      case lsla: opstack[sp-1]=mem[opstack[sp-1]]<<=opstack[sp]; sp--; break;
+      case lpar: private_start=mem[6]+mem[ip++]; break;
+      case lrtf: delete_process(id);
+        bp=--sp; sp-=mem[ip]+1; ip=opstack[bp--];
+        if (!ip) { id=opstack[bp]; opstack[sp]=opstack[bp+2]; goto next_process1; }
+        else { mem[id+_Executed]=1; id=opstack[bp]; opstack[sp]=opstack[bp+2]; } break;
+      case lclo: processes++; id2=id; id=id_start;
         while (mem[id+_Status] && id<=id_end) id+=iloc_len;
         if (id>id_end) { if (id>imem_max-iloc_len) exer(2); id_end=id; }
         memcpy(&mem[id],&mem[id2],iloc_len<<2);
@@ -988,9 +988,9 @@ void trace_process(void) {
         mem[id2+_Son]=id; mem[id+_Father]=id2;
         id=id2; ip=mem[ip]; break;
       case lfrf: mem[id+_IdScan]=0; mem[id+_BlScan]=0;
-        mem[id+_Frame]+=pila[sp--];
-        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=pila[bp--];
-        bp=pila[bp]; pila[sp]=id;
+        mem[id+_Frame]+=opstack[sp--];
+        mem[id+_IP]=ip+1; bp=sp; sp-=mem[ip]+1; ip=opstack[bp--];
+        bp=opstack[bp]; opstack[sp]=id;
         if (!ip) { id=bp; goto next_process2; }
         else {
           if (mem[id+_Frame]>=100) { mem[id+_Frame]-=100; mem[id+_Executed]=1; }
@@ -1017,7 +1017,7 @@ printf("lext\n");
         break;
       #ifdef DEBUG
       case lchk:
-        if (pila[sp]<id_init || pila[sp]>id_end || pila[sp]!=mem[pila[sp]]) {
+        if (opstack[sp]<id_init || opstack[sp]>id_end || opstack[sp]!=mem[opstack[sp]]) {
           v_function=-2; e(e141);
           if (call_to_debug) { process_stoped=id; return; }
         } break;
@@ -1057,7 +1057,7 @@ void frame_start(void) {
   // Control del screen saver
 
   if (ss_status && ss_frame!=NULL) {
-    if (get_reloj()>ss_time_counter) {
+    if (get_clock()>ss_time_counter) {
       if (ss_init!=NULL) ss_init();
       ss_exit=0; do {
         key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
@@ -1072,64 +1072,64 @@ void frame_start(void) {
           if (joy_check!=last_joy_check) ss_exit=3;
         }
         ss_frame();
-        volcado_completo=1; volcado(copia);
+        blit_full=1; blit_screen(copy_buffer);
       } while (!ss_exit);
       if (ss_end!=NULL) ss_end();
-      memcpy(copia,copia2,vga_an*vga_al);
-      volcado_parcial(0,0,vga_an,vga_al);
-      ss_time_counter=get_reloj()+ss_time;
+      memcpy(copy_buffer,copy_buffer2,vga_width*vga_height);
+      blit_partial(0,0,vga_width,vga_height);
+      ss_time_counter=get_clock()+ss_time;
     }
   }
 
   // Elimina los procesos muertos
 
   for (ide=id_start; ide<=id_end; ide+=iloc_len)
-    if (mem[ide+_Status]==1) elimina_proceso(ide);
+    if (mem[ide+_Status]==1) delete_process(ide);
 
   // Si se está haciendo un fade lo continúa
 
   if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
-    set_paleta();
+    set_palette();
     set_dac();
     fading=1;
   } else {
-    if (activar_paleta) {
-      set_paleta();
+    if (activate_palette) {
+      set_palette();
       set_dac();
-      activar_paleta--;
+      activate_palette--;
     } fading=0;
   }
 
-  for (max=0;max<10;max++) timer(max)+=get_reloj()-ultimo_reloj;
+  for (max=0;max<10;max++) timer(max)+=get_clock()-last_clock;
 
-  if (get_reloj()>ultimo_reloj) {
-    ffps=(ffps*49.0+100.0/(float)(get_reloj()-ultimo_reloj))/50.0;
+  if (get_clock()>last_clock) {
+    ffps=(ffps*49.0+100.0/(float)(get_clock()-last_clock))/50.0;
     fps=(int)ffps;
   }
 
-  ultimo_reloj=get_reloj();
+  last_clock=get_clock();
 
   //LoopSound();
 
   ascii=0;scan_code=0;
   
-  tecla();
+  read_key();
 
-  if (get_reloj()>(freloj+ireloj/3)) { // Permite comerse hasta un tercio del sgte frame
-    if (volcados_saltados<max_saltos) {
-      volcados_saltados++;
-      saltar_volcado=1;
-      freloj+=ireloj;
+  if (get_clock()>(fclock+iclock/3)) { // Permite comerse hasta un tercio del sgte frame
+    if (skipped_blits<max_skips) {
+      skipped_blits++;
+      skip_blit=1;
+      fclock+=iclock;
     } else {
-      freloj=(float)get_reloj()+ireloj;
-      volcados_saltados=0;
-      saltar_volcado=0;
+      fclock=(float)get_clock()+iclock;
+      skipped_blits=0;
+      skip_blit=0;
     }
   } else {
-    do { } while (get_reloj()<(int)freloj); // Espera para no dar más de "n" fps
-    volcados_saltados=0;
-    saltar_volcado=0;
-    freloj+=ireloj;
+    do { } while (get_clock()<(int)fclock); // Espera para no dar más de "n" fps
+    skipped_blits=0;
+    skip_blit=0;
+    fclock+=iclock;
   }
 
   // Marca todos los procesos como no ejecutados
@@ -1151,7 +1151,7 @@ void frame_start(void) {
     mouse->middle=(cbd.mouse_bx&4)/4;
     mouse->right=(cbd.mouse_bx&2)/2;
     cbd.mouse_action=0;
-    ss_time_counter=get_reloj()+ss_time;
+    ss_time_counter=get_clock()+ss_time;
   }
 */
 
@@ -1168,20 +1168,20 @@ void frame_start(void) {
     joy_check=joy->button1+joy->button2+joy->left+joy->right+joy->up+joy->down;
     if (joy_check!=last_joy_check) {
       last_joy_check=joy_check;
-      ss_time_counter=get_reloj()+ss_time;
+      ss_time_counter=get_clock()+ss_time;
     }
   }
 
   key_check=0; for (n=0;n<128;n++) if (key(n)) key_check++;
   if (key_check!=last_key_check) {
     last_key_check=key_check;
-    ss_time_counter=get_reloj()+ss_time;
+    ss_time_counter=get_clock()+ss_time;
   }
 
   mou_check=mouse->x+mouse->y+mouse->left+mouse->right+mouse->middle;
   if (mou_check!=last_mou_check) {
     last_mou_check=mou_check;
-    ss_time_counter=get_reloj()+ss_time;
+    ss_time_counter=get_clock()+ss_time;
   }
 
 }
@@ -1202,14 +1202,14 @@ void dprocess_palette(void);
 
 
 void frame_end(void) {
-  int mouse_pintado=0,textos_pintados=0;
+  int mouse_drawn=0,drawn_texts=0;
   int mouse_x0,mouse_x1,mouse_y0,mouse_y1;
   int n,m7ide,scrollide,otheride;
 char buf[255];
   // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
 
 #ifdef __EMSCRIPTEN__
-sprintf (buf, "$('#fps').text(\"FPS: %d/%d (max frameskip: %d)\");", fps,dfps,max_saltos);
+sprintf (buf, "$('#fps').text(\"FPS: %d/%d (max frameskip: %d)\");", fps,dfps,max_skips);
 emscripten_run_script (buf);
 #endif
   if (!dll_loaded) {
@@ -1242,7 +1242,7 @@ emscripten_run_script (buf);
     ss_frame              =(void (*)())DIV_import("ss_frame"); //ok
     ss_end                =(void (*)())DIV_import("ss_end"); //ok
 #endif
-    ss_time_counter=get_reloj()+ss_time;
+    ss_time_counter=get_clock()+ss_time;
 
     // DLL_1 Aquí se llama a uno.
 
@@ -1257,15 +1257,15 @@ emscripten_run_script (buf);
   // Si el usuario modificó mouse.x o mouse.y, posiciona el ratón debidamente
   if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) set_mouse(mouse->x,mouse->y);
 
-  if (!saltar_volcado) {
+  if (!skip_blit) {
 //printf("Restore type: %d DUmp type: %d\n",restore_type,dump_type);
     // *** OJO *** Restaura las zonas de copia fuera del scroll y del modo 7
 
     if (restore_type==0 || restore_type==1) {
-      if (!iscroll[0].on || iscroll[0].x || iscroll[0].y || iscroll[0].an!=vga_an || iscroll[0].al!=vga_al) {
+      if (!iscroll[0].on || iscroll[0].x || iscroll[0].y || iscroll[0].w!=vga_width || iscroll[0].h!=vga_height) {
         if (background_to_buffer!=NULL) background_to_buffer(); else {
-          if (old_restore_type==0) restore(copia,copia2);
-          else memcpy(copia,copia2,vga_an*vga_al);
+          if (old_restore_type==0) restore(copy_buffer,copy_buffer2);
+          else memcpy(copy_buffer,copy_buffer2,vga_width*vga_height);
         }
       }
     }
@@ -1295,13 +1295,13 @@ emscripten_run_script (buf);
       	  scrollide=n+1; max=(scroll+n)->z;
       	}
 
-      if (text_z>=max && !textos_pintados) { max=text_z; otheride=1; }
+      if (text_z>=max && !drawn_texts) { max=text_z; otheride=1; }
 
-      if (mouse->z>=max && !mouse_pintado) { max=mouse->z; otheride=2; }
+      if (mouse->z>=max && !mouse_drawn) { max=mouse->z; otheride=2; }
 
       if (otheride) {
       	if (otheride==1) {
-      	  pinta_textos(); textos_pintados=1;
+      	  draw_texts(); drawn_texts=1;
       	} else if (otheride==2) {
           readmouse();
 //      	  if (cbd.mouse_action) { // Para evitar retardos (en lo posible)
@@ -1311,20 +1311,20 @@ emscripten_run_script (buf);
 //      	    mouse->middle=(cbd.mouse_bx&4)/4;
 //      	    mouse->right=(cbd.mouse_bx&2)/2;
 //      	    cbd.mouse_action=0;
-//            ss_time_counter=get_reloj()+ss_time;
+//            ss_time_counter=get_clock()+ss_time;
 //          }
           x1s=-1; v_function=-1; // No se producen errores
-          put_sprite(mouse->file,mouse->graph,mouse->x,mouse->y,mouse->angle,mouse->size,mouse->flags,mouse->region,copia,vga_an,vga_al);
-          mouse_x0=x0s;mouse_x1=x1s;mouse_y0=y0s;mouse_y1=y1s; mouse_pintado=1;
+          put_sprite(mouse->file,mouse->graph,mouse->x,mouse->y,mouse->angle,mouse->size,mouse->flags,mouse->region,copy_buffer,vga_width,vga_height);
+          mouse_x0=x0s;mouse_x1=x1s;mouse_y0=y0s;mouse_y1=y1s; mouse_drawn=1;
       	}
       } else if (scrollide) {
       	iscroll[snum=scrollide-1].painted=1;
       	if (iscroll[snum].on==1) scroll_simple();
       	else if (iscroll[snum].on==2) scroll_parallax();
       } else if (m7ide) {
-      	pinta_m7(m7ide-1); im7[m7ide-1].painted=1;
+      	draw_m7(m7ide-1); im7[m7ide-1].painted=1;
       } else if (ide) {
-      	pinta_sprite(); mem[ide+_Executed]=1;
+      	draw_sprite(); mem[ide+_Executed]=1;
       }
 
     } while (ide || m7ide || scrollide || otheride);
@@ -1341,41 +1341,41 @@ emscripten_run_script (buf);
     if (buffer_to_video!=NULL) buffer_to_video(); else {
       if (old_dump_type) {
 
-        volcado_completo=1; volcado(copia);
+        blit_full=1; blit_screen(copy_buffer);
 
       } else {
 
-        volcado_completo=0;
+        blit_full=0;
 
         // Añade los volcados de este frame a los restore del anterior
 
         for (n=id_start; n<=id_end; n+=iloc_len)
-          if (mem[n+_x1]!=-1) volcado_parcial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
+          if (mem[n+_x1]!=-1) blit_partial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
         for (n=0;n<10;n++) {
-          if (im7[n].on) volcado_parcial(im7[n].x,im7[n].y,im7[n].an,im7[n].al);
-          if (iscroll[n].on) volcado_parcial(iscroll[n].x,iscroll[n].y,iscroll[n].an,iscroll[n].al);
+          if (im7[n].on) blit_partial(im7[n].x,im7[n].y,im7[n].w,im7[n].h);
+          if (iscroll[n].on) blit_partial(iscroll[n].x,iscroll[n].y,iscroll[n].w,iscroll[n].h);
         }
-        if (mouse_x1!=-1) volcado_parcial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
-        for (n=0;n<max_textos;n++) if (texto[n].font && texto[n].an)
-            volcado_parcial(texto[n].x0,texto[n].y0,texto[n].an,texto[n].al);
+        if (mouse_x1!=-1) blit_partial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
+        for (n=0;n<max_texts;n++) if (texts[n].font && texts[n].w)
+            blit_partial(texts[n].x0,texts[n].y0,texts[n].w,texts[n].h);
 
         // Realiza un volcado parcial
 
-        volcado(copia);
+        blit_screen(copy_buffer);
 
       }
 
       if (dump_type==0 || restore_type==0) { // Fija los restore para el siguiente frame
 
         for (n=id_start; n<=id_end; n+=iloc_len)
-          if (mem[n+_x1]!=-1) volcado_parcial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
+          if (mem[n+_x1]!=-1) blit_partial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
         for (n=0;n<10;n++) {
-          if (im7[n].on) volcado_parcial(im7[n].x,im7[n].y,im7[n].an,im7[n].al);
-          if (iscroll[n].on) volcado_parcial(iscroll[n].x,iscroll[n].y,iscroll[n].an,iscroll[n].al);
+          if (im7[n].on) blit_partial(im7[n].x,im7[n].y,im7[n].w,im7[n].h);
+          if (iscroll[n].on) blit_partial(iscroll[n].x,iscroll[n].y,iscroll[n].w,iscroll[n].h);
         }
-        if (mouse_x1!=-1) volcado_parcial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
-        for (n=0;n<max_textos;n++) if (texto[n].font && texto[n].an)
-            volcado_parcial(texto[n].x0,texto[n].y0,texto[n].an,texto[n].al);
+        if (mouse_x1!=-1) blit_partial(mouse_x0,mouse_y0,mouse_x1-mouse_x0+1,mouse_y1-mouse_y0+1);
+        for (n=0;n<max_texts;n++) if (texts[n].font && texts[n].w)
+            blit_partial(texts[n].x0,texts[n].y0,texts[n].w,texts[n].h);
       }
 
     }
@@ -1388,10 +1388,10 @@ emscripten_run_script (buf);
 // Elimina un proceso
 //═════════════════════════════════════════════════════════════════════════════
 
-void elimina_proceso(int id) {
+void delete_process(int id) {
   int id2;
 
-  mem[id+_Status]=0; procesos--;
+  mem[id+_Status]=0; processes--;
   if (id2=mem[id+_Father])
     if (mem[id2+_Son]==id) mem[id2+_Son]=mem[id+_BigBro];
   if (id2=mem[id+_BigBro]) mem[id2+_SmallBro]=mem[id+_SmallBro];
@@ -1412,11 +1412,11 @@ void elimina_proceso(int id) {
 // Finalización
 //═════════════════════════════════════════════════════════════════════════════
 
-void finalizacion (void) {
+void finalization (void) {
 
   dacout_r=64; dacout_g=64; dacout_b=64; dacout_speed=4;
   while (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
-    set_paleta(); set_dac();
+    set_palette(); set_dac();
   }
 
 #ifdef DIVDLL
@@ -1424,7 +1424,7 @@ void finalizacion (void) {
 #endif
 
 #ifdef NETLIB
-  if (inicializacion_red) net_end();
+  if (network_initialization) net_end();
 #endif
   rvmode();
   EndSound();
@@ -1474,7 +1474,7 @@ void exer(int e) {
   //procesos,(id_end-id_start)/iloc_len+1);
 
 #ifdef NETLIB
-  if (inicializacion_red) net_end();
+  if (network_initialization) net_end();
 #endif
 
   rvmode();
@@ -1515,16 +1515,16 @@ e("DIV ERROR\n");
 
 #endif
 
-void e(char * texto) {
+void e(char * texts) {
 
   if (v_function==-1) return;
 
   if (v_function>=0)
-       printf("DIV Execution error: %s (%s)",texto,fname[v_function]);
-  else printf("DIV Execution error: %s",texto);
+       printf("DIV Execution error: %s (%s)",texts,fname[v_function]);
+  else printf("DIV Execution error: %s",texts);
 
 #ifdef NETLIB
-  if (inicializacion_red) net_end();
+  if (network_initialization) net_end();
 #endif
 
   rvmode();

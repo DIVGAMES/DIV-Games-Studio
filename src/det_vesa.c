@@ -4,15 +4,15 @@
 //  Detection of available video modes
 //═════════════════════════════════════════════════════════════════════════════
 /*
-struct _modos {
-  short ancho;
-  short alto;
-  short modo;
+struct _modes {
+  short width;
+  short height;
+  short mode;
 };
-struct _modos modos[32];
-int num_modos;
+struct _modes video_modes[32];
+int num_modes;
 int VersionVesa;
-char marcavga[128];
+char vgabrand[128];
 */
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -24,14 +24,14 @@ int compare_mode(void const *aa, void const *bb) {
 	return((int)(*a)*10000+*(a+1)>(int)(*b)*10000+*(b+1));
 }
 
-void detectar_vesa(void) { // Detects available video modes
+void detect_vesa(void) { // Detects available video modes
 	short *modelist;
 	int n;
 
 	OSDEP_VMode **modes;
 	int i;
 
-	num_modos=0;
+	num_modes=0;
 
 
 	modes=OSDEP_ListModes();
@@ -39,23 +39,23 @@ void detectar_vesa(void) { // Detects available video modes
 	/* Check is there are any modes available */
 	if(modes == 0 || modes == -1) {
 		// none, just list some standard ones for use in windowed mode.
-		modos[0].ancho=320; modos[0].alto=240; modos[0].modo=1;
-		modos[1].ancho=640; modos[1].alto=480; modos[1].modo=1;
-		modos[2].ancho=800; modos[2].alto=600; modos[2].modo=1;
-		modos[3].ancho=1024; modos[3].alto=768; modos[3].modo=1;
-		modos[4].ancho=1280; modos[4].alto=1024; modos[4].modo=1;
-		modos[5].ancho=1920; modos[5].alto=1080; modos[5].modo=1;
-		modos[6].ancho=1280; modos[6].alto=720; modos[6].modo=1;
-		modos[7].ancho=376; modos[7].alto=282; modos[7].modo=1;
+		video_modes[0].width=320; video_modes[0].height=240; video_modes[0].mode=1;
+		video_modes[1].width=640; video_modes[1].height=480; video_modes[1].mode=1;
+		video_modes[2].width=800; video_modes[2].height=600; video_modes[2].mode=1;
+		video_modes[3].width=1024; video_modes[3].height=768; video_modes[3].mode=1;
+		video_modes[4].width=1280; video_modes[4].height=1024; video_modes[4].mode=1;
+		video_modes[5].width=1920; video_modes[5].height=1080; video_modes[5].mode=1;
+		video_modes[6].width=1280; video_modes[6].height=720; video_modes[6].mode=1;
+		video_modes[7].width=376; video_modes[7].height=282; video_modes[7].mode=1;
 	} else {
 		for(i=0;modes[i];++i) {
-			modos[i].ancho=modes[i]->w; modos[i].alto=modes[i]->h; modos[i].modo=1;
+			video_modes[i].width=modes[i]->w; video_modes[i].height=modes[i]->h; video_modes[i].mode=1;
 		}
-		num_modos=i-1;
+		num_modes=i-1;
 
 	}
 	
-	sprintf(marcavga,"SDL Video Driver");
+	sprintf(vgabrand,"SDL Video Driver");
 
-	qsort((void*)&(modos[0].ancho),num_modos,sizeof(struct _modos),compare_mode);
+	qsort((void*)&(video_modes[0].width),num_modes,sizeof(struct _modes),compare_mode);
 }

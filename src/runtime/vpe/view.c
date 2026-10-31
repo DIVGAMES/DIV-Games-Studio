@@ -367,7 +367,7 @@ VPEFixed MinZ, MaxZ, Z1, Z2, t, t1, t2, c;
 //  Sets view size. If ptr is given, do not allocate buffer.
 //-----------------------------------------------------------------------------
 
-void SetActiveView(int altura,int objeto,int w,int h,VPEByte *buf_ptr,int buf_width)
+void SetActiveView(int height,int object,int w,int h,VPEByte *buf_ptr,int buf_width)
 {
   VPEByte *ptr;
   VPEFixed t;
@@ -383,9 +383,9 @@ void SetActiveView(int altura,int objeto,int w,int h,VPEByte *buf_ptr,int buf_wi
   pv->BufWidth=buf_width;
 
   // Asigno el objeto
-  pv->pObject=(struct Object *)Objects.ptr[objeto];
+  pv->pObject=(struct Object *)Objects.ptr[object];
   pv->H=pv->pObject->H;
-  pv->ObjHeight=INT_FIX(altura+16);
+  pv->ObjHeight=INT_FIX(height+16);
 
   // Do the rest
   if (pv->BufScan) free(pv->BufScan);

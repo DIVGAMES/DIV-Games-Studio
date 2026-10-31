@@ -5,13 +5,13 @@
 
 void resource_create(Resource *resource_struct,char *name)
 {
-  char Clave[5];
+  char Key[5];
 
   resource_struct->Packed=fopen(name,"rb");
   if(resource_struct->Packed==NULL) {ERROR=(char *)ERR4;printf("Nombre del recurso: %s\n",name);exit(1);};
-  fread(Clave,4,1,resource_struct->Packed);
-  Clave[4]=0;
-  if(strcmp(Clave,"PACK")) {ERROR=(char *)ERR5;exit(1);};
+  fread(Key,4,1,resource_struct->Packed);
+  Key[4]=0;
+  if(strcmp(Key,"PACK")) {ERROR=(char *)ERR5;exit(1);};
   fread(&resource_struct->Num_Pack,4,1,resource_struct->Packed);
   if ((resource_struct->MyPack=(Pack *)lf_malloc(sizeof(Pack)*resource_struct->Num_Pack))==NULL)
     return;

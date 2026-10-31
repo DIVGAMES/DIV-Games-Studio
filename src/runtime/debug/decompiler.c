@@ -136,7 +136,7 @@ void dump(int size) {
 	int args=0;
 	int ifloop=0;
 	char condstack[255][100];
-	int con=0;
+	int ctr=0;
 	int f=0;
 	//					0    1     2    3    4    5    6    7    8    9  
 	char keys[128][15]={"","_esc","_1","_2","_3","_4","_5","_6","_7","_8",
@@ -440,21 +440,21 @@ local resolution=0
 			fprintf(prg,"%s=%s",cstack[sp-2],cmd);
 		}
 		memset(cmd,0,255);
-		con=1;
+		ctr=1;
 		sp--;
 		break;
     case lori: 
 		fprintf(sta,"%5u\tori",i);
 //		fprintf(prg,"// UNIMP! || (ORI)\n");
 		fprintf(prg,"// stack: || %d %d\n",sp,i);
-		sprintf(condstack[con],"%s OR %s",condstack[con-2],condstack[con-1]);
-		strcpy(condstack[con-2],condstack[con]);
-		strcpy(cstack[sp-2],condstack[con]);
+		sprintf(condstack[ctr],"%s OR %s",condstack[ctr-2],condstack[ctr-1]);
+		strcpy(condstack[ctr-2],condstack[ctr]);
+		strcpy(cstack[sp-2],condstack[ctr]);
 //		sp--;
-//		fprintf(prg,"// cmd: %s\n",condstack[con]);
+//		fprintf(prg,"// cmd: %s\n",condstack[ctr]);
 
-		con--;
-		strcpy(cmd,condstack[con-1]);
+		ctr--;
+		strcpy(cmd,condstack[ctr-1]);
 
 		break;
     case lxor: 
@@ -466,62 +466,62 @@ local resolution=0
 		fprintf(sta,"%5u\tand",i); 
 //		fprintf(prg,"// UNIMP! && (AND)\n");
 		fprintf(prg,"// stack: && %d\n",sp);
-		sprintf(condstack[con],"(%s && %s)",condstack[con-2],condstack[con-1]);
-		strcpy(condstack[con-2],condstack[con]);
-		con--;
-//		fprintf(prg,"// condstack %s\n",condstack[con]);
-		strcpy(cmd,condstack[con-1]);
+		sprintf(condstack[ctr],"(%s && %s)",condstack[ctr-2],condstack[ctr-1]);
+		strcpy(condstack[ctr-2],condstack[ctr]);
+		ctr--;
+//		fprintf(prg,"// condstack %s\n",condstack[ctr]);
+		strcpy(cmd,condstack[ctr-1]);
 		break;
     case ligu: 
 		fprintf(sta,"%5u\tigu",i); 
 //		fprintf(prg,"// %s UNIMP! == (IGU)\n",cmd);		
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"%s == %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s == %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 		break;
     case ldis: 
 		fprintf(sta,"%5u\tdis",i); 
 //		fprintf(prg,"// UNIMP! != (DIS)\n");		
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"%s != %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s != %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 
 		break;
     case lmay: 
 		fprintf(sta,"%5u\tmay",i); 
 //		fprintf(prg,"// UNIMP! > (MAY)\n");		
-		sprintf(condstack[con],"%s > %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s > %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 //		fprintf(prg,"// stack: %d %s\n",sp,cmd);
 		break;
     case lmen: 
 		fprintf(sta,"%5u\tmen",i); 
 //		fprintf(prg,"// UNIMP! < (MEN)\n");				
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"%s < %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s < %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 
 		break;
     case lmei: 
 		fprintf(sta,"%5u\tmei",i); 
 //		fprintf(prg,"// UNIMP! <= (MEI)\n");	
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"(%s <= %s)",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"(%s <= %s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 
 		break;
     case lmai: 
 		fprintf(sta,"%5u\tmai",i); 
 //		fprintf(prg,"// UNIMP! >= (MAI)\n");			
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"(%s >= %s)",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"(%s >= %s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 		break;
     case ladd: 
 		fprintf(sta,"%5u\tadd",i);
@@ -674,12 +674,12 @@ local resolution=0
 
 		memset(cmd,0,255);
 		i++;
-		con=0;
+		ctr=0;
 		sp=0;
 		break;
     case lfun: 
 		fprintf(sta,"%5u\tfun %u",i,mem[i+1]); 
-//		fprintf(prg,"// LFUN stack: %d i: %u con: %u\n",sp,i,con);
+//		fprintf(prg,"// LFUN stack: %d i: %u ctr: %u\n",sp,i,ctr);
 		// calling function
 
 //		fprintf(prg,"// fun stack %d %d\n",sp,i);
@@ -776,15 +776,15 @@ local resolution=0
 				fprintf(prg,"// GET_ID\n");
 				sprintf(cmd,"get_id(type proc%s)",cstack[sp-1]);
 				strcpy(cstack[sp-1],cmd);
-//				con++;
+//				ctr++;
 				break;
 //				sp=1;
 			
 			case 12:
 				sprintf(cmd,"get_angle(%s)",cstack[sp-1]);
-//				strcpy(condstack[con],cmd);
+//				strcpy(condstack[ctr],cmd);
 				strcpy(cstack[sp-1],cmd);
-//				con++;
+//				ctr++;
 //				sp=1;
 				break;
 
@@ -944,8 +944,8 @@ local resolution=0
 //				sp=0;
 				break;
 		}
-		strcpy(condstack[con],cmd);
-		con++;
+		strcpy(condstack[ctr],cmd);
+		ctr++;
 		i++; break;
     case lcal: 
 		fprintf(sta,"%5u\tcal %u",i,mem[i+1]); 
@@ -979,7 +979,7 @@ local resolution=0
 		fprintf(prg,"%s;\n",cmd);
 //		fprintf(prg,"// discard stack %d\n",sp);
 		memset(cmd,0,255);
-		con=0;
+		ctr=0;
 		sp--;
 
 		break;
@@ -1094,7 +1094,7 @@ local resolution=0
     case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
     case lchk: 
 		fprintf(sta,"%5u\tchk",i); 
-		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
+		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[ctr-1],cmd);
 		getvarname(mem[i+2],name);
 		strcat(cstack[sp-1],".");
 		strcat(cstack[sp-1],name);
@@ -1109,7 +1109,7 @@ local resolution=0
 		}
 */
 //		i++;
-//		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
+//		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[ctr-1],cmd);
 		i+=2;
 		fprintf(prg,"// lchk next %d %d\n",i,mem[i+1]);
 		if(mem[i+1]==lptr || mem[i+1]==lchk)

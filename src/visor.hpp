@@ -1,27 +1,27 @@
-#ifndef __VISOR_HPP_
-#define __VISOR_HPP_
+#ifndef __VIEWER_HPP_
+#define __VIEWER_HPP_
 
 typedef struct _buffer_sprite3d {
-  int   ancho,alto;
-  int   punto_x,punto_y;
+  int   width,height;
+  int   point_x,point_y;
   char  *buffer;
 } buffer_sprite3d;
 
 typedef struct {
-  int porcentaje;       // 100 % es el tamaño normal
-  float alfa;           // Angulo de deriva (0-360)
+  int percentage;       // 100 % es el tamaño normal
+  float alpha;           // Angulo de deriva (0-360)
   float beta;           // Angulo de caida (0-90)
-  char *animacion;      // Puntero al nombre de la animacion (incluye path)
-  int num_animacion;    // Numero de la animacion
+  char *animation;      // Puntero al nombre de la animacion (incluye path)
+  int num_animation;    // Numero de la animacion
   int frame;            // Frame a renderizar
   int num_frames;       // Frames totales de la animacion
-  char *nombre;         // Puntero al nombre del modelo (incluye path)
+  char *name;         // Puntero al nombre del modelo (incluye path)
   char *dac;            // Puntero a la paleta
-  char *textura;        // Puntero al nombre de la textura (incluye path)
-} tvisor, *lptvisor;
+  char *texture;        // Puntero al nombre de la textura (incluye path)
+} tviewer, *lptviewer;
 
-buffer_sprite3d *visor_init(lptvisor datos_render);
-void visor_loop(lptvisor datos_render);
-void visor_end();
+buffer_sprite3d *viewer_init(lptviewer render_data);
+void viewer_loop(lptviewer render_data);
+void viewer_end();
 
 #endif

@@ -4,74 +4,74 @@
 
 // TRASHCAN Handler
 
-extern HeadFPG HeadFPGArrastre;
+extern HeadFPG HeadFPGDrag;
 void FPG2();
 
-void FPG_pinta_listboxbr      (struct t_listboxbr * l);
-void FPG_actualiza_listboxbr  (struct t_listboxbr * l);
+void FPG_draw_listboxbr      (struct t_listboxbr * l);
+void FPG_update_listboxbr  (struct t_listboxbr * l);
 
 
 
 // Trash pain handerl
 void Bin1(void)
 {
-	int an=v.an,al=v.al;
+	int w=v.w,h=v.h;
 	byte * ptr=v.ptr;
 	if (big) {
-		an/=2; 
-		al/=2; 
+		w/=2; 
+		h/=2; 
 	}
 	
-	wput(ptr,an,al,2,10,-219);
+	wput(ptr,w,h,2,10,-219);
 }
 
 // Trash click handler (handles mouse-up event for drag)
 
 void Bin2(void)
 {
-	FPG *MiMemoFPG;
-	struct tventana MiVentana;
+	FPG *MyMemoFPG;
+	struct twindow MyWindow;
 
-	if(arrastrar==4) {
+	if(drag==4) {
 		
-		arrastrar=5; 
+		drag=5; 
 		free_drag=0;
 		
-		switch(ventana[1].tipo) {
+		switch(window[1].type) {
 
 			case 100: // Map dragged to bin from desktop (alias for close map)
-				MiVentana=v;
-				v=ventana[1];
-				ventana[1]=MiVentana;
-				cierra_ventana();
+				MyWindow=v;
+				v=window[1];
+				window[1]=MyWindow;
+				close_window();
 			break;
 
 			case 101: // Item dragged from FPG to bin. Remove from FPG
-				v_titulo=(char *)texto[60];
-				v_texto=ventana[1].mapa->descripcion;
-				dialogo(aceptar0);
+				v_title=(char *)texts[60];
+				v_text=window[1].map->description;
+				dialog(accept0);
 
-				if(v_aceptar) {
-					MiVentana=v;
-					MiMemoFPG=(FPG *)ventana[1].aux;
-					Borrar_FPG(MiMemoFPG,ventana[1].mapa->Codigo);
-					v=ventana[1];
+				if(v_accept) {
+					MyWindow=v;
+					MyMemoFPG=(FPG *)window[1].aux;
+					Delete_FPG(MyMemoFPG,window[1].map->Code);
+					v=window[1];
 
-					//if (MiMemoFPG->lInfoFPG.inicial+MiMemoFPG->lInfoFPG.lineas*MiMemoFPG->lInfoFPG.columnas>MiMemoFPG->lInfoFPG.maximo
-					//    && MiMemoFPG->lInfoFPG.inicial) MiMemoFPG->lInfoFPG.inicial--;
+					//if (MyMemoFPG->lInfoFPG.inicial+MyMemoFPG->lInfoFPG.lineas*MyMemoFPG->lInfoFPG.columnas>MyMemoFPG->lInfoFPG.maximo
+					//    && MyMemoFPG->lInfoFPG.inicial) MyMemoFPG->lInfoFPG.inicial--;
 
-					while (MiMemoFPG->lInfoFPG.inicial+(MiMemoFPG->lInfoFPG.lineas-1)*MiMemoFPG->lInfoFPG.columnas+1>MiMemoFPG->lInfoFPG.maximo) {
-						MiMemoFPG->lInfoFPG.inicial-=MiMemoFPG->lInfoFPG.columnas;
+					while (MyMemoFPG->lInfoFPG.initial+(MyMemoFPG->lInfoFPG.lines-1)*MyMemoFPG->lInfoFPG.columns+1>MyMemoFPG->lInfoFPG.maximum) {
+						MyMemoFPG->lInfoFPG.initial-=MyMemoFPG->lInfoFPG.columns;
 					}
 
-					if (MiMemoFPG->lInfoFPG.inicial<0) MiMemoFPG->lInfoFPG.inicial=0;
+					if (MyMemoFPG->lInfoFPG.initial<0) MyMemoFPG->lInfoFPG.initial=0;
 
-					// FPG_pinta_listboxbr(&MiMemoFPG->lInfoFPG);
+					// FPG_draw_listboxbr(&MyMemoFPG->lInfoFPG);
 
-					FPG_actualiza_listboxbr(&MiMemoFPG->lInfoFPG);
+					FPG_update_listboxbr(&MyMemoFPG->lInfoFPG);
 
-					v.volcar=1;
-					v=MiVentana;
+					v.blit=1;
+					v=MyWindow;
 				}
 			break;
 		} 
@@ -83,16 +83,16 @@ void Bin2(void)
 
 void Bin0(void)
 {
-	v.tipo=5;
-	v.an=27;
-	v.al=34;
+	v.type=5;
+	v.w=27;
+	v.h=34;
 	v.paint_handler=Bin1;
 	v.click_handler=Bin2;
-	v.titulo=(byte *)"";
-	v.nombre=texto[350];
+	v.title=(byte *)"";
+	v.name=texts[350];
 }
 
-void muestra_papelera()
+void show_clipboard()
 {
-  nueva_ventana(Bin0);
+  new_window(Bin0);
 }

@@ -911,13 +911,13 @@ int startpos, endpos;
         CDEnd=endpos;
 }
 
-void Play_CD(int pista,int modo)
+void Play_CD(int track,int mode)
 {
 int startpos, endpos;
         if(!CD_ROM)     return;
-        cd_set_track(pista);
+        cd_set_track(track);
         get_musicpos(&startpos, &endpos);
-        if(modo==0)                
+        if(mode==0)                
                 cd_play_audio (startpos, endpos);
         else
                 cd_play_audio (startpos, CDEnd);

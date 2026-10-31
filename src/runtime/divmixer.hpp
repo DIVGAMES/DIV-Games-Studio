@@ -60,9 +60,9 @@ extern UWORD CD;
 extern UWORD MASTER;
 extern UWORD VOC;
 
-void SetMasterVolume  (UWORD volumen); // de 0 a 15
-void SetVocVolume     (UWORD volumen); // de 0 a 15
-void SetCDVolume      (UWORD volumen); // de 0 a 15
+void SetMasterVolume  (UWORD volume); // de 0 a 15
+void SetVocVolume     (UWORD volume); // de 0 a 15
+void SetCDVolume      (UWORD volume); // de 0 a 15
 void InitMixer        (UWORD card, UWORD address, UWORD master, UWORD voc, UWORD cd);
 void MIX_Reset        (void);
 void MIX_SetInput     (byte opt);

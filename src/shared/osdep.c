@@ -261,7 +261,7 @@ strcpy(_FullPath, _Path);
 
 int nummatch=0;
 int np=0;
-int type=0;
+int find_type=0;
 
 char findmask[255];
 char findname[2048];
@@ -294,7 +294,7 @@ if(namelist!=NULL) {
 
     nummatch = scandir(".", &namelist, 0, alphasort); 
 np=-1;
-type = attr;
+find_type = attr;
 
 //n--;
 ret =_dos_findnext(result);
@@ -321,7 +321,7 @@ while(++np<nummatch) {
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
 	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
-		if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
+		if(namelist[np]->d_type == DT_DIR && find_type == _A_SUBDIR) {
 			
 			// only if searching via wildcard - fixes "new"
 			if(strchr(findmask,'*')) {
@@ -337,7 +337,7 @@ while(++np<nummatch) {
 
 	if (fnmatch(findmask, findname, FNM_PATHNAME | FNM_CASEFOLD)==0){
 		
-		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
+		if(namelist[np]->d_type != DT_DIR && find_type == _A_NORMAL) {
 			//printf("free'ing np [%d] [FILE]\n",np,result->name);
 			free(namelist[np]);
 			result->attrib=0;

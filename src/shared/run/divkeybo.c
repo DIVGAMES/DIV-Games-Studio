@@ -188,7 +188,7 @@ void kbdReset(void)
 //      Espera una tecla, actualiza variables (ascii,scan_code y shift_status)
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-void tecla_bios(void) {
+void bios_key(void) {
 #ifdef DOS
   int as,sc,ss;
   union REGS r;
@@ -278,8 +278,8 @@ void PrintEvent(const SDL_Event * event)
             SDL_Log("Window %d resized to %dx%d",
                     event->window.windowID, event->window.data1,
                     event->window.data2);
-//            vga_an = event->window.data1;
-//			vga_al = event->window.data2;
+//            vga_width = event->window.data1;
+//			vga_height = event->window.data2;
 			vwidth = event->window.data1;
 			vheight = event->window.data2;
 			// EndSound();
@@ -332,13 +332,13 @@ void PrintEvent(const SDL_Event * event)
 int8_t hx=0,hy=0; // hat xy positions
 
 byte oldhatval;
-void tecla(void) {
-//printf("tecla\n");
+void read_key(void) {
+//printf("read_key\n");
 //ascii=0; scan_code=0;
 SDL_Event event;
 if(vwidth == 0 && vheight == 0) {
-	vwidth = vga_an;
-	vheight = vga_al;
+	vwidth = vga_width;
+	vheight = vga_height;
 }
 #ifdef GCW
 if(divjoy) {
@@ -391,7 +391,7 @@ oldhatval = hatval;
 			}
 //			EndSound();
 //			soundstopped=1;
-//				volcado_parcial(0,0,vga_an-1,vga_al-1);
+//				blit_partial(0,0,vga_width-1,vga_height-1);
 //				SDL_PauseAudio(0);
 			
         }
@@ -703,9 +703,9 @@ oldhatval = hatval;
 		mouse->x = event.motion.x;
 		mouse->y = event.motion.y;
 
-		if(vga_an != vwidth || vga_al != vheight) {
-			mouse->x = (int)(event.motion.x*(float)((float)vga_an / (float)vwidth));// / (float)vga_an);
-			mouse->y = (int)(event.motion.y*(float)((float)vga_al / (float)vheight));// / (float)vga_al);
+		if(vga_width != vwidth || vga_height != vheight) {
+			mouse->x = (int)(event.motion.x*(float)((float)vga_width / (float)vwidth));// / (float)vga_width);
+			mouse->y = (int)(event.motion.y*(float)((float)vga_height / (float)vheight));// / (float)vga_height);
 #ifdef SDL2
 			SDL_Log("Mouse: VX: %d VY: %d x: %d y: %d\n",mouse->x, mouse->y, event.motion.x,event.motion.y);
 #endif
@@ -770,7 +770,7 @@ oldhatval = hatval;
   union REGS r;
   struct SREGS s;
 
-  tecla_bios();
+  bios_key();
 
   if (ibuf!=fbuf) {
     ascii=buf[ibuf]; scan_code=buf[ibuf+1]; shift_status=buf[ibuf+2];
@@ -796,7 +796,7 @@ oldhatval = hatval;
 //      Vacia el buffer de teclado (real e interno)
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
-void vacia_buffer(void) {
+void empty_buffer(void) {
 #ifdef DOS
   union REGS r;
   struct SREGS s;

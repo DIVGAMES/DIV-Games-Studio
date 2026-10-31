@@ -12,11 +12,11 @@ static void Palette_Update(TFUByte (*palette)[256][3]);
 
 TFAnimation *animation=NULL;
 char *CBuffer;
-int CBuff_alt,TFOffset;
-int CBuff_anc;
+int CBuff_height,TFOffset;
+int CBuff_width;
 TFUByte *TFframe, (*TFpalette)[256][3];
 TFAnimationInfo info;
-char TFNombre[256];
+char TFName[256];
 
 int fli_palette_update=0;
 
@@ -139,24 +139,24 @@ void FlcInitFirstFrame()
 
 extern OSDEP_Surface *vga;
 
-int StartFLI(char *flinombre, char *Buffer, int Buff_anc,int Buff_alt,int cx,int cy)
+int StartFLI(char *fliname, char *Buffer, int Buff_width,int Buff_height,int cx,int cy)
 {
-	char nombre[strlen(flinombre)+10];
+	char name[strlen(fliname)+10];
 	flc.pMembuf=NULL;
 	flc.membufSize=0;
 	flc.mainscreen=vga;//Buffer;
 	flc.buffer=(byte *)Buffer;
 	memset(flc.colors, 0, sizeof(flc.colors));
 	
-	strcpy(nombre,flinombre);
+	strcpy(name,fliname);
 	
-	if(FlcCheckHeader(nombre)) {
+	if(FlcCheckHeader(name)) {
 		printf("Wrong header\n");
 		return 0;
 	}
-//  SDLInit(nombre);
+//  SDLInit(name);
 
-printf("Loaded %s\n",nombre);
+printf("Loaded %s\n",name);
 FlcInitFirstFrame();
 printf("Frames: %d\n",flc.HeaderFrames);
 return flc.HeaderFrames;
@@ -164,21 +164,21 @@ return flc.HeaderFrames;
 #ifdef NOTYET
   if(animation!=NULL) EndFli();
 
-  strcpy(TFNombre,nombre);
+  strcpy(TFName,name);
   TFErrorHandler_Set(Error_Reporter);
-  animation=TFAnimation_NewFile(nombre);
+  animation=TFAnimation_NewFile(name);
   if(animation==NULL) return(0);
   CBuffer  =Buffer;
-  CBuff_alt=Buff_alt;
-  CBuff_anc=Buff_anc;
-  TFOffset =cy*Buff_anc+cx;
+  CBuff_height=Buff_height;
+  CBuff_width=Buff_width;
+  TFOffset =cy*Buff_width+cx;
 
   TFAnimation_SetLooping(animation, TF_TRUE);
   TFAnimation_SetPaletteFunction(animation, Palette_Update);
   TFAnimation_GetInfo(animation, &info);
 
   if((cx<0)||(cy<0)) return(0);
-  if((info.Width+cx>Buff_anc)||(info.Height+cy>Buff_alt)) return(0);
+  if((info.Width+cx>Buff_width)||(info.Height+cy>Buff_height)) return(0);
   if((TFframe=(TFUByte *)malloc(info.Height*info.Width+256))==NULL) return(0);
   if( (TFpalette=malloc(768) )==NULL) return(0);
 
@@ -199,12 +199,12 @@ static void Palette_Update() {
   if (m) {
 
   fli_palette_update=1;
-  memcpy(paleta,d,768);
+  memcpy(palette,d,768);
   dr=now_dacout_r=dacout_r=0;
   dg=now_dacout_g=dacout_g=0;
   db=now_dacout_b=dacout_b=0;
-  nueva_paleta();
-  paleta_cargada=1;
+  update_palette();
+  loaded_palette=1;
 
   }
 }
@@ -243,9 +243,9 @@ static void apply_fli_colors(int shift)
         flc.colors[index].r=(Uint8)r;
         flc.colors[index].g=(Uint8)g;
         flc.colors[index].b=(Uint8)b;
-        paleta[index*3]=(byte)(r>>2);
-        paleta[index*3+1]=(byte)(g>>2);
-        paleta[index*3+2]=(byte)(b>>2);
+        palette[index*3]=(byte)(r>>2);
+        palette[index*3+1]=(byte)(g>>2);
+        palette[index*3+2]=(byte)(b>>2);
       }
       index++;
     }
@@ -255,8 +255,8 @@ static void apply_fli_colors(int shift)
   dr=now_dacout_r=dacout_r=0;
   dg=now_dacout_g=dacout_g=0;
   db=now_dacout_b=dacout_b=0;
-  nueva_paleta();
-  paleta_cargada=1;
+  update_palette();
+  loaded_palette=1;
   OSDEP_SetPalette(flc.mainscreen, flc.colors, 0, 256);
 }
 
@@ -283,7 +283,7 @@ void SS2()
 /* Upper bits 11 - Lines skip 
 */
       if((Count & 0xc000)==0xc000) {  // 0xc000h = 1100000000000000
-        pDst+=(0x10000-Count)*vga_an;//flc.mainscreen->pitch;
+        pDst+=(0x10000-Count)*vga_width;//flc.mainscreen->pitch;
       }
 
       if((Count & 0xc000)==0x4000) {  // 0x4000h = 0100000000000000
@@ -320,7 +320,7 @@ void SS2()
           }
         }
       }
-      pDst+=vga_an;//=flc.mainscreen->pitch;
+      pDst+=vga_width;//=flc.mainscreen->pitch;
     } 
   }
 } /* SS2 */
@@ -339,7 +339,7 @@ void DECODE_COPY()
   while(Lines-- > 0) {
     memcpy(pDst, pSrc, flc.screen_w);
     pSrc+=flc.screen_w;
-    pDst+=vga_an;//flc.mainscreen->pitch;
+    pDst+=vga_width;//flc.mainscreen->pitch;
   }
 } /* DECODE_COPY */
 
@@ -349,7 +349,7 @@ void _BLACK()
   pDst=flc.buffer;//mainscreen->pixels;
   while(Lines-- > 0) {
     memset(pDst, 0, flc.screen_w);
-    pDst+=vga_an;//flc.mainscreen->pitch;
+    pDst+=vga_width;//flc.mainscreen->pitch;
   }
 } /* BLACK */
 
@@ -380,7 +380,7 @@ void DECODE_BRUN()
         }
       }
     }
-    pDst+=vga_an;//flc.mainscreen->pitch;
+    pDst+=vga_width;//flc.mainscreen->pitch;
   }
 } /* DECODE_BRUN */
 
@@ -398,7 +398,7 @@ void DECODE_LC()
 
   ReadU16(&tmp, pSrc);
   pSrc+=2;
-  pDst+=vga_an;//tmp*flc.mainscreen->pitch;
+  pDst+=vga_width;//tmp*flc.mainscreen->pitch;
   ReadU16(&Lines, pSrc);
   pSrc+=2;
   while(Lines--) {
@@ -422,7 +422,7 @@ void DECODE_LC()
         }
       }
     }
-    pDst+=vga_an;//flc.mainscreen->pitch;
+    pDst+=vga_width;//flc.mainscreen->pitch;
   }
 } /* DECODE_LC */
 
@@ -541,7 +541,7 @@ int Nextframe()
 int i;
   if(animation==NULL) return 0;
   TFFrame_Decode(animation);
-  for(i=0; i<info.Height; i++) memcpy(CBuffer+TFOffset+i*CBuff_anc, TFframe+i*info.Width, info.Width);
+  for(i=0; i<info.Height; i++) memcpy(CBuffer+TFOffset+i*CBuff_width, TFframe+i*info.Width, info.Width);
   TFAnimation_GetInfo(animation, &info);
   if(info.CurFrame<info.NumFrames) return(1);
 #endif
@@ -574,7 +574,7 @@ void ResetFli()
 #ifdef NOTYET
   if(animation==NULL) return;
   TFAnimation_Delete(animation);
-  animation=TFAnimation_NewFile(TFNombre);
+  animation=TFAnimation_NewFile(TFName);
   if(animation==NULL) return;
   TFBuffers_Set(animation, TFframe, TFpalette);
   Nextframe();
@@ -599,12 +599,12 @@ static void Palette_Update(TFUByte (*TFpalette)[256][3]) {
   if (m) {
 
   fli_palette_update=1;
-  memcpy(paleta,d,768);
+  memcpy(palette,d,768);
   dr=now_dacout_r=dacout_r=0;
   dg=now_dacout_g=dacout_g=0;
   db=now_dacout_b=dacout_b=0;
-  nueva_paleta();
-  paleta_cargada=1;
+  update_palette();
+  loaded_palette=1;
 
   }
 #endif

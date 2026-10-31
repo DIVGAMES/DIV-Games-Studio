@@ -4,19 +4,19 @@
 memptrsize ScrBase;
 int ScrWidth, ScrHeight;
 int GfxOn=FALSE;
-void retrazo(void);
+void retrace(void);
 
 /****************************************************************************
 Func:	void InitGraph(void)
 Info:	Initializes graphics system.
 *****************************************************************************/
 
-void InitGraph(char *buffer,int ancho,int alto)
+void InitGraph(char *buffer,int width,int height)
 {
   GfxOn=TRUE;
   ScrBase=(memptrsize)buffer;
-  ScrWidth=ancho;
-  ScrHeight=alto;
+  ScrWidth=width;
+  ScrHeight=height;
 }
 
 /****************************************************************************
@@ -69,7 +69,7 @@ void SetPalette(VPEByte *pal_ptr)
        if(!OSDEP_SetPalette(vga, colors, 0, 256)) 
                printf("Failed to set palette :(\n"); 
        
-       retrazo();
+       retrace();
 #else
 
 	VPEShort i;

@@ -67,8 +67,8 @@ typedef struct _HeadDC {
 int SaveWAV(byte *byte_ptr, int length, FILE *dstfile)
 {
   HeadDC MyHeadDC;
-  //int    con;
-  //float  paso,pos;
+  //int    ctr;
+  //float  step,pos;
 
   fputc('R',dstfile);
   fputc('I',dstfile);
