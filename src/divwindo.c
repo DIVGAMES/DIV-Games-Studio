@@ -101,7 +101,7 @@ void wbox_in_box(byte*copy_buffer,int real_copy_width,int copy_width,int copy_he
 		}
 	}
 */
-	// render ttf to copia_suface;	
+	// render ttf to copy_buffer_surface;	
 	// ofset by the window x/y
 
 	if (big) {
@@ -829,7 +829,7 @@ void wwrite_in_box(byte*copy_buffer,int real_copy_width,int copy_width,int copy_
 
 	}
 	* */
-	// render ttf to copia_suface;	
+	// render ttf to copy_buffer_surface;	
 	// ofset by the window x/y
 
 	

@@ -4,7 +4,7 @@
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 #include "inter.h"
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
-// Cabeceras
+// Headers
 //様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様
 int  check_collisions(int i,int block,int scroll);
 void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags);

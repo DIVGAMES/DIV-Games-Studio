@@ -29,14 +29,14 @@ int pcm2wav(FILE *in, long inlen, FILE *out, long outlen)
 	}
 	
     if ((ptr=(byte *)malloc(inlen))==NULL) {
-      printf("\n\nError: Memoria insuficiente.\n");
+      printf("\n\nError: Not enough memory.\n");
 		return 4;
     }
 
     fseek(in,0,SEEK_SET);
 	
     if ((c=fread(ptr,1,inlen,in))!=inlen) {
-      printf("\n\nError: %d %d No se pudo leer el archivo.\n",c,inlen);
+      printf("\n\nError: %d %d Could not read the file.\n",c,inlen);
       free(ptr);
 	  return 3;
     }

@@ -848,7 +848,7 @@ strcpy(cWork,full);
   while (ins<_ins+n) { nfiles++; ins+=strlen(ins)+1; } ins=_ins;
 
 fprintf(stdout,
-        "[IDE - CREAR_INSTALACION] creating package for %d asset(s)...\n", nfiles);
+        "[IDE - create_installation] creating package for %d asset(s)...\n", nfiles);
 fflush(stdout);
 
   // *** Eliminate duplicate files
@@ -879,7 +879,7 @@ fflush(stdout);
       }
       if (n<x || !strcmp(MyHeaderSetup[n].name,"SOUND.CFG")) {
 fprintf(stdout,
-        "[IDE - CREAR_INSTALACION] found duplicated file [%s] %d of %d file(s) (__ins [%X], _ins [%X], ins [%X])\n",
+        "[IDE - create_installation] found duplicated file [%s] %d of %d file(s) (__ins [%X], _ins [%X], ins [%X])\n",
         MyHeaderSetup[x].name,
         x + 1,
         nfiles,
@@ -923,7 +923,7 @@ fflush(stdout);
     }
 
 fprintf(stdout,
-        "[IDE - CREAR_INSTALACION] packing file [%s] %d of %d file(s) (__ins [%X], _ins [%X], ins [%X])\n",
+        "[IDE - create_installation] packing file [%s] %d of %d file(s) (__ins [%X], _ins [%X], ins [%X])\n",
         MyHeaderSetup[x].name,
         x + 1,
         nfiles,
@@ -1018,7 +1018,7 @@ fflush(stdout);
       }
 
 fprintf(stdout,
-        "[IDE - CREAR_INSTALACION] PACKED FILE: %s\n",
+        "[IDE - create_installation] PACKED FILE: %s\n",
         ins);
 fflush(stdout);
       if ((end=fopen(ins,"rb"))==NULL) {

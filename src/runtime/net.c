@@ -318,9 +318,9 @@ void net_send()
   int i;
 
   if (network_game.server)
-    printf("Jugadores: %d, NumPlayer: %d, Dir: %s, Soy el Servidor\n",network_game.num_players,network_game.player_id,ShowInternalAddress(&IPX_MyAddress));
+    printf("Players: %d, NumPlayer: %d, Addr: %s, I am the server\n",network_game.num_players,network_game.player_id,ShowInternalAddress(&IPX_MyAddress));
   else
-    printf("Jugadores: %d, NumPlayer: %d, Dir: %s, Soy un Nodo\n",network_game.num_players,network_game.player_id,ShowInternalAddress(&IPX_MyAddress));
+    printf("Players: %d, NumPlayer: %d, Addr: %s, I am a node\n",network_game.num_players,network_game.player_id,ShowInternalAddress(&IPX_MyAddress));
 */
   if (!network_game.active || (network_game.num_players<2 && network_game.device==IPX))
     return;
@@ -514,7 +514,7 @@ int server=0;
   //---------------------------------------------------------------------------
   // Check that the packet does not exceed 200 bytes
   //---------------------------------------------------------------------------
-// FER_AQUI
+// FER_HERE
   length*=4;
 //  length/=net->num_players;  
   if (length>=200)

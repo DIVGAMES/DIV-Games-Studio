@@ -1265,7 +1265,7 @@ void create_thumb_PCM(struct t_listboxbr * l)
       else
       {
         step=(float)thumb[num].filesize/(float)thumb[num].w;
-        //printf("Pintando ...\n");
+        //printf("Drawing ...\n");
         for(x=0;x<thumb[num].w;x++)
         {
 

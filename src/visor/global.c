@@ -92,7 +92,7 @@ void *lf_malloc(int size)
   table_mem_mallocs[num_mallocs]=size;
   mem_mallocs+=size;
   num_mallocs++;
-//  printf("Reservado: %d, Total: %d\n",size,mem_mallocs);
+//  printf("Reserved: %d, Total: %d\n",size,mem_mallocs);
   if (num_mallocs>=TOTAL_MALLOCS) {
     lf_free_all();
     return(NULL);
@@ -122,8 +122,8 @@ void lf_free_all()
 {
   int i;
 
-//  printf("Por liberar: %d, mallocs: %d\n",mem_mallocs,num_mallocs);
-//  printf("Liberado Todo\n");
+//  printf("To free: %d, mallocs: %d\n",mem_mallocs,num_mallocs);
+//  printf("Freed all\n");
   for (i=num_mallocs-1;i>=0;i--) {
     free(table_mallocs[i]);
     table_mallocs[i]=NULL;

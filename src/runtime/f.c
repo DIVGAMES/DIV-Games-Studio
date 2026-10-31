@@ -2489,7 +2489,7 @@ void _stop_cd(void) {
 unsigned int get_cd_error(void);
 
 void _is_playing_cd(void) {
-//CACA
+//CRAP
 #ifdef DOS
   if (get_cd_error()&0x200)
         opstack[++sp]=1;

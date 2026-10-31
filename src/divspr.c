@@ -363,7 +363,7 @@ void GenSpr1(void)
   wwrite(v.ptr, w, h, 3+64-1+40, 95+18+2, 0, texts[432], c3);
   wbox(v.ptr, w, h, c2,  6+80+44, 95+26+2, 16, 8);
   wwrite(v.ptr, w, h,  6+65+20+44, 95+30+2, 1,
-         itoa(imagenes[frac_img],cWork,10), c3);
+         itoa(images[frac_img],cWork,10), c3);
 */
   // Show the scaled texture
   if(TextureSprite != NULL)

@@ -83,18 +83,18 @@ void dummy_handler(void) {}
 //      Main Menu
 //═════════════════════════════════════════════════════════════════════════════
 
-void menu_principal0(void) {
+void menu_main0(void) {
   create_menu(750);
-  v.paint_handler=menu_principal1;
-  v.click_handler=menu_principal2;
-  v.close_handler=menu_principal3;
+  v.paint_handler=menu_main1;
+  v.click_handler=menu_main2;
+  v.close_handler=menu_main3;
 }
 
-void menu_principal1(void) { 
+void menu_main1(void) { 
 	draw_menu(750); 
 }
 
-void menu_principal2(void) {
+void menu_main2(void) {
 	update_menu(750,1,0); 
 	if ((old_mouse_b&1) && !(mouse_b&1)) {
 		switch (v.state) {
@@ -138,7 +138,7 @@ void menu_principal2(void) {
 	}
 }
 
-void menu_principal3(void) {
+void menu_main3(void) {
 	exit_environment=1; 
 }
 
@@ -2483,10 +2483,10 @@ void update_listbox(struct t_listbox * l) {
 //      Open dialog box
 //═════════════════════════════════════════════════════════════════════════════
 
-#define ancho_abrir 184+12
-#define alto_abrir 149+4
+#define open_width 184+12
+#define open_height 149+4
 
-void imprime_ruta(void) {
+void print_path(void) {
   int w=v.w/big2,h=v.h/big2;
 
   wbox(v.ptr,w,h,c2,3,31,w-6,7);
@@ -2497,7 +2497,7 @@ void imprime_ruta(void) {
   wwrite_in_box(v.ptr,w,w-3,h,3,31,0,full,c3);
 }
 
-void dir_abrir(void) {
+void dir_open(void) {
   unsigned n,m;
   struct find_t fileinfo;
 
@@ -2576,7 +2576,7 @@ void analyze_input(void) {
         //   if it exists as a directory, move to that directory
 
         // (the other difference between open/save is that on entering save
-        // status_abrir=1 and input="")
+        // status_open=1 and input="")
 
 
           if (strchr(input,'*')!=NULL || strchr(input,'?')!=NULL) { // Wildcards
@@ -2924,7 +2924,7 @@ void open_map(void) {
                   }
 
                   // NOTE!!! It is not checked whether an error occurs while decompressing
-                  // See all the places where descomprime_? is called
+                  // See all the places where decompress_? is called
 
                   ExternUseBufferMap=(char	 *)v_map->map;
 
@@ -3210,7 +3210,7 @@ int Colors[9],min_dist,i,dist;
           dialog(err0);
           return;
         }
-//CACA
+//CRAP
         y=(float)0;
         for(fy=0;fy<map_height;fy++)
         {

@@ -553,7 +553,7 @@ init_rnd(dtime);
 
   set_dac();
 //#ifdef __EMSCRIPTEN__
-//  tabla_ghost(); 
+//  ghost_table(); 
 //#endif
   dirinfo->files=0;
   memset(dirinfo->name,0,1025*4);
@@ -1892,7 +1892,7 @@ void exer(int e) {
 
 #endif
 
-  //printf("*** Error de ejecuci�n:\n\n\tn� actual de procesos = %u\n\tn� m�ximo de procesos = %u",
+  //printf("*** Execution error:\n\n\tcurrent no. of processes = %u\n\tmaximum no. of processes = %u",
   //processes,(id_end-id_start)/iloc_len+1);
 #ifdef NETPLAY
 	if (network_initialization)

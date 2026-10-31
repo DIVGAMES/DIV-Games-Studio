@@ -30,7 +30,7 @@ extern M3D_info *m3d;
 extern char Load_FontPathName[256];
 extern char Load_FontName[14];
 
-// extern char Nombres[256][15];
+// extern char Names[256][15];
 
 //extern 
 struct _calc {
@@ -102,7 +102,7 @@ void New_DownLoad_Desktop() {
     switch(window[x].type) { // Window structure
       case    2: //menu
               iWork=-1;
-              if(window[x].paint_handler==menu_principal1) iWork=0;
+              if(window[x].paint_handler==menu_main1) iWork=0;
               if(window[x].paint_handler==menu_programs1) iWork=1;
               if(window[x].paint_handler==menu_palettes1) iWork=2;
               if(window[x].paint_handler==menu_maps1) iWork=3;
@@ -194,7 +194,7 @@ modinfo *mymodinfo;
 #ifdef SLST
   FILE * lst;
   lst=fopen("session.lst","wt");
-  fprintf(lst,"sizeof(struct tventana)=%d\n",sizeof(struct twindow));
+  fprintf(lst,"sizeof(struct twindow)=%d\n",sizeof(struct twindow));
   fprintf(lst,"vid_mode=%d,vid_modebig=%d\n",Setupfile.Vid_mode,Setupfile.Vid_modeBig);
 fflush(lst);
 #endif
@@ -202,28 +202,28 @@ fflush(lst);
         desktop=fopen("system/session.dtf","wb");
         n=fwrite("dtf\x1a\x0d\x0a\x0",8,1,desktop);
 #ifdef SLST
-        fprintf(lst,"header %d elementos escritos <<<\n",n);
+        fprintf(lst,"header %d elements written <<<\n",n);
 #endif
         // save the old resolution
         iWork=Setupfile.Vid_modeHeight+Setupfile.Vid_modeWidth*10000+(Setupfile.Vid_modeBig<<31);
         n=fwrite(&iWork,1,4,desktop);
 #ifdef SLST        
-        fprintf(lst,"resol %d elementos escritos <<<\n",n);
+        fprintf(lst,"resolution %d elements written <<<\n",n);
 #endif
         // reserve space for the number of windows
         n=fwrite(&numwin,1,4,desktop);
 #ifdef SLST
-        fprintf(lst,"numvent %d elementos escritos <<<\n",n);
+        fprintf(lst,"numwin %d elements written <<<\n",n);
 #endif
         // save palette /4
         n=fwrite(dac,768,1,desktop);
 #ifdef SLST
-        fprintf(lst,"dac %d elementos escritos <<<\n",n);
+        fprintf(lst,"dac %d elements written <<<\n",n);
 #endif
         // save ghost table
         n=fwrite(ghost,65536,1,desktop);
 #ifdef SLST
-        fprintf(lst,"ghost %d elementos escritos <<<\n",n);
+        fprintf(lst,"ghost %d elements written <<<\n",n);
 #endif
         // Check and save the used windows one by one
         for(x=max_windows-1;x>=0;x--)
@@ -233,18 +233,18 @@ fflush(lst);
                         numwin++;
                         n=fwrite(&window[x],1,sizeof(struct twindow),desktop);
 #ifdef SLST
-                        fprintf(lst,"v %d elementos escritos <<<\n",n);
+                        fprintf(lst,"v %d elements written <<<\n",n);
 						if(window[x].type < 107)
-							fprintf(lst,"Ventana %d \"%s\" (tipo %d)\n",x,window[x].title,window[x].type);
+							fprintf(lst,"Window %d \"%s\" (type %d)\n",x,window[x].title,window[x].type);
 
-                        fprintf(lst,"  primer_plano=%d, (%d,%d,%d,%d)\n",window[x].foreground,window[x].x,window[x].y,window[x].w,window[x].h);
+                        fprintf(lst,"  foreground=%d, (%d,%d,%d,%d)\n",window[x].foreground,window[x].x,window[x].y,window[x].w,window[x].h);
 #endif
                         switch(window[x].type)
                         {
                                 //Window structure
                                 case    2: //menu
                                         iWork=-1;
-                                        if(window[x].paint_handler==menu_principal1)
+                                        if(window[x].paint_handler==menu_main1)
                                                         iWork=0;
                                         if(window[x].paint_handler==menu_programs1)
                                                         iWork=1;
@@ -265,15 +265,15 @@ fflush(lst);
                                         if(window[x].paint_handler==menu_maps3D1)
                                                         iWork=9;
 #ifdef SLST
-                                        fprintf(lst,"  menu tipo %d\n",iWork);
-                                        fprintf(lst,"tipomenu %d elementos escritos <<<\n",n);
+                                        fprintf(lst,"  menu type %d\n",iWork);
+                                        fprintf(lst,"menutype %d elements written <<<\n",n);
 #endif
                                         n=fwrite(&iWork,1,4,desktop);
                                         
                                         break;
                                 case    3: //palet
 #ifdef SLST                                
-                                        fprintf(lst,"  paleta\n");
+                                        fprintf(lst,"  palette\n");
 #endif
                                         break;
                                 case    4: //timer
@@ -283,17 +283,17 @@ fflush(lst);
                                                 iWork=1;
                                         n=fwrite(&iWork,1,4,desktop);
 #ifdef SLST
-                                        fprintf(lst,"cdivorclock %d elementos escritos <<<\n",n);
+                                        fprintf(lst,"cdivorclock %d elements written <<<\n",n);
 
                                         if (iWork) 
-                                            fprintf(lst,"  reloj\n"); 
+                                            fprintf(lst,"  clock\n"); 
                                         else 
                                             fprintf(lst,"  cdiv\n");
 #endif
                                         break;
                                 case    5: //clipboard
 #ifdef SLST
-                                        fprintf(lst,"  papelera\n");
+                                        fprintf(lst,"  clipboard\n");
 #endif
                                         break;
                                 case    8: //mixer
@@ -307,16 +307,16 @@ fflush(lst);
                                         mh=window[x].map->map_height;
                                         n=fwrite(window[x].map,1,sizeof(struct tmapinfo),desktop);
 
-                                        // fprintf(lst,"tmapinfo %d elementos escritos <<<\n",n);
+                                        // fprintf(lst,"tmapinfo %d elements written <<<\n",n);
                                         // Graphic
                                         n=fwrite((char *)window[x].map->map,mw*mh,1,desktop);
-                                        // fprintf(lst,"map %d elementos escritos <<<\n",n);
+                                        // fprintf(lst,"map %d elements written <<<\n",n);
                                         // fprintf(lst,"  map %dx%d\n",mw,mh);
                                         break;
                                 case    101: //fpg
                                         // fpg structure
                                         n=fwrite(window[x].aux,1,sizeof(FPG),desktop);
-                                        // fprintf(lst,"fpg %d elementos escritos <<<\n",n);
+                                        // fprintf(lst,"fpg %d elements written <<<\n",n);
                                         // fprintf(lst,"  fpg\n");
                                         break;
                                 case    102: //prg
@@ -324,18 +324,18 @@ fflush(lst);
                                         {
                                                 iWork=0;
                                                 n=fwrite(&iWork,1,4,desktop);
-                                                // fprintf(lst,"tipoprg %d elementos escritos <<<\n",n);
+                                                // fprintf(lst,"prgtype %d elements written <<<\n",n);
                                                 n=fwrite(window[x].prg,1,sizeof(struct tprg),desktop);
-                                                // fprintf(lst,"tprg %d elementos escritos <<<\n",n);
+                                                // fprintf(lst,"tprg %d elements written <<<\n",n);
                                                 n=fwrite(window[x].prg->buffer,1,window[x].prg->buffer_len,desktop);
-                                                // fprintf(lst,"buffer %d elementos escritos <<<\n",n);
+                                                // fprintf(lst,"buffer %d elements written <<<\n",n);
                                                 iWork=(memptrsize)window[x].prg->lptr-(memptrsize)window[x].prg->buffer;
                                                 n=fwrite(&iWork,1,4,desktop);
-                                                // fprintf(lst,"offset lptr %d elementos escritos <<<\n",n);
+                                                // fprintf(lst,"offset lptr %d elements written <<<\n",n);
                                                 iWork=(memptrsize)window[x].prg->vptr-(memptrsize)window[x].prg->buffer;
                                                 n=fwrite(&iWork,1,4,desktop);
-                                                // fprintf(lst,"offset vptr %d elementos escritos <<<\n",n);
-                                                // fprintf(lst,"  programa\n");
+                                                // fprintf(lst,"offset vptr %d elements written <<<\n",n);
+                                                // fprintf(lst,"  program\n");
                                         }
                                         else
                                         {
@@ -343,7 +343,7 @@ fflush(lst);
                                                 if (!strcmp((char *)window[x].name,(char *)texts[83])) {
                                                         iWork=1;
                                                         n=fwrite(&iWork,1,4,desktop);
-                                                        // fprintf(lst,"type fontgen %d elementos escritos <<<\n",n);
+                                                        // fprintf(lst,"type fontgen %d elements written <<<\n",n);
                                                         iWork=Save_Font_session(desktop,iWork);
                                                         // fprintf(lst,"  font generator\n");
                                                 } else if (!strcmp((char *)window[x].name,(char *)texts[413])) {
@@ -354,13 +354,13 @@ fflush(lst);
                                                 } else {
                                                         iWork=2;
                                                         n=fwrite(&iWork,1,4,desktop);
-                                                        // fprintf(lst,"type help %d elementos escritos <<<\n",n);
+                                                        // fprintf(lst,"type help %d elements written <<<\n",n);
                                                         n=fwrite(&help_item,1,4,desktop);
-                                                        // fprintf(lst,"help_item %d elementos escritos <<<\n",n);
+                                                        // fprintf(lst,"help_item %d elements written <<<\n",n);
                                                         n=fwrite(&help_height,1,4,desktop);
-                                                        // fprintf(lst,"help_height %d elementos escritos <<<\n",n);
+                                                        // fprintf(lst,"help_height %d elements written <<<\n",n);
                                                         n=fwrite(&help_l,1,4,desktop);
-                                                        // fprintf(lst,"help_l %d elementos escritos <<<\n",n);
+                                                        // fprintf(lst,"help_l %d elements written <<<\n",n);
                                                         // fprintf(lst,"  help\n");
                                                 }
                                         }
@@ -368,9 +368,9 @@ fflush(lst);
                                 case    104: //fnt
                                         // Unload
                                         n=fwrite(window[x].aux,1,14,desktop);
-                                        // fprintf(lst,"filename %d elementos escritos <<<\n",n);
+                                        // fprintf(lst,"filename %d elements written <<<\n",n);
                                         n=fwrite(window[x].aux+14,1,_MAX_PATH-14,desktop);
-                                        // fprintf(lst,"path %d elementos escritos <<<\n",n);
+                                        // fprintf(lst,"path %d elements written <<<\n",n);
                                         // fprintf(lst,"  font\n");
                                         break;
 #ifdef NOTYET
@@ -381,9 +381,9 @@ fflush(lst);
                                         if(mypcminfo->pathname[0]!=0) // NOTE !!!
                                         {
                                           n=fwrite(mypcminfo->name,1,14,desktop);
-                                          // fprintf(lst,"pcm name %d elementos escritos <<<\n",n);
+                                          // fprintf(lst,"pcm name %d elements written <<<\n",n);
                                           n=fwrite(mypcminfo->pathname,1,256,desktop);
-                                          // fprintf(lst,"pcm path %d elementos escritos <<<\n",n);
+                                          // fprintf(lst,"pcm path %d elements written <<<\n",n);
                                           // fprintf(lst,"  pcm\n");
                                         }
 */
@@ -414,7 +414,7 @@ fflush(lst);
         fseek(desktop,8+4,SEEK_SET);
         n=fwrite(&numwin,1,4,desktop);
 #ifdef SLST
-        fprintf(lst,"numvent %d elementos escritos <<<\n",n);
+        fprintf(lst,"numwin %d elements written <<<\n",n);
 		fclose(lst);
 #endif
         fclose(desktop);
@@ -484,7 +484,7 @@ int UpLoad_Desktop()
                                 switch(iWork)
                                 {
                                         case    0:
-                                                new_window_load(menu_principal0,window_aux.x,window_aux.y);
+                                                new_window_load(menu_main0,window_aux.x,window_aux.y);
                                                 break;
                                         case    1:
                                                 new_window_load(menu_programs0,window_aux.x,window_aux.y);

@@ -419,7 +419,7 @@ void ShowFont0(void);void ShowFont1(void);
 
 void dummy_handler(void);
 
-void menu_principal0(void);void menu_principal1(void);void menu_principal2(void);void menu_principal3(void);
+void menu_main0(void);void menu_main1(void);void menu_main2(void);void menu_main3(void);
 void menu_programs0(void);void menu_programs1(void);void menu_programs2(void);
 void menu_palettes0(void);void menu_palettes1(void);void menu_palettes2(void);
 void menu_maps0(void);void menu_maps1(void);void menu_maps2(void);
@@ -832,8 +832,8 @@ GLOBAL_DATA int exit_environment;
 struct ttype {                   // Information about the different types
   char path[PATH_MAX+1];                // Its default path
   char * ext;                           // Extensions .: "*.MAP *.PCX *.*"
-  int default_ext;         // Default choice (for the abrir0 extensions)
-  int initial;         // Position of the files listbox in abrir0
+  int default_ext;         // Default choice (for the browser0 extensions)
+  int initial;         // Position of the files listbox in browser0
 };
 
 GLOBAL_DATA struct ttype type[24]; // Paths 0-(current working directory),

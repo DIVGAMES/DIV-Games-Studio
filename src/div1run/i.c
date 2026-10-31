@@ -392,7 +392,7 @@ void initialization (void) {
   memset(&palette[0],0,768); memset(&dac[0],0,768);
   dacout_r=0; dacout_g=0; dacout_b=0; dacout_speed=8;
   now_dacout_r=64; now_dacout_g=64; now_dacout_b=64; loaded_palette=0;
-  set_dac(); // tabla_ghost();
+  set_dac(); // ghost_table();
 
   mouse->z=-512;
   mouse->x=vga_width/2;
@@ -1431,7 +1431,7 @@ void finalization (void) {
   mouse_off();
   kbdReset();
 
-//  printf("Ejecución correcta:\n\n\tnº actual de procesos = %u\n\tnº máximo de procesos = %u",
+//  printf("Execution OK:\n\n\tcurrent no. of processes = %u\n\tmaximum no. of processes = %u",
 //    processes,(id_end-id_start)/iloc_len+1);
 
 }
@@ -1470,7 +1470,7 @@ void exer(int e) {
 
   #endif
 
-  //printf("*** Error de ejecución:\n\n\tnº actual de procesos = %u\n\tnº máximo de procesos = %u",
+  //printf("*** Execution error:\n\n\tcurrent no. of processes = %u\n\tmaximum no. of processes = %u",
   //processes,(id_end-id_start)/iloc_len+1);
 
 #ifdef NETLIB

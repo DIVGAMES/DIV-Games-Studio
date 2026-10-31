@@ -1,5 +1,5 @@
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-# Online Help file for DIV Games Studio 3.0 (Castellano)
+# Online Help file for DIV Games Studio 3.0 (English)
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 # Empty lines are meant to be end of paragraphs.
@@ -5076,7 +5076,7 @@ BEGIN
     LOOP
         IF (scan_code==_space)
 
-            stop_cd(); // Para el CD
+            stop_cd(); // Stop the CD
 
         END
         IF (scan_code==_enter)
@@ -9276,7 +9276,7 @@ which by default is set at {4} for every program.
 
 {/}
 
-{Nota:} The function {#229,filelength()} allows you to find the length of an
+{Note:} The function {#229,filelength()} allows you to find the length of an
 file, but to do this the file must already be open.
 
 {/}See: {#227,fseek()} - {#225,fread()} - {#226,fwrite()} - {#1420,drive_size}
@@ -9548,7 +9548,7 @@ the value {1} and will save all information about the file in the global structu
 
 The path to the file can be completely specified (from the
 main directory of the drive, as "C:\WINDOWS\...") or relative to the current 
-directory (from which the game is executed, like "MAP\MIOS\...").
+directory (from which the game is executed, like "MAP\MINE\...").
 Anyhow, the complete path from the main directory will always be stored in 
 {fileinfo.fullpath}, including the drive letter of the disk.
 
@@ -17207,8 +17207,8 @@ It is possible to define the literals over several lines, to do this you just ne
 text into several lines, and put them successively (do not separate them with any symbol). 
 For example, you could define a constant as:
 
-{salute="­Ho"}ú
-{       "la!";}
+{salute="Hel"}ú
+{       "lo!";}
 
 This also can be used to initiate the data of type {#1406,STRING}.
 There is no limit in the number of lines. Only {#1002,Comments}
@@ -20595,7 +20595,7 @@ The values defined for these constants are the following ones.
 
 {Note:} Besides these standard video modes, the global structure
 {#1415,video_modes} contains a list of all modes compatible with the VESA standard
-situated in the system's video adaptador.
+situated in the system's video adapter.
 
 
 {/}See: {#1202,Constants} - {#157,set_mode()} - {#1415,video_modes}
@@ -22504,7 +22504,7 @@ directly to its 33 (from 0 to 32) firsts characters. If it is intended
 to access out of these limits, the program will advert it indicating an access
 out of the rank.
 
-{/}See: {#1401,types de data} - {#1009,Declaration of a data} - {#1085,OFFSET}
+{/}See: {#1401,types of data} - {#1009,Declaration of a data} - {#1085,OFFSET}
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -22703,7 +22703,7 @@ program to close after this code has finished, you can use, for example, the
 function {#129,let_me_alone()} just before the {#1091,END} of the {#1015,main code}, or also the function
 {#109,exit()} (in any point of the program).
 
-{/}See: {#1016,Los blocks PROCESS} - {#1000,syntax}
+{/}See: {#1016,PROCESS blocks} - {#1000,syntax}
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 

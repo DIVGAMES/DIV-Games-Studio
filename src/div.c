@@ -731,14 +731,14 @@ void initialize_environment() {
 
   // If the DIV.DTF file does not exist or safe mode is requested
 
-//  if(!CopyDesktop) new_window(menu_principal0); else UpLoad_Desktop();
+//  if(!CopyDesktop) new_window(menu_main0); else UpLoad_Desktop();
 
   if(CopyDesktop && !new_session && !first_time) UpLoad_Desktop();
  
   if (!first_time) {
     for (n=0;n<max_windows;n++)
-      if (window[n].click_handler==menu_principal2) break;
-    if (n==max_windows) new_window(menu_principal0);
+      if (window[n].click_handler==menu_main2) break;
+    if (n==max_windows) new_window(menu_main0);
   }
 
 //  if (test_video) dialog(test0);
@@ -767,7 +767,7 @@ void initialize_environment() {
     //mouse_graph=3; blit_copy(); mouse_graph=1;
     //v_finished=-1; // Do not emit an error if the file does not exist
     //open_program(); if (v_finished) maximize();
-    new_window(menu_principal0);
+    new_window(menu_main0);
     minimize_window();
     
     first_time=2;
@@ -1198,7 +1198,7 @@ void mainloop(void) {
 				}
 				
 				if (!(mouse_b&1) && (old_mouse_b&1)) {
-					if (v.click_handler==menu_principal2) {
+					if (v.click_handler==menu_main2) {
 						if (big) 
 							wput(v.ptr,v.w/2,v.h/2,v.w/2-9,2,-45);
 						else 

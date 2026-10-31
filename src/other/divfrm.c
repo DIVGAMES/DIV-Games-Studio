@@ -5999,27 +5999,27 @@ void l_objects (void) {
 
   sta=fopen("div.tab","wb");
 
-  fprintf(sta,"■ Objetos de %s - DIV Versión " version "\n\n",file_in);
+  fprintf(sta,"■ Objects of %s - DIV Version " version "\n\n",file_in);
 
   for (n=1;n<=8;n++) fprintf(sta,"[%u]: %u\n",n,mem[n]); fprintf(sta,"\n");
 
   for (n=0;n<obj_cnt;n++) {
     switch(obj[n].type) {
       case tnone: fprintf(sta,"%5u\ttnone: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         break;
       case tcons: fprintf(sta,"%5u\ttcons: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
-        fprintf(sta,"\tvalor=%u\n",obj[n].cons.value);
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
+        fprintf(sta,"\tvalue=%u\n",obj[n].cons.value);
         break;
       case tvglo: fprintf(sta,"%5u\ttvglo: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].vglo.offset);
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
-        else fprintf(sta,"\tvalor=%u\n",mem[o]);
+        else fprintf(sta,"\tvalue=%u\n",mem[o]);
         break;
       case ttglo: fprintf(sta,"%5u\tttglo: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].tglo.offset);
         fprintf(sta,"\tlen1=%u\n",obj[n].tglo.len1);
         fprintf(sta,"\tlen2=%u\n",obj[n].tglo.len2);
@@ -6028,7 +6028,7 @@ void l_objects (void) {
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
         break;
       case tsglo: fprintf(sta,"%5u\ttsglo: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].sglo.offset);
         fprintf(sta,"\titems1=%u\n",obj[n].sglo.items1);
         fprintf(sta,"\titems2=%u\n",obj[n].sglo.items2);
@@ -6038,51 +6038,51 @@ void l_objects (void) {
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
         break;
       case tvloc: fprintf(sta,"%5u\ttvloc: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].vloc.offset);
-        fprintf(sta,"\tbloque(%u), anterior(%u)\n",obj[n].block,obj[n].previous);
+        fprintf(sta,"\tblock(%u), previous(%u)\n",obj[n].block,obj[n].previous);
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
-        else fprintf(sta,"\tvalor=%u\n",loc[o]);
+        else fprintf(sta,"\tvalue=%u\n",loc[o]);
         break;
       case ttloc: fprintf(sta,"%5u\tttloc: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].tloc.offset);
         fprintf(sta,"\tlen1=%u\n",obj[n].tloc.len1);
         fprintf(sta,"\tlen2=%u\n",obj[n].tloc.len2);
         fprintf(sta,"\tlen3=%u\n",obj[n].tloc.len3);
         fprintf(sta,"\ttotalen=%u\n",obj[n].tloc.totalen);
-        fprintf(sta,"\tbloque(%u), anterior(%u)\n",obj[n].block,obj[n].previous);
+        fprintf(sta,"\tblock(%u), previous(%u)\n",obj[n].block,obj[n].previous);
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
         break;
       case tsloc: fprintf(sta,"%5u\ttsloc: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].sloc.offset);
         fprintf(sta,"\titems1=%u\n",obj[n].sloc.items1);
         fprintf(sta,"\titems2=%u\n",obj[n].sloc.items2);
         fprintf(sta,"\titems3=%u\n",obj[n].sloc.items3);
         fprintf(sta,"\ttotalitems=%u\n",l=obj[n].sloc.totalitems);
         fprintf(sta,"\tlen_item=%u\n",obj[n].sloc.len_item);
-        fprintf(sta,"\tbloque(%u), anterior(%u)\n",obj[n].block,obj[n].previous);
+        fprintf(sta,"\tblock(%u), previous(%u)\n",obj[n].block,obj[n].previous);
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
         break;
       case tproc: fprintf(sta,"%5u\ttproc: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
-        fprintf(sta,"\ttipo=%u\n",(int)(obj[n].proc.block));
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
+        fprintf(sta,"\ttype=%u\n",(int)(obj[n].proc.block));
         fprintf(sta,"\toffset=%u\n",obj[n].proc.offset);
-        fprintf(sta,"\tnum_par=%u\n",obj[n].proc.num_params);
+        fprintf(sta,"\tnum_params=%u\n",obj[n].proc.num_params);
         break;
       case tfunc: fprintf(sta,"%5u\ttfunc: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
-        fprintf(sta,"\tcodigo=%u\n",obj[n].func.code);
-        fprintf(sta,"\tnum_par=%u\n",obj[n].func.num_params);
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
+        fprintf(sta,"\tcode=%u\n",obj[n].func.code);
+        fprintf(sta,"\tnum_params=%u\n",obj[n].func.num_params);
         break;
       case tfext: fprintf(sta,"%5u\ttfext: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
-        fprintf(sta,"\tcodigo=%u\n",obj[n].fext.code);
-        fprintf(sta,"\tnum_par=%u\n",obj[n].fext.num_params);
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
+        fprintf(sta,"\tcode=%u\n",obj[n].fext.code);
+        fprintf(sta,"\tnum_params=%u\n",obj[n].fext.num_params);
         break;
       case tbglo: fprintf(sta,"%5u\ttbglo: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].bglo.offset);
         fprintf(sta,"\tlen1=%u\n",obj[n].bglo.len1);
         fprintf(sta,"\tlen2=%u\n",obj[n].bglo.len2);
@@ -6091,7 +6091,7 @@ void l_objects (void) {
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
         break;
       case tbloc: fprintf(sta,"%5u\ttbloc: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].bglo.offset);
         fprintf(sta,"\tlen1=%u\n",obj[n].bglo.len1);
         fprintf(sta,"\tlen2=%u\n",obj[n].bglo.len2);
@@ -6100,7 +6100,7 @@ void l_objects (void) {
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
         break;
       case twglo: fprintf(sta,"%5u\ttwglo: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].bglo.offset);
         fprintf(sta,"\tlen1=%u\n",obj[n].bglo.len1);
         fprintf(sta,"\tlen2=%u\n",obj[n].bglo.len2);
@@ -6109,7 +6109,7 @@ void l_objects (void) {
         if (obj[n].member) fprintf(sta,"\tmember of %s\n",(*obj[n].member).name);
         break;
       case twloc: fprintf(sta,"%5u\ttwloc: %s",n,obj[n].name);
-        if (obj[n].used) fprintf(sta," (*) usado\n"); else fprintf(sta,"\n");
+        if (obj[n].used) fprintf(sta," (*) used\n"); else fprintf(sta,"\n");
         fprintf(sta,"\toffset=%u\n",o=obj[n].bglo.offset);
         fprintf(sta,"\tlen1=%u\n",obj[n].bglo.len1);
         fprintf(sta,"\tlen2=%u\n",obj[n].bglo.len2);
@@ -6204,7 +6204,7 @@ void l_assembler (void) {
 
   sta=fopen("div.eml","wt");
 
-  fprintf(sta,"■ Código EML de %s - DIV Versión " version "\n",file_in);
+  fprintf(sta,"■ EML code of %s - DIV Version " version "\n",file_in);
 
   while (i<imem) { switch ((byte)mem[i]) {
     case lnop: fprintf(sta,"%5u\tnop",i); break;

@@ -402,8 +402,8 @@ struct _fileinfo { // x1
   int ext_fix;
   char ext[8];         // Extension
   int  size;           // Size (in bytes)
-  int  day;            // Dia
-  int  month;          // Mes
+  int  day;            // Day
+  int  month;          // Month
   int  year;           // Year
   int  hour;           // Hour
   int  min;            // Minute

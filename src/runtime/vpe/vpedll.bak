@@ -1,4 +1,4 @@
-// *** OJO con los OJO
+// *** CAREFUL with the NOTEs
 
 #include <math.h>
 #include <stdio.h>
@@ -26,7 +26,7 @@ extern int error_vpe;
 void set_fog_table(int intensity,int r,int g, int b);
 void delete_process(int);
 
-typedef struct { int z;         // Profundidad
+typedef struct { int z;         // Depth
                } mode8_struct;
 
 int vpe_initialized=0;
@@ -36,12 +36,12 @@ int num_fpg_aux;
 int fr=-1,fg=0,fb=0;
 extern int num_blocks;
 
-// Importante: Para cada funciขn se debe indicar el retval(int), y hacer
-// siempre un getparm() por cada par metro de llamada (el retval() es
-// imprescindible incluso si la funciขn no necesita devolver un valor).
+// Important: For each function you must specify the retval(int), and
+// always do a getparm() for each call parameter (the retval() is
+// mandatory even if the function does not need to return a value).
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Devuelve la longitud de un fichero
+//  Return the length of a file
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int file_size(FILE *file)
@@ -56,7 +56,7 @@ int file_size(FILE *file)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Carga un mundo de modo 8 (VPE)
+//  Load a mode 8 world (VPE)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void load_wld(void)
@@ -112,7 +112,7 @@ void load_wld(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Inicializa una sesion de modo 8 (VPE)
+//  Initialize a mode 8 session (VPE)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void start_mode8(void)
@@ -152,7 +152,7 @@ void start_mode8(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Finaliza una sesion de modo 8 (VPE)
+//  End a mode 8 session (VPE)
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void stop_mode8(void)
@@ -170,7 +170,7 @@ void stop_mode8(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Modifica la altura del suelo de una region
+//  Modify the floor height of a region
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void set_sector_height(void)
@@ -190,7 +190,7 @@ void set_sector_height(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Modifica la altura del techo de una region
+//  Modify the ceiling height of a region
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void get_sector_height(void)
@@ -211,7 +211,7 @@ void get_sector_height(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Finaliza las VPE
+//  End the VPE
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void vpe_end()
@@ -223,7 +223,7 @@ void vpe_end()
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Bucle central del modo 8
+//  Main loop of mode 8
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void loop_mode8(void)
@@ -269,7 +269,7 @@ void loop_mode8(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Crea un objeto
+//  Create an object
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int create_object(int ide)
@@ -469,7 +469,7 @@ void _object_data_input(int ide)
             m=mem[p];
             if (m>0 && m<=256) {
 
-              // angle es el  ngulo de visiขn del gr fico (0..2048), m el nฃmero de particiones
+              // angle is the viewing angle of the graphic (0..2048), m the number of partitions
 
               mem[ide+_Flags]&=254;
               mem[ide+_Graph]=((angle+DEG360/(m*2))*m)/DEG360;
@@ -620,7 +620,7 @@ void go_to_flag(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Modifica las coordenadas de un punto del mapa
+//  Modify the coordinates of a map point
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void set_point_m8(void)
@@ -644,7 +644,7 @@ void set_point_m8(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Devuelve las coordenadas de un punto del mapa
+//  Return the coordinates of a map point
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void get_point_m8(void)
@@ -668,7 +668,7 @@ void get_point_m8(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Modifica las texturas de una region del mapa
+//  Modify the textures of a map region
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void set_sector_texture(void)
@@ -691,7 +691,7 @@ void set_sector_texture(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Devuelve las texturas de una region del mapa
+//  Return the textures of a map region
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void get_sector_texture(void)
@@ -714,7 +714,7 @@ void get_sector_texture(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Modifica las texturas de una pared del mapa
+//  Modify the textures of a map wall
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void set_wall_texture(void)
@@ -746,7 +746,7 @@ void set_wall_texture(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Devuelve las texturas de una pared del mapa
+//  Return the textures of a map wall
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void get_wall_texture(void)
@@ -770,7 +770,7 @@ void get_wall_texture(void)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Avanza un objeto
+//  Advance an object
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void _object_advance(int ide,int ang,int speed)
@@ -811,7 +811,7 @@ void _object_advance(int ide,int ang,int speed)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Destruye un objeto
+//  Destroy an object
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void _object_destroy(int num_object)
@@ -840,7 +840,7 @@ void _object_destroy(int num_object)
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Modifica el valor de niebla
+//  Modify the fog value
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void set_fog(void)

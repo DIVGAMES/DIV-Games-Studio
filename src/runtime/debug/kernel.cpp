@@ -91,7 +91,7 @@ if((id_start+((processes-2)*iloc_len)) == id_end)
 	id=id_end+iloc_len;
 
 
-//if((processos-1)*iloc_len>id_end)
+//if((processes-1)*iloc_len>id_end)
 
 
   while (mem[id+_Status] && id<=id_end) 

@@ -109,7 +109,7 @@ void FPG2(void)
 		dialog(accept0);
 
 		if(!v_accept) {
-			//CACA
+			//CRAP
 			RemapAllFiles(0);
 			return;
 		} else {
@@ -2007,7 +2007,7 @@ void place_map(void) { // Place graphic lnum
 			break;
 		}
 	}
-	//if(lgraph[lnum].y+lgraph[lnum].h>lmapheight) printf("Falla el grafico %d\n", lnum);
+	//if(lgraph[lnum].y+lgraph[lnum].h>lmapheight) printf("Bad graphic %d\n", lnum);
 }
 
 int collides_with_map(int n, int x, int y, int w, int h) {

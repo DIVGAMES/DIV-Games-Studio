@@ -497,7 +497,7 @@ void blitsdl(byte *p) {
 	if(!vga) {
 		printf("setting up screen for first time %d %d\n",vga_width,vga_height);
 		svmode();
-		set_dac(); // tabla_ghost();
+		set_dac(); // ghost_table();
 	}
 #else
 	SDL_UpdateTexture(divTexture, NULL, copy_buffer, vga_width * sizeof (Uint8));

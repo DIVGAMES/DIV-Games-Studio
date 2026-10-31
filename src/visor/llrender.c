@@ -38,8 +38,8 @@ float fu,fv,inverse;
     int x_left, dx_left, x_right, dx_right;
     int r_left, dr_left, g_left, dg_left, b_left, db_left;
     int intensity_left,dintensity_left;
-    float duz_left, dvz_left, unoz_left, dunoz_left;
-    float duz_right, dvz_right, unoz_right, dunoz_right;
+    float duz_left, dvz_left, invz_left, dinvz_left;
+    float duz_right, dvz_right, invz_right, dinvz_right;
     float uz_left,vz_left,uz_right,vz_right;
 
 //-----------------------------------------------------------------------------
@@ -357,14 +357,14 @@ int zmed;
       llrender_Draw_Triangle(llrender_struct,face,mmlvl,T_TEXTURE | T_GOURAUD);
       break;
     case TEXT_ILLUM:
-//      Pinta_Text_Ilum(face,mmlvl);
+//      Draw_Text_Illum(face,mmlvl);
 //      llrender_Draw_Triangle(llrender_struct,face,mmlvl,T_TEXTURE | T_TRANSLUCENT);
       break;
     case TEXT_PER:
       llrender_Draw_Triangle(llrender_struct,face,mmlvl,T_TEXTURE | T_PERSPECTIVE);
       break;
     case TEXT_PER_TRANS:
-//      Pinta_Text_Persp_Translucido(face,mmlvl);
+//      Draw_Text_Persp_Translucent(face,mmlvl);
       break;
     case TEXT_TRANS:
       llrender_Draw_Triangle(llrender_struct,face,mmlvl,T_TEXTURE | T_TRANSLUCENT);
@@ -376,7 +376,7 @@ int zmed;
       llrender_Draw_Triangle(llrender_struct,face,mmlvl,T_TEXTURE | T_PERSPECTIVE | T_MASK);
       break;
     case TEXT_BILINEAR:
-//      Pinta_Text_Persp_Bilinear(face,mmlvl);
+//      Draw_Text_Persp_Bilinear(face,mmlvl);
       break;
     case TRANSPARENT:
       llrender_Draw_Triangle(llrender_struct,face,mmlvl,T_TEXTURE | T_MASK);
@@ -1230,7 +1230,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
   lptvertex v2=face->v2;
   lptvertex v3=face->v3;
   lptvertex vertex;
-  float unoz_aux,dunoz_aux,fdudx,fdvdx;
+  float invz_aux,dinvz_aux,fdudx,fdvdx;
   float dxdy,prestep;
   int preincrement;
   long v1_r,v1_g,v1_b;
@@ -1346,8 +1346,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
         uz_left=ru1+duz_left*prestep;
         dvz_left=(rv3-rv1)*fheight;
         vz_left=rv1+dvz_left*prestep;
-        dunoz_left=(1/v3->fpz-1/v1->fpz)*fheight;
-        unoz_left=1/v1->fpz+dunoz_left*prestep;
+        dinvz_left=(1/v3->fpz-1/v1->fpz)*fheight;
+        invz_left=1/v1->fpz+dinvz_left*prestep;
       }
       else {
         du_left=schop((ru3-ru1)*fheight);
@@ -1382,8 +1382,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           uz_right=ru2+duz_right*prestep;
           dvz_right=(rv3-rv2)*fheight;
           vz_right=rv2+dvz_right*prestep;
-          dunoz_right=(1/v3->fpz-1/v2->fpz)*fheight;
-          unoz_right=1/v2->fpz+dunoz_right*prestep;
+          dinvz_right=(1/v3->fpz-1/v2->fpz)*fheight;
+          invz_right=1/v2->fpz+dinvz_right*prestep;
         }
       }
     }
@@ -1399,8 +1399,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
         uz_right=ru1+duz_right*prestep;
         dvz_right=(rv2-rv1)*fheight;
         vz_right=rv1+dvz_right*prestep;
-        dunoz_right=(1/v2->fpz-1/v1->fpz)*fheight;
-        unoz_right=1/v1->fpz+dunoz_right*prestep;
+        dinvz_right=(1/v2->fpz-1/v1->fpz)*fheight;
+        invz_right=1/v1->fpz+dinvz_right*prestep;
       }
     }
   }
@@ -1418,8 +1418,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       uz_right=ru1+duz_right*prestep;
       dvz_right=(rv3-rv1)*fheight;
       vz_right=rv1+dvz_right*prestep;
-      dunoz_right=(1/v3->fpz-1/v1->fpz)*fheight;
-      unoz_right=1/v1->fpz+dunoz_right*prestep;
+      dinvz_right=(1/v3->fpz-1/v1->fpz)*fheight;
+      invz_right=1/v1->fpz+dinvz_right*prestep;
     }
     left_section_height=v2->py-v1->py;
     if (left_section_height<=0) {
@@ -1440,8 +1440,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
             uz_left=ru2+duz_left*prestep;
             dvz_left=(rv3-rv2)*fheight;
             vz_left=rv2+dvz_left*prestep;
-            dunoz_left=(1/v3->fpz-1/v2->fpz)*fheight;
-            unoz_left=1/v2->fpz+dunoz_left*prestep;
+            dinvz_left=(1/v3->fpz-1/v2->fpz)*fheight;
+            invz_left=1/v2->fpz+dinvz_left*prestep;
           }
           else {
             du_left=schop((ru3-ru2)*fheight);
@@ -1475,8 +1475,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           uz_left=ru1+duz_left*prestep;
           dvz_left=(rv2-rv1)*fheight;
           vz_left=rv1+dvz_left*prestep;
-          dunoz_left=(1/v2->fpz-1/v1->fpz)*fheight;
-          unoz_left=1/v1->fpz+dunoz_left*prestep;
+          dinvz_left=(1/v2->fpz-1/v1->fpz)*fheight;
+          invz_left=1/v1->fpz+dinvz_left*prestep;
         }
         else {
           du_left=schop((ru2-ru1)*fheight);
@@ -1520,7 +1520,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       if (type & T_PERSPECTIVE) {
         widtht=16.0/(float)width;
 
-        start_division(&unoz_left);
+        start_division(&invz_left);
         destination=screen_ptr+x1;
 
         if (width>16) {
@@ -1532,10 +1532,10 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           end_division();
           fdudx=(uz_right-uz_left)*widtht;
           fdvdx=(vz_right-vz_left)*widtht;
-          dunoz_aux=(unoz_right-unoz_left)*widtht;
-          unoz_aux=unoz_left+dunoz_aux;
+          dinvz_aux=(invz_right-invz_left)*widtht;
+          invz_aux=invz_left+dinvz_aux;
           assignment_u_v();
-          start_division(&unoz_aux);
+          start_division(&invz_aux);
           u=u_0;
           v=v_0;
           fu+=fdudx;
@@ -1547,8 +1547,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           	dvdx=(v_0-v)>>4;
           	fu+=fdudx;
           	fv+=fdvdx;
-            unoz_aux+=dunoz_aux;
-            start_division(&unoz_aux);
+            invz_aux+=dinvz_aux;
+            start_division(&invz_aux);
             kernel_textures(v,u,dudx,dvdx,16,destination);
             end_division();
             u=u_0;
@@ -1570,7 +1570,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           fv=vz_left;
           end_division();
           assignment_u_v();
-          start_division(&unoz_right);
+          start_division(&invz_right);
           u=u_0;
           v=v_0;
           fu=uz_right;
@@ -1730,7 +1730,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
             mov edx,ebx
             and ebx,0f81fh
             and edx,07e0h
-          bucle1:
+          loop1:
             mov ax,[edi]
             and eax,0f81fh
             add eax,ebx
@@ -1745,7 +1745,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
             mov [edi],ax
             add edi,2
             dec ecx
-            jnz bucle1
+            jnz loop1
             popad
           }
         }
@@ -1817,8 +1817,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
             uz_left=ru2+duz_left*prestep;
             dvz_left=(rv3-rv2)*fheight;
             vz_left=rv2+dvz_left*prestep;
-            dunoz_left=(1/v3->fpz-1/v2->fpz)*fheight;
-            unoz_left=1/v2->fpz+dunoz_left*prestep;
+            dinvz_left=(1/v3->fpz-1/v2->fpz)*fheight;
+            invz_left=1/v2->fpz+dinvz_left*prestep;
           }
           else {
             du_left=schop((ru3-ru2)*fheight);
@@ -1845,7 +1845,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
         if (type & T_PERSPECTIVE) {
           uz_left+=duz_left;
           vz_left+=dvz_left;
-          unoz_left+=dunoz_left;
+          invz_left+=dinvz_left;
         }
         else {
           u_left+=du_left;
@@ -1876,8 +1876,8 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           uz_right=ru2+duz_right*prestep;
           dvz_right=(rv3-rv2)*fheight;
           vz_right=rv2+dvz_right*prestep;
-          dunoz_right=(1/v3->fpz-1/v2->fpz)*fheight;
-          unoz_right=1/v2->fpz+dunoz_right*prestep;
+          dinvz_right=(1/v3->fpz-1/v2->fpz)*fheight;
+          invz_right=1/v2->fpz+dinvz_right*prestep;
         }
       }
     }
@@ -1886,7 +1886,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       if ((type & T_TEXTURE) && (type & T_PERSPECTIVE)) {
         uz_right+=duz_right;
         vz_right+=dvz_right;
-        unoz_right+=dunoz_right;
+        invz_right+=dinvz_right;
       }
     }
   }

@@ -154,8 +154,8 @@ char DummyArrayForFakingPurposesUsedInMapper[(FADE_LIMIT+6)*1];
 
 struct t_listbox lwall= {WINDOW_WIDTH+6+50+1,     11,DummyArrayForFakingPurposesUsedInMapper,1,6,1,6*8+2};
 struct t_listbox lsector={WINDOW_WIDTH+6+50+1,11+50+1,DummyArrayForFakingPurposesUsedInMapper,1,6,1,6*8+2};
-//struct t_listbox ltecho={WINDOW_WIDTH+6+50+1,    11+50+1,DummyArrayForFakingPurposesUsedInMapper,1,7,1,7*8+6};
-//struct t_listbox lsuelo={WINDOW_WIDTH+6+50+1,11+100+2+12,DummyArrayForFakingPurposesUsedInMapper,1,7,1,7*8+6};
+//struct t_listbox lceiling={WINDOW_WIDTH+6+50+1,    11+50+1,DummyArrayForFakingPurposesUsedInMapper,1,7,1,7*8+6};
+//struct t_listbox lfloor={WINDOW_WIDTH+6+50+1,11+100+2+12,DummyArrayForFakingPurposesUsedInMapper,1,7,1,7*8+6};
 
 #define max_textures 1000
 #define texture_code_width (3+1) // 000 - 999
@@ -3237,8 +3237,8 @@ void map_save()
   //---------------------------------------------------------------------------
   zgen=(struct ZF_General *)malloc(sizeof(struct ZF_General));
 
-  strcpy(zgen->Title,"Mapa1");        // Zone name
-  strcpy(zgen->Palette,"paleta");     // Palette filename
+  strcpy(zgen->Title,"Map1");         // Zone name
+  strcpy(zgen->Palette,"palette");    // Palette filename
   zgen->ScrTex=0;                     // Name of screen texture
   zgen->BackTex=my_map->background;        // Background texture name
   strcpy(zgen->BackEff,"NO_NAME");    // Background Eff program
@@ -4148,7 +4148,7 @@ void *lf_malloc(int size)
   table_mem_mallocs[num_mallocs]=size;
   mem_mallocs+=size;
   num_mallocs++;
-//  printf("Reservado: %d, Total: %d\n",size,mem_mallocs);
+//  printf("Reserved: %d, Total: %d\n",size,mem_mallocs);
   if (num_mallocs>=TOTAL_MALLOCS) {
     lf_free_all();
     return(NULL);
@@ -4184,8 +4184,8 @@ void lf_free_all()
 {
   int i;
 
-//  printf("Por liberar: %d, mallocs: %d\n",mem_mallocs,num_mallocs);
-//  printf("Liberado Todo\n");
+//  printf("To free: %d, mallocs: %d\n",mem_mallocs,num_mallocs);
+//  printf("Freed all\n");
   for (i=num_mallocs-1;i>=0;i--) {
     free(table_mallocs[i]);
     table_mallocs[i]=NULL;

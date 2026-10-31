@@ -2059,8 +2059,8 @@ void edit_mode_13(void) {
     switch(scan_code) {
       case 0x4A: num_point--;   break; // -
       case 0x4E: num_point++;   break; // +
-      case 0x49: num_point-=10; break; // RePag
-      case 0x51: num_point+=10; break; // AvPag
+      case 0x49: num_point-=10; break; // PgUp
+      case 0x51: num_point+=10; break; // PgDn
       case 0x47: num_point=0;   break; // Home
       case 0x4F:                       // End
         for(m=0;m<512;m+=2) if(v.map->points[m]!=-1) num_point=m/2;
@@ -5050,7 +5050,7 @@ void blit_darkened_bar(byte * p, int real_width, int x, int y, int w, int h) {
 
 // NOTE !!!
 
-/*void vuelca_barra2(byte * p, int x, int y, int w, int h) {
+/*void blit_bar2(byte * p, int x, int y, int w, int h) {
 
   byte * q;
   int skip_x, long_x, rest_x;

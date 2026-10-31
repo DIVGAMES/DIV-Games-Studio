@@ -765,7 +765,7 @@ void blitcsvga(byte *p) {
 //═════════════════════════════════════════════════════════════════════════════
 
 void blitpx(byte * p) {
-debugprintf("divvideo.cpp volcadopx\n");
+debugprintf("divvideo.cpp blitpx\n");
 #ifdef NOTYET
   int n,m=(vga_width*vga_height)/4,plane=0x100,y;
   byte * v2, * p2;
@@ -789,7 +789,7 @@ debugprintf("divvideo.cpp volcadopx\n");
 }
 
 void blitcx(byte * p) {
-	printf("divvideo.cpp - volcadocx\n");
+	printf("divvideo.cpp - blitcx\n");
 #ifdef NOTYET
   int n=(vga_width*vga_height)/4;
 

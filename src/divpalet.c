@@ -1318,7 +1318,7 @@ void create_palette(void){
 extern byte desktop_gradient[128];
 
 byte cdesktop[256];
-//byte col_tapiz[65];
+//byte col_desktop[65];
 extern SDL_Surface *vga;
 
 void prepare_desktop(void) {
