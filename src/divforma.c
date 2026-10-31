@@ -46,51 +46,51 @@ typedef struct _rgb_quad
 }rgb_quad;
 
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// For adding graphics formats follow these steps
+// Steps to add a new graphics format
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
-// - Add the extension in div.cpp chain ".MAP ... * * *."
+// - Add the extension to the corresponding type[].ext strings in div.c
+//   (".MAP ... *.*")
 
-// - Create the following functions in divforma.cpp (if the type is XYZ)
+// - Create the following functions in divforma.c (for a format XYZ):
 
-// PROT: int is_XYZ (byte * buffer);
-// DESC: Returns TRUE if the file loaded into the buffer is of type XYZ, and also 
-// returns the width / height of the bitmap in the variables map_width / p
+// PROT: int is_XYZ(byte * buffer);
+// DESC: Returns TRUE if the file loaded in buffer is of type XYZ, and also
+//       returns the width/height of the bitmap in map_width/map_height.
 
-// PROT: void decompresses_XYZ (byte * buffer, byte * map vent int);
-// DESC: The function receives the loaded file in buffer and another buffer
-// Map_an * map_height + map_width bytes (map), you have to unpack this
-// latest.
-// "Vent" indicates whether to charge the additional information window
-// (Such as checkpoints, see already defined formats)
-// If the file has palette, it must be stored in the buffer
-// 768 bytes called dac4 []
+// PROT: void decompress_XYZ(byte * buffer, byte * map, int win);
+// DESC: Receives the loaded file in buffer, and another buffer (map) of
+//       map_width*map_height bytes into which it must decompress the image.
+//       "win" tells whether to also load the additional window information
+//       (such as control points; see the formats already defined).
+//       If the file has a palette, it must be stored in the 768-byte
+//       buffer dac4[].
 
-// PROT: int record_XYZ (byte * Map, FILE * f);
-// DESC: You must save the bitmap to the file. Besides the buffer itself
-// Containing the map, you have access to the following information:
-// - map_width, map_height (map width and height in pixels)
-// - Dac [768] (palette file, 256 RGB values between 0 and 63)
-// When the file being saved is a MAP (own format) you also have
-// - map_code (number associated with the map, long integer, 4 bytes)
-// - map center x / y (center of the map)
-// - map description [32] (descriptive comment of the map)
-// The function returns TRUE if the file has been recorded without any problems,
-// Or FALSE if there was not enough disk space.
-// At the start, "f" should be assumed to be a binary file open for writing
-// Must be written on with fwrite, and in the end should not close
+// PROT: int save_XYZ(byte * map, FILE * f);
+// DESC: Must save the bitmap to the file. Besides the buffer containing
+//       the map, it has access to the following information:
+//       - map_width, map_height (map width and height in pixels)
+//       - dac[768] (file palette, 256 RGB values between 0 and 63)
+//       When saving a MAP (own format) it also has:
+//       - the map code (number associated with the map, long integer, 4 bytes)
+//       - the map center x/y
+//       - the map description[32] (descriptive comment of the map)
+//       The function returns TRUE if the file was saved without problems,
+//       or FALSE if there was not enough disk space.
+//       "f" is already open as a binary file for writing: write to it with
+//       fwrite, and do not close it at the end.
 
-// NOTE: Any function that requires additional memory for your
-// Job, you can ask to malloc, and if you can not get the memory
-// Required, then you must create an informative error window
-// As follows: I = text v_text [45]; dialogue ((voidReturnType) Err0);
+// NOTE: Any of these functions that needs extra memory for its work can
+// request it with malloc; if the memory cannot be obtained, it must show
+// an error window like this:
+//   v_text=(char *)texts[45]; dialog((voidReturnType)err0);
 
-// NOTE 2: The only format that returns a value from decompress is the JPG. NOTE !!!
+// NOTE 2: JPG is the only format whose decompress function returns a value!
 
-// - Finally you must call the three functions created in divhandl.cpp
-// And divbrow.cpp (look, for example, "MAP" on these two sources) and put
-// New prototypes Global.cpp (where n is the above) 
-// It also has to be added to divsetup.cpp and divpalet.cpp (preparing Skin)
+// - Finally, call the three new functions from divhandl.c and divbrow.c
+//   (search, for example, for "MAP" in these two files) and add the new
+//   prototypes to global.h, next to the existing ones.
+//   They must also be added to divsetup.c and divpalet.c (desktop wallpaper).
 
 //âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 //      MAP Format
