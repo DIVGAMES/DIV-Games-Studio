@@ -82,7 +82,7 @@ void end_division();
 #ifdef DOS
 
 #pragma aux end_division =    \
-        "fstp dword ptr[inversa]" \
+        "fstp dword ptr[inverse]" \
 
 #endif
 
@@ -91,7 +91,7 @@ void assignment_u_v();
 #ifdef DOS
 
 #pragma aux assignment_u_v =      \
-        "fld dword ptr[inversa]"  \
+        "fld dword ptr[inverse]"  \
         "fld st(0)"               \
         "fmul dword ptr[fu]"      \
         "fistp dword ptr[u_0]"    \
@@ -121,8 +121,8 @@ void kernel1();
 
 #pragma aux kernel1 = \
         "pushad" \
-        "mov edi,destino" \
-        "mov esi,tabla_rgba" \
+        "mov edi,destination" \
+        "mov esi,rgba_table" \
         "xor edx,edx" \
         "mov ebx,mr" \
         "shr ebx,3" \
@@ -130,7 +130,7 @@ void kernel1();
         "mov ax,color_b" \
         "and eax,0f800h" \
         "add eax,ebx" \
-        "add eax,alfa" \
+        "add eax,alpha" \
         "mov dx,[esi+eax*2]" \
         "shl edx,5" \
         "mov ebx,mg" \
@@ -147,7 +147,7 @@ void kernel2();
         "and eax,07c0h" \
         "shl eax,5" \
         "add eax,ebx" \
-        "add eax,alfa" \
+        "add eax,alpha" \
         "add dx,[esi+eax*2]" \
         "shl edx,6" \
         "mov ebx,mb" \
@@ -157,7 +157,7 @@ void kernel2();
         "and eax,1fh" \
         "shl eax,11" \
         "add eax,ebx" \
-        "add eax,alfa" \
+        "add eax,alpha" \
         "add dx,[esi+eax*2]" \
         "mov [edi],dx" \
         "popad" \
