@@ -1,13 +1,13 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo que contiene el código del mapeador
+//      Module containing the mapper code
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
 #include "divmap3d.hpp"
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Constantes
+//  Constants
 //═════════════════════════════════════════════════════════════════════════════
 
 #define DRAW_SECTOR  0
@@ -46,7 +46,7 @@
 extern int num_brush;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Prototipos del modulo
+//  Module prototypes
 //═════════════════════════════════════════════════════════════════════════════
 
 void MapperViewer0           (void);
@@ -107,7 +107,7 @@ void map_boundingbox();
 void map_reduce(int width, int height, char *buffer);
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Prototipos externos
+//  External prototypes
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_sliderbr         (struct t_listboxbr * l);
@@ -123,7 +123,7 @@ extern int clock_ticks;
 
 word *polys;
 int reg_polys;
-extern word polygon[2048]; // Hasta 1024 puntos para seleccionar un poligono
+extern word polygon[2048]; // Up to 1024 points to select a polygon
 extern int n_points;
 extern int k1,k2,xmin,trans;
 int inside;
@@ -144,11 +144,11 @@ byte FPG_pal[768];
 byte FPG_xlat[256];
 int  FPG_thumbpos;
 
-char strings[5][10]; // 0 - Posicion X del cursor en la ventana de volcado
-                     // 1 - Posicion Y del cursor en la ventana de volcado
-                     // 2 - Numero de bandera a colocar
-                     // 3 - Altura del techo
-                     // 4 - Altura del suelo
+char strings[5][10]; // 0 - X position of the cursor in the dump window
+                     // 1 - Y position of the cursor in the dump window
+                     // 2 - Number of the flag to place
+                     // 3 - Ceiling height
+                     // 4 - Floor height
 
 char DummyArrayForFakingPurposesUsedInMapper[(FADE_LIMIT+6)*1];
 
@@ -167,10 +167,10 @@ int  f_maximum;
 struct t_listboxbr ltexturesbr={3-2,11-2,m3d_fpgcodesbr,texture_code_width,4,4,32,32};
 
 struct _thumb_tex {
-  int w,h;            // Ancho y Alto de la reducción
-  int RealWidth, RealHeight;   // Ancho y Alto de la textura
-  char * ptr;           // ==NULL si el thumbnail no se ha comenzado a cargar
-  int status;           // 0-No es una textura valida, 1-Cargada
+  int w,h;            // Width and Height of the reduction
+  int RealWidth, RealHeight;   // Width and Height of the texture
+  char * ptr;           // ==NULL if the thumbnail has not started loading
+  int status;           // 0-Not a valid texture, 1-Loaded
   int FilePos;
   int Code;
   int Square;
@@ -224,7 +224,7 @@ int TypeTex;
 tmap *my_map;
 int old_but1,old_but2;
 float grid_size;
-int region_status=0; // Indica si se va a comenzar una nueva region
+int region_status=0; // Tells whether a new region is going to be started
 int region_deleted=0;
 int first_point;
 int last_point=-1;
@@ -243,7 +243,7 @@ int edit_point=-1;
 int edit_flag=-1;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Codigo principal del visor de mapas 3D
+//  Main code of the 3D map viewer
 //═════════════════════════════════════════════════════════════════════════════
 
 void MapperViewer0(void)
@@ -334,7 +334,7 @@ void MapperViewer3(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Codigo principal del creador de mapas 3D
+//  Main code of the 3D map creator
 //═════════════════════════════════════════════════════════════════════════════
 
 void MapperCreator0(void)
@@ -353,26 +353,26 @@ void MapperCreator0(void)
   v.click_handler=MapperCreator2;
   v.close_handler=MapperCreator3;
 
-  // Modo Edicion
+  // Edit Mode
   _flag(443, 4, 174, &m3d_flags[0]);
 
-  // Modo Vertice, Linea o Sector
+  // Vertex, Line or Sector Mode
   _flag(444, 50, 174, &m3d_flags[1]);
   _flag(445, 50, 182, &m3d_flags[2]);
   _flag(446, 50, 190, &m3d_flags[3]);
 
-  // Modo Banderas
+  // Flags Mode
   sprintf(strings[2],"%d",num_flag);
   _flag(447, 101, 174, &m3d_flags[4]);
   _get(414, 114, 177, 24, (byte *)strings[2], 4, 0, 999);
   _button(111, 104, 186, 0);
   _button(110, 144, 186, 0);
 
-  // Altura de Techo y Suelo
+  // Ceiling and Floor Height
   _get(414, WINDOW_WIDTH+7,    11+100+2-8+1, 48, (byte *)strings[3], 5, 0, 4095);
   _get(414, WINDOW_WIDTH+7, 11+150+3+11-8+2, 48, (byte *)strings[4], 5, 0, 4095);
 
-  // Modos Grid y Snap
+  // Grid and Snap Modes
   _flag(458, 155, 174, &grid);
   _flag(459, 155, 182, &snap);
 
@@ -427,11 +427,11 @@ void MapperCreator1(void)
     update_listbox(&lsector);
   }
 */
-  // Zona de edicion
+  // Edit area
   wrectangle(v.ptr, w, h, c0, 3, 11, WINDOW_WIDTH+2, WINDOW_HEIGHT+2);
 //  wbox       (v.ptr, w, h, c1, 4, 12,   WINDOW_WIDTH,   WINDOW_HEIGHT);
 
-  // Seleccion de texturas
+  // Texture selection
   wrectangle(v.ptr, w, h, c0, WINDOW_WIDTH+6,          11, 50, 50);
   wbox       (v.ptr, w, h, c1, WINDOW_WIDTH+7,          12, 48, 48);
   wrectangle(v.ptr, w, h, c0, WINDOW_WIDTH+6,     11+50+1, 50, 50);
@@ -440,7 +440,7 @@ void MapperCreator1(void)
   wbox       (v.ptr, w, h, c1, WINDOW_WIDTH+7, 12+100+2+12, 48, 48);
   DrawMapperThumbs();
 
-  // Barra de alturas
+  // Heights bar
   wbox(v.ptr, w, h, c_b_low, WINDOW_WIDTH+7+50, 11+100+3, 9, 72);
   height = (ceiling_height*72)/(CEILING_LIMIT-1) - (floor_height*72)/(CEILING_LIMIT-1);
   if(height<1)
@@ -457,7 +457,7 @@ void MapperCreator1(void)
     wbox(v.ptr, w, h, c4, WINDOW_WIDTH+7+50, 11+100+3+72-(ceiling_height*72)/(CEILING_LIMIT-1), 9, height);
   wrectangle(v.ptr, w, h, c0, WINDOW_WIDTH+7+50, 11+100+2, 9, 74);
 
-  // Seleccion de fondo
+  // Background selection
   wrectangle(v.ptr, w, h, c0, 201, 174, 44, 23);
   wbox       (v.ptr, w, h, c1, 202, 175, 42, 21);
 
@@ -500,28 +500,28 @@ void MapperCreator2(void)
 
   switch(v.active_item)
   {
-    case 0: // Flag de Edicion
+    case 0: // Edit Flag
       edit_mode=DRAW_SECTOR;
       memset(m3d_flags, 0, sizeof(m3d_flags));
       m3d_flags[edit_mode]=1;
       need_refresh=1;
       map_off();
       break;
-    case 1: // Flag de Vertice
+    case 1: // Vertex Flag
       edit_mode=EDIT_VERTEX;
       memset(m3d_flags, 0, sizeof(m3d_flags));
       m3d_flags[edit_mode]=1;
       need_refresh=1;
       map_off();
       break;
-    case 2: // Flag de Linea
+    case 2: // Line Flag
       edit_mode=EDIT_LINE;
       memset(m3d_flags, 0, sizeof(m3d_flags));
       m3d_flags[edit_mode]=1;
       need_refresh=1;
       map_off();
       break;
-    case 3: // Flag de Sector
+    case 3: // Sector Flag
       edit_mode=EDIT_SECTOR;
       memset(m3d_flags, 0, sizeof(m3d_flags));
       m3d_flags[edit_mode]=1;
@@ -529,27 +529,27 @@ void MapperCreator2(void)
       map_sortregions(1);
       map_off();
       break;
-    case 4: // Flag de Bandera
+    case 4: // Flag Flag
       edit_mode=DRAW_FLAG;
       memset(m3d_flags, 0, sizeof(m3d_flags));
       m3d_flags[edit_mode]=1;
       need_refresh=1;
       map_off();
       break;
-    case 5: // Get de Bandera
+    case 5: // Flag Get
       num_flag=atoi(strings[2]);
       break;
-    case 6: // Boton de Bandera anterior
+    case 6: // Previous Flag button
       if(num_flag>  0) num_flag--;
       itoa(num_flag, strings[2], 10);
       need_refresh=1;
       break;
-    case 7: // Boton de Bandera siguiente
+    case 7: // Next Flag button
       if(num_flag<999) num_flag++;
       itoa(num_flag, strings[2], 10);
       need_refresh=1;
       break;
-    case 8: // Get de Altura de Techo
+    case 8: // Ceiling Height Get
       ceiling_height = atoi(strings[3]);
       if(floor_height > ceiling_height)
       {
@@ -563,7 +563,7 @@ void MapperCreator2(void)
       }
       need_refresh=1;
       break;
-    case 9: // Get de Altura de Suelo
+    case 9: // Floor Height Get
       floor_height = atoi(strings[4]);
       if(ceiling_height < floor_height)
       {
@@ -577,11 +577,11 @@ void MapperCreator2(void)
       }
       need_refresh=1;
       break;
-    case 10: // Flag de Grid
+    case 10: // Grid Flag
       if(!grid) snap=0;
       need_refresh=1;
       break;
-    case 11: // Flag de Snap
+    case 11: // Snap Flag
       if(!grid)
       {
         grid=1;
@@ -591,7 +591,7 @@ void MapperCreator2(void)
       break;
   }
 
-  // Control de listbox de iluminacion
+  // Lighting listbox control
   if(!(mouse_b&1) && (old_mouse_b&1))
   {
     if(lwall.zone==2 || lwall.zone==3 || lwall.zone==4)
@@ -622,7 +622,7 @@ void MapperCreator2(void)
     need_refresh=1;
   }
 */
-  // Edicion del mapa
+  // Map editing
   if(wmouse_in(4, 12, WINDOW_WIDTH, WINDOW_HEIGHT))
   {
     mouse_graph=233;
@@ -631,13 +631,13 @@ void MapperCreator2(void)
     dif_y=pos_y=mouse_y - v.y - 12*big2;
 
     //-------------------------------------------------------------------------
-    // Coordenadas de pantalla aplicando el zoom
+    // Screen coordinates applying the zoom
     //-------------------------------------------------------------------------
     pos_x=pos_x/zoom_level+M_WINDOW_WIDTH*big2-M_WINDOW_WIDTH*big2/zoom_level;
     pos_y=pos_y/zoom_level+M_WINDOW_HEIGHT*big2-M_WINDOW_HEIGHT*big2/zoom_level;
 
     //-------------------------------------------------------------------------
-    //  Coordenadas de pantalla aplicando el Snap
+    //  Screen coordinates applying the Snap
     //-------------------------------------------------------------------------
     if (snap) {
       if (zoom_level<0.1)
@@ -717,7 +717,7 @@ void MapperCreator2(void)
   {
     if(edit_mode==EDIT_LINE || edit_mode==DRAW_SECTOR)
     {
-      if(wmouse_in(WINDOW_WIDTH+6,          11, 50, 50)) // Textura de Pared
+      if(wmouse_in(WINDOW_WIDTH+6,          11, 50, 50)) // Wall Texture
       {
         if(m3d_edit.fpg_path[0]==0)
         {
@@ -739,7 +739,7 @@ void MapperCreator2(void)
     }
     if(edit_mode==EDIT_SECTOR || edit_mode==DRAW_SECTOR)
     {
-      if(wmouse_in(WINDOW_WIDTH+6,     11+50+1, 50, 50)) // Textura de Techo
+      if(wmouse_in(WINDOW_WIDTH+6,     11+50+1, 50, 50)) // Ceiling Texture
       {
         if(m3d_edit.fpg_path[0]==0)
         {
@@ -759,7 +759,7 @@ void MapperCreator2(void)
         }
       }
       else
-      if(wmouse_in(WINDOW_WIDTH+6, 11+100+2+12, 50, 50)) // Textura de Suelo
+      if(wmouse_in(WINDOW_WIDTH+6, 11+100+2+12, 50, 50)) // Floor Texture
       {
         if(m3d_edit.fpg_path[0]==0)
         {
@@ -779,7 +779,7 @@ void MapperCreator2(void)
         }
       }
     }
-    if(wmouse_in(201, 174, 44, 23)) // Fondo
+    if(wmouse_in(201, 174, 44, 23)) // Background
     {
       if(m3d_edit.fpg_path[0]==0)
       {
@@ -797,7 +797,7 @@ void MapperCreator2(void)
         need_refresh=1;
       }
     }
-    if(wmouse_in(w-63, h-12, 60, 9)) // Seleccion de FPG
+    if(wmouse_in(w-63, h-12, 60, 9)) // FPG selection
     {
       if(check_file())
       {
@@ -842,7 +842,7 @@ void MapperCreator2(void)
 
   grid_size=(4*big2)/zoom_level;
 
-  // Scroll del mapa
+  // Map scroll
   if (!(v.item[5].state&2) && !(v.item[8].state&2) && !(v.item[9].state&2)) {
     if(kbdFLAGS[0x4B]) { scroll_x-=(8*big2)/zoom_level; map_draw(); }
     if(kbdFLAGS[0x4D]) { scroll_x+=(8*big2)/zoom_level; map_draw(); }
@@ -929,7 +929,7 @@ void MapperCreator3(void)
 {
   unsigned n;
 
-  // Libera texturas de ventana de seleccion
+  // Free textures of the selection window
   for(n=0; n<max_textures; n++)
   {
     if(thumb_tex[n].ptr!=NULL)
@@ -939,7 +939,7 @@ void MapperCreator3(void)
     }
   }
 
-  // Libera texturas de ventana de mapeador
+  // Free textures of the mapper window
   for(n=0; n<4; n++)
   {
     if(Tex[n].gra!=NULL)
@@ -959,11 +959,11 @@ extern int m_maximum;
 struct t_listboxbr        copy_br;
 extern struct t_listboxbr lthumbmapbr;
 
-extern struct _thumb_map { // Reducciones de brushmaps
-  int w,h;            // Ancho y Alto de la reducción
-  int RealWidth, RealHeight;   // Ancho y Alto de la textura
-  char * ptr;           // ==NULL si el thumbnail no se ha comenzado a cargar
-  int status;           // 0-No es una textura valida, 1-Cargada
+extern struct _thumb_map { // Brushmap reductions
+  int w,h;            // Width and Height of the reduction
+  int RealWidth, RealHeight;   // Width and Height of the texture
+  char * ptr;           // ==NULL if the thumbnail has not started loading
+  int status;           // 0-Not a valid texture, 1-Loaded
   int FilePos;
   int Code;
   int Square;
@@ -1103,7 +1103,7 @@ void M3D_create_thumbs(struct t_listboxbr * l, int prog)
   sprintf(strings[3], "%d", ceiling_height);
   sprintf(strings[4], "%d", floor_height);
 
-  // Libera texturas de ventana de seleccion
+  // Free textures of the selection window
   for(n=0; n<max_textures; n++)
   {
     if(thumb_tex[n].ptr!=NULL)
@@ -1250,7 +1250,7 @@ void M3D_create_thumbs(struct t_listboxbr * l, int prog)
 
   n=1;
   if( v.click_handler!=MapperViewer2 &&
-      v.click_handler!=MapperCreator2 ) n=0; // Sin textura vacia
+      v.click_handler!=MapperCreator2 ) n=0; // Without empty texture
   for(ctr=n; ctr<l->maximum; ctr++)
   {
     for(;;)
@@ -1259,14 +1259,14 @@ void M3D_create_thumbs(struct t_listboxbr * l, int prog)
       mh  = thumb_tex[ctr].RealHeight = thumb_tex[ctr].h;
       temp = (byte *)thumb_tex[ctr].ptr;
 
-      if(mw<=32*big2 && mh<=32*big2) // El grafico se deja tal cual
+      if(mw<=32*big2 && mh<=32*big2) // The graphic is left as is
       {
         for(n=thumb_tex[ctr].w*thumb_tex[ctr].h-1; n>=0; n--)
         {
           temp[n]=FPG_xlat[temp[n]];
         }
       }
-      else // Crea el thumbnail
+      else // Create the thumbnail
       {
         coefredx=mw/((float)32*2*(float)big2);
         coefredy=mh/((float)32*2*(float)big2);
@@ -1338,7 +1338,7 @@ void M3D_create_thumbs(struct t_listboxbr * l, int prog)
 
   if(TypeTex>3) return;
 
-  // Actualiza texturas de ventana de mapeador
+  // Update textures of the mapper window
   for(n=0; n<4; n++)
   {
     TypeTex=n;
@@ -1390,7 +1390,7 @@ void M3D_show_thumb(struct t_listboxbr * l, int num)
     if(TypeBrowser==MAPBR) {
       num_tex=num; // thumb_tmp[num].Code;
     } else {
-      num_tex=atoi(m3d_fpgcodesbr+num*texture_code_width); // Codigo de esa posicion
+      num_tex=atoi(m3d_fpgcodesbr+num*texture_code_width); // Code of that position
       if(num_tex)
       {
         for(x=0; x<max_textures; x++)
@@ -1493,7 +1493,7 @@ void M3D_update_listboxbr(struct t_listboxbr * l)
   int w=v.w/big2,h=v.h/big2;
   int n,old_zone=l->zone,x,y;
 
-  if (wmouse_in(l->x,l->y,(l->w+1)*l->columns,(l->h+1)*l->lines)) { // Calcula zona
+  if (wmouse_in(l->x,l->y,(l->w+1)*l->columns,(l->h+1)*l->lines)) { // Compute area
     l->zone=(wmouse_x-l->x)/(l->w+1)+((wmouse_y-l->y)/(l->h+1))*l->columns;
     if (l->zone>=l->maximum-l->initial || l->zone>=l->lines*l->columns) l->zone=1;
     else l->zone+=10;
@@ -1503,7 +1503,7 @@ void M3D_update_listboxbr(struct t_listboxbr * l)
   else l->zone=0;
 
   if (TypeBrowser!=MAPBR) {
-    if (old_zone!=l->zone) if (old_zone>=10) { // Desmarca zona
+    if (old_zone!=l->zone) if (old_zone>=10) { // Unmark zone
       x=l->x+1+((old_zone-10)%l->columns)*(l->w+1);
       y=l->y+l->h+((old_zone-10)/l->columns)*(l->h+1);
       p=(byte *)l->list+l->list_width*(l->initial+old_zone-10);
@@ -1560,7 +1560,7 @@ void M3D_update_listboxbr(struct t_listboxbr * l)
   }
 
   if (TypeBrowser!=MAPBR) {
-    if (old_zone!=l->zone) if (l->zone>=10) { // Marca zona
+    if (old_zone!=l->zone) if (l->zone>=10) { // Mark zone
       x=l->x+1+((l->zone-10)%l->columns)*(l->w+1);
       y=l->y+l->h+((l->zone-10)/l->columns)*(l->h+1);
       p=(byte *)l->list+l->list_width*(l->initial+l->zone-10);
@@ -1588,7 +1588,7 @@ void M3D_draw_listboxbr(struct t_listboxbr * l)
       wbox(ptr,w,h,c01,l->x+(x*(l->w+1))+1,l->y+(y*(l->h+1))+1+l->h-8,l->w,8);
     }
 
-  if (wmouse_in(l->x,l->y,(l->w+1)*l->columns,(l->h+1)*l->lines)) { // Calcula zona
+  if (wmouse_in(l->x,l->y,(l->w+1)*l->columns,(l->h+1)*l->lines)) { // Compute area
     l->zone=((mouse_x-v.x)/big2-l->x)/(l->w+1)+(((mouse_y-v.y)/big2-l->y)/(l->h+1))*l->columns;
     if (l->zone>=l->maximum-l->initial || l->zone>=l->lines*l->columns) l->zone=1;
     else l->zone+=10;
@@ -1644,10 +1644,10 @@ void CreateMapperThumb(int tex_code, int thumb_width, int thumb_height)
   float coefredy, coefredx, a, b;
   int x, y, num_tex=0;
 
-  if(tex_code == -1) // Textura desde browser
+  if(tex_code == -1) // Texture from browser
   {
-    num_tex=ltexturesbr.initial+ltexturesbr.zone-10; // Posicion en browser
-    tex_code=atoi(m3d_fpgcodesbr+num_tex*texture_code_width); // Codigo de esa posicion
+    num_tex=ltexturesbr.initial+ltexturesbr.zone-10; // Position in browser
+    tex_code=atoi(m3d_fpgcodesbr+num_tex*texture_code_width); // Code of that position
   }
   if(tex_code)
   {
@@ -1760,7 +1760,7 @@ void DrawMapperThumbs(void)
 {
   int px, py, x, y, w=v.w/big2, h=v.h/big2, ctr;
 
-  // Pinta los thumbnails con iluminacion
+  // Draw the thumbnails with lighting
   px=(WINDOW_WIDTH+7)*big2;
   for(ctr=0; ctr<3; ctr++)
   {
@@ -1792,7 +1792,7 @@ void DrawMapperThumbs(void)
     }
   }
 
-  // Oscurece las texturas y slidebars desactivadas
+  // Darken the disabled textures and slidebars
   switch(edit_mode)
   {
     case DRAW_SECTOR:
@@ -1894,7 +1894,7 @@ void show_coordinates(void)
   new_scroll_y=scroll_y+M_WINDOW_HEIGHT*big2-M_WINDOW_HEIGHT*big2/zoom_level;
 
   if(wmouse_in(4, 12, WINDOW_WIDTH, WINDOW_HEIGHT)) {
-    if (region_status) { // Coordenadas relativas
+    if (region_status) { // Relative coordinates
       x0=abs(my_map->points[last_point]->x-pos_x-scroll_x);
       y0=abs(my_map->points[last_point]->y-pos_y-scroll_y);
       sprintf(strings[0],"%04d",x0);
@@ -1905,7 +1905,7 @@ void show_coordinates(void)
       wwrite_in_box(v.ptr,w,w-4,h,w-153,h-10,0,(byte *)distance,c3);
       map_draw();
     }
-    else { // Coordenadas absolutas
+    else { // Absolute coordinates
       sprintf(strings[0],"%04d",pos_x+scroll_x);
       sprintf(strings[1],"%04d",pos_y+scroll_y);
     }
@@ -1920,12 +1920,12 @@ void show_coordinates(void)
   wwrite(v.ptr, w, h, 40, 183, 2, (byte *)strings[0], c3);
   wwrite(v.ptr, w, h, 40, 190, 2, (byte *)strings[1], c3);
 
-  // FPG en uso
+  // FPG in use
   wbox(v.ptr, w, h, c12, w-63, h-11, 60, 8);
   wwrite_in_box(v.ptr,w,w-4,h,w-62,h-10,0,m3d_edit.fpg_name,c3);
 
   //---------------------------------------------------------------------------
-  // Vertice, pared o sector editado
+  // Edited vertex, wall or sector
   //---------------------------------------------------------------------------
   if (edit_point!=-1) {
     sprintf(strings[0],"V: %04d",edit_point);
@@ -1956,11 +1956,11 @@ int cmpcode(const void * a, const void * b)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Zona Luisfer (NO TOCAR) -= DaNGeR =-
+//  Luisfer Zone (DO NOT TOUCH) -= DaNGeR =-
 //═════════════════════════════════════════════════════════════════════════════
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Pinta una linea
+//  Draw a line
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_line(int x0, int y0, int x1, int y1, byte color)
@@ -1973,7 +1973,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
   int clipping_max_y=WINDOW_HEIGHT-1;
 
   //---------------------------------------------------------------------------
-  //  Control inicial de orden
+  //  Initial order check
   //---------------------------------------------------------------------------
   if (x1<x0) {
     aux=x0; x0=x1; x1=aux;
@@ -1981,7 +1981,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
   }
 
   //---------------------------------------------------------------------------
-  //  Test de clipping Sutherland-Cohen
+  //  Sutherland-Cohen clipping test
   //---------------------------------------------------------------------------
   test0=0;
   test1=0;
@@ -1996,17 +1996,17 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
   else if (y1>clipping_max_y) test1+=BOTTOM_CLIP;
 
   //---------------------------------------------------------------------------
-  //  Linea fuera de pantalla
+  //  Line off screen
   //---------------------------------------------------------------------------
   if (test0&test1)
     return;
 
   //---------------------------------------------------------------------------
-  //  Clipping parcial
+  //  Partial clipping
   //---------------------------------------------------------------------------
   result=test0|test1;
   while (result) {
-    // Clipping derecha
+    // Right clipping
     if (result&RIGHT_CLIP) {
       if (test0&RIGHT_CLIP) {
         y0=((clipping_max_x-x1)*(y0-y1))/(x0-x1)+y1;
@@ -2017,7 +2017,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
         x1=clipping_max_x;
       }
     }
-    // Clipping abajo
+    // Bottom clipping
     else if (result&BOTTOM_CLIP) {
       if (test0&BOTTOM_CLIP) {
         x0=((clipping_max_y-y1)*(x0-x1))/(y0-y1)+x1;
@@ -2028,7 +2028,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
         y1=clipping_max_y;
       }
     }
-    // Clipping izquierda
+    // Left clipping
     else if (result&LEFT_CLIP) {
       if (test0&LEFT_CLIP) {
         y0=((clipping_min_x-x1)*(y0-y1))/(x0-x1)+y1;
@@ -2039,7 +2039,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
         x1=clipping_min_x;
       }
     }
-    // Clipping arriba
+    // Top clipping
     else {
       if (test0&TOP_CLIP) {
         x0=((clipping_min_y-y1)*(x0-x1))/(y0-y1)+x1;
@@ -2051,7 +2051,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
       }
     }
     //---------------------------------------------------------------------------
-    //  Test de clipping Sutherland-Cohen
+    //  Sutherland-Cohen clipping test
     //---------------------------------------------------------------------------
     test0=0;
     test1=0;
@@ -2077,7 +2077,7 @@ void draw_line(int x0, int y0, int x1, int y1, byte color)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Añade un vertice al mapa
+//  Add a vertex to the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_addpoint()
@@ -2092,7 +2092,7 @@ void map_addpoint()
   if (mouse_b&1 && old_but1==0) {
     old_but1=1;
     //-------------------------------------------------------------------------
-    //  Añade un punto a la lista
+    //  Add a point to the list
     //-------------------------------------------------------------------------
     if ((new_point=map_findpoint(pos_x,pos_y,-1))<0) {
       if (new_point==-2)
@@ -2117,10 +2117,10 @@ void map_addpoint()
     my_map->points[new_point]->links+=2;
     last_point=new_point;
     //-------------------------------------------------------------------------
-    //  Añade un muro a la lista
+    //  Add a wall to the list
     //-------------------------------------------------------------------------
     new_wall=my_map->num_walls;
-    if (region_status==0) { // Si es el primer muro
+    if (region_status==0) { // If it is the first wall
       first_point=new_point;
       first_wall=new_wall;
     }
@@ -2128,7 +2128,7 @@ void map_addpoint()
       my_map->walls[new_wall]->p2=new_point;
       my_map->num_walls++;
       //-----------------------------------------------------------------------
-      //  Cierra una region y la añade a la lista
+      //  Close a region and add it to the list
       //-----------------------------------------------------------------------
       if (first_point==last_point && region_status>2) {
         region_status=0;
@@ -2147,7 +2147,7 @@ void map_addpoint()
         my_map->num_regions++;
 //        map_sortregions();
         //---------------------------------------------------------------------
-        // Apago tanto los vertices como las paredes
+        // Turn off both the vertices and the walls
         //---------------------------------------------------------------------
         for (i=first_wall;i<=new_wall;i++) {
           my_map->walls[i]->front_region=new_region;
@@ -2184,7 +2184,7 @@ void map_addpoint()
       my_map->walls[new_wall]->p2=first_point;
       my_map->num_walls++;
       //-----------------------------------------------------------------------
-      //  Cierra una region y la añade a la lista
+      //  Close a region and add it to the list
       //-----------------------------------------------------------------------
       region_status=0;
       region_deleted=1;
@@ -2197,7 +2197,7 @@ void map_addpoint()
       my_map->regions[new_region]->fade=fade_sector;
       my_map->regions[new_region]->type=0;
       //-----------------------------------------------------------------------
-      // Apago tanto los vertices como las paredes
+      // Turn off both the vertices and the walls
       //-----------------------------------------------------------------------
       for (i=first_wall;i<=new_wall;i++) {
         my_map->walls[i]->front_region=new_region;
@@ -2217,7 +2217,7 @@ void map_addpoint()
   }
 
   //-------------------------------------------------------------------------
-  //  Calculo el angulo del sector
+  //  Compute the angle of the sector
   //-------------------------------------------------------------------------
 
   provisional_angle=0;
@@ -2238,7 +2238,7 @@ void map_addpoint()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Edita un vertice del mapa
+//  Edit a vertex of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_editpoint()
@@ -2248,7 +2248,7 @@ void map_editpoint()
   if (mouse_b&1) {
     if (old_but1==0) {
       //-----------------------------------------------------------------------
-      //  Busca el vertice y si no lo encuentra sale
+      //  Find the vertex and if not found, exit
       //-----------------------------------------------------------------------
       if ((edit_point=map_selectpoint(pos_x,pos_y,&region))==-1)
         return;
@@ -2277,7 +2277,7 @@ void map_editpoint()
       edit_point=-1;
       region=MAX_REGIONS-1;
       //-----------------------------------------------------------------------
-      // Apago tanto los vertices como las paredes
+      // Turn off both the vertices and the walls
       //-----------------------------------------------------------------------
       map_off();
       map_draw();
@@ -2290,7 +2290,7 @@ void map_editpoint()
     my_map->points[edit_point]->x=x;
     my_map->points[edit_point]->y=y;
     //---------------------------------------------------------------------
-    // Apago tanto los vertices como las paredes
+    // Turn off both the vertices and the walls
     //---------------------------------------------------------------------
     map_off();
   }
@@ -2302,7 +2302,7 @@ void map_editpoint()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Edita una pared del mapa
+//  Edit a wall of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_editwall()
@@ -2312,7 +2312,7 @@ void map_editwall()
   if (mouse_b&1) {
     if (old_but1==0) {
       //-----------------------------------------------------------------------
-      //  Apaga el mapa
+      //  Turn off the map
       //-----------------------------------------------------------------------
       for (i=0;i<my_map->num_points;i++)
         my_map->points[i]->active=0;
@@ -2322,7 +2322,7 @@ void map_editwall()
         my_map->regions[i]->active=0;
 
       //-----------------------------------------------------------------------
-      //  Busca el vertice y si no lo encuentra sale
+      //  Find the vertex and if not found, exit
       //-----------------------------------------------------------------------
       if ((edit_wall=map_findwall(pos_x,pos_y,edit_wall))==-1) {
         return;
@@ -2333,7 +2333,7 @@ void map_editwall()
       my_map->walls[edit_wall]->active=1;
 
       //-----------------------------------------------------------------------
-      // Activo los vertices elegidos
+      // Activate the chosen vertices
       //-----------------------------------------------------------------------
       for (i=0;i<my_map->num_walls;i++) {
         if (my_map->walls[i]->front_region==my_map->walls[edit_wall]->front_region) {
@@ -2359,7 +2359,7 @@ void map_editwall()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Edita una region del mapa
+//  Edit a region of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_editregion()
@@ -2370,7 +2370,7 @@ void map_editregion()
     if (old_but1==0) {
       map_off();
       //-----------------------------------------------------------------------
-      //  Busca el vertice y si no lo encuentra sale
+      //  Find the vertex and if not found, exit
       //-----------------------------------------------------------------------
       if ((edit_region=map_findregion(pos_x,pos_y,-1))==-1) {
         return;
@@ -2380,7 +2380,7 @@ void map_editregion()
       TypeTex=FLOOR; CreateMapperThumb(my_map->regions[edit_region]->floor_tex, 48, 48);
 
       //-----------------------------------------------------------------------
-      // Busca una pared de la region para mostrar su textura
+      // Find a wall of the region to show its texture
       //-----------------------------------------------------------------------
       for (i=0;i<my_map->num_walls;i++) {
         if (my_map->walls[i]->front_region==edit_region) {
@@ -2391,7 +2391,7 @@ void map_editregion()
       }
 
       //-----------------------------------------------------------------------
-      // Activo los vertices elegidos
+      // Activate the chosen vertices
       //-----------------------------------------------------------------------
       for (i=0;i<my_map->num_walls;i++) {
         if (my_map->walls[i]->front_region==edit_region) {
@@ -2428,7 +2428,7 @@ void map_editregion()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Dibuja un mapa
+//  Draw a map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_draw()
@@ -2448,7 +2448,7 @@ void map_draw()
   new_scroll_y=scroll_y+aux_y;
 
   //-------------------------------------------------------------------------
-  //  Pinta la zona de edicion (bordes negros)
+  //  Draw the edit area (black borders)
   //-------------------------------------------------------------------------
 
 //  new_scroll_x=scroll_x+M_WINDOW_WIDTH*big2-M_WINDOW_WIDTH*big2/zoom_level;
@@ -2499,7 +2499,7 @@ void map_draw()
     wbox(v.ptr,v.w/big2,v.h/big2,c01,4+x0,12+y1,x1-x0,WINDOW_HEIGHT-y1);
 
   //---------------------------------------------------------------------------
-  //  Dibujo el grid
+  //  Draw the grid
   //---------------------------------------------------------------------------
   if (grid) {
     if (zoom_level<0.1) {
@@ -2562,11 +2562,11 @@ void map_draw()
   }
 
   //---------------------------------------------------------------------------
-  //  Dibujo las banderas
+  //  Draw the flags
   //---------------------------------------------------------------------------
   j=0;
   for (i=0;i<my_map->num_flags;i++) {
-    //  Coordenadas de pantalla con el zoom
+    //  Screen coordinates with the zoom
     x0=zoom_level*(my_map->flags[i]->x-new_scroll_x)/big2;
     y0=zoom_level*(my_map->flags[i]->y-new_scroll_y)/big2;
     if (my_map->flags[i]->number==num_flag) {
@@ -2580,10 +2580,10 @@ void map_draw()
     wput_in_box((byte *)direction,width,WINDOW_WIDTH,WINDOW_HEIGHT,x1-2,y1-2,243);
 
   //---------------------------------------------------------------------------
-  //  Dibujo los vertices
+  //  Draw the vertices
   //---------------------------------------------------------------------------
   for (i=0;i<my_map->num_points;i++) {
-    //  Coordenadas de pantalla con el zoom
+    //  Screen coordinates with the zoom
     x0=zoom_level*(my_map->points[i]->x-new_scroll_x)/big2;
     y0=zoom_level*(my_map->points[i]->y-new_scroll_y)/big2;
     if (my_map->points[i]->active)
@@ -2593,13 +2593,13 @@ void map_draw()
   }
 
   //---------------------------------------------------------------------------
-  //  Dibujo las paredes
+  //  Draw the walls
   //---------------------------------------------------------------------------
   for (i=0;i<my_map->num_walls;i++) {
     if (!my_map->walls[i]->active) {
       p1=my_map->walls[i]->p1;
       p2=my_map->walls[i]->p2;
-      //  Coordenadas de pantalla con el zoom
+      //  Screen coordinates with the zoom
       x0=zoom_level*(my_map->points[p1]->x-new_scroll_x)/big2;
       y0=zoom_level*(my_map->points[p1]->y-new_scroll_y)/big2;
       x1=zoom_level*(my_map->points[p2]->x-new_scroll_x)/big2;
@@ -2611,7 +2611,7 @@ void map_draw()
     if (my_map->walls[i]->active) {
       p1=my_map->walls[i]->p1;
       p2=my_map->walls[i]->p2;
-      //  Coordenadas de pantalla con el zoom
+      //  Screen coordinates with the zoom
       x0=zoom_level*(my_map->points[p1]->x-new_scroll_x)/big2;
       y0=zoom_level*(my_map->points[p1]->y-new_scroll_y)/big2;
       x1=zoom_level*(my_map->points[p2]->x-new_scroll_x)/big2;
@@ -2621,10 +2621,10 @@ void map_draw()
   }
 
   //---------------------------------------------------------------------------
-  //  Dibujo la linea desde el ultimo punto al cursor del raton
+  //  Draw the line from the last point to the mouse cursor
   //---------------------------------------------------------------------------
   if (region_status && wmouse_in(4, 12, WINDOW_WIDTH, WINDOW_HEIGHT)) {
-    //  Coordenadas de pantalla con el zoom
+    //  Screen coordinates with the zoom
     x0=zoom_level*(my_map->points[last_point]->x-new_scroll_x)/big2;
     y0=zoom_level*(my_map->points[last_point]->y-new_scroll_y)/big2;
     x1=zoom_level*(pos_x+scroll_x-new_scroll_x)/big2;
@@ -2636,7 +2636,7 @@ void map_draw()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Edita una bandera del mapa
+//  Edit a flag of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_editflag()
@@ -2647,14 +2647,14 @@ void map_editflag()
     old_but1=1;
     map_off();
     //-------------------------------------------------------------------------
-    //  Añade una bandera a la lista
+    //  Add a flag to the list
     //-------------------------------------------------------------------------
     if (pos_x+scroll_x<0 || pos_y+scroll_y<0 ||
         pos_x+scroll_x>END_GRID || pos_y+scroll_y>END_GRID)
       return;
 
     //-------------------------------------------------------------------------
-    // No encuentra ninguna bandera
+    // No flag found
     //-------------------------------------------------------------------------
     if ((edit_flag=map_findflag(pos_x,pos_y,-1))<0) {
       for (i=0;i<my_map->num_flags;i++) {
@@ -2674,7 +2674,7 @@ void map_editflag()
       my_map->flags[edit_flag]->active=1;
     }
     //-------------------------------------------------------------------------
-    // Encuentra una bandera
+    // A flag was found
     //-------------------------------------------------------------------------
     else if (my_map->num_flags>0) {
       num_flag=my_map->flags[edit_flag]->number;
@@ -2725,7 +2725,7 @@ void map_editflag()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Comprueba si existe un punto en las coordenadas dadas
+//  Check whether a point exists at the given coordinates
 //═════════════════════════════════════════════════════════════════════════════
 
 int map_findpoint(int x, int y, int discard_point)
@@ -2749,7 +2749,7 @@ int map_findpoint(int x, int y, int discard_point)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Comprueba si existe una bandera en las coordenadas dadas
+//  Check whether a flag exists at the given coordinates
 //═════════════════════════════════════════════════════════════════════════════
 
 int map_findflag(int x, int y, int discard_flag)
@@ -2773,7 +2773,7 @@ int map_findflag(int x, int y, int discard_flag)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Comprueba si existe un muro en las coordenadas dadas
+//  Check whether a wall exists at the given coordinates
 //═════════════════════════════════════════════════════════════════════════════
 
 int map_findwall(int x, int y, int discard_wall)
@@ -2793,14 +2793,14 @@ int map_findwall(int x, int y, int discard_wall)
     p2=my_map->walls[i]->p2;
 
     //-------------------------------------------------------------------------
-    // Compruebo si el punto esta dentro de la caja definida por p1 y p2
+    // Check whether the point is inside the box defined by p1 and p2
     //-------------------------------------------------------------------------
     if (((my_map->points[p1]->x-grid_size<=x && x<=my_map->points[p2]->x+grid_size) ||
         (my_map->points[p2]->x-grid_size<=x && x<=my_map->points[p1]->x+grid_size)) &&
         ((my_map->points[p1]->y-grid_size<=y && y<=my_map->points[p2]->y+grid_size) ||
         (my_map->points[p2]->y-grid_size<=y && y<=my_map->points[p1]->y+grid_size))) {
       //-----------------------------------------------------------------------
-      // Utilizo la ecuacion de la recta para saber si pertenece a la pared
+      // Use the line equation to know whether it belongs to the wall
       //-----------------------------------------------------------------------
       x1=(my_map->points[p1]->x-my_map->points[p2]->x);
       y1=(my_map->points[p1]->y-my_map->points[p2]->y);
@@ -2817,7 +2817,7 @@ int map_findwall(int x, int y, int discard_wall)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Borra una region del mapa
+//  Delete a region of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_deleteregion(int region)
@@ -2827,7 +2827,7 @@ void map_deleteregion(int region)
   if (region<0 || region>=my_map->num_regions) return;
 
   //---------------------------------------------------------------------------
-  //  Borro las paredes de la region
+  //  Delete the walls of the region
   //---------------------------------------------------------------------------
   i=my_map->num_walls-1;
   do {
@@ -2840,7 +2840,7 @@ void map_deleteregion(int region)
   } while (i>=0);
 
   //---------------------------------------------------------------------------
-  //  Borro la region y reasigno los punteros de las paredes a la region
+  //  Delete the region and reassign the walls' pointers to the region
   //---------------------------------------------------------------------------
   my_map->num_regions--;
   free(my_map->regions[region]);
@@ -2853,7 +2853,7 @@ void map_deleteregion(int region)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Borra una pared del mapa
+//  Delete a wall of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_deletewall(int wall)
@@ -2861,13 +2861,13 @@ void map_deletewall(int wall)
   if (wall<0 || wall>=my_map->num_walls) return;
 
   //---------------------------------------------------------------------------
-  //  Borro los puntos de la pared
+  //  Delete the points of the wall
   //---------------------------------------------------------------------------
   map_deletepoint(my_map->walls[wall]->p1);
   map_deletepoint(my_map->walls[wall]->p2);
 
   //---------------------------------------------------------------------------
-  //  Borro la pared y reasigno los punteros de los puntos
+  //  Delete the wall and reassign the points' pointers
   //---------------------------------------------------------------------------
   my_map->num_walls--;
   free(my_map->walls[wall]);
@@ -2876,7 +2876,7 @@ void map_deletewall(int wall)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Borra un punto del mapa
+//  Delete a point of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_deletepoint(int point)
@@ -2886,19 +2886,19 @@ void map_deletepoint(int point)
   if (point<0 || point>=my_map->num_points) return;
 
   //---------------------------------------------------------------------------
-  //  Decremento los enlaces
+  //  Decrement the links
   //---------------------------------------------------------------------------
   my_map->points[point]->links--;
 
   //---------------------------------------------------------------------------
-  //  Si no quedan mas enlaces libero el punto
+  //  If no links are left, free the point
   //---------------------------------------------------------------------------
   if (my_map->points[point]->links==0) {
     my_map->num_points--;
     free(my_map->points[point]);
     my_map->points[point]=my_map->points[my_map->num_points];
     //---------------------------------------------------------------------------
-    //  Reasigno los punteros de las paredes a los puntos
+    //  Reassign the walls' pointers to the points
     //---------------------------------------------------------------------------
     for (i=0;i<my_map->num_walls;i++) {
       if (my_map->walls[i]->p1==my_map->num_points)
@@ -2910,7 +2910,7 @@ void map_deletepoint(int point)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Borra la region del mapa sin cerrar
+//  Delete the unclosed region of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_deletenullregion()
@@ -2928,7 +2928,7 @@ void map_deletenullregion()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Borra las paredes del mapa sin cerrar
+//  Delete the unclosed walls of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_deletenullwalls()
@@ -2946,7 +2946,7 @@ void map_deletenullwalls()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Apago tanto los vertices como las paredes
+// Turn off both the vertices and the walls
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_off()
@@ -2967,7 +2967,7 @@ void map_off()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Comprueba si existe una region en las coordenadas dadas
+//  Check whether a region exists at the given coordinates
 //═════════════════════════════════════════════════════════════════════════════
 
 int map_selectpoint(int x, int y, int *region)
@@ -2989,18 +2989,18 @@ int map_selectpoint(int x, int y, int *region)
   if (lowest_region!=MAX_REGIONS-1 && my_map->points[point]->links>2) {
     *region=lowest_region;
     //-----------------------------------------------------------------------
-    // Apago tanto los vertices como las paredes
+    // Turn off both the vertices and the walls
     //-----------------------------------------------------------------------
     map_off();
     //-----------------------------------------------------------------------
-    // Activo las paredes elegidas
+    // Activate the chosen walls
     //-----------------------------------------------------------------------
     for (i=0;i<my_map->num_walls;i++) {
       if (my_map->walls[i]->front_region==lowest_region)
         my_map->walls[i]->active=1;
     }
     //-----------------------------------------------------------------------
-    // Añado el nuevo punto
+    // Add the new point
     //-----------------------------------------------------------------------
     new_point=my_map->num_points;
     my_map->points[new_point]=(lptpoint)malloc(sizeof(tpoint));
@@ -3036,7 +3036,7 @@ int map_selectpoint(int x, int y, int *region)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Une los vertices cercanos
+//  Join nearby vertices
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_joinpoints()
@@ -3046,7 +3046,7 @@ void map_joinpoints()
 
   for (i=0;i<my_map->num_points;i++) {
     while ((new_point=map_findpoint(my_map->points[i]->x-scroll_x,my_map->points[i]->y-scroll_y,i))>=0) {
-      my_map->points[i]->links+=my_map->points[new_point]->links; //OJO 2
+      my_map->points[i]->links+=my_map->points[new_point]->links; //NOTE 2
       for (j=0;j<my_map->num_walls;j++) {
         if (my_map->walls[j]->p1==new_point)
           my_map->walls[j]->p1=i;
@@ -3067,7 +3067,7 @@ void map_joinpoints()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Une un vertice dado al mas cercano si se encuentra en su radio de accion
+//  Join a given vertex to the nearest one if it is within its range of action
 //═════════════════════════════════════════════════════════════════════════════
 
 int map_joinpoint(int point)
@@ -3090,7 +3090,7 @@ int map_joinpoint(int point)
       }
     }
 
-    my_map->points[new_point]->links+=my_map->points[point]->links; //OJO 2
+    my_map->points[new_point]->links+=my_map->points[point]->links; //NOTE 2
     my_map->points[new_point]->active=1;
     for (i=0;i<my_map->num_walls;i++) {
       if (my_map->walls[i]->p1==point)
@@ -3117,7 +3117,7 @@ int map_joinpoint(int point)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Graba un mapa
+//  Save a map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_save()
@@ -3143,7 +3143,7 @@ void map_save()
   map_asignregions();
 
   //---------------------------------------------------------------------------
-  //  Inicializo la cabecera
+  //  Initialize the header
   //---------------------------------------------------------------------------
   strcpy(Header.IDStr,"DAT");            // Zone file ID string
   Header.NumPoints=my_map->num_points;   // Number of points
@@ -3154,15 +3154,15 @@ void map_save()
   fwrite(&Header,sizeof(struct ZF_Header),1,file);
 
   //---------------------------------------------------------------------------
-  //  Asigno los puntos
+  //  Assign the points
   //---------------------------------------------------------------------------
   zp=(struct ZF_Point *)malloc(my_map->num_points*sizeof(struct ZF_Point));
 
   for (i=0;i<my_map->num_points;i++) {
     zp[i].Type=0;                 // Type               *  0 * OK
     zp[i].x=my_map->points[i]->x;  // Point x coordinate
-    zp[i].y=END_GRID-my_map->points[i]->y;  // Point y coordinate OJO
-//    zp[i].y=my_map->points[i]->y;  // Point y coordinate OJO
+    zp[i].y=END_GRID-my_map->points[i]->y;  // Point y coordinate NOTE
+//    zp[i].y=my_map->points[i]->y;  // Point y coordinate NOTE
     zp[i].path=-1;                // Path index                          * -1 * OK
     zp[i].link=-1;                // Index of the next point in the link * -1 * OK
   }
@@ -3171,7 +3171,7 @@ void map_save()
   free(zp);
 
   //---------------------------------------------------------------------------
-  //  Asigno las regiones
+  //  Assign the regions
   //---------------------------------------------------------------------------
   zr=(struct ZF_Region *)malloc(my_map->num_regions*sizeof(struct ZF_Region));
 
@@ -3181,8 +3181,8 @@ void map_save()
     zr[i].CeilH=(M8SHORT)my_map->regions[i]->ceil_height;     // Ceiling height
     zr[i].Below=-1;                                         // Region below
     zr[i].Above=-1;                                         // Region above
-    zr[i].FloorTex=my_map->regions[i]->floor_tex;           // Textura de suelo
-    zr[i].CeilTex=my_map->regions[i]->ceil_tex;             // Textura de techo
+    zr[i].FloorTex=my_map->regions[i]->floor_tex;           // Floor texture
+    zr[i].CeilTex=my_map->regions[i]->ceil_tex;             // Ceiling texture
     strcpy(zr[i].Eff,"NO_NAME");                            // Eff program
     zr[i].Fade=(M8SHORT)my_map->regions[i]->fade;             // Effect's param
     zr[i].Tag=0;                                            // Tag ID
@@ -3192,7 +3192,7 @@ void map_save()
   free(zr);
 
   //---------------------------------------------------------------------------
-  //  Asigno los muros
+  //  Assign the walls
   //---------------------------------------------------------------------------
   zw=(struct ZF_Wall *)malloc(my_map->num_walls*sizeof(struct ZF_Wall));
 
@@ -3219,13 +3219,13 @@ void map_save()
   free(zw);
 
   //---------------------------------------------------------------------------
-  //  Asigno las banderas
+  //  Assign the flags
   //---------------------------------------------------------------------------
   zf=(struct ZF_Flag *)malloc(my_map->num_flags*sizeof(struct ZF_Flag));
 
   for (i=0;i<my_map->num_flags;i++) {
     zf[i].x=my_map->flags[i]->x;  // Point x coordinate
-    zf[i].y=my_map->flags[i]->y;  // Point y coordinate OJO
+    zf[i].y=my_map->flags[i]->y;  // Point y coordinate NOTE
     zf[i].number=my_map->flags[i]->number;
   }
 
@@ -3233,7 +3233,7 @@ void map_save()
   free(zf);
 
   //---------------------------------------------------------------------------
-  //  Asigno la informacion general
+  //  Assign the general information
   //---------------------------------------------------------------------------
   zgen=(struct ZF_General *)malloc(sizeof(struct ZF_General));
 
@@ -3253,7 +3253,7 @@ void map_save()
   free(zgen);
 
   //---------------------------------------------------------------------------
-  //  Libero todo
+  //  Free everything
   //---------------------------------------------------------------------------
 
   fclose(file);
@@ -3271,7 +3271,7 @@ void map_save()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Graba un mapa
+//  Save a map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_saveedit(FILE *file, lptmap map_aux)
@@ -3313,7 +3313,7 @@ void map_saveedit(FILE *file, lptmap map_aux)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga un mapa antiguo
+//  Load an old map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_read_old( M3D_info *m3d_aux )
@@ -3415,7 +3415,7 @@ debugprintf("map_read_old\n");
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga un mapa
+//  Load a map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_read(M3D_info *m3d_aux)
@@ -3546,7 +3546,7 @@ void map_read(M3D_info *m3d_aux)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga un mapa
+//  Load a map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_readedit(FILE *file, lptmap map_aux)
@@ -3595,13 +3595,13 @@ void map_readedit(FILE *file, lptmap map_aux)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Comprueba si existe una region en las coordenadas dadas
+//  Check whether a region exists at the given coordinates
 //═════════════════════════════════════════════════════════════════════════════
 
 int map_findregion(int x, int y, int discard_region)
 {
   int i,j;
-  int y0,y1;        // Coordenada Y inicial y final
+  int y0,y1;        // Initial and final Y coordinate
   int x0,x1,is_inside;
   int type=-1;
   int aux_region=-1;
@@ -3659,7 +3659,7 @@ int map_findregion(int x, int y, int discard_region)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Funcion que utiliza find_region
+//  Function used by find_region
 //═════════════════════════════════════════════════════════════════════════════
 
 void find_first_x(int xi,int y) {
@@ -3677,7 +3677,7 @@ void find_first_x(int xi,int y) {
     }
   }
 
-  // Se ha obtenido xmin, ahora se ha de contabilizar k1 y k2 actualizando t
+  // xmin has been obtained, now k1 and k2 must be counted, updating t
 
   if (xmin!=max_int) for (n=0;n<n_points-1;n++) {
     x0=polygon[n*2]; y0=polygon[n*2+1];
@@ -3696,13 +3696,13 @@ void find_first_x(int xi,int y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Comprueba si existe una region en las coordenadas dadas
+//  Check whether a region exists at the given coordinates
 //═════════════════════════════════════════════════════════════════════════════
 
 int map_findregion2(int x, int y, int discard_region)
 {
   int i;
-  int y0,y1;        // Coordenada Y inicial y final
+  int y0,y1;        // Initial and final Y coordinate
   int x0,is_inside;
   int type=-1;
   int aux_region=-1;
@@ -3741,7 +3741,7 @@ int map_findregion2(int x, int y, int discard_region)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Funcion que utiliza find_region
+//  Function used by find_region
 //═════════════════════════════════════════════════════════════════════════════
 
 void find_first_x2(int xi,int y,word *polygon) {
@@ -3759,7 +3759,7 @@ void find_first_x2(int xi,int y,word *polygon) {
     }
   }
 
-  // Se ha obtenido xmin, ahora se ha de contabilizar k1 y k2 actualizando t
+  // xmin has been obtained, now k1 and k2 must be counted, updating t
 
   if (xmin!=max_int) for (n=0;n<n_points-1;n++) {
     x0=polygon[n*2]; y0=polygon[n*2+1];
@@ -3778,7 +3778,7 @@ void find_first_x2(int xi,int y,word *polygon) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Ordena las regiones por profundidad (unas dentro de otras)
+//  Sort the regions by depth (some inside others)
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_sortregions(int free_polys)
@@ -3799,7 +3799,7 @@ void map_sortregions(int free_polys)
   }
 
   //---------------------------------------------------------------------------
-  // Calculamos el maximo numero de vertices de una region
+  // Compute the maximum number of vertices of a region
   //---------------------------------------------------------------------------
   if ((regions=(int *)malloc(my_map->num_walls*sizeof(int)))==NULL)
     return;
@@ -3880,7 +3880,7 @@ void map_sortregions(int free_polys)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Asigna el back_region a cada pared
+//  Assign the back_region to each wall
 //═════════════════════════════════════════════════════════════════════════════
 
 typedef struct type_walls {
@@ -3904,18 +3904,18 @@ void map_asignregions()
   map_sortregions(0);
 
   //---------------------------------------------------------------------------
-  // Crea la tabla muros (walls reales)
+  // Create the walls table (real walls)
   //---------------------------------------------------------------------------
 
   if ((walls=(lptwalls)malloc(my_map->num_walls*sizeof(twalls)))==NULL) {
     free(polys);
-    return; // OJO
+    return; // NOTE
   }
 
   memset(walls,0,my_map->num_walls*sizeof(twalls));
 
   for (i=0;i<my_map->num_walls;i++) {
-    //  Pongo todas las paredes en el mismo sentido
+    //  Make all walls face the same direction
     if (my_map->walls[i]->type>0) {
       aux=my_map->walls[i]->p1;
       my_map->walls[i]->p1=my_map->walls[i]->p2;
@@ -3945,20 +3945,20 @@ void map_asignregions()
   }
 
   //---------------------------------------------------------------------------
-  //  Asigno back_regions
+  //  Assign back_regions
   //---------------------------------------------------------------------------
   for (i=0;i<my_map->num_walls;i++) {
 
     if ((i&7)==0) Progress((char *)texts[441],i,control);
 
-    // Inicializo las texturas de pared (partes alta y baja)
+    // Initialize the wall textures (upper and lower parts)
     my_map->walls[i]->texture_top=0;
     my_map->walls[i]->texture_bot=0;
     my_map->walls[i]->back_region=-1;
     my_map->walls[i]->type=2;
 
     //-------------------------------------------------------------------------
-    // Si comparte vertices
+    // If it shares vertices
     //-------------------------------------------------------------------------
 
     if (walls[i].n) {
@@ -3972,7 +3972,7 @@ void map_asignregions()
               max_inside=walls[j].inside;
               walls[i].front=walls[j].front; //my_map->walls[j]->front_region;
 
-            } else if (walls[j].inside<min_inside) { // DANI (unificar texturas)
+            } else if (walls[j].inside<min_inside) { // DANI (unify textures)
 
               min_inside=walls[j].inside;
 
@@ -4013,7 +4013,7 @@ void map_asignregions()
               auxfade=my_map->walls[j]->fade;
               my_map->walls[i]->fade=auxfade;
 
-/*          // DANI (Pruebas a unificar bien texturas)
+/*          // DANI (Tests to properly unify textures)
               my_map->walls[i]->texture_top=my_map->walls[i]->texture;
               my_map->walls[i]->texture_bot=my_map->walls[i]->texture;
               my_map->walls[i]->texture=0;
@@ -4031,7 +4031,7 @@ void map_asignregions()
       }
     }
     //-------------------------------------------------------------------------
-    // Si no comparte vertices
+    // If it does not share vertices
     //-------------------------------------------------------------------------
     else if (walls[i].inside>1) {
       xm=(my_map->points[my_map->walls[i]->p1]->x+my_map->points[my_map->walls[i]->p2]->x)/2;
@@ -4042,7 +4042,7 @@ void map_asignregions()
 //      region_back=map_findregion(xm-scroll_x,ym-scroll_y,walls[i].front); //my_map->walls[i]->front_region);
 
       //-------------------------------------------------------------------------
-      // Si es interior
+      // If it is inside
       //-------------------------------------------------------------------------
       if (region_back!=-1) {
         my_map->walls[i]->texture_top=my_map->walls[i]->texture;
@@ -4065,7 +4065,7 @@ void map_asignregions()
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Calcula la bounding box del mapa
+//  Compute the bounding box of the map
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_boundingbox()
@@ -4091,7 +4091,7 @@ void map_boundingbox()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Reduce el mapa al tamaño dado
+//  Reduce the map to the given size
 //═════════════════════════════════════════════════════════════════════════════
 
 void map_reduce(int width, int height, char *buffer)

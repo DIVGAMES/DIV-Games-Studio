@@ -1,8 +1,8 @@
-// *** OJO *** Que el usuario pueda determinar de alguna forma imem_max
-//             (o bien el número de procesos máximo)
+// *** NOTE *** Let the user determine imem_max somehow
+//             (or rather the maximum number of processes)
 
 //═════════════════════════════════════════════════════════════════════════════
-// Librerias utilizadas
+// Libraries used
 //═════════════════════════════════════════════════════════════════════════════
 
 #define DEFINE_HERE
@@ -52,7 +52,7 @@ int trace_program=0;
 int old_dump_type;
 int old_restore_type;
 
-int last_key_check,key_check,last_joy_check,joy_check; // Llamar al screensaver
+int last_key_check,key_check,last_joy_check,joy_check; // Call the screensaver
 int last_mou_check,mou_check;
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -86,7 +86,7 @@ void CNT_export(char *name,void *dir,int nparms)
 //═════════════════════════════════════════════════════════════════════════════
 
 //═════════════════════════════════════════════════════════════════════════════
-// Programa principal
+// Main program
 //═════════════════════════════════════════════════════════════════════════════
 int splashtime=5000;
 int oldticks = 0;
@@ -198,7 +198,7 @@ int main(int argc,char * argv[]) {
   
   #endif
   #else
-  vga_width=argc; // Para quitar un warning
+  vga_width=argc; // To remove a warning
   #endif
 
   
@@ -286,7 +286,7 @@ printf("exesize: %d datasize: %d exestart: %d datstart: %d filepos:%d\n ",exesiz
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Inicialización
+// Initialization
 //═════════════════════════════════════════════════════════════════════════════
 
 int _mouse_x,_mouse_y;
@@ -318,12 +318,12 @@ void initialization (void) {
     setup->master=15; setup->sound_fx=15; setup->cd_audio=15;
   }
 
-  iloc=mem[2];          // Inicio de la imagen de las variables locales
-  iloc_len=mem[6]+mem[5]; // Longitud de las locales (públicas y privadas)
-  iloc_pub_len=mem[6];	// Longitud de las variables locales públicas
+  iloc=mem[2];          // Start of the local variables image
+  iloc_len=mem[6]+mem[5]; // Length of the locals (public and private)
+  iloc_pub_len=mem[6];	// Length of the public local variables
   private_start=iloc_pub_len;
-  itxt=mem[7];          // Inicio de la zona de textos
-  imem=itxt+mem[8];     // Final de código, locales y textos (longitud del cmp)
+  itxt=mem[7];          // Start of the text area
+  imem=itxt+mem[8];     // End of code, locals and texts (length of the cmp)
 
   if (iloc_len&1) iloc_len++; if (!(imem&1)) imem++;
 
@@ -343,7 +343,7 @@ void initialization (void) {
 
 //  if((texts=(struct t_text *)malloc(sizeof(struct t_text)*max_texts))==NULL) exer(1);
 
-  // Crea los dos primeros procesos, init y main
+  // Create the first two processes, init and main
 
   processes=1; id_init=imem; imem+=iloc_len; id_start=id_end=imem;
 
@@ -399,7 +399,7 @@ void initialization (void) {
   mouse->y=vga_height/2;
   mouse->size=100;
 
-  for (n=0;n<10;n++) { // En un principio no hay sistema de scroll, ni de m7
+  for (n=0;n<10;n++) { // Initially there is no scroll system, nor m7
     (scroll+n)->z=512;
     (scroll+n)->ratio=200;
     (scroll+n)->region1=-1;
@@ -427,7 +427,7 @@ max_skips=2;
 
   skip_blit=0; skipped_blits=0;
 
-  init_sin_cos(); // Tablas de seno y coseno para el modo7
+  init_sin_cos(); // Sine and cosine tables for mode7
 
   #ifdef DEBUG
   init_debug(); new_palette=0; new_mode=0;
@@ -436,9 +436,9 @@ max_skips=2;
   init_blit();
 
 #ifdef DIVDLL
-  // DLL_3 Exportación de funciones y variables (para utilizarlas en las DLL)
+  // DLL_3 Export of functions and variables (to use them in DLLs)
 
-// Exportadas desde 'C'
+// Exported from 'C'
 // files
   DIV_export("div_fopen"  ,(void *)fopen  );
   DIV_export("div_fclose" ,(void *)fclose );
@@ -446,7 +446,7 @@ max_skips=2;
   DIV_export("div_free"   ,(void *)free);
   DIV_export("div_rand"   ,(void *)_random);
   DIV_export("div_text_out",(void *)text_out);
-// variables publicas
+// public variables
 
   DIV_export("stack",(void *)&opstack);
   DIV_export("sp",(void *)&sp);
@@ -496,7 +496,7 @@ max_skips=2;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Crea la tabla de cuadrados
+//  Create the table of squares
 //═════════════════════════════════════════════════════════════════════════════
 
 void create_squares(void) {
@@ -512,7 +512,7 @@ void create_squares(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Carga el font del systema
+//      Load the system font
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "06x08.h"
@@ -550,10 +550,10 @@ void system_font(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Intérprete del código generado
+// Interpreter of the generated code
 //═════════════════════════════════════════════════════════════════════════════
 
-int max,max_clock;        // Para procesar según _Priority y pintar según _Z
+int max,max_clock;        // To process according to _Priority and draw according to _Z
 extern int alt_x;
 void interpreter (void) {
 
@@ -568,7 +568,7 @@ void interpreter (void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Procesa el siguiente proceso
+// Process the next process
 //═════════════════════════════════════════════════════════════════════════════
 
 void exec_process(void) {
@@ -593,7 +593,7 @@ void exec_process(void) {
     mem[ide+_Executed]=1;
   } else {
 #ifdef NETLIB
-    net_receive(); // Recibe los paquetes justo antes de ejecutar el proceso
+    net_receive(); // Receive the packets right before executing the process
 #endif
     id=ide; ip=mem[id+_IP]; sp=64; opstack[64]=0;
 
@@ -826,7 +826,7 @@ printf("lext\n");
         #ifdef DEBUG
         for (ibreakpoint=0;ibreakpoint<max_breakpoint;ibreakpoint++)
           if (breakpoint[ibreakpoint].line>-1 && breakpoint[ibreakpoint].offset==ip-1) break;
-        if (ibreakpoint<max_breakpoint) { // Se llegó a un breakpoint
+        if (ibreakpoint<max_breakpoint) { // A breakpoint was reached
           mem[--ip]=breakpoint[ibreakpoint].code;
           breakpoint[ibreakpoint].line=-1;
           call_to_debug=1; process_stoped=id; return;
@@ -846,7 +846,7 @@ printf("lext\n");
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Procesa la siguiente instruccion del siguiente proceso
+// Process the next instruction of the next process
 //═════════════════════════════════════════════════════════════════════════════
 
 #ifdef DEBUG
@@ -871,7 +871,7 @@ void trace_process(void) {
     mem[ide+_Executed]=1;
   } else {
 #ifdef NETLIB
-    net_receive(); // Recibe los paquetes justo antes de ejecutar el proceso
+    net_receive(); // Receive the packets right before executing the process
 #endif
     id=ide; ip=mem[id+_IP]; sp=64; opstack[64]=0;
     continue_process:
@@ -1027,7 +1027,7 @@ printf("lext\n");
       case ldbg:
         for (ibreakpoint=0;ibreakpoint<max_breakpoint;ibreakpoint++)
           if (breakpoint[ibreakpoint].line>-1 && breakpoint[ibreakpoint].offset==ip-1) break;
-        if (ibreakpoint<max_breakpoint) { // Se llegó a un breakpoint
+        if (ibreakpoint<max_breakpoint) { // A breakpoint was reached
           mem[--ip]=breakpoint[ibreakpoint].code;
           breakpoint[ibreakpoint].line=-1;
         } call_to_debug=1; process_stoped=id; return;
@@ -1045,7 +1045,7 @@ printf("lext\n");
 #endif
 
 //═════════════════════════════════════════════════════════════════════════════
-// Inicia un frame, prepara variables vuelca y espera timer
+// Start a frame, prepare variables, dump and wait for the timer
 //═════════════════════════════════════════════════════════════════════════════
 
 float ffps=18.2;
@@ -1054,7 +1054,7 @@ void frame_start(void) {
 
   int n;
 
-  // Control del screen saver
+  // Screen saver control
 
   if (ss_status && ss_frame!=NULL) {
     if (get_clock()>ss_time_counter) {
@@ -1081,12 +1081,12 @@ void frame_start(void) {
     }
   }
 
-  // Elimina los procesos muertos
+  // Remove dead processes
 
   for (ide=id_start; ide<=id_end; ide+=iloc_len)
     if (mem[ide+_Status]==1) delete_process(ide);
 
-  // Si se está haciendo un fade lo continúa
+  // If a fade is in progress, continue it
 
   if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
     set_palette();
@@ -1115,7 +1115,7 @@ void frame_start(void) {
   
   read_key();
 
-  if (get_clock()>(fclock+iclock/3)) { // Permite comerse hasta un tercio del sgte frame
+  if (get_clock()>(fclock+iclock/3)) { // Allows eating up to a third of the next frame
     if (skipped_blits<max_skips) {
       skipped_blits++;
       skip_blit=1;
@@ -1126,21 +1126,21 @@ void frame_start(void) {
       skip_blit=0;
     }
   } else {
-    do { } while (get_clock()<(int)fclock); // Espera para no dar más de "n" fps
+    do { } while (get_clock()<(int)fclock); // Wait so as not to exceed "n" fps
     skipped_blits=0;
     skip_blit=0;
     fclock+=iclock;
   }
 
-  // Marca todos los procesos como no ejecutados
+  // Mark all processes as not executed
 
   for (ide=id_start; ide<=id_end; ide+=iloc_len) mem[ide+_Executed]=0;
 
-  // Fija la prioridad máxima, para ejecutar procesos según _Priority
+  // Set the maximum priority, to execute processes according to _Priority
 
-  id_old=id_start; // El siguiente a procesar
+  id_old=id_start; // The next one to process
 
-  // Posiciona las variables del ratón
+  // Position the mouse variables
 
 //  if (cbd.mouse_action) {
     readmouse();
@@ -1155,7 +1155,7 @@ void frame_start(void) {
   }
 */
 
-  // Lee el joystick
+  // Read the joystick
 
   if (joy_status==1 && joy_timeout>=6) {
     joy->button1=0; joy->button2=0;
@@ -1187,7 +1187,7 @@ void frame_start(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Finaliza un frame e imprime los gráficos
+// End a frame and print the graphics
 //═════════════════════════════════════════════════════════════════════════════
 
 void dprocess_active_palette(void);
@@ -1206,7 +1206,7 @@ void frame_end(void) {
   int mouse_x0,mouse_x1,mouse_y0,mouse_y1;
   int n,m7ide,scrollide,otheride;
 char buf[255];
-  // DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
+  // DLL_0 Read the breakpoints (whether from autoload or from import)
 
 #ifdef __EMSCRIPTEN__
 sprintf (buf, "$('#fps').text(\"FPS: %d/%d (max frameskip: %d)\");", fps,dfps,max_skips);
@@ -1216,7 +1216,7 @@ emscripten_run_script (buf);
     dll_loaded=1;
 
 #ifdef DIVDLL
-    // Los importa
+    // Import them
 
     set_video_mode        =(void (*)())DIV_import("set_video_mode"); //ok
     process_palette       =(void (*)())DIV_import("process_palette"); //ok
@@ -1244,7 +1244,7 @@ emscripten_run_script (buf);
 #endif
     ss_time_counter=get_clock()+ss_time;
 
-    // DLL_1 Aquí se llama a uno.
+    // DLL_1 One is called here.
 
     #ifdef DEBUG
     if (process_palette!=NULL)
@@ -1254,12 +1254,12 @@ emscripten_run_script (buf);
     #endif
   }
 
-  // Si el usuario modificó mouse.x o mouse.y, posiciona el ratón debidamente
+  // If the user modified mouse.x or mouse.y, position the mouse accordingly
   if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) set_mouse(mouse->x,mouse->y);
 
   if (!skip_blit) {
 //printf("Restore type: %d DUmp type: %d\n",restore_type,dump_type);
-    // *** OJO *** Restaura las zonas de copia fuera del scroll y del modo 7
+    // *** NOTE *** Restore the copy areas outside the scroll and mode 7
 
     if (restore_type==0 || restore_type==1) {
       if (!iscroll[0].on || iscroll[0].x || iscroll[0].y || iscroll[0].w!=vga_width || iscroll[0].h!=vga_height) {
@@ -1270,11 +1270,11 @@ emscripten_run_script (buf);
       }
     }
 
-    // Pinta los sprites, por orden de _Z (a mayor z se pinta antes)
+    // Draw the sprites, in _Z order (higher z is drawn first)
 
     for (ide=id_start; ide<=id_end; ide+=iloc_len) {
-      mem[ide+_Executed]=0; // Sin ejecutar
-      mem[ide+_x1]=-1; // Sin región de volcado
+      mem[ide+_Executed]=0; // Not executed
+      mem[ide+_x1]=-1; // No dump region
     }
 
     for (n=0;n<10;n++) { im7[n].painted=0; iscroll[n].painted=0; }
@@ -1304,7 +1304,7 @@ emscripten_run_script (buf);
       	  draw_texts(); drawn_texts=1;
       	} else if (otheride==2) {
           readmouse();
-//      	  if (cbd.mouse_action) { // Para evitar retardos (en lo posible)
+//      	  if (cbd.mouse_action) { // To avoid delays (as far as possible)
 //      	    _mouse_x=mouse->x=cbd.mouse_cx>>1;
 //      	    _mouse_y=mouse->y=cbd.mouse_dx;
 //      	    mouse->left=(cbd.mouse_bx&1);
@@ -1313,7 +1313,7 @@ emscripten_run_script (buf);
 //      	    cbd.mouse_action=0;
 //            ss_time_counter=get_clock()+ss_time;
 //          }
-          x1s=-1; v_function=-1; // No se producen errores
+          x1s=-1; v_function=-1; // No errors are produced
           put_sprite(mouse->file,mouse->graph,mouse->x,mouse->y,mouse->angle,mouse->size,mouse->flags,mouse->region,copy_buffer,vga_width,vga_height);
           mouse_x0=x0s;mouse_x1=x1s;mouse_y0=y0s;mouse_y1=y1s; mouse_drawn=1;
       	}
@@ -1347,7 +1347,7 @@ emscripten_run_script (buf);
 
         blit_full=0;
 
-        // Añade los volcados de este frame a los restore del anterior
+        // Add this frame's dumps to the previous frame's restores
 
         for (n=id_start; n<=id_end; n+=iloc_len)
           if (mem[n+_x1]!=-1) blit_partial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
@@ -1359,13 +1359,13 @@ emscripten_run_script (buf);
         for (n=0;n<max_texts;n++) if (texts[n].font && texts[n].w)
             blit_partial(texts[n].x0,texts[n].y0,texts[n].w,texts[n].h);
 
-        // Realiza un volcado parcial
+        // Perform a partial dump
 
         blit_screen(copy_buffer);
 
       }
 
-      if (dump_type==0 || restore_type==0) { // Fija los restore para el siguiente frame
+      if (dump_type==0 || restore_type==0) { // Set the restores for the next frame
 
         for (n=id_start; n<=id_end; n+=iloc_len)
           if (mem[n+_x1]!=-1) blit_partial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
@@ -1385,7 +1385,7 @@ emscripten_run_script (buf);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Elimina un proceso
+// Remove a process
 //═════════════════════════════════════════════════════════════════════════════
 
 void delete_process(int id) {
@@ -1409,7 +1409,7 @@ void delete_process(int id) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Finalización
+// Shutdown
 //═════════════════════════════════════════════════════════════════════════════
 
 void finalization (void) {
@@ -1437,7 +1437,7 @@ void finalization (void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Error de ejecución
+// Execution error
 //═════════════════════════════════════════════════════════════════════════════
 
 void exer(int e) {
@@ -1486,7 +1486,7 @@ void exer(int e) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Mensajes de error - Versión con debugger
+//      Error messages - Version with debugger
 //════════════════════════════════════════════════════════════════════════════
 
 char * fname[]={

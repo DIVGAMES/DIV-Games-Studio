@@ -5,14 +5,14 @@
 #include "global.hpp"
 
 typedef struct {
-    float       cx,cy,cz;           // Coordenadas de la camara.
-    float       cangx,cangy,cangz;  // Angulos de la camara.
-    tmatrix     cmatrix;            // Matriz de la camara.
-    int         width;              // Ancho del buffer
-    int         height;               // Alto del buffer
-    char        *buffer;            // Buffer de volcado
-    float       projection_x;       // Tipo de lente.
-    float       projection_y;       // Tipo de lente.
+    float       cx,cy,cz;           // Camera coordinates.
+    float       cangx,cangy,cangz;  // Camera angles.
+    tmatrix     cmatrix;            // Camera matrix.
+    int         width;              // Buffer width
+    int         height;               // Buffer height
+    char        *buffer;            // Dump buffer
+    float       projection_x;       // Lens type.
+    float       projection_y;       // Lens type.
 
     int   nTexturesLoad;
     lptexturebuffer texturesload[256];

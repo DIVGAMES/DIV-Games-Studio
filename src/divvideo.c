@@ -33,7 +33,7 @@ void blitsdl(byte *p);
 #define SC_INDEX        0x3c4   //Sequence Controller Index
 #define MISC_OUTPUT     0x3c2   //Miscellaneous Output register
 
-//byte * vga = (byte *) 0xA0000; // Pantalla fisica
+//byte * vga = (byte *) 0xA0000; // Physical screen
 
 SDL_Surface *vga;
 #ifdef SDL2
@@ -84,7 +84,7 @@ int nothing(SDL_Surface *surface) {
 
 #define MAX_YRES 2048
 
-static short scan[MAX_YRES*4]; // Por scan [x,an,x,an] se definen hasta 2 segmentos a volcar
+static short scan[MAX_YRES*4]; // Per scan [x,w,x,w] up to 2 segments to dump are defined
 
 struct {
   byte dot;
@@ -146,7 +146,7 @@ void set_dac(byte *_dac) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Set Video Mode (vga_width y vga_height se definen en shared.h)
+//      Set Video Mode (vga_width and vga_height are defined in shared.h)
 //═════════════════════════════════════════════════════════════════════════════
 
 int LinearMode;
@@ -309,7 +309,7 @@ SDL_setFramerate(&fpsman, 60);
     default: error=1; break;
   }
 
-  // OJO!, esto provoca que, en equipos sin VESA, se vea en "320x200 BIG"
+  // NOTE!, this causes that, on machines without VESA, it is shown in "320x200 BIG"
 
   if (error) {
     vesamode=0;
@@ -761,7 +761,7 @@ void blitcsvga(byte *p) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Volcado en un modo-x
+//      Dump in a mode-x
 //═════════════════════════════════════════════════════════════════════════════
 
 void blitpx(byte * p) {
@@ -807,7 +807,7 @@ void blitcx(byte * p) {
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Subrutinas de volcado genéricas
+//      Generic dump subroutines
 //═════════════════════════════════════════════════════════════════════════════
 
 void vgacpy(byte * q, byte * p, int n) {
@@ -845,59 +845,59 @@ void blit_partial(int x,int y,int w,int h) {
 
     if (!vesamode) {
       switch(vga_width*1000+vga_height) {
-        case 320240: case 320400: case 360240: case 360360: case 376282: // Modos X
+        case 320240: case 320400: case 360240: case 360360: case 376282: // X modes
           x>>=2; xmax>>=2; w=xmax-x+1; break;
       }
     }
 
     while (y<=ymax) { n=y*4;
-      if (scan[n+1]==0) {         // Caso 1, el scan estaba vacío ...
+      if (scan[n+1]==0) {         // Case 1, the scan was empty ...
         scan[n]=x; scan[n+1]=w;
-      } else if (scan[n+3]==0) {  // Caso 2, ya hay un scan definido ...
-        if (x>scan[n]+scan[n+1] || x+w<scan[n]) { // ... hueco entre medias
+      } else if (scan[n+3]==0) {  // Case 2, there is already a scan defined ...
+        if (x>scan[n]+scan[n+1] || x+w<scan[n]) { // ... gap in between
           if (x>scan[n]) {
             scan[n+2]=x; scan[n+3]=w;
           } else {
             scan[n+2]=scan[n]; scan[n+3]=scan[n+1];
             scan[n]=x; scan[n+1]=w;
           }
-        } else { // ... no hay hueco, amplia el primer scan
+        } else { // ... there is no gap, extend the first scan
           if (x<(x2=scan[n])) scan[n]=x;
           if (x+w>x2+scan[n+1]) scan[n+1]=x+w-scan[n];
           else scan[n+1]=x2+scan[n+1]-scan[n];
         }
-      } else {                    // Caso 3, hay 2 scanes definidos ...
+      } else {                    // Case 3, there are 2 scans defined ...
         if (x<=scan[n]+scan[n+1] && x+w>=scan[n+2]) {
-          // Caso 3.1, se tapa el hueco anterior -> queda un solo scan
+          // Case 3.1, the previous gap is covered -> a single scan is left
           if (x<scan[n]) scan[n]=x;
           if (x+w>scan[n+2]+scan[n+3]) scan[n+1]=x+w-scan[n]; else scan[n+1]=scan[n+2]+scan[n+3]-scan[n];
           scan[n+2]=0; scan[n+3]=0;
         } else {
-          if (x>scan[n]+scan[n+1] || x+w<scan[n]) { // No choca con 1º
-            if (x>scan[n+2]+scan[n+3] || x+w<scan[n+2]) { // No choca con 2º
-              // Caso 3.4, el nuevo no colisiona con ninguno, se calcula el espacio
-              // hasta ambos, y se fusiona con el más cercano
+          if (x>scan[n]+scan[n+1] || x+w<scan[n]) { // Does not collide with the 1st
+            if (x>scan[n+2]+scan[n+3] || x+w<scan[n+2]) { // Does not collide with the 2nd
+              // Case 3.4, the new one does not collide with any, the space up to both
+              // is computed, and it is merged with the closest one
               if (x+w<scan[n]) d1=scan[n]-(x+w); else d1=x-(scan[n]+scan[n+1]);
               if (x+w<scan[n+2]) d2=scan[n+2]-(x+w); else d2=x-(scan[n+2]+scan[n+3]);
               if (d1<=d2) {
-                // Caso 3.4.1 se fusiona con el primero
+                // Case 3.4.1 it is merged with the first one
                 if (x<(x2=scan[n])) scan[n]=x;
                 if (x+w>x2+scan[n+1]) scan[n+1]=x+w-scan[n];
                 else scan[n+1]=x2+scan[n+1]-scan[n];
               } else {
-                // Caso 3.4.2 se fusiona con el segundo
+                // Case 3.4.2 it is merged with the second one
                 if (x<(x2=scan[n+2])) scan[n+2]=x;
                 if (x+w>x2+scan[n+3]) scan[n+3]=x+w-scan[n+2];
                 else scan[n+3]=x2+scan[n+3]-scan[n+2];
               }
             } else {
-              // Caso 3.3, el nuevo colisiona con el 2º, se fusionan
+              // Case 3.3, the new one collides with the 2nd, they are merged
               if (x<(x2=scan[n+2])) scan[n+2]=x;
               if (x+w>x2+scan[n+3]) scan[n+3]=x+w-scan[n+2];
               else scan[n+3]=x2+scan[n+3]-scan[n+2];
             }
           } else {
-            // Caso 3.2, el nuevo colisiona con el 1º, se fusionan
+            // Case 3.2, the new one collides with the 1st, they are merged
             if (x<(x2=scan[n])) scan[n]=x;
             if (x+w>x2+scan[n+1]) scan[n+1]=x+w-scan[n];
             else scan[n+1]=x2+scan[n+1]-scan[n];

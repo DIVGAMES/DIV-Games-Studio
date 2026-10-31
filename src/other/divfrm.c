@@ -1,15 +1,15 @@
 
-// Este es el compilador con el código que tenia para auto-formatear el listado
-// (ver #define formato), por si se quiere implementar un auto-formateador de
-// código, eso sí, de forma separada al compilador normal (divc.cpp)
+// This is the compiler with the code I had to auto-format the listing
+// (see #define formato), in case a code auto-formatter is wanted,
+// but separate from the normal compiler (divc.cpp)
 
-// Este código es para ver únicamente la implementacion de la idea del auto-
-// formateador, pero se debe partir del código del compilador actual, ya que
-// este probablemente esté obsoleto.
+// This code is only to see the implementation of the auto-formatter
+// idea, but you should start from the current compiler code, since
+// this one is probably obsolete.
 
-#define listings // Para generar los listados de objetos y EML (LST/TAB/EML)
+#define listings // To generate the object and EML listings (LST/TAB/EML)
 
-#define format  // Listado fuente formateado (DIV.FRM)
+#define format  // Formatted source listing (DIV.FRM)
 
 
 void delete_code(void);
@@ -64,7 +64,7 @@ void add_code(int dir, int param, int op);
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      DIV - Compilador Interno
+//      DIV - Internal Compiler
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -72,44 +72,44 @@ void add_code(int dir, int param, int op);
 #include "zlib.h"
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Constantes
+//      Constants
 //═════════════════════════════════════════════════════════════════════════════
 
-#define version "0c44a" //Versión del compilador
+#define version "0c44a" //Compiler version
 
-//#define max_obj 4096    //Límite máximo de objetos del compilador
-//#define long_med_id 16  //Longitud media de los identificadores (+4+4+1)
+//#define max_obj 4096    //Maximum object limit of the compiler
+//#define long_med_id 16  //Average length of the identifiers (+4+4+1)
 
-#define max_obj 550     //El malvado tiene 456 y el fostiator 438 ...
-#define long_med_id 20  //Longitud media de los identificadores (+4+4+1)
+#define max_obj 550     //The nasty one has 456 and the fostiator 438 ...
+#define long_med_id 20  //Average length of the identifiers (+4+4+1)
 
-#define max_nodes 128   //Máximo número de nodos del léxico para símbolos
-#define max_exp 512     //Máximo número de elementos en una expresión
-#define long_header 9   //Longitud de la cabecera al inicio de los programas
-#define long_stack 2048  //Longitud de la pila en ejecución
+#define max_nodes 128   //Maximum number of lexer nodes for symbols
+#define max_exp 512     //Maximum number of elements in an expression
+#define long_header 9   //Length of the header at the start of the programs
+#define long_stack 2048  //Length of the execution stack
 
 #define default_buffer    16384
 #define security_distance 1024
 #define buffer_grow       16384
 
-#define cr 13           //Retorno de carro
-#define lf 10           //Salto de linea
-#define tab 9           //Tabulación
+#define cr 13           //Carriage return
+#define lf 10           //Line feed
+#define tab 9           //Tab
 
 //═════════════════════════════════════════════════════════════════════════════
 
-#define l_err 0         //Valores de lex_case, si no son punteros a lex_sym
-#define l_cr  1         //Fin de linea (l_err Carácter no esperado)
-#define l_id  2         //Identificador o palabra reservada
-#define l_spc 3         //Espacios y tabulaciones
+#define l_err 0         //Values of lex_case, if they are not pointers to lex_sym
+#define l_cr  1         //End of line (l_err Unexpected character)
+#define l_id  2         //Identifier or reserved word
+#define l_spc 3         //Spaces and tabs
 #define l_lit 4         //Literal
-#define l_num 5         //Constante numérica
+#define l_num 5         //Numeric constant
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Valores sintácticos o tokens (pieza)
+//      Syntactic values or tokens (piece)
 //═════════════════════════════════════════════════════════════════════════════
 
-#define p_last        0x00 //Fin de fichero <EOF>
+#define p_last        0x00 //End of file <EOF>
 
 #define p_program       0x01
 #define p_const         0x02
@@ -227,9 +227,9 @@ void add_code(int dir, int param, int op);
 #define p_shr_assign      0x73
 #define p_shl_assign      0x74
 
-#define p_start_rem       0x7d //Inicio comentario
-#define p_end_rem       0x7e //Fin comentario
-#define p_rem           0x7f //Comentario de una linea
+#define p_start_rem       0x7d //Comment start
+#define p_end_rem       0x7e //Comment end
+#define p_rem           0x7f //Single-line comment
 
 #define p_streq        0xc0
 #define p_strneq        0xc1
@@ -282,13 +282,13 @@ void add_code(int dir, int param, int op);
 
 #define p_pointerbyte   0xf7
 
-#define p_lit           0xfc //Puntero al literal (txt) en piece_num
-#define p_id            0xfd //o es un ptr a vnom (a un ptr al objeto)
-#define p_num           0xfe //Número en piece_num
+#define p_lit           0xfc //Pointer to the literal (txt) in piece_num
+#define p_id            0xfd //or it is a ptr to vnom (to a ptr to the object)
+#define p_num           0xfe //Number in piece_num
 
 //═════════════════════════════════════════════════════════════════════════════
 
-#define tnone   0       // Tipos de objetos en obj[]
+#define tnone   0       // Object types in obj[]
 #define tcons   1
 #define tvglo   2
 #define ttglo   3
@@ -300,7 +300,7 @@ void add_code(int dir, int param, int op);
 #define tfunc   9
 #define tsglo   10
 #define tsloc   11
-#define tfext   12      // Función de una librería externa
+#define tfext   12      // Function from an external library
 
 #define tbglo   13      // Byte global
 #define twglo   14
@@ -309,82 +309,82 @@ void add_code(int dir, int param, int op);
 
 //═════════════════════════════════════════════════════════════════════════════
 
-#define econs   0       // Constante          // Tipos de elementos en tabexp[]
-#define eoper   1       // Operador
-#define erange  2       // Comprobación de rango
-#define ewhoami 3       // Identificador de proceso
-#define ecall   4       // Creación de un proceso
-#define efunc   5       // Llamada a una función interna
-#define efext   6       // Llamada a una función externa
-#define echeck  7       // Comprobación de validez de un identificador
-#define estring 8       // Cadena de texto (su offset constante)
+#define econs   0       // Constant           // Types of elements in tabexp[]
+#define eoper   1       // Operator
+#define erange  2       // Range check
+#define ewhoami 3       // Process identifier
+#define ecall   4       // Creation of a process
+#define efunc   5       // Call to an internal function
+#define efext   6       // Call to an external function
+#define echeck  7       // Validity check of an identifier
+#define estring 8       // Text string (its constant offset)
 
 //═════════════════════════════════════════════════════════════════════════════
 
-//─Mnemónico─Códg.─Operandos (Generación de código EML, "*" ­ "aún no usado")
+//─Mnemonic──Code──Operands (EML code generation, "*" = "not used yet")
 
-#define lnop  0 // *            No operación
-#define lcar  1 // valor        Carga una constante en pila
-#define lasi  2 //              Saca valor, offset y mete el valor en [offset]
-#define lori  3 //              Or lógico
-#define lxor  4 //              Xor, or exclusivo
-#define land  5 //              And lógico, operador sobre condiciones
-#define ligu  6 //              Igual, operador logico de comparación
-#define ldis  7 //              Distinto, true si los 2 valores son diferentes
-#define lmay  8 //              Mayor, comparación con signo
-#define lmen  9 //              Menor, idem
-#define lmei 10 //              Menor o igual
-#define lmai 11 //              Mayor o igual
-#define ladd 12 //              Suma dos constantes
-#define lsub 13 //              Resta, operación binaria
-#define lmul 14 //              Multiplicación
-#define ldiv 15 //              División de enteros
-#define lmod 16 //              Módulo, resto de la división
-#define lneg 17 //              Negación, cambia de signo una constante
-#define lptr 18 //              Pointer, saca offset y mete [offset]
-#define lnot 19 //              Negación binaria, bit a bit
-#define laid 20 //              Suma id a la constante de la pila
-#define lcid 21 //              Carga id en la pila
-#define lrng 22 // rango        Realiza una comparación de rango
-#define ljmp 23 // offset       Salta a una dirección de mem[]
-#define ljpf 24 // offset       Salta si un valor es falso a una dirección
-#define lfun 25 // código       Llamada a un proceso interno, ej. signal()
-#define lcal 26 // offset       Crea un nuevo proceso en el programa
-#define lret 27 // num_params      Auto-eliminación del proceso
-#define lasp 28 //              Desecha un valor apilado
-#define lfrm 29 // num_params      Detiene por este frame la ejecución del proceso
-#define lcbp 30 // num_params      Inicializa el puntero a los parámetros locales
-#define lcpa 31 //              Saca offset, lee parámetro [offset] y bp++
-#define ltyp 32 // bloque       Define el tipo de proceso actual (colisiones)
-#define lpri 33 // offset       Salta a la dirección, y carga var. privadas
-#define lcse 34 // offset       Si switch <> expresión, salta al offset
-#define lcsr 35 // offset       Si switch no esta en el rango, salta al offset
-#define lshr 36 //              Rotacion a la derecha (modo C, >>)
-#define lshl 37 //              Rotacion a la izquierda (modo C, <<)
-#define lipt 38 //              Incremento y pointer
-#define lpti 39 //              Pointer e incremento
-#define ldpt 40 //              Decremento y pointer
-#define lptd 41 //              Pointer y decremento
-#define lada 42 //              Add-asignación
-#define lsua 43 //              Sub-asignación
-#define lmua 44 //              Mul-asignación
-#define ldia 45 //              Div-asignación
-#define lmoa 46 //              Mod-asignación
-#define lana 47 //              And-asignación
-#define lora 48 //              Or-asignación
-#define lxoa 49 //              Xor-asignación
-#define lsra 50 //              Shr-asignación
-#define lsla 51 //              Shl-asignación
-#define lpar 52 // num_par_pri  Define el número de parámetros privados
-#define lrtf 53 // num_params      Auto-eliminación del proceso, devuelve un valor
-#define lclo 54 // offset       Crea un clon del proceso actual
-#define lfrf 55 // num_params      Pseudo-Frame (frame a un porcentaje, frame(100)==frame)
-#define limp 56 // offset text  Importa una DLL externa
-#define lext 57 // código       Llama a una función externa
-#define lchk 58 //              Comprueba la validez de un identificador
-#define ldbg 59 //              Invoca al debugger
+#define lnop  0 // *            No operation
+#define lcar  1 // value        Load a constant onto the stack
+#define lasi  2 //              Pop value, offset and put the value into [offset]
+#define lori  3 //              Logical or
+#define lxor  4 //              Xor, exclusive or
+#define land  5 //              Logical and, operator on conditions
+#define ligu  6 //              Equal, logical comparison operator
+#define ldis  7 //              Not equal, true if the 2 values are different
+#define lmay  8 //              Greater than, signed comparison
+#define lmen  9 //              Less than, ditto
+#define lmei 10 //              Less than or equal
+#define lmai 11 //              Greater than or equal
+#define ladd 12 //              Add two constants
+#define lsub 13 //              Subtraction, binary operation
+#define lmul 14 //              Multiplication
+#define ldiv 15 //              Integer division
+#define lmod 16 //              Modulo, remainder of the division
+#define lneg 17 //              Negation, changes the sign of a constant
+#define lptr 18 //              Pointer, pop offset and push [offset]
+#define lnot 19 //              Binary negation, bitwise
+#define laid 20 //              Add id to the constant on the stack
+#define lcid 21 //              Load id onto the stack
+#define lrng 22 // range        Perform a range comparison
+#define ljmp 23 // offset       Jump to an address in mem[]
+#define ljpf 24 // offset       Jump to an address if a value is false
+#define lfun 25 // code         Call to an internal process, e.g. signal()
+#define lcal 26 // offset       Create a new process in the program
+#define lret 27 // num_params      Self-removal of the process
+#define lasp 28 //              Discard a stacked value
+#define lfrm 29 // num_params      Stop the execution of the process for this frame
+#define lcbp 30 // num_params      Initialize the pointer to the local parameters
+#define lcpa 31 //              Pop offset, read parameter [offset] and bp++
+#define ltyp 32 // block        Define the type of the current process (collisions)
+#define lpri 33 // offset       Jump to the address, and load private vars.
+#define lcse 34 // offset       If switch <> expression, jump to the offset
+#define lcsr 35 // offset       If switch is not in the range, jump to the offset
+#define lshr 36 //              Rotate right (C mode, >>)
+#define lshl 37 //              Rotate left (C mode, <<)
+#define lipt 38 //              Increment and pointer
+#define lpti 39 //              Pointer and increment
+#define ldpt 40 //              Decrement and pointer
+#define lptd 41 //              Pointer and decrement
+#define lada 42 //              Add-assignment
+#define lsua 43 //              Sub-assignment
+#define lmua 44 //              Mul-assignment
+#define ldia 45 //              Div-assignment
+#define lmoa 46 //              Mod-assignment
+#define lana 47 //              And-assignment
+#define lora 48 //              Or-assignment
+#define lxoa 49 //              Xor-assignment
+#define lsra 50 //              Shr-assignment
+#define lsla 51 //              Shl-assignment
+#define lpar 52 // num_par_pri  Define the number of private parameters
+#define lrtf 53 // num_params      Self-removal of the process, returns a value
+#define lclo 54 // offset       Create a clone of the current process
+#define lfrf 55 // num_params      Pseudo-Frame (frame at a percentage, frame(100)==frame)
+#define limp 56 // offset text  Import an external DLL
+#define lext 57 // code         Call an external function
+#define lchk 58 //              Check the validity of an identifier
+#define ldbg 59 //              Invoke the debugger
 
-// Instrucciones añadidas para la optimización (DIV 2.0)
+// Instructions added for optimization (DIV 2.0)
 
 #define lcar2 60
 #define lcar3 61
@@ -405,65 +405,65 @@ void add_code(int dir, int param, int op);
 #define lcarsub 76
 #define lcardiv 77
 
-// Instrucciones añadidas para el manejo de caracteres
+// Instructions added for character handling
 
-#define lptrchr 78  // Pointer, saca (index, offset) y mete [offset+byte index]
-#define lasichr 79  // Saca (valor, index, offset) y mete el valor en [offset+byte index]
-#define liptchr 80  // Incremento y pointer
-#define lptichr 81  // Pointer e incremento
-#define ldptchr 82  // Decremento y pointer
-#define lptdchr 83  // Pointer y decremento
-#define ladachr 84  // Add-asignación
-#define lsuachr 85  // Sub-asignación
-#define lmuachr 86  // Mul-asignación
-#define ldiachr 87  // Div-asignación
-#define lmoachr 88  // Mod-asignación
-#define lanachr 89  // And-asignación
-#define lorachr 90  // Or-asignación
-#define lxoachr 91  // Xor-asignación
-#define lsrachr 92  // Shr-asignación
-#define lslachr 93  // Shl-asignación
-#define lcpachr 94  // Saca offset, lee parámetro [offset] y bp++
+#define lptrchr 78  // Pointer, pop (index, offset) and push [offset+byte index]
+#define lasichr 79  // Pop (value, index, offset) and put the value into [offset+byte index]
+#define liptchr 80  // Increment and pointer
+#define lptichr 81  // Pointer and increment
+#define ldptchr 82  // Decrement and pointer
+#define lptdchr 83  // Pointer and decrement
+#define ladachr 84  // Add-assignment
+#define lsuachr 85  // Sub-assignment
+#define lmuachr 86  // Mul-assignment
+#define ldiachr 87  // Div-assignment
+#define lmoachr 88  // Mod-assignment
+#define lanachr 89  // And-assignment
+#define lorachr 90  // Or-assignment
+#define lxoachr 91  // Xor-assignment
+#define lsrachr 92  // Shr-assignment
+#define lslachr 93  // Shl-assignment
+#define lcpachr 94  // Pop offset, read parameter [offset] and bp++
 
-// Instrucciones añadidas para el manejo de cadenas
+// Instructions added for string handling
 
-#define lstrcpy 95  // Saca si, di, y hace strcpy(mem[di],[si]) (deja di en pila)
-#define lstrfix 96  // Amplia una cadena antes de meter un char en ella
-#define lstrcat 97  // Concatena dos cadenas (opera como strcpy)
-#define lstradd 98  // Suma dos strings "en el aire" y deja en pila el puntero al aire
-#define lstrdec 99  // Añade o quita caracteres a una cadena
-#define lstrsub 100 // Quita caracteres a una cadena (-=)
-#define lstrlen 101 // Sustituye una cadena por su longitud
-#define lstrigu 102 // Comparacion de igualdad de dos cadenas
-#define lstrdis 103 // Cadenas distintas
-#define lstrmay 104 // Cadena mayor
-#define lstrmen 105 // Cadena menor
-#define lstrmei 106 // Cadena mayor o igual
-#define lstrmai 107 // Cadena menor o igual
-#define lcpastr 108 // Carga un parámetro en una cadena
+#define lstrcpy 95  // Pop si, di, and do strcpy(mem[di],[si]) (leaves di on the stack)
+#define lstrfix 96  // Extend a string before putting a char into it
+#define lstrcat 97  // Concatenate two strings (works like strcpy)
+#define lstradd 98  // Add two strings "in the air" and leave the pointer to the air on the stack
+#define lstrdec 99  // Add or remove characters to/from a string
+#define lstrsub 100 // Remove characters from a string (-=)
+#define lstrlen 101 // Replace a string with its length
+#define lstrigu 102 // Equality comparison of two strings
+#define lstrdis 103 // Different strings
+#define lstrmay 104 // Greater string
+#define lstrmen 105 // Lesser string
+#define lstrmei 106 // Greater or equal string
+#define lstrmai 107 // Lesser or equal string
+#define lcpastr 108 // Load a parameter into a string
 
-// Instrucciones añadidas para el manejo de Words
+// Instructions added for handling Words
 
-#define lptrwor 109 // Pointer, saca (index, offset) y mete [offset+byte index]
-#define lasiwor 110 // Saca (valor, index, offset) y mete el valor en [offset+byte index]
-#define liptwor 111 // Incremento y pointer
-#define lptiwor 112 // Pointer e incremento
-#define ldptwor 113 // Decremento y pointer
-#define lptdwor 114 // Pointer y decremento
-#define ladawor 115 // Add-asignación
-#define lsuawor 116 // Sub-asignación
-#define lmuawor 117 // Mul-asignación
-#define ldiawor 118 // Div-asignación
-#define lmoawor 119 // Mod-asignación
-#define lanawor 120 // And-asignación
-#define lorawor 121 // Or-asignación
-#define lxoawor 122 // Xor-asignación
-#define lsrawor 123 // Shr-asignación
-#define lslawor 124 // Shl-asignación
-#define lcpawor 125 // Saca offset, lee parámetro [offset] y bp++
+#define lptrwor 109 // Pointer, pop (index, offset) and push [offset+byte index]
+#define lasiwor 110 // Pop (value, index, offset) and put the value into [offset+byte index]
+#define liptwor 111 // Increment and pointer
+#define lptiwor 112 // Pointer and increment
+#define ldptwor 113 // Decrement and pointer
+#define lptdwor 114 // Pointer and decrement
+#define ladawor 115 // Add-assignment
+#define lsuawor 116 // Sub-assignment
+#define lmuawor 117 // Mul-assignment
+#define ldiawor 118 // Div-assignment
+#define lmoawor 119 // Mod-assignment
+#define lanawor 120 // And-assignment
+#define lorawor 121 // Or-assignment
+#define lxoawor 122 // Xor-assignment
+#define lsrawor 123 // Shr-assignment
+#define lslawor 124 // Shl-assignment
+#define lcpawor 125 // Pop offset, read parameter [offset] and bp++
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Prototipos
+//      Prototypes
 //═════════════════════════════════════════════════════════════════════════════
 
 void c_error(word,word);
@@ -478,7 +478,7 @@ void expression(void);
 int constant(void);
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables globales del compilador
+//      Global variables of the compiler
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "div_stub.h"
@@ -505,92 +505,92 @@ FILE * div_open_file(char * file);
 
 //═════════════════════════════════════════════════════════════════════════════
 
-int old_line; // Situación en el fichero del token anterior al último leido
+int old_line; // Location in the file of the token before the last one read
 byte * old_ierror, * old_ierror_end;
 
-// El último token leido está en (linea,ierror,ierror_end)
+// The last token read is at (line,ierror,ierror_end)
 
 byte * last_line,zero=0;
 
 //═════════════════════════════════════════════════════════════════════════════
 
-// Informacion para EXEC.LIN (posicion en mem y fuente de cada sentencia)
+// Information for EXEC.LIN (position in mem and in the source of each statement)
 
-int start,final;     // Direcciones inicial y final de mem[] de la sentencia
-int line1,column1;  // Posicion en la que comienza la sentencia en el fuente
-int line2,column2;  // Posicion en la que acaba la sentencia en el fuente
+int start,final;     // Start and end addresses in mem[] of the statement
+int line1,column1;  // Position where the statement starts in the source
+int line2,column2;  // Position where the statement ends in the source
 
-void start_sentence(void);  // Fija inicio, line1, column1
-void end_sentence(void);   // Fija final, line2, column2
-void record_sentence(void);  // Guarda las seis variables en el fichero
+void start_sentence(void);  // Set start, line1, column1
+void end_sentence(void);   // Set end, line2, column2
+void record_sentence(void);  // Save the six variables to the file
 
 //═════════════════════════════════════════════════════════════════════════════
 
-// Tabla de objetos ───────────────────────────────── *iobj primer objeto libre
+// Object table ─────────────────────────────────────── *iobj first free object
 
 struct object {
-  byte type;    // Tipo de objeto
-  byte used;   // Indica si el objeto ha sido usado antes de definirse
-  byte * name;  // Puntero al nombre, para algún listado
-  byte * ierror;// Puntero al código para determinar la columna si es necesario
-  int line_num;    // Línea de código fuente, para informar del error
-  struct object * previous; // Anterior objeto de igual nombre
-  struct object * block;   // Bloque de este proceso (0-global/local N-private)
-  struct object * member;   // Indica a que struct pertenece (0-n/a)
+  byte type;    // Object type
+  byte used;   // Tells whether the object has been used before being defined
+  byte * name;  // Pointer to the name, for some listing
+  byte * ierror;// Pointer to the code to determine the column if necessary
+  int line_num;    // Source code line, to report the error
+  struct object * previous; // Previous object with the same name
+  struct object * block;   // Block of this process (0-global/local N-private)
+  struct object * member;   // Tells which struct it belongs to (0-n/a)
   union {
-    struct {                                            // Constante
+    struct {                                            // Constant
       int value;
       int literal;                                      // 0-no, 1-si
     } cons;
     struct {                                            // Variable global
       int offset;
     } vglo;
-    struct {                                            // Tabla global
+    struct {                                            // Global table
       int offset;
-      int totalen;                                      // numero total de elementos
+      int totalen;                                      // total number of elements
       int len1,len2,len3;                               // len2/3==-1 si n/a
     } tglo;
     struct {                                            // Byte global
       int offset;
-      int totalen;                                      // numero total de elementos
+      int totalen;                                      // total number of elements
       int len1,len2,len3;                               // len2/3==-1 si n/a
     } bglo;
     struct {                                            // Word global
       int offset;
-      int totalen;                                      // numero total de elementos
+      int totalen;                                      // total number of elements
       int len1,len2,len3;                               // len2/3==-1 si n/a
     } wglo;
-    struct {                                            // Cadena (string) global
+    struct {                                            // Global string
       int offset;
-      int totalen;                                      // numero total de elementos
+      int totalen;                                      // total number of elements
     } cglo;
     struct {                                            // Struct global
       int offset;
-      int len_item;                                     // Número de campos
-      int totalitems;                                   // Numero total de registros
+      int len_item;                                     // Number of fields
+      int totalitems;                                   // Total number of records
       int items1,items2,items3;                         // -1 si n/a
     } sglo;
     struct {                                            // Variable local
       int offset;
     } vloc;
-    struct {                                            // Tabla local
+    struct {                                            // Local table
       int offset;
       int totalen;
       int len1,len2,len3;
     } tloc;
     struct {                                            // Byte local
       int offset;
-      int totalen;                                      // numero total de elementos
+      int totalen;                                      // total number of elements
       int len1,len2,len3;                               // len2/3==-1 si n/a
     } bloc;
     struct {                                            // Word local
       int offset;
-      int totalen;                                      // numero total de elementos
+      int totalen;                                      // total number of elements
       int len1,len2,len3;                               // len2/3==-1 si n/a
     } wloc;
-    struct {                                            // Cadena (string) local
+    struct {                                            // Local string
       int offset;
-      int totalen;                                      // numero total de elementos
+      int totalen;                                      // total number of elements
     } cloc;
     struct {                                            // Struct local
       int offset;
@@ -598,16 +598,16 @@ struct object {
       int totalitems;
       int items1,items2,items3;                         // -1 si n/a
     } sloc;
-    struct {                                            // Proceso
+    struct {                                            // Process
       struct object * block;
       int offset;
       int num_params;
     } proc;
-    struct {                                            // Funcion interna
+    struct {                                            // Internal function
       int code;
       int num_params;
     } func;
-    struct {                                            // Funcion externa
+    struct {                                            // External function
       int code;
       int num_params;
     } fext;
@@ -616,12 +616,12 @@ struct object {
 
 //═════════════════════════════════════════════════════════════════════════════
 
-byte * vnames=NULL; // Vector de nombres (cad_hash:int, pieza (o iobj):int, asciiz)
+byte * vnames=NULL; // Names vector (cad_hash:int, piece (or iobj):int, asciiz)
 union { byte*b; byte**p; } ivnames;
 
-byte * objects_start; // Para el crear listado de la tabla de objetos
+byte * objects_start; // To create the listing of the object table
 
-byte * vhash[256]; // Punteros al vector de nombres;
+byte * vhash[256]; // Pointers to the names vector;
 
 //═════════════════════════════════════════════════════════════════════════════
 
@@ -641,11 +641,11 @@ struct lex_ele { byte character;
        lex_sym[max_nodes], * ilex_sym, * lex_case[256];
 
 int piece, piece_num;
-struct object * o; // Cuando pieza=p_id, objeto de tipo (**o).tipo
-struct object * current_block; // Bloque que esta siendo analizado
-struct object * lexical_block; // Es 0 hasta las privadas del program
+struct object * o; // When piece=p_id, object of type (**o).type
+struct object * current_block; // Block being analyzed
+struct object * lexical_block; // It is 0 until the program's privates
 
-struct object * member; // !=0 al declarar/acceder un miembro de un struct
+struct object * member; // !=0 when declaring/accessing a member of a struct
 
 int line_num, num_nodes, obj_cnt;
 
@@ -655,7 +655,7 @@ int predefined_obj_count;
 
 int parameters;
 
-int remote_access; // Para no permitir id.private
+int remote_access; // To not allow id.private
 
 //═════════════════════════════════════════════════════════════════════════════
 
@@ -669,7 +669,7 @@ int itcont;
 
 //═════════════════════════════════════════════════════════════════════════════
 
-int opstack[long_stack+max_exp+64]; // cálculo de expresiones (compilación y ejecución)
+int opstack[long_stack+max_exp+64]; // expression evaluation (compilation and execution)
 
 int * mem_ory=NULL, * frm=NULL;
 int * mem=NULL, * loc=NULL;
@@ -679,15 +679,15 @@ int itxt, ifrm_max;
 
 byte * imemptr;
 
-int iloc_len; // final de las variables locales incluyendo las privadas
+int iloc_len; // end of the local variables including the private ones
 
-// mem[]        vector de memoria destino
-// imem         puntero para la generación de datos y código
-// imem_max     fin de la memoria destino (indice máximo de mem[])
-// iloc         inicio en mem[] de las variables locales (inicializadas)
-// iloc_len     longitud de las variables locales
+// mem[]        target memory vector
+// imem         pointer for data and code generation
+// imem_max     end of the target memory (maximum index of mem[])
+// iloc         start in mem[] of the local variables (initialized)
+// iloc_len     length of the local variables
 
-//───────────── Inserción en la tabla de expresiones, acceso a variables
+//───────────── Insertion into the expression table, variable access
 
 //vglo           &vglo ptr
 //tglo[_exp]     &tglo <_exp> add rng ptr
@@ -699,34 +699,34 @@ int iloc_len; // final de las variables locales incluyendo las privadas
 //proc.tloc[_exp] &proc ptr &tloc <_exp> add rng add ptr
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables relacionadas con el listado formateado
+//      Variables related to the formatted listing
 //═════════════════════════════════════════════════════════════════════════════
 
 #ifdef format
 
-FILE * ls;              // Handle para el listado formateado
-char t[1024];           // Buffer temporal para guardar los token
-char com[1024];         // Buffer temporal para guardar los comentarios online
-int type_t=0;           // Tipo del token (1 si necesita espaciado)
-int old_type_t=0;       // Tipo del último token
-int tabu=0;             // Número de tabulaciones actuales
-int n_cr=2;             // Nº de crlf seguidos
-int double_crlf=0;            // Indica cuando se debe emitir un crlf doble
+FILE * ls;              // Handle for the formatted listing
+char t[1024];           // Temporary buffer to store the tokens
+char com[1024];         // Temporary buffer to store the inline comments
+int type_t=0;           // Token type (1 if it needs spacing)
+int old_type_t=0;       // Type of the last token
+int tabu=0;             // Current number of tabs
+int n_cr=2;             // Number of consecutive crlf
+int double_crlf=0;            // Tells when a double crlf must be emitted
 
 #endif
 
-int comment=0;           // 0-Código, 1-Dentro de comentario, 2-Anidado, ...
-int convert=0;          // Indica si se deben generar ya los token en ls
+int comment=0;           // 0-Code, 1-Inside a comment, 2-Nested, ...
+int convert=0;          // Tells whether the tokens must already be generated in ls
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Información sobre los errores
+//      Information about the errors
 //═════════════════════════════════════════════════════════════════════════════
 
 int error_number=-1;
 int error_line;
 int error_column;
 
-int error_27=27;        // Para emitir "se esperaba una sentencia"
+int error_27=27;        // To emit "a statement was expected"
 
 //═════════════════════════════════════════════════════════════════════════════
 
@@ -734,14 +734,14 @@ int program_type=0;
 
 //═════════════════════════════════════════════════════════════════════════════
 
-struct {      // Peephole, "mirilla" para el optimizador
-  int dir;    // Dirección
-  int param;  // Indica si ese opcode tiene parámetro
+struct {      // Peephole, "sight" for the optimizer
+  int dir;    // Address
+  int param;  // Tells whether that opcode has a parameter
   int op;     // Opcode
-} code[16];   // En code[15] debe quedar siempre la última instrucción generada
+} code[16];   // code[15] must always hold the last generated instruction
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Inicialización del compilador
+//      Compiler initialization
 //═════════════════════════════════════════════════════════════════════════════
 
 #ifdef listings
@@ -754,7 +754,7 @@ FILE * linf; // EXEC.LIN
 FILE * lprg; // EXEC.PGM
 FILE * lins; // EXEC.INS
 
-FILE * def; // Para el analizador de "ltlex.def"
+FILE * def; // For the "ltlex.def" analyzer
 byte *_buf;
 
 void initialize_compiler(void) {
@@ -767,7 +767,7 @@ void finalize_compiler(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Prepara la compilacion para un programa
+//      Prepare the compilation of a program
 //═════════════════════════════════════════════════════════════════════════════
 
 void compilation_message(byte * p) {
@@ -831,7 +831,7 @@ void compile(void) {
 
   objects_start=ivnames.b;
 
-  // *** OJO *** Estos dos errores no son "memoria insuficiente"
+  // *** NOTE *** These two errors are not "insufficient memory"
 
   #ifdef listings
   if ((lst=fopen("div.lst","wt"))==NULL) c_error(0,0);
@@ -859,7 +859,7 @@ void compile(void) {
 
   imem=long_header;
 
-  preload_obj(); // No hay literales en los objetos precargados
+  preload_obj(); // There are no literals in the preloaded objects
 
   compilation_message(texts[200]);
 
@@ -870,7 +870,7 @@ void compile(void) {
   remote_access=0; parameters=0; line_num=1;
 
   itxt=start_texts=imem;
-  psyntactic(); // Para obtener "texts_length"
+  psyntactic(); // To obtain "texts_length"
   imem+=texts_length;
 
   test_buffer(&mem,&imem_max,imem);
@@ -894,12 +894,12 @@ void compile(void) {
   }
 
   mem[2]=imem;
-  mem[3]=max_process; // Antes long_header, ahora no se utiliza
-  mem[4]=0; // Antes mem[1]-mem[3] (long datos globales), ahora no se utiliza
+  mem[3]=max_process; // Formerly long_header, now unused
+  mem[4]=0; // Formerly mem[1]-mem[3] (global data length), now unused
   mem[5]=iloc_len-iloc;
   mem[6]=iloc;
-  mem[7]=0; // Antes imem+iloc (inicio textos), ahora no se utiliza
-  mem[8]=imem+iloc; // Número de elementos ocupados en mem[]
+  mem[7]=0; // Formerly imem+iloc (start of texts), now unused
+  mem[8]=imem+iloc; // Number of elements used in mem[]
 
   compilation_message(texts[204]);
 
@@ -926,7 +926,7 @@ void compile(void) {
       memcpy(p+(imem-9)*4,loc,iloc*4);
       n=(imem-9+iloc)*4;
       if (!compress(q,&m,p,n)) {
-        fwrite(&n,1,4,f); // mem[0]..mem[8],longitud_datos_descomp,datos comp...
+        fwrite(&n,1,4,f); // mem[0]..mem[8],uncompressed_data_length,compressed data...
         fwrite(q,1,m,f);
         free(q); free(p);
         fclose(f);
@@ -961,7 +961,7 @@ void compile(void) {
       memcpy(p+(imem-9)*4,loc,iloc*4);
       n=(imem-9+iloc)*4;
       if (!compress(q,&m,p,n)) {
-        fwrite(&n,1,4,f); // mem[0]..mem[8],longitud_datos_descomp,datos comp...
+        fwrite(&n,1,4,f); // mem[0]..mem[8],uncompressed_data_length,compressed data...
         fwrite(q,1,m,f);
         free(q); free(p);
         fclose(f);
@@ -1007,13 +1007,13 @@ void free_resources(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Errores internos del compilador
+//      Internal compiler errors
 //═════════════════════════════════════════════════════════════════════════════
 
 int _le,_t;
 byte *_ie;
 
-void save_error(word type) { // Guarda una posicion de error (de 0 .. 3)
+void save_error(word type) { // Save an error position (from 0 .. 3)
   switch(type) {
     case 0: _le=line_num; _ie=ierror; break;
     case 1: _le=old_line; _ie=old_ierror_end; break;
@@ -1022,11 +1022,11 @@ void save_error(word type) { // Guarda una posicion de error (de 0 .. 3)
   } _t=type;
 }
 
-// 0 - Inicio de la pieza actual
-// 1 - Final de la pieza anterior mas un espacio (si se puede)
-// 2 - Inicio de la pieza anterior
-// 3 - Final de la pieza anterior
-// 4 - Error guardado con save_error(0..3)
+// 0 - Start of the current piece
+// 1 - End of the previous piece plus one space (if possible)
+// 2 - Start of the previous piece
+// 3 - End of the previous piece
+// 4 - Error saved with save_error(0..3)
 
 void c_error(word type, word e) {
   int column=0;
@@ -1064,7 +1064,7 @@ void c_error(word type, word e) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Con el primer token leido guarda el inicio de una sentencia
+//  With the first token read, save the start of a statement
 //═════════════════════════════════════════════════════════════════════════════
 
 void start_sentence(void) {
@@ -1076,7 +1076,7 @@ void start_sentence(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Con el primer token que no es de la sentecia guarda el fin de una sentencia
+//  With the first token that is not part of the statement, save the end of a statement
 //═════════════════════════════════════════════════════════════════════════════
 
 void end_sentence(void) {
@@ -1088,7 +1088,7 @@ void end_sentence(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Guarda un registro (inicio,final,line1,...) en EXEC.LIN
+//  Save a record (start,end,line1,...) to EXEC.LIN
 //═════════════════════════════════════════════════════════════════════════════
 
 void record_sentence(void) {
@@ -1101,7 +1101,7 @@ void record_sentence(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Comprueba los límites de un buffer de generación de código
+//      Check the limits of a code generation buffer
 //═════════════════════════════════════════════════════════════════════════════
 
 void test_buffer(int * * buffer,int * maximum,int n) {
@@ -1121,7 +1121,7 @@ void test_buffer(int * * buffer,int * maximum,int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Precarga de las estructuras léxicas, analiza el fichero ltlex.def
+//      Preload of the lexical structures, parses the ltlex.def file
 //═════════════════════════════════════════════════════════════════════════════
 
 void analyze_ltlex(void){
@@ -1131,7 +1131,7 @@ void analyze_ltlex(void){
   struct lex_ele * e;
 
   int t; //token (piece)
-  byte h; //hash (para id)
+  byte h; //hash (for id)
   byte * _ivnames;
   byte * * ptr;
 
@@ -1157,14 +1157,14 @@ void analyze_ltlex(void){
       *buf=lower[*buf]; if (*buf>='0' && *buf<='9') t+=(*buf++-'0');
       else if (*buf>='a' && *buf<='f') t+=(*buf++-'a'+10); else c_error(0,2);
       if (*buf==cr || *buf==' ' || *buf==tab) break;
-      else if (lower[*buf]) {           //Analiza una palabra reservada
+      else if (lower[*buf]) {           //Parse a reserved word
         _ivnames=ivnames.b; *ivnames.p++=0; *ivnames.p++=(void*)t; h=0;
         while (*ivnames.b=lower[*buf++]) h=((byte)(h<<1)+(h>>7))^(*ivnames.b++);
         ptr=&vhash[h]; while (*ptr) ptr=(void *)*ptr; *ptr=_ivnames;
         buf--; ivnames.b++;
-      } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
+      } else if (t>=0x78 && t<=0x7b) {  //Parse a literal delimiter
         lex_case[*buf]=(void*)l_lit;
-      } else {                          //Analiza un nuevo símbolo
+      } else {                          //Parse a new symbol
         if ((e=lex_case[*buf])==0) {
           if (num_nodes++==max_nodes) c_error(0,3);
           e=lex_case[*buf]=ilex_sym++; (*e).character=*buf++;
@@ -1192,10 +1192,10 @@ void analyze_ltlex(void){
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Precarga de la tabla de objetos, analiza el fichero ltobj.def
+//      Preload of the object table, parses the ltobj.def file
 //═════════════════════════════════════════════════════════════════════════════
 
-//      OJO, en este proceso no se comprueban los límites de memoria
+//      NOTE, memory limits are not checked in this process
 
 void preload_obj (void) {
 
@@ -1336,14 +1336,14 @@ void preload_obj (void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Adivina cual será la siguiente pieza lexica leida (y donde estará)
+//  Guess what the next lexical piece read will be (and where it will be)
 //═════════════════════════════════════════════════════════════════════════════
 
 int next_piece;
 int next_line;
 byte * next_source;
 
-byte * next_lexer(byte * _source, int comment, int line_num) { // No genera nunca errores
+byte * next_lexer(byte * _source, int comment, int line_num) { // It never generates errors
 
   byte ** ptr, * _ivnames, h;
   struct lex_ele * e;
@@ -1405,17 +1405,17 @@ byte * next_lexer(byte * _source, int comment, int line_num) { // No genera nunc
       ivnames.b++; _source--;
       ptr=&vhash[h];
       while (*ptr && strcmp((byte *)(ptr+2),_ivnames+8)) ptr=(void*)*ptr;
-      if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id encontrado
-        ivnames.b=_ivnames; // lo saca de vnom
+      if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id found
+        ivnames.b=_ivnames; // takes it out of vnom
         next_piece=(int)*(ptr+1);
-        if (next_piece<256 && next_piece>=0) { // palabra reservada (token)
+        if (next_piece<256 && next_piece>=0) { // reserved word (token)
           if (next_piece==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
         } else { // object (id previous)
           next_piece=p_id;
         }
       } else {
-        ivnames.b=_ivnames; // lo saca de vnom
-        next_piece=p_id; // id nuevo
+        ivnames.b=_ivnames; // takes it out of vnom
+        next_piece=p_id; // new id
       } break;
 
     case l_spc:
@@ -1431,7 +1431,7 @@ byte * next_lexer(byte * _source, int comment, int line_num) { // No genera nunc
       next_piece=p_num;
       break;
 
-    default: // puntero a un lex_ele
+    default: // pointer to a lex_ele
       e=lex_case[*_source++]; next_piece=(*e).token; _ivnames=_source;
 
       while (e=(*e).next) {
@@ -1461,7 +1461,7 @@ byte * next_lexer(byte * _source, int comment, int line_num) { // No genera nunc
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Lexico ( reading a new piece of *source)
+//      Lexer (reads a new piece of *source)
 //═════════════════════════════════════════════════════════════════════════════
 
 void lexer(void) {
@@ -1535,9 +1535,9 @@ void lexer(void) {
       ptr=&vhash[h];
       while (*ptr && strcmp((byte *)(ptr+2),_ivnames+8)) ptr=(void*)*ptr;
       if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id found
-        ivnames.b=_ivnames; // lo saca de vnom
+        ivnames.b=_ivnames; // takes it out of vnom
         piece=(int)*(ptr+1);
-        if (piece<256 && piece>=0) { // palabra reservada (token)
+        if (piece<256 && piece>=0) { // reserved word (token)
 
           #ifdef format
 
@@ -1560,7 +1560,7 @@ void lexer(void) {
           ptr_o=(void*)(ptr+1); o=*ptr_o; piece=p_id;
           while(o!=NULL && ( ((*o).block && lexical_block!=(*o).block) ||
                              ((*o).member!=member) )) o=(*o).previous;
-          if(o==NULL) { // No encontrado
+          if(o==NULL) { // Not found
             o=iobj++; (*o).previous=*ptr_o; *ptr_o=o;
             (*o).name=(byte*)(ptr_o+1);
             (*o).member=member;
@@ -1571,7 +1571,7 @@ void lexer(void) {
           }
         }
       } else {
-        *ptr=_ivnames; ptr_o=(void*)(_ivnames+4); *ptr_o=o=iobj++; piece=p_id; // id nuevo
+        *ptr=_ivnames; ptr_o=(void*)(_ivnames+4); *ptr_o=o=iobj++; piece=p_id; // new id
         (*o).name=(byte*)_ivnames+8;
         (*o).member=member;
         if (parameters) (*o).block=current_block;
@@ -1583,7 +1583,7 @@ void lexer(void) {
 
     case l_lit:
       if (comment) { piece=p_rem; _source++; break; }
-      piece=p_lit; h=*_source; _ivnames=ivnames.b; // Literal entre dos h
+      piece=p_lit; h=*_source; _ivnames=ivnames.b; // Literal between two h
       #ifdef format
       t[0]=h;
       #endif
@@ -1672,7 +1672,7 @@ void lexer(void) {
       } while ((int)lex_case[*_source]==l_num);
       break;
 
-    default: // puntero a un lex_ele
+    default: // pointer to a lex_ele
 
       #ifdef format
       t[0]=*_source; t[1]=0;
@@ -1727,7 +1727,7 @@ void lexer(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Emite un token en el listado de salida
+//      Emit a token into the output listing
 //═════════════════════════════════════════════════════════════════════════════
 
 #ifdef format
@@ -1801,10 +1801,10 @@ void skip_semicolon(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Analisis sintáctico (dirige todo el proceso de compilación)
+//      Syntactic analysis (drives the whole compilation process)
 //═════════════════════════════════════════════════════════════════════════════
 
-int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­member
+int analyze_struct(int offstruct) { // after " struct id [ <const> ] " // id=member
   int len=0,dup,i,_itxt,_imem;
   struct object * ob;
   struct object * old_member,* member2;
@@ -1813,7 +1813,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
   while (piece==p_semicolon) lexer();
 
   while (piece!=p_end) {
-    if (piece==p_struct) {                              // Miembro struct ───
+    if (piece==p_struct) {                              // Struct member ────
       lexer(); if (piece!=p_id) c_error(1,110);
       old_member=member; member=ob=o;
       if ((*ob).type!=tnone) c_error(0,22); lexer();
@@ -1853,7 +1853,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
       member=old_member; lexer();
       while (piece==p_semicolon) lexer();
 
-    } else if (piece==p_string) {                     // Miembro cadena
+    } else if (piece==p_string) {                     // String member
 
       lexer(); if (piece!=p_id) c_error(1,125);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -1886,7 +1886,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
         mem[offstruct+len]=0xDAD00000|(*ob).cglo.totalen;
         strcpy((char*)&mem[offstruct+len+1],(char*)&mem[piece_num]);
         len+=1+((*ob).cglo.totalen+5)/4;
-        itxt=_itxt; // Saca la cadena del segmento de textos
+        itxt=_itxt; // Take the string out of the text segment
         lexer();
       } else {
         test_buffer(&mem,&imem_max,offstruct+len);
@@ -1899,7 +1899,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
         while (piece==p_semicolon || piece==p_comma) lexer();
       }
 
-    } else if (piece==p_byte) {                         // Miembro byte ───
+    } else if (piece==p_byte) {                         // Byte member ────
 
       lexer(); if (piece!=p_id) c_error(1,142);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -1955,7 +1955,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
         while (piece==p_semicolon || piece==p_comma) lexer();
       }
 
-    } else if (piece==p_word) {                         // Miembro word ───
+    } else if (piece==p_word) {                         // Word member ────
 
       lexer(); if (piece!=p_id) c_error(1,145);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -2014,7 +2014,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
     } else if (piece==p_id) {
 
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
-      if (piece==p_lbracket) { lexer();                   // Miembro tabla ───
+      if (piece==p_lbracket) { lexer();                   // Table member ────
         (*ob).type=ttglo; (*ob).tglo.offset=len;
         if (((*ob).tglo.len1=constant())<0) c_error(4,35);
         if (piece==p_comma) {
@@ -2038,7 +2038,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
           imem=_imem;
         } len+=(*ob).tglo.totalen;
 
-      } else {                                          // Miembro variable ───
+      } else {                                          // Variable member ────
         (*ob).type=tvglo; (*ob).vglo.offset=len;
 
         test_buffer(&mem,&imem_max,offstruct+len);
@@ -2055,7 +2055,7 @@ int analyze_struct(int offstruct) { // tras " struct id [ <const> ] " // id­mem
 
 //───────────────────────────────────────────────────────────────────────────
 
-int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // id­member
+int analyze_struct_local(int offstruct) { // after " struct id [ <const> ] " // id=member
   int len=0,dup,i,_itxt,_iloc;
   struct object * ob;
   struct object * old_member,* member2;
@@ -2064,7 +2064,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
   while (piece==p_semicolon) lexer();
 
   while (piece!=p_end) {
-    if (piece==p_struct) {                              // Miembro struct ───
+    if (piece==p_struct) {                              // Struct member ────
       lexer(); if (piece!=p_id) c_error(1,110);
       old_member=member; member=ob=o;
       if ((*ob).type!=tnone) c_error(0,22); lexer();
@@ -2104,7 +2104,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
       member=old_member; lexer();
       while (piece==p_semicolon) lexer();
 
-    } else if (piece==p_string) {                     // Miembro cadena
+    } else if (piece==p_string) {                     // String member
 
       lexer(); if (piece!=p_id) c_error(1,125);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -2137,7 +2137,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         loc[offstruct+len]=0xDAD00000|(*ob).cloc.totalen;
         strcpy((char*)&loc[offstruct+len+1],(char*)&mem[piece_num]);
         len+=1+((*ob).cloc.totalen+5)/4;
-        itxt=_itxt; // Saca la cadena del segmento de textos
+        itxt=_itxt; // Take the string out of the text segment
         lexer();
       } else {
         test_buffer(&loc,&iloc_max,offstruct+len);
@@ -2150,7 +2150,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         while (piece==p_semicolon || piece==p_comma) lexer();
       }
 
-    } else if (piece==p_byte) {                         // Miembro byte ───
+    } else if (piece==p_byte) {                         // Byte member ────
 
       lexer(); if (piece!=p_id) c_error(1,142);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -2207,7 +2207,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
         while (piece==p_semicolon || piece==p_comma) lexer();
       }
 
-    } else if (piece==p_word) {                         // Miembro word ───
+    } else if (piece==p_word) {                         // Word member ────
 
       lexer(); if (piece!=p_id) c_error(1,145);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -2267,7 +2267,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
     } else if (piece==p_id) {
 
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
-      if (piece==p_lbracket) { lexer();    // Miembro tabla ───
+      if (piece==p_lbracket) { lexer();    // Table member ────
         (*ob).type=ttloc; (*ob).tloc.offset=len;
         if (((*ob).tloc.len1=constant())<0) c_error(4,35);
         if (piece==p_comma) {
@@ -2291,7 +2291,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
           iloc=_iloc;
         } len+=(*ob).tloc.totalen;
 
-      } else {                                          // Miembro variable ───
+      } else {                                          // Variable member ────
         (*ob).type=tvloc; (*ob).vloc.offset=len;
 
         test_buffer(&loc,&iloc_max,offstruct+len);
@@ -2309,7 +2309,7 @@ int analyze_struct_local(int offstruct) { // tras " struct id [ <const> ] " // i
 
 //───────────────────────────────────────────────────────────────────────────
 
-int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " // id­member
+int analyze_struct_private(int offstruct) { // after " struct id [ <const> ] " // id=member
   int len=0,dup,i,_itxt,_imem;
   struct object * ob;
   struct object * old_member,* member2;
@@ -2318,7 +2318,7 @@ int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
   while (piece==p_semicolon) lexer();
 
   while (piece!=p_end) {
-    if (piece==p_struct) {                              // Miembro struct ───
+    if (piece==p_struct) {                              // Struct member ────
       lexer(); if (piece!=p_id) c_error(1,110);
       old_member=member; member=ob=o;
       if ((*ob).type!=tnone) c_error(0,22); lexer();
@@ -2358,7 +2358,7 @@ int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
       member=old_member; lexer();
       while (piece==p_semicolon) lexer();
 
-    } else if (piece==p_string) {                     // Miembro cadena
+    } else if (piece==p_string) {                     // String member
 
       lexer(); if (piece!=p_id) c_error(1,125);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -2391,7 +2391,7 @@ int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         mem[offstruct+len]=0xDAD00000|(*ob).cloc.totalen;
         strcpy((char*)&mem[offstruct+len+1],(char*)&mem[piece_num]);
         len+=1+((*ob).cloc.totalen+5)/4;
-        itxt=_itxt; // Saca la cadena del segmento de textos
+        itxt=_itxt; // Take the string out of the text segment
         lexer();
       } else {
         test_buffer(&mem,&imem_max,offstruct+len);
@@ -2404,7 +2404,7 @@ int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         while (piece==p_semicolon || piece==p_comma) lexer();
       }
 
-    } else if (piece==p_byte) {                         // Miembro byte ───
+    } else if (piece==p_byte) {                         // Byte member ────
 
       lexer(); if (piece!=p_id) c_error(1,142);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -2460,7 +2460,7 @@ int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
         while (piece==p_semicolon || piece==p_comma) lexer();
       }
 
-    } else if (piece==p_word) {                         // Miembro word ───
+    } else if (piece==p_word) {                         // Word member ────
 
       lexer(); if (piece!=p_id) c_error(1,145);
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
@@ -2519,7 +2519,7 @@ int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
     } else if (piece==p_id) {
 
       ob=o; if ((*ob).type!=tnone) c_error(0,114); lexer();
-      if (piece==p_lbracket) { lexer();    // Miembro tabla ───
+      if (piece==p_lbracket) { lexer();    // Table member ────
         (*ob).type=ttloc; (*ob).tloc.offset=len;
         if (((*ob).tloc.len1=constant())<0) c_error(4,35);
         if (piece==p_comma) {
@@ -2543,7 +2543,7 @@ int analyze_struct_private(int offstruct) { // tras " struct id [ <const> ] " //
           imem=_imem;
         } len+=(*ob).tloc.totalen;
 
-      } else {                                          // Miembro variable ───
+      } else {                                          // Variable member ────
         (*ob).type=tvloc; (*ob).vloc.offset=len;
 
         test_buffer(&mem,&imem_max,offstruct+len);
@@ -2613,12 +2613,12 @@ void UnimportDll()
 }
 
 struct _dlls {
-  int filename;         // Puntero al nombre asciiz
-  int line1,column1;  // Posicion en la que comienza la sentencia en el fuente
-  int line2,column2;  // Posicion en la que acaba la sentencia en el fuente
+  int filename;         // Pointer to the asciiz name
+  int line1,column1;  // Position where the statement starts in the source
+  int line2,column2;  // Position where the statement ends in the source
 } dlls[64];
 
-int idlls;              // Indice de la estructura anterior
+int idlls;              // Index of the previous structure
 
 //───────────────────────────────────────────────────────────────────────────
 
@@ -2635,12 +2635,12 @@ void syntactic (void) {
   lexer();
 
   //───────────────────────────────────────────────────────────────────────────
-  // Opciones de compilacion
+  // Compilation options
   //───────────────────────────────────────────────────────────────────────────
-  // p_compiler_options {opcion} {;}
+  // p_compiler_options {option} {;}
   //───────────────────────────────────────────────────────────────────────────
 
-  max_process=0; // Valores de las opciones por defecto
+  max_process=0; // Default option values
   ignore_errors=0;
   free_syntax=0;
   extended_conditions=0;
@@ -2706,7 +2706,7 @@ void syntactic (void) {
   }
 
   //───────────────────────────────────────────────────────────────────────────
-  // Cabecera
+  // Header
   //───────────────────────────────────────────────────────────────────────────
   // p_program p_id {;}
   //───────────────────────────────────────────────────────────────────────────
@@ -2740,7 +2740,7 @@ void syntactic (void) {
   #endif
 
   //───────────────────────────────────────────────────────────────────────────
-  // Import de librerias dinámicas
+  // Import of dynamic libraries
   //───────────────────────────────────────────────────────────────────────────
   // {p_import p_lit {;}}
   //───────────────────────────────────────────────────────────────────────────
@@ -2787,7 +2787,7 @@ void syntactic (void) {
   }
 
   //───────────────────────────────────────────────────────────────────────────
-  // Zona de constantes
+  // Constants section
   //───────────────────────────────────────────────────────────────────────────
   // [ p_const {;} { p_id p_assign <exp> {; | ,} } ]
   //───────────────────────────────────────────────────────────────────────────
@@ -2817,11 +2817,11 @@ void syntactic (void) {
   }
 
   //───────────────────────────────────────────────────────────────────────────
-  // Variables globales, pueden usarse en expresiones constantes
+  // Global variables, they can be used in constant expressions
   //───────────────────────────────────────────────────────────────────────────
   // <variable> := p_id [ p_assign <exp> ] {;}
   //
-  // <tabla> := p_id p_lbracket ( p_rbracket p_assign <init>
+  // <table> := p_id p_lbracket ( p_rbracket p_assign <init>
   //                       | <exp> p_rbracket [ p_assign <init> ] ) {;}
   //
   // <init>  := ( <string> | <exp> [ [p_dup] p_lparen <init> p_rparen ] )
@@ -2881,7 +2881,7 @@ void syntactic (void) {
         imem=_imem+(*ob).sglo.len_item*(*ob).sglo.totalitems;
         test_buffer(&mem,&imem_max,imem);
 
-      } else if (piece==p_string) {                     // Cadena global
+      } else if (piece==p_string) {                     // Global string
 
         lexer(); if (piece!=p_id) c_error(1,125);
         ob=o; if ((*ob).type!=tnone) c_error(0,126); lexer();
@@ -2911,7 +2911,7 @@ void syntactic (void) {
           imem=_imem+1+((*ob).cglo.totalen+5)/4; // ej. c[32] -> c[0]..c[32],NUL
           test_buffer(&mem,&imem_max,imem);
           strcpy((char*)&mem[_imem+1],(char*)&mem[piece_num]);
-          itxt=_itxt; // Saca la cadena del segmento de textos
+          itxt=_itxt; // Take the string out of the text segment
           lexer();
         } else {
           imem=_imem+1+((*ob).cglo.totalen+5)/4;
@@ -2923,7 +2923,7 @@ void syntactic (void) {
           while (piece==p_semicolon || piece==p_comma) lexer();
         }
 
-      } else if (piece==p_byte) {                       // Tabla Byte global
+      } else if (piece==p_byte) {                       // Global Byte table
 
         lexer(); if (piece!=p_id) c_error(1,142);
         ob=o; if ((*ob).type!=tnone) c_error(0,117); lexer();
@@ -2980,7 +2980,7 @@ void syntactic (void) {
           while (piece==p_semicolon || piece==p_comma) lexer();
         }
 
-      } else if (piece==p_word) {                       // Tabla Word global
+      } else if (piece==p_word) {                       // Global Word table
 
         lexer(); if (piece!=p_id) c_error(1,145);
         ob=o; if ((*ob).type!=tnone) c_error(0,117); lexer();
@@ -3037,10 +3037,10 @@ void syntactic (void) {
           while (piece==p_semicolon || piece==p_comma) lexer();
         }
 
-      } else { // Int o tabla de Ints
+      } else { // Int or table of Ints
 
         ob=o; if ((*ob).type!=tnone) c_error(0,117); lexer();
-        if (piece==p_lbracket) {                           // Tabla global
+        if (piece==p_lbracket) {                           // Global table
           lexer();
           (*ob).type=ttglo; (*ob).tglo.offset=_imem=imem;
           if (piece==p_rbracket) {
@@ -3092,11 +3092,11 @@ void syntactic (void) {
   }
 
   //───────────────────────────────────────────────────────────────────────────
-  // Variables locales, no se pueden usar en expresiones constantes
+  // Local variables, they cannot be used in constant expressions
   //───────────────────────────────────────────────────────────────────────────
   // <variable> := p_id [ p_assign <exp> ] {;}
   //
-  // <tabla> := p_id p_lbracket ( p_rbracket p_assign <init>
+  // <table> := p_id p_lbracket ( p_rbracket p_assign <init>
   //                       | <exp> p_rbracket [ p_assign <init> ] ) {;}
   //───────────────────────────────────────────────────────────────────────────
 
@@ -3149,7 +3149,7 @@ void syntactic (void) {
         iloc=_imem+(*ob).sloc.len_item*(*ob).sloc.totalitems;
         test_buffer(&loc,&iloc_max,iloc);
 
-      } else if (piece==p_string) {                     // Cadena local
+      } else if (piece==p_string) {                     // Local string
 
         lexer(); if (piece!=p_id) c_error(1,125);
         ob=o; if ((*ob).type!=tnone) c_error(0,126); lexer();
@@ -3179,7 +3179,7 @@ void syntactic (void) {
           iloc=_imem+1+((*ob).cloc.totalen+5)/4; // ej. c[32] -> c[0]..c[32],NUL
           test_buffer(&loc,&iloc_max,iloc);
           strcpy((char*)&loc[_imem+1],(char*)&mem[piece_num]);
-          itxt=_itxt; // Saca la cadena del segmento de textos
+          itxt=_itxt; // Take the string out of the text segment
           lexer();
         } else {
           iloc=_imem+1+((*ob).cloc.totalen+5)/4;
@@ -3191,7 +3191,7 @@ void syntactic (void) {
           while (piece==p_semicolon || piece==p_comma) lexer();
         }
 
-      } else if (piece==p_byte) {                       // Tabla Byte local
+      } else if (piece==p_byte) {                       // Local Byte table
 
         lexer(); if (piece!=p_id) c_error(1,142);
         ob=o; if ((*ob).type!=tnone) c_error(0,117); lexer();
@@ -3248,7 +3248,7 @@ void syntactic (void) {
           while (piece==p_semicolon || piece==p_comma) lexer();
         }
 
-      } else if (piece==p_word) {                       // Tabla Word local
+      } else if (piece==p_word) {                       // Local Word table
 
         lexer(); if (piece!=p_id) c_error(1,145);
         ob=o; if ((*ob).type!=tnone) c_error(0,117); lexer();
@@ -3308,7 +3308,7 @@ void syntactic (void) {
       } else {
 
         ob=o; if ((*ob).type!=tnone) c_error(0,117); lexer();
-        if (piece==p_lbracket) {                             // Tabla local
+        if (piece==p_lbracket) {                             // Local table
           lexer();
           (*ob).type=ttloc; (*ob).tloc.offset=_imem=iloc;
           if (piece==p_rbracket) {
@@ -3360,10 +3360,10 @@ void syntactic (void) {
   }
 
   //───────────────────────────────────────────────────────────────────────────
-  // Código principal
+  // Main code
   //───────────────────────────────────────────────────────────────────────────
 
-  // Genera el salto al inicio del código (long_header)
+  // Generate the jump to the start of the code (long_header)
 
   mem[0]=program_type; mem[1]=imem; iloc_len=iloc;
   #ifdef listings
@@ -3378,9 +3378,9 @@ void syntactic (void) {
   start=0; final=imem-1;
   record_sentence();
 
-  if (piece==p_import) c_error(0,147); // Advertir a usuarios de DIV 1
+  if (piece==p_import) c_error(0,147); // Warn DIV 1 users
 
-  // Genera el código para cargar las librerías
+  // Generate the code to load the libraries
 
   for (n=1;n<idlls;n++) {
     start=imem; final=imem+1;
@@ -3392,8 +3392,8 @@ void syntactic (void) {
     record_sentence();
   }
 
-  // El primer FRAME, y la carga de variables PRIVATE, se ejecutan
-  // conjuntamente en el BEGIN del programa principal.
+  // The first FRAME, and the loading of PRIVATE variables, are executed
+  // together in the BEGIN of the main program.
 
   final=imem;
 
@@ -3425,7 +3425,7 @@ void syntactic (void) {
   #endif
 
   //───────────────────────────────────────────────────────────────────────────
-  // Procesos
+  // Processes
   //───────────────────────────────────────────────────────────────────────────
   // p_process p_id p_lparen [ id { , id } ] p_rparen { ; } p_begin ... p_end
   //───────────────────────────────────────────────────────────────────────────
@@ -3468,7 +3468,7 @@ void syntactic (void) {
       g2(lpar,parameters-1);
     }
 
-    parameters=-1; // Para que los parámetros se puedan repetir como PRIVATE
+    parameters=-1; // So that the parameters can be repeated as PRIVATE
 
     num_params=mem[_imem]=(*ob).proc.num_params;
 
@@ -3501,12 +3501,12 @@ void syntactic (void) {
 }
 
   //───────────────────────────────────────────────────────────────────────────
-  // Analiza las variables privadas de un bloque, como las locales
+  // Parse the private variables of a block, like the locals
   //───────────────────────────────────────────────────────────────────────────
 
-    // *** OJO *** No se debe permitir #id.tvpri
-    //             pues fallaría a no ser que #id fuera del mismo tipo que el
-    //             proceso actual (hermano)
+    // *** NOTE *** #id.tvpri must not be allowed
+    //             since it would fail unless #id were of the same type as the
+    //             current process (brother)
 
 void analyze_private(void) {
   struct object * ob, * member2;
@@ -3573,13 +3573,13 @@ void analyze_private(void) {
         (*ob).sloc.offset=iloc; iloc+=(*ob).sloc.len_item*(*ob).sloc.totalitems;
         test_buffer(&mem,&imem_max,imem);
 
-      } else if (piece==p_string) {                     // Cadena privada
+      } else if (piece==p_string) {                     // Private string
 
         lexer(); if (piece!=p_id) c_error(1,125);
 
-        ob=o; if ((*ob).type!=tnone) { // Mira si se repite un parámetro ...
+        ob=o; if ((*ob).type!=tnone) { // Check whether a parameter is repeated ...
           if (parameters==-1 && (*ob).block==current_block) {
-            if ((*ob).type==tcloc) { // Se repite un string
+            if ((*ob).type==tcloc) { // A string is repeated
               save_error(0);
               lexer();
               if (piece==p_lbracket) {
@@ -3628,7 +3628,7 @@ void analyze_private(void) {
           imem=_imem+1+((*ob).cloc.totalen+5)/4; // ej. c[32] -> c[0]..c[32],NUL
           test_buffer(&mem,&imem_max,imem);
           strcpy((char*)&mem[_imem+1],(char*)&mem[piece_num]);
-          itxt=_itxt; // Saca la cadena del segmento de textos
+          itxt=_itxt; // Take the string out of the text segment
           lexer();
         } else {
           imem=_imem+1+((*ob).cloc.totalen+5)/4;
@@ -3642,12 +3642,12 @@ void analyze_private(void) {
           while (piece==p_semicolon || piece==p_comma) lexer();
         }
 
-      } else if (piece==p_byte) {                       // Tabla Byte privado
+      } else if (piece==p_byte) {                       // Private Byte table
 
         lexer(); if (piece!=p_id) c_error(1,142);
         ob=o; if ((*ob).type!=tnone) {
           if (parameters==-1 && (*ob).block==current_block) {
-            if ((*ob).type==tbloc) { // Se repite un byte parámetro
+            if ((*ob).type==tbloc) { // A byte parameter is repeated
               lexer();
               if (piece==p_lbracket) c_error(2,53);
               else if (piece==p_assign) c_error(0,54);
@@ -3695,7 +3695,7 @@ void analyze_private(void) {
               if (imemptr-oimemptr>(*ob).bloc.totalen) c_error(4,33);
             } (*ob).bloc.totalen=((*ob).bloc.totalen+3)/4;
           }
-        } else {                                          // Byte privado
+        } else {                                          // Private byte
           (*ob).type=tbloc; (*ob).bloc.offset=imem;
           (*ob).bloc.len1=0;
           (*ob).bloc.len2=-1;
@@ -3716,12 +3716,12 @@ void analyze_private(void) {
           while (piece==p_semicolon || piece==p_comma) lexer();
         }
 
-      } else if (piece==p_word) {                       // Tabla Word privada
+      } else if (piece==p_word) {                       // Private Word table
 
         lexer(); if (piece!=p_id) c_error(1,145);
         ob=o; if ((*ob).type!=tnone) {
           if (parameters==-1 && (*ob).block==current_block) {
-            if ((*ob).type==twloc) { // Se repite un word parámetro
+            if ((*ob).type==twloc) { // A word parameter is repeated
               lexer();
               if (piece==p_lbracket) c_error(2,53);
               else if (piece==p_assign) c_error(0,54);
@@ -3769,7 +3769,7 @@ void analyze_private(void) {
               if (imemptr-oimemptr>(*ob).wloc.totalen*2) c_error(4,33);
             } (*ob).wloc.totalen=((*ob).wloc.totalen+1)/2;
           }
-        } else {                                          // Word privado
+        } else {                                          // Private word
           (*ob).type=twloc; (*ob).wloc.offset=imem;
           (*ob).wloc.len1=0;
           (*ob).wloc.len2=-1;
@@ -3792,11 +3792,11 @@ void analyze_private(void) {
 
       } else {
 
-        // Si el objeto no es tnone, se repite un parámetro o bien es un error
+        // If the object is not tnone, a parameter is repeated or else it is an error
 
         ob=o; if ((*ob).type!=tnone) {
           if (parameters==-1 && (*ob).block==current_block) {
-            if ((*ob).type==tvloc) { // Se repite una variable local
+            if ((*ob).type==tvloc) { // A local variable is repeated
               lexer();
               if (piece==p_lbracket) c_error(2,53);
               else if (piece==p_assign) c_error(0,54);
@@ -3813,7 +3813,7 @@ void analyze_private(void) {
           } else c_error(0,117);
         } else lexer();
 
-        if (piece==p_lbracket) {                             // Tabla privada
+        if (piece==p_lbracket) {                             // Private table
           lexer();
           (*ob).type=ttloc; _imem=imem;
           if (piece==p_rbracket) {
@@ -3844,7 +3844,7 @@ void analyze_private(void) {
           imem=_imem+(*ob).tloc.totalen;
           test_buffer(&mem,&imem_max,imem);
           (*ob).tloc.offset=iloc; iloc+=(*ob).tloc.totalen;
-        } else {                                          // Variable privada
+        } else {                                          // Private variable
           (*ob).type=tvloc; (*ob).vloc.offset=iloc++;
           (*ob).block=current_block;
           if (piece==p_assign) { lexer(); mem[imem]=constant(); }
@@ -3872,14 +3872,14 @@ void analyze_private(void) {
 }
 
   //───────────────────────────────────────────────────────────────────────────
-  // Inicialización de tablas (a mem[imem++])
+  // Table initialization (to mem[imem++])
   //───────────────────────────────────────────────────────────────────────────
   // <init>  := ( <string> | <exp> [ [p_dup] p_lparen <init> p_rparen ] )
   //            [ p_comma <init>]
   //───────────────────────────────────────────────────────────────────────────
 
 
-void tglo_init(int type) { // Tipo: 0-Int o variado (struct), 1-Word, 2-Byte
+void tglo_init(int type) { // Type: 0-Int or mixed (struct), 1-Word, 2-Byte
   imemptr=(byte*)&mem[imem];
   tglo_init2(type);
   if (!free_syntax) if (piece!=p_semicolon) c_error(3,66);
@@ -3906,7 +3906,7 @@ void tglo_init2(int type) {
 
   while (1) {
 
-    // Mira si finaliza la inicialización de datos
+    // Check whether the data initialization ends
 
     if (piece==p_rparen || piece==p_semicolon) {
       if (*(imemptr-(int)mem+(int)frm)==1 || type==1) {
@@ -3925,7 +3925,7 @@ void tglo_init2(int type) {
       return;
     }
 
-    // Una coma sola, como "3,,4", avanza una posición (y define un 0)
+    // A lone comma, as in "3,,4", advances one position (and defines a 0)
 
     if (piece==p_comma) {
       if (*(imemptr-(int)mem+(int)frm)==1 || type==1) {
@@ -3959,7 +3959,7 @@ void tglo_init2(int type) {
       value=piece_num; lexer();
       if (piece==p_lparen || piece==p_dup) c_error(2,38);
 
-      // Mete un literal en un dato de tipo string
+      // Put a literal into a string type datum
 
       if ((((int)imemptr-(int)mem)%4)==0) {
         imem=((int)imemptr-(int)mem+3)/4;
@@ -3975,11 +3975,11 @@ void tglo_init2(int type) {
         }
       }
 
-      // Mete un valor literal en otro tipo de dato (en lugar de un string)
+      // Put a literal value into another data type (instead of a string)
 
-      if (*(imemptr-(int)mem+(int)frm)==1 || type==1) { // Un string en words (el puntero short)
+      if (*(imemptr-(int)mem+(int)frm)==1 || type==1) { // A string in words (the short pointer)
 
-        imemptr=(byte*)(((int)imemptr+1)&-2); // Lo hace par
+        imemptr=(byte*)(((int)imemptr+1)&-2); // Make it even
         *((word*)imemptr)=value;
         imemptr+=2;
         imem=((int)imemptr-(int)mem+3)/4;
@@ -3987,7 +3987,7 @@ void tglo_init2(int type) {
         if (piece!=p_comma) return;
         lexer(); continue;
 
-      } else if (*(imemptr-(int)mem+(int)frm)==2 || type==2) { // Un string en bytes
+      } else if (*(imemptr-(int)mem+(int)frm)==2 || type==2) { // A string in bytes
 
         oimemptr=imemptr;
         while (*(oimemptr-(int)mem+(int)frm)==2) oimemptr++;
@@ -3999,7 +3999,7 @@ void tglo_init2(int type) {
         if (piece!=p_comma) return;
         lexer(); continue;
 
-      } else { // Un string en un int (el puntero long, como en DIV 1)
+      } else { // A string in an int (the long pointer, as in DIV 1)
 
         imem=((int)imemptr-(int)mem+3)/4;
         mem[imem]=value;
@@ -4020,12 +4020,12 @@ void tglo_init2(int type) {
             if (frm[imem]==0xdad00000) c_error(2,128);
           }
 
-          // Mete un valor numérico en la memoria
+          // Put a numeric value into memory
 
-          if (*(imemptr-(int)mem+(int)frm)==1 || type==1) { // En un word
+          if (*(imemptr-(int)mem+(int)frm)==1 || type==1) { // In a word
 
             if (value<0 || value>65535) c_error(2,144);
-            imemptr=(byte*)(((int)imemptr+1)&-2); // Lo hace par
+            imemptr=(byte*)(((int)imemptr+1)&-2); // Make it even
             *((word*)imemptr)=value;
             imemptr+=2;
             imem=((int)imemptr-(int)mem+3)/4;
@@ -4033,7 +4033,7 @@ void tglo_init2(int type) {
             if (piece!=p_comma) return;
             lexer(); continue;
 
-          } else if (*(imemptr-(int)mem+(int)frm)==2 || type==2) { // En un byte
+          } else if (*(imemptr-(int)mem+(int)frm)==2 || type==2) { // In a byte
 
             if (value<0 || value>255) c_error(2,143);
             *imemptr++=value;
@@ -4042,7 +4042,7 @@ void tglo_init2(int type) {
             if (piece!=p_comma) return;
             lexer(); continue;
 
-          } else { // En un int (lo normal en DIV 1)
+          } else { // In an int (the usual in DIV 1)
 
             imem=((int)imemptr-(int)mem+3)/4;
             mem[imem]=value;
@@ -4060,18 +4060,18 @@ void tglo_init2(int type) {
       } else dup=value;
     }
 
-    // Duplica una secuencia de valores
+    // Duplicate a sequence of values
 
     if (dup<1) c_error(2,38);
     lexer();
 
-    // Analiza la secuencia como otra inicialización ...
+    // Parse the sequence as another initialization ...
 
     oimemptr=imemptr;
     tglo_init2(type);
     if (piece!=p_rparen) c_error(3,25);
 
-    // Y la duplica el número de veces indicado
+    // And duplicate it the given number of times
 
     if (dup>1) {
       len=imemptr-oimemptr;
@@ -4079,7 +4079,7 @@ void tglo_init2(int type) {
       while (--dup) {
         for (n=0;n<len;n++) {
 
-          // Comprueba que las cadenas caigan sobre si mismas en los dup()...
+          // Check that the strings fall onto themselves in the dup()...
           if ((((int)imemptr-(int)mem)%4)==0) {
             imem=((int)imemptr-(int)mem+3)/4;
             _imem=((int)oimemptr+n-(int)mem+3)/4;
@@ -4089,12 +4089,12 @@ void tglo_init2(int type) {
             } else if (frm[_imem]==0xdad00000) c_error(3,136);
           }
 
-          // Comprueba que los words caigan sobre words
+          // Check that the words fall onto words
           if (*(imemptr-(int)mem+(int)frm)==1) {
             if (*(oimemptr+n-(int)mem+(int)frm)!=1) c_error(3,136);
           } else if (*(oimemptr+n-(int)mem+(int)frm)==1) c_error(3,136);
 
-          // Comprueba que los bytes caigan sobre bytes
+          // Check that the bytes fall onto bytes
           if (*(imemptr-(int)mem+(int)frm)==2) {
             if (*(oimemptr+n-(int)mem+(int)frm)!=2) c_error(3,136);
           } else if (*(oimemptr+n-(int)mem+(int)frm)==2) c_error(3,136);
@@ -4114,7 +4114,7 @@ void tglo_init2(int type) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Analisis de un bloque de sentencias;
+//      Analysis of a block of statements;
 //═════════════════════════════════════════════════════════════════════════════
 
 void sentence() {
@@ -4283,12 +4283,12 @@ void sentence() {
         } else {
           if (from<to) step=1; else step=-1;
         }
-        g2(lcar,from); // Asignación del from
+        g2(lcar,from); // Assignment of the from
         g1(lasi); g1(lasp);
 
-        im1=imem; // Inicio del bucle
+        im1=imem; // Start of the loop
 
-        if (dir>=0) { // Comparación de la condición de permanencia
+        if (dir>=0) { // Comparison of the loop continuation condition
           g2(lcar,dir);
         } else {
           g2(lcar,-dir); g1(laid);
@@ -4305,9 +4305,9 @@ void sentence() {
         if (piece!=p_end) c_error(0,40); start_sentence();
         lexer();
 
-        im3=imem; // Posición del continue
+        im3=imem; // Position of the continue
 
-        if (dir>=0) { // Incremento y vuelta al inicio del bucle
+        if (dir>=0) { // Increment and back to the start of the loop
           g2(lcar,dir); 
         } else {
           g2(lcar,-dir); g1(laid);
@@ -4558,17 +4558,17 @@ void sentence() {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Analisis de una condición (genera código para calcularla)
+//      Analysis of a condition (generates code to compute it)
 //═════════════════════════════════════════════════════════════════════════════
 
 int expression_type=0; // 0 - int, 1 - char o byte, 2 - string
-int factor_type=0;    // idem
+int factor_type=0;    // ditto
 
 void condition(void) {
   byte * __ierror, * _ierror;
   int _line;
 
-  if (extended_conditions) { expression(); return; } // Como en DIV 1
+  if (extended_conditions) { expression(); return; } // As in DIV 1
 
   _exp=tabexp;
   save_error(0);
@@ -4585,7 +4585,7 @@ void const_expr00(int exp_type) {
   expression_type=te;
 }
 
-void const_expr0() { // Operadores con asociatividad de derecha a izquierda <-
+void const_expr0() { // Operators with right-to-left associativity <-
   int p;
 
   const_expr1();
@@ -4594,11 +4594,11 @@ void const_expr0() { // Operadores con asociatividad de derecha a izquierda <-
   }
 }
 
-void const_expr1() { // Operadores con asociatividad de izquierda a derecha ->
+void const_expr1() { // Operators with left-to-right associativity ->
   int p;
   const_expr2();
   while ((p=piece)>=p_or && p<=p_andofs) {
-    if (p>=p_xorptr) p-=p_xorptr-p_xor; // Convierte xorptr,andofs en xor,and
+    if (p>=p_xorptr) p-=p_xorptr-p_xor; // Convert xorptr,andofs into xor,and
     lexer(); const_expr2();
     (*_exp).type=eoper; (*_exp++).token=p;
     factor_type=0;
@@ -4636,7 +4636,7 @@ void const_expr2() {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Analisis de una expresión (genera código para calcularla)
+//      Analysis of an expression (generates code to compute it)
 //═════════════════════════════════════════════════════════════════════════════
 
 void expression(void) {
@@ -4786,7 +4786,7 @@ void generate_expression(void) {
         case p_strge: g1(lstrmai); break;
 
         case p_pointerbyte: g1(lptrchr); break;
-        case p_string: break; // Es como un p_pointer nulo, que no se hace
+        case p_string: break; // It is like a null p_pointer, which is not done
 
         default: c_error(4,41);
       } break;
@@ -4796,8 +4796,8 @@ void generate_expression(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Analisis de una expresión constante
-//      No se procesan valores locales ni llamadas a otros procesos
+//      Analysis of a constant expression
+//      Local values and calls to other processes are not processed
 //═════════════════════════════════════════════════════════════════════════════
 
 int constant (void) {
@@ -4837,8 +4837,8 @@ int constant (void) {
       case p_mod: if (opstack[i]==0) c_error(4,34); opstack[i-1]%=opstack[i]; i--; break;
       case p_neg: opstack[i]=-opstack[i]; break;
 
-// Creo que se quitó los pointer (y los rangos, por consiguiente) por los FROM,
-// ya que provocaba confusion el tomar como constante una variable ...
+// I think pointers (and therefore ranges) were removed because of the FROMs,
+// since taking a variable as a constant caused confusion ...
 
 //      case p_pointer: opstack[i]=mem[opstack[i]]; break;
 
@@ -4854,7 +4854,7 @@ int constant (void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Análisis de una expresión a *tabexp
+//      Analysis of an expression into *tabexp
 //═════════════════════════════════════════════════════════════════════════════
 
 void exp00(int exp_type) {
@@ -4864,7 +4864,7 @@ void exp00(int exp_type) {
   expression_type=te;
 }
 
-void exp0() { // Operadores con asociatividad de derecha a izquierda <-
+void exp0() { // Operators with right-to-left associativity <-
   int p;
 
   exp1();
@@ -4876,7 +4876,7 @@ void exp0() { // Operadores con asociatividad de derecha a izquierda <-
     } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerchar) {
       if (p==p_assign) p=p_assignchar; else p+=p_add_assignchar-p_add_assign;
       _exp--; lexer();
-      exp00(1); // cadena[1]="A";
+      exp00(1); // string[1]="A";
       if (do_strfix) { (*_exp).type=eoper; (*_exp++).token=p_strfix; }
       (*_exp).type=eoper; (*_exp++).token=p;
     } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerbyte) {
@@ -4890,31 +4890,31 @@ void exp0() { // Operadores con asociatividad de derecha a izquierda <-
       exp00(0);
       (*_exp).type=eoper; (*_exp++).token=p;
     } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_string) {
-      if (p==p_assign) { // cadena="..."; // Hacer el strcpy
+      if (p==p_assign) { // string="..."; // Do the strcpy
         _exp--; lexer();
         exp00(2);
         (*_exp).type=eoper; (*_exp++).token=p_strcpy;
-        (*_exp).type=eoper; (*_exp++).token=p_string; //Sigue habiendo una cadena en la pila
-      } else if (p==p_add_assign) { // cadena+="..."; // Hacer el strcat
+        (*_exp).type=eoper; (*_exp++).token=p_string; //There is still a string on the stack
+      } else if (p==p_add_assign) { // string+="..."; // Do the strcat
         _exp--; lexer();
         exp00(2);
         (*_exp).type=eoper; (*_exp++).token=p_strcat;
-        (*_exp).type=eoper; (*_exp++).token=p_string; //Sigue habiendo una cadena en la pila
-      } else if (p==p_sub_assign) { // cadena-=n; // Quita caracteres
+        (*_exp).type=eoper; (*_exp++).token=p_string; //There is still a string on the stack
+      } else if (p==p_sub_assign) { // string-=n; // Remove characters
         _exp--; lexer();
         exp00(-1);
         (*_exp).type=eoper; (*_exp++).token=p_strsub;
-        (*_exp).type=eoper; (*_exp++).token=p_string; //Sigue habiendo una cadena en la pila
+        (*_exp).type=eoper; (*_exp++).token=p_string; //There is still a string on the stack
       } else c_error(0,133);
     } else c_error(0,39);
   } factor_type=0;
 }
 
-void exp1() { // Operadores con asociatividad de izquierda a derecha ->
+void exp1() { // Operators with left-to-right associativity ->
   int p;
   exp2();
   while ((p=piece)>=p_or && p<=p_andofs) {
-    if (p>=p_xorptr) p-=p_xorptr-p_xor; // Convierte xorptr,andofs en xor,and
+    if (p>=p_xorptr) p-=p_xorptr-p_xor; // Convert xorptr,andofs into xor,and
     lexer(); exp2();
     (*_exp).type=eoper; (*_exp++).token=p;
     factor_type=0;
@@ -4928,7 +4928,7 @@ void exp2() {
     tf=factor_type;
     lexer(); exp3();
     if (tf==2 || factor_type==2) {
-      // OJO, p==q no se hará el strcmp() si son dos punteros a cadenas
+      // NOTE, for p==q the strcmp() will not be done if they are two pointers to strings
       p+=p_streq-p_eq;
       (*_exp).type=eoper; (*_exp++).token=p;
       factor_type=0;
@@ -4953,16 +4953,16 @@ void exp4() {
   exp5();
   while ((p=piece)>=p_plus && p<=p_sub && (p<=p_minus || p>=p_add) ) {
     tf=factor_type;
-    if (p<=p_minus) p+=p_add-p_plus; // Convierte suma,resta en add,sub
+    if (p<=p_minus) p+=p_add-p_plus; // Convert addition,subtraction into add,sub
     lexer(); exp5();
     if (p==p_add && (tf==2 || factor_type==2 || expression_type==2)) {
       (*_exp).type=eoper; (*_exp++).token=p_stradd;
-      (*_exp).type=eoper; (*_exp++).token=p_string; // Hay una cadena en la pila
+      (*_exp).type=eoper; (*_exp++).token=p_string; // There is a string on the stack
       factor_type=2;
     } else if (p==p_sub && tf==2) {
       if (factor_type==2) { (*_exp).type=eoper; (*_exp++).token=p_strlen; }
       (*_exp).type=eoper; (*_exp++).token=p_strdec;
-      (*_exp).type=eoper; (*_exp++).token=p_string; // Hay una cadena en la pila
+      (*_exp).type=eoper; (*_exp++).token=p_string; // There is a string on the stack
       factor_type=2;
     } else {
       (*_exp).type=eoper; (*_exp++).token=p;
@@ -4975,7 +4975,7 @@ void exp5() {
   int p;
   unary();
   while ((p=piece)>=p_mul && p<=p_multi) {
-    if (p==p_multi) p=p_mul; // Convierte multi en mul
+    if (p==p_multi) p=p_mul; // Convert multi into mul
     lexer();  unary();
     (*_exp).type=eoper; (*_exp++).token=p;
     factor_type=0;
@@ -4988,7 +4988,7 @@ void unary() {
   while ((p=piece)==p_add) { lexer();  }
   if ((p>=p_xorptr && p<=p_mul) || (p==p_inc || p==p_dec)) {
 
-    if (p>=p_sub && p<=p_mul) p-=p_sub-p_neg; // Conv. sub,mul en neg,pointer
+    if (p>=p_sub && p<=p_mul) p-=p_sub-p_neg; // Conv. sub,mul into neg,pointer
     else if (p>=p_xorptr && p<=p_andofs) p+=p_pointer-p_xorptr; //xorptr,andofs pointer,offset
 
     lexer();  unary(); // p = ( neg, pointer, offset, not )
@@ -4996,13 +4996,13 @@ void unary() {
     if (p==p_offset) {
       if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointer) _exp--;
       else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerchar) {
-        c_error(4,132); // &cadena[<exp>] ???
+        c_error(4,132); // &string[<exp>] ???
       } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerbyte) {
         c_error(4,132); // &bytes[<exp>] ???
       } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerword) {
         c_error(4,132); // &words[<exp>] ???
       } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_string) {
-        // &cadena ­ cadena
+        // &string = string
       } else c_error(4,32);
     } else if (p==p_inc || p==p_dec) {
       if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointer) {
@@ -5026,13 +5026,13 @@ void unary() {
       } else c_error(4,122);
     } else if (p==p_pointer) {
       if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerchar) {
-        // *cadena[0] ­ cadena[0]
+        // *string[0] = string[0]
       } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerbyte) {
-        // *cadena[0] ­ cadena[0]
+        // *string[0] = string[0]
       } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerword) {
-        // *cadena[0] ­ cadena[0]
+        // *string[0] = string[0]
       } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_string) {
-        // *cadena == cadena
+        // *string == string
       } else {
         (*_exp).type=eoper; (*_exp++).token=p;
       }
@@ -5044,7 +5044,7 @@ void unary() {
 
 }
 
-void exp6() { // Operador de acceso a variables o tablas locales ajenas
+void exp6() { // Operator to access other processes' local variables or tables
   struct exp_ele * e;
 
   factor();
@@ -5053,9 +5053,9 @@ void exp6() { // Operador de acceso a variables o tablas locales ajenas
     e=_exp+1;
     remote_access=1; lexer(); factor(); remote_access=0;
 
-    // OJO, el <p_point> DEBE SER LO SEGUNDO que el <factor>
-    // introduzca en la <expresión>, no quedan más cojones.
-    // (bueno, si, hacer aquí una búsqueda del p_point entre e-1 y _exp ...)
+    // NOTE, the <p_point> MUST BE THE SECOND THING that the <factor>
+    // puts into the <expression>, there is no damn way around it.
+    // (well, there is, doing a search for the p_point here between e-1 and _exp ...)
 
     if ((*e).type==eoper && (*e).token==p_point)
       (*e).token=p_add; else c_error(4,43);
@@ -5072,7 +5072,7 @@ void factor(void) {
 
   factor_type=0;
 
-  switch (piece) { // analisis de un factor
+  switch (piece) { // analysis of a factor
 
     case p_lparen:
       lexer(); exp00(expression_type);
@@ -5137,7 +5137,7 @@ void factor(void) {
       } lexer(); if (piece!=p_rparen) c_error(3,25); lexer();
       break;
 
-    case p_string: // Se comprueba la declaración de un string parámetro
+    case p_string: // Check the declaration of a string parameter
       if (parameters<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -5173,7 +5173,7 @@ void factor(void) {
         (*_exp).type=eoper; (*_exp++).token=p_string;
       } break;
 
-    case p_byte: // Se comprueba la declaración de un byte parámetro
+    case p_byte: // Check the declaration of a byte parameter
       if (parameters<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -5193,7 +5193,7 @@ void factor(void) {
         (*_exp).type=eoper; (*_exp++).token=p_pointerbyte;
       } break;
 
-    case p_word: // Se comprueba la declaración de un word parámetro
+    case p_word: // Check the declaration of a word parameter
       if (parameters<=0) {
         if (error_27==27) c_error(1,27); else c_error(0,error_27);
       } else {
@@ -5990,7 +5990,7 @@ struct object * ob;
 #ifdef listings
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Graba el fichero de la tabla de objetos
+//      Write the object table file
 //═════════════════════════════════════════════════════════════════════════════
 
 void l_objects (void) {
@@ -6127,10 +6127,10 @@ void l_objects (void) {
 #endif
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Graba el fichero con información para debugging
+//      Write the file with debugging information
 //═════════════════════════════════════════════════════════════════════════════
 
-// Ojo, falta grabar items1,items2 e items3 (o len1,len2,len3 para tablas)
+// Careful, writing items1,items2 and items3 is still missing (or len1,len2,len3 for tables)
 
 void save_dbg(void) {
   FILE * sta;
@@ -6176,7 +6176,7 @@ void save_dbg(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//    Graba los parámetros de ejecución para el intérprete
+//    Write the execution parameters for the interpreter
 //═════════════════════════════════════════════════════════════════════════════
 
 void save_exec_bin(void) {
@@ -6194,7 +6194,7 @@ void save_exec_bin(void) {
 #ifdef listings
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Graba el fichero ensamblador
+//      Write the assembler file
 //═════════════════════════════════════════════════════════════════════════════
 
 void l_assembler (void) {
@@ -6484,8 +6484,8 @@ void assembler_line (void) {
 #endif
 
 //════════════════════════════════════════════════════════════════════════════
-//  Funcion para localizar y abrir un fichero (pal,fpg,fnt,...)
-//  Esta función debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
+//  Function to locate and open a file (pal,fpg,fnt,...)
+//  This function must follow the same algorithm in F.CPP and DIVC.CPP
 //════════════════════════════════════════════════════════════════════════════
 
 FILE * div_open_file(char * file) {
@@ -6524,7 +6524,7 @@ FILE * div_open_file(char * file) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dialogo de compilar
+//      Compile dialog
 //═════════════════════════════════════════════════════════════════════════════
 
 char e_msg[32];
@@ -6586,23 +6586,23 @@ void compile_program(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Funciones de generación de código
+//  Code generation functions
 //═════════════════════════════════════════════════════════════════════════════
 
 // void g1(int op) { mem[imem++]=op; }
 // void g2(int op, int pa) { mem[imem++]=op; mem[imem++]=pa; }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Optimización peephole de código intermedio EML
+//  Peephole optimization of EML intermediate code
 //═════════════════════════════════════════════════════════════════════════════
 
-// *** OJO!!! *** quizá se pueda quitar "dir" y esa comprobación absurda ...
+// *** NOTE!!! *** maybe "dir" and that absurd check can be removed ...
 
-//struct {      // Peephole, "mirilla" de optimizacion
-//  int dir;    // Dirección
-//  int param;  // Indica el número de parametros de la instruccion
+//struct {      // Optimization peephole, "sight"
+//  int dir;    // Address
+//  int param;  // Tells the number of parameters of the instruction
 //  int op;     // Opcode
-//} code[16];   // En code[15] debe quedar siempre la última instrucción generada
+//} code[16];   // code[15] must always hold the last generated instruction
 
 void g1(int op) {
   gen(0,op,0);
@@ -6768,7 +6768,7 @@ void gen(int param, int op, int pa) {
       } else if (code[15].op==lcar){
         if (mem[imem-1]==1) remove_code(1);
         else if (mem[imem-1]!=0) {
-          code[15].op=mem[imem-2]=lcardiv; // Un cardiv nunca será "cardiv 0"
+          code[15].op=mem[imem-2]=lcardiv; // A cardiv will never be "cardiv 0"
           optimized=1;
         }
       } break;
@@ -6822,7 +6822,7 @@ void add_code(int dir, int param, int op) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Precompilación
+//      Precompilation
 //═════════════════════════════════════════════════════════════════════════════
 
 void plexer(void) {
@@ -6832,7 +6832,7 @@ void plexer(void) {
   if (!comment) {old_line=line_num; old_ierror=ierror; old_ierror_end=ierror_end;}
 
   lex_scan: ierror=_source;
-  switch ((int)lex_case[*_source]) { // Puntero a un lex_ele o l_???
+  switch ((int)lex_case[*_source]) { // Pointer to a lex_ele or l_???
 
     case l_err:
       if (comment) { piece=p_rem; _source++; } else c_error(0,10); break;
@@ -6848,17 +6848,17 @@ void plexer(void) {
       ivnames.b++; _source--; if (ivnames.b-vnames>max_obj*long_med_id) c_error(0,100);
       ptr=&vhash[h];
       while (*ptr && strcmp((byte *)(ptr+2),_ivnames+8)) ptr=(void*)*ptr;
-      if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id encontrado
-        ivnames.b=_ivnames; // lo saca de vnom
+      if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id found
+        ivnames.b=_ivnames; // takes it out of vnom
         piece=(int)*(ptr+1);
-        if (piece<256 && piece>=0) { // palabra reservada (token)
+        if (piece<256 && piece>=0) { // reserved word (token)
           if (piece==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
         } else { // object (id previous)
           piece=p_id;
         }
       } else {
-        ivnames.b=_ivnames; // lo saca de vnom
-        piece=p_id; // id nuevo
+        ivnames.b=_ivnames; // takes it out of vnom
+        piece=p_id; // new id
       } break;
 
     case l_spc:
@@ -6866,14 +6866,14 @@ void plexer(void) {
 
     case l_lit:
       if (comment) { piece=p_rem; _source++; break; }
-      piece=p_lit; h=*_source; _ivnames=ivnames.b; // Literal entre dos h
+      piece=p_lit; h=*_source; _ivnames=ivnames.b; // Literal between two h
       do { if (*++_source==cr) c_error(0,11);
            if (*_source==h)
              if (*(_source+1)==h) *_ivnames=*++_source; else *_ivnames=0;
            else *_ivnames=*_source;
       } while (*_ivnames++); _source++;
       texts_length+=(strlen(ivnames.b)+4)/4;
-      ivnames.b=_ivnames; // lo saca de vnom
+      ivnames.b=_ivnames; // takes it out of vnom
       break;
 
     case l_num:
@@ -6892,7 +6892,7 @@ void plexer(void) {
       } while ((int)lex_case[*_source]==l_num);
       break;
 
-    default: // puntero a un lex_ele
+    default: // pointer to a lex_ele
       e=lex_case[*_source++]; _ivnames=_source; piece=(*e).token;
       while (e=(*e).next) {
         while (*_source!=(*e).character && (*e).alternative) e=(*e).alternative;

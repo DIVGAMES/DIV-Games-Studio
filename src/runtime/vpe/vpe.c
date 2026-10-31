@@ -6,7 +6,7 @@ int    VPE_fog    =0;
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Inicializa la libreria
+//  Initialize the library
 //═════════════════════════════════════════════════════════════════════════════
 
 void _vpe_start(char *file,char *buffer,int width,int height)
@@ -20,7 +20,7 @@ void _vpe_start(char *file,char *buffer,int width,int height)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Finaliza la libreria
+//  End the library
 //═════════════════════════════════════════════════════════════════════════════
 
 void _vpe_end()

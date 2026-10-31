@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-// Nucleo de la ejecución de los programas en DIV
+// Core of program execution in DIV
 //═════════════════════════════════════════════════════════════════════════════
 
 case lnop: break;
@@ -104,7 +104,7 @@ if((id_start+((processes-2)*iloc_len)) == id_end)
   mem[id+_Id]=id;
   if (mem[id+_BigBro]=mem[id2+_Son]) mem[mem[id+_BigBro]+_SmallBro]=id;
   mem[id2+_Son]=id; mem[id+_Father]=mem[id+_Caller]=id2;
-  if (mem[ip+2]==lnop) mem[id+_FCount]=mem[id2+_FCount]+1; // Función
+  if (mem[ip+2]==lnop) mem[id+_FCount]=mem[id2+_FCount]+1; // Function
   #ifdef DEBUG
   else process_level++;
   #endif
@@ -134,10 +134,10 @@ case lfrm:
   opstack[sp]=id; id=mem[id+_Caller];
   if (!(id&1)) goto next_process1;
   ip=mem[id+_IP];
-  if (mem[opstack[sp]+_FCount]>0) { // Si era una funcion, duerme al padre.
-    mem[opstack[sp]+_Caller]++; // Caller dormido
-    bp=sp; // Deja la pila aparcada en el lugar adecuado
-    sp=mem[id+_Param]-mem[id+_NumParams]; // Y la prerara para retornar al anterior
+  if (mem[opstack[sp]+_FCount]>0) { // If it was a function, put the father to sleep.
+    mem[opstack[sp]+_Caller]++; // Caller sleeping
+    bp=sp; // Leave the stack parked in the right place
+    sp=mem[id+_Param]-mem[id+_NumParams]; // And prepare it to return to the previous one
     save_stack(id,sp,bp);
     mem[id+_Status]=3; goto next_frm;
   } else {
@@ -218,7 +218,7 @@ case lrtf:
   bp=id; id=mem[id+_Caller];
   delete_process(bp);
   if (!(id&1)) {
-    if (id) update_stack(id-1,opstack[sp]); // Un return de función (tras frame)
+    if (id) update_stack(id-1,opstack[sp]); // A function return (after frame)
     goto next_process1;
   }
   ip=mem[id+_IP];
@@ -247,10 +247,10 @@ case lfrf:
   opstack[sp]=id; id=mem[id+_Caller];
   if (!(id&1)) goto next_process2;
   ip=mem[id+_IP];
-  if (mem[opstack[sp]+_FCount]>0) { // Si es una funcion, duerme al padre.
-    mem[opstack[sp]+_Caller]++; // Caller dormido
-    bp=sp; // Deja la pila aparcada en el lugar adecuado
-    sp=mem[id+_Param]-mem[id+_NumParams]; // Y la prerara para retornar al anterior
+  if (mem[opstack[sp]+_FCount]>0) { // If it is a function, put the father to sleep.
+    mem[opstack[sp]+_Caller]++; // Caller sleeping
+    bp=sp; // Leave the stack parked in the right place
+    sp=mem[id+_Param]-mem[id+_NumParams]; // And prepare it to return to the previous one
     save_stack(id,sp,bp);
     mem[id+_Status]=3; goto next_frf;
   } else {
@@ -289,11 +289,11 @@ case ldbg:
     if (debug_active) {
       for (ibreakpoint=0;ibreakpoint<max_breakpoint;ibreakpoint++)
         if (breakpoint[ibreakpoint].line>-1 && abs(breakpoint[ibreakpoint].offset)==ip-1) break;
-      if (ibreakpoint<max_breakpoint) { // Se llegó a un breakpoint
+      if (ibreakpoint<max_breakpoint) { // A breakpoint was reached
         mem[--ip]=breakpoint[ibreakpoint].code;
         breakpoint[ibreakpoint].line=-1;
         call_to_debug=1; process_stoped=id;
-        ids_old=-1; // Para que se vean los datos del proceso que tenia el break
+        ids_old=-1; // So that the data of the process that had the break are shown
         return;
       }
       #ifndef TRACE
@@ -347,7 +347,7 @@ case lcarasiasp:
 	  mem[opstack[sp]]=mem[ip++]; sp--;
   break;
 case lcarsub: opstack[sp]-=mem[ip++]; break;
-case lcardiv: opstack[sp]/=mem[ip++]; break; // No hay nunca "cardiv 0"
+case lcardiv: opstack[sp]/=mem[ip++]; break; // There is never a "cardiv 0"
 
 case lptrchr:
   opstack[sp-1]=(unsigned int)memb[opstack[sp-1]*4+opstack[sp]]; sp--; break;
@@ -411,7 +411,7 @@ case lcpachr:
       memb[opstack[sp-1]*4+opstack[sp]]=(byte)opstack[mem[id+_Param]];
   } sp-=2; mem[id+_Param]++; break;
 
-// Un puntero a cadena menor a 256 se trata siempre como "%c"
+// A string pointer below 256 is always treated as "%c"
 
 case lstrcpy:
   #ifdef DEBUG
@@ -457,7 +457,7 @@ case lstrcat:
   sp--;
   break;
 
-case lstradd: // Strcat "en el aire" (ojo, el aire tiene tambien 0xDAD00402)
+case lstradd: // Strcat "in the air" (careful, the air also has 0xDAD00402)
   #ifdef DEBUG
     if ((unsigned)opstack[sp-1]>255) oo=strlen((char*)&mem[opstack[sp-1]]); else oo=1;
     if ((unsigned)opstack[sp]>255) oo+=strlen((char*)&mem[opstack[sp]]); else oo+=1;
@@ -484,15 +484,15 @@ case lstradd: // Strcat "en el aire" (ojo, el aire tiene tambien 0xDAD00402)
   nstring=((nstring+1)&3);
   break;
 
-case lstrdec: // cambio de tamaño "en el aire" (no da error, hace lo que puede)
+case lstrdec: // resize "in the air" (gives no error, does what it can)
   oo=strlen((char*)&mem[opstack[sp-1]]);
   if (oo<1028) {
     strcpy((char*)&mem[nullstring[nstring]],(char*)&mem[opstack[sp-1]]);
-    if (opstack[sp]>0) { // Quitar caracteres
+    if (opstack[sp]>0) { // Remove characters
       if (opstack[sp]>=oo) memb[nullstring[nstring]*4]=0;
       else memb[nullstring[nstring]*4+oo-opstack[sp]]=0;
-    } else if (opstack[sp]<0) { // Añadir (?) caracteres (por homogeneidad)
-      opstack[sp]=oo-opstack[sp]; // Nueva longitud
+    } else if (opstack[sp]<0) { // Add (?) characters (for consistency)
+      opstack[sp]=oo-opstack[sp]; // New length
       if (opstack[sp]>1025) opstack[sp]=1025;
       for (;oo<opstack[sp];oo++) {
         memb[nullstring[nstring]*4+oo]=' ';
@@ -503,7 +503,7 @@ case lstrdec: // cambio de tamaño "en el aire" (no da error, hace lo que puede)
   nstring=((nstring+1)&3);
   break;
 
-case lstrsub: // cambio de tamaño a un string
+case lstrsub: // resize a string
   oo=strlen((char*)&mem[opstack[sp-1]]);
   #ifdef DEBUG
     if ((mem[opstack[sp-1]-1]&0xFFF00000)!=0xDAD00000) {
@@ -517,11 +517,11 @@ case lstrsub: // cambio de tamaño a un string
       break;
     }
   #endif
-  if (opstack[sp]>0) { // Quitar caracteres
+  if (opstack[sp]>0) { // Remove characters
     if (opstack[sp]>=oo) memb[opstack[sp-1]*4]=0;
     else memb[opstack[sp-1]*4+oo-opstack[sp]]=0;
-  } else if (opstack[sp]<0) { // Añadir (?) caracteres (por homogeneidad)
-    opstack[sp]=oo-opstack[sp]; // Nueva longitud
+  } else if (opstack[sp]<0) { // Add (?) characters (for consistency)
+    opstack[sp]=oo-opstack[sp]; // New length
     for (;oo<opstack[sp];oo++) {
       memb[opstack[sp-1]*4+oo]=' ';
     } memb[opstack[sp-1]*4+oo]=0;
@@ -720,7 +720,7 @@ case lnul:
   break;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Cases no utilizados (hasta el 255)
+//  Unused cases (up to 255)
 //═════════════════════════════════════════════════════════════════════════════
 
 case 127: case 128: case 129:

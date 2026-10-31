@@ -66,12 +66,12 @@ buffer_sprite3d *viewer_init(lptviewer render_data)
     viewer_end();
 
   //---------------------------------------------------------------------------
-  //  Inicializo el modulo matematico
+  //  Initialize the math module
   //---------------------------------------------------------------------------
   InitMath();
 
   //---------------------------------------------------------------------------
-  //  Crea el buffer del sprite
+  //  Create the sprite buffer
   //---------------------------------------------------------------------------
   if ((my_buffer=(buffer_sprite3d *)lf_malloc(sizeof(buffer_sprite3d)))==NULL)
     return(NULL);
@@ -90,7 +90,7 @@ buffer_sprite3d *viewer_init(lptviewer render_data)
   memset(sbuffer->buffer,0,sbuffer->width*sbuffer->height*2);
 
   //---------------------------------------------------------------------------
-  //  Inicializo la camara y el objeto asociado
+  //  Initialize the camera and the associated object
   //---------------------------------------------------------------------------
 
   texture_pointer=render_data->texture;
@@ -136,13 +136,13 @@ void viewer_loop(lptviewer render_data)
   memset(my_buffer->buffer,0,my_buffer->width*my_buffer->height*2);
 
   //---------------------------------------------------------------------------
-  //  Convierto de grados en radianes
+  //  Convert from degrees to radians
   //---------------------------------------------------------------------------
   render_data->alpha=(render_data->alpha * 3.141592) / 180;
   render_data->beta=(render_data->beta * 3.141592) / 180;
 
   //-------------------------------------------------------------------------
-  //  Actualizo el objeto y lo pinto
+  //  Update the object and draw it
   //-------------------------------------------------------------------------
   animated_setanim(&animation,render_data->num_animation);
   animation.complex_struct.curframe=render_data->frame+1;
@@ -175,7 +175,7 @@ void viewer_loop(lptviewer render_data)
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Procedimiento que finaliza el visor
+//  Procedure that ends the viewer
 //─────────────────────────────────────────────────────────────────────────────
 
 void viewer_end()
@@ -184,7 +184,7 @@ void viewer_end()
     return;
 
   //---------------------------------------------------------------------------
-  //  Libero la memoria reservada para el menu
+  //  Free the memory allocated for the menu
   //---------------------------------------------------------------------------
   hlrender_destroy(&world_camera);
   animated_destroy(&animation);
@@ -201,7 +201,7 @@ void viewer_end()
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Procedimiento que reescala un sprite ajustando al borde
+//  Procedure that rescales a sprite fitting it to the border
 //─────────────────────────────────────────────────────────────────────────────
 
 void rescale_sprite3d(buffer_sprite3d  *wbuffer)

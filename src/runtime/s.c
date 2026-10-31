@@ -188,7 +188,7 @@ void advance_scroll(int back) {
 					move_scroll(1, ix * 100 / (scroll + snum)->ratio, iy * 100 / (scroll + snum)->ratio);
 				}
 		}
-	} else { // Comprueba si se mueve el scroll manualmente
+	} else { // Check whether the scroll is moved manually
 		if ((scroll + snum)->x0 != iscroll[snum].map1_x || (scroll + snum)->y0 != iscroll[snum].map1_y) {
 			move_scroll(0, (scroll + snum)->x0 - iscroll[snum].map1_x, (scroll + snum)->y0 - iscroll[snum].map1_y);
 		}
@@ -364,7 +364,7 @@ void set_scroll(int plane, int x, int y) {
 
 	si += y * width + x;
 
-	// Dispone de (di,iscroll[snum].an/al) < (si,x,y,an,al)
+	// Has (di,iscroll[snum].w/h) < (si,x,y,w,h)
 
 	/* This optimization was removed
   if (x+iscroll[snum].width<=width && y+iscroll[snum].height<=height) {
@@ -643,7 +643,7 @@ void process_scan_left(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Move_scroll(snum,plano,ix,iy)
+//      Move_scroll(snum,plane,ix,iy)
 //════════════════════════════════════════════════════════════════════════════
 
 byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int width, int height, int x, int y);
@@ -2696,7 +2696,7 @@ void text_out(char *ptr, int x, int y) {
 
 void checkpal_font(int ifonts);
 
-void draw_texts(int n) { // E: texto[]
+void draw_texts(int n) { // In: text[]
 
 	int x, y, width, height;
 	int font;
@@ -2786,7 +2786,7 @@ void draw_texts(int n) { // E: texto[]
 				texts[n].w = width;
 				texts[n].h = height;
 
-				if (y >= 0 && y + height <= vga_height) { // El texto coge entero (coord. y)
+				if (y >= 0 && y + height <= vga_height) { // The text fits entirely (y coord.)
 
 					while (*ptr && x + fnt[*ptr].width <= 0) {
 						if (fnt[*ptr].width == 0) {
@@ -3048,7 +3048,7 @@ void draw_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera po
 				height += (m7 + n)->horizon - im7[n].h / 2;
 
 				h += 1000;
-				percent = (h * (max - factor)) / (max);                // en pix/4
+				percent = (h * (max - factor)) / (max);                // in pix/4
 				percent = im7[n].y + im7[n].h / 2 + (h - percent) / 4; // in pix
 				percent += (m7 + n)->horizon - im7[n].h / 2 - height;
 
@@ -3081,7 +3081,7 @@ void draw_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera po
 }
 
 //════════════════════════════════════════════════════════════════════════════
-// Draw a sprite (mem[ide]) in modo 7 (if in front of camera)
+// Draw a sprite (mem[ide]) in mode 7 (if in front of camera)
 //════════════════════════════════════════════════════════════════════════════
 
 void draw_sprite_m7(int n, int ide, int x, int y, int size, int ang) {

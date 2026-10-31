@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo de operaciones sobre el dac o paleta
+//      Module of operations on the dac or palette
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -14,7 +14,7 @@ void rescale(byte *si,int si_w,int si_h,byte *di,int di_w,int di_h);
 
 
 
-//Prototipos de funciones de cargar paleta del fichero: DIVFORMA.CPP
+//Prototypes of the functions to load a palette from a file: DIVFORMA.CPP
 
 extern int exp_Color0,exp_Color1,exp_Color2;
 
@@ -27,26 +27,26 @@ int loaddac_FPG(char *name);
 int loaddac_PAL(char *name);
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables globales del módulo
+//      Global variables of the module
 //═════════════════════════════════════════════════════════════════════════════
 
-struct t_tpoints { // Para la creación de la tabla ghost
+struct t_tpoints { // For the creation of the ghost table
   int r,g,b;
   struct t_tpoints * next;
 } tpoints[256];
 
-struct t_tpoints * vcubes[512]; // Para la creación de la tabla ghost
+struct t_tpoints * vcubes[512]; // For the creation of the ghost table
 
-byte _r,_g,_b,find_col; // Cálculos sobre la paleta
+byte _r,_g,_b,find_col; // Palette calculations
 
-int find_min; // Cálculo del color más próximo
+int find_min; // Computation of the nearest color
 
 byte palette[768];
 
 int num_points;
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Busca los colores c0..c4 del entorno
+//      Find the environment colors c0..c4
 //═════════════════════════════════════════════════════════════════════════════
 
 void find_colors(void) {
@@ -94,7 +94,7 @@ void find_colors(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones para la creación de la tabla ghost
+//      Functions for the creation of the ghost table
 //═════════════════════════════════════════════════════════════════════════════
 
 void init_ghost(void) {
@@ -121,8 +121,8 @@ void init_ghost(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función de búsqueda rápida de un color
-//      OJO!!! Antes hay que llamar a create_dac4();
+//      Fast color search function
+//      NOTE!!! create_dac4(); must be called first
 //═════════════════════════════════════════════════════════════════════════════
 
 byte fast_find_color(byte fr,byte fg,byte fb) {
@@ -134,13 +134,13 @@ byte fast_find_color(byte fr,byte fg,byte fb) {
   find_min=65536;
   num_points=0;
 
-  // Cubos de distancia sqr(0) ────────────────────────────────────────────
+  // Distance cubes sqr(0) ────────────────────────────────────────────────
 
   create_ghost_vc(vcube);
 
   if (num_points>1) goto fast_find;
 
-  // Cubos de distancia sqr(1) ────────────────────────────────────────────
+  // Distance cubes sqr(1) ────────────────────────────────────────────────
 
   if (r3>0) create_ghost_vc(vcube-64);
   if (r3<7*64) create_ghost_vc(vcube+64);
@@ -151,7 +151,7 @@ byte fast_find_color(byte fr,byte fg,byte fb) {
 
   if (num_points>2) goto fast_find;
 
-  // Cubos de distancia sqr(2) ────────────────────────────────────────────
+  // Distance cubes sqr(2) ────────────────────────────────────────────────
 
   if (r3>0) {
     if (g3>0) create_ghost_vc(vcube-64-8);
@@ -175,7 +175,7 @@ byte fast_find_color(byte fr,byte fg,byte fb) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función para la creación de la tabla ghost
+//      Function for the creation of the ghost table
 //═════════════════════════════════════════════════════════════════════════════
 
 void create_ghost(int points) {
@@ -198,13 +198,13 @@ void create_ghost(int points) {
       find_min=65536;
       num_points=0;
 
-      // Cubos de distancia sqr(0) ────────────────────────────────────────────
+      // Distance cubes sqr(0) ────────────────────────────────────────────────
 
       create_ghost_vc(vcube);
 
       if (num_points>1) goto fast_ghost;
 
-      // Cubos de distancia sqr(1) ────────────────────────────────────────────
+      // Distance cubes sqr(1) ────────────────────────────────────────────────
 
       if (r3>0) create_ghost_vc(vcube-64);
       if (r3<7*64) create_ghost_vc(vcube+64);
@@ -215,7 +215,7 @@ void create_ghost(int points) {
 
       if (num_points>2) goto fast_ghost;
 
-      // Cubos de distancia sqr(2) ────────────────────────────────────────────
+      // Distance cubes sqr(2) ────────────────────────────────────────────────
 
       if (r3>0) {
         if (g3>0) create_ghost_vc(vcube-64-8);
@@ -277,7 +277,7 @@ void create_ghost_slow (void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Saca dac4[] de dac[]
+//      Derive dac4[] from dac[]
 //═════════════════════════════════════════════════════════════════════════════
 
 void create_dac4(void) {
@@ -286,8 +286,8 @@ void create_dac4(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Busca un color (r,g,b) en la paleta (búsqueda completa)
-//      OJO!!! Antes hay que llamar a create_dac4();
+//      Find a color (r,g,b) in the palette (full search)
+//      NOTE!!! create_dac4(); must be called first
 //═════════════════════════════════════════════════════════════════════════════
 
 byte find_color(byte r,byte g,byte b) {
@@ -325,7 +325,7 @@ byte find_color_not0(byte r,byte g,byte b) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función de ordenación de la paleta
+//      Palette sorting function
 //═════════════════════════════════════════════════════════════════════════════
 
 void ord_palette0(void) {
@@ -426,7 +426,7 @@ byte find_ord(byte * dac) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Media de dos colores (cálculo exacto)
+//      Average of two colors (exact computation)
 //═════════════════════════════════════════════════════════════════════════════
 
 byte media(byte a,byte b) {
@@ -441,7 +441,7 @@ byte media(byte a,byte b) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Calcula que colores de la regla son los más cercanos a cada RGB
+//      Compute which colors of the rule are the nearest to each RGB
 //═════════════════════════════════════════════════════════════════════════════
 
 void make_near_rule(void) {
@@ -460,31 +460,31 @@ void make_near_rule(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Calcula los colores intermedios de la regla de colores
+//      Compute the intermediate colors of the color rule
 //═════════════════════════════════════════════════════════════════════════════
 
 void calculate_rule(int n) {
 
   int a;
 
-  if (!rules[n].fixed) { // Las reglas fijas no se pueden calcular
+  if (!rules[n].fixed) { // Fixed rules cannot be computed
     switch(rules[n].type) {
-      case 0: // Lineal, el cálculo es obvio, se toman los colores en secuencia
+      case 0: // Linear, the computation is obvious, the colors are taken in sequence
         for (a=1;a<32;a++) rules[n].col[a+1]=rules[n].col[a]+1;
         break;
-      case 1: // Adaptable cada 1 color, no hay nada que calcular
+      case 1: // Adaptive every 1 color, there is nothing to compute
         break;
-      case 2: // Adaptable cada 2 colores, se rellenan con las medias
+      case 2: // Adaptive every 2 colors, they are filled with the averages
         for (a=0;a<32;a+=2)
           rules[n].col[a+1]=media(rules[n].col[a],rules[n].col[a+2]);
         break;
-      case 4: // Adaptable cada 4
+      case 4: // Adaptive every 4
         for (a=0;a<32;a+=4) {
           rules[n].col[a+2]=media(rules[n].col[a],rules[n].col[a+4]);
           rules[n].col[a+1]=media(rules[n].col[a],rules[n].col[a+2]);
           rules[n].col[a+3]=media(rules[n].col[a+2],rules[n].col[a+4]);
         } break;
-      case 8: // Adaptable cada 8
+      case 8: // Adaptive every 8
         for (a=0;a<32;a+=8) {
           rules[n].col[a+4]=media(rules[n].col[a],rules[n].col[a+8]);
           rules[n].col[a+2]=media(rules[n].col[a],rules[n].col[a+4]);
@@ -507,7 +507,7 @@ int has_maps(void) {
 
 char PalName[_MAX_PATH+1]="";
 
-#define max_files 512 // ─────────────────────────────── Listbox de archivos
+#define max_files 512 // ─────────────────────────────── Files listbox
 extern struct t_listboxbr lfilesbr;
 extern t_thumb thumb[max_files];
 extern int num_taggeds;
@@ -676,7 +676,7 @@ void SaveAsPal()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Refresca todo el entorno tras cambiar una paleta
+//      Refresh the whole environment after changing a palette
 //═════════════════════════════════════════════════════════════════════════════
 void ReloadFont(int window, struct twindow *vntn);
 
@@ -711,17 +711,17 @@ void RefPalAndDlg(int dont_touch_maps,int save_original)
   byte xlat[768];
   int th=24*big2,tw=41*big2;
 
-  // Se comprueba si la paleta nueva es diferente
+  // Check whether the new palette is different
 
   x=0; sum=0; do { sum+=abs((int)dac[x]-(int)dac4[x]); } while (++x<768);
   if (!sum) { x=0; do dac4[x]=dac[x]*4; while (++x<768); return; }
 
-  // ************** Libera los thumbnails de los FPG
+  // ************** Free the FPG thumbnails
 
   for (m=0;m<max_windows;m++) if (window[m].type==101) {
     MyFPG=(FPG *)window[m].aux;
 
-    // Libera thumbnails de FPG
+    // Free FPG thumbnails
     for(n=0; n<1000; n++)
     {
       if(MyFPG->thumb[n].ptr!=NULL) free(MyFPG->thumb[n].ptr);
@@ -733,7 +733,7 @@ void RefPalAndDlg(int dont_touch_maps,int save_original)
   memcpy(pal,dac,768);
   memcpy(dac,dac4,768);
 
-  // *** Adapta los mapas viejos a la nueva paleta
+  // *** Adapt the old maps to the new palette
 
   create_dac4();
   xlat[0]=0;
@@ -845,11 +845,11 @@ void RefPalAndDlg(int dont_touch_maps,int save_original)
 
   create_dac4();
 
-  // Adapta las gamas de color definidas por el usuario
+  // Adapt the user-defined color gradients
 
   create_gradient(Setupfile.t_gradient,desktop_gradient);
 
-  // Restaura el tapiz de fondo
+  // Restore the background wallpaper
   prepare_desktop();
 
   update_box(0,0,vga_width,vga_height);
@@ -888,7 +888,7 @@ void RefPalAndDlg(int dont_touch_maps,int save_original)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Ordenar paleta
+//      Sort palette
 //═════════════════════════════════════════════════════════════════════════════
 
 int sorting=0;
@@ -978,7 +978,7 @@ void sort2(void){
 }
 
 void sort0(void){
-  v.type=1; // Diálogo
+  v.type=1; // Dialog
   v.state=0;
   v.w=65*2+7;
   v.h=65*2+31;
@@ -1006,7 +1006,7 @@ void sort_palette(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Fusión de dos paletas diferentes
+//      Merge of two different palettes
 //═════════════════════════════════════════════════════════════════════════════
 
 // byte paleta[768]
@@ -1067,15 +1067,15 @@ void merge_palette(void){
   } create_dac4();
 }
 
-// Toma dos paletas (una en dac y otra en dac4) y devuelve la mezcla en dac4
+// Take two palettes (one in dac and another in dac4) and return the mix in dac4
 
 void merge_palettes(void){
-  byte pal[2048]; // Dos paletas en formato R,G,B,sum(RGB),R,G,B,sum(RGB)...
+  byte pal[2048]; // Two palettes in R,G,B,sum(RGB),R,G,B,sum(RGB)... format
   word palette[512];
   int dist[512];
   int n,c,min,cmin;
 
-  // paleta vieja en dac, nueva en dac4
+  // old palette in dac, new one in dac4
 
   n=0; do {
     pal[n*4+3]=(pal[n*4]=dac[n*3])+(pal[n*4+1]=dac[n*3+1])+(pal[n*4+2]=dac[n*3+2]);
@@ -1085,7 +1085,7 @@ void merge_palettes(void){
     pal[1024+n*4+3]=(pal[1024+n*4]=dac4[n*3])+(pal[1024+n*4+1]=dac4[n*3+1])+(pal[1024+n*4+2]=dac4[n*3+2]);
   } while (++n<256);
 
-  // pal[2048] preparado con { R,G,B,SUM }
+  // pal[2048] prepared with { R,G,B,SUM }
 
   r=0; g=0; b=0; pal[c0*4]=255; palette[0]=c0;
   n=1; do {
@@ -1094,13 +1094,13 @@ void merge_palettes(void){
     pal[c*4]=255; palette[n]=c;
   } while (++n<512);
 
-  // Restaura pal
+  // Restore pal
 
   for (n=0;n<512;n++) {
     pal[n*4]=pal[n*4+3]-(pal[n*4+1]+pal[n*4+2]);
   }
 
-  // paleta[512] con los colores ordenados
+  // palette[512] with the sorted colors
 
   for (n=1;n<511;n++) {
     dist[n]=*(int*)(squares+pal[palette[n]*4]*256+pal[palette[n+1]*4]*4);
@@ -1108,18 +1108,18 @@ void merge_palettes(void){
     dist[n]+=*(int*)(squares+pal[palette[n]*4+2]*256+pal[palette[n+1]*4+2]*4);
   }
 
-  // Dist con las distancias entre todos los colores consecutivos
+  // Dist with the distances between all consecutive colors
 
   c=511; while (c>255) {
 
     min=64*64*64;
-    for (n=1;n<c;n++) { // Busca la distancia mínima de todas
+    for (n=1;n<c;n++) { // Find the minimum distance of all
       if (dist[n]<min) {
         cmin=n; min=dist[n];
       }
     }
 
-    // paleta[cmin],paleta[cmin+1] colores a fusionar
+    // palette[cmin],palette[cmin+1] colors to merge
 
     r=(pal[palette[cmin]*4]+pal[palette[cmin+1]*4])/2;
     g=(pal[palette[cmin]*4+1]+pal[palette[cmin+1]*4+1])/2;
@@ -1158,21 +1158,21 @@ void merge_palettes(void){
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Creación de una paleta a partir de una muestra de colores
+//  Creation of a palette from a sample of colors
 //
-//  Entradas: muestra[]
-//      Se requiere un puntero a una tabla RGB (32x32x32 bytes) con valores
-//      0 o 1 (según ese color esté presente o no en la muestra)
+//  Inputs: sample[]
+//      A pointer to an RGB table (32x32x32 bytes) with values
+//      0 or 1 is required (depending on whether that color is present in the sample or not)
 //
-//  Salidas: new_palette[] muestra[]
-//      La paleta resultante y en la tabla original se han sustituido los
-//      valores a 1 por el correspondiente color de la paleta
+//  Outputs: new_palette[] sample[]
+//      The resulting palette, and in the original table the values
+//      at 1 have been replaced by the corresponding palette color
 //═════════════════════════════════════════════════════════════════════════════
 
 byte * sample;   // 32768
 //byte * pal;       // 32768*4
-//byte * palette;    // 32768*2 (o max_colores*2)
-//byte * dist;      // 32768*4 (o max_colores*4)
+//byte * palette;    // 32768*2 (or max_colors*2)
+//byte * dist;      // 32768*4 (or max_colors*4)
 byte new_palette[768];
 int num_colors;
 extern int load_palette;
@@ -1200,19 +1200,19 @@ word new_find_ord(byte * dac) {
 }
 
 void create_palette(void){
-  byte * pal; // Una lista de colores en formato R,G,B,sum(RGB),R,G,B,sum(RGB)..
+  byte * pal; // A list of colors in R,G,B,sum(RGB),R,G,B,sum(RGB).. format
   word * palette;
   int * dist;
   int rr,gg,bb,n;
   int c,min,cmin;
   byte col;
 
-  // Cuenta el número de colores y genera pal[]
+  // Count the number of colors and generate pal[]
 
   if ((pal=(byte*)malloc(32768*4))==NULL) return;
 
-  sample[0]=1;                 // El color negro siempre se incluye
-  sample[(31*32+31)*32+31]=1;  // El color blanco idem
+  sample[0]=1;                 // The black color is always included
+  sample[(31*32+31)*32+31]=1;  // The white color, ditto
 
   for (num_colors=0,n=0,rr=0;rr<32;rr++) for (gg=0;gg<32;gg++) for (bb=0;bb<32;bb++,n++) {
     if (sample[n]) {
@@ -1226,7 +1226,7 @@ void create_palette(void){
   if ((palette=(word*)malloc(num_colors*2+10))==NULL) { free(pal); return; }
   if ((dist=(int*)malloc(num_colors*4+10))==NULL) { free(palette); free(pal); return; }
 
-  // pal[num_colors] preparado ctr { R,G,B,0 }
+  // pal[num_colors] prepared with { R,G,B,0 }
 
   r=0; g=0; b=0; pal[0]+=128; palette[0]=0;
   n=1; do {
@@ -1236,13 +1236,13 @@ void create_palette(void){
     pal[c*4]+=128; palette[n]=c;
   } while (++n<num_colors);
 
-  // Restaura pal
+  // Restore pal
 
   for (n=0;n<num_colors;n++) {
     if (pal[n*4]>=128) pal[n*4]-=128;
   }
 
-  // paleta[num_colors] con los colores ordenados
+  // palette[num_colors] with the sorted colors
 
   for (n=0;n<num_colors-1;n++) {
     dist[n]=*(int*)(squares+pal[palette[n]*4]*256+pal[palette[n+1]*4]*4);
@@ -1250,20 +1250,20 @@ void create_palette(void){
     dist[n]+=*(int*)(squares+pal[palette[n]*4+2]*256+pal[palette[n+1]*4+2]*4);
   }
 
-  // Dist con las distancias entre todos los colores consecutivos
+  // Dist with the distances between all consecutive colors
 
   c=num_colors-1; while (c>255) {
 
     if (!load_palette) if ((c&127)==0) Progress((char *)texts[497],num_colors*2+num_colors-c,num_colors*4-256);
 
     min=64*64*64;
-    for (n=0;n<c;n++) { // Busca la distancia mínima de todas
+    for (n=0;n<c;n++) { // Find the minimum distance of all
       if (dist[n]<min) {
         cmin=n; min=dist[n];
       }
     }
 
-    // paleta[cmin+1] color a eliminar
+    // palette[cmin+1] color to remove
 
     if (c-cmin>0) {
       memmove(&palette[cmin+1],&palette[cmin+2],sizeof(word)*(c-cmin));
@@ -1312,7 +1312,7 @@ void create_palette(void){
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Prepara el tapiz para una paleta en concreto
+//      Prepare the wallpaper for a specific palette
 //═════════════════════════════════════════════════════════════════════════════
 
 extern byte desktop_gradient[128];
@@ -1438,11 +1438,11 @@ return;
 
   free(temp2); memcpy(pal,dac4,768); create_dac4();
 
-  if (!Setupfile.Desktop_Gradient) { // Si el fichero se muestra a color
+  if (!Setupfile.Desktop_Gradient) { // If the file is displayed in color
     for (x=0,p=pal;x<256;x++,p+=3)
       cdesktop[x]=fast_find_color(*p,*(p+1),*(p+2));
     p=temp; q=p+desktop_w*desktop_h;
-    do *p=cdesktop[*p]; while (++p<q); // Lo adapta a la paleta actual
+    do *p=cdesktop[*p]; while (++p<q); // Adapt it to the current palette
   } else {
     for (x=0,p=pal;x<256;x++,p+=3)
       cdesktop[x]=desktop_gradient[(*p+*(p+1)+*(p+2))*2/3];
@@ -1485,7 +1485,7 @@ void rescale(byte *si,int si_w,int si_h,byte *di,int di_w,int di_h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones de edición de la paleta
+//      Palette editing functions
 //═════════════════════════════════════════════════════════════════════════════
 
 char Values[72*1];
@@ -1626,7 +1626,7 @@ int w=v.w/big2,h=v.h/big2;
                         switch(Action)
                         {
                                 case 1:
-                                        //Degradar
+                                        //Gradient
                                         if(SelColor>cColor)
                                         {
                                                 cStart=cColor;
@@ -1658,7 +1658,7 @@ int w=v.w/big2,h=v.h/big2;
                                         set_dac(dac);
                                         break;
                                 case 2:
-                                        //Copiar                                        
+                                        //Copy                                        
                                         dac[cColor*3]=dac[SelColor*3];
                                         dac[cColor*3+1]=dac[SelColor*3+1];
                                         dac[cColor*3+2]=dac[SelColor*3+2];                                        
@@ -1669,7 +1669,7 @@ int w=v.w/big2,h=v.h/big2;
                                         set_dac(dac);
                                         break;
                                 case 3:
-                                        //Intercambiar
+                                        //Swap
                                         bWork=dac[SelColor*3];
                                         dac[SelColor*3]=dac[cColor*3];
                                         dac[cColor*3]=bWork;
@@ -1736,7 +1736,7 @@ int w=v.w/big2,h=v.h/big2;
                 }
         }
 
-        //Barras de desplazamiento
+        //Scroll bars
         if(lRed.zone!=sRed)
         {
                 sRed=lRed.zone;
@@ -1852,7 +1852,7 @@ int w=v.w/big2,h=v.h/big2;
                                 end_dialog=1;
                                 break;
                         case 2:                                
-                                //Deshace
+                                //Undo
                                 memcpy(dac,palette,768);
 
                                 find_colors();
@@ -1864,7 +1864,7 @@ int w=v.w/big2,h=v.h/big2;
 
                                 button(4,w/2,h-13,1,c0);
 
-                                //refresca valores y barras
+                                //refresh values and bars
                                 wbox(v.ptr,w,h,c2,130,63-21,25,20);
                                 wwrite(v.ptr,w,h,147,63-21,0,texts[143],c3);
                                 sprintf(cWork,"%02d",dac[SelColor*3]);
@@ -1889,7 +1889,7 @@ int w=v.w/big2,h=v.h/big2;
 
 void InterPal0(void)
 {
-        v.type=1; // Diálogo
+        v.type=1; // Dialog
         v.w=220-46-7;
         v.h=163+24-16;
         v.title=texts[138];
@@ -1906,7 +1906,7 @@ void InterPal0(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Funciones propias del menú de paleta
+//	Functions specific to the palette menu
 //═════════════════════════════════════════════════════════════════════════════
 
 void EditPal()

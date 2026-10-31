@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo de acceso al ratón
+//      Mouse access module
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -19,7 +19,7 @@ int div_started = 0;
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Comprueba si el ratón está en una caja
+//      Check whether the mouse is inside a box
 //═════════════════════════════════════════════════════════════════════════════
 
 int mouse_in(int x, int y, int x2, int y2) {
@@ -98,7 +98,7 @@ void read_mouse(void) {
 #endif
 
 
-	} else if (mode<100 && hotkey && !help_paint_active) { // Las teclas están solo activas en edición
+	} else if (mode<100 && hotkey && !help_paint_active) { // The keys are only active while editing
 
 		if (!(shift_status&4)) {
 
@@ -756,7 +756,7 @@ while(SDL_PollEvent(&event) )
 			toolbar=NULL;
 		}
 			
-		toolbar=(byte*)malloc(vga_width*19*big2); //OJO
+		toolbar=(byte*)malloc(vga_width*19*big2); //NOTE
 		bar_x=8*big2; bar_y=vga_height-27*big2; rule=0; current_mouse=21; sel_status=0;
 		
 		copy_buffer=(byte*)malloc(vga_width*vga_height+6)+6;

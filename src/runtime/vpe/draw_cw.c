@@ -225,7 +225,7 @@ int32_t pp;
   for( i=pVDraw->LeftCol;i<pVDraw->RightCol;i++,clip++ )
   {
     if ( clip->Top >= clip->Bot )
-    {// El span esta lleno.
+    {// The span is full.
       if ( PrevCeil.Bot  > PrevCeil.Top )
         upd_ceil(i,0,0,&PrevCeil,cpic,Front);
       if ( PrevFloor.Bot > PrevFloor.Top)

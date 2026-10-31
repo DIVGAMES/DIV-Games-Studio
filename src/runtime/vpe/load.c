@@ -14,7 +14,7 @@ extern int error_vpe;
 #ifdef DEBUG
 extern
 #endif
-char combo_error[128]; // para componer mensajes de error compuestos.
+char combo_error[128]; // to compose compound error messages.
 
 int *tex_pointer;
 int tex_size;
@@ -24,7 +24,7 @@ int tex_size;
 #define PI 3.141592f
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga una zona
+//  Load a zone
 //═════════════════════════════════════════════════════════════════════════════
 
 void LoadZone(char *Buffer)
@@ -51,7 +51,7 @@ void LoadZone(char *Buffer)
   Pos=0;
 
   //---------------------------------------------------------------------------
-  // Lee la cabecera de edicion
+  // Read the edit header
   //---------------------------------------------------------------------------
   if (strcmp(&Buffer[Pos],"wld\x1a\x0d\x0a\x01"))
   {
@@ -62,12 +62,12 @@ void LoadZone(char *Buffer)
   Pos+=(8+4+*(int *)&Buffer[8]);
 
   //---------------------------------------------------------------------------
-  // Lee la cabecera
+  // Read the header
   //---------------------------------------------------------------------------
   READ(Header,struct ZF_Header);
 
   //---------------------------------------------------------------------------
-  // Lee los puntos
+  // Read the points
   //---------------------------------------------------------------------------
   for(n=0;n<Header->NumPoints;n++)
   {
@@ -90,7 +90,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Lee las regiones
+  // Read the regions
   //---------------------------------------------------------------------------
   for(n=0;n<Header->NumRegions;n++)
   {
@@ -121,7 +121,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Lee las paredes
+  // Read the walls
   //---------------------------------------------------------------------------
   for(n=0;n<Header->NumWalls;n++)
   {
@@ -150,7 +150,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Lee las banderas
+  // Read the flags
   //---------------------------------------------------------------------------
   num_flags=Header->NumFlags;
   for(n=0;n<Header->NumFlags;n++) {
@@ -162,7 +162,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Inicializa los objetos y la vista
+  // Initialize the objects and the view
   //---------------------------------------------------------------------------
   view=(struct View *)AddEntry(&Views);
   view->ScrX=0;
@@ -182,11 +182,11 @@ void LoadZone(char *Buffer)
   view->StartClip=NULL;
 
   //---------------------------------------------------------------------------
-  // Lee los datos de caracter general
+  // Read the general data
   //---------------------------------------------------------------------------
   READ(zgen,struct ZF_General);
   strcpy(Gen.Title,zgen->Title);
-  //  Cargo el fondo
+  //  Load the background
   TexAlloc2(&Gen.BackTC,zgen->BackTex,num_fpg_aux);
   if (Gen.BackTC.pPic==NULL)
     TexAlloc2(&Gen.BackTC,-1,num_fpg_aux);
@@ -203,7 +203,7 @@ void LoadZone(char *Buffer)
   ActView=(struct View *)Views.ptr[0];
 
   //---------------------------------------------------------------------------
-  // Inicializa la paleta y las tablas asociadas
+  // Initialize the palette and the associated tables
   //---------------------------------------------------------------------------
   LoadPalette(zgen->Palette);
 
@@ -232,7 +232,7 @@ void LoadZone(char *Buffer)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Reservo memoria para cargar una tipo textura (grupo de texturas)
+//  Allocate memory to load a texture type (group of textures)
 //═════════════════════════════════════════════════════════════════════════════
 
 void TexAlloc(struct TexCon *ptc, int texcode, int num_fpg)
@@ -241,18 +241,18 @@ struct PicInfo *pic;
 int i;
 
   //---------------------------------------------------------------------------
-  // Inicializa la textura
+  // Initialize the texture
   //---------------------------------------------------------------------------
   ptc->pPic=NULL;
 
   //---------------------------------------------------------------------------
-  // Si es 0 retorna
+  // If it is 0, return
   //---------------------------------------------------------------------------
   if (!texcode)
     return;
 
   //---------------------------------------------------------------------------
-  // Comprueba si ha sido cargada
+  // Check whether it has been loaded
   //---------------------------------------------------------------------------
   for(i=0;i<Pics.Number;i++)
   {
@@ -265,13 +265,13 @@ int i;
   }
 
   //---------------------------------------------------------------------------
-  // Carga la textura
+  // Load the texture
   //---------------------------------------------------------------------------
   ptc->pPic=GetPic(texcode,num_fpg);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Leo la informacion de la textura sin cargarla
+//  Read the texture information without loading it
 //═════════════════════════════════════════════════════════════════════════════
 
 struct PicInfo *GetPic(int piccode, int num_fpg)
@@ -283,13 +283,13 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
   i=0;
   correct=0;
   //---------------------------------------------------------------------------
-  // Recorro el fichero fpg en busca de la textura
-  // La busqueda se realiza por codigo
+  // Go through the fpg file looking for the texture
+  // The search is done by code
   //---------------------------------------------------------------------------
   while (i<1000) {
     if (fpg_grf[i]!=NULL) {
-      n=*(fpg_grf[i]+15);           // Numero de puntos de control
-      if (piccode==*fpg_grf[i]) {   // Si lo encuentra termina
+      n=*(fpg_grf[i]+15);           // Number of control points
+      if (piccode==*fpg_grf[i]) {   // If it finds it, finish
         correct=1;
         break;
       }
@@ -297,7 +297,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
     i++;
   }
   //---------------------------------------------------------------------------
-  // Si ha encontrado la textura
+  // If the texture has been found
   //---------------------------------------------------------------------------
   if (correct) {
     pic=(struct PicInfo *)AddEntry(&Pics);
@@ -344,7 +344,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
     }
   }
   //---------------------------------------------------------------------------
-  // Si no encuentra la textura devuelve null
+  // If the texture is not found, return null
   //---------------------------------------------------------------------------
   else
     if( piccode<1000 && piccode>0 )
@@ -358,7 +358,7 @@ struct PicInfo *GetPic(int piccode, int num_fpg)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Cargo una textura del fichero fpg abierto
+//  Load a texture from the open fpg file
 //═════════════════════════════════════════════════════════════════════════════
 
 void LoadPic(struct PicInfo *pic)
@@ -372,19 +372,19 @@ void LoadPic(struct PicInfo *pic)
   if (pic==NULL) return;
 
   //---------------------------------------------------------------------------
-  // Si no ha sido cargada ya, la carga
+  // If it has not been loaded yet, load it
   //---------------------------------------------------------------------------
   if (pic->Raw==NULL) {
     i=0;
     correct=0;
     //-------------------------------------------------------------------------
-    // Recorro el fichero fpg en busca de la textura
-    // La busqueda se realiza por codigo
+    // Go through the fpg file looking for the texture
+    // The search is done by code
     //-------------------------------------------------------------------------
     while (i<1000) {
       if (fpg_grf[i]!=NULL) {
-        n=*(fpg_grf[i]+15);             // Numero de puntos de control
-        if (pic->code==*fpg_grf[i]) {   // Si lo encuentra termina
+        n=*(fpg_grf[i]+15);             // Number of control points
+        if (pic->code==*fpg_grf[i]) {   // If it finds it, finish
           correct=1;
           break;
         }
@@ -392,7 +392,7 @@ void LoadPic(struct PicInfo *pic)
       i++;
     }
     //-------------------------------------------------------------------------
-    // Si ha encontrado la textura
+    // If the texture has been found
     //-------------------------------------------------------------------------
     if (correct) {
       pic->Width=*(fpg_grf[i]+13);
@@ -421,8 +421,8 @@ void LoadPic(struct PicInfo *pic)
         case 2048:pic->Width2=11;
                   break;
                   //-----------------------------------------------------------
-                  // Si no es cuadrada y potencia de 2 genera un cuadrado de
-                  // 2 x 2 de color negro
+                  // If it is not square and a power of 2, generate a black square
+                  // of 2 x 2
                   //-----------------------------------------------------------
         default:  e(158);
                   pic->Width=pic->Height=2;
@@ -438,7 +438,7 @@ void LoadPic(struct PicInfo *pic)
       ptr=pic->Raw;
       if (*(fpg_grf[i]+1)!=-1) {
         //---------------------------------------------------------------------
-        // Roto la textura 90 grados para uso interno de las VPE
+        // Rotate the texture 90 degrees for internal use by the VPE
         //---------------------------------------------------------------------
         width=pic->Width;
         while (width) {
@@ -455,13 +455,13 @@ void LoadPic(struct PicInfo *pic)
     }
   }
   //---------------------------------------------------------------------------
-  // Incrementa el contador de veces usada la textura
+  // Increment the texture usage counter
   //---------------------------------------------------------------------------
   pic->Used++;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Reservo memoria para cargar una tipo textura (grupo de texturas)
+//  Allocate memory to load a texture type (group of textures)
 //═════════════════════════════════════════════════════════════════════════════
 
 void TexAlloc2(struct TexCon *ptc, int texcode, int num_fpg)
@@ -470,18 +470,18 @@ void TexAlloc2(struct TexCon *ptc, int texcode, int num_fpg)
   int i;
 
   //---------------------------------------------------------------------------
-  // Inicializa la textura
+  // Initialize the texture
   //---------------------------------------------------------------------------
   ptc->pPic=NULL;
 
   //---------------------------------------------------------------------------
-  // Si es 0 retorna
+  // If it is 0, return
   //---------------------------------------------------------------------------
   if (!texcode)
     return;
 
   //---------------------------------------------------------------------------
-  // Comprueba si ha sido cargada
+  // Check whether it has been loaded
   //---------------------------------------------------------------------------
   for(i=0;i<Pics.Number;i++) {
     pic=(struct PicInfo *)Pics.ptr[i];
@@ -492,13 +492,13 @@ void TexAlloc2(struct TexCon *ptc, int texcode, int num_fpg)
   }
 
   //---------------------------------------------------------------------------
-  // Carga la textura
+  // Load the texture
   //---------------------------------------------------------------------------
   ptc->pPic=GetPic2(texcode,num_fpg);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Leo la informacion de la textura de cualquier ancho,alto sin cargarla
+//  Read the information of a texture of any width,height without loading it
 //═════════════════════════════════════════════════════════════════════════════
 
 struct PicInfo *GetPic2(int piccode, int num_fpg)
@@ -511,13 +511,13 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
   correct=0;
   fpg_aux=g[num_fpg].grf;
   //---------------------------------------------------------------------------
-  // Recorro el fichero fpg en busca de la textura
-  // La busqueda se realiza por codigo
+  // Go through the fpg file looking for the texture
+  // The search is done by code
   //---------------------------------------------------------------------------
   while (i<1000) {
     if (fpg_aux[i]!=NULL) {
-      n=*(fpg_aux[i]+15);           // Numero de puntos de control
-      if (piccode==*fpg_aux[i]) {   // Si lo encuentra termina
+      n=*(fpg_aux[i]+15);           // Number of control points
+      if (piccode==*fpg_aux[i]) {   // If it finds it, finish
         correct=1;
         break;
       }
@@ -525,7 +525,7 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
     i++;
   }
   //---------------------------------------------------------------------------
-  // Si ha encontrado la textura
+  // If the texture has been found
   //---------------------------------------------------------------------------
   if (correct) {
     pic=(struct PicInfo *)AddEntry(&Pics);
@@ -539,10 +539,10 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
     pic->Used=0;
   }
   //---------------------------------------------------------------------------
-  // Si no encuentra la textura devuelve null
+  // If the texture is not found, return null
   //---------------------------------------------------------------------------
   else {
-    if (piccode==-1) { // Preparo el fondo porque no se ha definido
+    if (piccode==-1) { // Prepare the background because it has not been defined
       pic=(struct PicInfo *)AddEntry(&Pics);
       pic->code=piccode;
       pic->fpg=num_fpg;
@@ -568,7 +568,7 @@ struct PicInfo *GetPic2(int piccode, int num_fpg)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Cargo una textura del fichero fpg abierto de cualquier ancho,alto
+//  Load a texture of any width,height from the open fpg file
 //═════════════════════════════════════════════════════════════════════════════
 
 void LoadPic2(struct PicInfo *pic)
@@ -583,20 +583,20 @@ void LoadPic2(struct PicInfo *pic)
   if (pic==NULL) return;
 
   //---------------------------------------------------------------------------
-  // Si no ha sido cargada ya, la carga
+  // If it has not been loaded yet, load it
   //---------------------------------------------------------------------------
   if (pic->Raw==NULL) {
     i=0;
     correct=0;
     fpg_aux=g[pic->fpg].grf;
     //-------------------------------------------------------------------------
-    // Recorro el fichero fpg en busca de la textura
-    // La busqueda se realiza por codigo
+    // Go through the fpg file looking for the texture
+    // The search is done by code
     //-------------------------------------------------------------------------
     while (i<1000) {
       if (fpg_aux[i]!=NULL) {
-        n=*(fpg_aux[i]+15);             // Numero de puntos de control
-        if (pic->code==*fpg_aux[i]) {   // Si lo encuentra termina
+        n=*(fpg_aux[i]+15);             // Number of control points
+        if (pic->code==*fpg_aux[i]) {   // If it finds it, finish
           correct=1;
           break;
         }
@@ -604,7 +604,7 @@ void LoadPic2(struct PicInfo *pic)
       i++;
     }
     //-------------------------------------------------------------------------
-    // Si ha encontrado la textura
+    // If the texture has been found
     //-------------------------------------------------------------------------
     if (correct) {
       pic->Width=*(fpg_aux[i]+14);
@@ -612,7 +612,7 @@ void LoadPic2(struct PicInfo *pic)
       size=pic->Width*pic->Height;
       buffer=(char *)(fpg_aux[i]+16+n);
       //-----------------------------------------------------------------------
-      // Roto la textura 90 grados para uso interno de las VPE
+      // Rotate the texture 90 degrees for internal use by the VPE
       //-----------------------------------------------------------------------
       ptr=pic->Raw=(char *)MemRealloc(tex_pointer,&tex_size,size);
       width=pic->Width;
@@ -624,7 +624,7 @@ void LoadPic2(struct PicInfo *pic)
       }
     }
     //-------------------------------------------------------------------------
-    // Si no encuentra la textura genera un cuadrado de 2 x 2 de color negro
+    // If the texture is not found, generate a black 2 x 2 square
     //-------------------------------------------------------------------------
     else {
       pic->Width=pic->Height=2;
@@ -635,13 +635,13 @@ void LoadPic2(struct PicInfo *pic)
     }
   }
   //---------------------------------------------------------------------------
-  // Incrementa el contador de veces usada la textura
+  // Increment the texture usage counter
   //---------------------------------------------------------------------------
   pic->Used++;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga la paleta
+//  Load the palette
 //═════════════════════════════════════════════════════════════════════════════
 
 void LoadPalette(char *palname)
@@ -652,30 +652,30 @@ void LoadPalette(char *palname)
   Pal.PH.NumShades=16;
 
   //---------------------------------------------------------------------------
-  // Copio la paleta
+  // Copy the palette
   //---------------------------------------------------------------------------
   memcpy(Pal.VGAPal,palette,768);
 
   //---------------------------------------------------------------------------
-  // Tabla de valores de fade del fondo
+  // Table of background fade values
   //---------------------------------------------------------------------------
   memset(Pal.BackFade,0,32);
 
   //---------------------------------------------------------------------------
-  // Reserva memoria para tablas de fade y transparencias
+  // Allocate memory for fade and transparency tables
   //---------------------------------------------------------------------------
   size=256*Pal.PH.NumShades*Pal.PH.NumTables; //+256*256;
   Pal.MemTables=(VPEByte  *)CacheAlloc(size+256);
   Pal.Tables[0]=(VPEByte *)Pal.MemTables+255;//&0xFFFFFF00);
 
   //---------------------------------------------------------------------------
-  // Puntero a la tabla de transparencias
+  // Pointer to the transparency table
   //---------------------------------------------------------------------------
   Pal.Trans=ghost;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Crea la tabla de fog
+//  Create the fog table
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_fog_table(int intensity,int r,int g, int b)
@@ -724,7 +724,7 @@ void set_fog_table(int intensity,int r,int g, int b)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Creo las tablas de senos y cosenos y tangentes
+//  Create the sine, cosine and tangent tables
 //═════════════════════════════════════════════════════════════════════════════
 
 void LoadMath(void)
@@ -733,7 +733,7 @@ void LoadMath(void)
   static VPEFixed itan_table[1024];
 
   //---------------------------------------------------------------------------
-  // Creo las tablas de senos y cosenos
+  // Create the sine and cosine tables
   //---------------------------------------------------------------------------
   for (i=0;i<DEG360;i++) {
     SinTable[i]=(VPEFixed)(65536.0*sin((2.0*PI*(float)i)/(float)DEG360));

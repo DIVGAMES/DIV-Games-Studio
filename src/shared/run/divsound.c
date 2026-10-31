@@ -130,7 +130,7 @@ fprintf(stdout,"running with SDL_mixer version: %d.%d.%d\n",
         fread(&sound_fx, 1, 4, File_Cfg);
         fread(&cd_audio, 1, 4, File_Cfg);
 
-        // Nuevos valores del sound.cfg
+        // New values of sound.cfg
 
         if (fread(&mixer, 1, 4, File_Cfg)==4) {
           fread(&mixrate, 1, 4, File_Cfg);
@@ -492,7 +492,7 @@ void channelDone(int channel) {
   // Done!
 }
 
-int DivPlaySound(int NumSound, int Volume, int Frec) // Vol y Frec (0..256)
+int DivPlaySound(int NumSound, int Volume, int Frec) // Vol and Freq (0..256)
 {
   int ctr=0;
   int loop=-1;

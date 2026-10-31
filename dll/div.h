@@ -244,9 +244,9 @@ typedef struct _FNTBODY{
 }FNTBODY;
 
 
-typedef struct _t_g { // Estructura para un fpg
-  int * * fpg; // Fichero cargado en memoria
-  int * * grf; // Punteros a los gr쟣icos (g[n].grf[000..999])
+typedef struct _t_g { // Structure for an fpg
+  int * * fpg; // File loaded in memory
+  int * * grf; // Pointers to the graphics (g[n].grf[000..999])
 }t_g;
 
 // 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴

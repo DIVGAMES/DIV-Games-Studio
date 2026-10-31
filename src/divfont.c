@@ -1,10 +1,10 @@
 
-// **** OJO **** La función que genera el texto es void CreateText()
-// **** ShowFont? es la ventana de font (el font se carga en memoria), GetText es el díalogo con el "input text"
-// El v.aux de ShowFont apunta a la siguiente información al llamar a CreateText()
-// v.aux -> filename, v.aux+14 -> path, v.aux+RES_FOR_NAME -> fichero FNT
-// No se hace FntAux=v.aux+RES_FOR_NAME; antes de llamar a CreateText, es decir, FntAux apunta al fichero
-// El string se pasa a CreateText en cCharsToPrint[128]
+// **** NOTE **** The function that generates the text is void CreateText()
+// **** ShowFont? is the font window (the font is loaded in memory), GetText is the dialog with the "input text"
+// ShowFont's v.aux points to the following information when calling CreateText()
+// v.aux -> filename, v.aux+14 -> path, v.aux+RES_FOR_NAME -> FNT file
+// FntAux=v.aux+RES_FOR_NAME; is not done before calling CreateText, that is, FntAux points to the file
+// The string is passed to CreateText in cCharsToPrint[128]
 
 #include "global.h"
 #include "ifs.h"
@@ -97,14 +97,14 @@ char cWork[10];
 
         create_listbox(&lfontsizes);
 
-        wbox(v.ptr,w,h,c0,2,49,w-4,1);       // Linea horizontal superior
-        wbox(v.ptr,w,h,c0,54,49,1,92-20);        // Linea vertical izquierda
-        wbox(v.ptr,w,h,c0,114,49,1,92-20);       // Linea vertical derecha
-        wbox(v.ptr,w,h,c0,18+67,10,1,39);     // Linea vertical sup-media
+        wbox(v.ptr,w,h,c0,2,49,w-4,1);       // Top horizontal line
+        wbox(v.ptr,w,h,c0,54,49,1,92-20);        // Left vertical line
+        wbox(v.ptr,w,h,c0,114,49,1,92-20);       // Right vertical line
+        wbox(v.ptr,w,h,c0,18+67,10,1,39);     // Top-middle vertical line
 
-        wbox(v.ptr,w,h,c2,24-8,61-1,16,8); // Borde oscuro del Outline
-        wbox(v.ptr,w,h,c2,84-8,61-1,16,8); // Borde oscuro de la somx
-        wbox(v.ptr,w,h,c2,84-8,75-1,16,8); // Borde oscuro de la somy
+        wbox(v.ptr,w,h,c2,24-8,61-1,16,8); // Dark border of the Outline
+        wbox(v.ptr,w,h,c2,84-8,61-1,16,8); // Dark border of the somx
+        wbox(v.ptr,w,h,c2,84-8,75-1,16,8); // Dark border of the somy
 
         wwrite(v.ptr,w,h,4+60+20,51,1,texts[86],c3);
         wwrite(v.ptr,w,h,24+60,61,1,(byte *)itoa(OutLine,cWork,10),c3);
@@ -117,16 +117,16 @@ char cWork[10];
         wwrite(v.ptr,w,h,124-120+20,51,1,texts[91],c3);
 
         wwrite(v.ptr,w,h,4,12,0,texts[84],c3);
-        wbox(v.ptr,w,h,c2,4,19,66,8); // Borde oscuro del Font
+        wbox(v.ptr,w,h,c2,4,19,66,8); // Dark border of the Font
         wwrite(v.ptr,w,h,4,19,0,(byte *)FontName,c4);
         wwrite(v.ptr,w,h,4,31,0,texts[85],c3);
-        wbox(v.ptr,w,h,c2,4,38,66,8); // Borde oscuro de Face
+        wbox(v.ptr,w,h,c2,4,38,66,8); // Dark border of Face
         wwrite(v.ptr,w,h,4,38,0,(byte *)FaceName,c4);
 
         ShowText();
 
-        wbox(v.ptr,w,h,c0,2,h-38-3,w-4,1);  // Linea horizontal inferior
-        wbox(v.ptr,w,h,c0,2,h-20,w-4,1);  // Linea horizontal inferior
+        wbox(v.ptr,w,h,c0,2,h-38-3,w-4,1);  // Bottom horizontal line
+        wbox(v.ptr,w,h,c0,2,h-20,w-4,1);  // Bottom horizontal line
 }
 
 void close_old_fnt(void) {
@@ -406,7 +406,7 @@ char cWork[10];
                 FntWidth=FntHeight=fontSizes[(lfontsizes.zone-10)+lfontsizes.initial];
                 sprintf(cFntHeight,"%d",FntHeight);
                 sprintf(cFntWidth,"%d",FntWidth);
-//                v.item[2].state&=-3; // Evitar "out of range"
+//                v.item[2].state&=-3; // Avoid "out of range"
 //                v.item[3].state&=-3;
                 call((voidReturnType )v.paint_handler);
                 v.blit=1;
@@ -632,7 +632,7 @@ FILE *file;
 
         memcpy(ifs.table,MyLetterTable,256);
 
-        ifs.light[0]=0; // El color transparente se mantiene
+        ifs.light[0]=0; // The transparent color is kept
         ifs.dark[0]=0;
 
         _c0=find_color_not0(dac[0],dac[1],dac[2]);
@@ -686,7 +686,7 @@ int w=v.w/big2,h=v.h/big2;
                 strcpy(FontPathName,type[v_type].path);
                 if (FontPathName[strlen(FontPathName)-1]!='/') strcat(FontPathName,"/");
                 strcat(FontPathName,input);
-                wbox(v.ptr,w,h,c2,4,19,66,8); // Borde oscuro del Font
+                wbox(v.ptr,w,h,c2,4,19,66,8); // Dark border of the Font
                 wwrite(v.ptr,w,h,4,19,0,(byte *)FontName,c4);
                 v.blit=1;
         }
@@ -694,7 +694,7 @@ int w=v.w/big2,h=v.h/big2;
 
 //═════════════════════════════════════════════════════════════════════════════
 
-#define max_files 512 // ─────────────────────────────── Listbox de archivos
+#define max_files 512 // ─────────────────────────────── Files listbox
 extern struct t_listboxbr lfilesbr;
 extern t_thumb thumb[max_files];
 extern int num_taggeds;
@@ -741,7 +741,7 @@ int  num;
                             strcat(FacePathName,input);
                           }
                         }
-                        wbox(v.ptr,w,h,c2,4,38,66,8); // Borde oscuro de Face
+                        wbox(v.ptr,w,h,c2,4,38,66,8); // Dark border of Face
                         wwrite(v.ptr,w,h,4,38,0,(byte *)FaceName,c4);
                         v.blit=1;
                 }
@@ -831,7 +831,7 @@ void Selcolor3(void)
 
 void Selcolor0(void)
 {
-        v.type=1; // Diálogo
+        v.type=1; // Dialog
         v.w=131;
         v.h=157;
         v.title=texts[78];
@@ -870,23 +870,23 @@ char *MyBuffer,*BuffAux;
         ptr+=11*big2*can+2*big2;
 
         if((can-4*big2)>=SizeX)
-        {//Si es mas estrecho que la ventana, centralo en esta
+        {//If it is narrower than the window, center it in it
                 bwidth=SizeX;
                 ptr+=((can-4*big2)-SizeX)/2+1;
         }
         else
-        {//Si es mas ancho que la ventana, centra el BuffAux.
+        {//If it is wider than the window, center the BuffAux.
                 bwidth=(can-4*big2);
                 BuffAux+=(SizeX-(can-4*big2))/2;
         }
 
         if((cal-29*big2)>=SizeY)
-        {//Si es mas alto que la ventana, centralo en esta
+        {//If it is taller than the window, center it in it
                 bheight=SizeY;
                 ptr+=(((cal-29*big2)-SizeY)/2)*can;
         }
         else
-        {//Si es mas alto que la ventana, centra el BuffAux.
+        {//If it is taller than the window, center the BuffAux.
                 bheight=(cal-29*big2);
                 BuffAux+=((SizeY-(cal-29*big2))/2)*SizeX;
         }
@@ -938,7 +938,7 @@ void Preview0()
                         SizeY=fh;
         }
 */
-        v.type=1; // Diálogo
+        v.type=1; // Dialog
         if(big) { TX=SizeX/2; TY=SizeY/2; } else { TX=SizeX; TY=SizeY; }
         v.w=TX+6;
         if(v.w<60)
@@ -1079,7 +1079,7 @@ int GenCode=0;
 }
 void GenFont0(void)
 {
-        v.type=1; // Diálogo
+        v.type=1; // Dialog
         v.w=169-26;
         v.h=103;
         v.title=texts[852];
@@ -1122,23 +1122,23 @@ char *MyBuffer,*BuffAux;
         ptr+=11*big2*can+2*big2;
 
         if((can-4*big2)>=SizeX)
-        {//Si es mas estrecho que la ventana, centralo en esta
+        {//If it is narrower than the window, center it in it
                 bwidth=SizeX;
                 ptr+=((can-4*big2)-SizeX)/2+1;
         }
         else
-        {//Si es mas ancho que la ventana, centra el BuffAux.
+        {//If it is wider than the window, center the BuffAux.
                 bwidth=(can-4*big2);
                 BuffAux+=(SizeX-(can-4*big2))/2;
         }
 
         if((cal-29*big2)>=SizeY)
-        {//Si es mas alto que la ventana, centralo en esta
+        {//If it is taller than the window, center it in it
                 bheight=SizeY;
                 ptr+=(((cal-29*big2)-SizeY)/2)*can;
         }
         else
-        {//Si es mas alto que la ventana, centra el BuffAux.
+        {//If it is taller than the window, center the BuffAux.
                 bheight=(cal-29*big2);
                 BuffAux+=((SizeY-(cal-29*big2))/2)*SizeX;
         }
@@ -1193,7 +1193,7 @@ void Preview20()
                         SizeY=fh;
         }
 */
-        v.type=1; // Diálogo
+        v.type=1; // Dialog
 
         if(big) { TX=SizeX/2; TY=SizeY/2; } else { TX=SizeX; TY=SizeY; }
         v.w=TX+6;
@@ -1315,7 +1315,7 @@ void ShowFont1(void)
 
   if (SizeX>width_w*big2 || SizeY>height_w*big2)
   {
-    // Crea la reducción del thumbnail
+    // Create the thumbnail reduction
     coefredx = SizeX/((float)width_w*(float)big2);
     coefredy = SizeY/((float)height_w*(float)big2);
     if(coefredx>coefredy) coefredy=coefredx;
@@ -1420,11 +1420,11 @@ int Length;
                 return;
         }
 
-        // v.aux -> filename, v.aux+14 -> path, v.aux+RES_FOR_NAME -> fichero FNT
+        // v.aux -> filename, v.aux+14 -> path, v.aux+RES_FOR_NAME -> FNT file
 
         memset(v.aux,0,RES_FOR_NAME);
         memcpy(v.aux,Load_FontName,strlen(Load_FontName));
-        memcpy(v.aux+14,Load_FontPathName,strlen(Load_FontPathName));//Path completo
+        memcpy(v.aux+14,Load_FontPathName,strlen(Load_FontPathName));//Full path
         fread(v.aux+RES_FOR_NAME,Length,1,file);
         ConvertFntToPal((char *)v.aux+RES_FOR_NAME);
         fclose(file);
@@ -1460,13 +1460,13 @@ int Length;
         }
         memset(vntn->aux,0,RES_FOR_NAME);
         memcpy(vntn->aux,Load_FontName,strlen(Load_FontName));
-        memcpy(vntn->aux+14,Load_FontPathName,strlen(Load_FontPathName));//Path completo
+        memcpy(vntn->aux+14,Load_FontPathName,strlen(Load_FontPathName));//Full path
         fread(vntn->aux+RES_FOR_NAME,Length,1,file);
         ConvertFntToPal((char *)vntn->aux+RES_FOR_NAME);
         fclose(file);
 }
 
-#define max_files 512 // ─────────────────────────────── Listbox de archivos
+#define max_files 512 // ─────────────────────────────── Files listbox
 extern struct t_listboxbr lfilesbr;
 extern t_thumb thumb[max_files];
 extern int num_taggeds;
@@ -1509,7 +1509,7 @@ void OpenFont(void) {
       if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
-      if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
+      if ((f=fopen(full,"rb"))!=NULL) { // One has been chosen
         if (fread(cwork,1,8,f)==8) {
           fclose(f);
           if (!strcmp(cwork,"fnt\x1a\x0d\x0a")) {
@@ -1573,7 +1573,7 @@ void CreateText()
 {
 int n,y,x,SizeX=0,SizeY=0,fw,_fh=0,fh,init,cnt;
 
-        // 1 - Determina la longitud del espacio
+        // 1 - Determine the length of the space
 
         if (!strlen(cCharsToPrint)) return;
 
@@ -1591,7 +1591,7 @@ int n,y,x,SizeX=0,SizeY=0,fw,_fh=0,fh,init,cnt;
         }
         spacelen=(spacelen/cnt)/2;
 
-        // 2 - Calcula en SizeX x SizeY las dimensiones del texto a pintar
+        // 2 - Compute in SizeX x SizeY the dimensions of the text to draw
 
         for(x=0;x<strlen(cCharsToPrint);x++)
         {
@@ -1603,14 +1603,14 @@ int n,y,x,SizeX=0,SizeY=0,fw,_fh=0,fh,init,cnt;
                         SizeY=fh;
         } if (SizeY==0) SizeY=_fh;
 
-        // 3 - Crea un mapa de ese tamaño
+        // 3 - Create a map of that size
 
         map_width=SizeX;
         map_height=SizeY;
 
         if (new_map(NULL)) return;
 
-        // 4 - Utiliza ShowCharBuffer() para pintar el texto en el mapa
+        // 4 - Use ShowCharBuffer() to draw the text on the map
 
         init=0;
         for(x=0;x<strlen(cCharsToPrint);x++)
@@ -1619,7 +1619,7 @@ int n,y,x,SizeX=0,SizeY=0,fw,_fh=0,fh,init,cnt;
                 else
                         init+=spacelen;
 
-        // 5 - Define el zoom del mapa
+        // 5 - Define the zoom of the map
 
         v.map->zoom_cx=v.map->map_width/2;
         v.map->zoom_cy=v.map->map_height/2;
@@ -1640,14 +1640,14 @@ int n,y,x,SizeX=0,SizeY=0,fw,_fh=0,fh,init,cnt;
         v.map->zoom_x=x;
         v.map->zoom_y=y;
 
-        // 6 - Inicializa los puntos de control y el código
+        // 6 - Initialize the control points and the code
 
         for (n=0;n<512;n++)
                 v.map->points[n]=-1;
 
         v.map->Code=0;
 
-        // 7 - Llama al paint handler para refrescar la ventana y la vuelca
+        // 7 - Call the paint handler to refresh the window and dump it
 
         call((voidReturnType )v.paint_handler);
         wblit(copy_buffer,vga_width,vga_height,v.ptr,v.x,v.y,v.w,v.h,0);

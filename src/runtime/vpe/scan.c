@@ -120,7 +120,7 @@ VPEFixed   aux1,aux2,inca=0;
     }
     goto END_WALLSCAN;
   }
-// Calcula la visibilidad.
+// Compute the visibility.
   t1=pp1->a-pp2->a; // Angle from p1 to p2 clockwise
   if ( t1 < 0 ) t1+=F_DEG360;
   t2=-t1+F_DEG360;  // From p2 to p1 clockwise

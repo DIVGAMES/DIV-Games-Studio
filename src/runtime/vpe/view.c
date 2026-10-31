@@ -382,7 +382,7 @@ void SetActiveView(int height,int object,int w,int h,VPEByte *buf_ptr,int buf_wi
     buf_width=w;
   pv->BufWidth=buf_width;
 
-  // Asigno el objeto
+  // Assign the object
   pv->pObject=(struct Object *)Objects.ptr[object];
   pv->H=pv->pObject->H;
   pv->ObjHeight=INT_FIX(height+16);

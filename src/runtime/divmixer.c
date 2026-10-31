@@ -29,7 +29,7 @@ void SetMasterVolume (UWORD volume)
                     outp(BaseAddress+GUSMIXDATA,volume);
                     outp(BaseAddress+GUSMIXADDRESS,GUSMASTERR);
                     outp(BaseAddress+GUSMIXDATA,volume);
-/* OJO !!!
+/* NOTE !!!
         case GUSMAX:
                     volume = 15-volume;
                     volumen <<= 2;
@@ -69,7 +69,7 @@ void SetVocVolume (UWORD volume)
                     outp(BaseAddress+GUSMIXDATA,volume);
                     outp(BaseAddress+GUSMIXADDRESS,GUSVOCR);
                     outp(BaseAddress+GUSMIXDATA,volume);
-/* OJO !!!
+/* NOTE !!!
         case GUSMAX:
                     volume=15-volume;
                     volumen <<= 1;
@@ -109,7 +109,7 @@ void SetCDVolume (UWORD volume)
                     outp(BaseAddress+GUSMIXDATA,volume);
                     outp(BaseAddress+GUSMIXADDRESS,GUSCDR);
                     outp(BaseAddress+GUSMIXDATA,volume);
-/* OJO !!!
+/* NOTE !!!
         case GUSMAX:
                     volume=15-volume;
                     volumen <<= 1;

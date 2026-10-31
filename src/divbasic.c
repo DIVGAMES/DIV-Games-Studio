@@ -163,7 +163,7 @@ void memxchg(byte *d, byte *s, int n) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//      MEGARUTINA para reponer el fondo de una caja en edición
+//      MEGAROUTINE to restore the background of a box being edited
 ///////////////////////////////////////////////////////////////////////////////
 
 static int zoom_portion=0;
@@ -185,7 +185,7 @@ void edit_background(int x,int y,int w,int h) {
 
   blit_partial(x,y,w,h);
 
-  // Repone el fondo del sistema de ventanas, OJO *** mejorar update_box();
+  // Restore the background of the window system, NOTE *** improve update_box();
 
   if (zx || zy) if (x<zx || y<zy || x+w>zx+zwidth || y+h>zy+zheight) update_box(x,y,w,h);
 
@@ -211,9 +211,9 @@ void edit_background(int x,int y,int w,int h) {
 
   if (_big) { big=1; big2=2; }
 
-  // Llama a zoom_map para que actualice la caja correspondiente
+  // Call zoom_map so it updates the corresponding box
 
-  // 1 - Intersección entre zoom y ventana en la copia
+  // 1 - Intersection between zoom and window in the copy
 
   _x0=(x>zx)?x:zx;
   _y0=(y>zy)?y:zy;
@@ -222,7 +222,7 @@ void edit_background(int x,int y,int w,int h) {
 
   if (_x1<_x0 || _y1<_y0) return;
 
-  // 2 - Calcular el pimer pixel y ultimo pixel del mapa
+  // 2 - Compute the first pixel and last pixel of the map
 
   _x0=((_x0-zx)>>zoom)+zoom_x;
   _y0=((_y0-zy)>>zoom)+zoom_y;
@@ -245,7 +245,7 @@ void edit_background(int x,int y,int w,int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Zoom, volcado de map(map_width*map_height) a copia segun zoom,zoom_x/y
+//      Zoom, dump of map(map_width*map_height) to copy according to zoom,zoom_x/y
 //═════════════════════════════════════════════════════════════════════════════
 
 int w,h;
@@ -261,7 +261,7 @@ void zoom_map(void) {
     p=map+zoom_y*map_width+zoom_x;
     q=copy_buffer;
 
-    if ((map_width<<zoom)<vga_width) { // Copia de este trozo en select_zoom()
+    if ((map_width<<zoom)<vga_width) { // Copy of this chunk in select_zoom()
       zwidth=map_width<<zoom; zx=(vga_width-zwidth)/2; q+=zx; w=map_width;
     } else {
       zx=0; w=vga_width>>zoom; zwidth=w<<zoom;
@@ -384,7 +384,7 @@ void zoom_map(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Sub barra de fill interpolativo
+//      Interpolative fill sub-bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void inter_mode(void) {
@@ -438,21 +438,21 @@ void inter_mode(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Interpolación
+//      Interpolation
 //═════════════════════════════════════════════════════════════════════════════
 
-void fill_inter(int w,int h) { // Rellena con medias una zona
+void fill_inter(int w,int h) { // Fill an area with averages
 
   int x,y;
   word *si,*di,n0,n1,n2,n3;
   int n;
 
-  // 1 - Desplaza m0 hacia derecha abajo un pixel
+  // 1 - Shift m0 one pixel right and down
 
   for (y=h-1;y>0;y--) for (x=w-1;x>0;x--) *(m0+y*w+x)=*(m0+(y-1)*w+x-1);
   for (x=0;x<w;x++) *(m0+x)=0; for (y=0;y<h;y++) *(m0+y*w)=0;
 
-  // 2 - Refresca en m0 el alambre de puntos que rodean a la zona
+  // 2 - Refresh in m0 the wire of points surrounding the area
 
   for (y=mab_y0-1;y<=mab_y1+1;y++) if (y>=0 && y<map_height)
     for (x=mab_x0-1;x<=mab_x1+1;x++) if (x>=0 && x<map_width)
@@ -464,14 +464,14 @@ void fill_inter(int w,int h) { // Rellena con medias una zona
         *(m0+(y-mab_y0+2)*w+(x-mab_x0+2))=0;
       }
 
-  // Interpola de m0 a m1
+  // Interpolate from m0 to m1
 
   si=m0; di=m1;
 
   for (y=0;y<h-1;y++) {
     for (x=0;x<w-1;x++) {
 
-        if (n0=*si) // Pone en *(di) la media de los cuatro *(si+?)
+        if (n0=*si) // Put into *(di) the average of the four *(si+?)
              if (n1=*(si+1))
                   if (n2=*(si+w))
                        if (n3=*(si+w+1))
@@ -506,14 +506,14 @@ void fill_inter(int w,int h) { // Rellena con medias una zona
     } si++; di++;
   }
 
-  // Y ahora interpola de m1 a m0
+  // And now interpolate from m1 to m0
 
   si=m1; di=m0;
 
   for (y=0;y<h-1;y++) {
     for (x=0;x<w-1;x++) {
 
-        if (n0=*si) // Pone en *(di) la media de los cuatro *(si+?)
+        if (n0=*si) // Put into *(di) the average of the four *(si+?)
              if (n1=*(si+1))
                   if (n2=*(si+w))
                        if (n3=*(si+w+1))
@@ -552,7 +552,7 @@ void fill_inter(int w,int h) { // Rellena con medias una zona
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selecciona un bloque por un relleno (x,y,fill_dac)
+//      Select a block via a fill (x,y,fill_dac)
 //═════════════════════════════════════════════════════════════════════════════
 
 void fill_select(word x,word y) {
@@ -569,7 +569,7 @@ void fill_select(word x,word y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Relleno de una zona (que contiene colores fill_dac) con un color
+//      Fill an area (containing fill_dac colors) with a color
 //═════════════════════════════════════════════════════════════════════════════
 
 void fill(word x,word y) {
@@ -583,10 +583,10 @@ void fill(word x,word y) {
     memset(mab,0,((map_width*map_height+31)/32)*4);
 
     if (fill_mode==2) {
-      memset(fill_dac,1,256); // Rellena hasta el color seleccionado
+      memset(fill_dac,1,256); // Fill up to the selected color
       fill_dac[color]=0;
     } else {
-      memset(fill_dac,0,256); // Rellena el color de map(x,y)
+      memset(fill_dac,0,256); // Fill the color at map(x,y)
       fill_dac[*(map+y*map_width+x)]=1;
     }
 
@@ -617,7 +617,7 @@ void fill(word x,word y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Algoritmo de fill (por scanes)
+//      Fill algorithm (by scans)
 //═════════════════════════════════════════════════════════════════════════════
 
 void fill_scan(word x,word y) {
@@ -638,9 +638,9 @@ void fill_scan(word x,word y) {
   x=x0; continue_scan_0:
 
   if (y>0) while (x<=x1) {
-    if (!is_mab(x,y-1)) // Si no está pintado
-      if (fill_dac[*(map+(y-1)*map_width+x)]) // Si se tiene que pintar
-        if (fsp<fsp_max) { // Si se puede pintar
+    if (!is_mab(x,y-1)) // If it is not painted
+      if (fill_dac[*(map+(y-1)*map_width+x)]) // If it has to be painted
+        if (fsp<fsp_max) { // If it can be painted
           *fsp=x0; fsp++; *fsp=x1; fsp++;
           *fsp=x+2; fsp++; *fsp=y; fsp++;
           *fsp=0; fsp++; y--;
@@ -652,9 +652,9 @@ void fill_scan(word x,word y) {
   x=x0; continue_scan_1:
 
   if (y<map_height-1) while (x<=x1) {
-    if (!is_mab(x,y+1)) // Si no está pintado
-      if (fill_dac[*(map+(y+1)*map_width+x)]) // Si se tiene que pintar
-        if (fsp<fsp_max) { // Si se puede pintar
+    if (!is_mab(x,y+1)) // If it is not painted
+      if (fill_dac[*(map+(y+1)*map_width+x)]) // If it has to be painted
+        if (fsp<fsp_max) { // If it can be painted
           *fsp=x0; fsp++; *fsp=x1; fsp++;
           *fsp=x+2; fsp++; *fsp=y; fsp++;
           *fsp=1; fsp++; y++;
@@ -663,7 +663,7 @@ void fill_scan(word x,word y) {
     x++;
   }
 
-  if (fsp>fss) { // Mientras queden scanes sin terminar
+  if (fsp>fss) { // While there are unfinished scans
     fsp-=2; y=*fsp; fsp--; x=*fsp;
     fsp--; x1=*fsp; fsp--; x0=*fsp;
     if (*(fsp+4)) goto continue_scan_1; else goto continue_scan_0;
@@ -672,7 +672,7 @@ void fill_scan(word x,word y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Relleno del fill
+//      Fill of the fill
 //═════════════════════════════════════════════════════════════════════════════
 
 extern byte * texture_color;
@@ -693,10 +693,10 @@ void fill_draw(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Volcado de la zona interpolada
+//      Dump of the interpolated area
 //═════════════════════════════════════════════════════════════════════════════
 
-void blit_inter(int w) { // Vuelca a pantalla la zona interpolada
+void blit_inter(int w) { // Dump the interpolated area to the screen
 
   int x,y,n;
 
@@ -708,12 +708,12 @@ void blit_inter(int w) { // Vuelca a pantalla la zona interpolada
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una selección de mapa de bits (según zoom,zoom_x/y,mab_*)
+//      Draw a bitmap selection (according to zoom,zoom_x/y,mab_*)
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_selection_mab(void) {
 
-  int x0,y0,x1,y1; // Intersección de la zona seleccionada y lo visto en zoom
+  int x0,y0,x1,y1; // Intersection of the selected area and what is seen in zoom
   int x,y,c;
   byte *p,g0=c0,g4=c4;
   word g04,g40;
@@ -724,7 +724,7 @@ void draw_selection_mab(void) {
   x1=zoom_x+(zwidth>>zoom)-1; if (mab_x1<x1) x1=mab_x1;
   y1=zoom_y+(zheight>>zoom)-1; if (mab_y1<y1) y1=mab_y1;
 
-  // OJO !!!
+  // NOTE !!!
   // p=copy_buffer+(zy+((y0-zoom_y)<<zoom))*vga_width+zx+((x0-zoom_x)<<zoom);
 
   if (x1>=x0 && y1>=y0) switch(zoom) {
@@ -857,7 +857,7 @@ void draw_selection_mab(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una caja de selección (según zoom,zoom_x/y)
+//      Draw a selection box (according to zoom,zoom_x/y)
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_selection_box(int _x0,int _y0,int _x1,int _y1) {
@@ -929,26 +929,26 @@ void draw_selection_box(int _x0,int _y0,int _x1,int _y1) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones del mapa de bits, poner un pixel
+//      Bitmap functions, set a pixel
 //═════════════════════════════════════════════════════════════════════════════
 
-void set_mab(int x,int y) { // Pone un pixel en el mapa de bits
+void set_mab(int x,int y) { // Set a pixel in the bitmap
 
-  x+=y*map_width; // Nº de bit en el buffer
-  y=x>>5; // Nº de int en el buffer
-  x&=31; // Nº de bit en el int
+  x+=y*map_width; // Bit number in the buffer
+  y=x>>5; // Int number in the buffer
+  x&=31; // Bit number in the int
   *(mab+y)|=1<<x;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones del mapa de bits, consultar un pixel
+//      Bitmap functions, query a pixel
 //═════════════════════════════════════════════════════════════════════════════
 
-int is_mab(int x,int y) { // Consulta un pixel en el mapa de bits
+int is_mab(int x,int y) { // Query a pixel in the bitmap
 
-  x+=y*map_width; // Nº de bit en el buffer
-  y=x>>5; // Nº de int en el buffer
-  x&=31; // Nº de bit en el int
+  x+=y*map_width; // Bit number in the buffer
+  y=x>>5; // Int number in the buffer
+  x&=31; // Bit number in the int
   return(*(mab+y)&(1<<x));
 }
 
@@ -965,19 +965,19 @@ int is_near_mab(int x,int y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      UNDO - Guarda la zona ocupada por una acción, antes de realizarla claro
+//      UNDO - Save the area occupied by an action, before performing it of course
 //═════════════════════════════════════════════════════════════════════════════
 
 byte * save_undo(int x, int y, int w, int h) {
 
-  int a,start,end; // Inicio y fin del bloque guardado (en undo[])
+  int a,start,end; // Start and end of the saved block (in undo[])
   byte *ret=0;
 
   if (x<0) {w+=x; x=0; } if (y<0) {h+=y; y=0; }
   if (x+w>map_width) w=map_width-x; if (y+h>map_height) h=map_height-y;
   if (w<=0 || h<=0) return((byte *)-1);
 
-  // Determina la zona de zoom a refrescar
+  // Determine the zoom area to refresh
 
   if (x<zoom_x) do_zoom_x=zx-((zoom_x-x)<<zoom);
   else do_zoom_x=zx+((x-zoom_x)<<zoom);
@@ -1002,7 +1002,7 @@ byte * save_undo(int x, int y, int w, int h) {
 
   if (start+w*h>undo_memory) start=0;
 
-  // Si una acción ocupa más de undo_memory, entonces no la guardamos.
+  // If an action takes more than undo_memory, then we do not save it.
 
   if ((end=start+w*h)<=undo_memory) {
 
@@ -1013,7 +1013,7 @@ byte * save_undo(int x, int y, int w, int h) {
 
     tundo[iundo].mode=mode;
 
-    // Nos cargamos los bloques machacados
+    // We discard the overwritten blocks
 
     for (a=0;a<max_undos;a++)
       if (a!=iundo && tundo[a].mode!=-1)
@@ -1021,13 +1021,13 @@ byte * save_undo(int x, int y, int w, int h) {
            (tundo[a].start>=start && tundo[a].start<end))
            tundo[a].mode=-1;
 
-    // Guardamos la zona que ocupará la acción realizada.
+    // We save the area that the performed action will occupy.
 
     copy_block(undo+start,map+x+y*map_width,w,h);
 
     tundo[iundo].code=map_code;
 
-    iundo=(iundo+1)%max_undos; tundo[iundo].mode=-1; // Se prohibe undo_next()
+    iundo=(iundo+1)%max_undos; tundo[iundo].mode=-1; // undo_next() is forbidden
 
     ret=(byte *)(undo+start);
 
@@ -1042,7 +1042,7 @@ byte * save_undo(int x, int y, int w, int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      UNDO - Restaura la zona ocupada por la última acción.
+//      UNDO - Restore the area occupied by the last action.
 //═════════════════════════════════════════════════════════════════════════════
 
 int undo_back(void) {
@@ -1059,7 +1059,7 @@ int undo_back(void) {
 
     xchg_block(undo+tundo[a].start,map+x+y*map_width,w,h);
 
-    // Determina la zona de zoom a refrescar
+    // Determine the zoom area to refresh
 
     if (x<zoom_x) do_zoom_x=zx-((zoom_x-x)<<zoom);
     else do_zoom_x=zx+((x-zoom_x)<<zoom);
@@ -1081,7 +1081,7 @@ int undo_back(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      UNDO - Rehace la untima acción desecha con undo_back()
+//      UNDO - Redo the last action undone with undo_back()
 //═════════════════════════════════════════════════════════════════════════════
 
 void undo_next(void) {
@@ -1096,7 +1096,7 @@ void undo_next(void) {
 
     xchg_block(undo+tundo[iundo].start,map+x+y*map_width,w,h);
 
-    // Determina la zona de zoom a refrescar
+    // Determine the zoom area to refresh
 
     if (x<zoom_x) do_zoom_x=zx-((zoom_x-x)<<zoom);
     else do_zoom_x=zx+((x-zoom_x)<<zoom);
@@ -1120,7 +1120,7 @@ void undo_next(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Copia un bloque del mapa a memoria
+//      Copy a block of the map to memory
 //═════════════════════════════════════════════════════════════════════════════
 
 void copy_block(byte *d,byte *s,int w,int h) {
@@ -1132,7 +1132,7 @@ void copy_block(byte *d,byte *s,int w,int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Intercambia un bloque entre el mapa y memoria
+//      Swap a block between the map and memory
 //═════════════════════════════════════════════════════════════════════════════
 
 void xchg_block(byte *d,byte *s,int w,int h) {

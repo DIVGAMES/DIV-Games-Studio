@@ -7,7 +7,7 @@
 #define MAX_FLAGS   1000
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Definicion de tipos
+//  Type definitions
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 typedef struct type_flag {
@@ -30,7 +30,7 @@ typedef struct type_wall {
   int32_t texture;
   int32_t texture_top;
   int32_t texture_bot;
-  int32_t fade;       // Valor de la luz de 0 a 16
+  int32_t fade;       // Light value from 0 to 16
 } twall, *lptwall;
 
 typedef struct type_region {
@@ -39,7 +39,7 @@ typedef struct type_region {
   int32_t floor_height,ceil_height;
   int32_t floor_tex;
   int32_t ceil_tex;
-  int32_t fade;       // Valor de la luz de 0 a 16
+  int32_t fade;       // Light value from 0 to 16
 } tregion, *lptregion;
 
 typedef struct type_map {
@@ -61,7 +61,7 @@ void lf_free(void *pointer);
 void lf_free_all();
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Definiciones del formato de las VPE
+//  Definitions of the VPE format
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 typedef int16_t     M8SHORT;
@@ -71,7 +71,7 @@ typedef int32_t M8DWORD;
 typedef int32_t      M8LONG;
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Definicion de estructuras
+//  Structure definitions
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 struct ZF_Header {  // Zone file header
@@ -99,7 +99,7 @@ struct ZF_General {     // General information
 
 struct ZF_Flag {    // Flag struture
   M8LONG  x,y;        // Point coordinates
-  int32_t   number;     // Numero asociado
+  int32_t   number;     // Associated number
 };
 
 struct ZF_Point {   // Point struture
@@ -138,7 +138,7 @@ struct ZF_Wall {    // Wall structure
 };
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Formato
+//  Format
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 //  Header        - ZF_Header
@@ -148,7 +148,7 @@ struct ZF_Wall {    // Wall structure
 //  General info  - ZF_General
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Declaracion de funciones
+//  Function declarations
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void map_saveedit(FILE *file, lptmap map_aux);

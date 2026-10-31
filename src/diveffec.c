@@ -1,15 +1,15 @@
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo para la creacion de explosiones
+//      Module for creating explosions
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Definiciones
+//      Definitions
 //═════════════════════════════════════════════════════════════════════════════
 
-#define max_pun 64      // Número máximo de puntos de control
-#define max_exp 8       // Número máximo de explosiones base
+#define max_pun 64      // Maximum number of control points
+#define max_exp 8       // Maximum number of base explosions
 #define DEEP    4
 #pragma on (check_stack);
 
@@ -30,39 +30,39 @@
 #endif
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Declaracion de procedimientos internos
+//      Declaration of internal procedures
 //═════════════════════════════════════════════════════════════════════════════
 
-void init_rnd(int,char*); // Inicializa el generador aleatorio con un int y clave
-byte rndb(void);	    	  // Obtiene un byte del generador aleatorio
-int  rnd(void); 		      // Obtiene un int del generador aleatorio
+void init_rnd(int,char*); // Initialize the random generator with an int and a key
+byte rndb(void);	    	  // Get a byte from the random generator
+int  rnd(void); 		      // Get an int from the random generator
 
 void gradient0(void);
 byte exp_colors[128];
 struct _gcolor exp_gradient[9];
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Tablas y variables globales
+//      Global tables and variables
 //═════════════════════════════════════════════════════════════════════════════
 
 int cx,cy;
 int ExpGradient;
 
-struct tp {			// Estructura para los puntos de la explosión
-  int x,y;                      // Coordenadas del punto
-  int radius;                    // Radio efectivo del punto
-  int force;                   // Fuerza central del punto
+struct tp {			// Structure for the explosion points
+  int x,y;                      // Point coordinates
+  int radius;                    // Effective radius of the point
+  int force;                   // Central force of the point
   int xr,yr;                    // Coord. * 10000
-  int ix,iy;                    // Incrementos
+  int ix,iy;                    // Increments
 };
 
-struct te {                     // Estructura para una explosión base
+struct te {                     // Structure for a base explosion
   struct tp p[max_pun];
   byte * ptr;
 } e[max_exp];
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Parámetros para crear la explosión
+//      Parameters to create the explosion
 //═════════════════════════════════════════════════════════════════════════════
 
 int exp_width=32;      // 8..256
@@ -77,7 +77,7 @@ int per_points;
 char *Buff_exp;
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Crea el array de puntos
+//	Create the array of points
 //═════════════════════════════════════════════════════════════════════════════
 
 void create_points(void) {
@@ -88,8 +88,8 @@ void create_points(void) {
 
     for (n=0;n<n_pun;n++) {
 
-      ang=(double)rnd()/10000.0; // Angulo (?)
-      dist=(double)(rnd()%10000)/10000.0; // Distancia (0 .. 0.8)
+      ang=(double)rnd()/10000.0; // Angle (?)
+      dist=(double)(rnd()%10000)/10000.0; // Distance (0 .. 0.8)
 
       e[m].p[n].ix=cos(ang)*10000.0;
       e[m].p[n].iy=sin(ang)*10000.0;
@@ -110,7 +110,7 @@ void create_points(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Avanza un frame en la explosión
+//      Advance one frame in the explosion
 //═════════════════════════════════════════════════════════════════════════════
 
 void advance_points(void) {
@@ -130,7 +130,7 @@ void advance_points(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Pinta la explosión
+//	Draw the explosion
 //═════════════════════════════════════════════════════════════════════════════
 
 int draw_explosion(void) {
@@ -438,7 +438,7 @@ int x;
                 return;
         for(x=0;x<256;x++) ExpDac[x] = exp_colors[x/2];
 /*
-        //Gamma del exp_Color2 al exp_Color1
+        //Gradient from exp_Color2 to exp_Color1
         r=(float)dac[exp_Color2*3  ];
         g=(float)dac[exp_Color2*3+1];
         b=(float)dac[exp_Color2*3+2];
@@ -456,7 +456,7 @@ int x;
                 b+=incb;
         }
 
-        //Gamma del exp_Color1 al exp_Color0
+        //Gradient from exp_Color1 to exp_Color0
         r=(float)dac[exp_Color1*3  ];
         g=(float)dac[exp_Color1*3+1];
         b=(float)dac[exp_Color1*3+2];

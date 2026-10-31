@@ -27,7 +27,7 @@ extern char *background;
 
 byte *dll_palette;
 byte  *active_palette;
-extern int   dll_set_palette;        // -1:siempre, 0:nunca, 1:una vez, 2:dos, ...
+extern int   dll_set_palette;        // -1:always, 0:never, 1:once, 2:twice, ...
 extern byte  *ghost;
 //extern char  key[];              // Actual scancodes
 

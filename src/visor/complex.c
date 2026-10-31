@@ -28,7 +28,7 @@ wmaterial   wmat;
   complex_struct->Clon=0;
   complex_struct->Shadow=0;
   complex_struct->AEmbedded=1;
-  complex_struct->hl_render=hlrnd;    //Motor de render de alto nivel.
+  complex_struct->hl_render=hlrnd;    //High level render engine.
   complex_struct->curframe=0;
   complex_struct->angx=0;complex_struct->angy=0;complex_struct->angz=0;
   complex_struct->x=0;complex_struct->y=0;complex_struct->z=0;
@@ -39,16 +39,16 @@ wmaterial   wmat;
   if(file==NULL)        {ERROR=(char *)ERR8;printf("Failed to open file: %s\n",name);exit(1);};
   fread(cControl,1,4,file);
   if(strcmp(cControl,"O3D")) {ERROR=(char *)ERR9;exit(1);};
-  fread(&sWork,1,2,file);   // Versión
-  fread(&complex_struct->nObjects,1,2,file);// Numero de Objetos
+  fread(&sWork,1,2,file);   // Version
+  fread(&complex_struct->nObjects,1,2,file);// Number of Objects
   if(complex_struct->nObjects>MAXOBJECTS)       {ERROR=(char *)ERR10;exit(1);};
   for(i=0;i<complex_struct->nObjects;i++)
     if ((complex_struct->Objects[i]=(lptobject)lf_malloc(sizeof(tobject)))==NULL)
       return;
-  fread(&complex_struct->nMaterials,1,2,file);  // Numero de materiales
+  fread(&complex_struct->nMaterials,1,2,file);  // Number of materials
   if ((complex_struct->Materials=(lptmaterial)lf_malloc(sizeof(tmaterial)*complex_struct->nMaterials))==NULL)
     return;
-  fread(&complex_struct->nDummies,1,2,file);  // Numero de Dummies
+  fread(&complex_struct->nDummies,1,2,file);  // Number of Dummies
   if(complex_struct->nDummies)
  {
     if ((complex_struct->Dummies=(lptbbox)lf_malloc(sizeof(tbbox)*complex_struct->nDummies))==NULL)
@@ -58,7 +58,7 @@ wmaterial   wmat;
 {
     complex_struct->Dummies=NULL;
   }
-  fread(&complex_struct->nTapes,1,2,file);  // Numero de Cintas
+  fread(&complex_struct->nTapes,1,2,file);  // Number of Tapes
   if(complex_struct->nTapes) {
     if ((complex_struct->Tapes=(lpttape)lf_malloc(sizeof(ttape)*complex_struct->nTapes))==NULL)
       return;
@@ -66,15 +66,15 @@ wmaterial   wmat;
 	complex_struct->Tapes=NULL;
   }
 
-  fread(&complex_struct->nFrames,1,2,file); // Numero de animaciones
+  fread(&complex_struct->nFrames,1,2,file); // Number of animations
   if ((complex_struct->Anims=(lptmatrix)lf_malloc(sizeof(tmatrix)*complex_struct->nObjects*complex_struct->nFrames))==NULL) 
 	  return;
 
-  fread(&OffsetObjs,1,4,file);    // Offset a los Objetos.
-  fread(&OffsetMats,1,4,file);    // Offset a los materiles.
-  fread(&OffsetDummies,1,4,file); // Offset a los Dummies.
-  fread(&OffsetTapes,1,4,file);   // Offset a las Cintas.
-  fread(&OffsetAnms,1,4,file);    // Offset a las animaciones.
+  fread(&OffsetObjs,1,4,file);    // Offset to the Objects.
+  fread(&OffsetMats,1,4,file);    // Offset to the materials.
+  fread(&OffsetDummies,1,4,file); // Offset to the Dummies.
+  fread(&OffsetTapes,1,4,file);   // Offset to the Tapes.
+  fread(&OffsetAnms,1,4,file);    // Offset to the animations.
 
   fread(&fWork,1,4,file); // bx1
   fread(&fWork,1,4,file); // by1
@@ -86,17 +86,17 @@ wmaterial   wmat;
   for(i=0;i<complex_struct->nObjects;i++)
   {
 
-    fread(&complex_struct->Objects[i]->nVertex,1,2,file); // Numero de vertices
+    fread(&complex_struct->Objects[i]->nVertex,1,2,file); // Number of vertices
     if ((complex_struct->Objects[i]->Vertices=(lptvertex)lf_malloc(sizeof(tvertex)*complex_struct->Objects[i]->nVertex))==NULL) 
       return;
       
-    fread(&complex_struct->Objects[i]->nFaces,1,2,file);  // Numero de caras
+    fread(&complex_struct->Objects[i]->nFaces,1,2,file);  // Number of faces
     if (complex_struct->Objects[i]->nFaces)
       if ((complex_struct->Objects[i]->Faces=(lptface)lf_malloc(sizeof(tface)*complex_struct->Objects[i]->nFaces))==NULL)
         return;
 
-    fread(&matindex,1,2,file);  // Material usado.
-    fread(complex_struct->Objects[i]->name,1,20,file);  // Nombre del objeto
+    fread(&matindex,1,2,file);  // Material used.
+    fread(complex_struct->Objects[i]->name,1,20,file);  // Object name
 	
 	printf("name: %s\n",complex_struct->Objects[i]->name);
 
@@ -340,7 +340,7 @@ float   cz=cos(complex_struct->angz);
     mwork._02 = sy;
     mwork._20 =-sy;
     mwork._22 = cy;
-    MatMult(&temp,&mwork,&complex_struct->CompMat); //OJO esta al reves por los sprites
+    MatMult(&temp,&mwork,&complex_struct->CompMat); //NOTE it is reversed because of the sprites
 //////////////////////////////////////////////
     mwork=Identity;
     mwork._00 = cz;

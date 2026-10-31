@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Módulo que contiene el código del creador de instalaciones
+//  Module containing the code of the installation creator
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -13,7 +13,7 @@
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Prototipos y variables del módulo
+//  Prototypes and variables of the module
 //═════════════════════════════════════════════════════════════════════════════
 
 void Setup0();
@@ -67,10 +67,10 @@ int second_font=1;
 //═════════════════════════════════════════════════════════════════════════════
 
 typedef struct _HeaderSetup{
-  char name[_MAX_FNAME];  // Nombre del archivo (en asciiz, sin path) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
-  unsigned int offset;    // Desplazamiento respecto al inicio del pack
-  unsigned int len1;      // Longitud del archivo en el packfile (comprimido)
-  unsigned int len2;      // Longitud del archivo real (descomprimido)
+  char name[_MAX_FNAME];  // File name (in asciiz, without path) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
+  unsigned int offset;    // Offset from the start of the pack
+  unsigned int len1;      // Length of the file in the packfile (compressed)
+  unsigned int len2;      // Length of the actual file (uncompressed)
 }HeaderSetup;
 
 HeaderSetup *MyHeaderSetup;
@@ -79,7 +79,7 @@ int nfiles,is_disk=0;
 
 char ExeGen[_MAX_PATH]; // PROGRAM.EXE
 
-char *__ins,*_ins,*ins; // Punteros a EXEC.INS
+char *__ins,*_ins,*ins; // Pointers to EXEC.INS
 
 extern char user1[];
 extern char user2[];
@@ -87,27 +87,27 @@ extern char user2[];
 //═════════════════════════════════════════════════════════════════════════════
 
 struct _dirhead {
-  char pack[_MAX_FNAME]; // Nombre del propio packfile (no va en el archivo) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
-  char head[8];          // Cabecera inicial del packfile (dat<-\n00)
-  int crc1,crc2,crc3;    // CRC's de hasta tres programas que lo utilicen
-  int nfiles;            // Número de archivos contenidos
+  char pack[_MAX_FNAME]; // Name of the packfile itself (not stored in the file) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
+  char head[8];          // Initial header of the packfile (dat<-\n00)
+  int crc1,crc2,crc3;    // CRCs of up to three programs that use it
+  int nfiles;            // Number of files contained
 } dirhead;
 
 struct tdir {
-  char name[_MAX_FNAME]; // Nombre del archivo (en asciiz, sin path) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
-  unsigned int offset;   // Desplazamiento respecto al inicio del pack
-  unsigned int len1;     // Longitud del archivo en el packfile (comprimido)
-  unsigned int len2;     // Longitud del archivo real (descomprimido)
+  char name[_MAX_FNAME]; // File name (in asciiz, without path) FIX: increase buffer size to fit large file names on modern platforms and avoiding loading errors
+  unsigned int offset;   // Offset from the start of the pack
+  unsigned int len1;     // Length of the file in the packfile (compressed)
+  unsigned int len2;     // Length of the actual file (uncompressed)
 };
 
-struct tdir * hdir;     // Directorio de ficheros
+struct tdir * hdir;     // File directory
 
-int memcrc[9];          // Para obtener el CRC de los programas
+int memcrc[9];          // To obtain the CRC of the programs
 
 byte * image_install=NULL;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Ventana de Custom setup
+//  Custom setup window
 //═════════════════════════════════════════════════════════════════════════════
 
 void Setup1() {
@@ -399,7 +399,7 @@ strcpy(tbuf,"                    2015 ");
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Crea el thumbnail del instalador de 142x87 (*big2)
+// Create the installer thumbnail of 142x87 (*big2)
 //═════════════════════════════════════════════════════════════════════════════
 
 void create_install_image(char * file, int errors) {
@@ -478,9 +478,9 @@ void create_install_image(char * file, int errors) {
 /*
       if (ptr=(int*)lst[3]) {
         if (ptr[13]==640 && ptr[14]==480) {
-          p=(byte*)ptr+64+ptr[15]*4; // Inicio de la pantalla
+          p=(byte*)ptr+64+ptr[15]*4; // Start of the screen
 
-          // Crea el thumbnail ...
+          // Create the thumbnail ...
 
           create_dac4();
           for (n=0;n<256;n++) xlat[n]=fast_find_color(pal[n*3],pal[n*3+1],pal[n*3+2]);
@@ -502,7 +502,7 @@ void create_install_image(char * file, int errors) {
               } a+=coefredy;
             }
 
-            // Aplica la tabla xlat[] al thumbnail
+            // Apply the xlat[] table to the thumbnail
 
             for (n=w*h-1;n>=0;n--) {
               temp2[n]=xlat[temp2[n]];
@@ -540,7 +540,7 @@ int is_point(int * ptr, int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Mensajes de información del instalador
+//  Installer information messages
 //═════════════════════════════════════════════════════════════════════════════
 
 void Setupm1() {
@@ -587,7 +587,7 @@ void Setupm0() {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Mensajes de error del instalador
+//  Installer error messages
 //═════════════════════════════════════════════════════════════════════════════
 
 void Setupe1() {
@@ -640,7 +640,7 @@ void Setupe0() {
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Funcion invocada para crear una instalacion desde el menú programas
+//  Function invoked to create an installation from the programs menu
 //═════════════════════════════════════════════════════════════════════════════
 
 int GetFileLen(FILE *file) {
@@ -766,9 +766,9 @@ void create_installation(void) {
 
   dialog(Setup0); if(!v_accept) return;
 
-  // *** Tratamiento de la unidad de Disco destino (permite "a:","dir","\dir\new","d:\tmp",...)
+  // *** Handling of the destination Disk drive (allows "a:","dir","\dir\new","d:\tmp",...)
 
-  if (strlen(Drive)==1) { // Se supone una letra entre 'a' y 'z' como una unidad y no directorio
+  if (strlen(Drive)==1) { // A letter between 'a' and 'z' is assumed to be a drive and not a directory
     strupr(Drive); if (Drive[0]>='A' && Drive[0]<='Z') strcat(Drive,":");
   }
 
@@ -787,9 +787,9 @@ void create_installation(void) {
   }
 #endif
 
-  if (_drive<=2) { strcpy(dir,"/"); is_disk=_drive; } // En un disquete no creará directorios
+  if (_drive<=2) { strcpy(dir,"/"); is_disk=_drive; } // On a floppy disk it will not create directories
 
-  for(x=1;x<strlen(dir);x++) if(dir[x]=='/') { // Crea directorios ...
+  for(x=1;x<strlen(dir);x++) if(dir[x]=='/') { // Create directories ...
 //    strcpy(cWork,drive);
 //    strcat(cWork,dir);
 //    cWork[x+2]=0;
@@ -802,11 +802,11 @@ strcpy(cWork,full);
 #endif
   }
 
-//  strcpy(full,drive); strcat(full,dir); // Destino: "full"*.*
+//  strcpy(full,drive); strcat(full,dir); // Destination: "full"*.*
 
  // _dos_setdrive(my_drive,&_drive);
 
-  // *** Directorio por defecto
+  // *** Default directory
 
   if (strlen(DefDir)==0) {
     strcpy(DefDir,(char *)window[v_window].title);
@@ -815,7 +815,7 @@ strcpy(cWork,full);
 
   strupr(DefDir);
 
-  // *** Ficheros de la instalación (los de exec y los de setup)
+  // *** Installation files (those of exec and those of setup)
 
   end=fopen("system/exec.ins","rb"); fseek(end,0,SEEK_END); n=ftell(end); fclose(end);
 
@@ -857,7 +857,7 @@ fflush(stdout);
     v_text=(char *)texts[357]; dialog(err0);
     free(_ins); return; }
 
-  dirhead.nfiles=0; // Archivos que van en el PACKFILE
+  dirhead.nfiles=0; // Files that go into the PACKFILE
 
   for(x=0;x<nfiles;x++) {
     if (x==0) strcpy(MyHeaderSetup[x].name,ExeGen);
@@ -888,7 +888,7 @@ fprintf(stdout,
         ins);
 fflush(stdout);
 
-        // Si el fichero llevaba '+', pone un '+' a su aparición anterior
+        // If the file had a '+', put a '+' on its previous occurrence
 
         ins+=strlen(ins)+1;
 
@@ -938,30 +938,30 @@ fflush(stdout);
 // ALWAYS pack files
 
 #if 0
-  if (!do_pack) dirhead.nfiles=0; // Cuando no deba generarse el PACKFILE
+  if (!do_pack) dirhead.nfiles=0; // When the PACKFILE must not be generated
 #endif
 
 
 //═════════════════════════════════════════════════════════════════════════════
 
-  // Aquí se creará el "PACKFILE.DAT" con los archivos pertinentes
-  // *** OJO *** Cuando el usuario seleccione la opción "Instalación protegida"
-  // nfiles es el número de ficheros totales (EXE + OVL [+ SETUP] + char * ins)
-  // Crea el directorio en hdir[].name/offset/len1/len2
-  // y su cabecera en dirhead.packname/head/crc1/crc2/crc3/nfiles
+  // Here the "PACKFILE.DAT" will be created with the relevant files
+  // *** NOTE *** When the user selects the "Protected installation" option
+  // nfiles is the number of total files (EXE + OVL [+ SETUP] + char * ins)
+  // Create the directory in hdir[].name/offset/len1/len2
+  // and its header in dirhead.packname/head/crc1/crc2/crc3/nfiles
 
   if (dirhead.nfiles) {
 
-    // 0º Define los valores básicos de la cabecera del packfile
+    // 0th Define the basic values of the packfile header
 
     strcpy(cWork,(char *)texts[498]);
     strcat(cWork,dirhead.pack);
 
     memcpy(dirhead.head,"dat\x1a\x0d\x0a\x00\x00",8);
 
-    // dirhead.nfiles ya está precalculado antes
+    // dirhead.nfiles is already precomputed before
 
-    // 1º Obtiene los CRC del system\exec.exe y install\setup.ovl (si include_setup)
+    // 1st Get the CRCs of system\exec.exe and install\setup.ovl (if include_setup)
 
     dirhead.crc1=0;
     dirhead.crc2=0;
@@ -983,29 +983,29 @@ fflush(stdout);
       fclose(end);
     }
 
-    // 2º Abre el fichero ("INSTALL/PACKFILE.DAT","wb")
+    // 2nd Open the file ("INSTALL/PACKFILE.DAT","wb")
 
     if ((fout=fopen("install/PACKFILE.DAT","wb"))==NULL) {
       v_text=(char *)texts[358]; dialog(err0);
       free(_ins); return;
     }
 
-    // 3º Graba la cabecera (&dirhead.head)
+    // 3rd Write the header (&dirhead.head)
 
     fwrite(&dirhead.head,1,8+3*4+4,fout);
 
-    // 4º Pide memoria para el directorio (hdir[])
+    // 4th Request memory for the directory (hdir[])
 
     if ((hdir=(struct tdir *)malloc(dirhead.nfiles*sizeof(struct tdir)))==NULL) {
       v_text=(char *)texts[357]; dialog(err0);
       fclose(fout); free(_ins); return;
     }
 
-    // 5º Graba el directorio (con basura, inicialmente)
+    // 5th Write the directory (with garbage, initially)
 
     fwrite(hdir,sizeof(struct tdir),dirhead.nfiles,fout);
 
-    // 6º Graba todos los archivos a continuacion (rellenando hdir[])
+    // 6th Write all the files next (filling hdir[])
 
     ins=__ins=_ins;
 
@@ -1036,7 +1036,7 @@ fflush(stdout);
       hdir[n].len2=ftell(end);
       fseek(end,0,SEEK_SET);
 
-      // Carga fin, lo comprime, y lo graba en fout (-1 si error)
+      // Load fin, compress it, and write it to fout (-1 on error)
 
       hdir[n].len1=compress_file(end,fout,(unsigned long)hdir[n].len2);
 
@@ -1051,7 +1051,7 @@ fflush(stdout);
       ins+=strlen(ins)+1;
     }
 
-    // 7º Actualiza la lista de ficheros a incluir (_ins), con el PACKFILE
+    // 7th Update the list of files to include (_ins), with the PACKFILE
 
     nfiles=nfiles-dirhead.nfiles+1;
 
@@ -1060,9 +1060,9 @@ fflush(stdout);
       strcpy(__ins,(char *)chr); __ins+=strlen(__ins)+1;
     }
 
-    strcpy(__ins,"install/PACKFILE.DAT"); // añade el PACKFILE como el último fichero
+    strcpy(__ins,"install/PACKFILE.DAT"); // add the PACKFILE as the last file
 
-    // 8º Reescribe el hdir[] y cierra el fichero
+    // 8th Rewrite hdir[] and close the file
 
     fseek(fout,8+3*4+4,SEEK_SET);
     fwrite(hdir,sizeof(struct tdir),dirhead.nfiles,fout);
@@ -1083,7 +1083,7 @@ fflush(stdout);
 #if 0
 //═════════════════════════════════════════════════════════════════════════════
 
-   // Crea el INSTALL\DIV32RUN.DLL a partir de (INSTALL\DIV32RUN.INS/386 + SYSTEM\LENGUAJE.INT)
+   // Create INSTALL\DIV32RUN.DLL from (INSTALL\DIV32RUN.INS/386 + SYSTEM\LENGUAJE.INT)
 
   if ((fout=fopen("install/DIV32RUN.DLL","wb"))==NULL) {
     v_text=(char *)texts[358]; dialog(err0);
@@ -1134,7 +1134,7 @@ fflush(stdout);
 
 //═════════════════════════════════════════════════════════════════════════════
 
-  // *** Crea install.div (fichero empaquetado original)
+  // *** Create install.div (original packed file)
 
   if ((fout=fopen("install/INSTALL.DIV","wb"))==NULL) {
 	v_text=(char *)texts[358]; dialog(err0);
@@ -1148,7 +1148,7 @@ fflush(stdout);
     fclose(fout); free(_ins); return;
   } fwrite(MyHeaderSetup,sizeof(HeaderSetup),nfiles,fout);
 
-  // Copia al INSTALL.DIV todos los ficheros de la instalación
+  // Copy all the installation files into INSTALL.DIV
 
   ins=_ins;
 
@@ -1221,14 +1221,14 @@ fflush(stdout);
 
   free(MyHeaderSetup);
 
-  Progress((char *)texts[219],nfiles*100,nfiles*100); // INSTALL.DIV ya creado
+  Progress((char *)texts[219],nfiles*100,nfiles*100); // INSTALL.DIV already created
 
-  strcpy(cWork,type[1].path); // Borra el PACKFILE.DAT
+  strcpy(cWork,type[1].path); // Delete PACKFILE.DAT
   strcat(cWork,"/");
   strcat(cWork,"install/PACKFILE.DAT");
   DaniDel(cWork);
 
-  // *** Graba INSTALL.EXE con la coletilla informativa
+  // *** Write INSTALL.EXE with the informative tail
 
   strcpy(cWork,type[1].path);
   strcat(cWork,"/");
@@ -1342,7 +1342,7 @@ fflush(stdout);
 
   Progress((char *)texts[543],100,100);
 
-  // *** Graba PackName.001, 002, ... a partir de INSTALL.DIV
+  // *** Write PackName.001, 002, ... from INSTALL.DIV
 
   strcpy(cWork,type[1].path);
   strcat(cWork,"/");
@@ -1353,11 +1353,11 @@ fflush(stdout);
 
   if(!FileCopyICE(cWork,dWork,1,234)) { v_text=(char *)texts[231]; dialog(err0); return; }
 
-  DaniDel(cWork);              // Borra el INSTALL.DIV
+  DaniDel(cWork);              // Delete INSTALL.DIV
 
 #endif
 
-  v_title=(char *)texts[359];        // Diálogo indicando el final de la instalación
+  v_title=(char *)texts[359];        // Dialog indicating the end of the installation
   strcpy(cWork,(char *)texts[360]);
   strupr(full);
   strcat(cWork,full);
@@ -1405,9 +1405,9 @@ int copy_file(FILE * end, FILE * fout, unsigned long len, int patch) {
   if ((pin=(unsigned char*)malloc(len))==NULL) return(-1);
   if (fread(pin,1,len,end)!=len) { free(pin); return(-1); }
 
-  if (patch) { // version para 386+ (parchea el div_stub)
-    pin[0x4F]=0x03; // Comparar CPU con 80386 o mayor
-    pin[0x51]=0x16; // Si no, emitir mensaje de Intel386 not found
+  if (patch) { // version for 386+ (patches the div_stub)
+    pin[0x4F]=0x03; // Compare CPU with 80386 or higher
+    pin[0x51]=0x16; // If not, emit the Intel386 not found message
   }
 
   if (fwrite(pin,1,len,fout)!=len) { free(pin); return(-1); }
@@ -1510,13 +1510,13 @@ int FileCopyICE(char *org,char *dest,int vols,int _text) { // Returns 0 -Error ,
         len=0;
       }
 
-    } else { // Digo yo que será esto ...
-      if (len<=totfree) { // Da igual, coge de todas formas
+    } else { // I guess this is what it will be ...
+      if (len<=totfree) { // It does not matter, take it anyway
         fread(buffer,1,len,end);
         if (fwrite(buffer,1,len,fout)!=len) { retval=0; break; }
         totfree-=len;
         len=0;
-      } else { // No coge (queda solo totfree espacio)
+      } else { // It does not take (only totfree space is left)
 
         if (!vols) { retval=0; break; }
 

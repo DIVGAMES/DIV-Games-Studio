@@ -12,15 +12,15 @@
 
 typedef struct {
   sprite3d    *ccamera;
-  lptobject   objects[N_OBJECTS]; // Array de 128 objetos.
-  lptobject   wobjects[N_OBJECTS];// Array de 128 objetos.
-  int         nobjects;           // Numero de objetos.
+  lptobject   objects[N_OBJECTS]; // Array of 128 objects.
+  lptobject   wobjects[N_OBJECTS];// Array of 128 objects.
+  int         nobjects;           // Number of objects.
   int         ppf,oldppf;
 
-  // Variables para luces
+  // Variables for lights
   float       lgtx,lgty,lgtz;
   float       mlgtx,mlgty,mlgtz;
-  // Variables para luces
+  // Variables for lights
   float       center_screen_x;
   float       center_screen_y;
 

@@ -17,13 +17,13 @@ static struct Region *ColReg[MAX_COLREGS];
 static int CurColReg, NumColRegs;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Actualiza un objeto
+//  Update an object
 //═════════════════════════════════════════════════════════════════════════════
 
 void DoObjectUpdate(struct Object *po)
 {
   struct Point   *pp;
-//  struct Object  *pObject; // Para las colisiones
+//  struct Object  *pObject; // For collisions
   struct Wall    *pWall;
   struct Region  *pRegion, *reg;
   struct Move    *pSpeed;
@@ -33,7 +33,7 @@ void DoObjectUpdate(struct Object *po)
   int i, Steps, gap;
 
   //---------------------------------------------------------------------------
-  // Destruye un objeto si esta marcado para ser destruido
+  // Destroy an object if it is marked to be destroyed
   //---------------------------------------------------------------------------
   if ((po->Event&EV_DESTROY)!=0) {
     DelPoint(po->pp);
@@ -43,24 +43,24 @@ void DoObjectUpdate(struct Object *po)
 
   pp=po->pp;            // Object point
   pRegion=po->pRegion;  // Object region
-  pSpeed=&po->Speed;    // Velocidad
+  pSpeed=&po->Speed;    // Speed
 
   po->region_number=pRegion->Tag;
 
   //---------------------------------------------------------------------------
-  // Calcula el angulo de giro
+  // Compute the turning angle
   //---------------------------------------------------------------------------
   t1=FixSin(-po->Angle); //-pSpeed->Y
   t2=FixCos(-po->Angle); //-pSpeed->Y
 
   //---------------------------------------------------------------------------
-  // Calcula las coordenadas de avance
+  // Compute the forward coordinates
   //---------------------------------------------------------------------------
   MoveX=FixMul(t2,pSpeed->X);
   MoveY=FixMul(-t1,pSpeed->X);
 
   //---------------------------------------------------------------------------
-  // Deteccion de colisiones
+  // Collision detection
   //---------------------------------------------------------------------------
   AddRH=0;
   ColFlag=TRUE;
@@ -68,7 +68,7 @@ void DoObjectUpdate(struct Object *po)
   ty=FixMod(MoveY);
   if (tx>=ty) {
     //-------------------------------------------------------------------------
-    // Multiples pasos
+    // Multiple steps
     //-------------------------------------------------------------------------
     if (tx>F_SDIST) {
       Steps=(FIX_INT(tx)>>SDIST2)+1;
@@ -77,7 +77,7 @@ void DoObjectUpdate(struct Object *po)
       AddY=FixMul(MoveY,t);
     }
     //-------------------------------------------------------------------------
-    // Un solo paso
+    // A single step
     //-------------------------------------------------------------------------
     else {
       Steps=1;
@@ -86,7 +86,7 @@ void DoObjectUpdate(struct Object *po)
   }
   else { // MoveY>MoveX
     //-------------------------------------------------------------------------
-    // Multiples pasos
+    // Multiple steps
     //-------------------------------------------------------------------------
     if (ty>F_SDIST) {
       Steps=(FIX_INT(ty)>>SDIST2)+1;
@@ -95,7 +95,7 @@ void DoObjectUpdate(struct Object *po)
       AddY=FixMul(MoveY,t);
     }
     //-------------------------------------------------------------------------
-    // Un solo paso
+    // A single step
     //-------------------------------------------------------------------------
     else {
       Steps=1;
@@ -103,35 +103,35 @@ void DoObjectUpdate(struct Object *po)
     }
   }
 
-  X=pp->x; Y=pp->y; // Coordenadas de inicio
+  X=pp->x; Y=pp->y; // Start coordinates
 
   //---------------------------------------------------------------------------
-  // Realiza las colisiones paso a paso
+  // Perform the collisions step by step
   //---------------------------------------------------------------------------
   for(;Steps>0;Steps--) {
     pRegion=po->pRegion;
     RegDist=INT_FIX(1000);
     Flag=0;
     //-------------------------------------------------------------------------
-    // Avanza un paso
+    // Advance one step
     //-------------------------------------------------------------------------
     X+=AddX;
     Y+=AddY;
 
     //-------------------------------------------------------------------------
-    // Inicializa la colision con regiones
+    // Initialize the collision with regions
     //-------------------------------------------------------------------------
     t1=pRegion->FloorH;
     t2=pRegion->CeilH;
     //-------------------------------------------------------------------------
-    // Comprueba si colisiona con el suelo
+    // Check whether it collides with the floor
     //-------------------------------------------------------------------------
     if (po->H<t1) {
       po->H=t1;
       ColFlag=FALSE;
     }
     //-------------------------------------------------------------------------
-    // Comprueba si colisiona con el techo
+    // Check whether it collides with the ceiling
     //-------------------------------------------------------------------------
     if (po->H+po->Height>=t2) {
       po->H=t2-po->Height;
@@ -139,8 +139,8 @@ void DoObjectUpdate(struct Object *po)
     }
 
     //-------------------------------------------------------------------------
-    // Comprueba colisiones con objetos y paredes de cada region
-    // Comienza por la region del objeto
+    // Check collisions with objects and walls of each region
+    // Start with the object's region
     //-------------------------------------------------------------------------
     ColReg[0]=pRegion;
     NumColRegs=1;
@@ -149,7 +149,7 @@ void DoObjectUpdate(struct Object *po)
       pRegion=ColReg[CurColReg];
 /*
       //-----------------------------------------------------------------------
-      // Colision con objetos
+      // Collision with objects
       //-----------------------------------------------------------------------
       pObject=po->Next;
       for(;pObject!=NULL;pObject=pObject->Next) {
@@ -203,23 +203,23 @@ void DoObjectUpdate(struct Object *po)
       }
 */
       //-----------------------------------------------------------------------
-      // Colision con paredes
+      // Collision with walls
       //-----------------------------------------------------------------------
-      check=F_CDIST+po->Radius; // Distancia de control
-      dist =F_WDIST+po->Radius; // Distancia minima para andar
+      check=F_CDIST+po->Radius; // Control distance
+      dist =F_WDIST+po->Radius; // Minimum distance to walk
       //-----------------------------------------------------------------------
-      // Recorre todas las paredes de la region actual
+      // Go through all the walls of the current region
       //-----------------------------------------------------------------------
       for (i=0;i<pRegion->NumWallPtrs;i++)
       {
         pWall=pRegion->WallPtrs[i];
         //---------------------------------------------------------------------
-        // Lee las coordenadas
+        // Read the coordinates
         //---------------------------------------------------------------------
         x1=pWall->p1->x; y1=pWall->p1->y;
         x2=pWall->p2->x; y2=pWall->p2->y;
         //---------------------------------------------------------------------
-        // Si no esta suficientemente cerca pasa a la siguiente pared
+        // If it is not close enough, move on to the next wall
         //---------------------------------------------------------------------
         if (x1>=x2)
         {
@@ -242,24 +242,24 @@ void DoObjectUpdate(struct Object *po)
           if (Y>=y2+check) continue;
         }
         //---------------------------------------------------------------------
-        // Halla el seno y el coseno para la transformacion
+        // Find the sine and cosine for the transformation
         //---------------------------------------------------------------------
         x2-=x1; y2-=y1;
         t=FIX_INT(FixITan(x2,y2));
         c=FixCos(t);
         s=FixSin(t);
         //---------------------------------------------------------------------
-        // Rota X,Y para pasarlo al espacio del muro (espacio afin)
-        // X queda a lo largo del muro e Y queda perpendicular
+        // Rotate X,Y to move it into wall space (affine space)
+        // X lies along the wall and Y lies perpendicular
         //---------------------------------------------------------------------
         x=FixMul(c,X-x1)-FixMul(-s,Y-y1);
         y=FixMul(-s,X-x1)+FixMul(c,Y-y1);
         //---------------------------------------------------------------------
-        // Si la distancia es mayor que la permitida comprueba el siguiente
+        // If the distance is greater than allowed, check the next one
         //---------------------------------------------------------------------
         if (FixMod(y) >= dist) continue;
         //---------------------------------------------------------------------
-        // Si el muro no es solido (puerta,ventana,...)
+        // If the wall is not solid (door,window,...)
         //---------------------------------------------------------------------
         RotateFlag=TRUE;
         if ((pWall->Type&W_SOLID)==0)
@@ -274,19 +274,19 @@ void DoObjectUpdate(struct Object *po)
           gap=t2-t1;
           t1-=po->Step+AddRH;
           //-------------------------------------------------------------------
-          // Si entramos por la puerta
+          // If we enter through the door
           //-------------------------------------------------------------------
           if ((po->H>=t1) && (po->H+po->Height<=t2) && (po->Height<=gap))
           {
             //-----------------------------------------------------------------
-            // Actualizamos la region
+            // Update the region
             //-----------------------------------------------------------------
             if ( y > 0 )
               reg=pWall->Back;
             else
               reg=pWall->Front;
             //-----------------------------------------------------------------
-            // Si se sale por los lados comprueba que sea por poco
+            // If it goes out through the sides, check that it is by a little
             //-----------------------------------------------------------------
             if (x<0 || x>pWall->Length)
             {
@@ -327,7 +327,7 @@ void DoObjectUpdate(struct Object *po)
               y=t;
             }
             //-----------------------------------------------------------------
-            // Si atraviesa el muro cambia de region si pasa lo suficiente
+            // If it crosses the wall, change region if it goes far enough
             //-----------------------------------------------------------------
             else if (y>0) {
               if (y<RegDist) {
@@ -342,7 +342,7 @@ void DoObjectUpdate(struct Object *po)
                   break;
                 }
               }
-              // Esta suficientemente cerca?
+              // Is it close enough?
               if (y>po->Radius) continue;
               // Down-stairs or flying?
               reg=pWall->Front;
@@ -352,7 +352,7 @@ void DoObjectUpdate(struct Object *po)
                 continue;
             }
             //-----------------------------------------------------------------
-            // Se pega al muro sin atravesarlo a menos que este muy cerca
+            // It sticks to the wall without crossing it unless it is very close
             //-----------------------------------------------------------------
             else if (y<0)
             {
@@ -373,7 +373,7 @@ void DoObjectUpdate(struct Object *po)
                   break;
                 }
               }
-              // Esta suficientemente cerca?
+              // Is it close enough?
               if (y<-po->Radius) continue;
               // Down-stairs or flying?
               reg=pWall->Back;
@@ -396,7 +396,7 @@ void DoObjectUpdate(struct Object *po)
         //---------------------------------------------------------------------
         if (x<0) {
           //-------------------------------------------------------------------
-          // El objeto esta a la izquierda del muro
+          // The object is to the left of the wall
           //-------------------------------------------------------------------
           RotateFlag=FALSE;
           t=FIX_INT(FixITan(X-x1,Y-y1));
@@ -415,7 +415,7 @@ void DoObjectUpdate(struct Object *po)
         }
         else if (x>pWall->Length) {
           //-------------------------------------------------------------------
-          // El objeto esta a la derecha del muro
+          // The object is to the right of the wall
           //-------------------------------------------------------------------
           RotateFlag=FALSE;
           t=FIX_INT(FixITan(X-x2,Y-y2));
@@ -434,7 +434,7 @@ void DoObjectUpdate(struct Object *po)
         }
         else {
           //-------------------------------------------------------------------
-          // El objeto esta dentro del muro
+          // The object is inside the wall
           //-------------------------------------------------------------------
           po->wall_number=pWall->Tag;
 
@@ -468,7 +468,7 @@ void DoObjectUpdate(struct Object *po)
   }
 
   //---------------------------------------------------------------------------
-  // Mueve el objeto
+  // Move the object
   //---------------------------------------------------------------------------
   po->RH=po->H+AddRH;
   MovePoint(pp,X-pp->x,Y-pp->y);
@@ -477,7 +477,7 @@ void DoObjectUpdate(struct Object *po)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  No se lo que hace
+//  I do not know what it does
 //═════════════════════════════════════════════════════════════════════════════
 
 void AddColReg(struct Region *reg)

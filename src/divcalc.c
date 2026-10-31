@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo que contiene el código de la calculadora
+//      Module containing the calculator code
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -19,7 +19,7 @@ void expr5(void);
 void calculator(void);
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables del módulo
+//      Module variables
 //═════════════════════════════════════════════════════════════════════════════
 
 extern char get_buffer[long_line];
@@ -35,8 +35,8 @@ struct _calc {
 int superget=0;
 
 //═════════════════════════════════════════════════════════════════════════════
-//    Evaluador de expresiones (se le pasa el puntero en `expresion')
-//    Si todo fue bien, devuelve token=p_num y tnumero=n
+//    Expression evaluator (it is passed the pointer in `expression')
+//    If all went well, returns token=p_num and tnumber=n
 //═════════════════════════════════════════════════════════════════════════════
 
 
@@ -44,28 +44,28 @@ enum tokens { p_start, p_last, p_error, p_num, p_lparen, p_rparen, p_add,
               p_sub, p_mul, p_div, p_mod, p_shl, p_shr, p_xor, p_or, p_and,
               p_not, p_sqrt, p_neg };
 
-int token;      // Del tipo enumerado anterior
-double tnumber;  // Cuando token==p_num
-static char * expression;     // Puntero a la expresión asciiz
+int token;      // Of the previous enumerated type
+double tnumber;  // When token==p_num
+static char * expression;     // Pointer to the asciiz expression
 
-struct {        // Para contener la expresion analizada
+struct {        // To hold the parsed expression
   int token;
   double number;
 } expr[64];
 
-int iexpr;    // Número de elementos introducidos en expres[]
+int iexpr;    // Number of elements put into expr[]
 
 double evaluate(void);
 
 void compute(void) {
   double evaluation;
-  token=p_start;         // No hay ningun token inicialmente
-  iexpr=0;              // Inicializa el contador de expresiones
-  get_token();            // Obtiene el primer token
-  expr0();              // Se analiza la expresion
-  if (token==p_last) {  // Se analizó con éxito la expresion
+  token=p_start;         // There is no token initially
+  iexpr=0;              // Initialize the expression counter
+  get_token();            // Get the first token
+  expr0();              // The expression is parsed
+  if (token==p_last) {  // The expression was parsed successfully
     evaluation=evaluate();
-    if (token!=p_error) { // Se evaluó con éxito
+    if (token!=p_error) { // It was evaluated successfully
       token=p_num;
       tnumber=evaluation;
     }
@@ -155,7 +155,7 @@ void expr3() { // * / %
   }
 }
 
-void expr4() { // signo !
+void expr4() { // ! sign
   int p;
 
   while ((p=token)==p_add) { get_token();  }
@@ -236,11 +236,11 @@ void get_token(void) {
   }
 }
 
-double get_num(void) { // Lee el número que hay en *expresion (double en hex o dec)
+double get_num(void) { // Read the number in *expression (double in hex or dec)
   double x=0;
   double dec=10;
 
-  if (*expression=='0' && lower[*(expression+1)]=='x') { // Numeros en hex
+  if (*expression=='0' && lower[*(expression+1)]=='x') { // Numbers in hex
 
     expression+=2;
     if ((*expression>='0' && *expression<='9') || (lower[*expression]>='a' && lower[*expression]<='f')) {
@@ -272,7 +272,7 @@ double get_num(void) { // Lee el número que hay en *expresion (double en hex o 
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cuadro de diálogo para la calculadora
+//      Dialog box for the calculator
 //═════════════════════════════════════════════════════════════════════════════
 
 void calc1(void) {
@@ -325,7 +325,7 @@ void calc2(void) {
   get=get_buffer;
   superget=0;
 
-  if (v.active_item>=0 && strlen(pcalc->ctext)) { // Se evalúa la expresión
+  if (v.active_item>=0 && strlen(pcalc->ctext)) { // The expression is evaluated
     expression=pcalc->ctext;
     compute();
 

@@ -1,6 +1,6 @@
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Cขdigo de las funciones de detecciขn de colisiขn
+// Code of the collision detection functions
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 #include "inter.h"
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -17,14 +17,14 @@ void test_scanc(byte * p,short n,short m,short o,byte * si,int width,int x0,int 
 void test_scan(byte * p,short n,byte * si,int width,int x0,int y0,int x1,int y1);
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Variables definidas a nivel de mขdulo
+// Variables defined at module level
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int collides;
 int p[24];
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Out_region(id,region) - solo para gr ficos de pantalla o scroll
+//      Out_region(id,region) - only for screen or scroll graphics
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void out_region(void) {
@@ -33,13 +33,13 @@ void out_region(void) {
   int xg,yg,xg1,yg1,x,y,width,height;
   int * ptr,n,m;
 
-  reg=opstack[sp--]; id=opstack[sp]; opstack[sp]=1; // Por defecto no est  en la region
+  reg=opstack[sp--]; id=opstack[sp]; opstack[sp]=1; // By default it is not in the region
 
   if (mem[id+_Ctype]==2) { e(137); return; }
 
   file=mem[id+_File]; graph=mem[id+_Graph]; angle=mem[id+_Angle];
 
-  if (reg<0 || reg>=max_region) { e(108); return; } // Ya tiene region[reg].(x0..y1)
+  if (reg<0 || reg>=max_region) { e(108); return; } // It already has region[reg].(x0..y1)
 
   if (file<0 || file>max_fpgs) { e(109); return; }
 
@@ -77,33 +77,33 @@ void out_region(void) {
     if (mem[id+_Flags]&2) yg=height-1-yg; y-=yg;
   }
 
-  // Ya tiene region[reg].(x0..y1) y sprite(x,y,an,al)
+  // It already has region[reg].(x0..y1) and sprite(x,y,w,h)
 
   if (mem[id+_Ctype]==1) {
 
     for (n=0;n<10;n++)if(iscroll[n].on&&(mem[id+_Cnumber]==0||(mem[id+_Cnumber]&(1<<n)))) {
 
-      xg=x+iscroll[n].x-iscroll[n].map1_x; // Posiciขn del sprite en el scroll
+      xg=x+iscroll[n].x-iscroll[n].map1_x; // Position of the sprite in the scroll
       yg=y+iscroll[n].y-iscroll[n].map1_y;
 
-      xg1=xg+width; yg1=yg+height; // 1ง Intersecciขn de xg,yg,an,al e iscroll[n]
+      xg1=xg+width; yg1=yg+height; // 1st Intersection of xg,yg,w,h and iscroll[n]
 
       if (iscroll[n].x>xg) xg=iscroll[n].x;
       if (iscroll[n].y>yg) yg=iscroll[n].y;
       if (iscroll[n].x+iscroll[n].w<xg1) xg1=iscroll[n].x+iscroll[n].w;
       if (iscroll[n].y+iscroll[n].h<yg1) yg1=iscroll[n].y+iscroll[n].h;
 
-      if (xg>=xg1 || yg>=yg1) continue; // Si no hay intersecciขn, continua
+      if (xg>=xg1 || yg>=yg1) continue; // If there is no intersection, continue
 
       if (xg<region[reg].x1 && yg<region[reg].y1 && xg1>region[reg].x0 &&
-        yg1>region[reg].y0) { opstack[sp]=0; return; } // Si est  en la regiขn
+        yg1>region[reg].y0) { opstack[sp]=0; return; } // If it is in the region
 
     }
 
   } else if (mem[id+_Ctype]==0) {
 
     if (x<region[reg].x1 && y<region[reg].y1 && x+width>region[reg].x0 &&
-        y+height>region[reg].y0) opstack[sp]=0; // Si est  en la regiขn
+        y+height>region[reg].y0) opstack[sp]=0; // If it is in the region
 
   }
 }
@@ -139,22 +139,22 @@ void graphic_info(void) {
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Funcion principal del lenguaje collision(tipo de proceso)
+// Main function of the language collision(process type)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
-// *** OJO, Detecta choques pantalla-pantalla, scroll-scroll y pantalla-scroll
-// Pero los gr ficos que est n en scroll detectan colisiones sขlo en el primer
-// scroll en el que est n (aunque estn en varios)
+// *** NOTE, Detects screen-screen, scroll-scroll and screen-scroll collisions
+// But the graphics that are in a scroll detect collisions only in the first
+// scroll they are in (even if they are in several)
 
 void collision(void) {
 
-  int i,block; // Recorre procesos de _IdScan en adelante, si _IdScan=0 desde start
+  int i,block; // Go through processes from _IdScan onwards, if _IdScan=0 from start
   int file,graph,angle;
-  int x,y,n,m;  // Coordenadas del proceso actual
-  int64_t xg,yg;  // Centro gravitatorio del gr fico del proceso actual
+  int x,y,n,m;  // Coordinates of the current process
+  int64_t xg,yg;  // Center of gravity of the current process's graphic
   int * ptr;
 
-  block=opstack[sp]; opstack[sp]=0; // Por defecto no colisiona
+  block=opstack[sp]; opstack[sp]=0; // By default it does not collide
 
   if (mem[id+_Ctype]==2) { e(139); return; }
 
@@ -204,11 +204,11 @@ void collision(void) {
   if ((buffer=(byte *)malloc(buffer_width*buffer_height))==NULL) { e(100); return; }
   memset(buffer,0,buffer_width*buffer_height);
 
-  // Ahora se tiene que pintar el sprite en el buffer(clip...)
+  // Now the sprite has to be drawn into the buffer(clip...)
 
   put_collision(buffer,ptr,x,y,xg,yg,angle,mem[id+_Size],mem[id+_Flags]);
 
-  // Ya tiene region del sprite clipx0..clipy1 (si es en pantalla)
+  // It already has the sprite region clipx0..clipy1 (if it is on screen)
 
   if (mem[id+_Ctype]==1) {
     for(n=0;n<10;n++)if(iscroll[n].on&&(mem[id+_Cnumber]==0||(mem[id+_Cnumber]&(1<<n)))) {
@@ -223,7 +223,7 @@ void collision(void) {
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Comprueba colisiones del sprite id (en buffer) con el resto (i..id_end)
+// Check collisions of sprite id (in buffer) with the rest (i..id_end)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int check_collisions(int i,int block,int scroll) {
@@ -244,12 +244,12 @@ int check_collisions(int i,int block,int scroll) {
     if (i!=id && mem[i+_Block]==block && (mem[i+_Status]==2 ||
       	mem[i+_Status]==4) && mem[i+_Ctype]<2) {
 
-      if (mem[i+_Ctype]==1) { // Si es de scroll, determina que scroll (n)
-        if (scroll<0) { // Choque de pantalla con scroll - el primero activo
+      if (mem[i+_Ctype]==1) { // If it is a scroll one, determine which scroll (n)
+        if (scroll<0) { // Screen-scroll collision - the first active one
       	  for(n=0;n<10;n++)
       	    if(iscroll[n].on&&(mem[i+_Cnumber]==0||(mem[i+_Cnumber]&(1<<n)))) break;
       	  if (n==10) continue;
-        } else { // Choque de scroll con scroll - simpre que coincidan en el 1ง
+        } else { // Scroll-scroll collision - as long as they coincide in the 1st
       	  if (mem[i+_Cnumber] && !(mem[i+_Cnumber]&(1<<scroll))) continue;
       	  else n=scroll;
       	}
@@ -289,12 +289,12 @@ int check_collisions(int i,int block,int scroll) {
 
       if (angle) {
 
-        // Distancia de seguridad
+        // Safety distance
 
         if (dist==0) dist=(int)sqrt((buffer_width*buffer_width+buffer_height*buffer_height)/4);
         width=((int)sqrt(ptr[13]*ptr[13]+ptr[14]*ptr[14])*mem[i+_Size])/100+dist;
 
-        // Distancia real
+        // Real distance
 
         xx=(clipx0+clipx1)/2-x; yy=(clipy0+clipy1)/2-y; height=(int)sqrt(xx*xx+yy*yy);
 
@@ -340,7 +340,7 @@ int check_collisions(int i,int block,int scroll) {
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Devuelve la caja en la que se encuentra un gr fico rotado y escalado
+//      Return the box in which a rotated and scaled graphic lies
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void sp_size( int *x, int *y, int *xx, int *yy, int xg, int yg,
@@ -389,13 +389,13 @@ void sp_size( int *x, int *y, int *xx, int *yy, int xg, int yg,
 }
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Devuelve la caja en la que se encuentra un gr fico rotado y/o escalado
+//      Return the box in which a rotated and/or scaled graphic lies
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void sp_size_scaled( int *x, int *y, int *xx, int *yy, int xg, int yg,
                      int size, int flags) {
 
-  int x0,y0,x1,y1; // Ventana ocupada por el sprite en el plano de copia
+  int x0,y0,x1,y1; // Window occupied by the sprite in the copy plane
 
   if (flags&1) x0=*x-((*xx-1-xg)*size)/100;
   else x0=*x-(xg*size)/100;
@@ -411,13 +411,13 @@ void sp_size_scaled( int *x, int *y, int *xx, int *yy, int xg, int yg,
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funcion externa para pintar gr ficos (para las colisiones)
+//      External function to draw graphics (for collisions)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
 
   byte * si;
-  int width,height; // Informaciขn respecto a pantalla del grafico
+  int width,height; // Information about the graphic relative to the screen
   byte * _copy;
   int _vga_width,_vga_height;
   int ix,iy;
@@ -441,9 +441,9 @@ void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int a
   } else {
     if (flags&1) xg=width-1-xg; x-=xg+ix;
     if (flags&2) yg=height-1-yg; y-=yg+iy;
-    if (x>=clipx0 && x+width<=clipx1 && y>=clipy0 && y+height<=clipy1) // Pinta sprite sin cortar
+    if (x>=clipx0 && x+width<=clipx1 && y>=clipy0 && y+height<=clipy1) // Draw sprite without clipping
       sp_normal(si,x,y,width,height,flags);
-    else if (x<clipx1 && y<clipy1 && x+width>clipx0 && y+height>clipy0) // Pinta sprite cortado
+    else if (x<clipx1 && y<clipy1 && x+width>clipx0 && y+height>clipy0) // Draw clipped sprite
       sp_clipped(si,x,y,width,height,flags);
   }
 
@@ -455,13 +455,13 @@ void put_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int a
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Sprite - rotado [escalado] [cortado] [espejado] [ghost]
+// Sprite - rotated [scaled] [clipped] [mirrored] [ghost]
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void sp_rotated_p(byte * si, int width, int height, int flags) {
 
-  int h,hmin,hmax; // Altura minima y maxima
-  int n,l0,l1;   // Lado 0 y lado 1 (indices p[])
+  int h,hmin,hmax; // Minimum and maximum height
+  int n,l0,l1;   // Side 0 and side 1 (indices of p[])
 
   int hmax0,hmax1;
   union { int l; short w[2]; } x0,x1,g0x,g1x,g0y,g1y;
@@ -560,13 +560,13 @@ void sp_rotated_p(byte * si, int width, int height, int flags) {
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//      Funcion externa para comprobar gr ficos (para las colisiones)
+//      External function to test graphics (for collisions)
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int angle, int size, int flags) {
 
   byte * si;
-  int width,height; // Informaciขn respecto a pantalla del grafico
+  int width,height; // Information about the graphic relative to the screen
   byte * _copy;
   int _vga_width,_vga_height;
   int ix,iy;
@@ -590,9 +590,9 @@ void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int 
   } else {
     if (flags&1) xg=width-1-xg; x-=xg+ix;
     if (flags&2) yg=height-1-yg; y-=yg+iy;
-    if (x>=clipx0 && x+width<=clipx1 && y>=clipy0 && y+height<=clipy1) // Pinta sprite sin cortar
+    if (x>=clipx0 && x+width<=clipx1 && y>=clipy0 && y+height<=clipy1) // Draw sprite without clipping
       test_normal(si,x,y,width,height,flags);
-    else if (x<clipx1 && y<clipy1 && x+width>clipx0 && y+height>clipy0) // Pinta sprite cortado
+    else if (x<clipx1 && y<clipy1 && x+width>clipx0 && y+height>clipy0) // Draw clipped sprite
       test_clipped(si,x,y,width,height,flags);
   }
 
@@ -604,7 +604,7 @@ void test_collision(byte * buffer, int * ptr, int x, int y, int xg, int yg, int 
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Test sprite - [espejado] [ghost]
+// Test sprite - [mirrored] [ghost]
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void test_normal(byte * p, int x, int y, int width, int height, int flags) {
@@ -652,7 +652,7 @@ void test_normal(byte * p, int x, int y, int width, int height, int flags) {
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Test sprite - cortado [espejado] [ghost]
+// Test sprite - clipped [mirrored] [ghost]
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void test_clipped(byte * p, int x, int y, int width, int height, int flags) {
@@ -714,14 +714,14 @@ void test_clipped(byte * p, int x, int y, int width, int height, int flags) {
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Test sprite - escalado [cortado] [espejado] [ghost]
+// Test sprite - scaled [clipped] [mirrored] [ghost]
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void test_scaled(byte * old_si, int x, int y, int width, int height, int xg, int yg,
                    int size, int flags) {
 
-  int x0,y0,x1,y1; // Ventana ocupada por el sprite en el plano de copia
-  int skip_x, long_x, rest_x; // Referidas a pantalla
+  int x0,y0,x1,y1; // Window occupied by the sprite in the copy plane
+  int skip_x, long_x, rest_x; // Relative to the screen
   int skip_y, long_y, rest_y;
   int xr,ixr,yr,iyr,old_xr,old_width;
   byte *si,*di;
@@ -766,13 +766,13 @@ void test_scaled(byte * old_si, int x, int y, int width, int height, int xg, int
 }
 
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-// Test sprite - rotado [escalado] [cortado] [espejado] [ghost]
+// Test sprite - rotated [scaled] [clipped] [mirrored] [ghost]
 //ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 void test_rotated(byte * si, int width, int height, int flags) {
 
-  int h,hmin,hmax; // Altura minima y maxima
-  int n,l0,l1;     // Lado 0 y lado 1 (indices p[])
+  int h,hmin,hmax; // Minimum and maximum height
+  int n,l0,l1;     // Side 0 and side 1 (indices of p[])
 
   int hmax0,hmax1;
   union { int l; short w[2]; } x0,x1,g0x,g1x,g0y,g1y;

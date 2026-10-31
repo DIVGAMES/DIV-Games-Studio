@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo que contiene el código del hipertexto
+//      Module containing the hypertext code
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -8,20 +8,20 @@
 extern int end_window;
 extern int first_time;
 
-int helpidx[4096];              // Por cada término {inicio,longitud}
-int help_item;                  // Indica sobre que término se pide ayuda
-int help_len;                   // Longitud del help_buffer
-int help_width,help_height;            // Ancho y alto de la ventana de ayuda
-int help_l,help_lines;          // Línea actual, y lineas totales
-byte help_title[128];           // Título del término
-byte *help_buffer=NULL;         // Buffer para contener la ayuda
-byte *h_buffer;                 // Buffer auxiliar
-byte *help_line;                // Puntero a la línea actual
-byte *help_end;                 // Final de help_buffer;
-byte *div_index=NULL;           // Inicio del glosario
-byte *index_end;                // Final del glosario
+int helpidx[4096];              // For each term {start,length}
+int help_item;                  // Tells which term help is requested for
+int help_len;                   // Length of help_buffer
+int help_width,help_height;            // Width and height of the help window
+int help_l,help_lines;          // Current line, and total lines
+byte help_title[128];           // Term title
+byte *help_buffer=NULL;         // Buffer to hold the help
+byte *h_buffer;                 // Auxiliary buffer
+byte *help_line;                // Pointer to the current line
+byte *help_end;                 // End of help_buffer;
+byte *div_index=NULL;           // Start of the glossary
+byte *index_end;                // End of the glossary
 
-int loaded[64],n_loaded=0;      // Imágenes cargadas, hasta un máximo de 32
+int loaded[64],n_loaded=0;      // Loaded images, up to a maximum of 32
 
 int determine_prg2(void);
 struct tprg * old_prg;
@@ -40,14 +40,14 @@ void put_image_line(int n,int line_num,byte * di,int v_width);
 
 //═════════════════════════════════════════════════════════════════════════════
 
-// Sistema de "Back to previous topic"
+// "Back to previous topic" system
 
-int backto[64]; // Cola circular para almacenar los topicos consultados {n,línea}
-int i_back,f_back; // Inicio y final de la cola circular (0,2,...,62)
-int a_back;        // Término actual (i_back <= a_back <= f_back)
+int backto[64]; // Circular queue to store the consulted topics {n,line}
+int i_back,f_back; // Start and end of the circular queue (0,2,...,62)
+int a_back;        // Current term (i_back <= a_back <= f_back)
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Carga el glosario de términos (div_index.prg)
+//      Load the glossary of terms (div_index.prg)
 //═════════════════════════════════════════════════════════════════════════════
 
 void load_index(void) {
@@ -80,7 +80,7 @@ void load_index(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Crea el índice para el hipertexto
+//      Create the index for the hypertext
 //═════════════════════════════════════════════════════════════════════════════
 
 void make_helpidx(void) {
@@ -88,7 +88,7 @@ void make_helpidx(void) {
   byte * help=NULL,* i=NULL,* help_end;
   FILE * f;
 
-  i_back=a_back=f_back=0; // La cola se vacía
+  i_back=a_back=f_back=0; // The queue is emptied
 
   memset(helpidx,0,sizeof(helpidx));
   if((f=fopen("help/help.div","rb"))!=NULL) {
@@ -105,10 +105,10 @@ void make_helpidx(void) {
           while (*i>='0' && *i<='9') 
 			n=n*10+*i++-0x30;
           
-          helpidx[n*2]=(long)(i+1-help); // Fija el inicio del término n
+          helpidx[n*2]=(long)(i+1-help); // Set the start of term n
           
           if (m>=0) 
-			helpidx[m*2+1]=len-helpidx[m*2]; // Fija la longitud del anterior
+			helpidx[m*2+1]=len-helpidx[m*2]; // Set the length of the previous one
           
           m=n;
         }
@@ -122,7 +122,7 @@ void make_helpidx(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Handles de la ventana de ayuda
+//      Handlers of the help window
 //═════════════════════════════════════════════════════════════════════════════
 
 int forced_helpslider=0;
@@ -136,7 +136,7 @@ void vertical_bar(void) {
   int min,max,slider;
   int w=v.w/big2,h=v.h/big2;
 
-  wbox(ptr,w,h,c2,w-9,18,7,h-36);   // Fondo gris del slider
+  wbox(ptr,w,h,c2,w-9,18,7,h-36);   // Gray background of the slider
 
   min=18; max=h-21;
 
@@ -158,10 +158,10 @@ void help1(void) {
 
   _show_items();
 
-  wbox(ptr,w,h,c0,w-10,10,9,h-12);   // Fondo negro del slider
+  wbox(ptr,w,h,c0,w-10,10,9,h-12);   // Black background of the slider
 
-  wput(ptr,w,h,w-9,10,39);           // Arriba
-  wput(ptr,w,h,w-9,h-17,40);        // Abajo
+  wput(ptr,w,h,w-9,10,39);           // Up
+  wput(ptr,w,h,w-9,h-17,40);        // Down
   wput(ptr,w,h,w-9,h-9,34);         // Resize
   vertical_bar();
 
@@ -190,7 +190,7 @@ void help2(void) {
     if (v.active_item==6 && help_item!=1) help_xref(1,0);
 
     if (!help_paint_active) {
-      if (scan_code==74) { // Anterior elemento de la ayuda (-)
+      if (scan_code==74) { // Previous help element (-)
         n=help_item;
         while (--n>=0) {
           if (helpidx[n*2] && helpidx[n*2+1]) {
@@ -198,7 +198,7 @@ void help2(void) {
           }
         } return;
       }
-      if (scan_code==78) { // Siguiente elemento de la ayuda (+)
+      if (scan_code==78) { // Next help element (+)
         n=help_item;
         while (++n<2048) {
           if (helpidx[n*2] && helpidx[n*2+1]) {
@@ -290,7 +290,7 @@ void help2(void) {
 
     vertical_bar();
 
-    // Miramos si estamos sobre una xref
+    // Check whether we are over an xref
 
     if (wmouse_x!=-1 && wmouse_y>=10+16) {
       mx=mouse_x-v.x-2*big2;
@@ -318,12 +318,12 @@ void help2(void) {
           }
         }
 
-        // Estamos sobre una referencia cruzada en el hipertexto
+        // We are over a cross reference in the hypertext
 
         if (n!=-1) {
           mouse_graph=2;
           if ((mouse_b&1) && !(old_mouse_b&1) && old_state) {
-            if (n==9999) { // *** Extrae un ejemplo ***
+            if (n==9999) { // *** Extract an example ***
               if ((di=p=(byte *)malloc(16384))!=NULL) {
 
                 while (*si!=6) si++;
@@ -353,7 +353,7 @@ void help2(void) {
               }
             } else if (helpidx[n*2] && helpidx[n*2+1]) { // *** X-Ref ***
               if (n!=help_item) {
-                help_xref(n,0); // Puede cerrar la ventana si se produce un error
+                help_xref(n,0); // It may close the window if an error occurs
               }
             }
           }
@@ -376,7 +376,7 @@ void help2(void) {
           a_back=(a_back+2)%64;
         }
       } else {
-        // *** OJO *** Esto no se para que !@#Ñ!! servía ...
+        // *** NOTE *** I do not know what the !@#$!! this was for ...
         // help_xref(backto[a_back],backto[a_back+1]);
       }
     }
@@ -412,7 +412,7 @@ void help3(void) {
   }
 }
 
-void help0(void) { // En help_item se indica sobre que término se pide ayuda
+void help0(void) { // help_item tells which term help is requested for
   int x;
 
   v.type=102;
@@ -423,7 +423,7 @@ void help0(void) { // En help_item se indica sobre que término se pide ayuda
   if (big) {
     if (v.w&1) v.w++;
     if (v.h&1) v.h++;
-    v.w=-v.w; // Para indicar que no se multiplique la ventana por 2
+    v.w=-v.w; // To indicate that the window must not be multiplied by 2
   }
 
   v.title=help_title;
@@ -448,14 +448,14 @@ void help0(void) { // En help_item se indica sobre que término se pide ayuda
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cambia el tamaño de la ventana de ayuda
+//      Change the size of the help window
 //═════════════════════════════════════════════════════════════════════════════
 
 void resize_help(void) {
-  int _mx=mouse_x,_my=mouse_y;  // Coordenadas del ratón iniciales
-  int my;                       // Coordenadas tabuladas del ratón en cada momento
-  int _h;                      // al original, en chr
-  int old_height;                   // último al
+  int _mx=mouse_x,_my=mouse_y;  // Initial mouse coordinates
+  int my;                       // Tabulated mouse coordinates at each moment
+  int _h;                      // original h, in chr
+  int old_height;                   // last h
   byte *new_block;
   int w=v.w/big2,h=v.h/big2;
 
@@ -520,7 +520,7 @@ void resize_help(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Convierte de base 16 a decimal un int y viceversa
+//      Convert an int from base 16 to decimal and vice versa
 //═════════════════════════════════════════════════════════════════════════════
 
 int itod(int n) {
@@ -540,7 +540,7 @@ int dtoi(int m) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Ayuda
+//      Help
 //═════════════════════════════════════════════════════════════════════════════
 
 int determine_help(void) {
@@ -576,7 +576,7 @@ void help(int n){
     if (m) move(0,m);
     if (v.foreground==2) maximize_window();
 
-    if (m && v.foreground==0) { // Si estaba en 2º plano
+    if (m && v.foreground==0) { // If it was in the background
       for (m=1;m<max_windows;m++) if (window[m].type && window[m].foreground==1)
         if (collide(0,m)) {window[m].foreground=0; blit_window(m);}
       v.foreground=1;
@@ -632,10 +632,10 @@ void help(int n){
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Ayuda en el programa de dibujo
+//      Help in the drawing program
 //═════════════════════════════════════════════════════════════════════════════
 
-void help_paint0(void) { // En help_item se indica sobre que término se pide ayuda
+void help_paint0(void) { // help_item tells which term help is requested for
   int x;
 
   v.type=1;
@@ -646,7 +646,7 @@ void help_paint0(void) { // En help_item se indica sobre que término se pide ay
   if (big) {
     if (v.w&1) v.w++;
     if (v.h&1) v.h++;
-    v.w=-v.w; // Para indicar que no se multiplique la ventana por 2
+    v.w=-v.w; // To indicate that the window must not be multiplied by 2
   }
 
   v.title=help_title;
@@ -713,7 +713,7 @@ void help_paint(memptrsize n){
 
 }
 //═════════════════════════════════════════════════════════════════════════════
-//  Obtiene en cerror[] el mensaje de error n
+//  Get in cerror[] the error message n
 //═════════════════════════════════════════════════════════════════════════════
 
 char cerror[128];
@@ -739,7 +739,7 @@ void get_error(int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Accede a otro término a través de una referencia cruzada
+//      Access another term through a cross reference
 //═════════════════════════════════════════════════════════════════════════════
 
 void help_xref(int n,int line_num) {
@@ -790,17 +790,17 @@ void help_xref(int n,int line_num) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Tabula la ayuda para un ancho dado (help_width)
+//      Tabulate the help for a given width (help_width)
 //═════════════════════════════════════════════════════════════════════════════
 
-// graf[n] puntero a an,al,x0,x1,gráfico... (an..x1 son word)
+// graf[n] pointer to w,h,x0,x1,graphic... (w..x1 are words)
 
-int example=0;  // Viene un ejemplo
-int image=0;   // Código de la imagen
-int image_y;   // Linea actual de la imagen
-int image_height;  // alto en chars de la imagen
-int image_width;  // ancho en chars de la imagen
-int image_type; // 0-izquierda, 1-centro, 2-derecha
+int example=0;  // An example comes
+int image=0;   // Image code
+int image_y;   // Current line of the image
+int image_height;  // height in chars of the image
+int image_width;  // width in chars of the image
+int image_type; // 0-left, 1-center, 2-right
 int restore_help_width=0;
 
 byte * continue_image(byte * di) {
@@ -835,11 +835,11 @@ void tab_help(byte *si,byte *di,int len) {
 
     c=*si++;
 
-    // Carácteres 0..31 se sustituyen por '?'
+    // Characters 0..31 are replaced by '?'
 
     if (c<32 && c!=13 && c!=10) *(si-1)=c='?';
 
-    // Salto de línea simple forzado (·)
+    // Forced simple line break (·)
 
     if (c==250) {
       *di++=0; help_lines++; last_cr=1; chars=0;
@@ -858,7 +858,7 @@ void tab_help(byte *si,byte *di,int len) {
       goto start_tab;
     }
 
-    // Comentarios
+    // Comments
 
     if (c=='#' && real_last_cr && si<end) {
       while (*si++!=13); si++;
@@ -866,7 +866,7 @@ void tab_help(byte *si,byte *di,int len) {
 //      c=*si++;
     } if (si>=end) break;
 
-    // Saltos de línea
+    // Line breaks
 
     if (c==13) {
       if (example) {
@@ -881,13 +881,13 @@ void tab_help(byte *si,byte *di,int len) {
       }
     } else real_last_cr=0;
 
-    // Mientras vengan chars o saltos de línea
+    // While chars or line breaks keep coming
 
     if (c!=0 || !last_cr) {
 
-      if (c) { // Si viene un carácter
+      if (c) { // If a character comes
 
-        // Tratamiento de comandos
+        // Command handling
 
         if (c=='{') {
           switch(*si) {
@@ -909,7 +909,7 @@ void tab_help(byte *si,byte *di,int len) {
               c='}'; si+=2;
               break;
 
-            case '/': // Línea
+            case '/': // Line
               si+=2; if (image) {
                 if (!last_cr) { *di++=0; help_lines++; last_cr=1; chars=0; }
                 do {
@@ -922,7 +922,7 @@ void tab_help(byte *si,byte *di,int len) {
               *di++=4; *di++=0; help_lines++; last_cr=1; chars=0;
               continue;
 
-            case '+': // Imagen
+            case '+': // Image
               if (image) {
                 if (!last_cr) { *di++=0; help_lines++; last_cr=1; chars=0; }
                 do {
@@ -982,7 +982,7 @@ void tab_help(byte *si,byte *di,int len) {
 
               continue;
 
-            case '-': // Fin imagen
+            case '-': // End of image
               si+=2;
               if (example) {
                 example=0; last_cr=1; if (*(di-1)==6) di--;
@@ -996,7 +996,7 @@ void tab_help(byte *si,byte *di,int len) {
               }
               continue;
 
-            case '@': // Texto de lenguaje.div
+            case '@': // Text from lenguaje.div
               tex=0; si++;
               while (*si>='0' && *si<='9') {
                 tex*=10; tex+=*si-'0'; si++;
@@ -1005,7 +1005,7 @@ void tab_help(byte *si,byte *di,int len) {
               di+=strlen((char *)di);
               continue;
 
-            default: // Negrita
+            default: // Bold
               c=1; state=1; chars--;
               break;
           }
@@ -1018,12 +1018,12 @@ void tab_help(byte *si,byte *di,int len) {
 
         if (!example && chars==help_width+1) {
 
-          chars2=chars; help_width2=help_width; // Arreglar la línea que se truncó
+          chars2=chars; help_width2=help_width; // Fix the line that was truncated
 
           nchars=chars=0; *di=c; old_di2=di+1;
 
           while (*di!=' ') {
-            if (*di==1) { // *** No puede venir 4 ***
+            if (*di==1) { // *** 4 cannot come ***
               state=0; chars--; chars2++;
             } else if (*di==2) {
               state=1; chars--; chars2++;
@@ -1031,9 +1031,9 @@ void tab_help(byte *si,byte *di,int len) {
             di--; chars++; nchars++; chars2--;
           }
 
-          di2=di; // Donde termina la línea anterior
+          di2=di; // Where the previous line ends
 
-          if (state==0) { // Se corta el texto normal
+          if (state==0) { // The normal text is cut
             if (image) {
               memmove(di+10,di+1,nchars);
               *di++=0; help_lines++; di=continue_image(di); di=old_di2+9;
@@ -1041,7 +1041,7 @@ void tab_help(byte *si,byte *di,int len) {
               if (restore_help_width) { restore_help_width=0; help_width+=image_width; }
               *di++=0; help_lines++; di=old_di2;
             }
-          } else if (state==1) { // En medio de un texto en negrita
+          } else if (state==1) { // In the middle of a bold text
             if (image) {
               memmove(di+12,di+1,nchars);
               *di++=2; *di++=0; help_lines++; di=continue_image(di);
@@ -1051,7 +1051,7 @@ void tab_help(byte *si,byte *di,int len) {
               memmove(di+3,di+1,nchars);
               *di++=2; *di++=0; help_lines++; *di=1; di=old_di2+2;
             }
-          } else { // En medio de una x-ref
+          } else { // In the middle of an x-ref
             if (image) {
               memmove(di+16,di+1,nchars);
               *di++=2; *di++=0; help_lines++; di=continue_image(di);
@@ -1097,7 +1097,7 @@ void tab_help(byte *si,byte *di,int len) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Arregla una linea (genera espaciados correctos)
+//      Fix a line (generate correct spacing)
 //═════════════════════════════════════════════════════════════════════════════
 
 void fix_line(byte * end,int chars,int help_width) {
@@ -1141,14 +1141,14 @@ void fix_line(byte * end,int chars,int help_width) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Vuelca la ventana del hipertexto
+//      Dump the hypertext window
 //═════════════════════════════════════════════════════════════════════════════
 
 /*
-int help_width,help_height;            // Ancho y alto de la ventana de ayuda
-byte *help_buffer;              // Buffer para contener la ayuda
-byte *help_line;                // Puntero a la línea actual
-byte *help_end;                 // Final de help_buffer;
+int help_width,help_height;            // Width and height of the help window
+byte *help_buffer;              // Buffer to hold the help
+byte *help_line;                // Pointer to the current line
+byte *help_end;                 // End of help_buffer;
 */
 
 void blit_help(void) {
@@ -1158,7 +1158,7 @@ void blit_help(void) {
 
   wbox(v.ptr,v.w/big2,v.h/big2,c12,2,10+16,v.w/big2-12,v.h/big2-12-16);
 
-  di=v.ptr+(v.w*(10+16)+2)*big2; // Volcado de la ventana de texto
+  di=v.ptr+(v.w*(10+16)+2)*big2; // Dump of the text window
   si=help_line;
   h=help_height;
 
@@ -1206,7 +1206,7 @@ void blit_help(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Impresión parcial de una imagen
+//      Partial printing of an image
 //═════════════════════════════════════════════════════════════════════════════
 
 void put_image_line(int n,int line_num,byte * di,int v_width) {
@@ -1230,7 +1230,7 @@ void put_image_line(int n,int line_num,byte * di,int v_width) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Impresión de un carácter
+//      Printing of a character
 //═════════════════════════════════════════════════════════════════════════════
 
 void put_chr(byte * ptr, int w, byte c,byte color) {
@@ -1283,7 +1283,7 @@ void put_chr(byte * ptr, int w, byte c,byte color) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Tabula un término de la ayuda para enviarlo a impresora
+//  Tabulate a help term to send it to the printer
 //═════════════════════════════════════════════════════════════════════════════
 
 #define help_text_width 70
@@ -1300,11 +1300,11 @@ void tab_help2(byte *si,byte *di,int len) {
 
     c=*si++;
 
-    // Carácteres 0..31 se sustituyen por '?'
+    // Characters 0..31 are replaced by '?'
 
     if (c<32 && c!=13 && c!=10) *(si-1)=c='?';
 
-    // Salto de línea simple forzado (·)
+    // Forced simple line break (·)
 
     if (c==250) {
       *di++=0; last_cr=1; chars=0;
@@ -1312,7 +1312,7 @@ void tab_help2(byte *si,byte *di,int len) {
       goto start_tab;
     }
 
-    // Comentarios
+    // Comments
 
     if (c=='#' && real_last_cr && si<end) {
       while (*si++!=13); si++;
@@ -1321,7 +1321,7 @@ void tab_help2(byte *si,byte *di,int len) {
 
     if (si>=end) break;
 
-    // Saltos de línea
+    // Line breaks
 
     if (c==13) {
       if (example) {
@@ -1336,13 +1336,13 @@ void tab_help2(byte *si,byte *di,int len) {
       }
     } else real_last_cr=0;
 
-    // Mientras vengan chars o saltos de línea
+    // While chars or line breaks keep coming
 
     if (c!=0 || !last_cr) {
 
-      if (c) { // Si viene un carácter
+      if (c) { // If a character comes
 
-        // Tratamiento de comandos
+        // Command handling
 
         if (c=='{') {
           switch(*si) {
@@ -1363,7 +1363,7 @@ void tab_help2(byte *si,byte *di,int len) {
               c='}'; si+=2;
               break;
 
-            case '/': // Línea
+            case '/': // Line
               si+=2;
               if (!last_cr) { *di++=0; last_cr=1; chars=0; }
               strcpy((char *)di,"──────────────────────────────────────────────────────────────────────");
@@ -1371,7 +1371,7 @@ void tab_help2(byte *si,byte *di,int len) {
               last_cr=1; chars=0;
               continue;
 
-            case '+': // Imagen
+            case '+': // Image
               if (!last_cr) { *di++=0; last_cr=1; chars=0; }
               si++;
               while (*si>='0' && *si<='9') {
@@ -1382,13 +1382,13 @@ void tab_help2(byte *si,byte *di,int len) {
               } si++;
               continue;
 
-            case '-': // Fin imagen
+            case '-': // End of image
               si+=2;
               if (example) {
                 example=0; last_cr=1;
               } continue;
 
-            case '@': // Texto de lenguaje.div
+            case '@': // Text from lenguaje.div
               n=0; si++;
               while (*si>='0' && *si<='9') {
                 n*=10; n+=*si-'0'; si++;
@@ -1397,7 +1397,7 @@ void tab_help2(byte *si,byte *di,int len) {
               di+=strlen((char *)di);
               continue;
 
-            default: // Negrita
+            default: // Bold
               continue;
           }
         } else if (c=='}') {
@@ -1430,7 +1430,7 @@ void tab_help2(byte *si,byte *di,int len) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Opción de impresión de una página de ayuda
+//  Option to print a help page
 //═════════════════════════════════════════════════════════════════════════════
 
 char h_ar[16]="";
@@ -1480,7 +1480,7 @@ void Print_Help(void) {
           _help_end=help_end;
           tab_help2(p+1,print_buffer,helpidx[help_item*2+1]-(p+1-h_buffer));
 
-          // Imprime el título de la página de ayuda
+          // Print the title of the help page
 
           fwrite("\xd\xa",1,2,g);
           for (n=0;n<(help_text_width-strlen((char *)help_title)-4)/2;n++) fwrite(" ",1,1,g);

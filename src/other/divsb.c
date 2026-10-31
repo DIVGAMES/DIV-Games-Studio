@@ -64,7 +64,7 @@ int sbinit ( void )
 
     if(x==100)
     {
-//      printf("Sound Blaster not found.\n"); // OJO !!!
+//      printf("Sound Blaster not found.\n"); // NOTE !!!
 //      exit(1);
         return(0);
     }
@@ -84,8 +84,8 @@ void sbmalloc ( void )
   for(ctr=0; ctr<2; ctr++)
   {
   	memset(&r, 0, sizeof(r));
-  	r.w.ax = 0x0100;				  // Función Reservar Bloque Mem. DOS
-  	r.w.bx = (Size + 15) >> 4; // Parrafos a reservar
+  	r.w.ax = 0x0100;				  // DOS Mem. Block Allocate function
+  	r.w.bx = (Size + 15) >> 4; // Paragraphs to allocate
   	int386 (0x31, &r, &r);
     if (r.x.cflag)
     {

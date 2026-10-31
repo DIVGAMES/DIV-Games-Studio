@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo para la gestión de textos (lenguaje.div) y de encriptación
+//      Module for managing texts (lenguaje.div) and encryption
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -8,8 +8,8 @@
 byte * text_data;
 byte * end_texts;
 
-int number=0; // Número de texto
-byte *p,*q; // Punteros de lectura y escritura respectivamente.
+int number=0; // Text number
+byte *p,*q; // Read and write pointers respectively.
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ void comment_width(void);
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Inicializa el sistema de textos
+//      Initialize the text system
 //═════════════════════════════════════════════════════════════════════════════
 
 void initialize_texts(byte * file) {
@@ -46,7 +46,7 @@ void initialize_texts(byte * file) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función de análisis de los textos
+//      Text parsing function
 //═════════════════════════════════════════════════════════════════════════════
 
 void analyze_texts(void) {
@@ -93,7 +93,7 @@ void text_width(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Finaliza el sistema de textos
+//      End the text system
 //═════════════════════════════════════════════════════════════════════════════
 
 void finalize_texts(void) {
@@ -102,10 +102,10 @@ void finalize_texts(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Generador de números aleatorios
+//      Random number generator
 //════════════════════════════════════════════════════════════════════════════
 
-union {byte b[128]; int d[32];} seed; // Seed aleatorio (127 bytes + PTR)
+union {byte b[128]; int d[32];} seed; // Random seed (127 bytes + PTR)
 
 byte rndb(void) {
 byte ptr;
@@ -137,7 +137,7 @@ void init_rnd(int n, char * cipher_key){
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Función de encriptación/desencriptación
+//  Encryption/decryption function
 //═════════════════════════════════════════════════════════════════════════════
 
 void coder(byte * ptr, int len, char * cipher_key) {

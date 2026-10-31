@@ -7,7 +7,7 @@
  *****************************************************************************/
 
 struct PicInfo {        // Information about a picture
-  int    code;          // Codigo dentro del fpg
+  int    code;          // Code inside the fpg
   VPEShort  Width, Height; // Dimensions of a pic
   VPEShort  InsX, InsY;    // Insertion point
   VPEShort  Used;          // Used counter

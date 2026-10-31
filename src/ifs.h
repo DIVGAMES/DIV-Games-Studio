@@ -15,7 +15,7 @@
 #define EXT     16
 
 
-// ESTRUCTURAS PARA EL FICHERO DE ENTRADA (IFS)
+// STRUCTURES FOR THE INPUT FILE (IFS)
 typedef struct _IFSTABLE{
     int32_t    disp;
     int32_t    size;
@@ -30,7 +30,7 @@ typedef struct _IFSHEADER{
     uint32_t    offset128;
 } IFSHEADER;
 
-// ESTRUCTURA PARA EL FICHERO DE SALIDA (FNT)
+// STRUCTURE FOR THE OUTPUT FILE (FNT)
 typedef struct _FNTTABLE{
     int    width;
     int    height;
@@ -43,31 +43,31 @@ typedef struct _FNTHEADER{
     char    eof;
 } FNTHEADER;
 
-// PARAMETROS NECESARIOS
+// REQUIRED PARAMETERS
 typedef struct _IFS {
     char            ifsName[256];
     char            fntName[256];
     char            sizeX;
     char            sizeY;
     char            outline;
-    char            brightness; // (0-4) Sin, Arr-Izq, Abj-drcha, Arr-dcha, Abj-izq.
+    char            brightness; // (0-4) None, Up-Left, Down-Right, Up-Right, Down-Left.
     short           shadowX;
     short           shadowY;
-    unsigned short  bodyTexWidth;    // textura de la letra
+    unsigned short  bodyTexWidth;    // texture of the letter
     unsigned short  bodyTexHeight;
     char            bodyTexColor;
     char            bodyTexMode;
-    unsigned short  shadowTexWidth;  // textura de la Sombra
+    unsigned short  shadowTexWidth;  // texture of the Shadow
     unsigned short  shadowTexHeight;
     char            shadowTexColor;
     char            shadowTexMode;
-    unsigned short  outTexWidth;    // textura del Outline
+    unsigned short  outTexWidth;    // texture of the Outline
     unsigned short  outTexHeight;
     char            outTexColor;
     char            outTexMode;
-    char            table[256];     // para indicar que letras se generan
-    char            light[256];    // correspondencias para los brillos
-    char            dark[256];   // correspondencias para los brillos
+    char            table[256];     // to indicate which letters are generated
+    char            light[256];    // correspondences for the highlights
+    char            dark[256];   // correspondences for the highlights
 
 }IFS;
 

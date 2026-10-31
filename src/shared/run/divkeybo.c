@@ -1,6 +1,6 @@
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Pruebas con la interrupci¢n de teclado
+//      Tests with the keyboard interrupt
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 #include "inter.h"
@@ -66,8 +66,8 @@ TIRQHandler OldIrq1b;
 byte * shift = (byte *) 0x417; // Shift status
 
 byte buf[64*3]; // {ascii,scan_code,shift_status}
-int ibuf=0; // Puntero al buffer, inicio de la cola
-int fbuf=0; // Puntero al buffer, fin de la cola
+int ibuf=0; // Pointer to the buffer, start of the queue
+int fbuf=0; // Pointer to the buffer, end of the queue
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 // Interrupt handler related functions.
@@ -185,7 +185,7 @@ void kbdReset(void)
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Espera una tecla, actualiza variables (ascii,scan_code y shift_status)
+//      Wait for a key, update variables (ascii,scan_code and shift_status)
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void bios_key(void) {
@@ -793,7 +793,7 @@ oldhatval = hatval;
 }
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//      Vacia el buffer de teclado (real e interno)
+//      Empty the keyboard buffer (real and internal)
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 void empty_buffer(void) {
@@ -807,5 +807,5 @@ void empty_buffer(void) {
   ascii=0; scan_code=0;
   r.h.ah=2; int386x(0x16,&r,&r,&s); shift_status=r.h.al;
 #endif
-  ibuf=fbuf=0; // Vacia el buffer interno
+  ibuf=fbuf=0; // Empty the internal buffer
 }

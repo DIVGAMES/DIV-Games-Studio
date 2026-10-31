@@ -36,7 +36,7 @@ extern int num_fpg_aux;
 struct ZF_Flag *flags[1000];
 int num_flags;
 extern int error_vpe;
-static char combo_error[128]; // para componer mensajes de error compuestos.
+static char combo_error[128]; // to compose compound error messages.
 
 int *tex_pointer;
 int tex_size;
@@ -527,7 +527,7 @@ void LoadZone(char *Buffer)
   Pos=0;
 
   //---------------------------------------------------------------------------
-  // Lee la cabecera de edicion
+  // Read the edit header
   //---------------------------------------------------------------------------
   if (strcmp(&Buffer[Pos],"wld\x1a\x0d\x0a\x01"))
   {
@@ -538,12 +538,12 @@ void LoadZone(char *Buffer)
   Pos+=(8+4+*(int *)&Buffer[8]);
 
   //---------------------------------------------------------------------------
-  // Lee la cabecera
+  // Read the header
   //---------------------------------------------------------------------------
   READ(Header,struct ZF_Header);
 
   //---------------------------------------------------------------------------
-  // Lee los puntos
+  // Read the points
   //---------------------------------------------------------------------------
   for(n=0;n<Header->NumPoints;n++)
   {
@@ -566,7 +566,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Lee las regiones
+  // Read the regions
   //---------------------------------------------------------------------------
   for(n=0;n<Header->NumRegions;n++)
   {
@@ -597,7 +597,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Lee las paredes
+  // Read the walls
   //---------------------------------------------------------------------------
   for(n=0;n<Header->NumWalls;n++)
   {
@@ -627,7 +627,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Lee las banderas
+  // Read the flags
   //---------------------------------------------------------------------------
   num_flags=Header->NumFlags;
   for(n=0;n<Header->NumFlags;n++) {
@@ -639,7 +639,7 @@ void LoadZone(char *Buffer)
   }
 
   //---------------------------------------------------------------------------
-  // Inicializa los objetos y la vista
+  // Initialize the objects and the view
   //---------------------------------------------------------------------------
   view=(struct View *)AddEntry(&Views);
   view->ScrX=0;
@@ -659,11 +659,11 @@ void LoadZone(char *Buffer)
   view->StartClip=NULL;
 
   //---------------------------------------------------------------------------
-  // Lee los datos de caracter general
+  // Read the general data
   //---------------------------------------------------------------------------
   READ(zgen,struct ZF_General);
   strcpy(Gen.Title,zgen->Title);
-  //  Cargo el fondo
+  //  Load the background
   TexAlloc2(&Gen.BackTC,zgen->BackTex,num_fpg_aux);
   if (Gen.BackTC.pPic==NULL)
     TexAlloc2(&Gen.BackTC,-1,num_fpg_aux);
@@ -680,7 +680,7 @@ void LoadZone(char *Buffer)
   ActView=(struct View *)Views.ptr[0];
 
   //---------------------------------------------------------------------------
-  // Inicializa la paleta y las tablas asociadas
+  // Initialize the palette and the associated tables
   //---------------------------------------------------------------------------
   LoadPalette(zgen->Palette);
 

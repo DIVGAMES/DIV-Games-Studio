@@ -96,12 +96,12 @@ extern int superget;
 //      Global variables
 ///////////////////////////////////////////////////////////////////////////////
 
-//int * system_clock = (void*) 0x46c; // Reloj del sistema
+//int * system_clock = (void*) 0x46c; // System clock
 //int system_clock;
 
 char get_buffer[long_line]; // Shared buffer (except for calculator)
 char * get;
-int get_cursor,get_pos;     // Clock y posición del cursor en los get
+int get_cursor,get_pos;     // Clock and cursor position in the gets
 
 int end_window=0,move_window_pending=0;
 int quick_close=0;
@@ -127,7 +127,7 @@ int first_time=0;  // Marks first time DIV runs
 extern int div_started;
 
 #ifdef SHARE
-int show_demo=1;  // La primera vez no saldrá el mensaje de la demo
+int show_demo=1;  // The first time the demo message will not be shown
 #else
 int show_demo=0;
 #endif
@@ -252,7 +252,7 @@ void chk_demo(void) {
 //  beta check (?)
 //═════════════════════════════════════════════════════════════════════════════
 
-// 0 - Dialogo
+// 0 - Dialog
 
 char betaname[128];
 
@@ -499,7 +499,7 @@ int main(int argc, char * argv[]) {
 	for (n=0;n<24;n++) 
 		type[n].default_ext=0; type[n].initial=0; 
 
-	initialize_texts((uint8_t *)"system/lenguaje.div"); // OJO emitir un error si lenguaje.div no existe
+	initialize_texts((uint8_t *)"system/lenguaje.div"); // NOTE: emit an error if lenguaje.div does not exist
 
 	if(compilemode==1) {	
 		initialize_compiler();
@@ -634,7 +634,7 @@ int main(int argc, char * argv[]) {
 
 	if (auto_save_session || return_mode!=0)
 		if (return_mode!=3) 
-			DownLoad_Desktop(); // Si no fallo el test
+			DownLoad_Desktop(); // If the test did not fail
 	//New_DownLoad_Desktop();
 
 	Save_Cfgbin();
@@ -729,7 +729,7 @@ void initialize_environment() {
     }
   }
 
-  // Si no existe el fichero DIV.DTF o se pide el modo a prueba de fallos
+  // If the DIV.DTF file does not exist or safe mode is requested
 
 //  if(!CopyDesktop) new_window(menu_principal0); else UpLoad_Desktop();
 
@@ -765,7 +765,7 @@ void initialize_environment() {
   if (first_time) {
     //v_type=13; strcpy(input,"system/div.txt");
     //mouse_graph=3; blit_copy(); mouse_graph=1;
-    //v_finished=-1; // No emite error si el fichero no existe
+    //v_finished=-1; // Do not emit an error if the file does not exist
     //open_program(); if (v_finished) maximize();
     new_window(menu_principal0);
     minimize_window();
@@ -775,7 +775,7 @@ void initialize_environment() {
     first_time=0;
   }
 
-// OJO! no se informa si no se pudo inicializar el sonido (sólo en Sonidos/Nuevo)
+// NOTE! it is not reported if sound could not be initialized (only in Sounds/New)
 
 /*
   if (!first_time && !Interpreting && SoundError){
@@ -792,7 +792,7 @@ void initialize_environment() {
 //      Execution Error (fatal)
 ///////////////////////////////////////////////////////////////////////////////
 
-// 1 - Out of memory - (algún malloc fundamental)
+// 1 - Out of memory - (some essential malloc)
 // 2 - Too many process
 // 3 - Stack overflow
 // 4 - DLL not found
@@ -887,7 +887,7 @@ void mainloop(void) {
 	read_key();
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Busca la ventana sobre la que estamos (n) n=max_windows si no hay
+	// Find the window we are over (n), n=max_windows if there is none
 	//─────────────────────────────────────────────────────────────────────────
 
 	n=0; 
@@ -900,7 +900,7 @@ void mainloop(void) {
 		drag=5;
 
 	//─────────────────────────────────────────────────────────────────────────
-	//  Arrastrar hacia el tapiz
+	//  Drag onto the wallpaper
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (drag==4 && (n==max_windows || window[n].type==2)) {
@@ -958,8 +958,8 @@ void mainloop(void) {
 	}
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Si antes estábamos en una ventana en la que hemos dejado de estar
-	// debemos repintar esta última (para borrar posibles "hi-lite")
+	// If we were previously over a window we have now left
+	// we must repaint the latter (to clear possible "hi-lite")
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (drag!=4) {
@@ -1028,13 +1028,13 @@ void mainloop(void) {
 
 	if (n!=0 && n<max_windows) {
 
-		// Pasa la ventana a la ventana 0 si esta en primer plano o se pulsa
+		// Move the window to window 0 if it is in the foreground or if it is clicked
 
 		if (window[n].foreground==1 || (mouse_b&1)) {
 			move(0,n); n=0;
 		}
 
-		if (n==0 && v.foreground!=1) { // Se pulsó icono o 2º plano
+		if (n==0 && v.foreground!=1) { // An icon or background window was clicked
 			for (m=1;m<max_windows;m++) {
 				if (window[m].type && window[m].foreground==1) {
 					if (collide(0,m)) {
@@ -1043,9 +1043,9 @@ void mainloop(void) {
 					}
 				}
 			}
-			if (v.foreground==0) { // Si estaba en segundo plano
+			if (v.foreground==0) { // If it was in the background
 				if (v.type>=100 && !v.state) 
-					activate(); // Activa un mapa
+					activate(); // Activate a map
 				
 				v.foreground=1; 
 				blit_window(0);
@@ -1058,7 +1058,7 @@ void mainloop(void) {
 		}
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Activa una ventana excluible (tipo>=100) cuando se haga algo sobre ella
+	// Activate an excludable window (type>=100) when something is done on it
 	//─────────────────────────────────────────────────────────────────────────
 
 	} else if (n==0 && (mouse_b&1) && v.type>=100 && v.foreground<2 && !v.state && mouse_graph!=4 && mouse_graph!=5) { 
@@ -1067,7 +1067,7 @@ void mainloop(void) {
 	}
 
 	//─────────────────────────────────────────────────────────────────────────
-	//  Suelta algo sobre una ventana que esta en segundo plano
+	//  Drop something onto a window that is in the background
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (n<max_windows && window[n].foreground==0 && drag==4 && v.type>=100 && window[n].type!=2) {
@@ -1111,7 +1111,7 @@ void mainloop(void) {
 	if (n==0 && v.foreground==1) 
 		if (mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.w-2*big2,v.y+v.h-2*big2)) {
 
-			do_call=1; // Llamamos a su click_handler
+			do_call=1; // Call its click_handler
 
 			if (v.type==100 && drag!=4) {
 
@@ -1265,7 +1265,7 @@ void mainloop(void) {
 			}
 
       //───────────────────────────────────────────────────────────────────────
-      // Minimiza una ventana
+      // Minimize a window
       //───────────────────────────────────────────────────────────────────────
 
 			if (mouse_graph==4) {
@@ -1285,7 +1285,7 @@ void mainloop(void) {
 		}
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Estamos sobre un icono
+	// We are over an icon
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (n==0 && v.foreground==2) {
@@ -1369,7 +1369,7 @@ void mainloop(void) {
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	//  Hotkey del menu programas
+	//  Programs menu hotkey
 	///////////////////////////////////////////////////////////////////////////
 
 	for (m=0;m<max_windows;m++)
@@ -1436,7 +1436,7 @@ void mainloop(void) {
 		if (kbdFLAGS[88]) 
 			n=7; // f12
 
-		if (n) { // Si se pulso algún hotkey ...
+		if (n) { // If some hotkey was pressed ...
 			if (m) {
 				wmouse_x=-1; 
 				wmouse_y=-1; 
@@ -1571,7 +1571,7 @@ void mainloop(void) {
 	}
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Comprobación de beta
+	// Beta check
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (rndb()>200) {
@@ -1595,7 +1595,7 @@ void mainloop(void) {
 	}
 	
 	//─────────────────────────────────────────────────────────────────────────
-	// Otros hotkey
+	// Other hotkeys
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (scan_code==62) { // F4 Open PRG
@@ -1687,7 +1687,7 @@ void mainloop(void) {
 		shell();
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Finaliza el bucle central
+	// End the main loop
 	//─────────────────────────────────────────────────────────────────────────
 
 	blit_copy();
@@ -1742,7 +1742,7 @@ void environment(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Shell al sistema operativo
+//  Shell to the operating system
 //═════════════════════════════════════════════════════════════════════════════
 
 char *paths_to_check[] = {"COMSPEC","PATH"};
@@ -1818,7 +1818,7 @@ void dialog_loop(void) {
 	read_key();
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Busca la ventana sobre la que estamos (n) n=max_windows si no hay
+	// Find the window we are over (n), n=max_windows if there is none
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (mouse_in(v.x,v.y,v.x+v.w-1,v.y+v.h-1)) 
@@ -1827,11 +1827,11 @@ void dialog_loop(void) {
 		n=max_windows;
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Si antes estábamos en una ventana en la que hemos dejado de estar
-	// debemos repintar esta última (para borrar posibles "hi-lite")
+	// If we were previously over a window we have now left
+	// we must repaint the latter (to clear possible "hi-lite")
 	//─────────────────────────────────────────────────────────────────────────
 
-	if (n==0) // Si ahora estamos en la barra, también se repinta la ventana
+	if (n==0) // If we are now on the bar, the window is also repainted
 		if (!mouse_in(v.x+2*big2,v.y+10*big2,v.x+v.w-2*big2,v.y+v.h-2*big2)) 
 			n--;
 
@@ -1862,7 +1862,7 @@ void dialog_loop(void) {
 		n++;
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Determina la forma del cursor
+	// Determine the cursor shape
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (n==max_windows) 
@@ -1876,7 +1876,7 @@ void dialog_loop(void) {
 		mouse_graph=1;
 
 	//─────────────────────────────────────────────────────────────────────────
-	// Si estamos dentro del contenido de una ventana ...
+	// If we are inside the contents of a window ...
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (n==0) 
@@ -1903,7 +1903,7 @@ void dialog_loop(void) {
 			oldn=0;
 			exit_dialog=0;
 
-		} else { // Si estamos en la barra de control de la ventana ...
+		} else { // If we are on the window's control bar ...
 
 			if (mouse_graph==2 && (mouse_b&1) && !(old_mouse_b&1)) 
 				move_window();
@@ -1932,7 +1932,7 @@ void dialog_loop(void) {
 	}
 
 	//─────────────────────────────────────────────────────────────────────────
-	//  Los diálogos se deben invocar siempre
+	//  Dialogs must always be invoked
 	//─────────────────────────────────────────────────────────────────────────
 
 	if (!invoked_dialog && !exit_dialog) {
@@ -2035,8 +2035,8 @@ void dialog_environment(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Declara que la v se ha movido desde la posición que se indica
-//      (... hasta la posicion v.x/y/an/al)
+//      Declare that v has moved from the given position
+//      (... to position v.x/y/w/h)
 //═════════════════════════════════════════════════════════════════════════════
 
 void has_moved_from(int x,int y,int w,int h) {
@@ -2056,18 +2056,18 @@ void has_moved_from(int x,int y,int w,int h) {
     for (n=1;n<max_windows;n++)
       if (window[n].type && window[n].foreground==0)
 
-        // Si una ventana oscurecida estaba tapada antes ...
+        // If a darkened window was previously covered ...
 
         if (collides_with(n,x,y,w,h)) {
           window[n].foreground=1;
 
-          // Si esta tapada por otras ventanas (en primer o segundo plano) ...
+          // If it is covered by other windows (in the foreground or background) ...
 
           for (m=1;m<max_windows;m++)
             if (m!=n && window[m].type && (window[m].foreground==1 || (window[m].foreground!=1 && m<n)))
               if (collide(n,m)) window[n].foreground=0;
 
-          // Si destapamos la susodicha ventana .. la pasa a primer plano ..
+          // If we uncover said window .. bring it to the foreground ..
 
           if (window[n].foreground==1) {
             if (n!=1) {
@@ -2083,7 +2083,7 @@ void has_moved_from(int x,int y,int w,int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Maximiza la ventana activa (la número 0)
+//      Maximize the active window (number 0)
 //═════════════════════════════════════════════════════════════════════════════
 
 void maximize_window(void) {
@@ -2125,7 +2125,7 @@ void maximize_window(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Minimiza la ventana activa (la número 0)
+//      Minimize the active window (number 0)
 //═════════════════════════════════════════════════════════════════════════════
 
 void minimize_window(void) {
@@ -2143,8 +2143,8 @@ void minimize_window(void) {
 
   v.w=(7+1+text_len(v.name)+1)*big2; v.h=7*big2;
 
-  if (v.w!=v._w || v.h!=v._h) { // Si es la primera vez que se minimiza
-                                    // (o cambió de nombre ...)
+  if (v.w!=v._w || v.h!=v._h) { // If it is the first time it is minimized
+                                    // (or it changed its name ...)
     place(v.side*2+0,&v.x,&v.y,v.w,v.h);
   } else {
     v.x=v._x; v.y=v._y;
@@ -2167,7 +2167,7 @@ void minimize_window(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cierra la ventana activa (la número 0)
+//      Close the active window (number 0)
 //═════════════════════════════════════════════════════════════════════════════
 
 void close_window(void) {
@@ -2218,7 +2218,7 @@ void close_window(void) {
     } old_prg=NULL;
   }
 
-  if (v.type>=100 && v.state) { // Los mapas se auto-desactivan al cerrarse
+  if (v.type>=100 && v.state) { // Maps auto-deactivate when closed
     for (m=1;m<max_windows;m++) if (window[m].type==v.type && window[m].foreground<2) {
       window[m].state=1;
       wgra(window[m].ptr,window[m].w/big2,window[m].h/big2,c_b_low,2,2,window[m].w/big2-20,7);
@@ -2243,8 +2243,8 @@ void close_window(void) {
     update_dialogs(x,y,w,h);
   } else update_box(x,y,w,h);
 
-  if (n==1 || n==7) { // Los diálogos pasan a primer plano las hiden[] al cerrarse
-    if (v.type==1 || v.type==7) { // Diálogo sobre diálogo solo abre el último
+  if (n==1 || n==7) { // Dialogs bring the hiden[] to the foreground when closed
+    if (v.type==1 || v.type==7) { // Dialog over dialog only opens the last one
       v.foreground=1; blit_window(0);
     } else if (mode>=100) for (n=0;n<max_windows;n++) if (hiden[n]) {
       window[n].foreground=1;
@@ -2271,7 +2271,7 @@ void close_window(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Mueve una ventana
+//      Move a window
 //═════════════════════════════════════════════════════════════════════════════
 
 void move_window(void) {
@@ -2326,10 +2326,10 @@ void move_window(void) {
 //  if (v.foreground==1) wrectangle(v.ptr,w/big2,h/big2,c2,0,0,w/big2,h/big2);
 
   //───────────────────────────────────────────────────────────────────────────
-  // Comprueba si se ha pulsado doble click para autoemplazar la ventana
+  // Check whether a double click was made to auto-place the window
   //───────────────────────────────────────────────────────────────────────────
 
-  x=0; // Ahora x indica si la ventana se autoemplaza
+  x=0; // Now x tells whether the window is auto-placed
 
   if (oldx==v.x && oldy==v.y) {
     if (*system_clock<double_click+10 && *system_clock>double_click
@@ -2387,7 +2387,7 @@ void move_window_full(void) {
   // Check if you pressed double-click to auto deploy window
   //───────────────────────────────────────────────────────────────────────────
 
-  x=0; // Ahora x indica si la ventana se autoemplaza
+  x=0; // Now x tells whether the window is auto-placed
 
   if (oldx==v.x && oldy==v.y) {
     if (*system_clock<double_click+10 && *system_clock>double_click
@@ -2528,7 +2528,7 @@ void update_dialogs(int x, int y, int w, int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Actualiza una caja de la pantalla, de una ventana para arriba
+//      Update a box of the screen, from one window upwards
 //═════════════════════════════════════════════════════════════════════════════
 
 void update_box2(int win, int x, int y, int w, int h) {
@@ -2585,7 +2585,7 @@ void update_box2(int win, int x, int y, int w, int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Actualiza el fondo de una ventana de zoom (zx,zy,zan,zal)
+//      Update the background of a zoom window (zx,zy,zw,zh)
 //═════════════════════════════════════════════════════════════════════════════
 
 void update_background(void) {
@@ -2768,15 +2768,15 @@ if(0) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Algoritmo de emplazamiento de una ventana
-//      (flag=0:icono, flag=1:ventana)
+//      Window placement algorithm
+//      (flag=0:icon, flag=1:window)
 //═════════════════════════════════════════════════════════════════════════════
 
 void place(int flag,int*_x,int*_y,int w,int h) {
   int n,m,x,y,new_x,old_y=*_y;
   int scanes,scan[max_windows];
 
-  // Primero crea en scan[] una lista de posibles alturas (0+fines de ventana)
+  // First build in scan[] a list of possible heights (0+window ends)
 
   if (flag&1) {
     *_y=vga_height; scan[0]=0;
@@ -2804,7 +2804,7 @@ void place(int flag,int*_x,int*_y,int w,int h) {
     }
   }
 
-  // Segundo ... algoritmo de colocación ...
+  // Second ... placement algorithm ...
 
   if (flag&2) {
     for (n=0;n<scanes;n++) {
@@ -2828,7 +2828,7 @@ void place(int flag,int*_x,int*_y,int w,int h) {
     }
   }
 
-  // Tercero, si el algoritmo falló, entonces coloca la ventana en ...
+  // Third, if the algorithm failed, then place the window at ...
 
   if (flag&1) {
     if (*_y+h>vga_height) least_bad_position(_x,_y,w,h);
@@ -2838,7 +2838,7 @@ void place(int flag,int*_x,int*_y,int w,int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//    Algoritmos de emplazamiento forzado
+//    Forced placement algorithms
 //═════════════════════════════════════════════════════════════════════════════
 
 #define steps_x 16
@@ -2892,7 +2892,7 @@ int how_much_collides_with(int a, int x, int y, int w, int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//    Comprueba si dos ventanas colisionan
+//    Check whether two windows collide
 //═════════════════════════════════════════════════════════════════════════════
 
 int collide(int a,int b) {
@@ -3051,23 +3051,23 @@ void new_window(voidReturnType init_handler) {
     w=v.w; h=v.h;
 
     //───────────────────────────────────────────────────────────────────────────
-    // Algoritmo de emplazamiento de ventanas ...
+    // Window placement algorithm ...
     //───────────────────────────────────────────────────────────────────────────
 
-    if (first_time==2) { // La ventana de ayuda (la primera vez)
+    if (first_time==2) { // The help window (the first time)
       y=x=vga_width/2-w/2;
-    } else if (v.type==1 || v.type==7) { // Los diálogos se colocan en el centro
+    } else if (v.type==1 || v.type==7) { // Dialogs are placed in the center
       x=vga_width/2-w/2; y=vga_height/2-h/2;
     } else place(v.side*2+1,&x,&y,w,h);
 
     v.x=x; v.y=y;
 
     //───────────────────────────────────────────────────────────────────────────
-    // Comprueba que si se trata de un mapa no haya otro activado
+    // If it is a map, check that no other one is activated
     //───────────────────────────────────────────────────────────────────────────
 
     if (v.type>=100) {
-      v.state=1; // Se activa
+      v.state=1; // It is activated
       for (m=1;m<max_windows;m++) if (window[m].type==v.type && window[m].state) {
         window[m].state=0;
         wgra(window[m].ptr,window[m].w/big2,window[m].h/big2,c1,2,2,window[m].w/big2-20,7);
@@ -3079,7 +3079,7 @@ void new_window(voidReturnType init_handler) {
           wwrite(window[m].ptr,window[m].w/big2,window[m].h/big2,2+(window[m].w/big2-20)/2,2,1,window[m].title,c2);
         }
 
-        if (v.type==102 && (window[m].prg!=NULL || window[m].click_handler==calc2) && window[m].type==102) { // Borra cursor
+        if (v.type==102 && (window[m].prg!=NULL || window[m].click_handler==calc2) && window[m].type==102) { // Erase cursor
           wup(m);
           call((voidReturnType )v.paint_handler);
           wdown(m);
@@ -3090,7 +3090,7 @@ void new_window(voidReturnType init_handler) {
     }
 
     //───────────────────────────────────────────────────────────────────────────
-    // Comprueba que si se trata de un menú no este ya generado
+    // If it is a menu, check that it is not already generated
     //───────────────────────────────────────────────────────────────────────────
 
     n=0; if (v.type==2 || v.type==3 || v.type==4 || v.type==5 || v.type==8) {
@@ -3101,16 +3101,16 @@ void new_window(voidReturnType init_handler) {
 
     if (!n) ptr=(byte *)malloc(w*h); else ptr=NULL;
 
-    if (ptr!=NULL) { // Ventana, free en close_window
+    if (ptr!=NULL) { // Window, freed in close_window
 		window_surface(w,h,0);
 		
       //───────────────────────────────────────────────────────────────────────────
-      // Pasa a segundo plano las ventanas que corresponda
+      // Send the appropriate windows to the background
       //───────────────────────────────────────────────────────────────────────────
 
-      if (v.type==1 || v.type==7) { // Los diálogos/progreso cierran todas las ventanas
+      if (v.type==1 || v.type==7) { // Dialogs/progress close all windows
         vtype=v.type; v.type=0;
-        if (window[1].type==1 || window[1].type==7) { // Diálogo sobre diálogo
+        if (window[1].type==1 || window[1].type==7) { // Dialog over dialog
           window[1].foreground=0; blit_window(1);
         } else for (n=1;n<max_windows;n++)
           if (window[n].type && window[n].foreground==1) {
@@ -3136,7 +3136,7 @@ void new_window(voidReturnType init_handler) {
       } v.type=vtype;
 
       //───────────────────────────────────────────────────────────────────────────
-      // Inicializa la ventana
+      // Initialize the window
       //───────────────────────────────────────────────────────────────────────────
 
       v.ptr=ptr;
@@ -3148,7 +3148,7 @@ void new_window(voidReturnType init_handler) {
       wrectangle(ptr,w,h,c2,0,0,w,h);
       wput(ptr,w,h,w-9,2,35);
       
-      if (v.type==1) { // Los diálogos no se minimizan
+      if (v.type==1) { // Dialogs are not minimized
         wgra(ptr,w,h,c_b_low,2,2,w-12,7);
         if (text_len(v.title)+3>w-12) {
           wwrite_in_box(ptr,w,w-11,h,4,2,0,v.title,c1);
@@ -3157,7 +3157,7 @@ void new_window(voidReturnType init_handler) {
           wwrite(ptr,w,h,3+(w-12)/2,2,1,v.title,c1);
           wwrite(ptr,w,h,2+(w-12)/2,2,1,v.title,c4);
         }
-      } else if (v.type==7) { // Barra de progreso
+      } else if (v.type==7) { // Progress bar
         wgra(ptr,w,h,c_b_low,2,2,w-4,7);
         if (text_len(v.title)+3>w-4) {
           wwrite_in_box(ptr,w,w-3,h,4,2,0,v.title,c1);
@@ -3194,7 +3194,7 @@ void new_window(voidReturnType init_handler) {
       }
 
     //───────────────────────────────────────────────────────────────────────────
-    // No se pudo abrir la ventana, (no hay memoria o menú duplicado)
+    // The window could not be opened (no memory or duplicate menu)
     //───────────────────────────────────────────────────────────────────────────
 
     } else {
@@ -3209,7 +3209,7 @@ void new_window(voidReturnType init_handler) {
           for (m=1;m<max_windows;m++) if (window[m].type && window[m].foreground==1)
             if (collide(0,m)) { window[m].foreground=0; blit_window(m); }
           v.foreground=1; blit_window(0);
-        } else { // Cuando el menu pedido ya está en primer plano lo resalta
+        } else { // When the requested menu is already in the foreground, highlight it
           divdelete(0);
           move(0,n-1);
           wrectangle(v.ptr,v.w/big2,v.h/big2,c4,0,0,v.w/big2,v.h/big2);
@@ -3228,7 +3228,7 @@ void new_window(voidReturnType init_handler) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Explode de una nueva ventana
+//      Explode of a new window
 //═════════════════════════════════════════════════════════════════════════════
 
 void init_blit(void);
@@ -3401,19 +3401,19 @@ uint32_t colorkey=0;
 
     if (v.click_handler==err2) ptr=error_window; else ptr=(byte *)malloc(w*h);
 
-    if (ptr!=NULL) { // Ventana, free en close_window
+    if (ptr!=NULL) { // Window, freed in close_window
 		memset(ptr,0,w*h);
 
 		window_surface(w,h,1);
 
       //───────────────────────────────────────────────────────────────────────────
-      // Pasa a segundo plano las ventanas que corresponda
+      // Send the appropriate windows to the background
       //───────────────────────────────────────────────────────────────────────────
 
-      vtype=v.type; v.type=0; // Megabug arreglado
+      vtype=v.type; v.type=0; // Megabug fixed
 
       if (mode>=100) {
-        if (window[1].type==1 || window[1].type==7) { // Diálogo sobre diálogo
+        if (window[1].type==1 || window[1].type==7) { // Dialog over dialog
           window[1].foreground=0; blit_window(1);
         } else {
           for (n=1;n<max_windows;n++) {
@@ -3544,15 +3544,15 @@ void initialization(void) {
 
 
 	if(!Interpreting) {
-		printf("%s (%d,%d)\n\n",vgabrand,vga_width,vga_height); // *** Solo info usuario ***
+		printf("%s (%d,%d)\n\n",vgabrand,vga_width,vga_height); // *** User info only ***
 		check_oldpif();
 	}
 
-	make_helpidx(); // *** Crea el índice del hipertexto ***
-	load_index();   // *** Carga el glosario del hipertexto ***
+	make_helpidx(); // *** Create the hypertext index ***
+	load_index();   // *** Load the hypertext glossary ***
 
 	if(!Interpreting)
-		printf("%s",(char *)texts[6]); // *** Init buffers gráficos ***
+		printf("%s",(char *)texts[6]); // *** Init graphics buffers ***
 
 	undo=(byte*)malloc(undo_memory);
 	tundo=(struct undo_type *)malloc(sizeof(struct undo_type)*max_undos);
@@ -3570,7 +3570,7 @@ void initialization(void) {
   
 	ghost=(byte*)malloc(65536); // 256*256 combinations
 
-	toolbar=(byte*)malloc(vga_width*19*big2); //OJO
+	toolbar=(byte*)malloc(vga_width*19*big2); //NOTE
 	fill_dac=(byte*)malloc(256);
 	error_window=(byte*)malloc(640*38*2);
 
@@ -3732,7 +3732,7 @@ mouse_surface = IMG_Load("system/cursor.png");
 
   // HYPERLINK
 
-  // *** Inicializa graph_help[384].offset/an/al/ptr=0
+  // *** Initialize graph_help[384].offset/w/h/ptr=0
 
 	if ((f=fopen("help/help.fig","rb"))==NULL) 
 		error(0); 
@@ -3808,18 +3808,18 @@ fclose(f);
 
   }
 
-  if (!Interpreting) printf("%s",(char *)texts[10]); // *** Carga los objetos editados ***
+  if (!Interpreting) printf("%s",(char *)texts[10]); // *** Load the edited objects ***
 
   if (auto_save_session || Interpreting) CopyDesktop=Can_UpLoad_Desktop();
 
-  if(!CopyDesktop) { //Carga paleta comun
-    if (!Interpreting) cprintf("%s",(char *)texts[11]); // *** Cálculos sobre la paleta ***
+  if(!CopyDesktop) { //Load common palette
+    if (!Interpreting) cprintf("%s",(char *)texts[11]); // *** Palette calculations ***
     memcpy(dac,system_dac,768);
     init_ghost();
     create_ghost(1);
   }
 
-  if (!Interpreting) printf("%s",(char *)texts[12]); // *** Miscelánea ***
+  if (!Interpreting) printf("%s",(char *)texts[12]); // *** Miscellaneous ***
   find_colors(); memset(copy_buffer,c0,vga_width*vga_height);
   zoom=0; zoom_x=0; zoom_y=0; zoom_cx=vga_width/2; zoom_cy=vga_height/2; zoom_move=c3;
   bar_x=8*big2; bar_y=vga_height-27*big2; rule=0; current_mouse=21; sel_status=0;
@@ -3835,7 +3835,7 @@ fclose(f);
 
   determine_drives();
 
-  initialize_compiler(); // *** Compilador *** espacios de lower a 00
+  initialize_compiler(); // *** Compiler *** spaces of lower to 00
   init_lexcolor();
 
   if (!Interpreting) printf("%s",(char *)texts[13]);
@@ -4239,7 +4239,7 @@ void show_flag(struct t_item * i) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Proceso de items
+//      Item processing
 //═════════════════════════════════════════════════════════════════════════════
 
 void _process_items(void) {
@@ -4460,7 +4460,7 @@ void process_flag(int n,int e) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Rutina de input
+//      Input routine
 //═════════════════════════════════════════════════════════════════════════════
 
 int text_len2(byte * ptr);
@@ -4493,7 +4493,7 @@ void get_input(int n) {
             get_pos++;
             break;                  // cursor right
           case 75: get_pos--; break;                  // cursor left
-          case 71: get_pos=0; break;                  // inicio
+          case 71: get_pos=0; break;                  // start
           case 79: get_pos=strlen(get); break;        // fin
           case 83:
             get[strlen(get)+1]=0;
@@ -4546,10 +4546,10 @@ void get_input(int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones de desactivar y activar
+//      Deactivate and activate functions
 //═════════════════════════════════════════════════════════════════════════════
 
-void deactivate(void) { // Minimiza: se desactiva
+void deactivate(void) { // Minimize: deactivates
   int m;
   int w=v.w,h=v.h;
   if (big) { w/=2; h/=2; }
@@ -4575,12 +4575,12 @@ void deactivate(void) { // Minimiza: se desactiva
       }
       blit_window(m); break;
     }
-    if (v.type==102) call((voidReturnType )v.paint_handler); // Borra cursor
+    if (v.type==102) call((voidReturnType )v.paint_handler); // Erase cursor
   }
 }
 
-void activate(void) { // Maximiza: se activa *** OJO *** se llama en varias
-  int m;           // ocasiones, además de al maximizarse, ver "div.cpp"
+void activate(void) { // Maximize: activates *** NOTE *** it is called on several
+  int m;           // occasions, besides when maximizing, see "div.cpp"
   int w=v.w,h=v.h;
   if (big) { w/=2; h/=2; }
 
@@ -4602,7 +4602,7 @@ void activate(void) { // Maximiza: se activa *** OJO *** se llama en varias
       wwrite(window[m].ptr,window[m].w/big2,window[m].h/big2,2+(window[m].w/big2-20)/2,3,1,window[m].title,c0);
       wwrite(window[m].ptr,window[m].w/big2,window[m].h/big2,2+(window[m].w/big2-20)/2,2,1,window[m].title,c2);
     }
-    if (v.type==102 && window[m].type==102) { // Borra cursor
+    if (v.type==102 && window[m].type==102) { // Erase cursor
       wup(m);
       call((voidReturnType )v.paint_handler);
       wdown(m);
@@ -4611,19 +4611,19 @@ void activate(void) { // Maximiza: se activa *** OJO *** se llama en varias
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga y grabación de setup.bin
+//  Loading and saving of setup.bin
 //═════════════════════════════════════════════════════════════════════════════
 
 extern int previous_mode;
 
 ////////////////////////////////////////////////////////////////////////////
-// Salva el fichero de configuracion                                      //
+// Saves the configuration file                                           //
 ////////////////////////////////////////////////////////////////////////////
 void Save_Cfgbin()
 {
 FILE *file;
 
-        // Modo de video
+        // Video mode
         Setupfile.Vid_modeWidth =VS_WIDTH;
         Setupfile.Vid_modeHeight  =VS_HEIGHT;
         Setupfile.Vid_modeBig   =VS_BIG;
@@ -4636,12 +4636,12 @@ FILE *file;
           Setupfile.Vid_modeHeight =previous_mode%10000;
         }
 
-        // Sistema de Undo
+        // Undo system
         Setupfile.Max_undo=max_undos;
         Setupfile.Undo_memory=undo_memory;
         Setupfile.tab_size=tab_size;
 
-        // Sistema de Directorios
+        // Directory system
 
         strcpy(Setupfile.Dir_cwd,type[0].path);
         strcpy(Setupfile.Dir_map,type[2].path);
@@ -4656,7 +4656,7 @@ FILE *file;
         strcpy(Setupfile.Dir_wld,type[15].path);
         strcpy(Setupfile.Dir_mod,type[16].path);
 /*
-        // Informacion del tapiz
+        // Wallpaper information
         strcpy(Setupfile.Desktop_Image,desk_file);
         Setupfile.Desktop_R=desk_r;
         Setupfile.Desktop_G=desk_g;
@@ -4751,7 +4751,7 @@ void Load_Cfgbin() {
   file=fopen("system/setup.bin","rb");
   if(file==NULL) {
     if (first_time) {
-      strcpy(Setupfile.Desktop_Image,(char *)texts[487]); // Informacion del tapiz
+      strcpy(Setupfile.Desktop_Image,(char *)texts[487]); // Wallpaper information
       Setupfile.Desktop_Gradient=1;
       Setupfile.Desktop_Tile=0;
       for (n=0;n<8;n++) Setupfile.t_gradient[n].select=0;
@@ -4791,7 +4791,7 @@ void Load_Cfgbin() {
 
     } else {
 
-      strcpy(Setupfile.Desktop_Image,""); // Informacion del tapiz
+      strcpy(Setupfile.Desktop_Image,""); // Wallpaper information
       Setupfile.Desktop_Gradient=0;
       Setupfile.Desktop_Tile=0;
       for (n=0;n<9;n++) Setupfile.t_gradient[n].select=0;
@@ -4951,7 +4951,7 @@ void check_free(void) {
     dialog(info0);
   }
 
-//  exit_environment=1; // Para do_exit h MS-DOS
+//  exit_environment=1; // For do_exit to MS-DOS
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -5114,8 +5114,8 @@ void GetFree4kBlocks(void)
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Check_oldpif - Si encuentra un PIF de DIV 1 inválido -> lo borra
-//  (quita el enlace del menú de inicio a DIV Games Studio 1)
+//  Check_oldpif - If it finds an invalid DIV 1 PIF -> deletes it
+//  (removes the start menu link to DIV Games Studio 1)
 //─────────────────────────────────────────────────────────────────────────────
 
 void check_oldpif(void) {
@@ -5149,12 +5149,12 @@ void check_oldpif(void) {
       fread(pif,1,n,f);
       fclose(f);
 
-      name=(char *)&pif[0x273]; // Path del icono
+      name=(char *)&pif[0x273]; // Icon path
 
       _splitpath(name,drive,dir,fname,ext);
       strupr(fname); strupr(ext);
 
-      if (!strcmp(fname,"DIV") && !strcmp(ext,".ICO")) { // Es el PIF de DIV 1
+      if (!strcmp(fname,"DIV") && !strcmp(ext,".ICO")) { // It is the DIV 1 PIF
 
         name=(char *)&pif[0x24];
 
@@ -5164,9 +5164,9 @@ void check_oldpif(void) {
           n=ftell(f);
           fclose(f);
 
-          if (n>1024*1024) remove(cwork); // Si no es el EXE de DIV 1, borra el PIF
+          if (n>1024*1024) remove(cwork); // If it is not the DIV 1 EXE, delete the PIF
 
-        } else remove(cwork); // Si no existe el EXE, también borra el PIF
+        } else remove(cwork); // If the EXE does not exist, also delete the PIF
 
       }
 

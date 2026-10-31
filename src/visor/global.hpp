@@ -5,7 +5,7 @@
 #include "struct.hpp"
 #include <stdlib.h>
 
-/////////////////////////////// Matriz Identidad.
+/////////////////////////////// Identity matrix.
 
 extern tmatrix    Identity;
 void InitMath();
@@ -15,7 +15,7 @@ float scalar_product(lptvector v, lptvector p);
 void MatShow(lptmatrix matrix_a);
 void GetAngs(lptmatrix mat,float *ax,float *ay,float *az,float *x,float *y,float *z);
 
-/////////////////////////////// Cambio de modo de video (temporal)
+/////////////////////////////// Video mode change (temporary)
 
 void SetVideoMode(int);
 #ifdef DOS

@@ -45,7 +45,7 @@ void PasteNewSounds         (void);
 byte *SaveSoundMem          (pcminfo *mypcminfo);
 int  IsWAV                  (char *FileName);
 int  NewSample              (pcminfo *mypcminfo); // 1-OK, 0-ERROR
-                                                  // Espacio (malloc+lock) en mypcminfo->SoundData para mypcminfo->SoundSize shorts
+                                                  // Space (malloc+lock) in mypcminfo->SoundData for mypcminfo->SoundSize shorts
 void wline                  (char *ptr,int realwidth,int w,int h,int x0, int y0, int x1, int y1, char color);
 void wave_line_pixel            (char * ptr, int w, int realwidth, int h, int x, int y, char color);
 
@@ -413,10 +413,10 @@ void show_mod_meters(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Funciones de sonidos
+//  Sound functions
 //═════════════════════════════════════════════════════════════════════════════
 
-#define max_files 512 // ─────────────────────────────── Listbox de archivos
+#define max_files 512 // ─────────────────────────────── Files listbox
 extern struct t_listboxbr lfilesbr;
 extern t_thumb thumb[max_files];
 extern int num_taggeds;
@@ -715,7 +715,7 @@ void OpenDesktopSound(FILE *f)
   pcminfo *mypcminfo;
 
   pcminfo_aux=(byte *)malloc(sizeof(pcminfo));
-  if(pcminfo_aux==NULL) return; // OJO !!!
+  if(pcminfo_aux==NULL) return; // NOTE !!!
   mypcminfo=(pcminfo *)pcminfo_aux;
 
   fread(mypcminfo->name,       1,  14, f);
@@ -912,7 +912,7 @@ void CloseSound(char *snd_path)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Funciones de canciones
+//  Song functions
 //═════════════════════════════════════════════════════════════════════════════
 
 void OpenSong(void) {
@@ -1115,7 +1115,7 @@ void PlaySong(char *pathname)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Editor de sonidos
+//  Sound editor
 //═════════════════════════════════════════════════════════════════════════════
 
 int window_width, window_height;
@@ -1136,8 +1136,8 @@ typedef struct _SND {
 } SND;
 
 SND     DesktopSND[100];
-int     NumSND=0;   // Contador de sonidos pegados durante una edicion
-int     ConSND=1; // Contador de sonidos pegados durante toda la sesion
+int     NumSND=0;   // Counter of sounds pasted during an edit
+int     ConSND=1; // Counter of sounds pasted during the whole session
 //SAMPLE  sample;
 CLP     Clipboard = { 0, 0, NULL };
 int     PosY=31;
@@ -1188,8 +1188,8 @@ void EditSound0(void)
   pos -= text_len(texts[507])+3;      _button(507,pos,v.h-34,0);
   pos -= text_len(texts[508])+3;      _button(508,pos,v.h-34,0);
 
-  _button(509,7,v.h-14,0);      // Prueba
-  _button(512,v.w-8,v.h-14,2); // Copiar en ventana
+  _button(509,7,v.h-14,0);      // Test
+  _button(512,v.w-8,v.h-14,2); // Copy into window
 
   pos=193 + text_len(texts[555])+3 ; // 241;
 
@@ -1221,7 +1221,7 @@ void EditSound1(void)
 
   _show_items();
 
-  // Info del sonido
+  // Sound info
   wbox       (v.ptr, w, h,  c1, 4, 12, 69, 28);
   wrectangle(v.ptr, w, h,  c0, 3, 11, 71, 30);
   wrectangle(v.ptr, w, h,  c0, 3, 21, 71, 11);
@@ -1231,7 +1231,7 @@ void EditSound1(void)
   sprintf(cwork,"%02d bit",mypcminfo->SoundBits);
   wwrite(v.ptr, w, h, 39, 33, 1, (byte *)cwork, c3);
 
-  // Opciones de conversion
+  // Conversion options
 
 /*
   wbox       (v.ptr, w, h, c12, 191, 13, text_len(texts[552])+2, 11);
@@ -1239,7 +1239,7 @@ void EditSound1(void)
   wwrite(v.ptr, w, h, 192, 15, 0, texts[552], c3);
 */
 
-  // Zona de edicion
+  // Edit area
   wrectangle(v.ptr, w, h, c0, 3, 11+PosY, v_width+2, v_height+2);
   wbox       (v.ptr, w, h, c1, 4, 12+PosY,   v_width,   v_height);
 
@@ -1247,7 +1247,7 @@ void EditSound1(void)
 
   if(sel_1<=sel_2)
   {
-//  No pone cajas de 1 de ancho
+//  Do not draw boxes 1 wide
 //  wbox(v.ptr, w, h, c3, (sel_1/big2)+4, 12+PosY, (sel_2/big2)-(sel_1/big2)+1, v_height);
 
     p0=4*big2; y0=(12+PosY)*big2;
@@ -1257,7 +1257,7 @@ void EditSound1(void)
   }
   else
   {
-//  No pone cajas de 1 de ancho
+//  Do not draw boxes 1 wide
 //  wbox(v.ptr, w, h, c3, (sel_2/big2)+4, 12+PosY, (sel_1/big2)-(sel_2/big2)+1, v_height);
 
     p0=4*big2; y0=(12+PosY)*big2;
@@ -1367,7 +1367,7 @@ Mix_HaltChannel(-1);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Grabador de sonidos
+//  Sound recorder
 //═════════════════════════════════════════════════════════════════════════════
 
 void RecSound0(void)
@@ -1386,7 +1386,7 @@ void RecSound0(void)
   if (SoundFile[strlen(SoundFile)-1]!='/') strcat(SoundFile, "/");
   strcat(SoundFile, "SAMPLE.WAV");
 
-  // Botones Aceptar/Cancelar
+  // Accept/Cancel buttons
   _button(100,      7, v.h-14, 0);
   _button(101, v.w-8, v.h-14, 2);
 
@@ -1394,7 +1394,7 @@ void RecSound0(void)
   _flag(561,                         3, 20, &RecDevice[0]);
   _flag(562, 3+11+text_len(texts[561]), 20, &RecDevice[1]);
 
-  // Boton de seleccion de fichero
+  // File selection button
   _button(121, v.w-12, 17, 0);
 
   v_accept=0;
@@ -1414,17 +1414,17 @@ void RecSound1(void)
 
   _show_items();
 
-  // Fuente de grabacion
+  // Recording source
   wwrite(v.ptr,w,h,3,11,0,texts[565],c3);
 
-  // Fichero WAV a grabar
+  // WAV file to record
   wwrite(v.ptr,w,h,w-86,11,0,texts[566],c3);
   _splitpath(SoundFile,drive,dir,fname,ext);
   strcpy(cwork, fname); strcat(cwork, ext);
   wbox(v.ptr, w, h, c12, w-86, 19, 69, 8);
   wwrite_in_box(v.ptr,w,w-12,h,w-85,20,0,(byte *)cwork,c4);
 
-  // Mensaje de ayuda
+  // Help message
   wbox(v.ptr, w, h, c12, 3, 29, w-6, 20);
   wrectangle(v.ptr, w, h,  c0, 3, 29, w-6, 20);
   wwrite_in_box(v.ptr,w,w-4,h,w/2,31,1,texts[563],c3);
@@ -1441,10 +1441,10 @@ void RecSound2(void)
 
   switch(v.active_item)
   {
-    case 0: // Aceptar
+    case 0: // Accept
       end_dialog=1; v_accept=1;
       break;
-    case 1: // Cancelar
+    case 1: // Cancel
       end_dialog=1;
       break;
     case 2: // MIC
@@ -1455,7 +1455,7 @@ void RecSound2(void)
       RecDevice[0]=!RecDevice[1];
       need_refresh=1;
       break;
-    case 4: // Seleccion de fichero
+    case 4: // File selection
       v_mode=1;
       v_type=7;
       v_text=(char *)texts[339];
@@ -1751,22 +1751,22 @@ void ModifySound(int option)
 	Mix_PlayChannel(-1,mypcminfo->SI,0);
 	
       return;
-    case 9: // Pega el sonido en el escritorio
+    case 9: // Paste the sound onto the desktop
       CopyNewSound(mypcminfo, begin, end);
       return;
-    case 10: // Convertir a 8 bit
+    case 10: // Convert to 8 bit
       mypcminfo->SoundBits=8;
       return;
-    case 11: // Convertir a 16 bit
+    case 11: // Convert to 16 bit
       mypcminfo->SoundBits=16;
       return;
-    case 12: // Convertir a 11025 Hz
+    case 12: // Convert to 11025 Hz
       ChangeSoundFreq(11025);
       return;
-    case 13: // Convertir a 22050 Hz
+    case 13: // Convert to 22050 Hz
       ChangeSoundFreq(22050);
       return;
-    case 14: // Convertir a 44100 Hz
+    case 14: // Convert to 44100 Hz
       ChangeSoundFreq(44100);
       return;
   }
@@ -2030,7 +2030,7 @@ void PollRecord(void)
   int  length;
 
   if((f=fopen(SoundFile,"ab"))==NULL) {
-    v_text=(char *)texts[47];  // OJO !!! Cambiar mensaje de error
+    v_text=(char *)texts[47];  // NOTE !!! Change error message
     dialog(err0);
 #ifdef NOTYET
     spkoff();
@@ -2050,7 +2050,7 @@ void PollRecord(void)
     {
       inp(judascfg_port+0x0E);
       if(DmaBuf) DmaBuf=0; else DmaBuf=1;
-      sbrec(65000); //Inicializa DMA de nuevo
+      sbrec(65000); //Initialize DMA again
       if(DmaBuf) DmaBuf=0; else DmaBuf=1;
       fwrite(aligned[DmaBuf],1,65000,f);
       if(DmaBuf) DmaBuf=0; else DmaBuf=1;
@@ -2063,7 +2063,7 @@ void PollRecord(void)
   fclose(f);
   if((f=fopen(SoundFile,"rb+"))==NULL)
   {
-    v_text=(char *)texts[47];  // OJO !!! Cambiar mensaje de error
+    v_text=(char *)texts[47];  // NOTE !!! Change error message
     dialog(err0);
 #ifdef NOTYET
     spkoff();

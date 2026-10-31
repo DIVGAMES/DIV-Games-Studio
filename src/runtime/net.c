@@ -1,6 +1,6 @@
 //=============================================================================
-//  Modulo central de la libreria de red
-//  Programado por: Luis F. Fernandez
+//  Central module of the network library
+//  Programmed by: Luis F. Fernandez
 //=============================================================================
 
 #ifdef NETPLAY
@@ -27,7 +27,7 @@ net_game network_game;
 extern int clock_ticks;
 
 //=============================================================================
-//  Procedimientos internos
+//  Internal procedures
 //=============================================================================
 
 int net_init(int game_id);
@@ -49,7 +49,7 @@ int old_net_clock;
 extern void arse(void);
 
 //=============================================================================
-// Inicializa la comunicación
+// Initialize the communication
 //=============================================================================
 
 int net_init(int game_id)
@@ -85,7 +85,7 @@ int net_init_internet(int game_id) {
 
 
 //=============================================================================
-// Inicializa la comunicación a traves de ipx
+// Initialize the communication through ipx
 //=============================================================================
 
 #ifdef NOTYET
@@ -94,13 +94,13 @@ int net_init_ipx(int game_id)
   int socket=27350;
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inició la comunicacion, en caso afirmativo se finaliza
+  // Check whether the communication was started, if so it is ended
   //---------------------------------------------------------------------------
   if (network_initialization)
     net_end();
 
   //---------------------------------------------------------------------------
-  // Inicializa el socket
+  // Initialize the socket
   //---------------------------------------------------------------------------
   if( !InitIPX(socket) )
   {
@@ -108,13 +108,13 @@ int net_init_ipx(int game_id)
   }
 
   //---------------------------------------------------------------------------
-  // Selecciona el dispositivo
+  // Select the device
   //---------------------------------------------------------------------------
   InitECBs();
   network_game.device=IPX;
 
   //---------------------------------------------------------------------------
-  // Inicialización correcta
+  // Successful initialization
   //---------------------------------------------------------------------------
   network_initialization=1;
   network_game.game_id=game_id;
@@ -125,13 +125,13 @@ int net_init_ipx(int game_id)
 }
 
 //=============================================================================
-// Inicializa la comunicación a traves de cable serie
+// Initialize the communication through serial cable
 //=============================================================================
 
 int net_init_serial(int game_id)
 {
   //---------------------------------------------------------------------------
-  // Compruebo si se inició la comunicacion, en caso afirmativo se finaliza
+  // Check whether the communication was started, if so it is ended
   //---------------------------------------------------------------------------
   if (network_initialization)
     net_end();
@@ -139,19 +139,19 @@ int net_init_serial(int game_id)
   network_game.num_players=2;
 
   //---------------------------------------------------------------------------
-  // Inicializa el puerto
+  // Initialize the port
   //---------------------------------------------------------------------------
   if (InitCOM(net->com,net->speed)) {
     return(NET_BADINIT);
   }
 
   //---------------------------------------------------------------------------
-  // Selecciona el dispositivo
+  // Select the device
   //---------------------------------------------------------------------------
   network_game.device=SERIAL;
 
   //---------------------------------------------------------------------------
-  // Inicialización correcta
+  // Successful initialization
   //---------------------------------------------------------------------------
   network_initialization=1;
   network_game.game_id=game_id;
@@ -162,7 +162,7 @@ int net_init_serial(int game_id)
 }
 
 //=============================================================================
-// Inicializa la comunicación a traves de modem
+// Initialize the communication through modem
 //=============================================================================
 
 int net_init_modem(int timeout)
@@ -170,7 +170,7 @@ int net_init_modem(int timeout)
 char data_aux[64];
 int dial=0;//????????? FERNANDO ?????
 /*
-  if ( net->phone[0]==NULL )     // OJO //OKFER
+  if ( net->phone[0]==NULL )     // NOTE //OKFER
     dial=0;
   else
     dial=1;
@@ -183,7 +183,7 @@ int dial=0;//????????? FERNANDO ?????
 //  strcat(data_aux,net->phone);
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inició la comunicacion, en caso afirmativo se finaliza
+  // Check whether the communication was started, if so it is ended
   //---------------------------------------------------------------------------
   if (network_initialization)
     net_end();
@@ -192,17 +192,17 @@ int dial=0;//????????? FERNANDO ?????
   timeout*=CLOCKS_PER_SEC;
 
   //---------------------------------------------------------------------------
-  // Inicializa el puerto
+  // Initialize the port
   //---------------------------------------------------------------------------
   if (InitCOM(net->com,net->speed)) {
     return(NET_BADINIT);
   }
 
   //---------------------------------------------------------------------------
-  // Inicializa el modem
+  // Initialize the modem
   //---------------------------------------------------------------------------
-  network_game.server=dial;  // El que marca es uno y el que recibe la llamada 0.
-                  // (El servidor espera, el nodo llama)
+  network_game.server=dial;  // The one who dials is one and the one who receives the call 0.
+                  // (The server waits, the node calls)
 /*
 //  InitModem("ATZ", "ATDT5197575");
   if (InitModem(net->string_start,data_aux)) {
@@ -210,19 +210,19 @@ int dial=0;//????????? FERNANDO ?????
   }
 */
   //---------------------------------------------------------------------------
-  // Selecciona el dispositivo
+  // Select the device
   //---------------------------------------------------------------------------
   network_game.device=MODEM;
 
   //---------------------------------------------------------------------------
-  // Inicialización correcta
+  // Successful initialization
   //---------------------------------------------------------------------------
   network_initialization=1;
   return(network_game.server);
 }
 
 //=============================================================================
-// Control de paquetes (para servidores)
+// Packet control (for servers)
 //=============================================================================
 
 #endif
@@ -232,19 +232,19 @@ void _net_loop(void)
   static int with_clock=0;
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inició la comunicacion, en caso contrario retorna
+  // Check whether the communication was started, otherwise return
   //---------------------------------------------------------------------------
   if (!network_initialization)
     return;
 
   //---------------------------------------------------------------------------
-  // Compruebo si hay una partida activa, en caso contrario retorna
+  // Check whether there is an active game, otherwise return
   //---------------------------------------------------------------------------
   if (!network_game.active)
     return;
 
   //---------------------------------------------------------------------------
-  // Manda un paquete
+  // Send a packet
   //---------------------------------------------------------------------------
   net->server=network_game.server;
   net->tones=network_game.game_id;
@@ -261,7 +261,7 @@ void _net_loop(void)
   
 #ifdef NOTYET
   //---------------------------------------------------------------------------
-  // Chequea los paquetes en la red
+  // Check the packets on the network
   //---------------------------------------------------------------------------
   if (network_game.device==IPX)
   {
@@ -277,7 +277,7 @@ void _net_loop(void)
 #endif
   net->act_players=network_game.num_players;
   //---------------------------------------------------------------------------
-  // Si la partida ya está completa retorna
+  // If the game is already full, return
   //---------------------------------------------------------------------------
   if (network_game.num_players==network_game.max_players) {
     return;
@@ -285,7 +285,7 @@ void _net_loop(void)
 }
 
 //=============================================================================
-//  Finaliza la red
+//  End the network
 //=============================================================================
 
 void net_end()
@@ -306,7 +306,7 @@ void net_end()
 }
 
 //=============================================================================
-// Manda un paquete
+// Send a packet
 //=============================================================================
 
 void net_send()
@@ -352,7 +352,7 @@ void net_send()
 }
 
 //=============================================================================
-// Crea una partida
+// Create a game
 //=============================================================================
 
 int net_create_game(int game_id,char *name, int num_players)
@@ -360,13 +360,13 @@ int net_create_game(int game_id,char *name, int num_players)
 	fprintf(stdout,"NET_CREATE_GAME %d %s %d\n",game_id,name, num_players);
 	
   //---------------------------------------------------------------------------
-  // Compruebo si se inició la comunicacion, en caso contrario retorna
+  // Check whether the communication was started, otherwise return
   //---------------------------------------------------------------------------
   if (!network_initialization)
     net_init(game_id);
 
   //---------------------------------------------------------------------------
-  // Compruebo si hay una partida activa, en caso afirmativo retorna
+  // Check whether there is an active game, if so return
   //---------------------------------------------------------------------------
   if (network_game.active)
     return(-1);
@@ -375,7 +375,7 @@ int net_create_game(int game_id,char *name, int num_players)
     return(NET_BADNUMPLAYERS);
 
   //---------------------------------------------------------------------------
-  // Compruebo si el número de jugadores es correcto, en caso contrario retorna
+  // Check whether the number of players is correct, otherwise return
   //---------------------------------------------------------------------------
 #ifdef NOTYET
   if (network_game.device==IPX) {
@@ -408,19 +408,19 @@ if(!tcpsock) {
 //    InsertIn(&IPX_MyAddress,0);
 
   //---------------------------------------------------------------------------
-  // Inicialización correcta
+  // Successful initialization
   //---------------------------------------------------------------------------
   return 1;
 }
 
 //=============================================================================
-// Destruye una partida
+// Destroy a game
 //=============================================================================
 
 void net_exit_game()
 {
   //---------------------------------------------------------------------------
-  // Compruebo si se inició la comunicacion, en caso contrario retorna
+  // Check whether the communication was started, otherwise return
   //---------------------------------------------------------------------------
   if (!network_initialization)
     return;
@@ -430,7 +430,7 @@ void net_exit_game()
   network_game.active=0;
 
   //---------------------------------------------------------------------------
-  // Enviar a los otros usuarios el mensaje de salida
+  // Send the exit message to the other users
   //---------------------------------------------------------------------------
 #ifdef NOTYET
   if (network_game.device==IPX) {
@@ -446,7 +446,7 @@ void net_exit_game()
 }
 
 //=============================================================================
-// Busca las partidas activas
+// Find the active games
 //=============================================================================
 
 int _net_get_games(int game_id)
@@ -455,7 +455,7 @@ int _net_get_games(int game_id)
   int return_value;
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inicio la comunicacion, en caso contrario la inicia
+  // Check whether the communication was started, otherwise start it
   //---------------------------------------------------------------------------
   if (!network_initialization) {
     if ((return_value=net_init(game_id))<0)
@@ -485,7 +485,7 @@ int _net_get_games(int game_id)
 }
 
 //=============================================================================
-// Entra en una de las partidas activas
+// Join one of the active games
 //=============================================================================
 
 int _net_join_game(int game_id,char *name,byte *data, int length)
@@ -495,7 +495,7 @@ int return_value;
 fprintf(stdout,"Net Join Game\n");
 int server=0;
   //---------------------------------------------------------------------------
-  // Comprueba el numero de jugadores
+  // Check the number of players
   //---------------------------------------------------------------------------
   if (net->num_players<=0 || net->num_players>16)
   {
@@ -504,7 +504,7 @@ int server=0;
   }
 
   //---------------------------------------------------------------------------
-  // Inicializa la tabla de jugadores
+  // Initialize the players table
   //---------------------------------------------------------------------------
   for (i=0;i<net->num_players;i++) {
     net_players[i]=0;
@@ -512,7 +512,7 @@ int server=0;
   network_game.num_players=0;
 
   //---------------------------------------------------------------------------
-  // Comprueba que le paquete no supere los 200 bytes
+  // Check that the packet does not exceed 200 bytes
   //---------------------------------------------------------------------------
 // FER_AQUI
   length*=4;
@@ -520,11 +520,11 @@ int server=0;
   if (length>=200)
   {
     e(163);
-    return(-6); // Paquete demasiado grande
+    return(-6); // Packet too big
   }
 
   //---------------------------------------------------------------------------
-  // Compruebo si se inició la comunicacion, en caso contrario retorna
+  // Check whether the communication was started, otherwise return
   //---------------------------------------------------------------------------
   if (!network_initialization) {
     if ((return_value=net_init(game_id))<0)
@@ -546,7 +546,7 @@ if(_net_get_games(game_id)>0) {
 	return(join_game(num_games));
 }
   //---------------------------------------------------------------------------
-  // Busca si existe la partida
+  // Find whether the game exists
   //---------------------------------------------------------------------------
   if (num_games=_net_get_games(game_id)) {
     for (i=0;i<num_games;i++) {
@@ -569,7 +569,7 @@ if(_net_get_games(game_id)>0) {
 int                 net_game_id;
 
 //-----------------------------------------------------------------------------
-//  Inicializacion del identificador de juego
+//  Initialization of the game identifier
 //-----------------------------------------------------------------------------
 
 void net_create_game_id(void)
@@ -587,7 +587,7 @@ void net_create_game_id(void)
 }
 
 //-----------------------------------------------------------------------------
-//  Entra en una de las partidas activas
+//  Join one of the active games
 //-----------------------------------------------------------------------------
 
 void net_join_game(void)
@@ -614,7 +614,7 @@ int name  =opstack[sp];
 }
 
 //-----------------------------------------------------------------------------
-//  Entra en una de las partidas activas
+//  Join one of the active games
 //-----------------------------------------------------------------------------
 
 void net_get_games(void)

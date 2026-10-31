@@ -1,12 +1,12 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo que contiene el código de control de gamas
+//      Module containing the gradient control code
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Constantes del módulo
+//      Module constants
 //═════════════════════════════════════════════════════════════════════════════
 
 #define ga_width 138
@@ -16,7 +16,7 @@
 #define gradient_width  130
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Estructura para guardar el estado de los colores de control de la gama
+//  Structure to save the state of the gradient control colors
 //═════════════════════════════════════════════════════════════════════════════
 
 byte my_colors[128];
@@ -28,7 +28,7 @@ struct {
 } button_coords[9];
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Prototipos
+//  Prototypes
 //═════════════════════════════════════════════════════════════════════════════
 
 void gradient0(void);
@@ -37,7 +37,7 @@ void gradient2(void);
 void gradient3(void);
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Variables y funciones externas
+//  External variables and functions
 //═════════════════════════════════════════════════════════════════════════════
 
 extern int SelColorFont;
@@ -45,7 +45,7 @@ extern int SelColorOk;
 void Selcolor0(void);
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Crea una gama a partir de los colores selecionados
+//  Create a gradient from the selected colors
 //═════════════════════════════════════════════════════════════════════════════
 
 void create_gradient(struct _gcolor * t_gradient, byte * gradient_buf) {
@@ -150,7 +150,7 @@ void create_gradient(struct _gcolor * t_gradient, byte * gradient_buf) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Codigo principal del dialogo de gamas
+//  Main code of the gradients dialog
 //═════════════════════════════════════════════════════════════════════════════
 
 void gradient0(void)
@@ -182,13 +182,13 @@ void gradient0(void)
   button_coords[7].x = button_coords[0].x+14*7;
   button_coords[8].x = button_coords[0].x+14*8;
 
-  // Aqui se inicializa el estado de la gama y los botones (r, g, b y selec)
+  // Here the state of the gradient and the buttons (r, g, b and selec) is initialized
 
   create_dac4();
   memcpy(my_colors,gradient_buf,128);
   memcpy(my_gradient,t_gradient,sizeof(my_gradient));
 
-  // Botones Aceptar/Cancelar
+  // Accept/Cancel buttons
 
   _button(100,    7, v.h-14, 0);
   _button(101, v.w-8, v.h-14, 2);
@@ -205,7 +205,7 @@ void gradient1(void)
 
   create_gradient(t_gradient,gradient_buf);
 
-  // Mostrar botones
+  // Show buttons
 
   for(ctr=0; ctr<9; ctr++)
   {
@@ -220,7 +220,7 @@ void gradient1(void)
                 button_coords[ctr].x-4+1, button_coords[ctr].y-15+1, 12, 12);
   }
 
-  // Mostrar gama
+  // Show gradient
 
   wrectangle(v.ptr, w, h, c0, gradient_x, gradient_y, gradient_width, 4);
   for(ctr=0; ctr<128; ctr++)

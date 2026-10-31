@@ -30,7 +30,7 @@ void hlrender_destroy(hlrender *hlrender_struct)
 }
 
 //---------------------------------------------------------------------------
-//  Transformo todos los puntos en el espacio
+//  Transform all the points in space
 //---------------------------------------------------------------------------
 void hlrender_transform(hlrender *hlrender_struct,lptobject obj)
 {
@@ -62,7 +62,7 @@ float illum;
     for (i=0;i<obj->nVertex;i++) {
       vertex=&obj->Vertices[i];
       vertex->state=0;
-      // Rotar vertices
+      // Rotate vertices
       aux_x = vertex->rx*wmat._00+
               vertex->ry*wmat._10+
               vertex->rz*wmat._20+wmat._30;
@@ -91,7 +91,7 @@ float illum;
         vertex->intensity=0; // -ilum;
       }
 
-      // Proyecto el punto en pantalla
+      // Project the point onto the screen
 
       vertex->fpx=(hlrender_struct->center_screen_x)+((aux_x*hlrender_struct->llrender_struct.projection_x)/aux_z);
       vertex->fpy=(hlrender_struct->center_screen_y)-((aux_y*hlrender_struct->llrender_struct.projection_y)/aux_z);
@@ -120,7 +120,7 @@ float illum;
     for (i=0;i<obj->nVertex;i++) {
       vertex=&obj->Vertices[i];
       vertex->state=0;
-      // Rotar vertices
+      // Rotate vertices
       aux_x = vertex->rx*wmat._00+
               vertex->ry*wmat._10+
               vertex->rz*wmat._20+wmat._30;
@@ -130,7 +130,7 @@ float illum;
       aux_z = vertex->rx*wmat._02+
               vertex->ry*wmat._12+
               vertex->rz*wmat._22+wmat._32;
-      // Proyecto el punto en pantalla
+      // Project the point onto the screen
       vertex->fpx=(hlrender_struct->center_screen_x)+((aux_x*hlrender_struct->llrender_struct.projection_x)/aux_z);
       vertex->fpy=(hlrender_struct->center_screen_y)-((aux_y*hlrender_struct->llrender_struct.projection_y)/aux_z);
       vertex->fpz=aux_z;
@@ -151,7 +151,7 @@ float illum;
 }
 
 //---------------------------------------------------------------------------
-//  Transformo todos los puntos en el espacio proyectando sobre el suelo
+//  Transform all the points in space projecting onto the floor
 //---------------------------------------------------------------------------
 void hlrender_transform_shadow(hlrender *hlrender_struct,lptobject obj)
 {
@@ -169,7 +169,7 @@ float aux,aux_x,aux_y,aux_z;
   for (i=0;i<obj->nVertex;i++) {
     vertex=&obj->Vertices[i];
     vertex->state=0;
-    // Roto en función de la matriz de giro del objeto
+    // Rotate according to the object's rotation matrix
     aux_x = vertex->rx*wmat._00+
             vertex->ry*wmat._10+
             vertex->rz*wmat._20+wmat._30;
@@ -180,13 +180,13 @@ float aux,aux_x,aux_y,aux_z;
             vertex->ry*wmat._12+
             vertex->rz*wmat._22+wmat._32;
 
-    // Traslado en función de la cámara
+    // Translate according to the camera
     aux=-obj->Shadow*aux_y/2;
     aux_x=aux_x-hlrender_struct->ccamera->cx+aux;
     aux_y=-hlrender_struct->ccamera->cy;
     aux_z=aux_z-hlrender_struct->ccamera->cz+aux;
 
-    // Roto en función de la matriz de giro de la camara
+    // Rotate according to the camera's rotation matrix
     vertex->sx = aux_x*wmat2._00+
                   aux_y*wmat2._10+
                   aux_z*wmat2._20+wmat2._30;
@@ -197,7 +197,7 @@ float aux,aux_x,aux_y,aux_z;
                   aux_y*wmat2._12+
                   aux_z*wmat2._22+wmat2._32;
 
-    // Proyecto el punto en pantalla
+    // Project the point onto the screen
     vertex->fpx=(hlrender_struct->llrender_struct.screen_fwidth/2)+((vertex->sx*hlrender_struct->llrender_struct.projection_x)/vertex->sz);
     vertex->fpy=(hlrender_struct->llrender_struct.screen_fheight/2)-((vertex->sy*hlrender_struct->llrender_struct.projection_y)/vertex->sz);
     vertex->fpz=vertex->sz;
@@ -234,7 +234,7 @@ void hlrender_rotate_normals(lptvertex v,lptmatrix matrix)
 }
 
 //---------------------------------------------------------------------------
-//  Transformo el centro del objeto en el espacio
+//  Transform the center of the object in space
 //---------------------------------------------------------------------------
 void hlrender_transform_center(hlrender *hlrender_struct,lptobject obj)
 {
@@ -347,7 +347,7 @@ void  hlrender_drawobjects(hlrender *hlrender_struct)
 
 void hlrender_setcamera(hlrender *hlrender_struct,sprite3d *newcamera)
 {
-// Datos cambiantes
+// Changing data
     hlrender_struct->ccamera=newcamera;
     hlrender_struct->llrender_struct.screen_width=hlrender_struct->ccamera->width;
     hlrender_struct->llrender_struct.screen_height=hlrender_struct->ccamera->height;

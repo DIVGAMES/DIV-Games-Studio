@@ -1,6 +1,6 @@
 
 //════════════════════════════════════════════════════════════════════════════
-// Código de las funciones internas
+// Code of the internal functions
 //════════════════════════════════════════════════════════════════════════════
 
 #include "inter.h"
@@ -210,12 +210,12 @@ void function(void) {
     case 86: path_free(); break;
     case 87: new_map(); break;
 #endif
-    /* OJO al añadir una funcion, hacerlo también en la lista fname de i.cpp, ltobj, add.prg y help */
+    /* NOTE when adding a function, also add it to the fname list in i.cpp, ltobj, add.prg and help */
   }
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Signal(proceso,señal)
+//      Signal(process,signal)
 //════════════════════════════════════════════════════════════════════════════
 
 static int n_clock=0, o_clock=0;
@@ -240,7 +240,7 @@ void _signal(void) {
         mem[bp+_Status]=opstack[sp--]-99;
         if (mem[bp+_Son]) signal_tree(mem[bp+_Son],opstack[sp+1]-99);
       }
-    else opstack[--sp]=0; // Devuelve el proceso o 0 si estaba muerto
+    else opstack[--sp]=0; // Returns the process, or 0 if it was dead
   } else {
     for (i=id_start; i<=id_end; i+=iloc_len)
       if (mem[i+_Status] && mem[i+_Block]==bp) {
@@ -264,7 +264,7 @@ void signal_tree(int p, int s) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Key(tecla)
+//      Key(key)
 //════════════════════════════════════════════════════════════════════════════
 
 void _key(void) {
@@ -274,8 +274,8 @@ void _key(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//  Funcion para localizar y abrir un fichero (pal,fpg,fnt,...)
-//  Esta función debe seguir el mismo algoritmo en F.CPP y DIVC.CPP
+//  Function to locate and open a file (pal,fpg,fnt,...)
+//  This function must follow the same algorithm in F.CPP and DIVC.CPP
 //════════════════════════════════════════════════════════════════════════════
 
 char full[_MAX_PATH+1];
@@ -388,7 +388,7 @@ FILE * _open_file(char * file) {
 
 
 //════════════════════════════════════════════════════════════════════════════
-//      Load_pal(fichero)
+//      Load_pal(file)
 //════════════════════════════════════════════════════════════════════════════
 
 int do_fade=0;
@@ -451,7 +451,7 @@ void update_palette(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Unload_map(codigo)
+//      Unload_map(code)
 //════════════════════════════════════════════════════════════════════════════
 
 void unload_map(void) {
@@ -460,7 +460,7 @@ void unload_map(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Load_map(fichero) - Devuelve el código del gráfico (1000..1999)
+//      Load_map(file) - Returns the graphic code (1000..1999)
 //════════════════════════════════════════════════════════════════════════════
 
 void load_map(void) {
@@ -509,8 +509,8 @@ void load_map(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      New_map(ancho,alto,centro_x,centro_y,color) - Devuelve el código
-//      Se descarga igualmente con unload_map(código)
+//      New_map(width,height,center_x,center_y,color) - Returns the code
+//      It is unloaded the same way, with unload_map(code)
 //════════════════════════════════════════════════════════════════════════════
 
 void new_map(void) {
@@ -520,7 +520,7 @@ void new_map(void) {
   color=opstack[sp--]; cy=opstack[sp--]; cx=opstack[sp--];
   height=opstack[sp--]; width=opstack[sp]; opstack[sp]=0;
 
-  // Comprueba límites an/al/color ...
+  // Check w/h/color limits ...
 
   if (width<1 || height<1 || width>32768 || height>32768) { e(e153); return; }
   if (color<0 || color>255) { e(e154); return; }
@@ -528,7 +528,7 @@ void new_map(void) {
 
   if ((ptr=(byte *)malloc(64+4+width*height))!=NULL) {
     *((int*)ptr+13)=width; *((int*)ptr+14)=height;
-    *((int*)ptr+15)=1; // Se define un punto de control (el centro)
+    *((int*)ptr+15)=1; // A control point is defined (the center)
     *((word*)ptr+32)=cx; *((word*)ptr+33)=cy;
     memset(ptr+4+64,color,width*height);
     g[0].grf[next_map_code]=(int*)ptr;
@@ -537,7 +537,7 @@ void new_map(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Load_fpg(fichero) - Devuelve el código del fichero 0..max_fpgs
+//      Load_fpg(file) - Returns the file code 0..max_fpgs
 //════════════════════════════════════════════════════════════════════════════
 
 void load_fpg(void) {
@@ -621,7 +621,7 @@ while(ftell(es)<file_len && len_>0 && num_>0) {
 fclose(es);
 #else
 
-ptr+=1352; // Longitud cabecera fpg
+ptr+=1352; // Fpg header length
       while (ptr<(byte*)g[n].fpg+file_len && *(int*)ptr<1000 && *(int*)ptr>0 ) {
         lst[*(int*)ptr]=(int*)ptr;
         ptr+=*(int*)(ptr+4);
@@ -634,7 +634,7 @@ clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Start_scroll(snum,fichero,graph1,graph2,region,flags)
+//      Start_scroll(snum,file,graph1,graph2,region,flags)
 //════════════════════════════════════════════════════════════════════════════
 
 void set_scroll(int plane,int x,int y);
@@ -671,7 +671,7 @@ void start_scroll(void) {
   if (ptr1==NULL && ptr2==NULL) { e(e112); return; }
   if (ptr1==NULL) { ptr1=ptr2; ptr2=NULL; }
 
-  if (ptr2==NULL) s=1; else s=2; // Tipo de scroll, normal(1) o parallax(2)
+  if (ptr2==NULL) s=1; else s=2; // Scroll type, normal(1) or parallax(2)
 
   iscroll[snum].map1_width=ptr1[13]; iscroll[snum].map1_height=ptr1[14]; iscroll[snum].map1=(byte*)ptr1+64+ptr1[15]*4;
   if (iscroll[snum].w>iscroll[snum].map1_width) iscroll[snum].map_flags|=1;
@@ -682,7 +682,7 @@ void start_scroll(void) {
   if ((iscroll[snum].fast=(tfast*)malloc(iscroll[snum].h*sizeof(tfast)))==NULL) { e(e100); return; }
   iscroll[snum].scr1=iscroll[snum]._scr1; iscroll[snum].block1=iscroll[snum].h;
   iscroll[snum].on=s; set_scroll(0,iscroll[snum].map1_x,iscroll[snum].map1_y);
-  iscroll[snum].on=0; // Si hay algún error (malloc), no habrá scroll
+  iscroll[snum].on=0; // If there is any error (malloc), there will be no scroll
 
   if (s==2) {
     iscroll[snum].map2_width=ptr2[13]; iscroll[snum].map2_height=ptr2[14]; iscroll[snum].map2=(byte*)ptr2+64+ptr2[15]*4;
@@ -697,7 +697,7 @@ void start_scroll(void) {
     iscroll[snum].on=2; set_scroll(1,iscroll[snum].map2_x,iscroll[snum].map2_y);
   }
 
-  iscroll[snum].on=s; // Al final si no ha habido errores, fija la variable scroll
+  iscroll[snum].on=s; // At the end, if there were no errors, set the scroll variable
 
   (scroll+snum)->x0=iscroll[snum].map1_x;
   (scroll+snum)->y0=iscroll[snum].map1_y;
@@ -716,7 +716,7 @@ void refresh_scroll(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Move_scroll(snum) - mueve automática o manualmente el scroll
+//      Move_scroll(snum) - moves the scroll automatically or manually
 //════════════════════════════════════════════════════════════════════════════
 
 void advance_scroll(int);
@@ -755,7 +755,7 @@ void stop_scroll(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Funcion que mata los procesos de scroll o modo-7 que ya no se ven
+//      Function that kills scroll or mode-7 processes that are no longer visible
 //════════════════════════════════════════════════════════════════════════════
 
 void delete_process(int);
@@ -772,7 +772,7 @@ void kill_invisible(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Get_id(tipo)
+//      Get_id(type)
 //════════════════════════════════════════════════════════════════════════════
 
 void get_id(void) {
@@ -792,7 +792,7 @@ void get_id(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Get_disx(angulo,dist)
+//      Get_disx(angle,dist)
 //════════════════════════════════════════════════════════════════════════════
 
 void get_disx(void) {
@@ -801,7 +801,7 @@ void get_disx(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Get_disy(angulo,dist)
+//      Get_disy(angle,dist)
 //════════════════════════════════════════════════════════════════════════════
 
 void get_disy(void) {
@@ -852,7 +852,7 @@ void fade(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Unload_fnt(codigo_font)
+//      Unload_fnt(font_code)
 //════════════════════════════════════════════════════════════════════════════
 
 void unload_fnt(void) {
@@ -864,7 +864,7 @@ void unload_fnt(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Load_fnt(fichero) - Devuelve codigo_font
+//      Load_fnt(file) - Returns font_code
 //════════════════════════════════════════════════════════════════════════════
 
 void load_fnt(void) {
@@ -900,7 +900,7 @@ void load_fnt(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Write(font,x,y,centro,ptr)
+//      Write(font,x,y,center,ptr)
 //════════════════════════════════════════════════════════════════════════════
 
 void __write(void) {
@@ -921,7 +921,7 @@ void __write(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Write_int(font,x,y,centro,&num)
+//      Write_int(font,x,y,center,&num)
 //════════════════════════════════════════════════════════════════════════════
 
 void write_int(void) {
@@ -963,7 +963,7 @@ void move_text(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Unload_fpg(codigo) - Devuelve el código del fichero 0..max_fpgs
+//      Unload_fpg(code) - Returns the file code 0..max_fpgs
 //════════════════════════════════════════════════════════════════════════════
 
 void unload_fpg(void) {
@@ -982,7 +982,7 @@ void unload_fpg(void) {
 //      Rand(min,max)
 //════════════════════════════════════════════════════════════════════════════
 
-union {byte b[128]; int d[32];} seed; // Seed aleatorio (127 bytes + PTR)
+union {byte b[128]; int d[32];} seed; // Random seed (127 bytes + PTR)
 
 byte rnd(void) {
 byte ptr;
@@ -1042,7 +1042,7 @@ void define_region(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Xput(file,graf,x,y,angle,size,flags,region)
+//      Xput(file,graph,x,y,angle,size,flags,region)
 //════════════════════════════════════════════════════════════════════════════
 
 void _xput(void) {
@@ -1058,7 +1058,7 @@ void _xput(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Put(file,graf,x,y)
+//      Put(file,graph,x,y)
 //════════════════════════════════════════════════════════════════════════════
 
 void _put(void) {
@@ -1117,7 +1117,7 @@ void map_put(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Map_block_copy(file,graf_dest,x_dest,y_dest,graf,x,y,an,al)
+//      Map_block_copy(file,dest_graph,x_dest,y_dest,graph,x,y,w,h)
 //════════════════════════════════════════════════════════════════════════════
 
 void map_block_copy(void) {
@@ -1157,9 +1157,9 @@ void map_block_copy(void) {
       si=(byte*)ptr+64+ptr[15]*4;
       x=xd-x; y=yd-y;
 
-      if (x>=clipx0 && x+w<=clipx1 && y>=clipy0 && y+h<=clipy1) // Pinta sprite sin cortar
+      if (x>=clipx0 && x+w<=clipx1 && y>=clipy0 && y+h<=clipy1) // Draw sprite without clipping
         sp_normal(si,x,y,w,h,0);
-      else if (x<clipx1 && y<clipy1 && x+w>clipx0 && y+h>clipy0) // Pinta sprite cortado
+      else if (x<clipx1 && y<clipy1 && x+w>clipx0 && y+h>clipy0) // Draw clipped sprite
         sp_clipped(si,x,y,w,h,0);
 
       no: copy_buffer=_copy; vga_width=_vga_width; vga_height=_vga_height;
@@ -1169,7 +1169,7 @@ void map_block_copy(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Put_screen(file,graf)
+//      Put_screen(file,graph)
 //════════════════════════════════════════════════════════════════════════════
 
 void put_screen(void) {
@@ -1220,7 +1220,7 @@ void get_pixel(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Map_put_pixel(file,graf,x,y,color)
+//      Map_put_pixel(file,graph,x,y,color)
 //════════════════════════════════════════════════════════════════════════════
 
 void map_put_pixel(void) {
@@ -1244,7 +1244,7 @@ void map_put_pixel(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Map_get_pixel(file,graf,x,y)
+//      Map_get_pixel(file,graph,x,y)
 //════════════════════════════════════════════════════════════════════════════
 
 void map_get_pixel(void) {
@@ -1268,7 +1268,7 @@ void map_get_pixel(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Get_point(file,graf,n,&x,&y)
+//      Get_point(file,graph,n,&x,&y)
 //════════════════════════════════════════════════════════════════════════════
 
 void get_point(void) {
@@ -1299,10 +1299,10 @@ void clear_screen(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Save(fichero,offset,long)
+//      Save(file,offset,long)
 //════════════════════════════════════════════════════════════════════════════
 
-#ifdef DEBUG // Versión con debugger.
+#ifdef DEBUG // Version with debugger.
 
 FILE * open_save_file(char * file) {
   FILE * f;
@@ -1321,7 +1321,7 @@ FILE * open_save_file(char * file) {
     if ((f=fopen(full,"wb"))==NULL) {                   // "est\paz\fixero.est"
       strcpy(full,fname);
       strcat(full,ext);
-      if ((f=fopen(full,"rb"))!=NULL) { // Si está ya en el raiz de div ...
+      if ((f=fopen(full,"rb"))!=NULL) { // If it is already in the div root ...
         fclose(f);
         if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
           strcpy(full,"");
@@ -1361,7 +1361,7 @@ void save(void) {
   fclose(es); clock_ticks=old_clock;
 }
 
-#else         // Versión instalaciones.
+#else         // Installations version.
 
 FILE * open_save_file(char * file) {
   FILE * f;
@@ -1411,7 +1411,7 @@ void save(void) {
   es=open_save_file((char*)&mem[itxt+opstack[sp]]);
   if (es==NULL) {
     opstack[sp]=0;
-//    e(e123); // OJO! Para que no de error en los CD-ROM
+//    e(e123); // NOTE! So that it does not give an error on CD-ROMs
     return;
   }
 //  if (fwrite(&mem[offset],4,len,es)!=len) e(e124);
@@ -1423,7 +1423,7 @@ void save(void) {
 #endif
 
 //════════════════════════════════════════════════════════════════════════════
-//      Load(fichero,offset)
+//      Load(file,offset)
 //════════════════════════════════════════════════════════════════════════════
 
 void load(void) {
@@ -1440,14 +1440,14 @@ void load(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Set_mode(modo)
+//      Set_mode(mode)
 //════════════════════════════════════════════════════════════════════════════
 
 void set_mode(void) {
   int n;
 
   #ifdef DEBUG
-  if (v.type) new_mode=1; // Avisa al debugger de un cambio de modo de vídeo
+  if (v.type) new_mode=1; // Notify the debugger of a video mode change
   #endif
 
   vga_width=opstack[sp]/1000; vga_height=opstack[sp]%1000;
@@ -1496,7 +1496,7 @@ void set_mode(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Load_pcm(fichero,loop)
+//      Load_pcm(file,loop)
 //════════════════════════════════════════════════════════════════════════════
 
 void load_pcm(void) {
@@ -1523,7 +1523,7 @@ void load_pcm(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Unload_pcm(id_sonido)
+//      Unload_pcm(sound_id)
 //════════════════════════════════════════════════════════════════════════════
 
 void unload_pcm(void) {
@@ -1531,7 +1531,7 @@ void unload_pcm(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Sound(id_sonido,volumen,frecuencia)
+//      Sound(sound_id,volume,frequency)
 //════════════════════════════════════════════════════════════════════════════
 
 void _sound(void) {
@@ -1550,7 +1550,7 @@ void stop_sound(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Change_sound(id_canal,volumen,frecuencia)
+//      Change_sound(channel_id,volume,frequency)
 //════════════════════════════════════════════════════════════════════════════
 
 void change_sound(void) {
@@ -1561,7 +1561,7 @@ void change_sound(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Set_fps(nº fps,max nº saltos)
+//      Set_fps(num fps,max num skips)
 //════════════════════════════════════════════════════════════════════════════
 
 void set_fps(void) {
@@ -1579,7 +1579,7 @@ void set_fps(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Start_fli("fichero",x,y) devuelve nº frames
+//      Start_fli("file",x,y) returns num frames
 //════════════════════════════════════════════════════════════════════════════
 
 void start_fli(void) {
@@ -1601,7 +1601,7 @@ void start_fli(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Frame_fli() devuelve 0-fin fli, 1-continúa
+//      Frame_fli() returns 0-end of fli, 1-continues
 //════════════════════════════════════════════════════════════════════════════
 
 void frame_fli(void) {
@@ -1625,7 +1625,7 @@ void reset_fli(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      System("comando")
+//      System("command")
 //════════════════════════════════════════════════════════════════════════════
 
 #ifndef DEBUG
@@ -1745,7 +1745,7 @@ void _is_playing_cd(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Start_mode7(n,fichero,graph1,graph2,region,horizonte)
+//      Start_mode7(n,file,graph1,graph2,region,horizon)
 //════════════════════════════════════════════════════════════════════════════
 
 void start_mode7(void) {
@@ -1796,7 +1796,7 @@ void start_mode7(void) {
 
   if (im7[n].ext_width && im7[n].ext_height) im7[n].ext=(byte*)ptr2+64+ptr2[15]*4; else im7[n].ext=NULL;
 
-  im7[n].on=1; // Al final si no ha habido errores, fija la variable m7
+  im7[n].on=1; // At the end, if there were no errors, set the m7 variable
 }
 
 //════════════════════════════════════════════════════════════════════════════
@@ -1822,7 +1822,7 @@ void advance(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Abs(valor)
+//      Abs(value)
 //════════════════════════════════════════════════════════════════════════════
 
 void _abs(void) {
@@ -1876,7 +1876,7 @@ void _pow(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Near_angle(angle1,angle2,angle_inc) - devuelve "new_angle1"
+//      Near_angle(angle1,angle2,angle_inc) - returns "new_angle1"
 //════════════════════════════════════════════════════════════════════════════
 
 void near_angle(void) {
@@ -1903,7 +1903,7 @@ void let_me_alone(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Exit("Mensaje",error_level)
+//      Exit("Message",error_level)
 //════════════════════════════════════════════════════════════════════════════
 
 void _exit_dos(void) {
@@ -1939,7 +1939,7 @@ void _exit_dos(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Roll_palette(col_inicial,num_col,inc)
+//      Roll_palette(initial_color,num_colors,inc)
 //════════════════════════════════════════════════════════════════════════════
 
 void roll_palette(void) {
@@ -2012,7 +2012,7 @@ void get_real_point(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Get_joy_button(boton 0..3)
+//      Get_joy_button(button 0..3)
 //════════════════════════════════════════════════════════════════════════════
 
 #define  GAME_PORT   0x201
@@ -2030,7 +2030,7 @@ void get_joy_button(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Get_joy_position(eje 0..3)
+//      Get_joy_position(axis 0..3)
 //════════════════════════════════════════════════════════════════════════════
 
 int ej[4]={-1,-1,-1,-1};
@@ -2072,7 +2072,7 @@ return(0);
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Read_joy() - Lectura del joystick con auto-calibración - INTERNA
+//      Read_joy() - Joystick reading with auto-calibration - INTERNAL
 //════════════════════════════════════════════════════════════════════════════
 
 int joy_cx=0,joy_cy=0,joy_x0,joy_x1,joy_y0,joy_y1,init_joy=0;
@@ -2090,7 +2090,7 @@ void read_joy(void) {
 
   if (init_joy<=10) {
 
-      if (x==0 || y==0) return; // Los timeout no los tiene en cuenta
+      if (x==0 || y==0) return; // Timeouts are not taken into account
 
       if (init_joy<10) {
         joy_cx+=x; joy_cy+=y;
@@ -2216,10 +2216,10 @@ void set_color(void) {
 
 #ifdef NETLIB
 //════════════════════════════════════════════════════════════════════════════
-//      Net_init_ipx(socket, jugadores, timeout)
+//      Net_init_ipx(socket, players, timeout)
 //════════════════════════════════════════════════════════════════════════════
 
-void _net_init_ipx(void) { // Ojo, emitir los errores, e(...)
+void _net_init_ipx(void) { // Careful, emit the errors, e(...)
   int s,j,t;
   int old_clock=get_clock();
 
@@ -2227,9 +2227,9 @@ void _net_init_ipx(void) { // Ojo, emitir los errores, e(...)
   j=opstack[sp--];
   s=opstack[sp];
 
-  if (t<1 || t>60) { e(e148); return; } // Límites timeout
-  if (j<2 || j>8) { e(e149); return; }  // Límites jugadores
-  s^=113838; // Para evitar conflictos en lo posible
+  if (t<1 || t>60) { e(e148); return; } // Timeout limits
+  if (j<2 || j>8) { e(e149); return; }  // Player limits
+  s^=113838; // To avoid conflicts as much as possible
 
   opstack[sp]=net_init_ipx(s,j,t);
 
@@ -2237,33 +2237,33 @@ void _net_init_ipx(void) { // Ojo, emitir los errores, e(...)
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Net_init_modem(puerto,velocidad,dial,cad_inicio,cad_llamada,cad_telefono,timeout)
+//      Net_init_modem(port,speed,dial,init_str,call_str,phone_str,timeout)
 //════════════════════════════════════════════════════════════════════════════
 
 void _net_init_modem(void) {
   int old_clock=get_clock();
 
   sp-=6;
-  opstack[sp]=-1; // ¡¡¡OJO!!! **************************************************
+  opstack[sp]=-1; // WARNING!!! **************************************************
 
   clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Net_init_serial(puerto, velocidad_baudios, segundos_timeout)
+//      Net_init_serial(port, baud_rate, timeout_seconds)
 //════════════════════════════════════════════════════════════════════════════
 
 void _net_init_serial(void) {
   int old_clock=get_clock();
 
   sp-=2;
-  opstack[sp]=-1; // ¡¡¡OJO!!! **************************************************
+  opstack[sp]=-1; // WARNING!!! **************************************************
 
   clock_ticks=old_clock;
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Net_send(offset datos, longitud)
+//      Net_send(data offset, length)
 //════════════════════════════════════════════════════════════════════════════
 
 void _net_send(void) {
@@ -2272,13 +2272,13 @@ void _net_send(void) {
   l=opstack[sp--];
   d=opstack[sp];
 
-  if (d<long_header || d+l>id_init) { e(e150); return; } // Sólo GLOBAL
+  if (d<long_header || d+l>id_init) { e(e150); return; } // GLOBAL only
 
   net_send(d,(char*)&mem[d],l*4);
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//    Net_asign(offset dato, value);
+//    Net_asign(data offset, value);
 //════════════════════════════════════════════════════════════════════════════
 
 void _net_assign(void) {
@@ -2287,14 +2287,14 @@ void _net_assign(void) {
   val=opstack[sp--];
   off=opstack[sp];
 
-  if (off<long_header || off>=id_init) { e(e150); return; } // Sólo GLOBAL
+  if (off<long_header || off>=id_init) { e(e150); return; } // GLOBAL only
 
   net_send(off,(char*)&val,4);
   net_send(off,(char*)&val,4);
 }
 
 //=============================================================================
-// Función que se ejecuta al recibir un paquete el servidor
+// Function executed when the server receives a packet
 //=============================================================================
 
 void MAINSRV_Packet(WORD User,WORD Command,BYTE *Buffer,WORD Len) {
@@ -2304,7 +2304,7 @@ void MAINSRV_Packet(WORD User,WORD Command,BYTE *Buffer,WORD Len) {
 }
 
 //=============================================================================
-// Función que se ejecuta al recibir un paquete el nodo
+// Function executed when the node receives a packet
 //=============================================================================
 
 void MAINNOD_Packet(WORD User,WORD Command,BYTE *Buffer,WORD Len) {

@@ -121,7 +121,7 @@ typedef struct _m8camera
 
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//  Definicion de tipos
+//  Type definitions
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 typedef struct type_flag {
@@ -144,7 +144,7 @@ typedef struct type_wall {
   int32_t texture;
   int32_t texture_top;
   int32_t texture_bot;
-  int32_t fade;       // Valor de la luz de 0 a 16
+  int32_t fade;       // Light value from 0 to 16
 } twall, *lptwall;
 
 typedef struct type_region {
@@ -153,7 +153,7 @@ typedef struct type_region {
   int32_t floor_height,ceil_height;
   int32_t floor_tex;
   int32_t ceil_tex;
-  int32_t fade;       // Valor de la luz de 0 a 16  
+  int32_t fade;       // Light value from 0 to 16  
 } tregion, *lptregion;
 
 typedef struct type_map {

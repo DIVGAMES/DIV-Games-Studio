@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones para el coloreado del fuente
+//      Functions for source code coloring
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -9,38 +9,38 @@ void col_analyze_ltlex(void);
 
 //═════════════════════════════════════════════════════════════════════════════
 
-#define max_obj 768     // Límite máximo de objetos del compilador
-#define long_med_id 16  // Longitud media de los identificadores (+4+4+1)
+#define max_obj 768     // Maximum object limit of the compiler
+#define long_med_id 16  // Average length of the identifiers (+4+4+1)
 
-#define max_nodes 128   // Máximo número de nodos del léxico para símbolos
+#define max_nodes 128   // Maximum number of lexer nodes for symbols
 
-#define cr 13           // Retorno de carro
-#define lf 10           // Salto de linea
-#define tab 9           // Tabulación
+#define cr 13           // Carriage return
+#define lf 10           // Line feed
+#define tab 9           // Tab
 
-#define l_err 0         // Valores de lex_case, si no son punteros a lex_sym
-#define l_cr  1         // Fin de linea (l_err Carácter no esperado)
-#define l_id  2         // Identificador o palabra reservada
-#define l_spc 3         // Espacios y tabulaciones
+#define l_err 0         // Values of lex_case, if they are not pointers to lex_sym
+#define l_cr  1         // End of line (l_err Unexpected character)
+#define l_id  2         // Identifier or reserved word
+#define l_spc 3         // Spaces and tabs
 #define l_lit 4         // Literal
-#define l_num 5         // Constante numérica
+#define l_num 5         // Numeric constant
 
-#define p_last        0x00 // Fin de fichero <EOF>
+#define p_last        0x00 // End of file <EOF>
 
 #define p_process       0x07 // Process
 
-#define p_start_rem       0x7d // Inicio comentario
-#define p_end_rem       0x7e // Fin comentario
-#define p_rem           0x7f // Comentario de una linea
+#define p_start_rem       0x7d // Comment start
+#define p_end_rem       0x7e // Comment end
+#define p_rem           0x7f // Single-line comment
 
-#define p_id            0xfd // Identificador
-#define p_num           0xfe // Número
+#define p_id            0xfd // Identifier
+#define p_num           0xfe // Number
 
-#define p_spc           0x100 // Espacios
-#define p_sym           0x101 // Símbolo
-#define p_lit           0x102 // Literal entre comillas
-#define p_res           0x103 // Id reservado
-#define p_pre           0x104 // Id predefinido
+#define p_spc           0x100 // Spaces
+#define p_sym           0x101 // Symbol
+#define p_lit           0x102 // Literal between quotes
+#define p_res           0x103 // Reserved id
+#define p_pre           0x104 // Predefined id
 
 //═════════════════════════════════════════════════════════════════════════════
 
@@ -51,15 +51,15 @@ struct clex_ele {
   struct clex_ele * next;
 } clex_sym[max_nodes], * iclex_sym, * clex_case[256];
 
-int cnum_nodes; // Número de nodos ocupados en clex_sym
+int cnum_nodes; // Number of nodes used in clex_sym
 
-int iscomment; // Indica si está dentro de un comentario.
-int numrem;   // Relación entre /* y */
+int iscomment; // Tells whether it is inside a comment.
+int numrem;   // Relation between /* and */
 
-byte * cvnames=NULL; // Vector de nombres (cad_hash:int, pieza (o iobj):int, asciiz)
+byte * cvnames=NULL; // Names vector (cad_hash:int, piece (or iobj):int, asciiz)
 union { byte*b; byte**p; } icvnames;
 
-byte * cvhash[256]; // Punteros al vector de nombres;
+byte * cvhash[256]; // Pointers to the names vector;
 
 int cpiece;
 
@@ -68,7 +68,7 @@ byte * csource;
 int include_names;
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función de error (!!!) (solo para cuando analiza ltlex)
+//      Error function (!!!) (only for when it parses ltlex)
 //═════════════════════════════════════════════════════════════════════════════
 
 void col_error(int n, int m) {
@@ -76,7 +76,7 @@ void col_error(int n, int m) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función de inicialización del coloreador
+//      Colorizer initialization function
 //═════════════════════════════════════════════════════════════════════════════
 
 void init_lexcolor() {
@@ -111,7 +111,7 @@ void end_lexcolor() {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Lexico (lee una nueva cpieza del *csource)
+//      Lexer (reads a new cpiece from *csource)
 //═════════════════════════════════════════════════════════════════════════════
 
 void clexer(void) {
@@ -120,14 +120,14 @@ void clexer(void) {
   struct clex_ele * e;
   int n;
 
-  switch ((memptrsize)clex_case[*_source]) { // Puntero a un clex_ele o l_???
+  switch ((memptrsize)clex_case[*_source]) { // Pointer to a clex_ele or l_???
 
     case l_err:
       cpiece=p_rem; _source++; break;
 
     case l_cr :
       if ((*++_source)==lf) _source++;
-      cpiece=p_last; break; // eol/eof OJO!!! esto es DIVPRO
+      cpiece=p_last; break; // eol/eof NOTE!!! this is DIVPRO
 
     case l_id :
       if (iscomment>0) { cpiece=p_rem; _source++; break; }
@@ -137,21 +137,21 @@ void clexer(void) {
       if (icvnames.b-cvnames>max_obj*long_med_id) { icvnames.b=_ivnames; cpiece=p_id; break; }
       ptr=&cvhash[h];
       while (*ptr && strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) ptr=(byte **)*ptr;
-      if (!strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) { // id encontrado
-        icvnames.b=_ivnames; // lo saca de cvnom
+      if (!strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) { // id found
+        icvnames.b=_ivnames; // takes it out of cvnom
         cpiece=(memptrsize)*(ptr+1);
-        if (cpiece<256 && cpiece>=0) { // palabra reservada (token)
+        if (cpiece<256 && cpiece>=0) { // reserved word (token)
           if (cpiece==p_rem) {
             while (*_source!=cr && *_source) _source++;
           } else cpiece=p_res;
         } else { // object (id previous)
           cpiece=p_pre;
         }
-      } else { // id nuevo
+      } else { // new id
         if (include_names) {
-          *ptr=_ivnames; // añade un nuevo id
+          *ptr=_ivnames; // add a new id
         } else {
-          icvnames.b=_ivnames; // lo saca de cvnom
+          icvnames.b=_ivnames; // takes it out of cvnom
         }
         cpiece=p_id;
       } break;
@@ -161,7 +161,7 @@ void clexer(void) {
 
     case l_lit:
       if (iscomment>0) { cpiece=p_rem; _source++; break; }
-      cpiece=p_lit; h=*_source; _ivnames=icvnames.b; // Literal entre dos h
+      cpiece=p_lit; h=*_source; _ivnames=icvnames.b; // Literal between two h
       do { _source++;
            if (*_source==cr || !*_source) break;
            if (*_source==h)
@@ -183,7 +183,7 @@ void clexer(void) {
       } else do { _source++; } while ((memptrsize)clex_case[*_source]==l_num);
       break;
 
-    default: // puntero a un clex_ele
+    default: // pointer to a clex_ele
 
       e=clex_case[*_source++]; _ivnames=_source; cpiece=(*e).token;
       while (e=(*e).next) {
@@ -208,11 +208,11 @@ void clexer(void) {
 
 //═════════════════════════════════════════════════════════════════════════════
 
-FILE * cdef; // Para el analizador de "ltlex.def"
+FILE * cdef; // For the "ltlex.def" analyzer
 byte *_cbuf;
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Precarga de las estructuras léxicas, analiza el fichero ltlex.def
+//      Preload of the lexical structures, parses the ltlex.def file
 //═════════════════════════════════════════════════════════════════════════════
 
 void col_analyze_ltlex(void){
@@ -222,7 +222,7 @@ void col_analyze_ltlex(void){
   struct clex_ele * e;
 
   int t; //token (cpiece)
-  byte h; //hash (para id)
+  byte h; //hash (for id)
   byte * _ivnames;
   byte * * ptr;
 
@@ -246,14 +246,14 @@ void col_analyze_ltlex(void){
       *buf=lower[*buf]; if (*buf>='0' && *buf<='9') t+=(*buf++-'0');
       else if (*buf>='a' && *buf<='f') t+=(*buf++-'a'+10); else col_error(0,2);
       if (*buf==cr || *buf==' ' || *buf==tab) break;
-      else if (lower[*buf]) {           //Analiza una palabra reservada
+      else if (lower[*buf]) {           //Parse a reserved word
         _ivnames=icvnames.b; *icvnames.p++=0; *icvnames.p++=(byte *)t; h=0;
         while (*icvnames.b=lower[*buf++]) h=((byte)(h<<1)+(h>>7))^(*icvnames.b++);
         ptr=&cvhash[h]; while (*ptr) ptr=(byte **)*ptr; *ptr=_ivnames;
         buf--; icvnames.b++;
-      } else if (t>=0x78 && t<=0x7b) {  //Analiza un delimitador de literal
+      } else if (t>=0x78 && t<=0x7b) {  //Parse a literal delimiter
         clex_case[*buf]=(struct clex_ele*)l_lit;
-      } else {                          //Analiza un nuevo símbolo
+      } else {                          //Parse a new symbol
         if ((e=clex_case[*buf])==0) {
           if (cnum_nodes++==max_nodes) col_error(0,3);
           e=clex_case[*buf]=iclex_sym++; (*e).character=*buf++;
@@ -281,7 +281,7 @@ void col_analyze_ltlex(void){
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Añade al vector hash las palabras predefinidas
+//  Add the predefined words to the hash vector
 //═════════════════════════════════════════════════════════════════════════════
 
 void col_analyze_ltobj(void){

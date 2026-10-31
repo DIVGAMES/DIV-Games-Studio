@@ -61,50 +61,50 @@ typedef struct _process{
 }process;
 
 typedef struct __mouse{
-        int     x;      // Coordenada X del ratón
-        int     y;      // Coordenada Y del ratón
-        int     z;      // Prioridad de impresión del gráfico
-        int     file;   // Fichero que contiene el gráfico
-        int     graph;  // Gráfico asignado al ratón
-        int     angle;  // Angulo del puntero
-        int     size;   // Tamaño en porcentaje
-        int     flags;  // Flags del ratón
-        int     region; // Region de corte
-        int     left;   // Botón izquierdo del ratón
-        int     middle; // Botón central del ratón
-        int     right;  // Botón derecho del ratón
+        int     x;      // Mouse X coordinate
+        int     y;      // Mouse Y coordinate
+        int     z;      // Graphic print priority
+        int     file;   // File containing the graphic
+        int     graph;  // Graphic assigned to the mouse
+        int     angle;  // Pointer angle
+        int     size;   // Size as a percentage
+        int     flags;  // Mouse flags
+        int     region; // Clipping region
+        int     left;   // Left mouse button
+        int     middle; // Middle mouse button
+        int     right;  // Right mouse button
 }_mouse;
 
 typedef struct __scroll{
-        int     z;              // Prioridad de impresión
-        int     camera;         // Id del proceso al que sigue el scroll (p.def 0-n/a)
-        int     ratio;          // Background speed ratio (p.def 200, la mitad del primero)
-        int     speed;          // Velocidad máxima del scroll (primer plano) (p.def 0-Sin límite)
-        int     region1;        // Region de bloqueo del scroll (p.def -1)
-        int     region2;        // Region exterior del scroll (sin velocidad máxima, p.def -1)
-        int     x0;             // Coordenadas del primer plano de scroll
-        int     y0;             // (esquina superior izquierda de la ventana)
-        int     x1;             // Coordenadas del segundo plano
-        int     y1;             // (plano del fondo, si hay)
+        int     z;              // Print priority
+        int     camera;         // Id of the process followed by the scroll (default 0-n/a)
+        int     ratio;          // Background speed ratio (default 200, half of the first one)
+        int     speed;          // Maximum scroll speed (foreground) (default 0-No limit)
+        int     region1;        // Scroll lock region (default -1)
+        int     region2;        // Outer scroll region (no maximum speed, default -1)
+        int     x0;             // Coordinates of the scroll foreground
+        int     y0;             // (top left corner of the window)
+        int     x1;             // Coordinates of the background
+        int     y1;             // (background plane, if any)
 }_scroll;
 
 typedef struct __m7{
-        int     z;              // Prioridad de impresión
-        int     camera;         // Id del proceso al que sigue la cámara
-        int     height;         // Altura de la cámara
-        int     distance;       // Distancia de la cámara al proceso seguido
-        int     horizon;        // Altura del horizonte
-        int     focus;          // Focal para la cámara (0..512)
-        int     color;          // Color para el exterior del modo-7
+        int     z;              // Print priority
+        int     camera;         // Id of the process followed by the camera
+        int     height;         // Camera height
+        int     distance;       // Distance from the camera to the followed process
+        int     horizon;        // Horizon height
+        int     focus;          // Camera focal length (0..512)
+        int     color;          // Color for the outside of mode-7
 }_m7;
 
 typedef struct __joy{
-        int     button1;        // Botones del joystick o gamepad (0/1)
+        int     button1;        // Joystick or gamepad buttons (0/1)
         int     button2;
         int     button3;
         int     button4;
-        int     left;           // Movimientos del joystick o gamepad
-        int     right;          // Valores lógicos (0/1)
+        int     left;           // Joystick or gamepad movements
+        int     right;          // Logical values (0/1)
         int     up;
         int     down;
 }_joy;
@@ -221,7 +221,7 @@ extern void     *memcpy( void *__s1, const void *__s2, size_t __n );
 extern void     *memset( void *__s, int __c, size_t __n );
 extern int	sprintf( char *__s, const char *__format, ... );
 
-// Miscelanea
+// Miscellaneous
 extern char     *getenv( const char *__name );
 extern int      rand(int rang_low,int rang_hi);
 
@@ -250,7 +250,7 @@ void            post_process_scroll(void);
 void            post_process_m7(void);
 void            post_process_buffer(void);
 
-void            post_process(void);                // Se ha ejecutado un proceso
+void            post_process(void);                // A process has been executed
 
 void    ss_init(void);
 void    ss_frame(void);
@@ -276,7 +276,7 @@ extern char *background;
 
 extern char  palette[];
 extern char  active_palette[];
-extern int   set_palette;        // -1:siempre, 0:nunca, 1:una vez, 2:dos, ...
+extern int   set_palette;        // -1:always, 0:never, 1:once, 2:twice, ...
 extern char  *ghost;
 extern char  key[];              // Actual scancodes
 

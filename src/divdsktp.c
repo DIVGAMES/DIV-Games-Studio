@@ -43,18 +43,18 @@ extern struct _calc * pcalc;
 extern struct _calc * readcalc;
 void calc0(void);
 
-extern int helpidx[4096];              // Por cada término {inicio,longitud}
-extern int help_item;                  // Indica sobre que término se pide ayuda
-extern int help_len;                   // Longitud del help_buffer
-extern int help_width,help_height;            // Ancho y alto de la ventana de ayuda
-extern int help_l,help_lines;          // Línea actual, y lineas totales
-extern byte help_title[128];           // Título del término
-extern byte *help_buffer,*h_buffer;    // Buffer para contener la ayuda, auxiliar
-extern byte *help_line;                // Puntero a la línea actual
-extern byte *help_end;                 // Final de help_buffer;
-extern int loaded[64],n_loaded;        // Imágenes cargadas, hasta un máximo de 32
-extern int backto[64];      // Cola circular para almacenar los topicos consultados {n,línea}
-extern int i_back,a_back,f_back; // Inicio y final de la cola circular (ambos 0,2,..62)
+extern int helpidx[4096];              // For each term {start,length}
+extern int help_item;                  // Tells which term help is requested for
+extern int help_len;                   // Length of help_buffer
+extern int help_width,help_height;            // Width and height of the help window
+extern int help_l,help_lines;          // Current line, and total lines
+extern byte help_title[128];           // Term title
+extern byte *help_buffer,*h_buffer;    // Buffer to hold the help, auxiliary
+extern byte *help_line;                // Pointer to the current line
+extern byte *help_end;                 // End of help_buffer;
+extern int loaded[64],n_loaded;        // Loaded images, up to a maximum of 32
+extern int backto[64];      // Circular queue to store the consulted topics {n,line}
+extern int i_back,a_back,f_back; // Start and end of the circular queue (both 0,2,..62)
 
 void Fonts1(void); void Fonts2(void); void Fonts3(void);
 
@@ -79,9 +79,9 @@ void New_DownLoad_Desktop() {
   int mw,mh;
   pcminfo *mypcminfo;
 
-  DaniDel("desk\\window.000"); // Borra la sesión previous
+  DaniDel("desk\\window.000"); // Delete the previous session
 
-  // Graba window.000 con la información general de la sesión
+  // Write window.000 with the general session information
 
   if ((desktop=fopen("desk\\window.000","wb"))==NULL) return;
   n=fwrite(&n,1,4,desktop);
@@ -99,7 +99,7 @@ void New_DownLoad_Desktop() {
     n=fwrite(&n,1,4,desktop);
     n+=fwrite(&window[x],1,sizeof(struct twindow),desktop);
 
-    switch(window[x].type) { // Estructura de window
+    switch(window[x].type) { // Window structure
       case    2: //menu
               iWork=-1;
               if(window[x].paint_handler==menu_principal1) iWork=0;
@@ -120,18 +120,18 @@ void New_DownLoad_Desktop() {
               if(window[x].paint_handler==Clock1) iWork=1;
               n+=fwrite(&iWork,1,4,desktop);
               break;
-      case    5: //papelera
+      case    5: //clipboard
               break;
       case    100: //map
-              // estructura tmapa
+              // tmapa structure
               mw=window[x].map->map_width;
               mh=window[x].map->map_height;
               n+=fwrite(window[x].map,1,sizeof(struct tmapinfo),desktop);
-              // Grafico
+              // Graphic
               n+=fwrite((char *)window[x].map->map,1,mw*mh,desktop);
               break;
       case    101: //fpg
-              // estructura fpg
+              // fpg structure
               n+=fwrite(window[x].aux,1,sizeof(FPG),desktop);
               break;
       case    102: //prg
@@ -198,34 +198,34 @@ modinfo *mymodinfo;
   fprintf(lst,"vid_mode=%d,vid_modebig=%d\n",Setupfile.Vid_mode,Setupfile.Vid_modeBig);
 fflush(lst);
 #endif
-        // Pone una cabecera de identificación
+        // Put an identification header
         desktop=fopen("system/session.dtf","wb");
         n=fwrite("dtf\x1a\x0d\x0a\x0",8,1,desktop);
 #ifdef SLST
         fprintf(lst,"header %d elementos escritos <<<\n",n);
 #endif
-        // guarda la antigua resolución
+        // save the old resolution
         iWork=Setupfile.Vid_modeHeight+Setupfile.Vid_modeWidth*10000+(Setupfile.Vid_modeBig<<31);
         n=fwrite(&iWork,1,4,desktop);
 #ifdef SLST        
         fprintf(lst,"resol %d elementos escritos <<<\n",n);
 #endif
-        // reserva espacio para el numero de ventanas
+        // reserve space for the number of windows
         n=fwrite(&numwin,1,4,desktop);
 #ifdef SLST
         fprintf(lst,"numvent %d elementos escritos <<<\n",n);
 #endif
-        // guarda paleta /4
+        // save palette /4
         n=fwrite(dac,768,1,desktop);
 #ifdef SLST
         fprintf(lst,"dac %d elementos escritos <<<\n",n);
 #endif
-        // guarda tabla ghost
+        // save ghost table
         n=fwrite(ghost,65536,1,desktop);
 #ifdef SLST
         fprintf(lst,"ghost %d elementos escritos <<<\n",n);
 #endif
-        // Mira y guarda una por una las ventanas utilizadas
+        // Check and save the used windows one by one
         for(x=max_windows-1;x>=0;x--)
         {
                 if(window[x].type!=0 && window[x].title)
@@ -241,7 +241,7 @@ fflush(lst);
 #endif
                         switch(window[x].type)
                         {
-                                //Estructura de ventana
+                                //Window structure
                                 case    2: //menu
                                         iWork=-1;
                                         if(window[x].paint_handler==menu_principal1)
@@ -291,7 +291,7 @@ fflush(lst);
                                             fprintf(lst,"  cdiv\n");
 #endif
                                         break;
-                                case    5: //papelera
+                                case    5: //clipboard
 #ifdef SLST
                                         fprintf(lst,"  papelera\n");
 #endif
@@ -302,19 +302,19 @@ fflush(lst);
 #endif
                                         break;
                                 case    100: //map
-                                        // estructura tmapa
+                                        // tmapa structure
                                         mw=window[x].map->map_width;
                                         mh=window[x].map->map_height;
                                         n=fwrite(window[x].map,1,sizeof(struct tmapinfo),desktop);
 
                                         // fprintf(lst,"tmapinfo %d elementos escritos <<<\n",n);
-                                        // Grafico
+                                        // Graphic
                                         n=fwrite((char *)window[x].map->map,mw*mh,1,desktop);
                                         // fprintf(lst,"map %d elementos escritos <<<\n",n);
                                         // fprintf(lst,"  map %dx%d\n",mw,mh);
                                         break;
                                 case    101: //fpg
-                                        // estructura fpg
+                                        // fpg structure
                                         n=fwrite(window[x].aux,1,sizeof(FPG),desktop);
                                         // fprintf(lst,"fpg %d elementos escritos <<<\n",n);
                                         // fprintf(lst,"  fpg\n");
@@ -366,7 +366,7 @@ fflush(lst);
                                         }
                                         break;
                                 case    104: //fnt
-                                        // Descargarse
+                                        // Unload
                                         n=fwrite(window[x].aux,1,14,desktop);
                                         // fprintf(lst,"filename %d elementos escritos <<<\n",n);
                                         n=fwrite(window[x].aux+14,1,_MAX_PATH-14,desktop);
@@ -378,7 +378,7 @@ fflush(lst);
                                         mypcminfo=(pcminfo *)window[x].aux;
                                         SaveDesktopSound(mypcminfo, desktop);
 /*
-                                        if(mypcminfo->pathname[0]!=0) // OJO !!!
+                                        if(mypcminfo->pathname[0]!=0) // NOTE !!!
                                         {
                                           n=fwrite(mypcminfo->name,1,14,desktop);
                                           // fprintf(lst,"pcm name %d elementos escritos <<<\n",n);
@@ -440,11 +440,11 @@ int iWork;
                 previous_mode=iWork;
                 VidModeChanged=1;
         }
-        // se salta el contador de ventanas
+        // skip the window counter
         fread(cWork,4,1,desktop);
-        // lee paleta /4
+        // read palette /4
         fread(dac,768,1,desktop);
-        // lee tabla ghost
+        // read ghost table
         fread(ghost,65536,1,desktop);
         fclose(desktop);
 return(1);
@@ -533,14 +533,14 @@ int UpLoad_Desktop()
                                                 if (get_cd_error()&0x200) CDPlaying=1; else CDPlaying=0;
                                                 new_window_load(CDiv0,window_aux.x,window_aux.y);
                                                 break;
-                                        case 1: //Reloj
+                                        case 1: //Clock
                                                 new_window_load(Clock0,window_aux.x,window_aux.y);
                                                 break;
                                 }
                                 if(!Interpreting)
                                         update_box(0,0,vga_width,vga_height);
                                 break;
-                        case    5: //papelera
+                        case    5: //clipboard
                                 new_window_load(Bin0,window_aux.x,window_aux.y);
                                 if(!Interpreting)
                                         update_box(0,0,vga_width,vga_height);
@@ -551,7 +551,7 @@ int UpLoad_Desktop()
                                         update_box(0,0,vga_width,vga_height);
                                 break;
                         case    100: //map
-                                // estructura tmapa
+                                // tmapa structure
                                 fread(&maux,1,sizeof(struct tmapinfo),desktop);
                                 baux=(char *)malloc(maux.map_width*maux.map_height);
                                 if (baux==NULL) {
@@ -580,7 +580,7 @@ int UpLoad_Desktop()
                                 v.map->recorded=maux.recorded;
                                 memcpy((char *)v.map->description,(char *)maux.description,32);
                                 memcpy((char *)v.map->points,(char *)maux.points,512*2);
-                                // Grafico
+                                // Graphic
                                 // fread(v.map->map,maux.map_width,maux.map_height,desktop);
                                 call((voidReturnType )v.paint_handler);
                                 wblit(copy_buffer,vga_width,vga_height,v.ptr,v.x,v.y,v.w,v.h,0);
@@ -588,7 +588,7 @@ int UpLoad_Desktop()
                                         update_box(0,0,vga_width,vga_height);
                                 break;
                         case    101: //fpg
-                                // estructura fpg
+                                // fpg structure
                                 fread(&faux,1,sizeof(FPG),desktop);
                                 strcpy(input,(char *)faux.FpgName);
                                 strcpy(full,(char *)faux.CurrentFile);
@@ -683,7 +683,7 @@ int UpLoad_Desktop()
                                 }
                                 break;
                         case    104: //fnt
-                                // Descargarse
+                                // Unload
                                 fread(Load_FontName,1,14,desktop);
                                 fread(Load_FontPathName,1,_MAX_PATH-14,desktop);
 
@@ -764,7 +764,7 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
     addwindow();
 
     //───────────────────────────────────────────────────────────────────────────
-    // Los siguientes valores los debe definir init_handler, valores por defecto:
+    // The following values must be defined by init_handler, default values:
     //───────────────────────────────────────────────────────────────────────────
 
     v.order=next_order++;
@@ -795,11 +795,11 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
     w=v.w; h=v.h;
 
     //───────────────────────────────────────────────────────────────────────────
-    // Algoritmo de emplazamiento de ventanas ...
+    // Window placement algorithm ...
     //───────────────────────────────────────────────────────────────────────────
 /*
     if (v.type==1)
-    { // Los diálogos se colocan en el centro
+    { // Dialogs are placed in the center
         x=vga_width/2-w/2;
         y=vga_height/2-h/2;
     }
@@ -811,12 +811,12 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
     v.x=x; v.y=y;
 
     //───────────────────────────────────────────────────────────────────────────
-    // Comprueba que si se trata de un mapa no haya otro activado
+    // If it is a map, check that no other one is activated
     //───────────────────────────────────────────────────────────────────────────
 
     if(VidModeChanged) {
       if (v.type>=100 && window_aux.foreground!=2) {
-        v.state=1; // Se activa
+        v.state=1; // It is activated
         for (m=1;m<max_windows;m++) if (window[m].type==v.type && window[m].state) {
           window[m].state=0;
           wgra(window[m].ptr,window[m].w/big2,window[m].h/big2,c1,2,2,window[m].w/big2-20,7);
@@ -834,7 +834,7 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
     }
 
     //───────────────────────────────────────────────────────────────────────────
-    // Comprueba que si se trata de un menú no este ya generado
+    // If it is a menu, check that it is not already generated
     //───────────────────────────────────────────────────────────────────────────
 /*
     n=0; if (v.type==2 || v.type==3 || v.type==4) {
@@ -845,14 +845,14 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
 
     if (!n)
 */
-    if ((ptr=(byte *)malloc(w*h))!=NULL) { // Ventana, free en close_window
+    if ((ptr=(byte *)malloc(w*h))!=NULL) { // Window, freed in close_window
 
       //───────────────────────────────────────────────────────────────────────────
-      // Pasa a segundo plano las ventanas que corresponda
+      // Send the appropriate windows to the background
       //───────────────────────────────────────────────────────────────────────────
 /*
-      if (v.tipo==1) { // Los diálogos cierran todas las ventanas
-        if (window[1].type==1) { // Diálogo sobre diálogo
+      if (v.tipo==1) { // Dialogs close all windows
+        if (window[1].type==1) { // Dialog over dialog
           window[1].foreground=0; blit_window(1);
         } else for (n=1;n<max_windows;n++)
           if (window[n].type && window[n].foreground==1) {
@@ -889,7 +889,7 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
 */
 
       //───────────────────────────────────────────────────────────────────────────
-      // Inicializa la ventana
+      // Initialize the window
       //───────────────────────────────────────────────────────────────────────────
 
       v.ptr=ptr;
@@ -966,7 +966,7 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
       }
 
     //───────────────────────────────────────────────────────────────────────────
-    // No se pudo abrir la ventana, (no hay memoria o menú duplicado)
+    // The window could not be opened (no memory or duplicate menu)
     //───────────────────────────────────────────────────────────────────────────
 
     } else { divdelete(0); return(1); }
@@ -979,21 +979,21 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Carga un mapa nuevo (1 si Error)
+//      Load a new map (1 if Error)
 //═════════════════════════════════════════════════════════════════════════════
 
 int new_map_load(int nx,int ny,char *name,byte *minimap)
 {
   int n;
 
-  //1º Pide memoria para un struct tmapa
+  //1st Request memory for a tmapa struct
   if ((v_map=(struct tmapinfo *)malloc(sizeof(struct tmapinfo)))!=NULL) {
 	memset(v_map,0,sizeof(struct tmapinfo));
 	
-    // 2º Pide memoria para el mapa
+    // 2nd Request memory for the map
     v_map->map=minimap;
 
-    //4º Fija el resto de variables
+    //4th Set the rest of the variables
     memcpy((char *)v_map->filename,(char *)name,255);
     *v_map->path='\0';
     v_map->map_width=map_width;
@@ -1066,7 +1066,7 @@ void load_program0(void)
   v.h=(12+16)*big2+editor_font_height*v_prg->h;
 
   if (v.w>vga_width) {
-    v.prg->w=(vga_width-12*big2)/editor_font_width; // Calcula tamaño (en chr) maximizada
+    v.prg->w=(vga_width-12*big2)/editor_font_width; // Compute the maximized size (in chr)
     v.w=(4+8)*big2+editor_font_width*v.prg->w;
     window_aux.w=v.w;
   }
@@ -1081,7 +1081,7 @@ void load_program0(void)
   {
     if (v.w&1) v.w++;
     if (v.h&1) v.h++;
-    v.w=-v.w; // Para indicar que no se multiplique la ventana por 2
+    v.w=-v.w; // To indicate that the window must not be multiplied by 2
   }
 
   v.title=(byte *)v_prg->filename;

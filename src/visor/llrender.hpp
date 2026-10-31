@@ -15,8 +15,8 @@ typedef struct {
     char    *copy_buffer;
     char    *end_copy;
 
-    float   projection_x;     // Tipo de lente.
-    float   projection_y;     // Tipo de lente.
+    float   projection_x;     // Lens type.
+    float   projection_y;     // Lens type.
 
 } llrender;
 

@@ -6,7 +6,7 @@
 #include "ifs.h"
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Tabla de conversión de chars Windows a chars MSDOS
+//  Conversion table from Windows chars to MSDOS chars
 //─────────────────────────────────────────────────────────────────────────────
 
 char OEM2ANSI[256]={
@@ -21,12 +21,12 @@ char OEM2ANSI[256]={
 
 /*
 char OEM2ANSI[256]={     // Table antigua
-//Diferencias
+//Differences
                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
                  0,  0,  0,  0,  0,164,  0,  0,  0,  0,
                182,167,  0,  0,  0,  0,  0,  0,  0,  0,
                  0,  0,
-//Diferencias
+//Differences
                 32, 33, 34, 35, 36, 37, 38, 39,
                 40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
                 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
@@ -37,7 +37,7 @@ char OEM2ANSI[256]={     // Table antigua
                100,101,102,103,104,105,106,107,108,109,
                110,111,112,113,114,115,116,117,118,119,
                120,121,122,123,124,125,126,127,
-//Diferencias
+//Differences
                199,252,
                233,226,228,224,229,231,234,235,232,239,
                238,236,196,197,201,230,198,244,246,242,
@@ -52,7 +52,7 @@ char OEM2ANSI[256]={     // Table antigua
                181,  0,  0,  0,  0,167,  0,248,  0,  0,
                  0,177,  0,  0,  0,  0,247,  0,176,149,
                  0,  0,  0,178,  0,  0};
-//Diferencias
+//Differences
 */
 
 FNTHEADER FNTheader = { "DIVFNT", 0x1A };
@@ -163,11 +163,11 @@ short scalar()
     short cx=0,cy=0,flag=0;
     char *ptr=Buffer, *p;
 
-    width2= (float) width * ifs.sizeX / sizeIFS;    // ancho real en relación
-                                                     // al tamaño original
+    width2= (float) width * ifs.sizeX / sizeIFS;    // actual width relative
+                                                     // to the original size
     height2= (float) height * ifs.sizeY / sizeIFS;
 
-    if (ifs.sizeX==sizeIFS && ifs.sizeY==sizeIFS)         // no hace falta escalar
+    if (ifs.sizeX==sizeIFS && ifs.sizeY==sizeIFS)         // no need to scale
     {
         ptrLetter=Buffer;
         return (0);
@@ -176,7 +176,7 @@ short scalar()
     factX=width/width2;
     factY=height/height2;
 
-    if (factX>=2.0 || factY>=2.0)           // escalar por medias
+    if (factX>=2.0 || factY>=2.0)           // scale by averages
     {
         if (factX-(int)factX==0.0 && factY-(int)factY==0.0) flag=1;
 
@@ -218,7 +218,7 @@ short scalar()
                     for (ixx=ix; ixx<ix+(int)factX; ixx++)
                     pixel+=Buffer[iyy*Width + ixx];
                 pixel/=(factX*factY);
-                if (flag)   // filtrar anti-alias
+                if (flag)   // anti-alias filter
                     ptr[cy*realwidth+cx++]= pixel > 128 ? 255 : 0;
                 else
                     ptr[cy*realwidth+cx++]=pixel;
@@ -501,7 +501,7 @@ void textureBody()
 
     ptr=ptrBody+incY*bodyWidth;
 
-    if (ifs.bodyTexWidth==1 && ifs.bodyTexHeight==1)    // textura=1 color
+    if (ifs.bodyTexWidth==1 && ifs.bodyTexHeight==1)    // texture=1 color
     {
         for (iy=0; iy<bodyHeight-incY; iy++)
             for (ix=0; ix<bodyWidth; ix++, ptr++)
@@ -509,7 +509,7 @@ void textureBody()
         return;
     }
 
-    if (ifs.bodyTexMode==1)                           // escalar textura
+    if (ifs.bodyTexMode==1)                           // scale texture
     {
         factX=(float) ifs.bodyTexWidth/bodyWidth;
         factY=(float) ifs.bodyTexHeight/(bodyHeight-incY);
@@ -518,7 +518,7 @@ void textureBody()
             for (x=0, xx=0; xx<bodyWidth; x+=factX, xx++, ptr++)
             if (*ptr) *ptr=bodyTexBuffer[(int)y*ifs.bodyTexWidth+(int)x];
     }
-    else                                                // textura en tile
+    else                                                // tiled texture
         for (yy=0, iy=0; yy<bodyHeight-incY; yy++)
         {
             for (xx=0, ix=0; xx<bodyWidth; xx++, ptr++)
@@ -552,7 +552,7 @@ void textureOutline()
         return;
     }
 
-    if (ifs.outTexMode==1)                     // escalar textura
+    if (ifs.outTexMode==1)                     // scale texture
     {
         factX=(float) ifs.outTexWidth/outlineWidth;
         factY=(float) ifs.outTexHeight/(outlineHeight-incY);
@@ -569,7 +569,7 @@ void textureOutline()
 
     }
     else
-        for (y=0, iy=0; y<outlineHeight-incY; y++)        // textura en tile
+        for (y=0, iy=0; y<outlineHeight-incY; y++)        // tiled texture
         {
             for (x=0, ix=0; x<outlineWidth; x++, ptr++)
             {
@@ -598,7 +598,7 @@ void textureShadow()
 
     ptr=ptrShadow+incY*(outlineWidth+absShadowX);
 
-    if (ifs.shadowTexMode==1)                     // escalar textura
+    if (ifs.shadowTexMode==1)                     // scale texture
     {
         factX=(float) ifs.shadowTexWidth/outlineWidth;
         factY=(float) ifs.shadowTexHeight/(outlineHeight-incY);
@@ -611,7 +611,7 @@ void textureShadow()
         }
     }
     else
-    for (y=0, iy=0; y<outlineHeight-incY; y++)            // textura en tile
+    for (y=0, iy=0; y<outlineHeight-incY; y++)            // tiled texture
     {
         for (x=0, ix=0; x<outlineWidth; x++, ptr++)
         {
@@ -624,7 +624,7 @@ void textureShadow()
 }
 
 
-void joinOutlineWithBody(void) { // Le añade el body al outline
+void joinOutlineWithBody(void) { // Add the body to the outline
   char *ptr, *ptr2, c, color, realcolor;
   short x,y,n;
 

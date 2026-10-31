@@ -191,7 +191,7 @@ static char *vnames = NULL; // Names vector
 #define twloc 16
 
 #define tpigl 17 // Global pointer to ints (an addressable ttglo)
-#define tpilo 18 // Local pointer to ints (idem)
+#define tpilo 18 // Local pointer to ints (ditto)
 
 #define tpwgl 19 // Pointers to word
 #define tpwlo 20
@@ -261,7 +261,7 @@ static byte c_r_low0, c_g_low0, c_b_low0;
 static int obj_start; // Start of first object (&obj[0])
 static int obj_size;  // Length of each object (struct object)
 
-// The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;
+// The block for an ID is: (mem[ID+_Block]-obj_start)/obj_size;
 
 static unsigned f_time[256];     // Time used by each function
 static unsigned frame_time[256]; // Time used by each function
@@ -565,7 +565,7 @@ static void dialog(voidReturnType init_handler) {
 			vtype = v.type;
 			v.type = 0;
 
-			if (window[1].type == 1) { // Diálogo sobre diálogo
+			if (window[1].type == 1) { // Dialog over dialog
 				window[1].foreground = 0;
 				blit_window(1);
 			}
@@ -1518,7 +1518,7 @@ static void wwrite_in_box(byte *copy_buffer,
 	}
 
 	if (y < copy_height && y + h > 0) {
-		if (y >= 0 && y + h <= copy_height) { // El texto coge entero (coord. y)
+		if (y >= 0 && y + h <= copy_height) { // The text fits entirely (y coord.)
 			while (*ptr && x + glyph[*ptr].w <= 0) {
 				x = x + glyph[*ptr].w;
 				ptr++;
@@ -2517,7 +2517,7 @@ static void blit_copy(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Save (flag=0) or recover (flag=1) a virtual box from copia
+//      Save (flag=0) or recover (flag=1) a virtual box from copy_buffer
 //═════════════════════════════════════════════════════════════════════════════
 
 static void save_restore(byte *p, int x, int y, int n, int flag) {
@@ -2675,7 +2675,7 @@ static void _err0(void) {
 	v.paint_handler = _err1;
 	v.click_handler = _err2;
 
-	//  ojo, añadir la que falta y comprobar que 218 es suficiente
+	//  careful, add the missing one and check that 218 is enough
 	_button(text[11], 7, v.h - 14, 0);
 	_button(text[12], 7 + text_len(text[11]) + 14, v.h - 14, 0);
 	_button(text[13], v.w - 8 - text_len(text[14]) - 14, v.h - 14, 2);
@@ -3130,7 +3130,7 @@ static void process_graph(int id, byte *q, int van, int w, int h) {
 
 	put_collision(buffer, ptr, x, y, xg, yg, angle, mem[id + _Size], mem[id + _Flags]);
 
-	// ventana q, van, de an*al
+	// window q, van, of w*h
 
 	wbox(v.ptr, v.w / big2, v.h / big2, c0, 134, 32, w / big2, h / big2); // Draws black background
 
@@ -3760,7 +3760,7 @@ static void inspect2(void) {
 						}
 						n = memo(get_offset(var_select));
 						o[var[var_select].object].type = type;
-						if (!n) break; // No si el puntero es NULL
+						if (!n) break; // Not if the pointer is NULL
 					}
 					if (o[var[var_select].object].v2 == -1) {
 						var[var_select].index++;
@@ -5639,7 +5639,7 @@ static void process_list0(void) {
 
 //int obj_start; // Start of first object (&obj[0])
 //int obj_size;  // Length of each object (struct object)
-//(The block for an ID is: (mem[ID+_Bloque]-obj_start)/obj_size;)
+//(The block for an ID is: (mem[ID+_Block]-obj_start)/obj_size;)
 
 //unsigned f_time[256]; // Time taken by each function
 static unsigned f_time_total;
@@ -5682,8 +5682,8 @@ unsigned int get_ticks(void) {
 #ifdef DOS
 	unsigned int x, xnull;
 
-	//OJO, es importante haber reprogramado el timer con el siguiente out
-	//outp(0x43, 0x34); // 0x36 00110100, lsb/msb, counter 0, mode ¡2!, binary
+	//NOTE, it is important to have reprogrammed the timer with the following out
+	//outp(0x43, 0x34); // 0x36 00110100, lsb/msb, counter 0, mode 2!, binary
 	xnull = (unsigned char)inp(0x40);               // LSB
 	x = ticks + IntIncr - (unsigned char)inp(0x40); // MSB
 	return (x);
@@ -5724,10 +5724,10 @@ static void create_profile_list(void) {
 
 	lp_num = 0;
 	lp_start = 0;
-	lp_select = 0; // Procesos
+	lp_select = 0; // Processes
 	lp2_num = 0;
 	lp2_start = 0;
-	lp2_select = 0; // Funciones
+	lp2_select = 0; // Functions
 
 	f_exec_total = 0;
 	f_paint_total = 0;

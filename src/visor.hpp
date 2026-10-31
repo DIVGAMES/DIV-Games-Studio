@@ -8,16 +8,16 @@ typedef struct _buffer_sprite3d {
 } buffer_sprite3d;
 
 typedef struct {
-  int percentage;       // 100 % es el tamaño normal
-  float alpha;           // Angulo de deriva (0-360)
-  float beta;           // Angulo de caida (0-90)
-  char *animation;      // Puntero al nombre de la animacion (incluye path)
-  int num_animation;    // Numero de la animacion
-  int frame;            // Frame a renderizar
-  int num_frames;       // Frames totales de la animacion
-  char *name;         // Puntero al nombre del modelo (incluye path)
-  char *dac;            // Puntero a la paleta
-  char *texture;        // Puntero al nombre de la textura (incluye path)
+  int percentage;       // 100 % is the normal size
+  float alpha;           // Drift angle (0-360)
+  float beta;           // Fall angle (0-90)
+  char *animation;      // Pointer to the name of the animation (includes path)
+  int num_animation;    // Animation number
+  int frame;            // Frame to render
+  int num_frames;       // Total frames of the animation
+  char *name;         // Pointer to the name of the model (includes path)
+  char *dac;            // Pointer to the palette
+  char *texture;        // Pointer to the name of the texture (includes path)
 } tviewer, *lptviewer;
 
 buffer_sprite3d *viewer_init(lptviewer render_data);

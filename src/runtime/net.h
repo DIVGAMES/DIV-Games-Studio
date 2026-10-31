@@ -7,12 +7,12 @@
 #define MAX_PACK        22
 #define MAX_USERS       512
 
-// Dispositivos
+// Devices
 #define IPX     1
 #define SERIAL  2
 #define MODEM   3
 
-// Errores
+// Errors
 #define NET_INITOK         0
 #define NET_ABORTED       -1
 #define NET_BADINIT       -2
@@ -42,7 +42,7 @@ void net_join_game(void);
 int _net_get_games(int game_id);
 int _net_join_game(int game_id,char *name,byte *data, int length);
 
-/*- Mensajes publicos internos ----*/
+/*- Internal public messages ----*/
 #define MSG_SYNC                10001
 #define MSG_OK                  10002
 #define MSG_ENDSYNC             10003
@@ -67,7 +67,7 @@ int _net_join_game(int game_id,char *name,byte *data, int length);
 #define MSG_PACKET             10023
 #define MSG_TALLY              10024
 
-// Mensajes internos
+// Internal messages
 #define MSG_OKSYNC              10070
 
 #endif

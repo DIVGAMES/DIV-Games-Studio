@@ -11,9 +11,9 @@
 #define MARK_STRING_TIZO_ASCII 111333
 #define MARK_STRING_TIZO_INPUT 333111
 
-// Se guardan rutinas antiguas con 0 al final....
-// Falta load y save multilinea.....
-// Y poner comprobante de que es cadena de dll(de tizo)
+// Old routines are kept with 0 at the end....
+// Multiline load and save still missing.....
+// And add a check that it is a dll string (tizo's)
 
  int *newasciipointer,mitxt;
  FILE *diskfile;
@@ -42,7 +42,7 @@ void ascii_load(){
         {
                 int linecounter=0;
 
-                // Avanzamos a la linea indicada
+                // Advance to the given line
                 while (linecounter<linestart && feof(diskfile)==NULL)
                 {
 
@@ -56,7 +56,7 @@ void ascii_load(){
                                 retval(-1);
                         }else
                         {
-                                // Codigo 10 de ascii....
+                                // ASCII code 10....
                                 fread(character,1,1,diskfile);
                                 linecounter++;
                         }
@@ -66,16 +66,16 @@ void ascii_load(){
                         retval(-1);
                 }else
                 {
-                        // Hemos situado el fichero.....
-                        // Ahora a coger la memoria...
-                        // y despues la variable....
+                        // We have positioned the file.....
+                        // Now to grab the memory...
+                        // and then the variable....
                         int linestoread=0;
                         while (linestoread<numtexts && feof(diskfile)==NULL)                        
                         {
-                                // guardamos la posicion del fichero....
+                                // save the file position....
                                 filestartpos=ftell(diskfile);
 
-                                // Contamos las letras
+                                // Count the letters
                                 int charcount=0;
 
                                 while (*character!=13 && feof(diskfile)==NULL)
@@ -84,21 +84,21 @@ void ascii_load(){
                                         charcount++;
                                 }
                                 
-                                // A reservar memoria....
+                                // Allocate memory....
                                 newasciipointer=(int *)div_malloc(charcount+9);
                                 mitxt=(int)newasciipointer[0];
 
                                 int *textstart;
-                                //y calculamos el offset del nuevo puntero
+                                //and compute the offset of the new pointer
                                 textstart=&mem[text_offset];
                                 int firsttxt;
                                 firsttxt=(int)textstart[0];
                                 mitxt+=3;
                                 mitxt&=-4;
-                                // Guarda valores internos....
+                                // Save internal values....
                                 realasciipointer=(int *) mitxt;
 
-                                // Ponemos la marca
+                                // Set the mark
                                 *realasciipointer=MARK_STRING_TIZO_ASCII;
                                 realasciipointer++;
                                 mitxt=(int)realasciipointer[0];
@@ -107,21 +107,21 @@ void ascii_load(){
                 
                                 newascii=(mitxt-firsttxt)/4;
 
-                                // Guardamos el valor, en el campo de la estructura...                                
+                                // Save the value into the structure field...                                
                                 mem[savetable+linestoread]=newascii;
 
-                                // Colocamos el fichero en su sitio, una vez contado...
+                                // Put the file back in place, once counted...
                                 fseek(diskfile,filestartpos,SEEK_SET);
 
-                                // Y cogemos toda la linea...
+                                // And grab the whole line...
                                 fread(ptr,1,charcount,diskfile);                                       
 
-                                // pone un cero al final....
+                                // put a zero at the end....
                                 ptr[charcount-1]=0;
 
-                                // Y otra linea....
+                                // And another line....
                                 linestoread++; 
-                                // Leemos el enter y el 10....
+                                // Read the enter and the 10....
                                 fread(character,1,1,diskfile);                                
                         }
                         if (feof(diskfile)!=NULL){        
@@ -168,14 +168,14 @@ void ascii_save() {
   inname=(char *)&mem[name+text_offset];
   if (savemode==0)
   {
-        // Se crea el fichero nuevo....
-        // ya se tiene el nombre....
+        // Create the new file....
+        // we already have the name....
         variable2=(char *)&mem[variable+text_offset];
-        // Ahora grabamos el fichero.....
+        // Now write the file.....
         if ((diskfile=div_fopen(inname,"ab"))!=NULL)
         {                
                 fwrite(variable2,1,strlen(variable2),diskfile);
-                // Se debe introducir un codigo enter 
+                // An enter code must be entered 
                 *enter_code=13;
                 fwrite(enter_code,1,1,diskfile);
                 *enter_code=10;
@@ -184,14 +184,14 @@ void ascii_save() {
                 retval(1);
         }else{ retval(-1);}
   }else{
-        // Se crea el fichero nuevo....
-        // ya se tiene el nombre....
+        // Create the new file....
+        // we already have the name....
         variable2=(char *)&mem[variable+text_offset];
-        // Ahora grabamos el fichero.....
+        // Now write the file.....
         if ((diskfile=div_fopen(inname,"wb"))!=NULL)
         {                
                 fwrite(variable2,1,strlen(variable2),diskfile);
-                // Se debe introducir un codigo enter 
+                // An enter code must be entered 
                 *enter_code=13;
                 fwrite(enter_code,1,1,diskfile);
                 *enter_code=10;
@@ -203,34 +203,34 @@ void ascii_save() {
   }
 }
 
-void ascii_load0() { // Carga fichero formato ascii
+void ascii_load0() { // Load file in ascii format
   int counter;
   int newascii;
   int *textstart;
 
   name=getparm();
-  // ya se tiene el nombre del archivo....
+  // we already have the file name....
   inname=(char *)&mem[name+text_offset];
            
 
-   // Ahora cargaremos el fichero.....
+   // Now load the file.....
    if ((diskfile=div_fopen(inname,"rb"))!=NULL)
         {
                
                 int filelength;
                 int firsttxt;
-                // Lo llevamos al final
+                // Move it to the end
                 fseek(diskfile,0,SEEK_END);
-                // lo medimos
+                // measure it
                 filelength=ftell(diskfile);
-                // y lo llevamos al principio
+                // and move it back to the start
                 fseek(diskfile,0,SEEK_SET);
 
-                // A reservar memoria....
+                // Allocate memory....
                 newasciipointer=(int *)div_malloc(filelength+4);
                 mitxt=(int)newasciipointer[0];
 
-                //y calculamos el offset del nuevo puntero
+                //and compute the offset of the new pointer
                 textstart=&mem[text_offset];
                 firsttxt=(int)textstart[0];
                 mitxt+=3;
@@ -260,17 +260,17 @@ void ascii_dup(){
         int chosenchar=getparm();
 
 
-        // A reservar memoria....
+        // Allocate memory....
         newasciipointer=(int *)div_malloc(textamount+8);
         mitxt=(int)newasciipointer[0];
-        //y calculamos el offset del nuevo puntero
+        //and compute the offset of the new pointer
         textstart=&mem[text_offset];
         firsttxt=(int)textstart[0];
         mitxt+=3;
         mitxt&=-4;
 
-        // puntero colocado....
-        // Guarda valores internos....
+        // pointer positioned....
+        // Save internal values....
         realasciipointer=(int *) mitxt;
 
         *realasciipointer=MARK_STRING_TIZO_ASCII ;
@@ -299,20 +299,20 @@ void ascii_add()
 
         int variable2=getparm();
         int variable1=getparm();
-        // ya se tiene el nombre....
+        // we already have the name....
         text1=(char *)&mem[variable1+text_offset];
         text2=(char *)&mem[variable2+text_offset];
-        // A reservar memoria....
+        // Allocate memory....
         newasciipointer=(int *)div_malloc(strlen(text1)+strlen(text2)+4);
         mitxt=(int)newasciipointer;
-        //y calculamos el offset del nuevo puntero
+        //and compute the offset of the new pointer
         textstart=&mem[text_offset];
         firsttxt=(int)textstart;
         mitxt+=3;
         mitxt&=-4;
 
-        // puntero colocado....
-        // Guarda valores internos....
+        // pointer positioned....
+        // Save internal values....
         realasciipointer=(int *) mitxt;
 
         *realasciipointer=MARK_STRING_TIZO_ASCII;
@@ -335,7 +335,7 @@ void ascii_paste()
         int textposition=getparm();
         int variable2=getparm();
         int variable1=getparm();
-        // ya se tiene el nombre....
+        // we already have the name....
         text1=(char *)&mem[variable1+text_offset];
         text2=(char *)&mem[variable2+text_offset];
 
@@ -358,7 +358,7 @@ void ascii_setchar()
         int variable2=getparm();
         int textposition=getparm();
         int variable1=getparm();
-        // ya se tiene el nombre....
+        // we already have the name....
         text1=(char *)&mem[variable1+text_offset];
 
 
@@ -377,7 +377,7 @@ void ascii_getchar()
         char *text1;
         int position=getparm();
         int variable1=getparm();
-        // ya se tiene el nombre....
+        // we already have the name....
         text1=(char *)&mem[variable1+text_offset];
         if (position<0)retval(-1);
         if (position>strlen(text1))retval(-1);
@@ -391,7 +391,7 @@ void ascii_len()
         int finalvalue;
         char *text1;
         int variable1=getparm();
-        // ya se tiene el nombre....
+        // we already have the name....
         text1=(char *)&mem[variable1+text_offset];
         finalvalue=strlen(text1);
         retval(finalvalue);
@@ -408,7 +408,7 @@ void ascii_copy()
         int textlength=getparm();
         int firsttext=getparm();
         int variable1=getparm();
-        // ya se tiene el nombre....
+        // we already have the name....
         text1=(char *)&mem[variable1+text_offset];
 
         if (textlength<0)retval(-1);
@@ -417,17 +417,17 @@ void ascii_copy()
         if (textlength>strlen(text1))retval(-1);
         if (firsttext+textlength>strlen(text1))retval(-1);
 
-        // A reservar memoria....
+        // Allocate memory....
         newasciipointer=(int *)div_malloc(textlength+8);
         mitxt=(int)newasciipointer;
-        //y calculamos el offset del nuevo puntero
+        //and compute the offset of the new pointer
         textstart=&mem[text_offset];
         firsttxt=(int)textstart;
         mitxt+=3;
         mitxt&=-4;
 
-        // puntero colocado....
-        // Guarda valores internos....
+        // pointer positioned....
+        // Save internal values....
         realasciipointer=(int *) mitxt;
 
         *realasciipointer=MARK_STRING_TIZO_ASCII;
@@ -446,7 +446,7 @@ void ascii_copy()
 
 }
 
-// Segunda tanda de funciones..........
+// Second batch of functions..........
 
 void input_version(){
         retval(VERSION_INPUT);
@@ -464,17 +464,17 @@ void input_new()
 
         int variable1=getparm();
 
-        // A reservar memoria....
+        // Allocate memory....
         newasciipointer=(int *)div_malloc(variable1+12);
         mitxt=(int)newasciipointer;
-        //y calculamos el offset del nuevo puntero
+        //and compute the offset of the new pointer
         textstart=&mem[text_offset];
         firsttxt=(int)textstart;
         mitxt+=3;
         mitxt&=-4;
 
-        // puntero colocado....
-        // Guarda valores internos....
+        // pointer positioned....
+        // Save internal values....
         realasciipointer=(int *) mitxt;
 
         *realasciipointer=variable1;

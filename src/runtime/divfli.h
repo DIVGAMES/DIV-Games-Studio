@@ -2,45 +2,45 @@
 #define __DIVFLI_H
 
 /*************************************************************************/
-/* Inicializa el engine de Fli.                                          */
+/* Initialize the Fli engine.                                          */
 /*************************************************************************/
-/* Entradas: nombre del fli/flc                                          */
-/*           Buffer donde se muestra el fli                              */
-/*           Buffer_anc ancho del buffer donde se muestra el fli         */
-/*           Buffer_alt alto del buffer donde se muestra el fli          */
-/*           cx coordenada x del buffer donde se muestra el fli          */
-/*           cy coordenada y del buffer donde se muestra el fli          */
+/* Inputs: name of the fli/flc                                          */
+/*           Buffer where the fli is shown                              */
+/*           Buffer_anc width of the buffer where the fli is shown         */
+/*           Buffer_alt height of the buffer where the fli is shown          */
+/*           cx x coordinate of the buffer where the fli is shown          */
+/*           cy y coordinate of the buffer where the fli is shown          */
 /*************************************************************************/
-/* Salidas: numero de frames de la animacion                             */
-/*          0 si sucedio algo muy malo.                                  */
+/* Outputs: number of frames of the animation                             */
+/*          0 if something very bad happened.                                  */
 /*************************************************************************/
 int StartFLI(char *name, char *Buffer, int Buff_width,int Buff_height,int cx,int cy);
 
 /*************************************************************************/
-/* Visualiza el siguiente frame.                                         */
+/* Show the next frame.                                         */
 /*************************************************************************/
-/* Entradas: Nada                                                        */
+/* Inputs: None                                                        */
 /*************************************************************************/
-/* Salidas: 1 si el fli continua                                         */
-/*          0 si se va a repetir.                                        */
+/* Outputs: 1 if the fli continues                                         */
+/*          0 if it is going to repeat.                                        */
 /*************************************************************************/
 int Nextframe();
 
 /*************************************************************************/
-/* Termina y libera un fli.                                              */
+/* End and free a fli.                                              */
 /*************************************************************************/
-/* Entradas: Nada                                                        */
+/* Inputs: None                                                        */
 /*************************************************************************/
-/* Salidas:  Nada                                                        */
+/* Outputs:  None                                                        */
 /*************************************************************************/
 void EndFli();
 
 /*************************************************************************/
-/* Reinicializa un fli.                                                  */
+/* Reinitialize a fli.                                                  */
 /*************************************************************************/
-/* Entradas: Nada                                                        */
+/* Inputs: None                                                        */
 /*************************************************************************/
-/* Salidas:  Nada                                                        */
+/* Outputs:  None                                                        */
 /*************************************************************************/
 void ResetFli();
 

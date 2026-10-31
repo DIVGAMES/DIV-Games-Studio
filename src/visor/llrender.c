@@ -28,7 +28,7 @@ int u_1,v_1,u_0,v_0;
 float fu,fv,inverse;
 
 //-----------------------------------------------------------------------------
-// Datos globales
+// Global data
 //-----------------------------------------------------------------------------
 
     int left_section, right_section;
@@ -177,7 +177,7 @@ void llrender_create(llrender *llrender_struct,sprite3d *newcamera)
   llrender_struct->mmdist[0]=llrender_struct->dist_max*0.33;
   llrender_struct->mmdist[1]=llrender_struct->dist_max*0.66;
   for (i=0;i<256;i++)
-// Datos cambiantes
+// Changing data
   llrender_struct->screen_width=newcamera->width; //video->Width;
   llrender_struct->screen_height=newcamera->height; //video->Height;
   llrender_struct->screen_fwidth=llrender_struct->screen_width;
@@ -192,9 +192,9 @@ void llrender_create(llrender *llrender_struct,sprite3d *newcamera)
 
     for (i=0;i<65536;i++) {
 
-      alpha=(short)(i&0x1f);         //0-32 Nivel de iluminacion
-      color=(short)((i>>10)&0x3e);  //0-64 Color de textura
-      gouraud=(short)((i>>5)&0x3f); //0-64 Color de iluminacion
+      alpha=(short)(i&0x1f);         //0-32 Lighting level
+      color=(short)((i>>10)&0x3e);  //0-64 Texture color
+      gouraud=(short)((i>>5)&0x3f); //0-64 Lighting color
 
     	t = (LMax-LMin)*((float)alpha/32.0) + LMin;
       c = (int)(t*(float)color);
@@ -260,7 +260,7 @@ void llrender_render(llrender *llrender_struct,lptface faces,int nfaces)
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Pinta un triangulo en el buffer de video
+//  Draw a triangle in the video buffer
 //─────────────────────────────────────────────────────────────────────────────
 
 void llrender_draw_triangle(llrender *llrender_struct,lptface face)
@@ -290,7 +290,7 @@ int zmed;
   }
 
   //---------------------------------------------------------------------------
-  //  Calculo la bounding box del objeto en pantalla
+  //  Compute the bounding box of the object on screen
   //---------------------------------------------------------------------------
 
   if (face->v1->px<complex_x_start) complex_x_start=face->v1->px;
@@ -306,7 +306,7 @@ int zmed;
   if (face->v2->py>complex_y_end) complex_y_end=face->v2->py+1;
   if (face->v3->py>complex_y_end) complex_y_end=face->v3->py+1;
 
-  // Si el poligono no apunta a la cámara no se ve y por tanto no se pinta
+  // If the polygon does not face the camera, it is not visible and therefore not drawn
   if( llrender_Hidden_Face(llrender_struct,face) ) return;
 /*
   #ifdef DEBUG
@@ -327,7 +327,7 @@ int zmed;
 */
   zmed=schop(face->v1->fpz+face->v2->fpz+face->v3->fpz)>>2;
 
-  //  Calculo el Mipmap asociado a la textura
+  //  Compute the Mipmap associated with the texture
   if(zmed<llrender_struct->mmdist[0])
     mmlvl=0;
   else
@@ -396,7 +396,7 @@ int zmed;
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Comprueba si una cara está oculta
+//  Check whether a face is hidden
 //─────────────────────────────────────────────────────────────────────────────
 
 int llrender_Hidden_Face(llrender *llrender_struct,lptface face)
@@ -421,16 +421,16 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
   tvertex vertex[4];
   float fwork;
 
-  //  Calculamos cuantos puntos están situados detras del plano de clipping
+  //  Compute how many points lie behind the clipping plane
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_draw_triangle(llrender_struct,face_in);
     return;
   }
   i=(i>>8)&3;
-  if (i==3) return; // El polígono está fuera de pantalla
+  if (i==3) return; // The polygon is off screen
   if (i==0) {
-    llrender_clipping_3d_left(llrender_struct,face_in); // El polígono está dentro de pantalla
+    llrender_clipping_3d_left(llrender_struct,face_in); // The polygon is inside the screen
     return;
   }
 
@@ -439,8 +439,8 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
   face.v2->state=0;
   face.v3->state=0;
 
-  if (i==2) { // El resultado del corte es un triángulo
-    // Partimos de un punto situado delante del plano de clipping
+  if (i==2) { // The result of the cut is a triangle
+    // We start from a point located in front of the clipping plane
     if (face.v1->fpz>=1.0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -456,7 +456,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
       memcpy(&vertex[1],face.v1,sizeof(tvertex));
       memcpy(&vertex[2],face.v2,sizeof(tvertex));
     }
-    // Corte 1 con el plano de clipping
+    // Cut 1 with the clipping plane
     fwork=(1.0-vertex[0].fpz)/(vertex[1].fpz-vertex[0].fpz);
     vertex[1].sx=(vertex[1].sx-vertex[0].sx)*fwork+vertex[0].sx;
     vertex[1].sy=(vertex[1].sy-vertex[0].sy)*fwork+vertex[0].sy;
@@ -466,7 +466,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     vertex[1].g=(vertex[1].g-vertex[0].g)*fwork+vertex[0].g;
     vertex[1].b=(vertex[1].b-vertex[0].b)*fwork+vertex[0].b;
     vertex[1].intensity=(vertex[1].intensity-vertex[0].intensity)*fwork+vertex[0].intensity;
-    // Proyectar
+    // Project
     vertex[1].fpx=(llrender_struct->screen_fwidth/2)+(vertex[1].sx*llrender_struct->projection_x);
     vertex[1].fpy=(llrender_struct->screen_fheight/2)-(vertex[1].sy*llrender_struct->projection_y);
     vertex[1].fpz=1.0;
@@ -476,7 +476,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     if (vertex[1].fpy<0.0) vertex[1].sutherland_cohen+=16;
     if (vertex[1].fpy>llrender_struct->screen_fheight) vertex[1].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=(1.0-vertex[0].fpz)/(vertex[2].fpz-vertex[0].fpz);
     vertex[2].sx=(vertex[2].sx-vertex[0].sx)*fwork+vertex[0].sx;
     vertex[2].sy=(vertex[2].sy-vertex[0].sy)*fwork+vertex[0].sy;
@@ -486,7 +486,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     vertex[2].g=(vertex[2].g-vertex[0].g)*fwork+vertex[0].g;
     vertex[2].b=(vertex[2].b-vertex[0].b)*fwork+vertex[0].b;
     vertex[2].intensity=(vertex[2].intensity-vertex[0].intensity)*fwork+vertex[0].intensity;
-    // Proyectar
+    // Project
     vertex[2].fpx=(llrender_struct->screen_fwidth/2)+(vertex[2].sx*llrender_struct->projection_x);
     vertex[2].fpy=(llrender_struct->screen_fheight/2)-(vertex[2].sy*llrender_struct->projection_y);
     vertex[2].fpz=1.0;
@@ -496,14 +496,14 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     if (vertex[2].fpy<0.0) vertex[2].sutherland_cohen+=16;
     if (vertex[2].fpy>llrender_struct->screen_fheight) vertex[2].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
     llrender_clipping_3d_left(llrender_struct,&face);
   }
-  else { // El resultado del corte son dos triángulos
-    // Partimos de un punto situado detras del plano de clipping
+  else { // The result of the cut is two triangles
+    // We start from a point located behind the clipping plane
     if (face.v1->fpz<1.0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -519,7 +519,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
       memcpy(&vertex[1],face.v1,sizeof(tvertex));
       memcpy(&vertex[2],face.v2,sizeof(tvertex));
     }
-    // Corte 1 con el plano de clipping
+    // Cut 1 with the clipping plane
     fwork=(1.0-vertex[0].fpz)/(vertex[2].fpz-vertex[0].fpz);
     vertex[3].sx=(vertex[2].sx-vertex[0].sx)*fwork+vertex[0].sx;
     vertex[3].sy=(vertex[2].sy-vertex[0].sy)*fwork+vertex[0].sy;
@@ -529,7 +529,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     vertex[3].g=(vertex[2].g-vertex[0].g)*fwork+vertex[0].g;
     vertex[3].b=(vertex[2].b-vertex[0].b)*fwork+vertex[0].b;
     vertex[3].intensity=(vertex[2].intensity-vertex[0].intensity)*fwork+vertex[0].intensity;
-    // Proyectar
+    // Project
     vertex[3].fpx=(llrender_struct->screen_fwidth/2)+(vertex[3].sx*llrender_struct->projection_x);
     vertex[3].fpy=(llrender_struct->screen_fheight/2)-(vertex[3].sy*llrender_struct->projection_y);
     vertex[3].fpz=1.0;
@@ -539,7 +539,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     if (vertex[3].fpy<0.0) vertex[3].sutherland_cohen+=16;
     if (vertex[3].fpy>llrender_struct->screen_fheight) vertex[3].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=(1.0-vertex[0].fpz)/(vertex[1].fpz-vertex[0].fpz);
     vertex[0].sx=(vertex[1].sx-vertex[0].sx)*fwork+vertex[0].sx;
     vertex[0].sy=(vertex[1].sy-vertex[0].sy)*fwork+vertex[0].sy;
@@ -549,7 +549,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     vertex[0].g=(vertex[1].g-vertex[0].g)*fwork+vertex[0].g;
     vertex[0].b=(vertex[1].b-vertex[0].b)*fwork+vertex[0].b;
     vertex[0].intensity=(vertex[1].intensity-vertex[0].intensity)*fwork+vertex[0].intensity;
-    // Proyectar
+    // Project
     vertex[0].fpx=(llrender_struct->screen_fwidth/2)+(vertex[0].sx*llrender_struct->projection_x);
     vertex[0].fpy=(llrender_struct->screen_fheight/2)-(vertex[0].sy*llrender_struct->projection_y);
     vertex[0].fpz=1.0;
@@ -559,7 +559,7 @@ void llrender_clipping_3d_near(llrender *llrender_struct,lptface face_in)
     if (vertex[0].fpy<0.0) vertex[0].sutherland_cohen+=16;
     if (vertex[0].fpy>llrender_struct->screen_fheight) vertex[0].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -583,16 +583,16 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
   float fwork;
   float zero_z,one_z,two_z;
 
-  //  Calculamos cuantos puntos están situados fuera de la pantalla
+  //  Compute how many points lie outside the screen
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_draw_triangle(llrender_struct,face_in);
     return;
   }
   i=i&3;
-  if (i==3) return; // El polígono está fuera de pantalla
+  if (i==3) return; // The polygon is off screen
   if (i==0) {
-    llrender_clipping_3d_right(llrender_struct,face_in); // El polígono está dentro de pantalla
+    llrender_clipping_3d_right(llrender_struct,face_in); // The polygon is inside the screen
     return;
   }
 
@@ -601,8 +601,8 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
   face.v2->state=0;
   face.v3->state=0;
 
-  if (i==1) { // El resultado del corte son dos triángulos
-    // Partimos de un punto situado encima de la pantalla
+  if (i==1) { // The result of the cut is two triangles
+    // We start from a point located above the screen
     if (face.v1->fpx<0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -621,7 +621,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el plano de clipping
+    // Cut 1 with the clipping plane
     fwork=-vertex[0].fpx/(vertex[2].fpx-vertex[0].fpx);
     vertex[3].fpx=0;
     vertex[3].fpy=(vertex[2].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -637,7 +637,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     if (vertex[3].fpy<0.0) vertex[3].sutherland_cohen+=16;
     if (vertex[3].fpy>llrender_struct->screen_fheight) vertex[3].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=-vertex[0].fpx/(vertex[1].fpx-vertex[0].fpx);
     vertex[0].fpx=0;
     vertex[0].fpy=(vertex[1].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -653,7 +653,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     if (vertex[0].fpy<0.0) vertex[0].sutherland_cohen+=16;
     if (vertex[0].fpy>llrender_struct->screen_fheight) vertex[0].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -664,8 +664,8 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     face.v3->state=0;
     llrender_clipping_3d_right(llrender_struct,&face);
   }
-  else { // El resultado del corte es un triángulo
-    // Partimos de un punto situado debajo del margen superior de pantalla
+  else { // The result of the cut is a triangle
+    // We start from a point located below the top margin of the screen
     if (face.v1->fpx>=0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -684,7 +684,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el margen superior de la pantalla
+    // Cut 1 with the top margin of the screen
     fwork=-vertex[0].fpx/(vertex[1].fpx-vertex[0].fpx);
     vertex[1].fpx=0;
     vertex[1].fpy=(vertex[1].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -700,7 +700,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     if (vertex[1].fpy<0.0) vertex[1].sutherland_cohen+=16;
     if (vertex[1].fpy>llrender_struct->screen_fheight) vertex[1].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=-vertex[0].fpx/(vertex[2].fpx-vertex[0].fpx);
     vertex[2].fpx=0;
     vertex[2].fpy=(vertex[2].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -716,7 +716,7 @@ void llrender_clipping_3d_left(llrender *llrender_struct,lptface face_in)
     if (vertex[2].fpy<0.0) vertex[2].sutherland_cohen+=16;
     if (vertex[2].fpy>llrender_struct->screen_fheight) vertex[2].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -735,16 +735,16 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
   float fwork;
   float zero_z,one_z,two_z;
 
-  //  Calculamos cuantos puntos están situados fuera de la pantalla
+  //  Compute how many points lie outside the screen
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_draw_triangle(llrender_struct,face_in);
     return;
   }
   i=(i>>2)&3;
-  if (i==3) return; // El polígono está fuera de pantalla
+  if (i==3) return; // The polygon is off screen
   if (i==0) {
-    llrender_clipping_3d_up(llrender_struct,face_in); // El polígono está dentro de pantalla
+    llrender_clipping_3d_up(llrender_struct,face_in); // The polygon is inside the screen
     return;
   }
 
@@ -753,8 +753,8 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
   face.v2->state=0;
   face.v3->state=0;
 
-  if (i==1) { // El resultado del corte son dos triángulos
-    // Partimos de un punto situado encima de la pantalla
+  if (i==1) { // The result of the cut is two triangles
+    // We start from a point located above the screen
     if (face.v1->fpx>llrender_struct->screen_fwidth) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -773,7 +773,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el plano de clipping
+    // Cut 1 with the clipping plane
     fwork=(llrender_struct->screen_fwidth-vertex[0].fpx)/(vertex[2].fpx-vertex[0].fpx);
     vertex[3].fpx=llrender_struct->screen_fwidth;
     vertex[3].fpy=(vertex[2].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -788,7 +788,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     if (vertex[3].fpy<0.0) vertex[3].sutherland_cohen+=16;
     if (vertex[3].fpy>llrender_struct->screen_fheight) vertex[3].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=(llrender_struct->screen_fwidth-vertex[0].fpx)/(vertex[1].fpx-vertex[0].fpx);
     vertex[0].fpx=llrender_struct->screen_fwidth;
     vertex[0].fpy=(vertex[1].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -803,7 +803,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     if (vertex[0].fpy<0.0) vertex[0].sutherland_cohen+=16;
     if (vertex[0].fpy>llrender_struct->screen_fheight) vertex[0].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -814,8 +814,8 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     face.v3->state=0;
     llrender_clipping_3d_up(llrender_struct,&face);
   }
-  else { // El resultado del corte es un triángulo
-    // Partimos de un punto situado debajo del margen superior de pantalla
+  else { // The result of the cut is a triangle
+    // We start from a point located below the top margin of the screen
     if (face.v1->fpx<=llrender_struct->screen_fwidth) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -834,7 +834,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el margen superior de la pantalla
+    // Cut 1 with the top margin of the screen
     fwork=(llrender_struct->screen_fwidth-vertex[0].fpx)/(vertex[1].fpx-vertex[0].fpx);
     vertex[1].fpx=llrender_struct->screen_fwidth;
     vertex[1].fpy=(vertex[1].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -849,7 +849,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     if (vertex[1].fpy<0.0) vertex[1].sutherland_cohen+=16;
     if (vertex[1].fpy>llrender_struct->screen_fheight) vertex[1].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=(llrender_struct->screen_fwidth-vertex[0].fpx)/(vertex[2].fpx-vertex[0].fpx);
     vertex[2].fpx=llrender_struct->screen_fwidth;
     vertex[2].fpy=(vertex[2].fpy-vertex[0].fpy)*fwork+vertex[0].fpy;
@@ -864,7 +864,7 @@ void llrender_clipping_3d_right(llrender *llrender_struct,lptface face_in)
     if (vertex[2].fpy<0.0) vertex[2].sutherland_cohen+=16;
     if (vertex[2].fpy>llrender_struct->screen_fheight) vertex[2].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -883,16 +883,16 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
   float fwork;
   float zero_z,one_z,two_z;
 
-  //  Calculamos cuantos puntos están situados fuera de la pantalla
+  //  Compute how many points lie outside the screen
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_draw_triangle(llrender_struct,face_in);
     return;
   }
   i=(i>>4)&3;
-  if (i==3) return; // El polígono está fuera de pantalla
+  if (i==3) return; // The polygon is off screen
   if (i==0) {
-    llrender_clipping_3d_down(llrender_struct,face_in); // El polígono está dentro de pantalla
+    llrender_clipping_3d_down(llrender_struct,face_in); // The polygon is inside the screen
     return;
   }
 
@@ -901,8 +901,8 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
   face.v2->state=0;
   face.v3->state=0;
 
-  if (i==1) { // El resultado del corte son dos triángulos
-    // Partimos de un punto situado encima de la pantalla
+  if (i==1) { // The result of the cut is two triangles
+    // We start from a point located above the screen
     if (face.v1->fpy<0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -921,7 +921,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el plano de clipping
+    // Cut 1 with the clipping plane
     fwork=-vertex[0].fpy/(vertex[2].fpy-vertex[0].fpy);
     vertex[3].fpx=(vertex[2].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[3].fpy=0;
@@ -935,7 +935,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     vertex[3].sutherland_cohen=0;
     if (vertex[3].fpy>llrender_struct->screen_fheight) vertex[3].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=-vertex[0].fpy/(vertex[1].fpy-vertex[0].fpy);
     vertex[0].fpx=(vertex[1].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[0].fpy=0;
@@ -949,7 +949,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     vertex[0].sutherland_cohen=0;
     if (vertex[0].fpy>llrender_struct->screen_fheight) vertex[0].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -960,8 +960,8 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     face.v3->state=0;
     llrender_clipping_3d_down(llrender_struct,&face);
   }
-  else { // El resultado del corte es un triángulo
-    // Partimos de un punto situado debajo del margen superior de pantalla
+  else { // The result of the cut is a triangle
+    // We start from a point located below the top margin of the screen
     if (face.v1->fpy>=0) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -980,7 +980,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el margen superior de la pantalla
+    // Cut 1 with the top margin of the screen
     fwork=-vertex[0].fpy/(vertex[1].fpy-vertex[0].fpy);
     vertex[1].fpx=(vertex[1].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[1].fpy=0;
@@ -994,7 +994,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     vertex[1].sutherland_cohen=0;
     if (vertex[1].fpy>llrender_struct->screen_fheight) vertex[1].sutherland_cohen+=64;
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=-vertex[0].fpy/(vertex[2].fpy-vertex[0].fpy);
     vertex[2].fpx=(vertex[2].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[2].fpy=0;
@@ -1008,7 +1008,7 @@ void llrender_clipping_3d_up(llrender *llrender_struct,lptface face_in)
     vertex[2].sutherland_cohen=0;
     if (vertex[2].fpy>llrender_struct->screen_fheight) vertex[2].sutherland_cohen+=64;
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -1028,16 +1028,16 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
   float fwork;
   float zero_z,one_z,two_z;
 
-  //  Calculamos cuantos puntos están situados fuera de la pantalla
+  //  Compute how many points lie outside the screen
   i=face_in->v1->sutherland_cohen+face_in->v2->sutherland_cohen+face_in->v3->sutherland_cohen;
   if (!i) {
     llrender_draw_triangle(llrender_struct,face_in);
     return;
   }
   i=(i>>6)&3;
-  if (i==3) return; // El polígono está fuera de pantalla
+  if (i==3) return; // The polygon is off screen
   if (i==0) {
-    llrender_draw_triangle(llrender_struct,face_in); // El polígono está dentro de pantalla
+    llrender_draw_triangle(llrender_struct,face_in); // The polygon is inside the screen
     return;
   }
 
@@ -1046,8 +1046,8 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
   face.v2->state=0;
   face.v3->state=0;
 
-  if (i==1) { // El resultado del corte son dos triángulos
-    // Partimos de un punto situado encima de la pantalla
+  if (i==1) { // The result of the cut is two triangles
+    // We start from a point located above the screen
 
     if (face.v1->fpy>llrender_struct->screen_fheight) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
@@ -1067,7 +1067,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el plano de clipping
+    // Cut 1 with the clipping plane
     fwork=(llrender_struct->screen_fheight-vertex[0].fpy)/(vertex[2].fpy-vertex[0].fpy);
     vertex[3].fpx=(vertex[2].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[3].fpy=llrender_struct->screen_fheight;
@@ -1079,7 +1079,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     vertex[3].intensity=((vertex[2].intensity*two_z-vertex[0].intensity*zero_z)*fwork+vertex[0].intensity*zero_z)/((two_z-zero_z)*fwork+zero_z);
     vertex[3].fpz=1/((two_z-zero_z)*fwork+zero_z);
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=(llrender_struct->screen_fheight-vertex[0].fpy)/(vertex[1].fpy-vertex[0].fpy);
     vertex[0].fpx=(vertex[1].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[0].fpy=llrender_struct->screen_fheight;
@@ -1091,7 +1091,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     vertex[0].intensity=((vertex[1].intensity*one_z-vertex[0].intensity*zero_z)*fwork+vertex[0].intensity*zero_z)/((one_z-zero_z)*fwork+zero_z);
     vertex[0].fpz=1/((one_z-zero_z)*fwork+zero_z);
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -1102,8 +1102,8 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     face.v3->state=0;
     llrender_draw_triangle(llrender_struct,&face);
   }
-  else { // El resultado del corte es un triángulo
-    // Partimos de un punto situado debajo del margen superior de pantalla
+  else { // The result of the cut is a triangle
+    // We start from a point located below the top margin of the screen
     if (face.v1->fpy<=llrender_struct->screen_fheight) {
       memcpy(&vertex[0],face.v1,sizeof(tvertex));
       memcpy(&vertex[1],face.v2,sizeof(tvertex));
@@ -1122,7 +1122,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     zero_z=1.0/vertex[0].fpz;
     one_z=1.0/vertex[1].fpz;
     two_z=1.0/vertex[2].fpz;
-    // Corte 1 con el margen superior de la pantalla
+    // Cut 1 with the top margin of the screen
     fwork=(llrender_struct->screen_fheight-vertex[0].fpy)/(vertex[1].fpy-vertex[0].fpy);
     vertex[1].fpx=(vertex[1].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[1].fpy=llrender_struct->screen_fheight;
@@ -1134,7 +1134,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     vertex[1].intensity=((vertex[1].intensity*one_z-vertex[0].intensity*zero_z)*fwork+vertex[0].intensity*zero_z)/((one_z-zero_z)*fwork+zero_z);
     vertex[1].fpz=1/((one_z-zero_z)*fwork+zero_z);
 
-    // Corte 2 con el plano de clipping
+    // Cut 2 with the clipping plane
     fwork=(llrender_struct->screen_fheight-vertex[0].fpy)/(vertex[2].fpy-vertex[0].fpy);
     vertex[2].fpx=(vertex[2].fpx-vertex[0].fpx)*fwork+vertex[0].fpx;
     vertex[2].fpy=llrender_struct->screen_fheight;
@@ -1146,7 +1146,7 @@ void llrender_clipping_3d_down(llrender *llrender_struct,lptface face_in)
     vertex[2].intensity=((vertex[2].intensity*two_z-vertex[0].intensity*zero_z)*fwork+vertex[0].intensity*zero_z)/((two_z-zero_z)*fwork+zero_z);
     vertex[2].fpz=1/((two_z-zero_z)*fwork+zero_z);
 
-    // Pintar
+    // Draw
     face.v1=&vertex[0];
     face.v2=&vertex[1];
     face.v3=&vertex[2];
@@ -1284,7 +1284,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
               break;
   }
 
-  //Ordenamos los vertices, v1 el de más arriba y v3 el de más abajo
+  //Sort the vertices, v1 the topmost and v3 the bottommost
 
   if (v1->fpy > v2->fpy) { vertex=v1; v1=v2; v2=vertex; }
   if (v1->fpy > v3->fpy) { vertex=v1; v1=v3; v3=vertex; }
@@ -1321,7 +1321,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
     v3_b=v3->b*63;
   }
 
-  //Calculamos la longitud de la linea más larga
+  //Compute the length of the longest line
   tri_height=v3->py-v1->py;
   if ((v3->fpy-v1->fpy)<0) return;
 //  if (tri_height<=0) return;
@@ -1339,7 +1339,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
     dx_left=schop(dxdy*65536.0);
     prestep=(float)v1->py-v1->fpy;
     x_left=schop((v1->fpx+prestep*dxdy)*65536.0);
-    //Calculo de las deltas
+    //Computation of the deltas
     if (type & T_TEXTURE) {
       if (type & T_PERSPECTIVE) {
         duz_left=(ru3-ru1)*fheight;
@@ -1371,7 +1371,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       right_section_height=v3->py-v2->py;
       if (right_section_height<=0) return;
       else {
-        //Calculo de las deltas
+        //Computation of the deltas
         dx_right=schop(((v3->fpx-v2->fpx)*65536.0)/(v3->fpy-v2->fpy));
         fheight=1.0/(v3->fpy-v2->fpy);
         dxdy=(v3->fpx-v2->fpx)*fheight;
@@ -1388,7 +1388,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       }
     }
     else {
-      //Calculo de las deltas
+      //Computation of the deltas
       dx_right=schop(((v2->fpx-v1->fpx)*65536.0)/(v2->fpy-v1->fpy));
       fheight=1.0/(v2->fpy-v1->fpy);
       dxdy=(v2->fpx-v1->fpx)*fheight;
@@ -1433,7 +1433,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
         dx_left=schop(dxdy*65536.0);
         prestep=(float)v2->py-v2->fpy;
         x_left=schop((v2->fpx+prestep*dxdy)*65536.0);
-        //Calculo de las deltas
+        //Computation of the deltas
         if (type & T_TEXTURE) {
           if (type & T_PERSPECTIVE) {
             duz_left=(ru3-ru2)*fheight;
@@ -1468,7 +1468,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       dx_left=schop(dxdy*65536.0);
       prestep=(float)v1->py-v1->fpy;
       x_left=schop((v1->fpx+prestep*dxdy)*65536.0);
-      //Calculo de las deltas
+      //Computation of the deltas
       if (type & T_TEXTURE) {
         if (type & T_PERSPECTIVE) {
           duz_left=(ru2-ru1)*fheight;
@@ -1512,7 +1512,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
 
   screen_ptr=(short *)(llrender_struct->copy_buffer+(v1->py)*llrender_struct->vwidth);
 
-  for (;;) { //Bucle que recorre el polígono de arriba a abajo
+  for (;;) { //Loop that goes through the polygon from top to bottom
     x1=adjust_integer(x_left);
     width=adjust_integer(x_right)-x1;
 
@@ -1810,7 +1810,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
         dx_left=schop(dxdy*65536.0);
         prestep=(float)v2->py-v2->fpy;
         x_left=schop((v2->fpx+prestep*dxdy)*65536.0);
-        //Calculo de las deltas
+        //Computation of the deltas
         if (type & T_TEXTURE) {
           if (type & T_PERSPECTIVE) {
             duz_left=(ru3-ru2)*fheight;
@@ -1865,7 +1865,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       right_section_height=v3->py-v2->py;
       if (right_section_height<=0) return;
       else {
-        //Calculo de las deltas
+        //Computation of the deltas
         dx_right=schop(((v3->fpx-v2->fpx)*65536.0)/(v3->fpy-v2->fpy));
         fheight=1.0/(v3->fpy-v2->fpy);
         dxdy=(v3->fpx-v2->fpx)*fheight;

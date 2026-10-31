@@ -1,13 +1,13 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo que contiene el código del mixer
+//      Module containing the mixer code
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
 #include "divmixer.hpp"
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Constantes
+//  Constants
 //═════════════════════════════════════════════════════════════════════════════
 
 #define MIX_BAR1   7
@@ -15,7 +15,7 @@
 #define MIX_BAR3  43
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Prototipos
+//  Prototypes
 //═════════════════════════════════════════════════════════════════════════════
 
 void mixer0(void);
@@ -32,7 +32,7 @@ struct t_listbox lvol_cd={MIX_BAR2,11,DummyArrayForFakingPurposesUsedInMixer,1,5
 struct t_listbox lvol_ma={MIX_BAR3,11,DummyArrayForFakingPurposesUsedInMixer,1,5,1};
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Ventana del mixer
+//  Mixer window
 //═════════════════════════════════════════════════════════════════════════════
 
 void mixer0(void)
@@ -147,7 +147,7 @@ void mixer2(void)
     }
   }
 
-  if(Touched) // Actualiza los valores del mixer
+  if(Touched) // Update the mixer values
   {
     Touched=0;
     lvol_fx.initial=15-Setupfile.vol_fx;

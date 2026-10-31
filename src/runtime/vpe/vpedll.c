@@ -1,4 +1,4 @@
-// *** OJO con los OJO
+// *** CAREFUL with the NOTEs
 
 #include <math.h>
 #include <stdio.h>
@@ -26,7 +26,7 @@ extern int error_vpe;
 void set_fog_table(int intensity,int r,int g, int b);
 void delete_process(int);
 
-typedef struct { int z;         // Profundidad
+typedef struct { int z;         // Depth
                } mode8_struct;
 
 int vpe_initialized=0;
@@ -36,12 +36,12 @@ int num_fpg_aux;
 int fr=-1,fg=0,fb=0;
 extern int num_blocks;
 
-// Importante: Para cada función se debe indicar el retval(int), y hacer
-// siempre un getparm() por cada parámetro de llamada (el retval() es
-// imprescindible incluso si la función no necesita devolver un valor).
+// Important: For each function you must specify the retval(int), and
+// always do a getparm() for each call parameter (the retval() is
+// mandatory even if the function does not need to return a value).
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve la longitud de un fichero
+//  Return the length of a file
 //═════════════════════════════════════════════════════════════════════════════
 
 int file_size(FILE *file)
@@ -56,7 +56,7 @@ int file_size(FILE *file)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga un mundo de modo 8 (VPE)
+//  Load a mode 8 world (VPE)
 //═════════════════════════════════════════════════════════════════════════════
 
 void load_wld(void)
@@ -112,7 +112,7 @@ void load_wld(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Inicializa una sesion de modo 8 (VPE)
+//  Initialize a mode 8 session (VPE)
 //═════════════════════════════════════════════════════════════════════════════
 
 void start_mode8(void)
@@ -152,7 +152,7 @@ void start_mode8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Finaliza una sesion de modo 8 (VPE)
+//  End a mode 8 session (VPE)
 //═════════════════════════════════════════════════════════════════════════════
 
 void stop_mode8(void)
@@ -170,7 +170,7 @@ void stop_mode8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica la altura del suelo de una region
+//  Modify the floor height of a region
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_sector_height(void)
@@ -190,7 +190,7 @@ void set_sector_height(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica la altura del techo de una region
+//  Modify the ceiling height of a region
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_sector_height(void)
@@ -217,7 +217,7 @@ void get_sector_height(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Finaliza las VPE
+//  End the VPE
 //═════════════════════════════════════════════════════════════════════════════
 
 void vpe_end()
@@ -229,7 +229,7 @@ void vpe_end()
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Bucle central del modo 8
+//  Main loop of mode 8
 //═════════════════════════════════════════════════════════════════════════════
 
 void loop_mode8(void)
@@ -275,7 +275,7 @@ void loop_mode8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Crea un objeto
+//  Create an object
 //═════════════════════════════════════════════════════════════════════════════
 
 int create_object(int ide)
@@ -475,7 +475,7 @@ void _object_data_input(int ide)
             m=mem[p];
             if (m>0 && m<=256) {
 
-              // angle es el ángulo de visión del gráfico (0..2048), m el número de particiones
+              // angle is the viewing angle of the graphic (0..2048), m the number of partitions
 
               mem[ide+_Flags]&=254;
               mem[ide+_Graph]=((angle+DEG360/(m*2))*m)/DEG360;
@@ -626,7 +626,7 @@ void go_to_flag(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica las coordenadas de un punto del mapa
+//  Modify the coordinates of a map point
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_point_m8(void)
@@ -650,7 +650,7 @@ void set_point_m8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve las coordenadas de un punto del mapa
+//  Return the coordinates of a map point
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_point_m8(void)
@@ -674,7 +674,7 @@ void get_point_m8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica las texturas de una region del mapa
+//  Modify the textures of a map region
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_sector_texture(void)
@@ -699,7 +699,7 @@ void set_sector_texture(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve las texturas de una region del mapa
+//  Return the textures of a map region
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_sector_texture(void)
@@ -725,7 +725,7 @@ void get_sector_texture(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica las texturas de una pared del mapa
+//  Modify the textures of a map wall
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_wall_texture(void)
@@ -757,7 +757,7 @@ void set_wall_texture(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve las texturas de una pared del mapa
+//  Return the textures of a map wall
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_wall_texture(void)
@@ -781,7 +781,7 @@ void get_wall_texture(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Avanza un objeto
+//  Advance an object
 //═════════════════════════════════════════════════════════════════════════════
 
 void _object_advance(int ide,int ang,int speed)
@@ -822,7 +822,7 @@ void _object_advance(int ide,int ang,int speed)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Destruye un objeto
+//  Destroy an object
 //═════════════════════════════════════════════════════════════════════════════
 
 void _object_destroy(int num_object)
@@ -852,7 +852,7 @@ void _object_destroy(int num_object)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica el valor de niebla
+//  Modify the fog value
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_fog(void)

@@ -78,7 +78,7 @@ unsigned int leng;
     {
 /*
       if(resource_struct->MyPack[x].Length)
-      {// Comprimido
+      {// Compressed
         Buffer=(unsigned char *)lf_malloc(resource_struct->MyPack[x].Length);
         fseek(resource_struct->Packed,resource_struct->MyPack[x].Offsets ,SEEK_SET);
         fread(Buffer,resource_struct->MyPack[x].Length,1,resource_struct->Packed);

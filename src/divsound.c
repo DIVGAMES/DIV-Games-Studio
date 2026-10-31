@@ -67,7 +67,7 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
       fread(&sound_fx, 1, 4, File_Cfg);
       fread(&cd_audio, 1, 4, File_Cfg);
 
-      // Nuevos valores del sound.cfg
+      // New values of sound.cfg
 
       if (fread(&mixer, 1, 4, File_Cfg)==4) {
         fread(&mixrate, 1, 4, File_Cfg);
@@ -99,7 +99,7 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
 
 //  timer_init(1193180 / 100, judas_update);
 
-  if (safe==33) { // Modo a prueba de fallos
+  if (safe==33) { // Safe mode
 
     judascfg_device = DEV_NOSOUND;
     judas_init(mixrate, mixer, mixmode, interpolation);

@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo que contiene las primitivas básicas para ventanas
+//      Module containing the basic primitives for windows
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -77,7 +77,7 @@ int mousebutton(int n,int x,int y,int center) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una caja en pantalla
+//      Draw a box on screen
 //═════════════════════════════════════════════════════════════════════════════
 
 void wbox(byte*copy_buffer,int copy_width,int copy_height,byte c,int x,int y,int w,int h) {
@@ -144,7 +144,7 @@ if(tsurface!=NULL)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Barra de título
+//  Title bar
 //═════════════════════════════════════════════════════════════════════════════
 
 char gradient[]={
@@ -207,7 +207,7 @@ void wgra(byte*copy_buffer,int copy_width,int copy_height,byte color,int x,int y
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Resalta una caja, como un icono sobre el que se ponga el cursor
+//      Highlight a box, like an icon the cursor is placed over
 //═════════════════════════════════════════════════════════════════════════════
 
 void whighlight_box(byte*copy_buffer,int copy_width,int copy_height,int x,int y,int w,int h) {
@@ -235,7 +235,7 @@ void whighlight_box(byte*copy_buffer,int copy_width,int copy_height,int x,int y,
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja un rectángulo
+//      Draw a rectangle
 //═════════════════════════════════════════════════════════════════════════════
 
 void wrectangle(byte*copy_buffer,int copy_width,int copy_height,byte c,int x,int y,int w,int h) {
@@ -566,7 +566,7 @@ void wblit_dark(byte*copy_buffer,int copy_width,int copy_height,
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones de impresión de un texto
+//      Text printing functions
 //═════════════════════════════════════════════════════════════════════════════
 typedef  struct { byte w; word dir; } sschar;
 // * car;
@@ -869,7 +869,7 @@ void wwrite_in_box(byte*copy_buffer,int real_copy_width,int copy_width,int copy_
 
 
 	if (y<copy_height && y+h>0) {
-		if (y>=0 && y+h<=copy_height) { // El texto coge entero (coord. y)
+		if (y>=0 && y+h<=copy_height) { // The text fits entirely (y coord.)
 			while (*ptr && x+glyph[*ptr].w<=0) { 
 				x=x+glyph[*ptr].w; 
 				ptr++; 

@@ -4,10 +4,10 @@
 #define GLOBALS
 #include "div.h"
 
-void ss_init(void) { // Funci¢n de inicializaci¢n del salvapantallas.
+void ss_init(void) { // Screensaver initialization function.
 }
 
-void ss_frame(void) { // Pone "wide" puntos en negro, aleatoriamente
+void ss_frame(void) { // Puts "wide" black points, randomly
   int x,y,n=0;
 
   for (n=0;n<wide;n++) {
@@ -23,7 +23,7 @@ void __export divmain(COMMON_PARAMS) {
   DIV_export("ss_init",ss_init);
   DIV_export("ss_frame",ss_frame);
 
-  ss_time=1500; // Llamar al salvapantallas tras 15 segundos de inactividad.
+  ss_time=1500; // Call the screensaver after 15 seconds of inactivity.
 
 
 }

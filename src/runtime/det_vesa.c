@@ -7,7 +7,7 @@
 //#include "..\inc\vesa.h"
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Detección de los modos vesa
+//  Detection of vesa modes
 //═════════════════════════════════════════════════════════════════════════════
 
 int compare_mode(void const *aa, void const *bb) {
@@ -17,7 +17,7 @@ int compare_mode(void const *aa, void const *bb) {
   return( *a*10000 + *(a+1) > *b*10000 + *(b+1) );
 }
 
-void detect_vesa(void) { // Detecta los modos de vídeo disponibles
+void detect_vesa(void) { // Detect the available video modes
 	short *modelist;
   int n;
 

@@ -2,7 +2,7 @@
 #include <stdio.h>
 //#include <mem.h>
 
-#define GLOBALS     // define las variables externas en este modulo.
+#define GLOBALS     // defines the external variables in this module.
 #include "div.h"
 
 char pal[1024];

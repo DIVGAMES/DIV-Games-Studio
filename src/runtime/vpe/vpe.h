@@ -162,9 +162,9 @@ struct Object {     // Object structure
   VPEFixed  Height, Radius, Step;    // Obj dimensions
   VPEFixed  Mass;      // Obj mass
   VPEShort  Fade;      // Light control
-  VPEShort  wall_number;   // Para el control de colisiones
-  VPEShort  region_number; // Para el control de colisiones
-  VPEShort  nextregion_number; // Para el control de colisiones
+  VPEShort  wall_number;   // For collision control
+  VPEShort  region_number; // For collision control
+  VPEShort  nextregion_number; // For collision control
   struct TexCon     TC;   // Texture
   struct Move       MSpeed; // Max speed
   struct Move       Acc;    // Obj acceleration
@@ -281,7 +281,7 @@ VPEWord GetPickWatch(void *,VPEFixed *);   // Get result of pick watching
 #define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
 
 //==================
-//  Funciones de movimiento
+//  Movement functions
 //==================
 
 void _object_advance(int num_object,int angle,int speed);

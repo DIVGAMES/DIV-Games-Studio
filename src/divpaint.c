@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo de dibujo
+//      Drawing module
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -60,7 +60,7 @@ void blit_darkened_bar(byte * p, int real_width, int x, int y, int w, int h);
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Barras de herramientas del programa de dibujo
+//      Toolbars of the drawing program
 //═════════════════════════════════════════════════════════════════════════════
 
 struct {
@@ -70,46 +70,46 @@ struct {
 } bars[10];
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Constantes
+//      Constants
 //═════════════════════════════════════════════════════════════════════════════
 
-#define _rule_start 96 // Inicio regla de colores en la pantalla de edicion
+#define _rule_start 96 // Start of the color rule in the edit screen
 #define max_int 65536
 
 extern int quick_close;
 int determine_help(void);
 extern int help_paint_active;
 
-int back; // Indica si se debe hacer un undo tras el volcado
+int back; // Tells whether an undo must be done after the dump
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables globales de este módulo
+//      Global variables of this module
 //═════════════════════════════════════════════════════════════════════════════
 
 int zoom_dx,zoom_dy,zoom_sx,zoom_sy;
-int zoom_speed=4; // más -> lento, menos -> rápido
+int zoom_speed=4; // more -> slow, less -> fast
 int _tab=0;
 
-int hotkey=1; // Indica si es se pueden utilizar hotkey (para barra de texto)
+int hotkey=1; // Tells whether hotkeys can be used (for the text bar)
 
 int num_point=0;
 
 //═════════════════════════════════════════════════════════════════════════════
 
-int line_fx=16; // Modo en el que se va a pintar la línea
+int line_fx=16; // Mode in which the line is going to be drawn
 
 int effect1=16,effect2=16,effect3=16,effect4=16,effect5=16;
 int effect6=16,effect7=16,effect8=4,effect12=16;
 
-int lights[128]; // Focos del fill (x,y), hasta 64 diferentes (-1,?) -> n/a
+int lights[128]; // Fill seeds (x,y), up to 64 different ones (-1,?) -> n/a
 
 int blur=0;
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables relacionadas con el pincel
+//      Brush related variables
 //═════════════════════════════════════════════════════════════════════════════
 
-// El pincel es un bitmap de colores entre 0 (0%) y 16 (100%)
+// The brush is a bitmap of colors between 0 (0%) and 16 (100%)
 
 byte default_brush[16]={ 16,16,16,16,
                               16,16,16,16,
@@ -119,19 +119,19 @@ byte default_brush[16]={ 16,16,16,16,
 byte *brush=&default_brush[0];
 int brush_width=1,brush_height=1;
 
-int brush_type=0; // 0-b/n, 1-grises
+int brush_type=0; // 0-b/w, 1-grayscale
 int num_brush=0;
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables relacionadas con la textura
+//      Texture related variables
 //═════════════════════════════════════════════════════════════════════════════
 
-byte * texture_color=NULL; // Cuando es NULL, se pinta con color
+byte * texture_color=NULL; // When it is NULL, it paints with color
 int texture_width=2,texture_height=2;
 int texture_x=0,texture_y=0;
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Obtiene el color de la texture_color
+//      Get the color from texture_color
 //═════════════════════════════════════════════════════════════════════════════
 
 void remove_texture(void) {
@@ -145,7 +145,7 @@ byte get_color(int x,int y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (edición genérica, sin modo definido)
+//      Edit screen (generic editing, with no mode defined)
 //═════════════════════════════════════════════════════════════════════════════
 
 void test_mouse_box(int a,int b,int c, int d) {
@@ -248,7 +248,7 @@ void edit_mode_0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (lápiz)
+//      Edit screen (pencil)
 //═════════════════════════════════════════════════════════════════════════════
 
 void edit_mode_1(void) {
@@ -267,7 +267,7 @@ void edit_mode_1(void) {
     select_fx(12,&effect1);
     select_color(2);
 
-    a=-1; // Ultima acción realizada (en esta iteración) - sin definir
+    a=-1; // Last action performed (in this iteration) - undefined
 
     if ((mouse_b&1) && mouse_graph>=10) {
 
@@ -283,7 +283,7 @@ void edit_mode_1(void) {
 
     } else a=0;
 
-    if (a>=0) _a=a; // Fijamos la última acción
+    if (a>=0) _a=a; // Set the last action
 
     if (((mouse_b&1) && selected_icon==1) || (scan_code==14 && !key(_L_SHIFT) && !key(_R_SHIFT))) {
       undo_back(); do {read_mouse();} while(mouse_b&1);
@@ -296,13 +296,13 @@ void edit_mode_1(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (líneas)
+//      Edit screen (lines)
 //═════════════════════════════════════════════════════════════════════════════
 
 void edit_mode_2(void) {
 
-  int s; // Estado 0-espera 1er click, 1-espera 2do click
-  int x0,y0; // Coordenadas iniciales
+  int s; // State 0-waiting for 1st click, 1-waiting for 2nd click
+  int x0,y0; // Initial coordinates
   int w,h;
 
   bar[0]=101+zoom; bar[1]=121;
@@ -359,13 +359,13 @@ void edit_mode_2(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (líneas continuas)
+//      Edit screen (continuous lines)
 //═════════════════════════════════════════════════════════════════════════════
 
 void edit_mode_3(void) {
 
-  int s; // Estado 0-espera 1er click, 1-espera 2do click, 2-espera 3er click
-  int x0,y0; // Coordenadas iniciales
+  int s; // State 0-waiting for 1st click, 1-waiting for 2nd click, 2-waiting for 3rd click
+  int x0,y0; // Initial coordinates
   int w,h;
 
   bar[0]=101+zoom; bar[1]=121;
@@ -425,16 +425,16 @@ void edit_mode_3(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (curvas bézier)
+//      Edit screen (bezier curves)
 //═════════════════════════════════════════════════════════════════════════════
 
 void edit_mode_4(void) {
 
-  int s; // Estado 0-espera 1er click, 1-espera 2do click, 2-3er..., 3-4to...
+  int s; // State 0-waiting for 1st click, 1-waiting for 2nd click, 2-3rd..., 3-4th...
 
-  int x0,y0; // Coordenadas iniciales
-  int x1,y1; // Coordenadas finales
-  int _x0,_y0; // Pendiente inicial
+  int x0,y0; // Initial coordinates
+  int x1,y1; // Final coordinates
+  int _x0,_y0; // Initial slope
 
   bar[0]=101+zoom; bar[1]=121;
   for (a=2;a<11;a++) bar[a]=1; bar[11]=166;
@@ -513,7 +513,7 @@ void edit_mode_4(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (curvas bézier continuas)
+//      Edit screen (continuous bezier curves)
 //═════════════════════════════════════════════════════════════════════════════
 
 int bezier_x,bezier_y;
@@ -521,10 +521,10 @@ int tension=16;
 
 void edit_mode_5(void) {
 
-  int s; // Estado 0-espera 1er click, 1-espera 2do click, 2-3er...
+  int s; // State 0-waiting for 1st click, 1-waiting for 2nd click, 2-3rd...
 
-  int x0,y0; // Primer punto
-  int x1,y1; // Segundo punto
+  int x0,y0; // First point
+  int x1,y1; // Second point
 
   float ang;
 
@@ -567,7 +567,7 @@ void edit_mode_5(void) {
         if (mouse_graph>=10) {
           y0=sqrt(abs(coord_x-x1)*abs(coord_x-x1)+abs(coord_y-y1)*abs(coord_y-y1));
 
-          // OJO, esto se puede poner a gusto del consumidor
+          // NOTE, this can be set to taste
 
           // y0=y0/2; if (y0>32) y0=32;
           // y0=y0/2;
@@ -614,7 +614,7 @@ void edit_mode_5(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (rectángulos)
+//      Edit screen (rectangles)
 //═════════════════════════════════════════════════════════════════════════════
 
 int icons_rectangle[]={2,1,110,111};
@@ -630,8 +630,8 @@ void select_rectangle(int n) {
 
 void edit_mode_6(void) {
 
-  int s; // Estado 0-espera 1er click, 1-espera 2do click
-  int x0,y0; // Coordenadas iniciales
+  int s; // State 0-waiting for 1st click, 1-waiting for 2nd click
+  int x0,y0; // Initial coordinates
   int w,h;
 
   bar[0]=101+zoom; bar[1]=121;
@@ -690,7 +690,7 @@ void edit_mode_6(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (círculos)
+//      Edit screen (circles)
 //═════════════════════════════════════════════════════════════════════════════
 
 int icons_circle[]={4,1,175,176,112,113};
@@ -706,8 +706,8 @@ void select_circle(int n) {
 
 void edit_mode_7(void) {
 
-  int s; // Estado 0-espera 1er click, 1-espera 2do click
-  int x0,y0; // Coordenadas iniciales
+  int s; // State 0-waiting for 1st click, 1-waiting for 2nd click
+  int x0,y0; // Initial coordinates
   int w,h;
 
   bar[0]=101+zoom; bar[1]=121;
@@ -781,7 +781,7 @@ void edit_mode_7(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Zoom porcion, sin hacer undo
+//      Zoom portion, without doing undo
 //═════════════════════════════════════════════════════════════════════════════
 
 void zoom_portion(int x, int y, int w, int h) {
@@ -790,7 +790,7 @@ void zoom_portion(int x, int y, int w, int h) {
   if (x+w>map_width) w=map_width-x; if (y+h>map_height) h=map_height-y;
   if (w<=0 || h<=0) return;
 
-  // Determina la zona de zoom a refrescar
+  // Determine the zoom area to refresh
 
   if (x<zoom_x) do_zoom_x=zx-((zoom_x-x)<<zoom);
   else do_zoom_x=zx+((x-zoom_x)<<zoom);
@@ -838,7 +838,7 @@ int rnd();
 void edit_mode_8(void) {
   byte col;
   int n,m,x,y;
-  int u=undo_spray,ux,uy; // Nº de acciones guardadas y en que caja
+  int u=undo_spray,ux,uy; // Number of saved actions and in which box
 
   clock_spray=-1;
 
@@ -914,7 +914,7 @@ void edit_mode_8(void) {
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (rellenos -fill-)
+//      Edit screen (fills)
 //═════════════════════════════════════════════════════════════════════════════
 
 int icons_fill[]={4,1,114,115,116,118,1};
@@ -947,7 +947,7 @@ void edit_mode_9(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Edit screen (bloques)
+//      Edit screen (blocks)
 //═════════════════════════════════════════════════════════════════════════════
 
 void bar_block(int n) {
@@ -963,10 +963,10 @@ void bar_block(int n) {
       break;
     case 1:
       bar[0]=101+zoom; bar[1]=121; for (a=2;a<11;a++) bar[a]=1;
-      bar[11]=166; // Cuentagotas
-      bar[12]=139; // Mover
+      bar[11]=166; // Eyedropper
+      bar[12]=139; // Move
       bar[13]=171; // Fx
-      bar[14]=172; // Ventana
+      bar[14]=172; // Window
       bar[15]=0; bar[16]=0;
       draw_bar(22); draw_rule(); break;
   }
@@ -975,7 +975,7 @@ void bar_block(int n) {
 void edit_mode_10(void) {
   int w,h;
   int x,y,a,b,aa,bb;
-  int s; // s: Estado 0-espera 1er click, 1-espera 2do click, ...
+  int s; // s: State 0-waiting for 1st click, 1-waiting for 2nd click, ...
   int * m;
 
   bar_block(0);
@@ -994,25 +994,25 @@ void edit_mode_10(void) {
 
       case 2: case 3:
 
-//        if ((mouse_b&1) && selected_icon==12) { // *** Delete, borra selección
+//        if ((mouse_b&1) && selected_icon==12) { // *** Delete, deletes the selection
 //          box2mab(); mab_delete(); do {read_mouse();} while(mouse_b&1);
 //        }
 
-        if ((mouse_b&1) && selected_icon==12) { // *** Mover, Copiar, ...
+        if ((mouse_b&1) && selected_icon==12) { // *** Move, Copy, ...
           do {read_mouse();} while(mouse_b&1);
           sel_status=0; box2mab(); move_block(NULL,0,0);
           if (mode<100) { bar_block(1); sel_status=1; }
           zoom_background=0; do_zoom=1;
           do {read_mouse();} while(mouse_b || key(_ESC));
         }
-        if ((mouse_b&1) && selected_icon==13) { // *** Efectos
+        if ((mouse_b&1) && selected_icon==13) { // *** Effects
           do {read_mouse();} while(mouse_b&1);
           box2mab(); effects();
           if (mode<100) { bar_block(1); sel_status=1; }
           zoom_background=0; do_zoom=1;
           do {read_mouse();} while(mouse_b || key(_ESC));
         }
-        if (((mouse_b&1) && selected_icon==14) || key(_K)) { // *** Cortar ventana
+        if (((mouse_b&1) && selected_icon==14) || key(_K)) { // *** Cut window
           s=0; sel_status=0; bar_block(0); do_zoom=1;
 	  cut_map();
           do {read_mouse();} while(mouse_b || key(_ESC));
@@ -1081,8 +1081,8 @@ void edit_mode_10(void) {
 
 void test_previous(void) {
 
-  // Todo esto se añade para calcular la zona a refrescar, en lugar de
-  // hacer un sencillo "do_zoom=1"
+  // All this is added to compute the area to refresh, instead of
+  // doing a simple "do_zoom=1"
 
   do_zoom_x=map_width; do_zoom_y=map_height;
   do_zoom_width=0; do_zoom_height=0;
@@ -1110,7 +1110,7 @@ void test_next(void) {
     case 5: test_mab(); break;
   }
 
-  // Determina la zona de zoom a refrescar en pantalla
+  // Determine the zoom area to refresh on screen
 
   x=do_zoom_x; y=do_zoom_y;
   w=do_zoom_width-do_zoom_x+1;
@@ -1133,7 +1133,7 @@ void test_next(void) {
     if (!do_zoom) do_zoom=-1;
   }
 
-  // Zona a refrescar calculada
+  // Area to refresh computed
 
   cclock=(*system_clock)>>1;
 //	  printf("%d %d\n",cclock, system_clock);
@@ -1154,7 +1154,7 @@ void test_mab(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pasa el bloque seleccionado a una nueva ventana
+//      Move the selected block to a new window
 //═════════════════════════════════════════════════════════════════════════════
 
 void cut_map(void) {
@@ -1162,20 +1162,20 @@ void cut_map(void) {
   int x,y,w,h;
   byte *p;
 
-  //1º Pide memoria para un struct tmapa
+  //1st Request memory for a tmapa struct
   if ((v_map=(struct tmapinfo *)malloc(sizeof(struct tmapinfo)))!=NULL) {
 
     box2mab(); w=mab_x1-mab_x0+1; h=mab_y1-mab_y0+1;
 
-    // 2º Pide memoria para el mapa
+    // 2nd Request memory for the map
     if ((v_map->map=(byte *)malloc(w*h))!=NULL) {
 
-      //2ºB Copia el contenido del mapa
+      //2nd B Copy the contents of the map
       p=v_map->map;
       for (y=mab_y0;y<=mab_y1;y++) for (x=mab_x0;x<=mab_x1;x++)
         if (is_mab(x,y)) *p++=*(map+y*map_width+x); else *p++=0;
 
-      //4º Fija el resto de variables
+      //4th Set the rest of the variables
       strcpy(v_map->filename,(char *)texts[136]);
       ltoa(next_code++,v_map->filename+strlen(v_map->filename),10);
       *v_map->path='\0';
@@ -1191,7 +1191,7 @@ void cut_map(void) {
           v_map->points[x+1]=-1;
         }
       }
-      v_map->HaveName=0;//No tiene descripcion por defecto
+      v_map->HaveName=0;//It has no description by default
       v_map->Code=0;
       windows_to_create[num_windows_to_create++]=v_map;
 
@@ -1205,7 +1205,7 @@ void cut_map(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Convierte los bloques sencillos (cajas) en mapas de bits
+//      Convert the simple blocks (boxes) into bitmaps
 //═════════════════════════════════════════════════════════════════════════════
 
 void box2mab(void) {
@@ -1222,7 +1222,7 @@ void box2mab(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Borra (con color) una zona seleccionada
+//      Erase (with color) a selected area
 //═════════════════════════════════════════════════════════════════════════════
 
 void mab_delete(void) {
@@ -1242,7 +1242,7 @@ void mab_delete(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cambia de banco (con la regla) una zona seleccionada
+//      Change the bank (with the rule) of a selected area
 //═════════════════════════════════════════════════════════════════════════════
 
 void mab_rule(void) {
@@ -1262,7 +1262,7 @@ void mab_rule(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Invierte una selección
+//	Invert a selection
 //═════════════════════════════════════════════════════════════════════════════
 
 void mab_invert(void) {
@@ -1281,7 +1281,7 @@ void mab_invert(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Crea la máscara a una selección
+//      Create the mask of a selection
 //═════════════════════════════════════════════════════════════════════════════
 
 void mab_mask(void) {
@@ -1308,7 +1308,7 @@ void mab_mask(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Aclara una selección
+//      Lighten a selection
 //═════════════════════════════════════════════════════════════════════════════
 
 void mab_lighten(byte color_lighten) {
@@ -1365,7 +1365,7 @@ void mab_antialias(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Modo de selección de bloques por una caja (según s=estado)
+//      Block selection mode by a box (according to s=state)
 //═════════════════════════════════════════════════════════════════════════════
 
 int edit_mode_6_box(int s) {
@@ -1405,7 +1405,7 @@ int edit_mode_6_box(int s) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Modo de selección de bloques por una caja (según s=estado)
+//      Block selection mode by a box (according to s=state)
 //═════════════════════════════════════════════════════════════════════════════
 
 int edit_mode_6_box_auto(int s) {
@@ -1429,7 +1429,7 @@ int edit_mode_6_box_auto(int s) {
 
           do { m=0;
 
-            // Amplia la caja ...
+            // Enlarge the box ...
             n=0; if (y0>0) {
               for (x=x0;x<=x1;x++) if (*(map+(y0-1)*map_width+x)) n++;
               if (n) y0--; m+=n; }
@@ -1443,7 +1443,7 @@ int edit_mode_6_box_auto(int s) {
               for (y=y0;y<=y1;y++) if (*(map+y*map_width+x1+1)) n++;
               if (n) x1++; m+=n; }
 
-	    // Reduce la caja ...
+	    // Shrink the box ...
 	    n=0; if (y0<y1) {
 	      for (x=x0;x<=x1;x++) if (*(map+y0*map_width+x)) n++;
 	      if (!n) {y0++;m++;} }
@@ -1490,7 +1490,7 @@ int edit_mode_6_box_auto(int s) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una línea en el mapa de bits desde x0,y0 .. hasta x1,y1
+//      Draw a line in the bitmap from x0,y0 .. to x1,y1
 //═════════════════════════════════════════════════════════════════════════════
 
 void mab_line(int x0, int y0, int x1, int y1) {
@@ -1529,10 +1529,10 @@ void mab_line(int x0, int y0, int x1, int y1) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Algoritmo de relleno de un poligono en mab
+//      Polygon fill algorithm in mab
 //═════════════════════════════════════════════════════════════════════════════
 
-word polygon[2048]; // Hasta 1024 puntos para seleccionar un poligono
+word polygon[2048]; // Up to 1024 points to select a polygon
 int n_points;
 int k1,k2,xmin,trans;
 
@@ -1551,7 +1551,7 @@ void find_first_x_from(int xi,int y) {
     }
   }
 
-  // Se ha obtenido xmin, ahora se ha de contabilizar k1 y k2 actualizando t
+  // xmin has been obtained, now k1 and k2 must be counted, updating t
 
   if (xmin!=max_int) for (n=0;n<n_points-1;n++) {
     x0=polygon[n*2]; y0=polygon[n*2+1];
@@ -1570,7 +1570,7 @@ void find_first_x_from(int xi,int y) {
 }
 
 void fill_polygon(void) {
-  int y0,y1; // Coordenada Y inicial y final
+  int y0,y1; // Initial and final Y coordinate
   int x0,is_inside;
   int m,n;
 
@@ -1595,7 +1595,7 @@ void fill_polygon(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Modo de selección poligonal (según s=estado)
+//      Polygonal selection mode (according to s=state)
 //═════════════════════════════════════════════════════════════════════════════
 
 int edit_mode_6_lines(int s) {
@@ -1656,7 +1656,7 @@ int edit_mode_6_lines(int s) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Modo de selección de bloques por relleno (según s=estado)
+//      Block selection mode by fill (according to s=state)
 //═════════════════════════════════════════════════════════════════════════════
 
 int edit_mode_6_fill(int s) {
@@ -1703,7 +1703,7 @@ int edit_mode_6_fill(int s) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Modo de selección de bloques por varias cajas (según s=estado)
+//      Block selection mode by several boxes (according to s=state)
 //═════════════════════════════════════════════════════════════════════════════
 
 int edit_mode_6_boxes(int s) {
@@ -1804,21 +1804,21 @@ void edit_mode_11(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Texto
+//      Text
 //═════════════════════════════════════════════════════════════════════════════
 
-// *** OJO *** fallo refresco al combinar undo y backspace para borrar el texto
+// *** NOTE *** refresh bug when combining undo and backspace to delete the text
 
 int determine_fnt(void);
 void GetCharSizeBuffer(int WhatChar,int *width,int *height,char *buffer);
 int ShowCharBuffer(int WhatChar,int cx,int cy,char *ptr,int w,char *buffer);
 
-int bar_text=0; // Para no resaltar el background con la 'b'
+int bar_text=0; // So as not to highlight the background with the 'b'
 
 void edit_mode_12(void) {
   int spacelen,cnt,x,fw,fh,wmax,hmax;
   int ms=selection_mode;
-  int tx=-256,ty=-256; // Inicio del texto (para el enter)
+  int tx=-256,ty=-256; // Start of the text (for the enter)
   byte * font, * buffer;
   int ilon=0;
   byte len[256];
@@ -1830,11 +1830,11 @@ void edit_mode_12(void) {
 
   if (x=determine_fnt()) {
 
-    // Puntero al font
+    // Pointer to the font
 
     font=window[x].aux+RES_FOR_NAME;
 
-    // Determina spacelen
+    // Determine spacelen
 
     spacelen=0; cnt=0;
     for(x=0;x<255;x++) {
@@ -1842,7 +1842,7 @@ void edit_mode_12(void) {
       if(fw!=1) { cnt++; spacelen+=fw; }
     } spacelen=(spacelen/cnt)/2;
 
-    // Determina anmax y almax
+    // Determine anmax and almax
 
     wmax=0; hmax=0; for(x=0;x<255;x++) {
       GetCharSizeBuffer(x,&fw,&fh,(char *)font);
@@ -1851,7 +1851,7 @@ void edit_mode_12(void) {
       if(hmax<fh) hmax=fh;
     }
 
-    // Pide memoria para el buffer
+    // Request memory for the buffer
 
     if ((buffer=(byte*)malloc(wmax*hmax))!=NULL) {
       memset(buffer,0,wmax*hmax);
@@ -1860,7 +1860,7 @@ void edit_mode_12(void) {
       font=NULL;
     }
 
-  } else font=NULL; // Pintará con el font del editor
+  } else font=NULL; // It will draw with the editor font
 
   bar_text=1;
 
@@ -1872,7 +1872,7 @@ void edit_mode_12(void) {
 
     if (font==NULL) {
 
-      // Escribe con el font del sistema
+      // Write with the system font
 
       if (mouse_graph>=10 && (mouse_b&1) && !key(_SPC)) {
         sel_x0=coord_x-font_width/2; sel_y0=coord_y-font_height/2;
@@ -1895,7 +1895,7 @@ void edit_mode_12(void) {
           }
         } else if (ascii && scan_code!=15 && scan_code!=1 && ilon<256) {
           if (save_undo(sel_x0,sel_y0,font_width,font_height)) {
-            test_previous(); // Para contrarrestar el efecto del save_undo()
+            test_previous(); // To counteract the effect of save_undo()
             line_fx=effect12; write_char(sel_x0,sel_y0,ascii);
             sel_x0+=font_width; sel_x1+=font_width;
           }
@@ -1903,7 +1903,7 @@ void edit_mode_12(void) {
       }
     } else {
 
-      // Escribe con el font seleccionado
+      // Write with the selected font
 
       if (mouse_graph>=10 && (mouse_b&1)) {
         sel_x0=coord_x-spacelen/2; sel_y0=coord_y-hmax/2;
@@ -1934,7 +1934,7 @@ void edit_mode_12(void) {
           } else {
             memset(buffer,0,wmax*hmax);
             if (save_undo(sel_x0,sel_y0,fw,hmax)) {
-              test_previous(); // Para contrarrestar el efecto del save_undo()
+              test_previous(); // To counteract the effect of save_undo()
               ShowCharBuffer(ascii,0,0,(char *)buffer,wmax,(char *)font);
               line_fx=effect12; write_char2(sel_x0,sel_y0,buffer,wmax,hmax);
               sel_x0+=fw; sel_x1+=fw; len[ilon++]=fw;
@@ -1970,7 +1970,7 @@ void edit_mode_12(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función que escribe un carácter del sistema en un mapa (en 'color')
+//      Function that writes a system character onto a map (in 'color')
 //═════════════════════════════════════════════════════════════════════════════
 
 void write_char(int x, int y, byte c) {
@@ -2039,7 +2039,7 @@ void write_char2(int x, int y, byte * si, int font_width, int font_height) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Puntos de control
+//      Control points
 //═════════════════════════════════════════════════════════════════════════════
 
 void edit_mode_13(void) {
@@ -2061,8 +2061,8 @@ void edit_mode_13(void) {
       case 0x4E: num_point++;   break; // +
       case 0x49: num_point-=10; break; // RePag
       case 0x51: num_point+=10; break; // AvPag
-      case 0x47: num_point=0;   break; // Inicio
-      case 0x4F:                       // Fin
+      case 0x47: num_point=0;   break; // Home
+      case 0x4F:                       // End
         for(m=0;m<512;m+=2) if(v.map->points[m]!=-1) num_point=m/2;
         break;
     }
@@ -2086,7 +2086,7 @@ void edit_mode_13(void) {
       test_sel();
     }
 
-    if (scan_code==0x53) { // Suprimir
+    if (scan_code==0x53) { // Delete
       v.map->points[num_point*2]=-1;
       v.map->points[num_point*2+1]=-1;
     }
@@ -2135,7 +2135,7 @@ void edit_mode_13(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pinta una curva bézier
+//      Draw a bezier curve
 //═════════════════════════════════════════════════════════════════════════════
 
 void bezier(int x0,int y0,int x1,int y1,int _x0,int _y0,int _x1,int _y1,int inc0) {
@@ -2170,8 +2170,8 @@ void bezier(int x0,int y0,int x1,int y1,int _x0,int _y0,int _x1,int _y1,int inc0
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una línea de puntos desde x0,y0 .. hasta x1,y1
-//      'inc0' indica si debemos pinr el primer pixel de la línea
+//      Draw a dotted line from x0,y0 .. to x1,y1
+//      'inc0' tells whether we must draw the first pixel of the line
 //═════════════════════════════════════════════════════════════════════════════
 
 void line0(int x0, int y0, int x1, int y1, int inc0) {
@@ -2212,7 +2212,7 @@ void line0(int x0, int y0, int x1, int y1, int inc0) {
   }
 }
 
-// Intentando añadir que pinten de abajo hacia arriba y de derecha a izquierda
+// Trying to add drawing from bottom to top and from right to left
 
 void line(int x0, int y0, int x1, int y1, int inc0) {
   int dx=0,dy=0,a=0,b=0,d=0,x=0,y=0;
@@ -2272,7 +2272,7 @@ void line(int x0, int y0, int x1, int y1, int inc0) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pinta un pixel, según line_fx y color
+//      Draw a pixel, according to line_fx and color
 //═════════════════════════════════════════════════════════════════════════════
 
 int color256;
@@ -2286,7 +2286,7 @@ void pixel(byte *p) {
 
   switch(line_fx) {
 
-  case 0: // Quitar un color
+  case 0: // Remove a color
     if (*p==color) *p=0;
     break;
 
@@ -2379,7 +2379,7 @@ void pixel(byte *p) {
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
-  case 16: // Poner un color
+  case 16: // Put a color
     *p=color;
     break;
 
@@ -2393,7 +2393,7 @@ void pixel_sin_mask(byte *p) {
 
   switch(line_fx) {
 
-  case 0: // Quitar un color
+  case 0: // Remove a color
     if (*p==color) *p=0;
     break;
 
@@ -2486,7 +2486,7 @@ void pixel_sin_mask(byte *p) {
     if (d!=*p) *p=d; else if (c!=*p) *p=c; else if (b!=*p) *p=b; else if (a!=*p) *p=a; else *p=color;
     break;
 
-  case 16: // Poner un color
+  case 16: // Put a color
     *p=color;
     break;
 
@@ -2626,7 +2626,7 @@ void line_pixel(int x,int y) { // Brush
   } line_fx=_line_fx;
 }
 
-void _line_pixel(int x,int y) { // Un simple pixel (para line_pixel,spray y writes)
+void _line_pixel(int x,int y) { // A simple pixel (for line_pixel, spray and writes)
   byte c1,c2,_color=color;
 
   if (x>=0 && y>=0 && x<map_width && y<map_height) {
@@ -2641,7 +2641,7 @@ void _line_pixel(int x,int y) { // Un simple pixel (para line_pixel,spray y writ
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una caja, según rectangle_mode, line_fx y color
+//      Draw a box, according to rectangle_mode, line_fx and color
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_rectangle(int x0,int y0,int x1,int y1) {
@@ -2664,14 +2664,14 @@ void draw_rectangle(int x0,int y0,int x1,int y1) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja un círculo, según modo_círculo, line_fx y color
+//      Draw a circle, according to circle_mode, line_fx and color
 //═════════════════════════════════════════════════════════════════════════════
 
 void circle(int x0,int y0,int x1,int y1,int fill) {
 
-  int p[2048]; // Puntos de la circunferencia
-  double cx,rx; // Centro y radio de la circunferencia
-  int w,h; // Ancho y alto
+  int p[2048]; // Points of the circumference
+  double cx,rx; // Center and radius of the circumference
+  int w,h; // Width and height
   double y,ymed,nsin;
   int n,xa,xb,ya,yb;
 
@@ -2748,7 +2748,7 @@ void circle_scan2(int x,int y,int w) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Detecta la regla de color dentro de una barra de edición
+//      Detect the color rule inside an edit bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void edit_rule(void) {
@@ -2776,7 +2776,7 @@ void edit_rule(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Barra de mover, copiar, rotar, escalar, etc.
+//      Bar for move, copy, rotate, scale, etc.
 //═════════════════════════════════════════════════════════════════════════════
 
 void move_block(byte * sp, int w, int h) {
@@ -2791,7 +2791,7 @@ void move_block(byte * sp, int w, int h) {
 
   int ghost=0,block=0;
   float size=1,ang=0,old_float;
-  int s=0; // Status 0-Normal, 1-Rotando_a, 2-Rotando_b, 3-Escalando_a, 4-...
+  int s=0; // Status 0-Normal, 1-Rotating_a, 2-Rotating_b, 3-Scaling_a, 4-...
 
   byte num[5];
 
@@ -2799,7 +2799,7 @@ void move_block(byte * sp, int w, int h) {
     w=mab_x1-mab_x0+1; h=mab_y1-mab_y0+1;
     if ((sp=(byte*)malloc(w*h))==NULL) {
       v_text=(char *)texts[45]; dialog(err0); return; }
-    memset(sp,0,w*h); // Crea el sprite en sp
+    memset(sp,0,w*h); // Create the sprite in sp
     for (y=mab_y0;y<=mab_y1;y++)
       for (x=mab_x0;x<=mab_x1;x++)
         if (is_mab(x,y)) *(sp+x-mab_x0+(y-mab_y0)*w)=*(map+x+y*map_width);
@@ -2977,7 +2977,7 @@ void move_block(byte * sp, int w, int h) {
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      FX - efectos sobre un bloque seleccionado
+//      FX - effects on a selected block
 //═════════════════════════════════════════════════════════════════════════════
 
 void effects(void) {
@@ -2994,27 +2994,27 @@ void effects(void) {
       undo_back(); do {read_mouse();} while(mouse_b&1);
     } else if (scan_code==14 && (key(_L_SHIFT)||key(_R_SHIFT))) { undo_next(); do_zoom=1; }
 
-    if ((mouse_b&1) && selected_icon==2) { // Pasar a regla
+    if ((mouse_b&1) && selected_icon==2) { // Convert to rule
       mab_rule(); do_zoom=1;
       do {read_mouse();} while(mouse_b&1);
     }
 
-    if ((mouse_b&1) && selected_icon==3) { // Invertir
+    if ((mouse_b&1) && selected_icon==3) { // Invert
       mab_invert(); do_zoom=1;
       do {read_mouse();} while(mouse_b&1);
     }
 
-    if ((mouse_b&1) && selected_icon==4) { // Máscara
+    if ((mouse_b&1) && selected_icon==4) { // Mask
       mab_mask(); do_zoom=1;
       do {read_mouse();} while(mouse_b&1);
     }
 
-    if ((mouse_b&1) && selected_icon==5) { // Aclarar
+    if ((mouse_b&1) && selected_icon==5) { // Lighten
       mab_lighten(c4); do_zoom=1;
       do {read_mouse();} while(mouse_b&1);
     }
 
-    if ((mouse_b&1) && selected_icon==6) { // Oscurecer
+    if ((mouse_b&1) && selected_icon==6) { // Darken
       mab_lighten(c0); do_zoom=1;
       do {read_mouse();} while(mouse_b&1);
     }
@@ -3038,7 +3038,7 @@ void effects(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Cuentagotas (toma un color de pantalla) para una barra cualquiera
+//      Eyedropper (takes a color from the screen) for any bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void eyedropper(void) {
@@ -3101,8 +3101,8 @@ void eyedropper(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función que dice si el cursor esta sobre un color editable de la regla
-//      Devuelve en el parámetro el color editado (de la regla actual de color)
+//      Function that tells whether the cursor is over an editable color of the rule
+//      Returns in the parameter the edited color (of the current color rule)
 //═════════════════════════════════════════════════════════════════════════════
 
 int editable(int *n) {
@@ -3127,9 +3127,9 @@ int editable(int *n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función que dice si el cursor esta sobre un color editable de la regla
-//      Devuelve en el parámetro el color editado (de la regla actual de color)
-//      - Versión para la regla de la ventana de select_color -
+//      Function that tells whether the cursor is over an editable color of the rule
+//      Returns in the parameter the edited color (of the current color rule)
+//      - Version for the rule of the select_color window -
 //═════════════════════════════════════════════════════════════════════════════
 
 int editable_selection(int *n,int x,int y) {
@@ -3154,7 +3154,7 @@ int editable_selection(int *n,int x,int y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja la regla de colores dentro de la barra de edicion
+//      Draw the color rule inside the edit bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_rule(void) {
@@ -3198,7 +3198,7 @@ void draw_rule(void) {
       }
   }
 
-  wbox(toolbar,vga_width/big2,19,color,80,2,7,8); // Caja del color, invoca a select_color()
+  wbox(toolbar,vga_width/big2,19,color,80,2,7,8); // Color box, invokes select_color()
 
   if (texture_color==NULL || mode==0) {
     n=(memptrsize)c1*3; mid=dac[n]+dac[n+1]+dac[n+2];
@@ -3218,7 +3218,7 @@ void draw_rule(void) {
     }
   }
 
-  // Selección de texture_color
+  // texture_color selection
 
   wbox(toolbar,vga_width/big2,19,c2,80,2+9,7,6);
 
@@ -3226,12 +3226,12 @@ void draw_rule(void) {
   wbox(toolbar,vga_width/big2,19,c3,80+5,2+10,1,4);
   wbox(toolbar,vga_width/big2,19,c3,80+1,2+13,5,1);
 
-  // Rectángulo del color 0
+  // Rectangle of color 0
 
   wrectangle(toolbar,vga_width/big2,19,c1,88,2,7,8);
   wbox(toolbar,vga_width/big2,19,0,88+1,2+1,5,6);
 
-  // Selección de brush
+  // Brush selection
 
   wbox(toolbar,vga_width/big2,19,c2,88,2+9,7,6);
 
@@ -3243,7 +3243,7 @@ void draw_rule(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja la regla de colores dentro de la ventana de selección de color
+//      Draw the color rule inside the color selection window
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_rule_selection(byte * p, int c, int d, int x, int y) {
@@ -3307,7 +3307,7 @@ void draw_rule_selection(byte * p, int c, int d, int x, int y) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Ayuda dentro del editor de dibujo
+//      Help inside the drawing editor
 //═════════════════════════════════════════════════════════════════════════════
 
 extern struct tprg * old_prg;
@@ -3318,7 +3318,7 @@ void drawing_help(int n) {
 
   if (!key(_L_SHIFT) && !key(_R_SHIFT) && key(_F1)) {
 
-    // Si hay una ventana de ayuda, entonces la quita
+    // If there is a help window, then remove it
 
     if ((m=determine_help())>0) {
       v.foreground=1; v.state=1; v.type=100;
@@ -3344,7 +3344,7 @@ void drawing_help(int n) {
       highlighted_background=0; zoom_map(); do_zoom=0;
     }
 
-    // Crea un diálogo de ayuda...
+    // Create a help dialog...
 
     help_paint(n);
 
@@ -3352,7 +3352,7 @@ void drawing_help(int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//    Para ver la textura con la tecla X
+//    To view the texture with the X key
 //═════════════════════════════════════════════════════════════════════════════
 
 void zoom_map2(void) {
@@ -3362,7 +3362,7 @@ void zoom_map2(void) {
 
   p=map+zoom_y*map_width+zoom_x;
 
-  if ((map_width<<zoom)<vga_width) { // Copia de este trozo en select_zoom()
+  if ((map_width<<zoom)<vga_width) { // Copy of this chunk in select_zoom()
     zwidth=map_width<<zoom; zx=(vga_width-zwidth)/2; q+=zx; w=map_width;
   } else {
     zx=0; w=vga_width>>zoom; zwidth=w<<zoom;
@@ -3454,7 +3454,7 @@ void zoom_map2(void) {
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Volcado de la copia virtual de pantalla a la real (en edición)
+//      Dump of the virtual screen copy to the real one (while editing)
 //═════════════════════════════════════════════════════════════════════════════
 
 int b_pressed;
@@ -3526,7 +3526,7 @@ void blit_edit(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selección de otra barra, desde la pantalla de edición
+//      Selection of another bar, from the edit screen
 //═════════════════════════════════════════════════════════════════════════════
 
 int icons_mode[]={14,2,177,160,161,178,162,179,163,164,180,165,131,100,191,190};
@@ -3560,7 +3560,7 @@ void select_mode(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selección de FX, desde una barra de edición
+//      FX selection, from an edit bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void select_fx(int n,int * effect) {
@@ -3675,7 +3675,7 @@ void select_fx(int n,int * effect) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selección de algoritmo de relleno, desde una barra de edición
+//      Fill algorithm selection, from an edit bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void select_fill(int n) {
@@ -3686,7 +3686,7 @@ void select_fill(int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selección de algoritmo de relleno, desde una barra de edición
+//      Fill algorithm selection, from an edit bar
 //═════════════════════════════════════════════════════════════════════════════
 
 int icons_box[]={6,1,135,136,137,138,169,170};
@@ -3698,7 +3698,7 @@ void select_box(int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selección de entre cualquier lista de iconos, en una barra de edición
+//      Selection from any list of icons, in an edit bar
 //═════════════════════════════════════════════════════════════════════════════
 
 int select_icon(int icon_x,int * icons) {
@@ -3794,7 +3794,7 @@ int select_icon(int icon_x,int * icons) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Vuelca la pantalla (y barra) posicionando el raton si mouse_graph>=10
+//      Dump the screen (and bar) positioning the mouse if mouse_graph>=10
 //═════════════════════════════════════════════════════════════════════════════
 
 void blit_mouse() { blit_mouse_a(); blit_mouse_b(); }
@@ -3825,7 +3825,7 @@ void blit_mouse_b(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Ventana de selección de máscara
+//      Mask selection window
 //═════════════════════════════════════════════════════════════════════════════
 
 void select_mask(int n) {
@@ -3851,7 +3851,7 @@ void select_mask(int n) {
       oldcol=col;
       col=color;
 
-      // Mueve la ventana
+      // Move the window
 
       if (mouse_in(a+2,b+2,a+c-10,b+9)) {
         ix=mouse_shift_x-a; iy=mouse_shift_y-b;
@@ -3872,7 +3872,7 @@ void select_mask(int n) {
         }
       }
 
-      // Determina col sobre el que estamos
+      // Determine the col we are over
 
       if (mouse_in(a+2,b+10,a+128+1,b+128+9)) {
         col=(mouse_x-a-2)/8+((mouse_y-b-10)/8)*16;
@@ -3893,7 +3893,7 @@ void select_mask(int n) {
         do { read_mouse(); } while (mouse_b);
       }
 
-      // Coger un color de la pantalla
+      // Pick a color from the screen
 
       if ((mouse_b&1) && !mouse_in(a,b,a+c-1,b+d-1))
         if (mouse_graph>=10) {
@@ -3934,18 +3934,18 @@ void select_mask(int n) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pinta la ventana de selección de máscara
+//      Draw the mask selection window
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_window_mask(byte * p,int c,int d) {
   int n,x,y;
 
-  wrectangle(p,c,d,c2,0,0,c,d); // Ventana
+  wrectangle(p,c,d,c2,0,0,c,d); // Window
   wbox(p,c,d,c0,1,1,c-2,d-2);
   wgra(p,c,d,c_b_low,2,2,c-12,7);
   wput(p,c,d,c-9,2,35);
 
-  // Caja y paleta
+  // Box and palette
 
   for (y=0;y<16;y++) for (x=0;x<16;x++)
     wbox(p,c,d,y*16+x,2+x*8,10+y*8,7,7);
@@ -3966,7 +3966,7 @@ void draw_window_mask(byte * p,int c,int d) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selección de un color de la paleta, desde una barra de edición
+//      Selection of a palette color, from an edit bar
 //═════════════════════════════════════════════════════════════════════════════
 //Find: SCO
 
@@ -3984,10 +3984,10 @@ extern M3D_info  m3d_edit;
 extern char m3d_fpgcodesbr[max_textures*texture_code_width];
 extern struct t_listboxbr ltexturesbr;
 extern struct _thumb_tex {
-  int w,h;            // Ancho y Alto de la reducción
-  int RealWidth, RealHeight;   // Ancho y Alto de la textura
-  char * ptr;           // ==NULL si el thumbnail no se ha comenzado a cargar
-  int status;           // 0-No es una textura valida, 1-Cargada
+  int w,h;            // Width and Height of the reduction
+  int RealWidth, RealHeight;   // Width and Height of the texture
+  char * ptr;           // ==NULL if the thumbnail has not started loading
+  int status;           // 0-Not a valid texture, 1-Loaded
   int FilePos;
   int Code;
   int Square;
@@ -4001,11 +4001,11 @@ int m_maximum=0;
 struct t_listboxbr lthumbmapbr={3-2,11-2,NULL,0,4,4,32,32};
 int TypeBrowser=0;
 
-struct _thumb_map { // Reducciones de brushmaps
-  int w,h;            // Ancho y Alto de la reducción
-  int RealWidth, RealHeight;   // Ancho y Alto de la textura
-  char * ptr;           // ==NULL si el thumbnail no se ha comenzado a cargar
-  int status;           // 0-No es una textura valida, 1-Cargada
+struct _thumb_map { // Brushmap reductions
+  int w,h;            // Width and Height of the reduction
+  int RealWidth, RealHeight;   // Width and Height of the texture
+  char * ptr;           // ==NULL if the thumbnail has not started loading
+  int status;           // 0-Not a valid texture, 1-Loaded
   int FilePos;
   int Code;
   int Square;
@@ -4065,7 +4065,7 @@ int create_mapbr_thumbs(struct t_listboxbr * l)
     mh  = thumb_map[ctr].RealHeight = thumb_map[ctr].h;
     temp = (byte *)thumb_map[ctr].ptr;
 
-    if(mw<=32*big2 && mh<=32*big2) // El grafico se deja tal cual
+    if(mw<=32*big2 && mh<=32*big2) // The graphic is left as is
     {
       if((thumb_map[ctr].ptr=(char *)malloc(mw*mh))==NULL)
       {
@@ -4075,7 +4075,7 @@ int create_mapbr_thumbs(struct t_listboxbr * l)
       }
       memcpy(thumb_map[ctr].ptr, temp, mw*mh);
     }
-    else // Crea el thumbnail
+    else // Create the thumbnail
     {
 
       coefredx=mw/((float)32*2*(float)big2);
@@ -4136,7 +4136,7 @@ int create_mapbr_thumbs(struct t_listboxbr * l)
   return(1);
 }
 
-void select_color(int n) { // Número de "icono" como parámetro
+void select_color(int n) { // Number of "icon" as a parameter
   int x,y,col,oldcol,ix,iy;
   int a,b,c,d;
   int do_exit,blit;
@@ -4153,8 +4153,8 @@ void select_color(int n) { // Número de "icono" como parámetro
     TypeBrowser=BRUSH;
     dialog(MapperBrowseFPG0);
 
-    num_tex=ltexturesbr.initial+ltexturesbr.zone-10; // Posicion en browser
-    tex_code=atoi(m3d_fpgcodesbr+num_tex*texture_code_width); // Codigo de esa posicion
+    num_tex=ltexturesbr.initial+ltexturesbr.zone-10; // Position in browser
+    tex_code=atoi(m3d_fpgcodesbr+num_tex*texture_code_width); // Code of that position
 
     if(thumb_tex[num_tex].Code==0 || !v_finished) return;
 
@@ -4188,7 +4188,7 @@ void select_color(int n) { // Número de "icono" como parámetro
         memcpy(pal,dac,768);
         fread(pal,1,768,FilePaintFPG);
 
-        // Brush en {pincel, man x mal, pal}
+        // Brush in {brush, man x mal, pal}
 
         for (n=0;n<256;n++) xchg[n]=(pal[n*3]+pal[n*3+1]+pal[n*3+2]+3)/12;
         brush_type=0;
@@ -4233,7 +4233,7 @@ void select_color(int n) { // Número de "icono" como parámetro
       oldcol=col;
       col=color;
 
-      // Mueve la ventana
+      // Move the window
 
       if (mouse_in(a+2,b+2,a+c-10,b+9)) {
         ix=mouse_shift_x-a; iy=mouse_shift_y-b;
@@ -4328,7 +4328,7 @@ void select_color(int n) { // Número de "icono" como parámetro
           mouse_graph=2;
       }
 
-      // Volcar: 0-Nada (ratón), 1-Información color, 2-Ventana entera.
+      // Dump: 0-Nothing (mouse), 1-Color information, 2-Whole window.
 
       if (blit==1) { blit=0;
         blit_bars(0);
@@ -4428,7 +4428,7 @@ void select_color(int n) { // Número de "icono" como parámetro
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Animación (pasa mapas con TAB y shift-TAB)
+//  Animation (cycle maps with TAB and shift-TAB)
 //═════════════════════════════════════════════════════════════════════════════
 
 void change_map(int forward) {
@@ -4481,7 +4481,7 @@ void change_map(int forward) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Sube o baja un tono el color actualmente seleccionado
+//      Raise or lower one shade the currently selected color
 //═════════════════════════════════════════════════════════════════════════════
 
 void color_up(void) {
@@ -4504,7 +4504,7 @@ void color_down(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pinta la ventana de seleccion de colores
+//      Draw the color selection window
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_window_colors(byte * p,int c,int d) {
@@ -4512,12 +4512,12 @@ void draw_window_colors(byte * p,int c,int d) {
   int x,y;
   char num[3];
 
-  wrectangle(p,c,d,c2,0,0,c,d); // Ventana
+  wrectangle(p,c,d,c2,0,0,c,d); // Window
   wbox(p,c,d,c0,1,1,c-2,d-2);
   wgra(p,c,d,c_b_low,2,2,c-12,7);
   wput(p,c,d,c-9,2,35);
 
-  // Caja y paleta
+  // Box and palette
 
   wbox(p,c,d,c2,2,10,7,145);
   wbox(p,c,d,c2,9,138,224,1);
@@ -4533,7 +4533,7 @@ void draw_window_colors(byte * p,int c,int d) {
 
   wbox(p,c,d,c2,138,10,31,63);
 
-  // Reglas
+  // Rules
 
   for (y=0;y<16;y++) {
     wbox(p,c,d,c1,170,10+y*8,4,7);
@@ -4565,7 +4565,7 @@ void draw_window_colors(byte * p,int c,int d) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//	Informacion de la ventana de colores relativa al color seleccionado
+//	Information of the colors window relative to the selected color
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_window_colors2(byte * p,int c,int d,int col) {
@@ -4598,7 +4598,7 @@ void draw_window_colors2(byte * p,int c,int d,int col) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Ajusta una caja (a,b,c,d) para que coja entera dentro de pantalla
+//      Adjust a box (a,b,c,d) so that it fits entirely inside the screen
 //═════════════════════════════════════════════════════════════════════════════
 
 void adjust_box(int*a,int*b,int*c,int*d) {
@@ -4607,7 +4607,7 @@ void adjust_box(int*a,int*b,int*c,int*d) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Detecta el icono de mover la barra
+//      Detect the move bar icon
 //═════════════════════════════════════════════════════════════════════════════
 
 void move_bar(void) {
@@ -4634,7 +4634,7 @@ void move_bar(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Detecta el icono de zoom como segundo icono de la barra
+//      Detect the zoom icon as the second icon of the bar
 //═════════════════════════════════════════════════════════════════════════════
 
 int icons_zoom[]={4,1,101,102,103,104};
@@ -4665,7 +4665,7 @@ void select_zoom(void) {
 
     bar[0]=101+zoom; put_bar(48,2,bar[0]); zoom_background=0;
 
-    if ((map_width<<zoom)<vga_width) { // Copia de este trozo en zoom_map
+    if ((map_width<<zoom)<vga_width) { // Copy of this chunk in zoom_map
       zwidth=map_width<<zoom; zx=(vga_width-zwidth)/2;
     } else {
       zx=0; zwidth=(vga_width>>zoom)<<zoom;
@@ -4715,7 +4715,7 @@ void select_zoom(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Desplaza la zona ampliada al acercarnos a su borde
+//      Shift the zoomed area when getting close to its edge
 //═════════════════════════════════════════════════════════════════════════════
 
 void move_zoom(void) {
@@ -4755,12 +4755,12 @@ void move_zoom(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja la barra (con la parte fija 'mover','volver','modo' y 'coords')
+//      Draw the bar (with the fixed part 'move','back','mode' and 'coords')
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_bar(int _w) {
 
-  int n; // Número de iconos
+  int n; // Number of icons
 
   edit_background(bar_x-4,bar_y,bar_width*big2+4,19*big2);
 
@@ -4772,7 +4772,7 @@ void draw_bar(int _w) {
 //  for (a=1;a<18;a++) { toolbar[a*vga_width]=c2; toolbar[a*vga_width+bar_width-1]=c2; }
   wgra(toolbar,vga_width/big2,19,c_b_low,2,2,7,7);
 
-//**** OJO ****
+//**** NOTE ****
 
   put_bar(2,10,35);
   n=0; while (bar[n]) {
@@ -4800,7 +4800,7 @@ void draw_bar(int _w) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Imprime las coordenadas sobre el segundo icono de la barra
+//      Print the coordinates over the second icon of the bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void coord_bar(void) {
@@ -4824,7 +4824,7 @@ void coord_bar(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Imprime el ancho y alto (lineas, cajas, ...) en la barra
+//      Print the width and height (lines, boxes, ...) on the bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void analyze_bar(int w, int h) {
@@ -4843,7 +4843,7 @@ void analyze_bar(int w, int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Vuelca la barra (segun bar_x/y y bar_width)
+//      Dump the bar (according to bar_x/y and bar_width)
 //═════════════════════════════════════════════════════════════════════════════
 
 int new_bar(int w, int h) {
@@ -4969,7 +4969,7 @@ int select_icon(int icon_x,int * icons) {
 void blit_bars(int darkened) {
   int n;
 
-  // La barra principal se trata de forma especial, siempre está activa
+  // The main bar is handled in a special way, it is always active
 
   if (!darkened) blit_bar(toolbar,vga_width,bar_x,bar_y,bar_width,19);
   else blit_darkened_bar(toolbar,vga_width,bar_x,bar_y,bar_width,19);
@@ -5048,7 +5048,7 @@ void blit_darkened_bar(byte * p, int real_width, int x, int y, int w, int h) {
   } while (--long_y);
 }
 
-// OJO !!!
+// NOTE !!!
 
 /*void vuelca_barra2(byte * p, int x, int y, int an, int al) {
 
@@ -5079,7 +5079,7 @@ void blit_darkened_bar(byte * p, int real_width, int x, int y, int w, int h) {
 }*/
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pone un gráfico en la barra de edición
+//      Put a graphic on the edit bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void put_bar(int x,int y,int n) {
@@ -5115,7 +5115,7 @@ void put_bar(int x,int y,int n) {
 
 void put_bar_inv(int x,int y,int n) {
 
-  wput_in_box(toolbar,vga_width/big2,vga_width/big2,19,x,y,-n); //*** OJO *** esto no vale
+  wput_in_box(toolbar,vga_width/big2,vga_width/big2,19,x,y,-n); //*** NOTE *** this is no good
   whighlight_box(toolbar,vga_width/big2,19,x,y,*((word*)graph[n])/big2,*((word*)(graph[n]+2))/big2);
 
 /*  int h,w,width;

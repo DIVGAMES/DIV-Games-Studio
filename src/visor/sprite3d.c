@@ -4,13 +4,13 @@ extern char *texture_pointer;
 extern char *dac_pointer;
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Constructor de la clase sprite3d
+//  Constructor of the sprite3d class
 //─────────────────────────────────────────────────────────────────────────────
 
 void sprite3d_create(sprite3d *sprite3d_struct,char *vbuffer,long vwidth, long vheight)
 {
-float anglex=(60.0 *3.141592)/180;      // Angulo para x en radianes
-float angley=(60.0 *3.141592)/180;      // Angulo para y en radianes
+float anglex=(60.0 *3.141592)/180;      // Angle for x in radians
+float angley=(60.0 *3.141592)/180;      // Angle for y in radians
 float aspect_ratio;
 
   sprite3d_struct->nTexturesLoad=0;
@@ -32,7 +32,7 @@ float aspect_ratio;
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Situa la camara en el espacio
+//  Place the camera in space
 //─────────────────────────────────────────────────────────────────────────────
 
 void sprite3d_setposition(sprite3d *sprite3d_struct,float x,float y,float z)
@@ -42,7 +42,7 @@ void sprite3d_setposition(sprite3d *sprite3d_struct,float x,float y,float z)
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Cambia los angulos de rotacion de la camara
+//  Change the rotation angles of the camera
 //─────────────────────────────────────────────────────────────────────────────
 
 void sprite3d_setrotation(sprite3d *sprite3d_struct,float angx,float angy,float angz)
@@ -52,7 +52,7 @@ void sprite3d_setrotation(sprite3d *sprite3d_struct,float angx,float angy,float 
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Situa el target de la camara hacia un punto en el espacio
+//  Point the camera target at a point in space
 //─────────────────────────────────────────────────────────────────────────────
 
 void sprite3d_look(sprite3d *sprite3d_struct,float x,float y,float z)
@@ -65,7 +65,7 @@ float d,dx=x-sprite3d_struct->cx,dy=y-sprite3d_struct->cy,dz=z-sprite3d_struct->
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Modifica el FOV de la camara
+//  Modify the FOV of the camera
 //─────────────────────────────────────────────────────────────────────────────
 
 void sprite3d_visionangles(sprite3d *sprite3d_struct,float anglex,float angley)
@@ -73,8 +73,8 @@ void sprite3d_visionangles(sprite3d *sprite3d_struct,float anglex,float angley)
 float aspect_ratio;
 float screen_fwidth,screen_fheight;
 
-  anglex=(anglex *3.141592)/180;      // Angulo para x en radianes
-  angley=(angley *3.141592)/180;      // Angulo para y en radianes
+  anglex=(anglex *3.141592)/180;      // Angle for x in radians
+  angley=(angley *3.141592)/180;      // Angle for y in radians
 
   aspect_ratio=(float)sprite3d_struct->width/(2.0*(float)sprite3d_struct->height);
 
@@ -121,7 +121,7 @@ float   wcz=cos(sprite3d_struct->cangz);
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Comprueba se una textura ya esta cargada
+//  Check whether a texture is already loaded
 //─────────────────────────────────────────────────────────────────────────────
 
 lpttexture sprite3d_SeekIfTextureLoad(sprite3d *sprite3d_struct,char *name,Resource *res)
@@ -138,7 +138,7 @@ lpttexture sprite3d_SeekIfTextureLoad(sprite3d *sprite3d_struct,char *name,Resou
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Carga una textura
+//  Load a texture
 //─────────────────────────────────────────────────────────────────────────────
 
 lpttexture sprite3d_CreateTexture(sprite3d *sprite3d_struct,Resource *res,char *name)
@@ -150,7 +150,7 @@ lpttexture sprite3d_CreateTexture(sprite3d *sprite3d_struct,Resource *res,char *
   int i;
   char color,color_r,color_g,color_b;
 ///////////////////////////////
-//// CONSULTAR CON LUISFER ////
+//// CHECK WITH LUISFER ////
 ///////////////////////////////
 /*
   strupr(name);
@@ -181,7 +181,7 @@ lpttexture sprite3d_CreateTexture(sprite3d *sprite3d_struct,Resource *res,char *
 //-----------------------------------------------------------------------------
 
 
-  // Calculo del mipmapping a lo bestia.
+  // Brute-force mipmapping computation.
   nwidth          =wtext->width;
   nheight           =wtext->height;
   destbuff        =wtext->buffer;
@@ -190,7 +190,7 @@ lpttexture sprite3d_CreateTexture(sprite3d *sprite3d_struct,Resource *res,char *
   wtext->Height[0]  =nheight;
 
   //---------------------------------------------------------------------------
-  //  Creo las texturas para el Mipmapping
+  //  Create the textures for Mipmapping
   //---------------------------------------------------------------------------
   for(z=1;z<4;z++)
   {
@@ -216,7 +216,7 @@ lpttexture sprite3d_CreateTexture(sprite3d *sprite3d_struct,Resource *res,char *
 }
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Descarga una textura
+//  Unload a texture
 //─────────────────────────────────────────────────────────────────────────────
 
 void sprite3d_DestroyTexture(sprite3d *sprite3d_struct,lpttexture txt)

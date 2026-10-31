@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pruebas con la interrupción de teclado
+//      Tests with the keyboard interrupt
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -19,8 +19,8 @@ TIRQHandler OldIrq1b;
 byte * shift = (byte *) 0x417; // Shift status
 
 byte buf[64*3]; // {ascii,scan_code,shift_status}
-int ibuf=0; // Puntero al buffer, inicio de la cola
-int fbuf=0; // Puntero al buffer, fin de la cola
+int ibuf=0; // Pointer to the buffer, start of the queue
+int fbuf=0; // Pointer to the buffer, end of the queue
 
 //═════════════════════════════════════════════════════════════════════════════
 // Interrupt handler related functions.
@@ -119,7 +119,7 @@ void kbdReset(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Espera una tecla, actualiza variables (ascii,scan_code y shift_status)
+//      Wait for a key, update variables (ascii,scan_code and shift_status)
 //═════════════════════════════════════════════════════════════════════════════
 
 void bios_key(void) {

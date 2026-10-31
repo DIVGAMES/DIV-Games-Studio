@@ -64,7 +64,7 @@ void draw_process_segment(void);
 //      Constants
 //═════════════════════════════════════════════════════════════════════════════
 
-#define buffer_grow     16384 // Lo que crece el buffer de edición
+#define buffer_grow     16384 // How much the edit buffer grows
 #define buffer_min      2048  // Minimum margin space
 
 #define cr 13           // Carriage return
@@ -74,7 +74,7 @@ void draw_process_segment(void);
 extern word * kb_start;
 extern word * kb_end;
 extern int ibuf; // A pointer to the queue buffer
-extern int fbuf; // Puntero al buffer, fin de la cola
+extern int fbuf; // Pointer to the buffer, end of the queue
 
 //═════════════════════════════════════════════════════════════════════════════
 
@@ -96,50 +96,50 @@ extern int error_column;   // Error column num
   char path[_MAX_PATH+1];       // Path of associated file
   char filename[12+1];          // Associated file's name
 
-  char * buffer;                // Buffer con el fichero cargado
-  int buffer_len;               // Longitud del buffer
-  int file_len;                 // Longitud del file ( < buffer_len)
+  char * buffer;                // Buffer with the loaded file
+  int buffer_len;               // Buffer length
+  int file_len;                 // File length ( < buffer_len)
 
-  int num_lines;               // Nº de líneas del font
-  int line_num;                    // Línea actual en edición
-  int column;                  // Columna actual del cursor
-  char * lptr;                  // Puntero a la línea actual en el fichero
-  char * vptr;                  // Puntero a la primera línea visualizada
-  int first_line;            // Primera línea visualizada en pantalla
-  int first_column;          // Desp. horizontal del fichero en pantalla
+  int num_lines;               // Number of font lines
+  int line_num;                    // Current line being edited
+  int column;                  // Current cursor column
+  char * lptr;                  // Pointer to the current line in the file
+  char * vptr;                  // Pointer to the first displayed line
+  int first_line;            // First line displayed on screen
+  int first_column;          // Horizontal offset of the file on screen
 
-  char l[long_line+4];          // Buffer para la línea editada
-  int line_size;                // Tamaño original de la línea editada
+  char l[long_line+4];          // Buffer for the edited line
+  int line_size;                // Original size of the edited line
 
-  int old_line;              // Línea previous (para el blit_screen parcial)
+  int old_line;              // Previous line (for the partial blit_screen)
 
   */
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables de edición
+//      Edit variables
 //═════════════════════════════════════════════════════════════════════════════
 
-// La ventana es de (an*editor_font_width+12*big2) x (al*editor_font_height+20*big2)
+// The window is (w*editor_font_width+12*big2) x (h*editor_font_height+20*big2)
 
-char line_copy[long_line+4];  // Copia de la línea en edición, para f_enter()
+char line_copy[long_line+4];  // Copy of the line being edited, for f_enter()
 
-int cursor_mode=0;      // Tipo de cursor activo (0-insert/1-overwrite)
+int cursor_mode=0;      // Active cursor type (0-insert/1-overwrite)
 
-long kblock=0; //0-n/a 1-pivotante(kini,kcol1) 2-completo(kini,kcol1,kfin,kcol2)
+long kblock=0; //0-n/a 1-pivoting(kini,kcol1) 2-complete(kini,kcol1,kfin,kcol2)
 
-byte *kstart,*kend;       // Punteros a los inicios de las líneas inicial y final
-int kcol1,kcol2;        // Columnas inicial y final en dichas lineas
+byte *kstart,*kend;       // Pointers to the starts of the initial and final lines
+int kcol1,kcol2;        // Initial and final columns in those lines
 
-struct tprg * kprg;     // Prg al que pertenece el bloque
+struct tprg * kprg;     // Prg the block belongs to
 
-char * clipboard=NULL;   // Puntero a la papelera (inicialmente vacia)
-int clipboard_len;       // Longitud en bytes del contenido de la papelera
-int clipboard_lines;    // Nº de saltos de línea contenidos
-int clipboard_type=0;    // 0-bloque de chars, 1-Bloque de líneas
+char * clipboard=NULL;   // Pointer to the clipboard (initially empty)
+int clipboard_len;       // Length in bytes of the clipboard contents
+int clipboard_lines;    // Number of line breaks contained
+int clipboard_type=0;    // 0-block of chars, 1-Block of lines
 
-int block_edit=0;      // 1-Bloque volatil en línea actual, 2-de varias líneas
+int block_edit=0;      // 1-Volatile block in the current line, 2-of several lines
 
-int blit_skipped=0;  // Para saltar volcados completos
+int blit_skipped=0;  // To skip full dumps
 
 byte * advance(byte * q);
 byte * retreat(byte * q);
@@ -149,26 +149,26 @@ char color_cursor;
 int forced_slider=0;    
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables del coloreador léxico
+//      Lexical colorizer variables
 //═════════════════════════════════════════════════════════════════════════════
 
-#define p_last        0x00  // Fin de fichero <EOF>
-#define p_rem           0x7f  // Comentario de una linea
-#define p_id            0xfd  // Identificador
-#define p_num           0xfe  // Número
-#define p_spc           0x100 // Espacios
-#define p_sym           0x101 // Símbolo
-#define p_lit           0x102 // Literal entre comillas
-#define p_res           0x103 // Id reservado
-#define p_pre           0x104 // Id predefinido
+#define p_last        0x00  // End of file <EOF>
+#define p_rem           0x7f  // Single-line comment
+#define p_id            0xfd  // Identifier
+#define p_num           0xfe  // Number
+#define p_spc           0x100 // Spaces
+#define p_sym           0x101 // Symbol
+#define p_lit           0x102 // Literal between quotes
+#define p_res           0x103 // Reserved id
+#define p_pre           0x104 // Predefined id
 
 void clexer(void);
 
-extern int cpiece;      // Token leido por clexer()
-extern byte * csource;  // Puntero al source, para compilar el programa
-extern int iscomment;    // Indica si está dentro de un comentario.
+extern int cpiece;      // Token read by clexer()
+extern byte * csource;  // Pointer to the source, to compile the program
+extern int iscomment;    // Tells whether it is inside a comment.
 
-char colin[1024];       // Buffer para "colorear" las lineas
+char colin[1024];       // Buffer to "color" the lines
 
 int _iscomment;
 char * _csource=NULL;
@@ -178,7 +178,7 @@ int c_oldrem;
 extern int numrem;
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Handles de la ventana tipo programa
+//      Handlers of the program type window
 //═════════════════════════════════════════════════════════════════════════════
 
 void program1(void) {
@@ -190,12 +190,12 @@ void program1(void) {
 
   if (error_number!=-1 && eprg==v.prg) error_cursor();
 
-  wput(ptr,w,h,w-17,10,56);          // Maximizar
-  wput(ptr,w,h,w-9,10,39);           // Arriba
-  wput(ptr,w,h,w-9,h-17,40);        // Abajo
+  wput(ptr,w,h,w-17,10,56);          // Maximize
+  wput(ptr,w,h,w-9,10,39);           // Up
+  wput(ptr,w,h,w-9,h-17,40);        // Down
   wput(ptr,w,h,w-9,h-9,34);         // Resize
-  wput(ptr,w,h,2,h-9,51);            // Izquierda
-  wput(ptr,w,h,w-17,h-9,52);        // Derecha
+  wput(ptr,w,h,2,h-9,51);            // Left
+  wput(ptr,w,h,w-17,h-9,52);        // Right
 }
 
 void program2(void) {
@@ -244,7 +244,7 @@ void program2(void) {
     else mouse_graph=14;
   } else if (wmouse_in(w-9,h-9,9,9)) { // Resize
     mouse_graph=12;
-  } else if (wmouse_in(w-17,10,9,9)) { // Maximizar
+  } else if (wmouse_in(w-17,10,9,9)) { // Maximize
     mouse_graph=15;
   }
 
@@ -368,7 +368,7 @@ void program0(void){
   if (big) {
     if (v.w&1) v.w++;
     if (v.h&1) v.h++;
-    v.w=-v.w; // Para indicar que no se multiplique la ventana por 2
+    v.w=-v.w; // To indicate that the window must not be multiplied by 2
   }
 
   v.prg=v_prg;
@@ -382,7 +382,7 @@ void program0(void){
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Bucle del editor
+//      Editor loop
 //═════════════════════════════════════════════════════════════════════════════
 
 struct tprg * edited;
@@ -400,7 +400,7 @@ void editor() {
 
   v.prg->old_line=v.prg->line_num-v.prg->first_line;
 
-  if (edited!=v.prg) { // Si se estaba editando otro ...
+  if (edited!=v.prg) { // If another one was being edited ...
     for (n=0;n<max_windows;n++)
       if (window[n].type==102 && window[n].prg!=NULL && window[n].prg==edited) break;
     if (n<max_windows) {
@@ -416,7 +416,7 @@ void editor() {
 
 //═════════════════════════════════════════════════════════════════════════════
 
-  if (block_edit==1) // Bloque edit en una línea
+  if (block_edit==1) // Edit block in one line
 
   if ((shift_status&3) && !(shift_status&12)) switch(scan_code) {
 
@@ -434,13 +434,13 @@ void editor() {
         if (kcol1>kcol2) f_unmark();
         f_left();
       } break;
-    case 82: f_cut_block(2);                // shift+insertar
+    case 82: f_cut_block(2);                // shift+insert
       f_paste_block(); f_unmark();
       scan_code=0; break;
-    case 83: f_cut_block(1);                // shift+suprimir
+    case 83: f_cut_block(1);                // shift+delete
       block_edit=0;
       scan_code=0; break;
-    case 71:                                    // shift+inicio
+    case 71:                                    // shift+home
       if (kcol1==v.prg->column) kcol1=1;
       else { kcol2=kcol1-1; kcol1=1; }
       if (kcol1>kcol2) f_unmark();
@@ -475,7 +475,7 @@ void editor() {
   } else if (!(shift_status&15) && ascii==0) switch(scan_code) {
 
     case 0: break;
-    case 83: f_cut_block(2);                // suprimir
+    case 83: f_cut_block(2);                // delete
       scan_code=0;
       block_edit=0;
       break;
@@ -534,7 +534,7 @@ void editor() {
 
 //═════════════════════════════════════════════════════════════════════════════
 
-  if (block_edit==2) // Bloque edit de varias líneas.
+  if (block_edit==2) // Edit block of several lines.
 
   if ((shift_status&3) && !(shift_status&12)) switch(scan_code) {
     case 0: break;
@@ -550,7 +550,7 @@ void editor() {
       }
       if (kstart>kend) f_unmark();
       v.blit++; scan_code=0; break;
-    case 81:                                    // shift+avance pág.
+    case 81:                                    // shift+page down
       if (kend<v.prg->lptr) {
         f_pgdn();
         f_up(); kend=v.prg->lptr; f_down();
@@ -565,7 +565,7 @@ void editor() {
         }
       } if (kstart>kend) f_unmark();
       v.blit++; scan_code=0; break;
-    case 73:                                    // shift+retroceso pág.
+    case 73:                                    // shift+page up
       if (kstart==v.prg->lptr) {
         f_pgup();
         kstart=v.prg->lptr;
@@ -601,10 +601,10 @@ void editor() {
       }
       if (kstart>kend) f_unmark();
       v.blit++; scan_code=0; break;
-    case 82: f_cut_block(2);                // shift+insertar
+    case 82: f_cut_block(2);                // shift+insert
       f_paste_block(); f_unmark();
       scan_code=0; break;
-    case 83: f_cut_block(1);                // shift+suprimir
+    case 83: f_cut_block(1);                // shift+delete
       block_edit=0;
       clipboard_type=1; scan_code=0; break;
     default: f_unmark(); break;
@@ -632,7 +632,7 @@ void editor() {
   } else if (!(shift_status&15) && ascii==0) switch(scan_code) {
 
     case 0: break;
-    case 83: f_cut_block(2);                // suprimir
+    case 83: f_cut_block(2);                // delete
       scan_code=0;
       block_edit=0;
       break;
@@ -670,7 +670,7 @@ void editor() {
 
 //═════════════════════════════════════════════════════════════════════════════
 
-  if (block_edit==0) // Solo si no hay un bloque de tipo edit
+  if (block_edit==0) // Only if there is no edit type block
 
   if ((shift_status&3) && !(shift_status&12)) switch(scan_code) {
     case 77:                                    // shift+right
@@ -704,7 +704,7 @@ void editor() {
       f_down();
       if (v.prg->lptr==kend) f_unmark();
       break;
-    case 81:                                    // shift+avance pág.
+    case 81:                                    // shift+page down
       f_unmark();
       block_edit=2;
       kblock=2; kprg=v.prg;
@@ -724,7 +724,7 @@ void editor() {
         kend=v.prg->lptr;
         kcol1=1; kcol2=linelen(v.prg->lptr)+1;
       } break;
-    case 73:                                    // shift+retroceso pág.
+    case 73:                                    // shift+page up
       block_edit=2;
       kblock=2; kprg=v.prg;
       f_up(); kend=v.prg->lptr; f_down();
@@ -734,10 +734,10 @@ void editor() {
       if (v.prg->lptr==kend) f_unmark();
       break;
     case 15: f_untab(); break;           // shift+tab
-    case 82: f_paste_block();                  // shift+insertar
+    case 82: f_paste_block();                  // shift+insert
              f_unmark(); break;
-    case 83: f_cut_block(1); break;         // shift+suprimir
-    case 71:                                    // shift+inicio
+    case 83: f_cut_block(1); break;         // shift+delete
+    case 71:                                    // shift+home
       f_unmark();
       block_edit=1;
       kblock=2; kprg=v.prg;
@@ -797,26 +797,26 @@ void editor() {
     case 75: f_left(); break;                   // cursor left
     case 80: f_down(); break;                   // cursor down
     case 72: f_up(); break;                     // cursor up
-    case 71: f_home(); break;                 // inicio
+    case 71: f_home(); break;                 // start
     case 79: f_end(); break;                    // fin
-    case 81: f_pgdn(); break;                  // avance pág.
-    case 73: f_pgup(); break;                  // retroceso pág.
-    case 82: f_insert(); break;                 // insertar
-    case 83: f_delete_char(); break;               // suprimir
+    case 81: f_pgdn(); break;                  // page down
+    case 73: f_pgup(); break;                  // page up
+    case 82: f_insert(); break;                 // insert
+    case 83: f_delete_char(); break;               // delete
 
   } else if (!(shift_status&15)) switch(scan_code) {
 
     case 14: f_backspace(); break;              // backspace
-    case 15: f_tab(); break;              // tabulador
+    case 15: f_tab(); break;              // tab
 
   } else if ((shift_status&4) && !(shift_status&11)) switch(scan_code) {
 
     case 14: case 21: f_delete(); break;        // ctrl+backspace,ctrl+y
     case 116:case 77: f_word_right(); break;    // ctrl+right
     case 115:case 75: f_word_left(); break;     // ctrl+left
-    case 132:case 73: f_bof(); break;           // ctrl+re.pág.
-    case 118:case 81: f_eof(); break;           // ctrl+av.pág.
-    case 119:case 71: f_bop(); break;           // ctrl+inicio.
+    case 132:case 73: f_bof(); break;           // ctrl+page up
+    case 118:case 81: f_eof(); break;           // ctrl+page down
+    case 119:case 71: f_bop(); break;           // ctrl+home.
     case 117:case 79: f_eop(); break;           // ctrl+fin.
     case 45: f_cut_block(1); break;         // ctrl+x
     case 46: f_cut_block(0); break;         // ctrl+c
@@ -868,14 +868,14 @@ void editor() {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Comprueba que buffer_len>file_len+buffer_min+block_len
+//      Check that buffer_len>file_len+buffer_min+block_len
 //═════════════════════════════════════════════════════════════════════════════
 
-//  char * buffer;                // Buffer con el fichero cargado
-//  int buffer_len;               // Longitud del buffer
-//  int file_len;                 // Longitud del file ( < buffer_len)
-//  char * lptr;                  // Puntero a la línea actual en el fichero
-//  char * vptr;                  // Puntero a la primera línea visualizada
+//  char * buffer;                // Buffer with the loaded file
+//  int buffer_len;               // Buffer length
+//  int file_len;                 // File length ( < buffer_len)
+//  char * lptr;                  // Pointer to the current line in the file
+//  char * vptr;                  // Pointer to the first displayed line
 
 void check_memory(int block_len) {
   byte * p;
@@ -896,7 +896,7 @@ void check_memory(int block_len) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Calcula la longitud de una línea del fuente
+//      Compute the length of a source line
 //═════════════════════════════════════════════════════════════════════════════
 
 int linelen(byte * p) {
@@ -909,7 +909,7 @@ int linelen(byte * p) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones de bloques
+//      Block functions
 //═════════════════════════════════════════════════════════════════════════════
 
 void f_mark(void) {
@@ -969,7 +969,7 @@ int t_p;
 
 void f_cut_block(memptrsize do_delete) {
   int n;
-  t_p=0; // Tipo de papelera -> chars por defecto
+  t_p=0; // Clipboard type -> chars by default
   if (kblock && kprg!=v.prg) {
     for (n=0;n<max_windows;n++)
       if (window[n].type==102 && window[n].prg==kprg && kprg!=NULL) break;
@@ -983,7 +983,7 @@ void f_cut_block(memptrsize do_delete) {
   if (do_delete!=2) { clipboard_type=t_p; }
 }
 
-void f_cut(int do_delete) { // 0-Copiar, 1-Cortar, 2-Borrar
+void f_cut(int do_delete) { // 0-Copy, 1-Cut, 2-Delete
   int n,num_lines,num_lines2,num_lines3;
   byte *k1,*k2;
 
@@ -992,22 +992,22 @@ void f_cut(int do_delete) { // 0-Copiar, 1-Cortar, 2-Borrar
   if (kcol1>linelen(kstart)) kcol1=linelen(kstart)+1; // ->cr
   if (kcol2>linelen(kend)) kcol2=linelen(kend)+2; // ->lf
 
-  if (kcol1==1 && kcol2==linelen(kend)+2) t_p=1; // Tipo de papelera -> líneas
+  if (kcol1==1 && kcol2==linelen(kend)+2) t_p=1; // Clipboard type -> lines
 
-  k2=kend+kcol2-1; // Fija k2
+  k2=kend+kcol2-1; // Set k2
 
-  k1=v.prg->buffer+v.prg->file_len; // Si se marco el crlf inexistente del final, lo crea
+  k1=v.prg->buffer+v.prg->file_len; // If the nonexistent crlf at the end was marked, create it
   if (k2>k1) {
     *k1++=cr; *k1++=lf; *k1=0;
     v.prg->file_len+=2;
     v.prg->num_lines++;
   }
 
-  k1=kstart+kcol1-1; // Fija k1
+  k1=kstart+kcol1-1; // Set k1
 
-  n=k2-k1; // Longitud del texto
+  n=k2-k1; // Text length
 
-  // Calcula el numero de crlf que hay en el texto
+  // Compute the number of crlf in the text
 
   num_lines=0; num_lines2=0; num_lines3=0;
   while (n--) {
@@ -1024,7 +1024,7 @@ void f_cut(int do_delete) { // 0-Copiar, 1-Cortar, 2-Borrar
 		
     if ((clipboard=(char *)malloc(clipboard_len=k2-k1+1))==NULL) {
 
-      // *** OJO *** Error "no hay memoria"
+      // *** NOTE *** "out of memory" error
 
     } else {
       memcpy(clipboard,k1,clipboard_len);
@@ -1034,13 +1034,13 @@ void f_cut(int do_delete) { // 0-Copiar, 1-Cortar, 2-Borrar
 
   if (do_delete) {
 
-    if (in_block()) {                   // lptr dentro del bloque
+    if (in_block()) {                   // lptr inside the block
       v.prg->line_num-=num_lines2;
       v.prg->lptr=kstart; v.prg->column=kcol1;
-    } else if (v.prg->lptr>kend) {      // lptr tras el bloque
+    } else if (v.prg->lptr>kend) {      // lptr after the block
       v.prg->line_num-=num_lines;
       v.prg->lptr-=k2-k1+1;
-    } else if (v.prg->lptr==kend && v.prg->column>kcol2) { // columna tras el bloque
+    } else if (v.prg->lptr==kend && v.prg->column>kcol2) { // column after the block
       v.prg->line_num-=num_lines;
       v.prg->lptr=kstart; v.prg->column+=kcol1-(kcol2+1);
     }
@@ -1094,28 +1094,28 @@ void f_paste_block(void) {
 
     check_memory(clipboard_len);
 
-    kblock=2; kprg=v.prg; kstart=v.prg->lptr; kcol1=v.prg->column; // Fija kini
+    kblock=2; kprg=v.prg; kstart=v.prg->lptr; kcol1=v.prg->column; // Set kini
 
-    // Rellena con espacios desde el final de la línea actual hasta el cursor
+    // Fill with spaces from the end of the current line up to the cursor
 
     if (v.prg->column-1>strlen(v.prg->l))
       spaces=v.prg->column-1-strlen(v.prg->l);
     else spaces=0;
 
-    begin=v.prg->lptr+v.prg->column-1-spaces; // Dode va a pegar el bloque
+    begin=v.prg->lptr+v.prg->column-1-spaces; // Where the block is going to be pasted
 
     if (begin<v.prg->buffer+v.prg->file_len)
       memmove(begin+spaces+clipboard_len,begin,(byte *)v.prg->buffer+v.prg->file_len-begin);
 
-    memset(begin,' ',spaces); // Pega los espacios
+    memset(begin,' ',spaces); // Paste the spaces
 
-    memcpy(begin+spaces,clipboard,clipboard_len); // Pega la papelera
+    memcpy(begin+spaces,clipboard,clipboard_len); // Paste the clipboard
 
-    kend=begin+spaces+clipboard_len-1; kcol2=1; // Fija kfin
+    kend=begin+spaces+clipboard_len-1; kcol2=1; // Set kfin
     while (kend!=v.prg->buffer && *kend!=cr) { kcol2++; kend--; }
     if (kend!=v.prg->buffer && *kend==cr) { kend+=2; kcol2-=2; }
 
-    n=0; p=v.prg->lptr; // Si la linea actual excede de 1023 chars, la corta
+    n=0; p=v.prg->lptr; // If the current line exceeds 1023 chars, cut it
     while (*p!=cr && p<v.prg->buffer+v.prg->file_len) { p++; n++; }
 
     if (n>1023) {
@@ -1138,7 +1138,7 @@ void f_paste_block(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones de edición
+//      Editing functions
 //═════════════════════════════════════════════════════════════════════════════
 
 void f_right(void) {
@@ -1230,10 +1230,10 @@ void f_delete_char(void) {
   int n,n_chars;
   byte *p;
   remove_spaces();
-  if (strlen(v.prg->l)<v.prg->column) { // Junta dos líneas
+  if (strlen(v.prg->l)<v.prg->column) { // Join two lines
     if (v.prg->lptr+v.prg->line_size+2<=v.prg->buffer+v.prg->file_len) {
       for (n=strlen(v.prg->l);n<v.prg->column-1;n++) v.prg->l[n]=' ';
-      p=v.prg->lptr+v.prg->line_size+2; // Inicio de la siguiente línea
+      p=v.prg->lptr+v.prg->line_size+2; // Start of the next line
       n=v.prg->column-1; n_chars=0;
       if (p==kstart) { kstart=v.prg->lptr; kcol1+=n; }
       if (p==kend) { kend=v.prg->lptr; kcol2+=n; }
@@ -1243,7 +1243,7 @@ void f_delete_char(void) {
       v.prg->l[n]=0; v.prg->line_size+=2+n_chars;
       write_line(); read_line(); v.prg->num_lines--; v.blit++;
     }
-  } else { // Suprime un carácter
+  } else { // Delete a character
     for (n=v.prg->column-1;n<strlen(v.prg->l);n++) v.prg->l[n]=v.prg->l[n+1];
     if (kstart==v.prg->lptr && kcol1>v.prg->column) kcol1--;
     if (kend==v.prg->lptr)
@@ -1315,7 +1315,7 @@ void f_enter(void) {
     write_line(); advance_lptr(); read_line();
     if (v.prg->line_num-v.prg->first_line==v.prg->h) advance_vptr();
     if (len>2) { f_home(); while (t--) f_right(); }
-  } else { // Enter, divide la línea actual
+  } else { // Enter, split the current line
     n=v.prg->column-1;
     t=0; while(v.prg->l[t]==' ' && t<n) { line_copy[t]=' '; t++; }
     memcpy(line_copy+t,v.prg->l+n,long_line-n);
@@ -1432,7 +1432,7 @@ void f_bop(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Avance y retroceso por el fichero
+//      Moving forward and backward through the file
 //═════════════════════════════════════════════════════════════════════════════
 
 void advance_vptr(void) {
@@ -1510,10 +1510,10 @@ byte * retreat(byte * q) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funcion de coloreado del fuente
+//      Source coloring function
 //═════════════════════════════════════════════════════════════════════════════
 
-void filled_colin(void) {  // Función para obtener los colores de la siguiente línea
+void filled_colin(void) {  // Function to get the colors of the next line
   unsigned char *p=csource;
   int i=0;
 
@@ -1549,7 +1549,7 @@ void filled_colin(void) {  // Función para obtener los colores de la siguiente 
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones de impresión de una ventana de edición
+//      Printing functions of an edit window
 //═════════════════════════════════════════════════════════════════════════════
 
 void _full(void) {
@@ -1597,7 +1597,7 @@ void _full(void) {
   bar_info();
   scroll_bars();
 
-  di=v.ptr+(v.w*18+2)*big2; // Volcado de la ventana de texto
+  di=v.ptr+(v.w*18+2)*big2; // Dump of the text window
   si=v.prg->vptr;
   height=v.prg->h;
 
@@ -1605,13 +1605,13 @@ void _full(void) {
 
   do {
     old_di=di; n=editor_font_height;
-    if (kblock==0 || kprg!=v.prg || si<kstart || si>kend) { // Fuera del bloque
+    if (kblock==0 || kprg!=v.prg || si<kstart || si>kend) { // Outside the block
       if (si>v.prg->buffer+v.prg->file_len)
         while (n--) { memset(di,ce01,v.w-12*big2); di+=v.w; }
       else while (n--) { memset(di,ce1,v.w-12*big2); di+=v.w; }
-    } else if (si>kstart && si<kend) { // Dentro del bloque
+    } else if (si>kstart && si<kend) { // Inside the block
       while (n--) { memset(di,ce4,v.w-12*big2); di+=v.w; }
-    } else { // A medias, pinta carácter a carácter el fondo
+    } else { // Partially, paint the background character by character
       if (si==kstart) col0=kcol1; else col0=1;
       if (si==kend) {
         if (kcol2>linelen(kend)) col1=long_line; else col1=kcol2;
@@ -1628,7 +1628,7 @@ void _full(void) {
       }
     } di=old_di;
 
-    if (height==1 && big && (editor_font_height*v_prg->h&1)) { // Fix ventana impar
+    if (height==1 && big && (editor_font_height*v_prg->h&1)) { // Odd window fix
       if (*di==ce01) memset(di+v.w*editor_font_height,ce01,v.w-24);
       else memset(di+v.w*editor_font_height,ce1,v.w-24);
     }
@@ -1681,7 +1681,7 @@ void _full(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Impresión parcial de una ventana de edición (línea actual)
+//      Partial printing of an edit window (current line)
 //═════════════════════════════════════════════════════════════════════════════
 
 void _partial(void) {
@@ -1733,11 +1733,11 @@ void _partial(void) {
   si=v.prg->lptr;
 
   n=editor_font_height;
-  if (kblock==0 || kprg!=v.prg || si<kstart || si>kend) { // Fuera del bloque
+  if (kblock==0 || kprg!=v.prg || si<kstart || si>kend) { // Outside the block
     while (n--) { memset(di,ce1,v.w-12*big2); di+=v.w; }
-  } else if (si>kstart && si<kend) { // Dentro del bloque
+  } else if (si>kstart && si<kend) { // Inside the block
     while (n--) { memset(di,ce4,v.w-12*big2); di+=v.w; }
-  } else { // A medias, pinta carácter a carácter el fondo
+  } else { // Partially, paint the background character by character
     if (si==kstart) col0=kcol1; else col0=1;
     if (si==kend) {
       if (kcol2>linelen(kend)) col1=long_line; else col1=kcol2;
@@ -1775,7 +1775,7 @@ void _partial(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Impresión de las barras de desplazamiento
+//      Printing of the scroll bars
 //═════════════════════════════════════════════════════════════════════════════
 
 void scroll_bars(void) {
@@ -1819,7 +1819,7 @@ int get_slide_x(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Impresión de la barra informativa
+//      Printing of the information bar
 //═════════════════════════════════════════════════════════════════════════════
 
 void bar_info(void) {
@@ -1829,7 +1829,7 @@ void bar_info(void) {
   int w=v.w,h=v.h;
   if (big) { w/=2; h/=2; }
 
-  wbox(ptr,w,h,c12,2,10,w-4-16,7);  // Barra de estado
+  wbox(ptr,w,h,c12,2,10,w-4-16,7);  // Status bar
   itoa(v.prg->line_num,num,10);
   wwrite_in_box(v.ptr,w,w-19,h,3,10,0,(byte *)num,c3); width=text_len((byte *)num)+1;
   itoa(v.prg->column,num+1,10); num[0]=',';
@@ -1839,7 +1839,7 @@ void bar_info(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Entra en el bucle de escalado de una ventana
+//      Enter the scaling loop of a window
 //═════════════════════════════════════════════════════════════════════════════
 
 void resize_surface(void) {
@@ -1853,10 +1853,10 @@ void resize_surface(void) {
 }
 
 void resize(void) {
-  int _mx=mouse_x,_my=mouse_y; // Coordenadas del ratón iniciales
-  int mx,my; // Coordenadas tabuladas del ratón en cada momento
-  int _w,_h; // an/al (en chr) originales
-  int old_width,old_height; // ultimo an/al
+  int _mx=mouse_x,_my=mouse_y; // Initial mouse coordinates
+  int mx,my; // Tabulated mouse coordinates at each moment
+  int _w,_h; // original w/h (in chr)
+  int old_width,old_height; // last w/h
   byte *new_block;
   int w=v.w,h=v.h;
   if (big) { w/=2; h/=2; }
@@ -1920,7 +1920,7 @@ void resize(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Comprueba el cursor
+// Check the cursor
 //═════════════════════════════════════════════════════════════════════════════
 
 void test_cursor(void) {
@@ -1937,7 +1937,7 @@ void test_cursor(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Maximiza o desmaximiza una ventana tipo PRG
+//      Maximize or un-maximize a PRG type window
 //═════════════════════════════════════════════════════════════════════════════
 
 void extrude(int x,int y,int w,int h,int x2,int y2,int w2,int h2);
@@ -1948,12 +1948,12 @@ void maximize(void) {
   int _x,_y,_w,_h,_w2,_h2;
   if (big) { w/=2; h/=2; }
 
-  _w=(vga_width-12*big2)/editor_font_width; // Calcula tamaño (en chr) maximizada
+  _w=(vga_width-12*big2)/editor_font_width; // Compute the maximized size (in chr)
   _h=(vga_height-28*big2)/editor_font_height;
   if (_w>100) _w=100;
   if (_h>100) _h=100;
 
-  if (v.prg->w!=_w || v.prg->h!=_h) { // *** Maximiza ***
+  if (v.prg->w!=_w || v.prg->h!=_h) { // *** Maximize ***
 
     v.prg->old_width=v.prg->w;
     v.prg->old_height=v.prg->h;
@@ -1991,7 +1991,7 @@ void maximize(void) {
       wput(v.ptr,w,h,w-17,10,-56); v.blit=2;
     }
 
-  } else { // *** Des-maximiza ***
+  } else { // *** Un-maximize ***
 
     _w2=v.w; _h2=v.h;
     _x=v.x; _y=v.y;
@@ -2032,7 +2032,7 @@ void maximize(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Repinta una ventana (incluyendo barra e iconos)
+//      Repaint a window (including bar and icons)
 //═════════════════════════════════════════════════════════════════════════════
 
 void redraw_window(void) {
@@ -2043,7 +2043,7 @@ void redraw_window(void) {
   wrectangle(v.ptr,w,h,c2,0,0,w,h);
   wput(v.ptr,w,h,w-9,2,35);
 
-  if (v.type==1) { // Los diálogos no se minimizan
+  if (v.type==1) { // Dialogs are not minimized
     wgra(v.ptr,w,h,c_b_low,2,2,w-12,7);
     if (text_len(v.title)+3>w-12) {
       wwrite_in_box(v.ptr,w,w-11,h,4,2,0,v.title,c1);
@@ -2068,7 +2068,7 @@ void redraw_window(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Determina si el cursor está dentro de un bloque
+//      Determine whether the cursor is inside a block
 //═════════════════════════════════════════════════════════════════════════════
 
 int in_block(void) {
@@ -2209,7 +2209,7 @@ void delete_text_cursor(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Impresión de un carácter
+//      Printing of a character
 //═════════════════════════════════════════════════════════════════════════════
 
 void put_char(byte * ptr, int w, byte c,int block) {
@@ -2427,7 +2427,7 @@ y=oi/w;//=50;//oi-(y*v.an);
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Lee una línea del programa (la pone en asciiz)
+//      Read a line of the program (puts it in asciiz)
 //═════════════════════════════════════════════════════════════════════════════
 
 void read_line(void) {
@@ -2439,7 +2439,7 @@ void read_line(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Escribe una línea en el programa
+//      Write a line into the program
 //═════════════════════════════════════════════════════════════════════════════
 
 void write_line(void) {
@@ -2451,8 +2451,8 @@ void write_line(void) {
   old_len=v.prg->file_len;
   v.prg->file_len+=strlen(v.prg->l)-v.prg->line_size;
 
-  begin=v.prg->lptr+v.prg->line_size; // Donde está el cr,lf de esta línea
-  end=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
+  begin=v.prg->lptr+v.prg->line_size; // Where the cr,lf of this line is
+  end=v.prg->lptr+strlen(v.prg->l); // Where it must go
 
   if (begin<v.prg->buffer+old_len) {
     len=(memptrsize)v.prg->buffer+old_len-(memptrsize)begin;
@@ -2474,8 +2474,8 @@ void delete_line(void) {
   old_len=v.prg->file_len;
   v.prg->file_len+=strlen(v.prg->l)-(v.prg->line_size+2);
 
-  begin=v.prg->lptr+(v.prg->line_size+2); // Donde está el cr,lf de esta línea
-  end=v.prg->lptr+strlen(v.prg->l); // Donde debe ir
+  begin=v.prg->lptr+(v.prg->line_size+2); // Where the cr,lf of this line is
+  end=v.prg->lptr+strlen(v.prg->l); // Where it must go
 
   if (begin<v.prg->buffer+old_len) {
     len=(memptrsize)v.prg->buffer+old_len-(memptrsize)begin;
@@ -2489,7 +2489,7 @@ void delete_line(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Quita los espacios al final de la línea actual (v.prg->l[])
+//      Remove the spaces at the end of the current line (v.prg->l[])
 //═════════════════════════════════════════════════════════════════════════════
 
 void remove_spaces(void) {
@@ -2498,10 +2498,10 @@ void remove_spaces(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Abre un programa
+//      Open a program
 //═════════════════════════════════════════════════════════════════════════════
 
-#define max_files 512 // ─────────────────────────────── Listbox de archivos
+#define max_files 512 // ─────────────────────────────── Files listbox
 extern struct t_listboxbr lfilesbr;
 extern t_thumb thumb[max_files];
 extern int num_taggeds;
@@ -2539,7 +2539,7 @@ void open_program(void) {
       if (full[strlen(full)-1]!='/') strcat(full,"/");
       strcat(full, input);
 
-      if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
+      if ((f=fopen(full,"rb"))!=NULL) { // One has been chosen
         fseek(f,0,SEEK_END); n=ftell(f)+buffer_grow;
         if ((buffer=(byte *)malloc(n))!=NULL) {
 			memset(buffer,0,n);
@@ -2552,7 +2552,7 @@ void open_program(void) {
 
             if (fread(buffer,1,n,f)==n-buffer_grow) {
 
-              for (p=buffer;p<buffer+n-buffer_grow;p++) // Rechaza ficheros binarios
+              for (p=buffer;p<buffer+n-buffer_grow;p++) // Reject binary files
                 if (!*p) { n=0; break; }
 
               if (n) {
@@ -2679,7 +2679,7 @@ void new_program0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Guarda un programa a disco
+//      Save a program to disk
 //═════════════════════════════════════════════════════════════════════════════
 
 void save_prg(void) {
@@ -2691,7 +2691,7 @@ void save_prg(void) {
   if ((f=fopen(full,"wb"))!=NULL) {
     write_line();
     fwrite(v.prg->buffer,1,v.prg->file_len,f);
-    fclose(f); // *** OJO, se debe borrar el fichero si no se pudo grabar entero
+    fclose(f); // *** NOTE, the file must be deleted if it could not be fully written
 
     strcpy(v.prg->path,type[v_type].path);
     strcpy(v.prg->filename,input);
@@ -2711,7 +2711,7 @@ void save_prg(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Determina si se ha encontrado una cadena
+//      Determine whether a string has been found
 //═════════════════════════════════════════════════════════════════════════════
 
 int string_found(char *p, char*q, int may_min, int whole) {
@@ -2733,7 +2733,7 @@ int string_found(char *p, char*q, int may_min, int whole) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Buscar un texto
+//      Find a text
 //═════════════════════════════════════════════════════════════════════════════
 
 #define y_bt 50
@@ -2793,7 +2793,7 @@ void find_text(void) {
     }
   }
 
-  if (!found) { // Restaura variables y emite dialogo informativo
+  if (!found) { // Restore variables and show an informative dialog
     memcpy(v.prg,&my_prg,sizeof(struct tprg));
     v_title=(char *)texts[347]; v_text=(char *)texts[189]; dialog(info0);
   } else {
@@ -2806,7 +2806,7 @@ void find_text(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Sustituir un texto
+//      Replace a text
 //═════════════════════════════════════════════════════════════════════════════
 
 void replace0(void);
@@ -2910,7 +2910,7 @@ void replace_text(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      ¿Sustituir o no?
+//      Replace or not?
 //═════════════════════════════════════════════════════════════════════════════
 
 void replace1(void) { _show_items(); }
@@ -2920,8 +2920,8 @@ void replace2(void) {
   switch(v.active_item) {
     case 0: v_accept=1; end_dialog=1; break; // SI
     case 1: v_accept=2; end_dialog=1; break; // NO
-    case 2: v_accept=3; end_dialog=1; break; // TODO
-    case 3: v_accept=4; end_dialog=1; break; // CANCELAR
+    case 2: v_accept=3; end_dialog=1; break; // ALL
+    case 3: v_accept=4; end_dialog=1; break; // CANCEL
   }
 }
 
@@ -2942,7 +2942,7 @@ void replace0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dialogo informativo al final de una sustitución
+//      Informative dialog at the end of a replacement
 //═════════════════════════════════════════════════════════════════════════════
 
 char repl[128];
@@ -2974,7 +2974,7 @@ void open_program_for_fernando(char *name,char *path) {
   strcpy(input,name);
   strcpy(wpath,path);
   wpath[strlen(wpath)-strlen(name)]=0;
-  if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
+  if ((f=fopen(full,"rb"))!=NULL) { // One has been chosen
     fseek(f,0,SEEK_END); n=ftell(f)+buffer_grow;
     if ((buffer=(byte *)malloc(n))!=NULL) {
       if ((v_prg=(struct tprg*)malloc(sizeof(struct tprg)))!=NULL) {
@@ -3036,15 +3036,15 @@ void open_program_for_fernando(char *name,char *path) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Dialogo lista de procesos
+// Process list dialog
 //═════════════════════════════════════════════════════════════════════════════
 
-int lp1[512];     // Numero de línea en el que están los procesos
-byte * lp2[512];  // Punteros a las líneas de los procesos
-int lp_num;       // Número de procesos en la lista
-int lp_start;       // La primera variable que se visualiza en la ventana
-int lp_select;    // La variable seleccionada
-int lp_sort=0;    // Flag que indica si se ordena la lista
+int lp1[512];     // Line number where the processes are
+byte * lp2[512];  // Pointers to the lines of the processes
+int lp_num;       // Number of processes in the list
+int lp_start;       // The first variable displayed in the window
+int lp_select;    // The selected variable
+int lp_sort=0;    // Flag telling whether the list is sorted
 
 void create_process_list(char * buffer, int file_len) {
   byte * p,* end,*q;
@@ -3093,7 +3093,7 @@ void create_process_list(char * buffer, int file_len) {
   } while (1);
 
 
-  // Si estamos sobre un nombre de proceso en el programa, lo selecciona
+  // If we are over a process name in the program, select it
 
   if (buffer==(char *)window[1].prg->buffer) {
     n=window[1].prg->column-1;
@@ -3135,13 +3135,13 @@ void draw_process_list(void) {
   int w=v.w/big2,h=v.h/big2;
   int n,m,x;
 
-  wbox(ptr,w,h,c1,4,20,128+132-10,121); // Límites listbox procesos
+  wbox(ptr,w,h,c1,4,20,128+132-10,121); // Process listbox limits
 
   end=window[1].prg->buffer+window[1].prg->file_len;
 
   for (m=lp_start;m<lp_start+15 && m<lp_num;m++) {
     if (m==lp_select) {
-      wbox(ptr,w,h,c01,4,20+(m-lp_start)*8,150+100,9); // Relleno listbox procesos
+      wbox(ptr,w,h,c01,4,20+(m-lp_start)*8,150+100,9); // Process listbox fill
       x=c4;
     } else x=c3;
     p=lp2[m]; n=0; while (*p!=cr && p<end) { cwork[n++]=*p; p++; } cwork[n]=0;
@@ -3156,7 +3156,7 @@ void draw_process_segment(void) {
   int min=27,max=129,n;
   float x;
 
-  wbox(ptr,w,h,c2,123+132,28,7,max-min+3); // Borra la barra del slider
+  wbox(ptr,w,h,c2,123+132,28,7,max-min+3); // Erase the slider bar
 
   if (lp_num<=1) n=min; else {
     x=(float)lp_select/(float)(lp_num-1);
@@ -3175,11 +3175,11 @@ void process_list1(void) {
   wwrite(ptr,w,h,5,11,0,texts[379],c1);
   wwrite(ptr,w,h,4,11,0,texts[379],c3);
 
-  wrectangle(ptr,w,h,c0,3,19,128+132,123); // Límites listbox procesos
+  wrectangle(ptr,w,h,c0,3,19,128+132,123); // Process listbox limits
   wrectangle(ptr,w,h,c0,122+132,19,9,123);
   wrectangle(ptr,w,h,c0,122+132,27,9,123-16);
 
-  wput(ptr,w,h,123+132,20,-39); // Boton arriba / abajo (pulsados 41,42)
+  wput(ptr,w,h,123+132,20,-39); // Up / down button (pressed 41,42)
   wput(ptr,w,h,123+132,174-40,-40);
 
   create_process_list((char *)window[1].prg->buffer,window[1].prg->file_len);
@@ -3288,7 +3288,7 @@ void process_list0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Salta a la línea y columna donde se ha detectado el error
+//  Jump to the line and column where the error was detected
 //═════════════════════════════════════════════════════════════════════════════
 
 void goto_error(void) {
@@ -3300,9 +3300,9 @@ void goto_error(void) {
     }
   }
 
-  if (n) move(0,n); // Si no es la ventana[0] la sube a foreground
+  if (n) move(0,n); // If it is not window[0], bring it to the foreground
 
-  if (v.foreground!=1) { // Si no esta en foreground, la pone
+  if (v.foreground!=1) { // If it is not in the foreground, put it there
     for (m=1;m<max_windows;m++) if (window[m].type && window[m].foreground==1)
       if (collide(0,m)) {window[m].foreground=0; blit_window(m); }
   }
@@ -3347,7 +3347,7 @@ void goto_error(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-// Opción de impresión de listados
+// Listing printing option
 //═════════════════════════════════════════════════════════════════════════════
 
 int fp_co=1,fp_bl=0;
@@ -3392,7 +3392,7 @@ void Print_Program(void) {
     write_line();
     read_line();
 
-    if (fp_bl) { // Imprime el bloque seleccionado
+    if (fp_bl) { // Print the selected block
 
       if (!kblock) {
         v_text=(char *)texts[452];
@@ -3406,7 +3406,7 @@ void Print_Program(void) {
       buf=(byte *)clipboard;
       len=clipboard_len;
 
-    } else { // Imprime el listado completo
+    } else { // Print the complete listing
 
       buf=v.prg->buffer;
       len=v.prg->file_len;

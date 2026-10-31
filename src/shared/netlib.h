@@ -6,30 +6,30 @@
 #define __NETLIB_H
 
 //-----------------------------------------------------------------------------
-// Definicion de tipos
+// Type definitions
 //-----------------------------------------------------------------------------
 typedef unsigned short WORD;
 typedef unsigned char  BYTE;
 
-typedef struct { int device;         // IPX, SERIAL ¢ MODEM
+typedef struct { int device;         // IPX, SERIAL or MODEM
                  int com;                 // 0-3
-                 int speed;           // Velocidad del puerto
+                 int speed;           // Port speed
                  char phone[32];
-                 char string_start[16];  // Defecto: ATZ
-                 int tones;               // 1-tonos, 0-pulsos
+                 char string_start[16];  // Default: ATZ
+                 int tones;               // 1-tone, 0-pulse
                  int server;            //
-                 int num_players;         // Maximo 16
+                 int num_players;         // Maximum 16
                } net_struct;
 
 //-----------------------------------------------------------------------------
-// Definicion de Dispositivos
+// Device definitions
 //-----------------------------------------------------------------------------
 #define IPX     1
 #define SERIAL  2
 #define MODEM   3
 
 //-----------------------------------------------------------------------------
-// Definicion de errores
+// Error definitions
 //-----------------------------------------------------------------------------
 #define NET_ABORTED       -1
 #define NET_BADINIT       -2
@@ -37,7 +37,7 @@ typedef struct { int device;         // IPX, SERIAL ¢ MODEM
 #define NET_BADSYNC       -4
 
 //-----------------------------------------------------------------------------
-// Definicion de variables exportadas
+// Definition of exported variables
 //-----------------------------------------------------------------------------
 extern char net_games[10][32];
 extern int net_players[16];
@@ -45,21 +45,21 @@ extern net_struct *net_lib;
 extern int network_initialization;
 
 //-----------------------------------------------------------------------------
-// Definicion de procedimientos
+// Procedure definitions
 //-----------------------------------------------------------------------------
 
-// Finaliza la comunicacion
+// End the communication
 void net_end(void);
 
-// Devuelve las partidas activas en la red
+// Return the active games on the network
 int _net_get_games(int game_id);
 void net_get_games(void);
 
-// Si la partida no existe la crea en caso contrario se une a ella
+// If the game does not exist, create it, otherwise join it
 int _net_join_game(int game_id,char *name,byte *data, int length);
 void net_join_game(void);
 
-// Chequea la red (manda y recibe paquetes)
+// Check the network (send and receive packets)
 void _net_loop();
 
 #endif

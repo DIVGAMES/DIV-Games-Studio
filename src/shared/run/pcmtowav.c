@@ -1,6 +1,6 @@
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Convierte de PCM a WAV
+//  Convert from PCM to WAV
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 //#include <dos.h>
@@ -17,7 +17,7 @@ int SaveWAV          (byte *byte_ptr, int length, FILE *f);
 int _IsWAV            (FILE *FileName);
 
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
-//  Programa principal
+//  Main program
 //อออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 int pcm2wav(FILE *in, long inlen, FILE *out, long outlen)

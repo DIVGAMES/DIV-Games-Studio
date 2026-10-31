@@ -28,7 +28,7 @@ typedef struct {
         lptmatrix       Anims;
         tmatrix         CompMat;
         int32_t            curframe;
-        int32_t            bbox_x_start; //Coordenadas de pantalla de la bounding box
+        int32_t            bbox_x_start; //Screen coordinates of the bounding box
         int32_t            bbox_x_end;
         int32_t            bbox_y_start;
         int32_t            bbox_y_end;
@@ -46,7 +46,7 @@ void complex_draw(complex *complex_struct);
 void complex_sortdraw(complex *complex_struct);
 void complex_drawshadow(complex *complex_struct);
 void complex_setmaptype(complex *complex_struct,int type);
-void complex_setambientlight(complex *complex_struct,float intensity); //Valores entre -1.0 y 1.0
+void complex_setambientlight(complex *complex_struct,float intensity); //Values between -1.0 and 1.0
 void complex_setcolor(complex *complex_struct,float r, float g, float b);
 void complex_makefacenormals(complex *complex_struct);
 void complex_look(complex *complex_struct,float nx,float ny,float nz);

@@ -8,7 +8,7 @@
 #include "fpgfile.hpp"
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Constantes
+//  Constants
 //═════════════════════════════════════════════════════════════════════════════
 
 #define MAN   0
@@ -19,7 +19,7 @@
 #define DWARF_A  5
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Prototipos
+//  Prototypes
 //═════════════════════════════════════════════════════════════════════════════
 
 void sprite_generator      (void);
@@ -85,7 +85,7 @@ buffer_sprite3d *InfoSpr;
 float spr_coefred;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Codigo principal del generador de sprites
+//  Main code of the sprite generator
 //═════════════════════════════════════════════════════════════════════════════
 
 void sprite_generator(void) {
@@ -300,37 +300,37 @@ void GenSpr0(void)
 
   lanim_spr.created=0;
 
-  // Botones Aceptar/Cancelar
+  // Accept/Cancel buttons
   _button(100,      7, v.h-14, 0);
   _button(101, v.w-8, v.h-14, 2);
 
-  // Entrada de tamaño
+  // Size input
   _get(426, 3+1, 11+65+2, text_len(texts[426])+16, (byte *)SizeText, 5, 1, 1000);
 
-  // Entrada de imagenes
+  // Images input
   _get(429, 3+1+text_len(texts[426])+22, 11+65+2, 62, (byte *)NumFrames, 4, 0, 0);
 
-  // Botones frame anterior/siguiente (<< y >>)
+  // Previous/next frame buttons (<< and >>)
   _button(435, v.w-30, 10+70+5, 0);
   _button(427, v.w-14, 10+70+5, 0);
 
-  // Flags Hombre/Mujer/Niño - armado
+  // Man/Woman/Child - armed flags
   _flag(423,                                                                 3,95+2,&TypeModel[0]);
   _flag(424,                                         3+11+text_len(texts[423]),95+2,&TypeModel[1]);
   _flag(425,                    3+22+text_len(texts[423])+text_len(texts[424]),95+2,&TypeModel[2]);
   _flag(550,3+33+text_len(texts[423])+text_len(texts[424])+text_len(texts[425]),95+2,&Armed);
 /*
-  // Botones Imagenes (- +)
+  // Images buttons (- +)
   _button(111,   1+65+8, 11+65+9, 0);
   _button(110, 62+65+12, 11+65+9, 0);
 */
-  // Entrada de angulo
+  // Angle input
   _get(430, 3+64+40, 95+43, 60, (byte *)AngText, 5, -360, 360);
 
-  // Entrada de perspectiva
+  // Perspective input
   _get(431, 3+64+40, 95+62, 60, (byte *)PerText, 5, -360, 360);
 /*
-  // Botones Iluminacion (- +)
+  // Lighting buttons (- +)
   _button(111,  1+65+44, 95+29+2, 0);
   _button(110, 50+65+44, 95+29+2, 0);
 */
@@ -347,25 +347,25 @@ void GenSpr1(void)
 //lanim_spr.created = 0;
   create_listbox(&lanim_spr);
 
-  // Cajas de Textura y Modelo
+  // Texture and Model boxes
   wrectangle(v.ptr, w, h, c0,      3, 11, 66, 66);
   wrectangle(v.ptr, w, h, c0, 3+66+1, 11, 98, 66);
   wbox       (v.ptr, w, h, c1, 3+66+2, 12, 96, 64);
 
-  // Animacion
+  // Animation
   wwrite(v.ptr, w, h, 3, 92+12+2, 0, (byte *)texts[428], c3);
   wbox(v.ptr, w, h, c12, 3+text_len(texts[428])+1, 92+11+2,
        w-7-5-text_len(texts[428]), 9);
   wwrite(v.ptr, w, h, 3+text_len(texts[428])+2, 92+12+2, 0,
          (byte *)anim_spr[current_anim], c3);
 /*
-  // Iluminacion
+  // Lighting
   wwrite(v.ptr, w, h, 3+64-1+40, 95+18+2, 0, texts[432], c3);
   wbox(v.ptr, w, h, c2,  6+80+44, 95+26+2, 16, 8);
   wwrite(v.ptr, an, al,  6+65+20+44, 95+30+2, 1,
          itoa(imagenes[frac_img],cWork,10), c3);
 */
-  // Muestra la textura escalada
+  // Show the scaled texture
   if(TextureSprite != NULL)
   {
     px=4*big2, py=12*big2;
@@ -379,13 +379,13 @@ void GenSpr1(void)
     }
   }
 
-  // Muestra el sprite escalado
+  // Show the scaled sprite
   if(ThumbSprite != NULL)
   {
     px=(4+64+3)*big2 + (96*big2-ThumbSpriteWidth)/2;
     py=      12*big2 + (64*big2-ThumbSpriteHeight)/2;
 
-    // Pinta el punto de control
+    // Draw the control point
     cx=(float)(InfoSpr->point_x)/(2.0*spr_coefred);
     cy=(float)(InfoSpr->point_y)/(2.0*spr_coefred);
 
@@ -429,13 +429,13 @@ void GenSpr2(void)
 
   switch(v.active_item)
   {
-    case 0: // Aceptar
+    case 0: // Accept
       end_dialog=1; v_accept=1;
       break;
-    case 1: // Cancelar
+    case 1: // Cancel
       end_dialog=1;
       break;
-    case 2: // Tamaño
+    case 2: // Size
       mouse_graph=3;
       blit_window(0);
       blit_copy();
@@ -458,13 +458,13 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 3: // Nº de imagenes
+    case 3: // Number of images
       if(atoi(NumFrames) < 1) strcpy(NumFrames, "1");
       if(atoi(NumFrames) > InfoCfg.num_frames)
         itoa(InfoCfg.num_frames, NumFrames, 10);
       need_refresh=1;
       break;
-    case 4: // Frame anterior
+    case 4: // Previous frame
       InitCfg();
       FloatFrame -= (float)InfoCfg.num_frames/(float)atoi(NumFrames);
       InfoCfg.frame = (int)(FloatFrame+0.5);
@@ -482,7 +482,7 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 5: // Frame siguiente
+    case 5: // Next frame
       InitCfg();
       FloatFrame += (float)InfoCfg.num_frames/(float)atoi(NumFrames);
       InfoCfg.frame = (int)(FloatFrame+0.5);
@@ -500,7 +500,7 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 6: // Hombre
+    case 6: // Man
       mouse_graph=3;
       blit_window(0);
       blit_copy();
@@ -538,7 +538,7 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 7: // Mujer
+    case 7: // Woman
       mouse_graph=3;
       blit_window(0);
       blit_copy();
@@ -576,7 +576,7 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 8: // Niño
+    case 8: // Child
       mouse_graph=3;
       blit_window(0);
       blit_copy();
@@ -614,7 +614,7 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 9: // Armado
+    case 9: // Armed
       mouse_graph=3;
       blit_window(0);
       blit_copy();
@@ -679,7 +679,7 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 10: // Angulo
+    case 10: // Angle
       InitCfg();
       viewer_loop((lptviewer)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
@@ -690,7 +690,7 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 11: // Perspectiva
+    case 11: // Perspective
       InitCfg();
       viewer_loop((lptviewer)&InfoCfg);
       if (InfoSpr->buffer==NULL) {
@@ -701,9 +701,9 @@ void GenSpr2(void)
       LoadSprite();
       need_refresh=1;
       break;
-    case 12: // - Iluminacion
+    case 12: // - Lighting
       break;
-    case 13: // + Iluminacion
+    case 13: // + Lighting
       break;
   }
 
@@ -1024,7 +1024,7 @@ debugprintf("file: %s\n",full);
             b+=coefredx;
           } a+=coefredy;
         }
-        // Aplica la tabla xlat[] al thumbnail
+        // Apply the xlat[] table to the thumbnail
         for (n=final_width*final_height-1;n>=0;n--) {
           temp2[n]=xlat[temp2[n]];
         }
@@ -1147,7 +1147,7 @@ memset(map,0,mw*mh);
 
   spr_coefred=1.0;
 
-  if (mw>96*big2 || mh>64*big2) // Crea el thumbnail
+  if (mw>96*big2 || mh>64*big2) // Create the thumbnail
   {
     coefredx=mw/((float)96*(float)big2);
     coefredy=mh/((float)64*(float)big2);

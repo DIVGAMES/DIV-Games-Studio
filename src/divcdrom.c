@@ -43,17 +43,17 @@ static int CDOpendoor=0;
                 CDPlaying=0;
                 cd_stop_audio ();
         }
-        if(get_cd_status()&1)//Puerta abierta
+        if(get_cd_status()&1)//Door open
         {
                 CDPlaying=0;
                 CDOpendoor=1;
         }
-        if(CDOpendoor&&!(get_cd_status()&1) )//CD Puerta cerrada
+        if(CDOpendoor&&!(get_cd_status()&1) )//CD Door closed
         {
                 CDOpendoor=0;
                 CDChange=1;
         }
-        if(!CDPlaying &&CDChange && !(get_cd_status()&(1<<11)))//CD DENTRO
+        if(!CDPlaying &&CDChange && !(get_cd_status()&(1<<11)))//CD INSIDE
         {
                 if(CDinit())
                         CDChange=0;
@@ -90,7 +90,7 @@ int x;
         if( !CDInUse || cdrom_installed () )
         {
                 CDInUse=1;
-                if(get_cd_status()&(1<<11)) //No hay CD dentro
+                if(get_cd_status()&(1<<11)) //No CD inside
                 {
                         tracks=0;
                         return 0;
@@ -365,7 +365,7 @@ void CDiv2(void) {
 }
 
 void CDiv0(void) {
-  v.type=4; // Diálogo
+  v.type=4; // Dialog
   v.w=147;
   v.h=45;
   v.title=texts[150];

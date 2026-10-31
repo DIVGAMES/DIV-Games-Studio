@@ -1,13 +1,13 @@
 
-// *** OJO *** Poner un M8 donde haya un M7 ...
+// *** NOTE *** Put an M8 wherever there is an M7 ...
 
-// *** OJO *** Quitar los OJOID de aqu� y de kernel
+// *** NOTE *** Remove the OJOIDs from here and from kernel
 
-// quitar los //net de aqui y de f.cpp
+// remove the //net from here and from f.cpp
 
-// *** OJO *** Que el usuario pueda determinar de alguna forma imem_max
-//             (o bien el n�mero de procesos m�ximo)
-// OJO !!! Convertir imem_max en variable
+// *** NOTE *** Let the user determine imem_max somehow
+//             (or rather the maximum number of processes)
+// NOTE !!! Convert imem_max into a variable
 
 ///////////////////////////////////////////////////////////////////////////////
 // Libraries used
@@ -75,9 +75,9 @@ int last_key_check,key_check,last_joy_check,joy_check; // Call screensaver
 int last_mou_check,mou_check;
 int error_vpe;
 
-void function_exec(int id,int n); // Id, ciclos
-void process_exec(int id,int n); // Id, ciclos
-void process_paint(int id,int n); // Id, ciclos
+void function_exec(int id,int n); // Id, cycles
+void process_exec(int id,int n); // Id, cycles
+void process_paint(int id,int n); // Id, cycles
 
 int get_ticks(void);
 
@@ -90,7 +90,7 @@ int get_ticks(void) {
 int restore_time=0;
 int blit_time=0;
 
-int process_level=0; // Para contabilizar los cal/ret (para el step del debug)
+int process_level=0; // To count the cal/ret (for the debugger step)
 
 int nullstring[4];
 int nstring=0;
@@ -453,11 +453,11 @@ void initialization (void) {
 //  setup->master=15; setup->sound_fx=15; setup->cd_audio=15;
   }
 */
-  iloc=mem[2];            // Start of local variables | Inicio de la imagen de las variables locales
-  iloc_len=mem[6]+mem[5]; // Length of local ( public and private ) | Longitud de las locales (p�blicas y privadas)
-  iloc_pub_len=mem[6];  	// Length of local public variables | Longitud de las variables locales p�blicas
+  iloc=mem[2];            // Start of the local variables image
+  iloc_len=mem[6]+mem[5]; // Length of the locals (public and private)
+  iloc_pub_len=mem[6];  	// Length of the public local variables
   private_start=iloc_pub_len;
-  imem=mem[8];            // Final code , local and texts ( length cmp ) | Final de c�digo, locales y textos (longitud del cmp)
+  imem=mem[8];            // End of code, locals and texts (length of the cmp)
 
   if (iloc_len&1) iloc_len++; if (!(imem&1)) imem++;
 
@@ -481,7 +481,7 @@ void initialization (void) {
 
 //  if((texts=(struct t_text *)malloc(sizeof(struct t_text)*max_texts))==NULL) exer(1);
 
-  // Crea los dos primeros procesos, init y main
+  // Create the first two processes, init and main
 
   processes=1; id_init=imem; imem+=iloc_len; id_start=id_end=imem;
 
@@ -564,9 +564,9 @@ init_rnd(dtime);
   mouse->size=100;
   mouse->speed=2;
 
-  check_mouse(); // mouse->cursor = 1-No hay rat�n, 0-Si hay
+  check_mouse(); // mouse->cursor = 1-No mouse, 0-There is a mouse
 
-  for (n=0;n<10;n++) { // En un principio no hay sistema de scroll, ni de m7
+  for (n=0;n<10;n++) { // Initially there is no scroll system, nor m7
     (scroll+n)->z=512;
     (scroll+n)->ratio=200;
     (scroll+n)->region1=-1;
@@ -600,11 +600,11 @@ init_rnd(dtime);
 
   skip_blit=0; skipped_blits=0;
 
-  init_sin_cos(); // Tablas de seno y coseno para el modo7
+  init_sin_cos(); // Sine and cosine tables for mode7
 
   memcpy(palette,system_dac,768); update_palette();
 
-  adapt_palette=0; // Hasta que no se llame a force_pal ...
+  adapt_palette=0; // Until force_pal is called ...
 
   #ifdef DEBUG
   #ifndef __EMSCRIPTEN__
@@ -621,9 +621,9 @@ init_rnd(dtime);
 
   init_blit();
 
-  // DLL_3 Exportaci�n de funciones y variables (para utilizarlas en las DLL)
+  // DLL_3 Export of functions and variables (to use them in DLLs)
 #ifdef DIVDLL
-// Exportadas desde 'C'
+// Exported from 'C'
 // files
   DIV_export("div_fopen"  ,(void *)fopen  );
   DIV_export("div_fclose" ,(void *)fclose );
@@ -631,7 +631,7 @@ init_rnd(dtime);
   DIV_export("div_free"   ,(void *)free);
   DIV_export("div_rand"   ,(void *)_random);
   DIV_export("div_text_out",(void *)text_out);
-// variables publicas
+// public variables
 
   DIV_export("stack",(void *)&opstack);
   DIV_export("sp",(void *)&sp);
@@ -690,7 +690,7 @@ init_rnd(dtime);
 }
 
 //�����������������������������������������������������������������������������
-//  Crea la tabla de cuadrados
+//  Create the table of squares
 //�����������������������������������������������������������������������������
 
 void create_squares(void) {
@@ -706,7 +706,7 @@ void create_squares(void) {
 }
 
 //�����������������������������������������������������������������������������
-//      Carga el font del sistema
+//      Load the system font
 //�����������������������������������������������������������������������������
 
 #include "06x08.h"
@@ -744,15 +744,15 @@ void system_font(void) {
 }
 
 //�����������������������������������������������������������������������������
-// Sistema multi-pila para funciones (DIV 2)
+// Multi-stack system for functions (DIV 2)
 //�����������������������������������������������������������������������������
 
-// Funciones:
-//      save_stack(id,sp,mem[id+_SP]); // En lfrm y lfrf de funciones
-//      load_stack(id);                 // En exec_process/trace_process
-//      update_stack(id,valor);       // Pone un valor al final de la pila (rtf)
+// Functions:
+//      save_stack(id,sp,mem[id+_SP]); // In lfrm and lfrf of functions
+//      load_stack(id);                 // In exec_process/trace_process
+//      update_stack(id,value);       // Put a value at the end of the stack (rtf)
 
-// * (int *) mem[id+_SP] = {SP1,SP2,DATOS...}
+// * (int *) mem[id+_SP] = {SP1,SP2,DATA...}
 int stacks=0;
 
 void save_stack(int id, int sp1, int sp2) {
@@ -884,7 +884,7 @@ void is_fps(byte f) {
 }	
 #endif
 //�����������������������������������������������������������������������������
-// Procesa el siguiente proceso
+// Process the next process
 //�����������������������������������������������������������������������������
 #ifdef DEBUG
 int oclock;
@@ -958,10 +958,10 @@ void exec_process(void) {
 }
 
 //�����������������������������������������������������������������������������
-//  N�cleo interno del int�rprete
+//  Internal core of the interpreter
 //�����������������������������������������������������������������������������
 
-int oo; // Para usos internos en el kernel
+int oo; // For internal uses in the kernel
 
 void kernel_exec() {
 
@@ -977,7 +977,7 @@ void kernel_exec() {
 }
 
 //�����������������������������������������������������������������������������
-// Procesa la siguiente instruccion del siguiente proceso
+// Process the next instruction of the next process
 //�����������������������������������������������������������������������������
 
 #ifdef DEBUG
@@ -1034,7 +1034,7 @@ void trace_process(void) {
 }
 
 //�����������������������������������������������������������������������������
-//  N�cleo interno del int�rprete, cuando se est� trazando
+//  Internal core of the interpreter, when tracing
 //�����������������������������������������������������������������������������
 
 void kernel_trace(void) {
@@ -1184,7 +1184,7 @@ void frame_start(void) {
 	} function_exec(255,get_ticks()-oclock);
 #endif
 
-	if (get_clock()>(fclock+iclock/3)) { // Permite comerse hasta un tercio del sgte frame
+	if (get_clock()>(fclock+iclock/3)) { // Allows eating up to a third of the next frame
 		if (skipped_blits<max_skips) {
 			skipped_blits++;
 			skip_blit=1;
@@ -1229,11 +1229,11 @@ void frame_start(void) {
 	for (ide=id_start; ide<=id_end; ide+=iloc_len)
 		mem[ide+_Executed]=0;
 
-// Fija la prioridad m�xima, para ejecutar procesos seg�n _Priority
+// Set the maximum priority, to execute processes according to _Priority
 
-	id_old=id_start; // El siguiente a procesar
+	id_old=id_start; // The next one to process
 
-// Posiciona las variables del rat�n
+// Position the mouse variables
 
 	readmouse();
 
@@ -1295,7 +1295,7 @@ void frame_end(void) {
 #endif
 
 #ifdef DIVDLL
-	// DLL_0 Lee los puntos de ruptura (bien sea de autoload o de import)
+	// DLL_0 Read the breakpoints (whether from autoload or from import)
 	if (!dll_loaded) {
 		dll_loaded=1;
 
@@ -1328,7 +1328,7 @@ void frame_end(void) {
 
 		ss_time_counter=get_clock()+ss_time;
 
-		// DLL_1 Aqu� se llama a uno.
+		// DLL_1 One is called here.
 
 #ifdef DEBUG
 		if (process_palette!=NULL) 
@@ -1339,7 +1339,7 @@ void frame_end(void) {
 
 #endif // DLL
 
-	// Si el usuario modific� mouse.x o mouse.y, posiciona el rat�n debidamente
+	// If the user modified mouse.x or mouse.y, position the mouse accordingly
 #ifndef SDL2
 	if (_mouse_x!=mouse->x || _mouse_y!=mouse->y) 
 		set_mouse(mouse->x,mouse->y);
@@ -1347,7 +1347,7 @@ void frame_end(void) {
 
 	if (!skip_blit) {
 
-	// *** OJO *** Restaura las zonas de copia fuera del scroll y del modo 7
+	// *** NOTE *** Restore the copy areas outside the scroll and mode 7
 
 #ifdef DEBUG
 	oclock=get_ticks();
@@ -1393,7 +1393,7 @@ void frame_end(void) {
 			n=1; 
 			mem[ide+_M8_Object]=create_object(ide);
 
-			// ******* OJO *************** PROBAR !!!!!
+			// ******* NOTE *************** TEST !!!!!
 
 			if (mem[ide+_M8_Object]==-1) delete_process(ide);
 
@@ -1424,11 +1424,11 @@ void frame_end(void) {
 	}
 #endif
 
-    // Pinta los sprites, por orden de _Z (a mayor z se pinta antes)
+    // Draw the sprites, in _Z order (higher z is drawn first)
 
 	for (ide=id_start; ide<=id_end; ide+=iloc_len) {
-		mem[ide+_Executed]=0; // Sin ejecutar
-		mem[ide+_x1]=-1; // Sin regi�n de volcado
+		mem[ide+_Executed]=0; // Not executed
+		mem[ide+_x1]=-1; // No dump region
 	}
 
 	for (n=0;n<10;n++) {
@@ -1493,7 +1493,7 @@ void frame_end(void) {
 								break;
 
 						if (n<max_texts) {
-							memb[nullstring[0]*4]=0; // El texto "en el aire" no se muestra nunca
+							memb[nullstring[0]*4]=0; // The text "in the air" is never shown
 							memb[nullstring[1]*4]=0;
 							memb[nullstring[2]*4]=0;
 							memb[nullstring[3]*4]=0;
@@ -1587,7 +1587,7 @@ void frame_end(void) {
 						break;
 
 				if (n<max_texts) {
-					memb[nullstring[0]*4]=0; // El texto "en el aire" no se muestra nunca
+					memb[nullstring[0]*4]=0; // The text "in the air" is never shown
 					memb[nullstring[1]*4]=0;
 					memb[nullstring[2]*4]=0;
 					memb[nullstring[3]*4]=0;
@@ -1605,7 +1605,7 @@ void frame_end(void) {
 				if (post_process_buffer!=NULL)
 					post_process_buffer();
 
-    // Si se est� haciendo un fade lo contin�a
+    // If a fade is in progress, continue it
 
 				if (now_dacout_r!=dacout_r || now_dacout_g!=dacout_g || now_dacout_b!=dacout_b) {
 					set_palette();
@@ -1644,7 +1644,7 @@ void frame_end(void) {
 
 							blit_full=0;
 
-							// A�ade los volcados de este frame a los restore del anterior
+							// Add this frame's dumps to the previous frame's restores
 
 							for (n=id_start; n<=id_end; n+=iloc_len)
 								if (mem[n+_x1]!=-1) blit_partial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
@@ -1662,13 +1662,13 @@ void frame_end(void) {
 								if (texts[n].font && texts[n].w)
 									blit_partial(texts[n].x0,texts[n].y0,texts[n].w,texts[n].h);
 
-							// Realiza un volcado parcial
+							// Perform a partial dump
 
 							blit_screen((byte*)copy_buffer);
 
 						}
 
-						if (dump_type==0 || restore_type==0) { // Fija los restore para el siguiente frame
+						if (dump_type==0 || restore_type==0) { // Set the restores for the next frame
 
 							for (n=id_start; n<=id_end; n+=iloc_len)
 								if (mem[n+_x1]!=-1) blit_partial(mem[n+_x0],mem[n+_y0],mem[n+_x1]-mem[n+_x0]+1,mem[n+_y1]-mem[n+_y0]+1);
@@ -1698,7 +1698,7 @@ void frame_end(void) {
 				}
 #endif
 
-	} // saltar volcado
+	} // skip dump
 
 }
 
@@ -2293,7 +2293,7 @@ for(a=0;a<10;a++){
 
     mem=(int*)((((memptrsize)mem+3)/4)*4);
 
-    filenames=(char*)&mem[imem_max+258*5]; // Buffer de 16*1025 para dirinfo[].name
+    filenames=(char*)&mem[imem_max+258*5]; // Buffer of 16*1025 for dirinfo[].name
 
     memset(mem,0,4*imem_max+1032*5);
     // To add strings (on the fly?) "in the air"

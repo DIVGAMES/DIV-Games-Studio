@@ -1,12 +1,12 @@
 
 ;ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-;       Definiciones de tokens
+;       Token definitions
 ;ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-;       Si se declaran dos o m s s¡mbolos con el mismo identificador, solo se
-;       reconocer  el primero (sean tokens u objetos de la tabla)
-;       Limitaci¢n, no mezclar s¡mbolos con car cteres de identificador en un
-;       solo token (los car cteres de ident. son los que est n en lower[]).
-;       Est n libres para ser redefinidos los c¢digos de token &01..&77 (hex)
+;       If two or more symbols are declared with the same identifier, only the
+;       first one will be recognized (whether tokens or table objects)
+;       Limitation, do not mix symbols with identifier characters in a
+;       single token (the ident. characters are the ones in lower[]).
+;       Token codes &01..&77 (hex) are free to be redefined
 ;ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 &01program              ;Program
@@ -60,68 +60,68 @@
 
 &2Cdebug                ;Debug
 
-&30; &30:               ;Separador de sentencias
-&31,                    ;Separador de expresiones
+&30; &30:               ;Statement separator
+&31,                    ;Expression separator
 
-&32[                    ;Indirecci¢n, inicio
-&33]                    ;Indirecci¢n, final
+&32[                    ;Indirection, start
+&33]                    ;Indirection, end
 
-&38= &38:=              ;Asignaci¢n
+&38= &38:=              ;Assignment
 
 &3Cdup                  ;Dup
 
-&40(                    ;Par‚ntesis, apertura
-&41)                    ;Par‚ntesis, cierre
+&40(                    ;Parenthesis, opening
+&41)                    ;Parenthesis, closing
 
-;&44add                 ;Suma exclusivamente binaria, pasa a + en tab_exp
-;&45sub                 ;Resta exclusivamente binaria, pasa a -
+;&44add                 ;Exclusively binary addition, becomes + in tab_exp
+;&45sub                 ;Exclusively binary subtraction, becomes -
 
-&46>>                   ;Rotaci¢n a la derecha
-&47<<                   ;Rotaci¢n a la izquierda
+&46>>                   ;Rotate right
+&47<<                   ;Rotate left
 
-&48or &48|| &48|        ;Or l¢gico
-&49xor &49^^            ;Xor l¢gico
-&4Aand &4A&&            ;And l¢gico
+&48or &48|| &48|        ;Logical or
+&49xor &49^^            ;Logical xor
+&4Aand &4A&&            ;Logical and
 
-&4B^                    ;Pointer (unario) o bien xor l¢gico (binario)
-&4C&                    ;Offset (unario) o bien and l¢gico (binario)
+&4B^                    ;Pointer (unary) or else logical xor (binary)
+&4C&                    ;Offset (unary) or else logical and (binary)
 
-&4Eneg                  ;Signo menos unario
-&4Fpointer              ;Operador de indirecci¢n, unario
+&4Eneg                  ;Unary minus sign
+&4Fpointer              ;Indirection operator, unary
 
-&50offset               ;Desplazamiento unaria
-&51! &51not             ;Negaci¢n l¢gica unaria
+&50offset               ;Unary shift
+&51! &51not             ;Unary logical negation
                                                                                §
-&52+                    ;Suma binaria, usado como unario es ignorado
-&53-                    ;Resta binaria, usado como unario equivale a neg
+&52+                    ;Binary addition, used as unary it is ignored
+&53-                    ;Binary subtraction, used as unary it is equivalent to neg
 
-&54*                    ;Multiplicaci¢n, usado como unario equivale a pointer
-&55/ ;&55div            ;Divisi¢n entera, cociente
-&56% &56mod             ;M¢dulo, resto de divisi¢n entera
-;&57mul                 ;Multiplicaci¢n exclusivamente binaria, pasa a *
+&54*                    ;Multiplication, used as unary it is equivalent to pointer
+&55/ ;&55div            ;Integer division, quotient
+&56% &56mod             ;Modulo, remainder of integer division
+;&57mul                 ;Exclusively binary multiplication, becomes *
 
-&58++                   ;Incremento
-&59--                   ;Decremento
+&58++                   ;Increment
+&59--                   ;Decrement
 
-&5B== &5B_eq            ;Igual, operador binario de comparaci¢n
-&5C<> &5C!= &5C_ne      ;Diferente
+&5B== &5B_eq            ;Equal, binary comparison operator
+&5C<> &5C!= &5C_ne      ;Different
 
-&5D> &5D_gt             ;Mayor
-&5E< &5E_lt             ;Menor
-&5F<= &5F=< &5F_le      ;Menor o igual
-&60>= &60=> &60_ge      ;Mayor o igual
+&5D> &5D_gt             ;Greater than
+&5E< &5E_lt             ;Less than
+&5F<= &5F=< &5F_le      ;Less than or equal
+&60>= &60=> &60_ge      ;Greater than or equal
 
-&66sizeof               ;Funci¢n sizeof() interna, devuelve longitud
+&66sizeof               ;Internal sizeof() function, returns length
 
-&67type                 ;Operando que significa el c¢digo del proceso ejecutado
+&67type                 ;Operand that means the code of the executed process
 
-&68id &68whoami         ;Operando que significa el c¢digo del proceso ejecutado
+&68id &68whoami         ;Operand that means the code of the executed process
 
-&69. &69->              ;Operador de acceso a variables ajenas (ej.: nave.x)
+&69. &69->              ;Operator to access other processes' variables (e.g.: ship.x)
 
-&6A..                   ;Especificador de rango (dentro de un case)
+&6A..                   ;Range specifier (inside a case)
 
-&6B+=                   ;Asignaciones operativas (abreviaturas de C)
+&6B+=                   ;Operative assignments (C abbreviations)
 &6C-=
 &6D*=
 &6E/=
@@ -132,17 +132,17 @@
 &73>>=
 &74<<=
 
-;ÄÄÄ C¢digos de token especiales o reservados ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+;ÄÄÄ Special or reserved token codes ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-&00                  ;&00 p_£ltima (Fin de fichero)
-&78' &79"               ;&78..&7B delimitadores de literales (interno an.lex.)
-                        ;&7C reservado                                     (")
-&7D/*                   ;&7D Inicio de un comentario de varias l¡neas
-&7E*/                   ;&7D Fin de un comentario de varias l¡neas
-&7F//                   ;&7F Inicio de un comentario de una l¡nea          (")
+&00                  ;&00 p_last (End of file)
+&78' &79"               ;&78..&7B literal delimiters (internal to the lexer)
+                        ;&7C reserved                                      (")
+&7D/*                   ;&7D Start of a multi-line comment
+&7E*/                   ;&7D End of a multi-line comment
+&7F//                   ;&7F Start of a single-line comment                (")
 &7F#			;
-                        ;&80..&FC (reservados)                             (")
-                        ;&FD identificador
-                        ;&FE constante entera
+                        ;&80..&FC (reserved)                               (")
+                        ;&FD identifier
+                        ;&FE integer constant
 
 ;ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ

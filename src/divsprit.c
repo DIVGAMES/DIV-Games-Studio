@@ -23,7 +23,7 @@ void sp_scan_mask(byte * p,short n,byte * si,int width,int x0,int y0,int x1,int 
 
                 
 //═════════════════════════════════════════════════════════════════════════════
-//      Graficos sin rotar ni escalar
+//      Graphics without rotation or scaling
 //═════════════════════════════════════════════════════════════════════════════
 
 void sp_normal( byte * p, int x, int y, int width, int height,
@@ -165,7 +165,7 @@ void sp_normal_mask( byte * p, int x, int y, int width, int height,
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pone un gráfico rotado y escalado
+//      Put a rotated and scaled graphic
 //═════════════════════════════════════════════════════════════════════════════
 
 byte * ptrmap;
@@ -176,8 +176,8 @@ void sp_rotated( byte * si, int x, int y, int width, int height, int xg, int yg,
   float d0,d1,d2,d3;
   float a0,a1,a2,a3;
   int p[24];
-  int h,hmin,hmax; // Altura minima y maxima
-  int n,l0,l1;   // Lado 0 y lado 1 (indices p[])
+  int h,hmin,hmax; // Minimum and maximum height
+  int n,l0,l1;   // Side 0 and side 1 (indices of p[])
 
   int hmax0,hmax1;
   union { int l; short w[2]; } x0,x1,g0x,g1x,g0y,g1y;
@@ -444,7 +444,7 @@ void sp_scan_mask(byte * p,short n,byte * si,int width,int x0,int y0,int x1,int 
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Invierte horizontalmente un gráfico
+//      Flip a graphic horizontally
 //═════════════════════════════════════════════════════════════════════════════
 
 void invert_horizontal(byte * p, int width, int height) {
@@ -461,7 +461,7 @@ void invert_horizontal(byte * p, int width, int height) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Invierte verticalmente un gráfico
+//      Flip a graphic vertically
 //═════════════════════════════════════════════════════════════════════════════
 
 void invert_vertical(byte * sp, int width, int height) {
@@ -478,7 +478,7 @@ void invert_vertical(byte * sp, int width, int height) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Devuelve el ancho y alto de un gráfico rotado y/o escalado
+//      Return the width and height of a rotated and/or scaled graphic
 //═════════════════════════════════════════════════════════════════════════════
 
 void sp_size( int *x, int *y, int *width, int *height, int xg, int yg,

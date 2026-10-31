@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo de análisis de setup.cfg
+//      setup.cfg parsing module
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -12,7 +12,7 @@ void cfg_show_mouse(void);
 void cfg_show_cursor(void);
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Variables a nivel de módulo
+//      Module-level variables
 //═════════════════════════════════════════════════════════════════════════════
 
 int stnot_big;
@@ -121,7 +121,7 @@ void Vid_Setup3(void) {
 	v_title=(char *)texts[385];
     v_text =(char *)texts[386];
 //    dialog((voidReturnType)info0);
-    exit_environment=1; //Salida directa sin preguntar
+    exit_environment=1; //Direct exit without asking
     return_mode=2;
     
   }
@@ -164,7 +164,7 @@ void Vid_Setup0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Seleccion del tapiz de fondo
+//  Background wallpaper selection
 //═════════════════════════════════════════════════════════════════════════════
 
 char Desktop_name[_MAX_PATH];
@@ -192,7 +192,7 @@ void Get_Desktop() {
 
 		if(v_exists) {
 
-			if ((f=fopen(full,"rb"))!=NULL) { // Se ha elegido uno
+			if ((f=fopen(full,"rb"))!=NULL) { // One has been chosen
 #ifdef TTF
 			strcpy(Desktop_name,input);
 			strcpy(Desktop_pathname,full);
@@ -586,7 +586,7 @@ void MemInfo0(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Ventana de configuración
+//  Configuration window
 //═════════════════════════════════════════════════════════════════════════════
 
 char color_cfg[12];
@@ -1053,7 +1053,7 @@ void resize_program(void) {
   v.h=(12+16)*big2+font_height*v_prg->h;
 
   if (v.w>vga_width) {
-    v.prg->w=(vga_width-12*big2)/font_width; // Calcula tamaño (en chr) maximizada
+    v.prg->w=(vga_width-12*big2)/font_width; // Compute the maximized size (in chr)
     v.w=(4+8)*big2+font_width*v.prg->w;
     window_aux.w=v.w;
   }
@@ -1119,7 +1119,7 @@ void desktop_thumb(void)
 
   if(x_desktop==NULL) return;
 
-  // Crea la reducción del tapiz
+  // Create the wallpaper reduction
 
   coefredx=x_desktop_width/((float)128*(float)big2);
   coefredy=x_desktop_height/((float) 88*(float)big2);
@@ -1145,7 +1145,7 @@ void desktop_thumb(void)
   free(x_desktop);
   x_desktop=NULL;
 
-  // Lo pinta en pantalla
+  // Draw it on screen
 
 
   thumb_pos=5*big2+(42*big2)*v.w;
@@ -1228,9 +1228,9 @@ void prepare_desktop_temp(void) {
 
 
 
-  // *** OJO ***
-  // Mosaico/rescalado
-  // Abrir el map indicado y no siempre "tapiz.map"
+  // *** NOTE ***
+  // Tile/rescale
+  // Open the given map and not always "tapiz.map"
 
   if ((f=fopen(Desktop_pathname,"rb"))==NULL) return;
   fseek(f,0,SEEK_END); len=ftell(f); fseek(f,0,SEEK_SET);
@@ -1291,7 +1291,7 @@ void prepare_desktop_temp(void) {
     for (x=0,p=pal;x<256;x++,p+=3)
       x_cdesktop[x]=fast_find_color(*p,*(p+1),*(p+2));
     p=temp; q=p+desktop_w*desktop_h;
-    do *p=x_cdesktop[*p]; while (++p<q); // Lo adapta a la paleta actual
+    do *p=x_cdesktop[*p]; while (++p<q); // Adapt it to the current palette
   } else {
     for (x=0,p=pal;x<256;x++,p+=3)
       x_cdesktop[x]=desktop_gradient[(*p+*(p+1)+*(p+2))*2/3];
@@ -1303,7 +1303,7 @@ void prepare_desktop_temp(void) {
 
   if (Desktop_mosaic) {
     x_desktop_width=vga_width; x_desktop_height=vga_height; x_desktop_map=x_desktop=p;
-    // Hace el mosaico
+    // Do the tiling
 
     for(y=0; y<vga_height; y++)
     {
