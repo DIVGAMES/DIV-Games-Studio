@@ -5183,7 +5183,7 @@ static void debug0(void) {
 	_button(text[71], v.w - 40, 35, 1);
 	_button(text[72], 136, 102 - 18, 0);
 	_button(text[73],
-	        (v.w - 8 - text_len((byte *)"\15Sgte. Frame") + 136 + text_len((byte *)"\15Perfiles")) / 2,
+	        (v.w - 8 - text_len(text[65]) + 136 + text_len(text[72])) / 2,
 	        102 - 18,
 	        1);
 }
@@ -6272,10 +6272,10 @@ static void profile0(void) {
 	v.click_handler = profile2;
 
 	_button(text[87], 7, v.h - 14, 0);
-	_button(text[88], 7 + 3 + text_len((byte *)"\15 Siguiente Frame "), v.h - 14, 0);
+	_button(text[88], 7 + 3 + text_len(text[87]), v.h - 14, 0);
 	_button(text[89], v.w - 8, v.h - 14, 2);
 	_flag(text[90],
-	      7 + 3 + text_len((byte *)"\15 Siguiente Frame ") + 3 + text_len((byte *)"\15 Comenzar "),
+	      7 + 3 + text_len(text[87]) + 3 + text_len(text[88]),
 	      v.h - 14,
 	      &absolut);
 }
