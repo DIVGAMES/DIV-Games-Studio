@@ -236,13 +236,13 @@ void set_scroll(int plane,int x,int y) {
 
   si+=y*width+x;
 
-  // Has (di,iscroll[snum].w/h) < (si,x,y,w,h)
+  // Has (di,iscroll[snum].w/h) < (si,x,y,width,height)
 
 /* This optimization has been removed
-  if (x+iscroll[snum].width<=width && y+iscroll[snum].height<=height) {
-    y=iscroll[snum].height; do {
-      memcpy(di,si,iscroll[snum].width);
-      di+=iscroll[snum].width; si+=width;
+  if (x+iscroll[snum].w<=width && y+iscroll[snum].h<=height) {
+    y=iscroll[snum].h; do {
+      memcpy(di,si,iscroll[snum].w);
+      di+=iscroll[snum].w; si+=width;
     } while (--y);
   } else {
 */
@@ -598,10 +598,10 @@ void move_scroll(int plane,int x,int y) {
 byte * scroll_right(byte * _buf, byte * buf, int * block,
                     byte * map, int width, int height, int x, int y) {
 
-  // Scroll window (_buf,iscroll[snum].w,iscroll[snum].height(+1))
+  // Scroll window (_buf,iscroll[snum].w,iscroll[snum].h(+1))
   // Number of scans of the first block (*block)
   // Pointer to the current start of the scroll (buf)
-  // Map at (map,w,h), scroll start coordinates (x,y)
+  // Map at (map,width,height), scroll start coordinates (x,y)
 
   int n,m,b;
   byte * ret;
@@ -1361,7 +1361,7 @@ byte * ptr2;
                 }
 }
 
-void draw_texts(void) { // In: text[]
+void draw_texts(void) { // In: texts[]
 
   int n=0,x,y,width,height;
   int font;
@@ -1608,7 +1608,7 @@ void draw_sprites_m7(int n,int cx,int cy,float ang) { // Pass it the camera posi
 
         // *** White pixel at the base of the object ***
         // if (height<vga_height && height>=0 && width<vga_width && width>=0) {
-        //   *(copia+altura*vga_width+anchura)=127;
+        //   *(copy_buffer+height*vga_width+width)=127;
         // }
 
       } mem[ide+_Painted]=1;

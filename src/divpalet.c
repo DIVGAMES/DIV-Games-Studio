@@ -1009,7 +1009,7 @@ void sort_palette(void) {
 //      Merge of two different palettes
 //═════════════════════════════════════════════════════════════════════════════
 
-// byte paleta[768]
+// byte palette[768]
 
 word find_ord2(byte * dac) {
 

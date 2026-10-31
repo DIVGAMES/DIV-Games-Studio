@@ -383,7 +383,7 @@ void show_mod_meters(void)
       for(channel=0; channel<SongChannels; channel++)
       {
         x = bar_width*channel;
-        y = (int)rand()%25*big2;//(judas_getvumeter(canal)*(float)25)*big2;
+        y = (int)rand()%25*big2;//(judas_getvumeter(channel)*(float)25)*big2;
 
         for(ctr=0; ctr<y; ctr++)
         {

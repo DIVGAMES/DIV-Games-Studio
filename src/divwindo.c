@@ -569,7 +569,7 @@ void wblit_dark(byte*copy_buffer,int copy_width,int copy_height,
 //      Text printing functions
 //═════════════════════════════════════════════════════════════════════════════
 typedef  struct { byte w; word dir; } sschar;
-// * car;
+// * glyph;
 
 int char_len(char c) {
 	sschar *glyph;
@@ -584,7 +584,7 @@ int text_len(byte * ptr) {
 	/*  struct {
 	byte w;
 	word dir;
-	} * car;
+	} * glyph;
 	*/
 	int h=0;
 
@@ -621,7 +621,7 @@ int text_len2(byte * ptr) {
 /*  struct {
     byte w;
     word dir;
-  } * car;
+  } * glyph;
 
 */
 
@@ -645,7 +645,7 @@ int text_len2(byte * ptr) {
 void wwrite(byte*copy_buffer,int copy_width,int copy_height,
             int x,int y,int center,byte * ptr,byte c) {
 				
-//	printf("wwrite: %x %d %d %d %d %d %s %d\n",copia,copy_width, copy_height, x,y,centro, ptr, x);
+//	printf("wwrite: %x %d %d %d %d %d %s %d\n",copy_buffer,copy_width, copy_height, x,y,center, ptr, x);
 	
 	wwrite_in_box(copy_buffer,copy_width,copy_width,copy_height,x,y,center,ptr,c);
 }
@@ -670,7 +670,7 @@ void wwrite_in_box(byte*copy_buffer,int real_copy_width,int copy_width,int copy_
 	struct {
 	byte w;
 	word dir;
-	} * car;
+	} * glyph;
 	*/
 
 	byte * font;
@@ -823,7 +823,7 @@ void wwrite_in_box(byte*copy_buffer,int real_copy_width,int copy_width,int copy_
 	if(tsurface == v.surfaceptr) {	
 
 	// calculate if we are rendering the archive listbox
-//		larchivosbr
+//		lfilesbr
 		if(false)
 			x+=10;
 

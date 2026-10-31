@@ -6,8 +6,8 @@
 /*************************************************************************/
 /* Inputs: name of the fli/flc                                          */
 /*           Buffer where the fli is shown                              */
-/*           Buffer_anc width of the buffer where the fli is shown         */
-/*           Buffer_alt height of the buffer where the fli is shown          */
+/*           Buff_width width of the buffer where the fli is shown         */
+/*           Buff_height height of the buffer where the fli is shown         */
 /*           cx x coordinate of the buffer where the fli is shown          */
 /*           cy y coordinate of the buffer where the fli is shown          */
 /*************************************************************************/

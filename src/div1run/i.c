@@ -1432,7 +1432,7 @@ void finalization (void) {
   kbdReset();
 
 //  printf("Ejecución correcta:\n\n\tnº actual de procesos = %u\n\tnº máximo de procesos = %u",
-//    procesos,(id_end-id_start)/iloc_len+1);
+//    processes,(id_end-id_start)/iloc_len+1);
 
 }
 
@@ -1471,7 +1471,7 @@ void exer(int e) {
   #endif
 
   //printf("*** Error de ejecución:\n\n\tnº actual de procesos = %u\n\tnº máximo de procesos = %u",
-  //procesos,(id_end-id_start)/iloc_len+1);
+  //processes,(id_end-id_start)/iloc_len+1);
 
 #ifdef NETLIB
   if (network_initialization) net_end();

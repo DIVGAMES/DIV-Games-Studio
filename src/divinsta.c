@@ -1036,7 +1036,7 @@ fflush(stdout);
       hdir[n].len2=ftell(end);
       fseek(end,0,SEEK_SET);
 
-      // Load fin, compress it, and write it to fout (-1 on error)
+      // Load end, compress it, and write it to fout (-1 on error)
 
       hdir[n].len1=compress_file(end,fout,(unsigned long)hdir[n].len2);
 

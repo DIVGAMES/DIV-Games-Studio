@@ -1893,7 +1893,7 @@ void exer(int e) {
 #endif
 
   //printf("*** Error de ejecuci�n:\n\n\tn� actual de procesos = %u\n\tn� m�ximo de procesos = %u",
-  //procesos,(id_end-id_start)/iloc_len+1);
+  //processes,(id_end-id_start)/iloc_len+1);
 #ifdef NETPLAY
 	if (network_initialization)
 		net_end();

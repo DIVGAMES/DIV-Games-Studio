@@ -88,7 +88,7 @@ extern int error_column;   // Error column num
 
   /*
 
-  int an,al;                    // Character width and height of the window
+  int w,h;                    // Character width and height of the window
 
   int old_x,old_y;              // Coordinates before maximized
   int old_width,old_height;            // Width and height before maximized
@@ -125,7 +125,7 @@ char line_copy[long_line+4];  // Copy of the line being edited, for f_enter()
 
 int cursor_mode=0;      // Active cursor type (0-insert/1-overwrite)
 
-long kblock=0; //0-n/a 1-pivoting(kini,kcol1) 2-complete(kini,kcol1,kfin,kcol2)
+long kblock=0; //0-n/a 1-pivoting(kstart,kcol1) 2-complete(kstart,kcol1,kend,kcol2)
 
 byte *kstart,*kend;       // Pointers to the starts of the initial and final lines
 int kcol1,kcol2;        // Initial and final columns in those lines
@@ -297,7 +297,7 @@ void program2(void) {
     if (!(v.buttons&32)) {
       if (wmouse_y>get_slide_y()) f_pgdn(); else f_pgup(); v.buttons^=32;
     }
-  } else if (v.botones&32) v.botones^=32;
+  } else if (v.buttons&32) v.buttons^=32;
 */
 
   if (mouse_graph==13 && (mouse_b&1) && wmouse_x!=-1) {
@@ -445,7 +445,7 @@ void editor() {
       else { kcol2=kcol1-1; kcol1=1; }
       if (kcol1>kcol2) f_unmark();
       f_home(); break;
-    case 79:                                    // shift+fin
+    case 79:                                    // shift+end
       if (kcol2+1==v.prg->column) kcol2=linelen(v.prg->lptr);
       else { kcol1=kcol2+1; kcol2=linelen(v.prg->lptr); }
       if (kcol1>kcol2) f_unmark();
@@ -747,7 +747,7 @@ void editor() {
       kcol2=v.prg->column-1;
       if (kcol1>kcol2) f_unmark();
       f_home(); break;
-    case 79:                                    // shift+fin
+    case 79:                                    // shift+end
       f_unmark();
       block_edit=1;
       kblock=2; kprg=v.prg;
@@ -798,7 +798,7 @@ void editor() {
     case 80: f_down(); break;                   // cursor down
     case 72: f_up(); break;                     // cursor up
     case 71: f_home(); break;                 // start
-    case 79: f_end(); break;                    // fin
+    case 79: f_end(); break;                    // end
     case 81: f_pgdn(); break;                  // page down
     case 73: f_pgup(); break;                  // page up
     case 82: f_insert(); break;                 // insert
@@ -817,7 +817,7 @@ void editor() {
     case 132:case 73: f_bof(); break;           // ctrl+page up
     case 118:case 81: f_eof(); break;           // ctrl+page down
     case 119:case 71: f_bop(); break;           // ctrl+home.
-    case 117:case 79: f_eop(); break;           // ctrl+fin.
+    case 117:case 79: f_eop(); break;           // ctrl+end.
     case 45: f_cut_block(1); break;         // ctrl+x
     case 46: f_cut_block(0); break;         // ctrl+c
     case 47: f_paste_block();                  // ctrl+v
@@ -1094,7 +1094,7 @@ void f_paste_block(void) {
 
     check_memory(clipboard_len);
 
-    kblock=2; kprg=v.prg; kstart=v.prg->lptr; kcol1=v.prg->column; // Set kini
+    kblock=2; kprg=v.prg; kstart=v.prg->lptr; kcol1=v.prg->column; // Set kstart
 
     // Fill with spaces from the end of the current line up to the cursor
 
@@ -1111,7 +1111,7 @@ void f_paste_block(void) {
 
     memcpy(begin+spaces,clipboard,clipboard_len); // Paste the clipboard
 
-    kend=begin+spaces+clipboard_len-1; kcol2=1; // Set kfin
+    kend=begin+spaces+clipboard_len-1; kcol2=1; // Set kend
     while (kend!=v.prg->buffer && *kend!=cr) { kcol2++; kend--; }
     if (kend!=v.prg->buffer && *kend==cr) { kend+=2; kcol2-=2; }
 
@@ -1517,7 +1517,7 @@ void filled_colin(void) {  // Function to get the colors of the next line
   unsigned char *p=csource;
   int i=0;
 
-  if (!colorizer ) {//|| strstr((const char *)v.titulo,".PRG")) {
+  if (!colorizer ) {//|| strstr((const char *)v.title,".PRG")) {
     memset(colin,ce4,1024);
   } else do {
     clexer();
@@ -2333,7 +2333,7 @@ oi = ptr-v.ptr;
 //x=oi/v.w;//((v.w*18+2)*big2);
 x=(oi%w);//*18+2)*big2);
 //printf("x= %d y=%d\n",x,y);
-y=oi/w;//=50;//oi-(y*v.an);
+y=oi/w;//=50;//oi-(y*v.w);
 
 
 // get window
@@ -2346,7 +2346,7 @@ y=oi/w;//=50;//oi-(y*v.an);
 		}
 	}
 */
-	// render ttf to copia_suface;	
+	// render ttf to copy_buffer_surface;	
 	// ofset by the window x/y
 	SDL_Rect rc;
 

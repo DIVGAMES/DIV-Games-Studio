@@ -476,7 +476,7 @@ void add_code(int dir, int param, int op);
 #define p_pointerbyte   0xf7
 
 #define p_lit           0xfc //Pointer to the literal (txt) in piece_num
-#define p_id            0xfd //or it is a ptr to vnom (to a ptr to the object)
+#define p_id            0xfd //or it is a ptr to vnames (to a ptr to the object)
 #define p_num           0xfe //Number in piece_num
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -737,7 +737,7 @@ FILE * div_open_file(char * file);
 int old_line; // Location in the file of the token before the last one read
 byte * old_ierror, * old_ierror_end;
 
-// The last token read is at (line,ierror,ierror_end)
+// The last token read is at (line_num,ierror,ierror_end)
 
 byte * last_line,zero=0;
 
@@ -858,7 +858,7 @@ byte * vhash[256]; // Pointer to the vector of names
 //═════════════════════════════════════════════════════════════════════════════
 
 struct exp_ele {
-  byte type; // econs, eoper, erango, ewhoami, ecall
+  byte type; // econs, eoper, erange, ewhoami, ecall
   union {
     int value;
     int token;
@@ -1693,7 +1693,7 @@ byte * next_lexer(byte * _source, int comment, int line_num) { // It never gener
       ptr=&vhash[h];
       while (*ptr!=NULL && strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) ptr=(byte **)*ptr;
       if (!strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) { // id found
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         next_piece=(memptrsize)*(ptr+1);
         if (next_piece<256 && next_piece>=0) { // reserved word (token)
           if (next_piece==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
@@ -1701,7 +1701,7 @@ byte * next_lexer(byte * _source, int comment, int line_num) { // It never gener
           next_piece=p_id;
         }
       } else {
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         next_piece=p_id; // new id
       } break;
 
@@ -1802,7 +1802,7 @@ void lexer(void) {
 	  }
 	  
       if (!strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) { // id found
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         piece=(memptrsize)*(ptr+1);
         if (piece<256 && piece>=0) { // reserved word (t	oken)
 			
@@ -5621,7 +5621,7 @@ int constant (void) {
     case estring:
       opstack[++i]=(*e).value; break;
 
-//    case erango:
+//    case erange:
 //      if (opstack[i]<0||opstack[i]>(*e).value) c_error(4,31); break;
 
     case eoper: switch((*e).token) {
@@ -6555,7 +6555,7 @@ void factor(void) {
           if ((*ob).func.par[p]==1) { // Parameter of type 1 (struct,field)
 
             // RECEIVES: struct_name,field_name
-            // GENERATES: struct_offset,item_len,totalen,field_offset,field_type
+            // GENERATES: struct_offset,len_item,totalen,field_offset,field_type
 
             if (piece!=p_id) c_error(0,152);
             if ((*o).member!=NULL) c_error(0,152);
@@ -7901,7 +7901,7 @@ void plexer(void) {
       ptr=&vhash[h];
       while (*ptr && strcmp((char *)(ptr+2),(char *)(_ivnames+ptr8))) ptr=(byte **)*ptr;
       if (!strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) { // id found
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         piece=(memptrsize)*(ptr+1);
         if (piece<256 && piece>=0) { // reserved word (token)
           if (piece==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
@@ -7909,7 +7909,7 @@ void plexer(void) {
           piece=p_id;
         }
       } else {
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         piece=p_id; // new id
       } break;
 
@@ -7925,7 +7925,7 @@ void plexer(void) {
            else *_ivnames=*_source;
       } while (*_ivnames++); _source++;
       texts_length+=(strlen((char *)ivnames.b)+ptr4)/4;
-      ivnames.b=_ivnames; // takes it out of vnom
+      ivnames.b=_ivnames; // takes it out of vnames
       break;
 
     case l_num:

@@ -2036,7 +2036,7 @@ static void _process_items(void) {
 				ascii = 0;
 				_select_new_item(v.selected_item + 1);
 			}
-			if (ascii == 0x1b) { // && (v.item[v.selected_item].estado&2)) {
+			if (ascii == 0x1b) { // && (v.item[v.selected_item].state&2)) {
 				if (v.item[v.selected_item].type == 2) {
 					asc = ascii;
 					kesc = kbdFLAGS[28];
@@ -5246,7 +5246,7 @@ static void determine_id(void) { // Determines what must be displayed for "ids_n
 	l = line0 = line1 - 3;
 	if (l < 0) l = line0 = 0;
 
-	//if (line1) l=line0=line1-1; else l=linea0=0;
+	//if (line1) l=line0=line1-1; else l=line0=0;
 
 	pline0 = source + 1;
 	while (l--) pline0 += strlen((char *)pline0) + 1;

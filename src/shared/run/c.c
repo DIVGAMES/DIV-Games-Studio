@@ -77,7 +77,7 @@ void out_region(void) {
     if (mem[id+_Flags]&2) yg=height-1-yg; y-=yg;
   }
 
-  // It already has region[reg].(x0..y1) and sprite(x,y,w,h)
+  // It already has region[reg].(x0..y1) and sprite(x,y,width,height)
 
   if (mem[id+_Ctype]==1) {
 
@@ -86,7 +86,7 @@ void out_region(void) {
       xg=x+iscroll[n].x-iscroll[n].map1_x; // Position of the sprite in the scroll
       yg=y+iscroll[n].y-iscroll[n].map1_y;
 
-      xg1=xg+width; yg1=yg+height; // 1st Intersection of xg,yg,w,h and iscroll[n]
+      xg1=xg+width; yg1=yg+height; // 1st Intersection of xg,yg,width,height and iscroll[n]
 
       if (iscroll[n].x>xg) xg=iscroll[n].x;
       if (iscroll[n].y>yg) yg=iscroll[n].y;
@@ -130,10 +130,10 @@ void graphic_info(void) {
   } else { xg=*((word*)ptr+32); yg=*((word*)ptr+33); }
 
   switch(opstack[sp+2]) {
-    case 0: opstack[sp]=ptr[13]; break;                    //g_an (original)
-    case 1: opstack[sp]=ptr[14]; break;                    //g_al (original)
-    case 2: opstack[sp]=xg; break;                         //g_x_centro
-    case 3: opstack[sp]=yg; break;                         //g_y_centro
+    case 0: opstack[sp]=ptr[13]; break;                    //g_wide (original)
+    case 1: opstack[sp]=ptr[14]; break;                    //g_height (original)
+    case 2: opstack[sp]=xg; break;                         //g_x_center
+    case 3: opstack[sp]=yg; break;                         //g_y_center
     default: e(138);
   }
 }

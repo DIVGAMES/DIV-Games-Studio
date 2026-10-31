@@ -182,7 +182,7 @@ void gradient0(void)
   button_coords[7].x = button_coords[0].x+14*7;
   button_coords[8].x = button_coords[0].x+14*8;
 
-  // Here the state of the gradient and the buttons (r, g, b and selec) is initialized
+  // Here the state of the gradient and the buttons (r, g, b and select) is initialized
 
   create_dac4();
   memcpy(my_colors,gradient_buf,128);

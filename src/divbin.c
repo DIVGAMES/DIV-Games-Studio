@@ -57,8 +57,8 @@ void Bin2(void)
 					Delete_FPG(MyMemoFPG,window[1].map->Code);
 					v=window[1];
 
-					//if (MyMemoFPG->lInfoFPG.inicial+MyMemoFPG->lInfoFPG.lineas*MyMemoFPG->lInfoFPG.columnas>MyMemoFPG->lInfoFPG.maximo
-					//    && MyMemoFPG->lInfoFPG.inicial) MyMemoFPG->lInfoFPG.inicial--;
+					//if (MyMemoFPG->lInfoFPG.initial+MyMemoFPG->lInfoFPG.lines*MyMemoFPG->lInfoFPG.columns>MyMemoFPG->lInfoFPG.maximum
+					//    && MyMemoFPG->lInfoFPG.initial) MyMemoFPG->lInfoFPG.initial--;
 
 					while (MyMemoFPG->lInfoFPG.initial+(MyMemoFPG->lInfoFPG.lines-1)*MyMemoFPG->lInfoFPG.columns+1>MyMemoFPG->lInfoFPG.maximum) {
 						MyMemoFPG->lInfoFPG.initial-=MyMemoFPG->lInfoFPG.columns;

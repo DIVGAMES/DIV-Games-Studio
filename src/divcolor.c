@@ -138,7 +138,7 @@ void clexer(void) {
       ptr=&cvhash[h];
       while (*ptr && strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) ptr=(byte **)*ptr;
       if (!strcmp((char *)(ptr+2),(char *)_ivnames+ptr8)) { // id found
-        icvnames.b=_ivnames; // takes it out of cvnom
+        icvnames.b=_ivnames; // takes it out of cvnames
         cpiece=(memptrsize)*(ptr+1);
         if (cpiece<256 && cpiece>=0) { // reserved word (token)
           if (cpiece==p_rem) {
@@ -151,7 +151,7 @@ void clexer(void) {
         if (include_names) {
           *ptr=_ivnames; // add a new id
         } else {
-          icvnames.b=_ivnames; // takes it out of cvnom
+          icvnames.b=_ivnames; // takes it out of cvnames
         }
         cpiece=p_id;
       } break;

@@ -694,7 +694,7 @@ GLOBAL fnt_info f_i[max_fonts];
 
 typedef struct _t_text {
   int type;     // Text type 0-normal, 1-&variable
-  byte * font;  // Pointer to the font (byte h,car[256].w/.dir,data...)
+  byte * font;  // Pointer to the font (byte h,glyph[256].w/.dir,data...)
   int x,y;      // Text coordinates
   int ptr;      // Text
   int center;   // Centering type 0-normal (right), 1-horiz. centered, ...
@@ -855,7 +855,7 @@ GLOBAL int buffer_width,buffer_height;         // Width & Height of buffer
 // int      1   height
 // int      1   n - number of points
 // short  2*n   pooints {x,y}
-// char an*al   graphic data
+// char   w*h   graphic data
 // --------------------- N ---------------------------
 
 #ifdef DEBUG

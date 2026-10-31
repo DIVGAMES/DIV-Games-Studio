@@ -190,7 +190,7 @@ void path_find(void) {
     cy=c/max_map_size; cx=c%max_map_size; // The limits (and the map) still need checking
   } while (!end);
 
-  // If (fin==1) cell (bx,by) was reached, and the path is taken from dist()
+  // If (end==1) cell (bx,by) was reached, and the path is taken from dist()
 
   if (!end) { // !!! No path to bx,by was found (there is none) !!!
     m(ax,ay)=start_cell; return;

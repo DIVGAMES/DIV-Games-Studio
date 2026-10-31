@@ -1162,7 +1162,7 @@ void cut_map(void) {
   int x,y,w,h;
   byte *p;
 
-  //1st Request memory for a tmapa struct
+  //1st Request memory for a tmapinfo struct
   if ((v_map=(struct tmapinfo *)malloc(sizeof(struct tmapinfo)))!=NULL) {
 
     box2mab(); w=mab_x1-mab_x0+1; h=mab_y1-mab_y0+1;
@@ -1842,7 +1842,7 @@ void edit_mode_12(void) {
       if(fw!=1) { cnt++; spacelen+=fw; }
     } spacelen=(spacelen/cnt)/2;
 
-    // Determine anmax and almax
+    // Determine wmax and hmax
 
     wmax=0; hmax=0; for(x=0;x<255;x++) {
       GetCharSizeBuffer(x,&fw,&fh,(char *)font);
@@ -4188,7 +4188,7 @@ void select_color(int n) { // Number of "icon" as a parameter
         memcpy(pal,dac,768);
         fread(pal,1,768,FilePaintFPG);
 
-        // Brush in {brush, man x mal, pal}
+        // Brush in {brush, mw x mh, pal}
 
         for (n=0;n<256;n++) xchg[n]=(pal[n*3]+pal[n*3+1]+pal[n*3+2]+3)/12;
         brush_type=0;
@@ -4906,7 +4906,7 @@ int select_icon(int icon_x,int * icons) {
 
       r=0; while (r<num) {
         wput(p,c,d,2+(r%col)*16,10+(r/col)*16,*icons++); r++;
-      } iconos-=num;
+      } icons-=num;
 
       if (mouse_in(a+2,b+10,a+c-2,b+d-2)) {
         r=((mouse_y-b-10)/16)*col+(mouse_x-a-2)/16;
@@ -5050,7 +5050,7 @@ void blit_darkened_bar(byte * p, int real_width, int x, int y, int w, int h) {
 
 // NOTE !!!
 
-/*void vuelca_barra2(byte * p, int x, int y, int an, int al) {
+/*void vuelca_barra2(byte * p, int x, int y, int w, int h) {
 
   byte * q;
   int skip_x, long_x, rest_x;
@@ -5073,7 +5073,7 @@ void blit_darkened_bar(byte * p, int real_width, int x, int y, int w, int h) {
   do {
     do {
       *q=ghost[*q+*p*256]; q++; p++;
-    } while (--an);
+    } while (--w);
     q+=320-(w=long_x); p+=rest_x;
   } while (--long_y);
 }*/
@@ -5108,9 +5108,9 @@ void put_bar(int x,int y,int n) {
         case 3: *q=c3; break;
         case 4: *q=c4; break;
       } p++; q++;
-    } while (--an);
+    } while (--w);
     q+=vga_width-(w=width);
-  } while (--al); */
+  } while (--h); */
 }
 
 void put_bar_inv(int x,int y,int n) {
@@ -5142,8 +5142,8 @@ void put_bar_inv(int x,int y,int n) {
         case 3: *q=c15; break;
         case 4: *q=c0; break;
       } p++; q++;
-    } while (--an);
+    } while (--w);
     q+=vga_width-(w=width);
-  } while (--al); */
+  } while (--h); */
 }
 

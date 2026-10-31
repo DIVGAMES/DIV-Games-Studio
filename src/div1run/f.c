@@ -520,7 +520,7 @@ void new_map(void) {
   color=opstack[sp--]; cy=opstack[sp--]; cx=opstack[sp--];
   height=opstack[sp--]; width=opstack[sp]; opstack[sp]=0;
 
-  // Check w/h/color limits ...
+  // Check width/height/color limits ...
 
   if (width<1 || height<1 || width>32768 || height>32768) { e(e153); return; }
   if (color<0 || color>255) { e(e154); return; }
@@ -1017,7 +1017,7 @@ void init_rnd(int n){
 void rand_seed(void) { init_rnd(opstack[sp]); }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Define_region(n,x,y,an,al)
+//      Define_region(n,x,y,w,h)
 //════════════════════════════════════════════════════════════════════════════
 
 void define_region(void) {
@@ -1542,7 +1542,7 @@ void _sound(void) {
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Stop_sound(id_canal)
+//      Stop_sound(channel_id)
 //════════════════════════════════════════════════════════════════════════════
 
 void stop_sound(void) {

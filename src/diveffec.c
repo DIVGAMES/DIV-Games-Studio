@@ -263,7 +263,7 @@ extern int SelColorFont;
 extern int SelColorOk;
 
 void Explode2(void) {
-  int w=v.w/big2;//, al=v.al/big2;
+  int w=v.w/big2;//, h=v.h/big2;
   int need_refresh=0;
 
   _process_items();

@@ -48,18 +48,18 @@ Mix_Chunk * smp=NULL;
 
 /*struct t_listboxbr{
   int x,y;              // Position of the listbox in the window
-  char * lista;         // The pointer to the list
+  char * list;         // The pointer to the list
   int list_width;         // Number of characters per record
-  int columnas;         // Number of columns of the browser listbox
+  int columns;         // Number of columns of the browser listbox
   int lines;           // Number of lines
-  int an,al;            // Size in pixels of each cell
+  int w,h;            // Size in pixels of each cell
 
   int initial;          // Initial record displayed (from 0)
-  int maximo;           // Total number of existing records (0 n/a)
+  int maximum;           // Total number of existing records (0 n/a)
   int s0,s1,slide;      // Initial, final and current position of the "slide bar"
   int zone;             // Selected zone
-  int botones;          // Tells whether the up(1) or down(2) button is pressed
-  int creada;           // Tells whether the list has already been created on screen
+  int buttons;          // Tells whether the up(1) or down(2) button is pressed
+  int created;           // Tells whether the list has already been created on screen
 };*/
 
 

@@ -800,7 +800,7 @@ void new_map(void) {
   color=opstack[sp--]; cy=opstack[sp--]; cx=opstack[sp--];
   height=opstack[sp--]; width=opstack[sp]; opstack[sp]=0;
 
-  // Check w/h/color limits ...
+  // Check width/height/color limits ...
 
   if (width<1 || height<1 || width>32768 || height>32768) { e(153); return; }
   if (color<0 || color>255) { e(154); return; }
@@ -1510,7 +1510,7 @@ void init_rnd(int n){
 void rand_seed(void) { init_rnd(opstack[sp]); }
 
 //����������������������������������������������������������������������������
-//      Define_region(n,x,y,an,al)
+//      Define_region(n,x,y,w,h)
 //����������������������������������������������������������������������������
 
 void define_region(void) {
@@ -2160,7 +2160,7 @@ opstack[sp]=0;
 }
 
 //����������������������������������������������������������������������������
-//      Stop_sound(id_canal)
+//      Stop_sound(channel_id)
 //����������������������������������������������������������������������������
 
 extern int MusicChannels;
@@ -2299,7 +2299,7 @@ void get_song_line(void) {
 }
 
 //����������������������������������������������������������������������������
-//      is_playing_sound(id_canal)
+//      is_playing_sound(channel_id)
 //����������������������������������������������������������������������������
 
 void is_playing_sound(void) {

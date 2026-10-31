@@ -1,6 +1,6 @@
 
 // This is the compiler with the code I had to auto-format the listing
-// (see #define formato), in case a code auto-formatter is wanted,
+// (see #define format), in case a code auto-formatter is wanted,
 // but separate from the normal compiler (divc.cpp)
 
 // This code is only to see the implementation of the auto-formatter
@@ -283,7 +283,7 @@ void add_code(int dir, int param, int op);
 #define p_pointerbyte   0xf7
 
 #define p_lit           0xfc //Pointer to the literal (txt) in piece_num
-#define p_id            0xfd //or it is a ptr to vnom (to a ptr to the object)
+#define p_id            0xfd //or it is a ptr to vnames (to a ptr to the object)
 #define p_num           0xfe //Number in piece_num
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -508,7 +508,7 @@ FILE * div_open_file(char * file);
 int old_line; // Location in the file of the token before the last one read
 byte * old_ierror, * old_ierror_end;
 
-// The last token read is at (line,ierror,ierror_end)
+// The last token read is at (line_num,ierror,ierror_end)
 
 byte * last_line,zero=0;
 
@@ -626,7 +626,7 @@ byte * vhash[256]; // Pointers to the names vector;
 //═════════════════════════════════════════════════════════════════════════════
 
 struct exp_ele {
-  byte type; // econs, eoper, erango, ewhoami, ecall
+  byte type; // econs, eoper, erange, ewhoami, ecall
   union {
     int value;
     int token;
@@ -1406,7 +1406,7 @@ byte * next_lexer(byte * _source, int comment, int line_num) { // It never gener
       ptr=&vhash[h];
       while (*ptr && strcmp((byte *)(ptr+2),_ivnames+8)) ptr=(void*)*ptr;
       if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id found
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         next_piece=(int)*(ptr+1);
         if (next_piece<256 && next_piece>=0) { // reserved word (token)
           if (next_piece==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
@@ -1414,7 +1414,7 @@ byte * next_lexer(byte * _source, int comment, int line_num) { // It never gener
           next_piece=p_id;
         }
       } else {
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         next_piece=p_id; // new id
       } break;
 
@@ -1535,7 +1535,7 @@ void lexer(void) {
       ptr=&vhash[h];
       while (*ptr && strcmp((byte *)(ptr+2),_ivnames+8)) ptr=(void*)*ptr;
       if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id found
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         piece=(int)*(ptr+1);
         if (piece<256 && piece>=0) { // reserved word (token)
 
@@ -4817,7 +4817,7 @@ int constant (void) {
     case estring:
       opstack[++i]=(*e).value; break;
 
-//    case erango:
+//    case erange:
 //      if (opstack[i]<0||opstack[i]>(*e).value) c_error(4,31); break;
 
     case eoper: switch((*e).token) {
@@ -6849,7 +6849,7 @@ void plexer(void) {
       ptr=&vhash[h];
       while (*ptr && strcmp((byte *)(ptr+2),_ivnames+8)) ptr=(void*)*ptr;
       if (!strcmp((byte *)(ptr+2),_ivnames+8)) { // id found
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         piece=(int)*(ptr+1);
         if (piece<256 && piece>=0) { // reserved word (token)
           if (piece==p_rem) { while (*_source!=cr) _source++; goto lex_scan; }
@@ -6857,7 +6857,7 @@ void plexer(void) {
           piece=p_id;
         }
       } else {
-        ivnames.b=_ivnames; // takes it out of vnom
+        ivnames.b=_ivnames; // takes it out of vnames
         piece=p_id; // new id
       } break;
 
@@ -6873,7 +6873,7 @@ void plexer(void) {
            else *_ivnames=*_source;
       } while (*_ivnames++); _source++;
       texts_length+=(strlen(ivnames.b)+4)/4;
-      ivnames.b=_ivnames; // takes it out of vnom
+      ivnames.b=_ivnames; // takes it out of vnames
       break;
 
     case l_num:

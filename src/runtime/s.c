@@ -364,13 +364,13 @@ void set_scroll(int plane, int x, int y) {
 
 	si += y * width + x;
 
-	// Has (di,iscroll[snum].w/h) < (si,x,y,w,h)
+	// Has (di,iscroll[snum].w/h) < (si,x,y,width,height)
 
 	/* This optimization was removed
-  if (x+iscroll[snum].width<=width && y+iscroll[snum].height<=height) {
-    y=iscroll[snum].height; do {
-      memcpy(di,si,iscroll[snum].width);
-      di+=iscroll[snum].width; si+=width;
+  if (x+iscroll[snum].w<=width && y+iscroll[snum].h<=height) {
+    y=iscroll[snum].h; do {
+      memcpy(di,si,iscroll[snum].w);
+      di+=iscroll[snum].w; si+=width;
     } while (--y);
   } else {
 */
@@ -850,10 +850,10 @@ void move_scroll(int plane, int x, int y) {
 
 byte *scroll_right(byte *_buf, byte *buf, int *block, byte *map, int width, int height, int x, int y) {
 
-	// Scrolling window (_buf,iscroll[snum].an,iscroll[snum].height(+1))
+	// Scrolling window (_buf,iscroll[snum].w,iscroll[snum].h(+1))
 	// Number of scans in first block (*block)
 	// Pointer to current scroll start (buf)
-	// Map (map,an,al)
+	// Map (map,width,height)
 	// scroll start coordinates(x,y)
 
 	int n, m, b;
@@ -2696,7 +2696,7 @@ void text_out(char *ptr, int x, int y) {
 
 void checkpal_font(int ifonts);
 
-void draw_texts(int n) { // In: text[]
+void draw_texts(int n) { // In: texts[]
 
 	int x, y, width, height;
 	int font;
@@ -3071,7 +3071,7 @@ void draw_sprites_m7(int n, int cx, int cy, float ang) { // We pass in camera po
 
 				// *** White pixel at object base ***
 				// if (height<vga_height && height>=0 && width<vga_width && width>=0) {
-				//   *(copia+altura*vga_width+anchura)=127;
+				//   *(copy_buffer+height*vga_width+width)=127;
 				// }
 			}
 			mem[ide + _Painted] = 1;

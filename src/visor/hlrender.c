@@ -88,7 +88,7 @@ float illum;
         vertex->r=0.0;
         vertex->g=0.0;
         vertex->b=0.0;
-        vertex->intensity=0; // -ilum;
+        vertex->intensity=0; // -illum;
       }
 
       // Project the point onto the screen

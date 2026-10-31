@@ -123,7 +123,7 @@ void New_DownLoad_Desktop() {
       case    5: //clipboard
               break;
       case    100: //map
-              // tmapa structure
+              // tmapinfo structure
               mw=window[x].map->map_width;
               mh=window[x].map->map_height;
               n+=fwrite(window[x].map,1,sizeof(struct tmapinfo),desktop);
@@ -302,7 +302,7 @@ fflush(lst);
 #endif
                                         break;
                                 case    100: //map
-                                        // tmapa structure
+                                        // tmapinfo structure
                                         mw=window[x].map->map_width;
                                         mh=window[x].map->map_height;
                                         n=fwrite(window[x].map,1,sizeof(struct tmapinfo),desktop);
@@ -551,7 +551,7 @@ int UpLoad_Desktop()
                                         update_box(0,0,vga_width,vga_height);
                                 break;
                         case    100: //map
-                                // tmapa structure
+                                // tmapinfo structure
                                 fread(&maux,1,sizeof(struct tmapinfo),desktop);
                                 baux=(char *)malloc(maux.map_width*maux.map_height);
                                 if (baux==NULL) {
@@ -631,9 +631,9 @@ int UpLoad_Desktop()
 
 										if(dtime < getFileCreationTime(&pathtmp[0])) {
 											v_title=v_prg->filename;
-											//(char *)texto[75];
+											//(char *)texts[75];
 											v_text="File on disk is newer, reload?";
-											//(char *)texto[76];
+											//(char *)texts[76];
 											dialog(accept0);
 
 											if(v_accept) {
@@ -851,7 +851,7 @@ int new_window_load(voidReturnType init_handler,int nx,int ny)
       // Send the appropriate windows to the background
       //───────────────────────────────────────────────────────────────────────────
 /*
-      if (v.tipo==1) { // Dialogs close all windows
+      if (v.type==1) { // Dialogs close all windows
         if (window[1].type==1) { // Dialog over dialog
           window[1].foreground=0; blit_window(1);
         } else for (n=1;n<max_windows;n++)
@@ -986,7 +986,7 @@ int new_map_load(int nx,int ny,char *name,byte *minimap)
 {
   int n;
 
-  //1st Request memory for a tmapa struct
+  //1st Request memory for a tmapinfo struct
   if ((v_map=(struct tmapinfo *)malloc(sizeof(struct tmapinfo)))!=NULL) {
 	memset(v_map,0,sizeof(struct tmapinfo));
 	

@@ -1645,7 +1645,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
       	      if (color=dir_texture[((v&file_mask)>>rotation_mask)+((u&file_mask)>>16)]) {
                 _asm {
                   pushad
-                  mov edi,destino
+                  mov edi,destination
                   mov ebx,color
                   mov edx,ebx
                   and ebx,0f81fh
@@ -1669,7 +1669,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           	  destination++;
             	u+=dudx;
             	v+=dvdx;
-            } while (--ancho);
+            } while (--width);
           }
         }
         else {
@@ -1682,7 +1682,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
     	        color=dir_texture[((v&file_mask)>>rotation_mask)+((u&file_mask)>>16)];
               _asm {
                 pushad
-                mov edi,destino
+                mov edi,destination
                 mov ebx,color
                 mov edx,ebx
                 and ebx,0f81fh
@@ -1705,7 +1705,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
             	destination++;
           	  u+=dudx;
             	v+=dvdx;
-            } while (--ancho);
+            } while (--width);
           }
         }
       }
@@ -1724,9 +1724,9 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           destination=screen_ptr+x1;
           _asm {
             pushad
-            mov edi,destino
+            mov edi,destination
             mov ebx,color
-            mov ecx,ancho
+            mov ecx,width
             mov edx,ebx
             and ebx,0f81fh
             and edx,07e0h
@@ -1757,7 +1757,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
           do {
             _asm {
               pushad
-              mov edi,destino
+              mov edi,destination
               mov ebx,mr
               cmp ebx,10000h
               jbe label1
@@ -1786,7 +1786,7 @@ void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel,
             }
             destination++;
 	          mr+=drdx; mg+=dgdx; mb+=dbdx;
-          } while (--ancho);
+          } while (--width);
         }
       }
       else {

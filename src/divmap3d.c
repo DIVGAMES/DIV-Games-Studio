@@ -616,7 +616,7 @@ void MapperCreator2(void)
     }
   }
 /*
-  if( lpared.zona==2 || lpared.zona==3 || lpared.zona==4 ||
+  if( lwall.zone==2 || lwall.zone==3 || lwall.zone==4 ||
       lsector.zone==2 || lsector.zone==3 || lsector.zone==4 )
   {
     need_refresh=1;

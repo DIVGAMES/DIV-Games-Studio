@@ -262,7 +262,7 @@ void help2(void) {
             help_line--; while (*(--help_line)); help_line++; help_l--;
           }
         }
-      } blit_help(); v.volcar++;
+      } blit_help(); v.blit++;
     }
 */
 
@@ -793,7 +793,7 @@ void help_xref(int n,int line_num) {
 //      Tabulate the help for a given width (help_width)
 //═════════════════════════════════════════════════════════════════════════════
 
-// graf[n] pointer to w,h,x0,x1,graphic... (w..x1 are words)
+// graph[n] pointer to w,h,x0,x1,graphic... (w..x1 are words)
 
 int example=0;  // An example comes
 int image=0;   // Image code

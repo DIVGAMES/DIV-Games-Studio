@@ -456,7 +456,7 @@ GLOBAL fnt_info f_i[max_fonts];
 
 GLOBAL struct t_text {
   int type;     // Text type 0-normal, 1-&variable
-  byte * font;  // Pointer to the font (byte h,car[256].w/.dir,data...)
+  byte * font;  // Pointer to the font (byte h,glyph[256].w/.dir,data...)
   int x,y;      // Text coordinates
   int ptr;      // Text
   int center;   // Centering type 0-normal (right), 1-horiz. centered, ...

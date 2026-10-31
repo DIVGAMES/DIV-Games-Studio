@@ -2116,7 +2116,7 @@ void maximize_window(void) {
 
   do { read_mouse(); } while(mouse_b&1);
 
-//  if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+//  if (exploding_windows) extrude(x,y,w,h,v.x,v.y,v.w,v.h);
 
   has_moved_from(x,y,w,h);
 
@@ -2160,7 +2160,7 @@ void minimize_window(void) {
 
   do { read_mouse(); } while(mouse_b&1);
   
-  //if (exploding_windows) extrude(x,y,an,al,v.x,v.y,v.an,v.al);
+  //if (exploding_windows) extrude(x,y,w,h,v.x,v.y,v.w,v.h);
   
   has_moved_from(x,y,w,h);
 
@@ -2317,7 +2317,7 @@ void move_window(void) {
 //    if (mode<100) { edit_background(x,y,w,h);
 //      blit_bars(0);
 //      update_dialogs(x,y,w,h);
-//    } else update_box(oldx,oldy,an,al);
+//    } else update_box(oldx,oldy,w,h);
     has_moved_from(oldx,oldy,w,h);
     blit_full=1;
     blit_copy();
@@ -2585,7 +2585,7 @@ void update_box2(int win, int x, int y, int w, int h) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Update the background of a zoom window (zx,zy,zw,zh)
+//      Update the background of a zoom window (zx,zy,zwidth,zheight)
 //═════════════════════════════════════════════════════════════════════════════
 
 void update_background(void) {
@@ -2658,7 +2658,7 @@ void restore_desktop(int x,int y,int w,int h) {
         n=x;
         do {
           *p++=*(t+(n++&127));
-        } while (--an);
+        } while (--w);
         w=_w; p+=vga_width-w;
         if ((t+=128)==desktop_image+128*128) t=desktop_image;
       } while (--al);
@@ -2960,7 +2960,7 @@ void window_surface(int w, int h, byte type) {
 
 	// if couldnt be found
 //	if(tempsurface==NULL) 
-//		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, an, al, 32,
+//		tempsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32,
 //											rmask, gmask, bmask, amask);
 
 
@@ -3928,7 +3928,7 @@ void default_rules(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Function to determine the present drives (in string unidades[])
+//      Function to determine the present drives (in string drives[])
 //═════════════════════════════════════════════════════════════════════════════
 
 void determine_drives(void) {
@@ -4262,7 +4262,7 @@ void _process_items(void) {
         ascii=0;
         _select_new_item(v.selected_item+1);
       }
-      if (ascii==0x1b) { // && (v.item[v.selected_item].estado&2)) {
+      if (ascii==0x1b) { // && (v.item[v.selected_item].state&2)) {
         if (v.item[v.selected_item].type==2) {
           asc=ascii; kesc=kbdFLAGS[28]; est=v.item[v.selected_item].state;
           ascii=0;
@@ -4494,7 +4494,7 @@ void get_input(int n) {
             break;                  // cursor right
           case 75: get_pos--; break;                  // cursor left
           case 71: get_pos=0; break;                  // start
-          case 79: get_pos=strlen(get); break;        // fin
+          case 79: get_pos=strlen(get); break;        // end
           case 83:
             get[strlen(get)+1]=0;
             strcpy(&get[get_pos],&get[get_pos+1]);

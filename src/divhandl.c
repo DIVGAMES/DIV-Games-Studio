@@ -1566,7 +1566,7 @@ void update_menu(int menu,int min,int max) { // (Min,Max) Forbidden options
 // v_map->path       ─┘ the map does not yet have a counterpart on disk
 // v_map->map
 // v_map->mab
-// v_map->map_width/al
+// v_map->map_width/map_height
 
 void blit_mouse(void);
 
@@ -2505,7 +2505,7 @@ void dir_abrir(void) {
   while (m==0 && n<max_files) {
     strcpy(file+n++*file_width,fileinfo.name);
     m=_dos_findnext(&fileinfo);
-  } larchivos.maximo=n;
+  } lfiles.maximum=n;
   qsort(file,lfiles.maximum,file_width,strcmp);
 
   n=0; m=_dos_findfirst("*.*",_A_SUBDIR,&fileinfo);
@@ -2513,7 +2513,7 @@ void dir_abrir(void) {
     if (strcmp(fileinfo.name,".") && (fileinfo.attrib&16))
       strcpy(directory+n++*directory_width,fileinfo.name);
     m=_dos_findnext(&fileinfo);
-  } ldirectorios.maximo=n;
+  } ldirectories.maximum=n;
   qsort(directory,ldirectories.maximum,directory_width,strcmp);
 }
 */
@@ -2716,7 +2716,7 @@ void new_map2(void) {
 int new_map(byte * minimap) {
   int n;
 
-  // 1st Request memory for a tmapa struct
+  // 1st Request memory for a tmapinfo struct
   if ((v_map=(struct tmapinfo *)malloc(sizeof(struct tmapinfo)))!=NULL) {
 
     // 2nd Request memory for the map
@@ -3007,7 +3007,7 @@ void open_map3d(void) {
 //═════════════════════════════════════════════════════════════════════════════
 //      Save a map
 //
-// In: tipo[v_type].path, input
+// In: type[v_type].path, input
 //      map, dac, map_width, map_height
 //      v_window
 //═════════════════════════════════════════════════════════════════════════════
@@ -3245,7 +3245,7 @@ int Colors[9],min_dist,i,dist;
                         p3=ghost[p3+p4*256];
                         p1=ghost[p1+p3*256];
 
-//Gray=1 Convert the image to grayscale
+//Grey=1 Convert the image to grayscale
 
                         if(Grey)
                         {
@@ -3357,7 +3357,7 @@ void search_map() {
 
   if(!determine_active_map()) return;
 
-  mw=map_width; mh=map_height; ma=map; // Original map ma(man,mal)
+  mw=map_width; mh=map_height; ma=map; // Original map ma(mw,mh)
 
   if (mw>mh) { // Get the limits of the "tile"
     mintile=(mw+max_map_size-1)/max_map_size;
@@ -3749,7 +3749,7 @@ void about1(void) {
   wwrite(v.ptr,w,h,x,11+8*17,1,texts[481],c0);
   wwrite(v.ptr,w,h,x,11+8*18,1,texts[482],c3);
   wwrite(v.ptr,w,h,x,11+8*19,1,texts[483],c4);
-//  wwrite(v.ptr,an,al,x,11+8*20,1,texto[484],c4);
+//  wwrite(v.ptr,w,h,x,11+8*20,1,texts[484],c4);
 }
 
 void about2(void) {
