@@ -64,8 +64,8 @@ void initialize_texts(byte * file) {
   } 
 
 /*
-  text_data=textosing;
-  end_texts=text_data+sizeof(textosing);
+  text_data=english_texts;
+  end_texts=text_data+sizeof(english_texts);
   analyze_texts();
 */
 #endif

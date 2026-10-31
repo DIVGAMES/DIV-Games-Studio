@@ -96,7 +96,7 @@ typedef struct _vertex{
   int         garbage[4];
 }tvertex,*lptvertex;
 
-/* CARA *************************************************/
+/* FACE *************************************************/
 
 typedef struct _face{
   lptvertex   v1;           // Pointer to vertex 1.

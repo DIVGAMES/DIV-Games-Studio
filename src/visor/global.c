@@ -109,7 +109,7 @@ void lf_free(void *pointer)
       free(pointer);
       mem_mallocs-=table_mem_mallocs[i];
       num_mallocs--;
-//      printf("Liberado: %d, Total: %d\n",table_mem_mallocs[i],mem_mallocs);
+//      printf("Freed: %d, Total: %d\n",table_mem_mallocs[i],mem_mallocs);
       table_mallocs[i]=table_mallocs[num_mallocs];
       table_mem_mallocs[i]=table_mem_mallocs[num_mallocs];
       table_mallocs[num_mallocs]=NULL;

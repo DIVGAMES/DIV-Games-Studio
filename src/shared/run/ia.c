@@ -27,7 +27,7 @@ word * next;  // Table with the linked list of cells
 
 #define dist(x)  (*(distances+(x)))
 #define dist2(x) (*(distances2+(x)))
-#define sig(x)  (*(next+(x)))
+#define next_of(x) (*(next+(x)))
 
 byte *map;          // Pointer to the hardness map (bytes, 0 if free)
 int w,h;          // Width and height of the map
@@ -173,19 +173,19 @@ void path_find(void) {
 
   cx=ax; cy=ay; c=cx+cy*max_map_size; b=bx+by*max_map_size;
 
-  sig(c)=65535; // There is no next one
+  next_of(c)=65535; // There is no next one
   dist(c)=1;     // There is no distance (1 to mark it as visited)
   end=0;        // No path was found
 
   if (!mode) do {
     expand();
-    c=sig(c);
+    c=next_of(c);
     if (c==65535) break;
     cy=c/max_map_size; cx=c%max_map_size; // The limits (and the map) still need checking
   } while (!end);
   else do {
     expand2();
-    c=sig(c);
+    c=next_of(c);
     if (c==65535) break;
     cy=c/max_map_size; cx=c%max_map_size; // The limits (and the map) still need checking
   } while (!end);
@@ -261,12 +261,12 @@ void add(int x, int y, word bnew, word step) { // Fast version
   i=abs(x-bx); a=abs(y-by); cdis=dist2(bnew)=(i<a)?(i>>2)+a:i+(a>>2);
 
   a=c; do { // Find the place for this new cell
-    i=a; a=sig(a);
+    i=a; a=next_of(a);
     if (a==65535) break;
   } while (cdis>dist2(a));
 
-  sig(i)=bnew;
-  sig(bnew)=a;
+  next_of(i)=bnew;
+  next_of(bnew)=a;
 
   if (bnew==b) end=1;
 }
@@ -277,12 +277,12 @@ void add2(word bnew, word step) { // Exact version
   dist(bnew)=dist(c)+step; // Save its distance
 
   a=c; do { // Find the place for this new cell
-    i=a; a=sig(a);
+    i=a; a=next_of(a);
     if (a==65535) break;
   } while (dist(bnew)>dist(a));
 
-  sig(i)=bnew;
-  sig(bnew)=a;
+  next_of(i)=bnew;
+  next_of(bnew)=a;
 
   if (bnew==b) end=1;
 }

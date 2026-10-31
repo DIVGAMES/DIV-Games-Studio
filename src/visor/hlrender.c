@@ -35,8 +35,8 @@ void hlrender_destroy(hlrender *hlrender_struct)
 void hlrender_transform(hlrender *hlrender_struct,lptobject obj)
 {
 lptvertex vertex;
-//lptvertex ini;
-//lptvertex fin;
+//lptvertex begin;
+//lptvertex end;
 tmatrix   wmat;
 tmatrix   wmat2;
 //tmatrix   wmat3;
@@ -156,8 +156,8 @@ float illum;
 void hlrender_transform_shadow(hlrender *hlrender_struct,lptobject obj)
 {
 lptvertex vertex;
-//lptvertex ini;
-//lptvertex fin;
+//lptvertex begin;
+//lptvertex end;
 tmatrix   wmat;
 tmatrix   wmat2;
 int i;

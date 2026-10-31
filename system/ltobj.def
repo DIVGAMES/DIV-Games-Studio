@@ -305,8 +305,8 @@ global struct fileinfo[0]
         string name[7]  // Name
         string ext[3]   // Extension
         size            // Size (in bytes)
-        day             // Dia
-        month           // Mes
+        day             // Day
+        month           // Month
         year            // Year
         hour            // Hour
         min             // Minute
@@ -353,7 +353,7 @@ global num_video_modes=0 // Number of video modes in struct video_modes[]
 
 global unit_size=4      // Minimum word size for disk operations
 
-//ÄÄÄ Variables locales ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//ÄÄÄ Local variables ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 local struct reserved[0]
         process_id=0    // Process identifier

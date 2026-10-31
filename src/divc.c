@@ -5686,7 +5686,7 @@ void exp0() { // Operators with right-to-left associativity <-
     } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerbyte) {
       if (p==p_assign) p=p_assignchar; else p+=p_add_assignchar-p_add_assign;
       _exp--; lexer();
-      exp00(1); // mis_bytes[1]="A";
+      exp00(1); // my_bytes[1]="A";
       (*_exp).type=eoper; (*_exp++).token=p;
     } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerword) {
       if (p==p_assign) p=p_assignword; else p+=p_add_assignword-p_add_assign;
@@ -7468,7 +7468,7 @@ FILE * open_multi(char *file, char *mode) {
   if ( f = fpopen(full))
     return f;
 
-  if ((f=fopen(full,mode))) // "paz\fixero.est"
+  if ((f=fopen(full,mode))) // "dir\file.ext"
     return f;
 
     
@@ -7487,7 +7487,7 @@ FILE * open_multi(char *file, char *mode) {
 
     strcat(full,(char*)file);
 
-  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\dir\file.ext"
     return f;
 
   if ( f = fpopen(full))
@@ -7495,7 +7495,7 @@ FILE * open_multi(char *file, char *mode) {
 
   strupr(full);
 
-  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\dir\file.ext"
   return f;
 
   if ( f=fpopen(full) )
@@ -7504,7 +7504,7 @@ FILE * open_multi(char *file, char *mode) {
   strcpy(full,fname);
   strcat(full,ext);
 
-  if ((f=fopen(full,mode))) // "fixero.est"
+  if ((f=fopen(full,mode))) // "file.ext"
     return f;
 
   if ( f = fpopen(full))
@@ -7512,7 +7512,7 @@ FILE * open_multi(char *file, char *mode) {
 
   strupr(full);
 
-  if ((f=fopen(full,mode))) // "fixero.est"
+  if ((f=fopen(full,mode))) // "file.ext"
     return f;
 
   if ( f = fpopen(full))
@@ -7520,7 +7520,7 @@ FILE * open_multi(char *file, char *mode) {
 
   strlwr(full);
 
-  if ((f=fopen(full,mode))) // "fixero.est"
+  if ((f=fopen(full,mode))) // "file.ext"
     return f;
 
   if ( f = fpopen(full))
@@ -7537,7 +7537,7 @@ FILE * open_multi(char *file, char *mode) {
   strcat(full,fname);
   strcat(full,ext);
 
-  if ((f=fopen(full,mode))) // "est\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\file.ext"
     return f;
 
   if ( f = fpopen(full))
@@ -7545,7 +7545,7 @@ FILE * open_multi(char *file, char *mode) {
 
   strlwr(full);
 
-  if ((f=fopen(full,mode))) // "est\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\file.ext"
     return f;
 
   if ( f = fpopen(full))

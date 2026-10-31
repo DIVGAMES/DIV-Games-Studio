@@ -82,7 +82,7 @@ static int wmouse_in(int x, int y, int w, int h);
 static void get_input(int n);
 
 static void save_restore(byte *p, int x, int y, int n, int flag);
-static void process_graph(int id, byte *q, int van, int w, int h);
+static void process_graph(int id, byte *q, int win_width, int w, int h);
 
 static void draw_segment(void);
 static void include_members(int parent, int level, int index);
@@ -3041,7 +3041,7 @@ static void draw_proc_list(void) {
 //		Draws the graphic for a process in the debugger
 //════════════════════════════════════════════════════════════════════════════
 
-static void process_graph(int id, byte *q, int van, int w, int h) {
+static void process_graph(int id, byte *q, int win_width, int w, int h) {
 
 	int file, graph, angle;
 	int x, y, n, m;
@@ -3130,18 +3130,18 @@ static void process_graph(int id, byte *q, int van, int w, int h) {
 
 	put_collision(buffer, ptr, x, y, xg, yg, angle, mem[id + _Size], mem[id + _Flags]);
 
-	// window q, van, of w*h
+	// Window q, row stride win_width, area w*h
 
 	wbox(v.ptr, v.w / big2, v.h / big2, c0, 134, 32, w / big2, h / big2); // Draws black background
 
 	if (buffer_width <= w && buffer_height <= h) { // If it fits in window, center it
 
-		q += (w - buffer_width) / 2 + ((h - buffer_height) / 2) * van;
+		q += (w - buffer_width) / 2 + ((h - buffer_height) / 2) * win_width;
 		p = buffer;
 		old_width = buffer_width;
 		do {
 			do { *q++ = *p++; } while (--buffer_width);
-			q += van - (buffer_width = old_width);
+			q += win_width - (buffer_width = old_width);
 		} while (--buffer_height);
 
 	} else { // If it doesn't fit in window, scale it
@@ -3151,7 +3151,7 @@ static void process_graph(int id, byte *q, int van, int w, int h) {
 
 		if (ixr > iyr) {
 			yg = h - (float)(buffer_height * 256) / (float)ixr;
-			q += (yg / 2) * van;
+			q += (yg / 2) * win_width;
 			h -= yg;
 			iyr = ixr;
 		} else if (iyr > ixr) {
@@ -3172,7 +3172,7 @@ static void process_graph(int id, byte *q, int van, int w, int h) {
 					xr += ixr;
 				} while (--w);
 				yr += iyr;
-				q += van - (w = old_width);
+				q += win_width - (w = old_width);
 			} while (--h);
 	}
 

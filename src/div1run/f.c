@@ -304,28 +304,28 @@ while (*ff!=0) {
 //printf("%s\n",full);
   strcpy(full,(char*)file);
 //    printf("trying to load %s\n",full);
-  if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
+  if ((f=fopen(full,"rb"))==NULL) {                     // "dir\file.ext"
     if (_fullpath(full,(char*)file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,(char*)file);
     //printf("Trying: %s\n",full);
-    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+    if ((f=fopen(full,"rb"))==NULL) {                   // "ext\dir\file.ext"
 	strupr(full);
 	//printf("Trying: %s\n",full);
-    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+    if ((f=fopen(full,"rb"))==NULL) {                   // "ext\dir\file.ext"
 		
       strcpy(full,fname);
       strcat(full,ext);
 //    printf("Trying: %s\n",full);
 
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+      if ((f=fopen(full,"rb"))==NULL) {                 // "file.ext"
 strupr(full);
     //printf("Trying: %s\n",full);
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+      if ((f=fopen(full,"rb"))==NULL) {                 // "file.ext"
 strlwr(full);
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+      if ((f=fopen(full,"rb"))==NULL) {                 // "file.ext"
 
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
@@ -333,9 +333,9 @@ strlwr(full);
         strcat(full,ext);
     //printf("Trying: %s\n",full);
 
-        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+        if ((f=fopen(full,"rb"))==NULL) {               // "ext\file.ext"
 			strlwr(full);
-        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+        if ((f=fopen(full,"rb"))==NULL) {               // "ext\file.ext"
 //#ifndef PSP
 			if(f=memz_open_file(file))
 				return f;
@@ -363,21 +363,21 @@ FILE * _open_file(char * file) {
   char ext[_MAX_EXT+1];
 
   strcpy(full,file);
-  if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
+  if ((f=fopen(full,"rb"))==NULL) {                     // "dir\file.ext"
     if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,file);
-    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+    if ((f=fopen(full,"rb"))==NULL) {                   // "ext\dir\file.ext"
       strcpy(full,fname);
       strcat(full,ext);
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+      if ((f=fopen(full,"rb"))==NULL) {                 // "file.ext"
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
-        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+        if ((f=fopen(full,"rb"))==NULL) {               // "ext\file.ext"
           strcpy(full,"");
           return(NULL);
         } else return(f);
@@ -1312,18 +1312,18 @@ FILE * open_save_file(char * file) {
   char ext[_MAX_EXT+1];
 
   strcpy(full,file);
-  if ((f=fopen(full,"wb"))==NULL) {                     // "paz\fixero.est"
+  if ((f=fopen(full,"wb"))==NULL) {                     // "dir\file.ext"
     if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='/') strcat(full,"/");
     strcat(full,file);
-    if ((f=fopen(full,"wb"))==NULL) {                   // "est\paz\fixero.est"
+    if ((f=fopen(full,"wb"))==NULL) {                   // "ext\dir\file.ext"
       strcpy(full,fname);
       strcat(full,ext);
       if ((f=fopen(full,"rb"))!=NULL) { // If it is already in the div root ...
         fclose(f);
-        if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
+        if ((f=fopen(full,"wb"))==NULL) {                 // "file.ext"
           strcpy(full,"");
           return(NULL);
         } else return(f);
@@ -1332,12 +1332,12 @@ FILE * open_save_file(char * file) {
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
-        if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
+        if ((f=fopen(full,"wb"))==NULL) {               // "ext\file.ext"
           if (strchr(ext,'.')==NULL) mkdir(ext); else mkdir(strchr(ext,'.')+1);
-          if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
+          if ((f=fopen(full,"wb"))==NULL) {               // "ext\file.ext"
             strcpy(full,fname);
             strcat(full,ext);
-            if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
+            if ((f=fopen(full,"wb"))==NULL) {                 // "file.ext"
               strcpy(full,"");
               return(NULL);
             } else return(f);
@@ -1390,12 +1390,12 @@ FILE * open_save_file(char * file) {
   strcat(full,ext);
   printf("Looking for save file: %s\n",full);
 
-  if ((f=fopen(full,"wb"))==NULL) {               // "est\fixero.est"
+  if ((f=fopen(full,"wb"))==NULL) {               // "ext\file.ext"
     strcpy(full,fname);
     strcat(full,ext);
   printf("Looking for save file: %s\n",full);
 
-    if ((f=fopen(full,"wb"))==NULL) {                 // "fixero.est"
+    if ((f=fopen(full,"wb"))==NULL) {                 // "file.ext"
       strcpy(full,"");
       return(NULL);
     } else return(f);

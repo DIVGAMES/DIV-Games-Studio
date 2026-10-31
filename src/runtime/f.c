@@ -217,7 +217,7 @@ FILE * open_multi(char *file, char *mode) {
 
 //fprintf(stdout,"Trying to open %s\n",full);
 
-  if ((f=fopen(full,mode))) // "paz\fixero.est"
+  if ((f=fopen(full,mode))) // "dir\file.ext"
     return f;
 
     
@@ -238,7 +238,7 @@ FILE * open_multi(char *file, char *mode) {
 
 //fprintf(stdout,"Trying to open %s\n",full);
 
-  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\dir\file.ext"
     return f;
 
 #ifdef DEBUG  
@@ -250,7 +250,7 @@ FILE * open_multi(char *file, char *mode) {
 
 //fprintf(stdout,"Trying to open %s\n",full);
 
-  if ((f=fopen(full,mode))) // "est\paz\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\dir\file.ext"
   return f;
 
 #ifdef DEBUG
@@ -263,7 +263,7 @@ FILE * open_multi(char *file, char *mode) {
 
 //fprintf(stdout,"Trying to open %s\n",full);
 
-  if ((f=fopen(full,mode))) // "fixero.est"
+  if ((f=fopen(full,mode))) // "file.ext"
     return f;
 
 #ifdef DEBUG
@@ -275,7 +275,7 @@ FILE * open_multi(char *file, char *mode) {
 
 //fprintf(stdout,"Trying to open %s\n",full);
 
-  if ((f=fopen(full,mode))) // "fixero.est"
+  if ((f=fopen(full,mode))) // "file.ext"
     return f;
 
 #ifdef DEBUG
@@ -287,7 +287,7 @@ FILE * open_multi(char *file, char *mode) {
 
 //fprintf(stdout,"Trying to open %s\n",full);
 
-  if ((f=fopen(full,mode))) // "fixero.est"
+  if ((f=fopen(full,mode))) // "file.ext"
     return f;
 
 #ifdef DEBUG
@@ -306,7 +306,7 @@ FILE * open_multi(char *file, char *mode) {
   strcat(full,fname);
   strcat(full,ext);
 
-  if ((f=fopen(full,mode))) // "est\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\file.ext"
     return f;
 
 #ifdef DEBUG
@@ -316,7 +316,7 @@ FILE * open_multi(char *file, char *mode) {
 
   strlwr(full);
 
-  if ((f=fopen(full,mode))) // "est\fixero.est"
+  if ((f=fopen(full,mode))) // "ext\file.ext"
     return f;
 
 #ifdef DEBUG
@@ -3312,21 +3312,21 @@ void _fopen(void) { // Find the file, since it may have been included in the ins
 #endif
 
   if(f==NULL) {
-  if ((f=fopen(full,mode))==NULL) {                     // "paz\fixero.est"
+  if ((f=fopen(full,mode))==NULL) {                     // "dir\file.ext"
     if (_fullpath(full,(char*)&mem[opstack[sp]],_MAX_PATH)==NULL) { opstack[sp]=0; return; }
     _splitpath(full,drive,dir,fname,ext);
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && memb[opstack[sp]*4]!='/') strcat(full,"/");
     strcat(full,(char*)&mem[opstack[sp]]);
-    if ((f=fopen(full,mode))==NULL) {                   // "est\paz\fixero.est"
+    if ((f=fopen(full,mode))==NULL) {                   // "ext\dir\file.ext"
       strcpy(full,fname);
       strcat(full,ext);
-      if ((f=fopen(full,mode))==NULL) {                 // "fixero.est"
+      if ((f=fopen(full,mode))==NULL) {                 // "file.ext"
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"/");
         strcat(full,fname);
         strcat(full,ext);
-        f=fopen(full,mode);                             // "est\fixero.est"
+        f=fopen(full,mode);                             // "ext\file.ext"
 			
       }
     }

@@ -1206,7 +1206,7 @@ void create_thumb_PCM(struct t_listboxbr * l)
                   thumb[num].status=-1;
                   return;
                 }
-                //printf("ST a MONO ...\n");
+                //printf("ST to MONO ...\n");
                 for(x=0;x<length;x++) {
                         BufferOut[x]=BufferIn[x*2];
                 }

@@ -2661,7 +2661,7 @@ void restore_desktop(int x,int y,int w,int h) {
         } while (--w);
         w=_w; p+=vga_width-w;
         if ((t+=128)==desktop_image+128*128) t=desktop_image;
-      } while (--al);
+      } while (--h);
       */
     } else {
       do {

@@ -9236,18 +9236,18 @@ PROGRAM example_ftell;
 
 GLOBAL
     mytable[3]=11,22,33,44;
-    midata1;
-    midata2;
+    mydata1;
+    mydata2;
     myhandle;
 
 BEGIN
     myhandle=fopen("help/help.dat","w");
 
-    midata1=ftell(myhandle); // Position of the cursor before writing
+    mydata1=ftell(myhandle); // Position of the cursor before writing
 
     fwrite(OFFSET mytable,4,myhandle);
 
-    midata2=ftell(myhandle); // Position of the cursor after being written the data
+    mydata2=ftell(myhandle); // Position of the cursor after being written the data
 
     fclose(myhandle);
 END
@@ -9257,10 +9257,10 @@ This example writes the four data items contained in {mytable} (11,22,33 & 44)
 into the file {help.dat}.
 
 After opening the file with {#223,fopen()} the position of the cursor is obtained
-and saved in the variable {midata1} (this will be 0, the beginning of the file).
+and saved in the variable {mydata1} (this will be 0, the beginning of the file).
 
 Then, the four values contained in the table are written in the file and the
-position of the cursor is obtained again, which now is saved in {midata2} (will be
+position of the cursor is obtained again, which now is saved in {mydata2} (will be
 4, at the end of the file, after the four written values).
 
 Finally, the file is closed with {#224.fclose()} before ends.
@@ -9377,18 +9377,18 @@ This last function allows you to close just one file, or everyone which is open.
 PROGRAM example_flush;
 
 GLOBAL
-    midata1;
-    midata2;
+    mydata1;
+    mydata2;
     myhandle;
 
 BEGIN
     myhandle=fopen("help/help.dat","w");
 
-    midata1=flush(); // Obtains the number of opened files (1)
+    mydata1=flush(); // Obtains the number of opened files (1)
 
     fclose(myhandle);
 
-    midata2=flush(); // Obtains the number of opened files (0)
+    mydata2=flush(); // Obtains the number of opened files (0)
 
 END
 {-}
@@ -10858,16 +10858,16 @@ of the first {file FPG} which is loaded in the program).
 PROGRAM example_write_in_map;
 
 GLOBAL
-    mi_font;
+    my_font;
 
 BEGIN
-    mi_font=load_fnt("help/help.fnt");
+    my_font=load_fnt("help/help.fnt");
 
     // A new map is created with the text "MOUSE"
     // with the checkpoint in the centre, and is
     // assigned as the graphic of the mouse cursor.
 
-    mouse.graph = write_in_map(mi_font,"MOUSE",4);
+    mouse.graph = write_in_map(my_font,"MOUSE",4);
 
     REPEAT
         FRAME;
@@ -14368,7 +14368,7 @@ type of data can only contain values inside the rank {0} ... {255}.
 {#9999,Example:}
 PROGRAM my_game;
 GLOBAL
-    BYTE mi_value=300; // Error: Value of byte out of rank (0...255).
+    BYTE my_value=300; // Error: Value of byte out of rank (0...255).
 BEGIN
     //...
 END
@@ -23024,7 +23024,7 @@ type {#1406,STRING}) and numeric variables (data of type {#1402,INT}).
 
 {fullpath} - Full name (including the path). The file path can be specified completely (beginning with
 the root directory of the drive, such as "C:\WINDOWS\...") or relative to the current directory
-(starting from where the game executes, such as "MAP\MIOS\...").
+(starting from where the game executes, such as "MAP\MINE\...").
 In all cases, {fileinfo.fullpath} always returns the full path
 from the root directory, including the drive letter.
 

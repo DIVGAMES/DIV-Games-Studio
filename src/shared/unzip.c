@@ -110,7 +110,7 @@ FILE * memz_open_file(unsigned char *file) {
 FILE *out;
 
 
-// trim file to last bit (fixero.ext)
+// trim file to last bit (file.ext)
 
 while (*ff!=0) {
 	if(*ff =='\\') *ff='/';

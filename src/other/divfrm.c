@@ -4882,7 +4882,7 @@ void exp0() { // Operators with right-to-left associativity <-
     } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerbyte) {
       if (p==p_assign) p=p_assignchar; else p+=p_add_assignchar-p_add_assign;
       _exp--; lexer();
-      exp00(1); // mis_bytes[1]="A";
+      exp00(1); // my_bytes[1]="A";
       (*_exp).type=eoper; (*_exp++).token=p;
     } else if ((*(_exp-1)).type==eoper && (*(_exp-1)).token==p_pointerword) {
       if (p==p_assign) p=p_assignword; else p+=p_add_assignword-p_add_assign;
@@ -6496,7 +6496,7 @@ FILE * div_open_file(char * file) {
   char ext[_MAX_EXT+1];
 
   strcpy(full,file);
-  if ((f=fopen(full,"rb"))==NULL) {                     // "paz\fixero.est"
+  if ((f=fopen(full,"rb"))==NULL) {                     // "dir\file.ext"
 
 #ifdef NOTYET
     if (_fullpath(full,file,_MAX_PATH)==NULL) return(NULL);
@@ -6506,15 +6506,15 @@ FILE * div_open_file(char * file) {
     if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
     if (strlen(full) && file[0]!='\\') strcat(full,"\\");
     strcat(full,file);
-    if ((f=fopen(full,"rb"))==NULL) {                   // "est\paz\fixero.est"
+    if ((f=fopen(full,"rb"))==NULL) {                   // "ext\dir\file.ext"
       strcpy(full,fname);
       strcat(full,ext);
-      if ((f=fopen(full,"rb"))==NULL) {                 // "fixero.est"
+      if ((f=fopen(full,"rb"))==NULL) {                 // "file.ext"
         if (strchr(ext,'.')==NULL) strcpy(full,ext); else strcpy(full,strchr(ext,'.')+1);
         if (strlen(full)) strcat(full,"\\");
         strcat(full,fname);
         strcat(full,ext);
-        if ((f=fopen(full,"rb"))==NULL) {               // "est\fixero.est"
+        if ((f=fopen(full,"rb"))==NULL) {               // "ext\file.ext"
           strcpy(full,"");
           return(NULL);
         } else return(f);

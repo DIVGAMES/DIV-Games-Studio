@@ -2386,7 +2386,7 @@ void pixel(byte *p) {
   }
 }
 
-void pixel_sin_mask(byte *p) {
+void pixel_no_mask(byte *p) {
 
   byte a,b,c,d;
   int n;
@@ -2513,7 +2513,7 @@ void line_pixel(int x,int y) { // Brush
         } else {
           do {
             do {
-              if ((line_fx=*p) && *q!=color) pixel_sin_mask(q); q++; p++;
+              if ((line_fx=*p) && *q!=color) pixel_no_mask(q); q++; p++;
             } while (++xx<brush_width);
             xx=0; q-=brush_width-map_width;
           } while (++yy<brush_height);
@@ -2541,7 +2541,7 @@ void line_pixel(int x,int y) { // Brush
         } else {
           do {
             do {
-              if (*p && *q!=color) pixel_sin_mask(q); q++; p++;
+              if (*p && *q!=color) pixel_no_mask(q); q++; p++;
             } while (++xx<brush_width);
             xx=0; q-=brush_width-map_width;
           } while (++yy<brush_height);
@@ -2574,7 +2574,7 @@ void line_pixel(int x,int y) { // Brush
           do {
             do {
               color=get_color(x+xx,y+yy);
-              if ((line_fx=*p) && *q!=color) pixel_sin_mask(q); q++; p++;
+              if ((line_fx=*p) && *q!=color) pixel_no_mask(q); q++; p++;
             } while (++xx<brush_width);
             xx=0; q-=brush_width-map_width;
           } while (++yy<brush_height);
@@ -2605,7 +2605,7 @@ void line_pixel(int x,int y) { // Brush
           do {
             do {
               color=get_color(x+xx,y+yy);
-              if (*p && *q!=color) pixel_sin_mask(q); q++; p++;
+              if (*p && *q!=color) pixel_no_mask(q); q++; p++;
             } while (++xx<brush_width);
             xx=0; q-=brush_width-map_width;
           } while (++yy<brush_height);

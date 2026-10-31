@@ -1753,7 +1753,7 @@ void CreateMapperThumb(int tex_code, int thumb_width, int thumb_height)
   free(temp2);
 }
 
-void pixel_sin_mask(byte *p);
+void pixel_no_mask(byte *p);
 extern int line_fx;
 
 void DrawMapperThumbs(void)
@@ -1783,10 +1783,10 @@ void DrawMapperThumbs(void)
       {
         for(x=0; x<Tex[ctr].w; x++)
         {
-//color=???; line_fx=1..16; pixel_sin_mask(v.ptr[x+y*v.w])
+//color=???; line_fx=1..16; pixel_no_mask(v.ptr[x+y*v.w])
 //        v.ptr[(py+y)*v.w+(px+x)]=Tex[ctr].gra[y*Tex[ctr].w+x];
           color=Tex[ctr].gra[y*Tex[ctr].w+x];
-          pixel_sin_mask(&(v.ptr[(py+y)*v.w+(px+x)]));
+          pixel_no_mask(&(v.ptr[(py+y)*v.w+(px+x)]));
         }
       }
     }
@@ -4168,7 +4168,7 @@ void lf_free(void *pointer)
       free(pointer);
       mem_mallocs-=table_mem_mallocs[i];
       num_mallocs--;
-//      printf("Liberado: %d, Total: %d\n",table_mem_mallocs[i],mem_mallocs);
+//      printf("Freed: %d, Total: %d\n",table_mem_mallocs[i],mem_mallocs);
       table_mallocs[i]=table_mallocs[num_mallocs];
       table_mem_mallocs[i]=table_mem_mallocs[num_mallocs];
       table_mallocs[num_mallocs]=NULL;
