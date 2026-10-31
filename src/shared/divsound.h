@@ -22,20 +22,20 @@
 typedef struct _channels {
   int freq;
   int vol;
-  int con;
+  int ctr;
   int num;
   int pos;
 } tChannels;	
 
-typedef struct _sonido {
+typedef struct _sound {
   SAMPLE smp;
 #ifdef MIXER
   Mix_Chunk *sound;
   char loop;
 #endif
-} tSonido;
+} tSound;
 
-typedef struct _cancion {
+typedef struct _song {
   char *ptr;
   int  loop;
   int  SongType;
@@ -43,21 +43,21 @@ typedef struct _cancion {
   Mix_Music* music;
   SDL_RWops *rw;
 #endif
-} tCancion;
+} tSong;
 
-extern tSonido  sonido[128];
-extern tCancion cancion[128];
+extern tSound  sounds[128];
+extern tSong songs[128];
 extern int *NewSound;
 extern int ChannelCon;
 
 void InitSound              (void);
 void ResetSound             (void);
 int  LoadSound              (char *ptr, long Len, int Loop);
-int  UnloadSound            (int NumSonido);
-int  DivPlaySound           (int NumSonido,int Volumen,int Frec);
+int  UnloadSound            (int NumSound);
+int  DivPlaySound           (int NumSound,int Volume,int Frec);
 int  StopSound              (int NumChannel);
-int  ChangeSound            (int NumChannel,int Volumen,int Frec);
-int  ChangeChannel          (int NumChannel,int Volumen,int Panning);
+int  ChangeSound            (int NumChannel,int Volume,int Frec);
+int  ChangeChannel          (int NumChannel,int Volume,int Panning);
 int  IsPlayingSound         (int NumChannel);
 int  LoadSong               (char *ptr, int Len, int Loop);
 int  PlaySong               (int NumSong);

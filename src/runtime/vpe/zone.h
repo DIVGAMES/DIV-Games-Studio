@@ -84,7 +84,7 @@ struct ZF_Region {  // Region structure
   int   FloorTex;   // Floor texture name
   int   CeilTex;    // Ceiling texture name
   char  Eff[9];     // Eff program
-  VPEShort Fade;       // Luminosidad de la region 0-65535
+  VPEShort Fade;       // Region luminosity 0-65535
   VPEShort Tag;        // Tag ID
 };
 
@@ -97,7 +97,7 @@ struct ZF_Wall {    // Wall structure
   int   MidTex;     // Middle texture name
   int   BotTex;     // Bottom texture name
   char  Eff[9];     // Eff program
-  VPEShort Fade;       // Luminosidad de la pared 0-65535
+  VPEShort Fade;       // Wall luminosity 0-65535
   VPEShort TexX, TexY; // Texture adjusting
   VPEShort Mass;       // Mass for movable walls
   VPEShort Tag;        // Tag ID

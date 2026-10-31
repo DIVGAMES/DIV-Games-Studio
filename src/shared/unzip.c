@@ -110,7 +110,7 @@ FILE * memz_open_file(unsigned char *file) {
 FILE *out;
 
 
-// trim file to last bit (fixero.ext)
+// trim file to last bit (file.ext)
 
 while (*ff!=0) {
 	if(*ff =='\\') *ff='/';
@@ -284,10 +284,10 @@ typedef struct
 */
 
 
-local int unzlocal_getByte(	FILE *fin, int *pi) 
+local int unzlocal_getByte(	FILE *end, int *pi) 
 {
     unsigned char c;
-	int err = fread(&c, 1, 1, fin);
+	int err = fread(&c, 1, 1, end);
     if (err==1)
     {
         *pi = (int)c;
@@ -295,7 +295,7 @@ local int unzlocal_getByte(	FILE *fin, int *pi)
     }
     else
     {
-        if (ferror(fin)) 
+        if (ferror(end)) 
             return UNZ_ERRNO;
         else
             return UNZ_EOF;
@@ -306,17 +306,17 @@ local int unzlocal_getByte(	FILE *fin, int *pi)
 /* ===========================================================================
    Reads a long in LSB order from the given gz_stream. Sets 
 */
-local int unzlocal_getShort (FILE* fin, uLong *pX)
+local int unzlocal_getShort (FILE* end, uLong *pX)
 {
     uLong x ;
     int i;
     int err;
 
-    err = unzlocal_getByte(fin,&i);
+    err = unzlocal_getByte(end,&i);
     x = (uLong)i;
     
     if (err==UNZ_OK)
-        err = unzlocal_getByte(fin,&i);
+        err = unzlocal_getByte(end,&i);
     x += ((uLong)i)<<8;
    
     if (err==UNZ_OK)
@@ -326,25 +326,25 @@ local int unzlocal_getShort (FILE* fin, uLong *pX)
     return err;
 }
 
-local int unzlocal_getLong (FILE* fin,   uLong *pX)
+local int unzlocal_getLong (FILE* end,   uLong *pX)
 {
     uLong x ;
     int i;
     int err;
 
-    err = unzlocal_getByte(fin,&i);
+    err = unzlocal_getByte(end,&i);
     x = (uLong)i;
     
     if (err==UNZ_OK)
-        err = unzlocal_getByte(fin,&i);
+        err = unzlocal_getByte(end,&i);
     x += ((uLong)i)<<8;
 
     if (err==UNZ_OK)
-        err = unzlocal_getByte(fin,&i);
+        err = unzlocal_getByte(end,&i);
     x += ((uLong)i)<<16;
 
     if (err==UNZ_OK)
-        err = unzlocal_getByte(fin,&i);
+        err = unzlocal_getByte(end,&i);
     x += ((uLong)i)<<24;
    
     if (err==UNZ_OK)
@@ -417,7 +417,7 @@ extern int ZEXPORT unzStringFileNameCompare (
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local uLong unzlocal_SearchCentralDir(	FILE *fin )
+local uLong unzlocal_SearchCentralDir(	FILE *end )
 {
 	unsigned char* buf;
 	uLong uSizeFile;
@@ -426,14 +426,14 @@ local uLong unzlocal_SearchCentralDir(	FILE *fin )
 	uLong uPosFound=0;
 	
 	if(datastartpos==0) {
-	if (fseek(fin,0,SEEK_END) != 0)
+	if (fseek(end,0,SEEK_END) != 0)
 		return 0;
 
 
-	uSizeFile = ftell( fin );
+	uSizeFile = ftell( end );
 } else {
-	fseek(fin,-10,SEEK_END);
-	uSizeFile = ftell( fin ) -datastartpos;
+	fseek(end,-10,SEEK_END);
+	uSizeFile = ftell( end ) -datastartpos;
 }
 	if (uMaxBack>uSizeFile)
 		uMaxBack = uSizeFile;
@@ -455,10 +455,10 @@ local uLong unzlocal_SearchCentralDir(	FILE *fin )
 		
 		uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ? 
                      (BUFREADCOMMENT+4) : (uSizeFile-uReadPos);
-		if (fseek(fin,uReadPos + datastartpos,SEEK_SET)!=0)
+		if (fseek(end,uReadPos + datastartpos,SEEK_SET)!=0)
 			break;
 
-		if (fread(buf,(uInt)uReadSize,1,fin)!=1)
+		if (fread(buf,(uInt)uReadSize,1,end)!=1)
 			break;
 
                 for (i=(int)uReadSize-3; (i--)>0;)
@@ -490,7 +490,7 @@ extern unzFile ZEXPORT unzOpen (const char *path)
 	unz_s us;
 	unz_s *s;
 	uLong central_pos,uL;
-	FILE * fin ;
+	FILE * end ;
 
 	uLong number_disk;          /* number of the current dist, used for 
 								   spaning ZIP, unsupported, always 0*/
@@ -505,35 +505,35 @@ extern unzFile ZEXPORT unzOpen (const char *path)
     if (unz_copyright[0]!=' ')
         return NULL;
 
-    fin=fopen(path,"rb");
-	if (fin==NULL)
+    end=fopen(path,"rb");
+	if (end==NULL)
 		return NULL;
 
-	central_pos = unzlocal_SearchCentralDir(fin);
+	central_pos = unzlocal_SearchCentralDir(end);
 	if (central_pos==0)
 		err=UNZ_ERRNO;
 
-	if (fseek(fin,central_pos + datastartpos,SEEK_SET)!=0)
+	if (fseek(end,central_pos + datastartpos,SEEK_SET)!=0)
 		err=UNZ_ERRNO;
 
 	/* the signature, already checked */
-	if (unzlocal_getLong(fin,&uL)!=UNZ_OK)
+	if (unzlocal_getLong(end,&uL)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	/* number of this disk */
-	if (unzlocal_getShort(fin,&number_disk)!=UNZ_OK)
+	if (unzlocal_getShort(end,&number_disk)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	/* number of the disk with the start of the central directory */
-	if (unzlocal_getShort(fin,&number_disk_with_CD)!=UNZ_OK)
+	if (unzlocal_getShort(end,&number_disk_with_CD)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	/* total number of entries in the central dir on this disk */
-	if (unzlocal_getShort(fin,&us.gi.number_entry)!=UNZ_OK)
+	if (unzlocal_getShort(end,&us.gi.number_entry)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	/* total number of entries in the central dir */
-	if (unzlocal_getShort(fin,&number_entry_CD)!=UNZ_OK)
+	if (unzlocal_getShort(end,&number_entry_CD)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	if ((number_entry_CD!=us.gi.number_entry) ||
@@ -542,16 +542,16 @@ extern unzFile ZEXPORT unzOpen (const char *path)
 		err=UNZ_BADZIPFILE;
 
 	/* size of the central directory */
-	if (unzlocal_getLong(fin,&us.size_central_dir)!=UNZ_OK)
+	if (unzlocal_getLong(end,&us.size_central_dir)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	/* offset of start of central directory with respect to the 
 	      starting disk number */
-	if (unzlocal_getLong(fin,&us.offset_central_dir)!=UNZ_OK)
+	if (unzlocal_getLong(end,&us.offset_central_dir)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	/* zipfile comment length */
-	if (unzlocal_getShort(fin,&us.gi.size_comment)!=UNZ_OK)
+	if (unzlocal_getShort(end,&us.gi.size_comment)!=UNZ_OK)
 		err=UNZ_ERRNO;
 
 	if ((central_pos<us.offset_central_dir+us.size_central_dir) && 
@@ -560,11 +560,11 @@ extern unzFile ZEXPORT unzOpen (const char *path)
 
 	if (err!=UNZ_OK)
 	{
-		fclose(fin);
+		fclose(end);
 		return NULL;
 	}
 
-	us.file=fin;
+	us.file=end;
 	us.byte_before_the_zipfile = central_pos -
 		                    (us.offset_central_dir+us.size_central_dir);
 	us.central_pos = central_pos;

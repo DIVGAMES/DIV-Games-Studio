@@ -5,17 +5,17 @@
 
 #include "global.h"
 
-void ayuda_dibujo(int); // Drawing support
+void drawing_help(int); // Drawing support
 
 
 void draw_selection_box(int _x0,int _y0,int _x1,int _y1);
 void draw_selection_mab(void);
-void fill_inter(int an,int al);
-void volcado_inter(int an);
+void fill_inter(int w,int h);
+void blit_inter(int w);
 void fill_scan(word x,word y);
 void fill_draw(void);
-void copy_block(byte *d,byte *s,int an,int al);
-void xchg_block(byte *d,byte *s,int an,int al);
+void copy_block(byte *d,byte *s,int w,int h);
+void xchg_block(byte *d,byte *s,int w,int h);
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,16 +23,16 @@ void xchg_block(byte *d,byte *s,int an,int al);
 ///////////////////////////////////////////////////////////////////////////////
 
 word * m0, * m1;
-word an_original;
+word original_width;
 
-extern int num_punto;
+extern int num_point;
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Functions to print text
 ///////////////////////////////////////////////////////////////////////////////
 
-void writetxt(int x,int y,int centro,byte * ptr) {
-  wwrite(copia,vga_an/big2,vga_al,x,y,centro,ptr,text_color);
+void writetxt(int x,int y,int center,byte * ptr) {
+  wwrite(copy_buffer,vga_width/big2,vga_height,x,y,center,ptr,text_color);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,56 +40,56 @@ void writetxt(int x,int y,int centro,byte * ptr) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void box(byte c,int x0,int y0,int x1,int y1) {
-  wbox(copia,vga_an,vga_al,c,x0,y0,x1-x0+1,y1-y0+1);
+  wbox(copy_buffer,vga_width,vga_height,c,x0,y0,x1-x0+1,y1-y0+1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Draw a rectangle
 ///////////////////////////////////////////////////////////////////////////////
 
-void rectangulo(byte c,int x,int y,int an,int al) {
-  wrectangulo(copia,vga_an,vga_al,c,x,y,an,al);
+void rectangle(byte c,int x,int y,int w,int h) {
+  wrectangle(copy_buffer,vga_width,vga_height,c,x,y,w,h);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //      Save ( flag = 0 ) or retrieve ( flag = 1) of a virtual box
 ///////////////////////////////////////////////////////////////////////////////
 
-void salvaguarda(byte * p, int x, int y, int n, int flag) {
+void save_restore(byte * p, int x, int y, int n, int flag) {
   byte *q;
-  int an,al;
-  int salta_x, long_x, resto_x;
-  int salta_y, long_y, resto_y;
+  int w,h;
+  int skip_x, long_x, rest_x;
+  int skip_y, long_y, rest_y;
 
-  al=*((word*)(graf[n]+2));
-  an=*((word*)graf[n]);
+  h=*((word*)(graph[n]+2));
+  w=*((word*)graph[n]);
 
-  x-=*((word*)(graf[n]+4));
-  y-=*((word*)(graf[n]+6));
+  x-=*((word*)(graph[n]+4));
+  y-=*((word*)(graph[n]+6));
 
 
-	if(x>vga_an | y>vga_al)
+	if(x>vga_width | y>vga_height)
 		return;
 
-  volcado_parcial(x,y,an,al);
+  blit_partial(x,y,w,h);
 
-  q=copia+y*vga_an+x;
+  q=copy_buffer+y*vga_width+x;
 
-  if (x<0) salta_x=-x; else salta_x=0;
-  if (x+an>vga_an) resto_x=x+an-vga_an; else resto_x=0;
-  long_x=an-salta_x-resto_x;
+  if (x<0) skip_x=-x; else skip_x=0;
+  if (x+w>vga_width) rest_x=x+w-vga_width; else rest_x=0;
+  long_x=w-skip_x-rest_x;
 
-  if (y<0) salta_y=-y; else salta_y=0;
-  if (y+al>vga_al) resto_y=y+al-vga_al; else resto_y=0;
-  long_y=al-salta_y-resto_y;
+  if (y<0) skip_y=-y; else skip_y=0;
+  if (y+h>vga_height) rest_y=y+h-vga_height; else rest_y=0;
+  long_y=h-skip_y-rest_y;
 
-  p+=an*salta_y+salta_x; q+=vga_an*salta_y+salta_x;
-  resto_x+=salta_x; an=long_x;
+  p+=w*skip_y+skip_x; q+=vga_width*skip_y+skip_x;
+  rest_x+=skip_x; w=long_x;
   do {
     do {
       if (flag) *q=*p; else *p=*q; p++; q++;
-    } while (--an);
-    q+=vga_an-(an=long_x); p+=resto_x;
+    } while (--w);
+    q+=vga_width-(w=long_x); p+=rest_x;
   } while (--long_y);
 }
 
@@ -98,49 +98,49 @@ void salvaguarda(byte * p, int x, int y, int n, int flag) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void put(int x,int y,int n) {
-  wput_in_box(copia,vga_an,vga_an,vga_al,x,y,n);
+  wput_in_box(copy_buffer,vga_width,vga_width,vga_height,x,y,n);
 }
 
 void put_bw(int x,int y,int n) { // Puts a contrasting graphic (mouse edition )
-  int al,an;
+  int h,w;
   byte *p,*q;
-  int salta_x, long_x, resto_x;
-  int salta_y, long_y, resto_y;
+  int skip_x, long_x, rest_x;
+  int skip_y, long_y, rest_y;
 
-  p=graf[n]+8;
+  p=graph[n]+8;
 
-  al=*((word*)(graf[n]+2));
-  an=*((word*)graf[n]);
+  h=*((word*)(graph[n]+2));
+  w=*((word*)graph[n]);
 
-  x-=*((word*)(graf[n]+4));
-  y-=*((word*)(graf[n]+6));
+  x-=*((word*)(graph[n]+4));
+  y-=*((word*)(graph[n]+6));
 
-  if (x>=vga_an || y>=vga_al || x+an<=0 || y+al<=0) return;
+  if (x>=vga_width || y>=vga_height || x+w<=0 || y+h<=0) return;
 
-  q=copia+y*vga_an+x;
+  q=copy_buffer+y*vga_width+x;
 
-  if (x<0) salta_x=-x; else salta_x=0;
-  if (x+an>vga_an) resto_x=x+an-vga_an; else resto_x=0;
-  long_x=an-salta_x-resto_x;
+  if (x<0) skip_x=-x; else skip_x=0;
+  if (x+w>vga_width) rest_x=x+w-vga_width; else rest_x=0;
+  long_x=w-skip_x-rest_x;
 
-  if (y<0) salta_y=-y; else salta_y=0;
-  if (y+al>vga_al) resto_y=y+al-vga_al; else resto_y=0;
-  long_y=al-salta_y-resto_y;
+  if (y<0) skip_y=-y; else skip_y=0;
+  if (y+h>vga_height) rest_y=y+h-vga_height; else rest_y=0;
+  long_y=h-skip_y-rest_y;
 
-  p+=an*salta_y+salta_x; q+=vga_an*salta_y+salta_x;
-  resto_x+=salta_x; an=long_x;
+  p+=w*skip_y+skip_x; q+=vga_width*skip_y+skip_x;
+  rest_x+=skip_x; w=long_x;
 
-  al=(int)c0*3; salta_x=dac[al]+dac[al+1]+dac[al+2];
-  al=(int)c4*3; salta_x+=dac[al]+dac[al+1]+dac[al+2]; salta_x/=2;
+  h=(int)c0*3; skip_x=dac[h]+dac[h+1]+dac[h+2];
+  h=(int)c4*3; skip_x+=dac[h]+dac[h+1]+dac[h+2]; skip_x/=2;
 
   do {
     do {
       if (*p) {
-        al=(int)(*q)*3;
-        if (dac[al]+dac[al+1]+dac[al+2]>salta_x) *q=c0; else *q=c4;
+        h=(int)(*q)*3;
+        if (dac[h]+dac[h+1]+dac[h+2]>skip_x) *q=c0; else *q=c4;
       } p++; q++;
-    } while (--an);
-    q+=vga_an-(an=long_x); p+=resto_x;
+    } while (--w);
+    q+=vga_width-(w=long_x); p+=rest_x;
   } while (--long_y);
 }
 
@@ -163,92 +163,92 @@ void memxchg(byte *d, byte *s, int n) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//      MEGARUTINA para reponer el fondo de una caja en edición
+//      MEGAROUTINE to restore the background of a box being edited
 ///////////////////////////////////////////////////////////////////////////////
 
-static int zoom_porcion=0;
-int zoom_an,zoom_al;
+static int zoom_portion=0;
+int zoom_width,zoom_height;
 byte *zoom_p,*zoom_q;
 
-void fondo_edicion(int x,int y,int an,int al) {
+void edit_background(int x,int y,int w,int h) {
 
   int _x0,_y0,_x1,_y1;
   int _zoom_x,_zoom_y;
-  int _zx,_zy,_zan,_zal;
+  int _zx,_zy,_zwidth,_zheight;
   int _big=big;
 
-  if (x<0) { an+=x; x=0; }
-  if (y<0) { al+=y; y=0; }
-  if (x+an>vga_an) an=vga_an-x;
-  if (y+al>vga_al) al=vga_al-y;
-  if (an<=0 || al<=0) return;
+  if (x<0) { w+=x; x=0; }
+  if (y<0) { h+=y; y=0; }
+  if (x+w>vga_width) w=vga_width-x;
+  if (y+h>vga_height) h=vga_height-y;
+  if (w<=0 || h<=0) return;
 
-  volcado_parcial(x,y,an,al);
+  blit_partial(x,y,w,h);
 
-  // Repone el fondo del sistema de ventanas, OJO *** mejorar actualiza_caja();
+  // Restore the background of the window system, NOTE *** improve update_box();
 
-  if (zx || zy) if (x<zx || y<zy || x+an>zx+zan || y+al>zy+zal) actualiza_caja(x,y,an,al);
+  if (zx || zy) if (x<zx || y<zy || x+w>zx+zwidth || y+h>zy+zheight) update_box(x,y,w,h);
 
   if (_big) { big=0; big2=1; }
 
   if (zy) {
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c2,zx-2-x,zy-2-y,zan+4,1);
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c0,zx-1-x,zy-1-y,zan+2,1);
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c2,zx-2-x,zy-2-y,zwidth+4,1);
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c0,zx-1-x,zy-1-y,zwidth+2,1);
   }
-  if (zy+zal<vga_al) {
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c2,zx-2-x,zy+zal+1-y,zan+4,1);
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c0,zx-1-x,zy+zal-y,zan+2,1);
+  if (zy+zheight<vga_height) {
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c2,zx-2-x,zy+zheight+1-y,zwidth+4,1);
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c0,zx-1-x,zy+zheight-y,zwidth+2,1);
   }
 
   if (zx) {
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c2,zx-2-x,zy-1-y,1,zal+2);
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c0,zx-1-x,zy-y,1,zal);
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c2,zx-2-x,zy-1-y,1,zheight+2);
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c0,zx-1-x,zy-y,1,zheight);
   }
-  if (zx+zan<vga_an) {
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c2,zx+zan+1-x,zy-1-y,1,zal+2);
-    wbox_in_box(copia+y*vga_an+x,vga_an,an,al,c0,zx+zan-x,zy-y,1,zal);
+  if (zx+zwidth<vga_width) {
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c2,zx+zwidth+1-x,zy-1-y,1,zheight+2);
+    wbox_in_box(copy_buffer+y*vga_width+x,vga_width,w,h,c0,zx+zwidth-x,zy-y,1,zheight);
   }
 
   if (_big) { big=1; big2=2; }
 
-  // Llama a zoom_map para que actualice la caja correspondiente
+  // Call zoom_map so it updates the corresponding box
 
-  // 1 - Intersección entre zoom y ventana en la copia
+  // 1 - Intersection between zoom and window in the copy
 
   _x0=(x>zx)?x:zx;
   _y0=(y>zy)?y:zy;
-  _x1=(x+an<zx+zan)?x+an-1:zx+zan-1;
-  _y1=(y+al<zy+zal)?y+al-1:zy+zal-1;
+  _x1=(x+w<zx+zwidth)?x+w-1:zx+zwidth-1;
+  _y1=(y+h<zy+zheight)?y+h-1:zy+zheight-1;
 
   if (_x1<_x0 || _y1<_y0) return;
 
-  // 2 - Calcular el pimer pixel y ultimo pixel del mapa
+  // 2 - Compute the first pixel and last pixel of the map
 
   _x0=((_x0-zx)>>zoom)+zoom_x;
   _y0=((_y0-zy)>>zoom)+zoom_y;
   _x1=((_x1-zx)>>zoom)+zoom_x;
   _y1=((_y1-zy)>>zoom)+zoom_y;
 
-  zoom_p=map+_y0*map_an+_x0;
-  zoom_q=copia+(zy+((_y0-zoom_y)<<zoom))*vga_an+zx+((_x0-zoom_x)<<zoom);
-  zoom_an=_x1-_x0+1;
-  zoom_al=_y1-_y0+1;
+  zoom_p=map+_y0*map_width+_x0;
+  zoom_q=copy_buffer+(zy+((_y0-zoom_y)<<zoom))*vga_width+zx+((_x0-zoom_x)<<zoom);
+  zoom_width=_x1-_x0+1;
+  zoom_height=_y1-_y0+1;
 
-  _zoom_x=zoom_x; _zoom_y=zoom_y; _zx=zx; _zy=zy; _zan=zan; _zal=zal;
+  _zoom_x=zoom_x; _zoom_y=zoom_y; _zx=zx; _zy=zy; _zwidth=zwidth; _zheight=zheight;
   zx=zx+((_x0-zoom_x)<<zoom); zy=zy+((_y0-zoom_y)<<zoom);
   zoom_x=_x0; zoom_y=_y0;
-  zan=(_x1-_x0+1)<<zoom; zal=(_y1-_y0+1)<<zoom;
-  volcado_parcial(zx,zy,zan,zal);
-  zoom_porcion=1; zoom_map(); zoom_porcion=0;
-  zoom_x=_zoom_x; zoom_y=_zoom_y; zx=_zx; zy=_zy; zan=_zan; zal=_zal;
+  zwidth=(_x1-_x0+1)<<zoom; zheight=(_y1-_y0+1)<<zoom;
+  blit_partial(zx,zy,zwidth,zheight);
+  zoom_portion=1; zoom_map(); zoom_portion=0;
+  zoom_x=_zoom_x; zoom_y=_zoom_y; zx=_zx; zy=_zy; zwidth=_zwidth; zheight=_zheight;
 
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Zoom, volcado de map(map_an*map_al) a copia segun zoom,zoom_x/y
+//      Zoom, dump of map(map_width*map_height) to copy according to zoom,zoom_x/y
 //═════════════════════════════════════════════════════════════════════════════
 
-int an,al;
+int w,h;
 
 void zoom_map(void) {
 
@@ -256,120 +256,120 @@ void zoom_map(void) {
   byte *p,*q;
   int _big=big;
 
-  if (!zoom_porcion) {
+  if (!zoom_portion) {
 
-    p=map+zoom_y*map_an+zoom_x;
-    q=copia;
+    p=map+zoom_y*map_width+zoom_x;
+    q=copy_buffer;
 
-    if ((map_an<<zoom)<vga_an) { // Copia de este trozo en select_zoom()
-      zan=map_an<<zoom; zx=(vga_an-zan)/2; q+=zx; an=map_an;
+    if ((map_width<<zoom)<vga_width) { // Copy of this chunk in select_zoom()
+      zwidth=map_width<<zoom; zx=(vga_width-zwidth)/2; q+=zx; w=map_width;
     } else {
-      zx=0; an=vga_an>>zoom; zan=an<<zoom;
+      zx=0; w=vga_width>>zoom; zwidth=w<<zoom;
     }
 
-    if ((map_al<<zoom)<vga_al) {
-      zal=map_al<<zoom; zy=(vga_al-zal)/2; q+=zy*vga_an; al=map_al;
+    if ((map_height<<zoom)<vga_height) {
+      zheight=map_height<<zoom; zy=(vga_height-zheight)/2; q+=zy*vga_width; h=map_height;
     } else {
-      zy=0; al=vga_al>>zoom; zal=al<<zoom;
+      zy=0; h=vga_height>>zoom; zheight=h<<zoom;
     }
 
     if (!zoom_background) {
       if (zx || zy) {
-        actualiza_background();
-        volcado_completo=1;
+        update_background();
+        blit_full=1;
       } else {
         if (_big) { big=0; big2=1; }
-        if (zy+zal<vga_al) {
-          wbox(copia,vga_an,vga_al,c2,zx-2,zy+zal+1,zan+4,1);
-          wbox(copia,vga_an,vga_al,c0,zx-1,zy+zal,zan+2,1);
-          volcado_parcial(0,zy+zal,vga_an,2); }
-        if (zx+zan<vga_an) {
-          wbox(copia,vga_an,vga_al,c2,zx-2,zy-2,zan+4,1);
-          wbox(copia,vga_an,vga_al,c0,zx-1,zy-1,zan+2,1);
-          volcado_parcial(zy+zan,0,2,vga_al); }
+        if (zy+zheight<vga_height) {
+          wbox(copy_buffer,vga_width,vga_height,c2,zx-2,zy+zheight+1,zwidth+4,1);
+          wbox(copy_buffer,vga_width,vga_height,c0,zx-1,zy+zheight,zwidth+2,1);
+          blit_partial(0,zy+zheight,vga_width,2); }
+        if (zx+zwidth<vga_width) {
+          wbox(copy_buffer,vga_width,vga_height,c2,zx-2,zy-2,zwidth+4,1);
+          wbox(copy_buffer,vga_width,vga_height,c0,zx-1,zy-1,zwidth+2,1);
+          blit_partial(zy+zwidth,0,2,vga_height); }
         if (_big) { big=1; big2=2; }
       }
       zoom_background=1;
     }
 
-    if (zx || zy) volcado_parcial(zx,zy,zan,zal); else volcado_completo=1;
+    if (zx || zy) blit_partial(zx,zy,zwidth,zheight); else blit_full=1;
 
   } else {
-    p=zoom_p; q=zoom_q; an=zoom_an; al=zoom_al;
+    p=zoom_p; q=zoom_q; w=zoom_width; h=zoom_height;
   }
 
   switch (zoom) {
   case 0:
-    m=al; do {
-      memcpy(q,p,an);
-      p+=map_an;
-      q+=vga_an;
+    m=h; do {
+      memcpy(q,p,w);
+      p+=map_width;
+      q+=vga_width;
     } while (--m);
     break;
 
   case 1:
-    m=al; do {
-      n=an; do {
+    m=h; do {
+      n=w; do {
         c=*p; c+=c*256;
         *(word*)q=c;
-        *(word*)(q+vga_an)=c;
+        *(word*)(q+vga_width)=c;
         p++; q+=2;
       } while (--n);
-      p+=map_an-an;
-      q+=vga_an*2-an*2;
+      p+=map_width-w;
+      q+=vga_width*2-w*2;
     } while (--m);
     break;
 
   case 2:
-    m=al; do {
-      n=an; do {
+    m=h; do {
+      n=w; do {
         c=*p; c+=c*256; c+=c*65536;
-        *(int*)q=c; q+=vga_an;
-        *(int*)q=c; q+=vga_an;
-        *(int*)q=c; q+=vga_an;
-        *(int*)q=c; q-=vga_an*3-4;
+        *(int*)q=c; q+=vga_width;
+        *(int*)q=c; q+=vga_width;
+        *(int*)q=c; q+=vga_width;
+        *(int*)q=c; q-=vga_width*3-4;
         p++;
       } while (--n);
-      p+=map_an-an;
-      q+=vga_an*4-an*4;
+      p+=map_width-w;
+      q+=vga_width*4-w*4;
     } while (--m);
     break;
 
   case 3:
-    m=al; do {
-      n=an; do {
+    m=h; do {
+      n=w; do {
         c=*p; c+=c*256; c+=c*65536;
         *(int*)q=c; q+=4;
-        *(int*)q=c; q+=vga_an;
+        *(int*)q=c; q+=vga_width;
         *(int*)q=c; q-=4;
-        *(int*)q=c; q+=vga_an;
+        *(int*)q=c; q+=vga_width;
         *(int*)q=c; q+=4;
-        *(int*)q=c; q+=vga_an;
+        *(int*)q=c; q+=vga_width;
         *(int*)q=c; q-=4;
-        *(int*)q=c; q+=vga_an;
+        *(int*)q=c; q+=vga_width;
         *(int*)q=c; q+=4;
-        *(int*)q=c; q+=vga_an;
+        *(int*)q=c; q+=vga_width;
         *(int*)q=c; q-=4;
-        *(int*)q=c; q+=vga_an;
+        *(int*)q=c; q+=vga_width;
         *(int*)q=c; q+=4;
-        *(int*)q=c; q+=vga_an;
+        *(int*)q=c; q+=vga_width;
         *(int*)q=c; q-=4;
-        *(int*)q=c; q-=vga_an*7-8;
+        *(int*)q=c; q-=vga_width*7-8;
         p++;
       } while (--n);
-      p+=map_an-an;
-      q+=vga_an*8-an*8;
+      p+=map_width-w;
+      q+=vga_width*8-w*8;
     } while (--m);
     break;
   }
 
-  if (!zoom_porcion) cclock=(*system_clock)>>1;
+  if (!zoom_portion) cclock=(*system_clock)>>1;
 
-  if (sel_status) switch(modo_seleccion) {
-    case -1: for (n=0;n<512;n+=2) if (v.mapa->puntos[n]!=-1) {
-      draw_selection_box(v.mapa->puntos[n],v.mapa->puntos[n+1],v.mapa->puntos[n],v.mapa->puntos[n+1]);
-      if (num_punto==n/2) {
-        draw_selection_box(v.mapa->puntos[n]-1,v.mapa->puntos[n+1]-1,v.mapa->puntos[n]+1,v.mapa->puntos[n+1]+1);
+  if (sel_status) switch(selection_mode) {
+    case -1: for (n=0;n<512;n+=2) if (v.map->points[n]!=-1) {
+      draw_selection_box(v.map->points[n],v.map->points[n+1],v.map->points[n],v.map->points[n+1]);
+      if (num_point==n/2) {
+        draw_selection_box(v.map->points[n]-1,v.map->points[n+1]-1,v.map->points[n]+1,v.map->points[n+1]+1);
       }
     } break;
     case 0: draw_selection_box(sel_x0,sel_y0,sel_x1,sel_y1); break;
@@ -384,164 +384,164 @@ void zoom_map(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Sub barra de fill interpolativo
+//      Interpolative fill sub-bar
 //═════════════════════════════════════════════════════════════════════════════
 
-void modo_inter(void) {
+void inter_mode(void) {
 
-  int an,al;
+  int w,h;
 
-  an=mab_x1-mab_x0+1+4; al=mab_y1-mab_y0+1+4;
+  w=mab_x1-mab_x0+1+4; h=mab_y1-mab_y0+1+4;
 
-  if ((m0=(word*)malloc(an*al*2))!=NULL)
-  if ((m1=(word*)malloc(an*al*2))!=NULL) {
+  if ((m0=(word*)malloc(w*h*2))!=NULL)
+  if ((m1=(word*)malloc(w*h*2))!=NULL) {
 
-    make_near_regla();
+    make_near_rule();
 
     bar[0]=101+zoom; bar[1]=120; bar[2]=154; bar[3]=0;
-    dibuja_barra(0); put_barra(10,2,118); hacer_zoom=1;
+    draw_bar(0); put_bar(10,2,118); do_zoom=1;
 
-    memset(m0,0,an*al*2);
-    memset(m1,0,an*al*2);
+    memset(m0,0,w*h*2);
+    memset(m1,0,w*h*2);
 
     do {
-      ayuda_dibujo(1295);
+      drawing_help(1295);
       read_mouse(); select_zoom(); test_mouse();
 
       if (((mouse_b&1) && selected_icon==2)) {
-        fill_inter(an,al); hacer_zoom=1;
+        fill_inter(w,h); do_zoom=1;
       } else if ((mouse_b&1) && selected_icon==1) {
-        fill_inter(an,al); hacer_zoom=1;
+        fill_inter(w,h); do_zoom=1;
         do { read_mouse(); } while (mouse_b&1);
       }
 
-      volcado_inter(an);
+      blit_inter(w);
 
-      volcado_edicion();
-    } while (!(mouse_b&2) && !key(_ESC) && modo<100 &&
-      !(mouse_b && mouse_in(barra_x,barra_y+10,barra_x+9,barra_y+18)));
+      blit_edit();
+    } while (!(mouse_b&2) && !key(_ESC) && mode<100 &&
+      !(mouse_b && mouse_in(bar_x,bar_y+10,bar_x+9,bar_y+18)));
 
-    volcado_inter(an);
+    blit_inter(w);
 
-    if (key(_ESC)||(mouse_b && mouse_in(barra_x,barra_y+10,barra_x+9,barra_y+18)))
-      { put_barra(2,10,45); volcar_barras(0);
-        put(mouse_x,mouse_y,mouse_graf); volcado(copia); }
+    if (key(_ESC)||(mouse_b && mouse_in(bar_x,bar_y+10,bar_x+9,bar_y+18)))
+      { put_bar(2,10,45); blit_bars(0);
+        put(mouse_x,mouse_y,mouse_graph); blit_screen(copy_buffer); }
 
     free(m1); free(m0);
   } else free(m0);
 
   if (m0==NULL || m1==NULL) {
-    v_texto=(char *)texto[45]; dialogo(err0);
+    v_text=(char *)texts[45]; dialog(err0);
   }
 
-  modo+=100;
+  mode+=100;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Interpolación
+//      Interpolation
 //═════════════════════════════════════════════════════════════════════════════
 
-void fill_inter(int an,int al) { // Rellena con medias una zona
+void fill_inter(int w,int h) { // Fill an area with averages
 
   int x,y;
   word *si,*di,n0,n1,n2,n3;
   int n;
 
-  // 1 - Desplaza m0 hacia derecha abajo un pixel
+  // 1 - Shift m0 one pixel right and down
 
-  for (y=al-1;y>0;y--) for (x=an-1;x>0;x--) *(m0+y*an+x)=*(m0+(y-1)*an+x-1);
-  for (x=0;x<an;x++) *(m0+x)=0; for (y=0;y<al;y++) *(m0+y*an)=0;
+  for (y=h-1;y>0;y--) for (x=w-1;x>0;x--) *(m0+y*w+x)=*(m0+(y-1)*w+x-1);
+  for (x=0;x<w;x++) *(m0+x)=0; for (y=0;y<h;y++) *(m0+y*w)=0;
 
-  // 2 - Refresca en m0 el alambre de puntos que rodean a la zona
+  // 2 - Refresh in m0 the wire of points surrounding the area
 
-  for (y=mab_y0-1;y<=mab_y1+1;y++) if (y>=0 && y<map_al)
-    for (x=mab_x0-1;x<=mab_x1+1;x++) if (x>=0 && x<map_an)
+  for (y=mab_y0-1;y<=mab_y1+1;y++) if (y>=0 && y<map_height)
+    for (x=mab_x0-1;x<=mab_x1+1;x++) if (x>=0 && x<map_width)
       if (is_near_mab(x,y)) {
-        n=*(original+(y-mab_y0+1)*(an_original)+(x-mab_x0+1));
+        n=*(original+(y-mab_y0+1)*(original_width)+(x-mab_x0+1));
         n=(dac[n*3]+dac[n*3+1]+dac[n*3+2])*256+256;
-        *(m0+(y-mab_y0+2)*an+(x-mab_x0+2))=n;
+        *(m0+(y-mab_y0+2)*w+(x-mab_x0+2))=n;
       } else if (!is_mab(x,y)) {
-        *(m0+(y-mab_y0+2)*an+(x-mab_x0+2))=0;
+        *(m0+(y-mab_y0+2)*w+(x-mab_x0+2))=0;
       }
 
-  // Interpola de m0 a m1
+  // Interpolate from m0 to m1
 
   si=m0; di=m1;
 
-  for (y=0;y<al-1;y++) {
-    for (x=0;x<an-1;x++) {
+  for (y=0;y<h-1;y++) {
+    for (x=0;x<w-1;x++) {
 
-        if (n0=*si) // Pone en *(di) la media de los cuatro *(si+?)
+        if (n0=*si) // Put into *(di) the average of the four *(si+?)
              if (n1=*(si+1))
-                  if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+                  if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n0+n1+n2+n3)>>2;
                        else *di=(n0+n1+n2)/3;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=(n0+n1+n3)/3;
                        else *di=(n0+n1)>>1;
-             else if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+             else if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n0+n2+n3)/3;
                        else *di=(n0+n2)>>1;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=(n0+n3)>>1;
                        else *di=n0;
         else if (n1=*(si+1))
-                  if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+                  if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n1+n2+n3)/3;
                        else *di=(n1+n2)>>1;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=(n1+n3)>>1;
                        else *di=n1;
-             else if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+             else if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n2+n3)>>1;
                        else *di=n2;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=n3;
                        else *di=0;
       si++; di++;
     } si++; di++;
   }
 
-  // Y ahora interpola de m1 a m0
+  // And now interpolate from m1 to m0
 
   si=m1; di=m0;
 
-  for (y=0;y<al-1;y++) {
-    for (x=0;x<an-1;x++) {
+  for (y=0;y<h-1;y++) {
+    for (x=0;x<w-1;x++) {
 
-        if (n0=*si) // Pone en *(di) la media de los cuatro *(si+?)
+        if (n0=*si) // Put into *(di) the average of the four *(si+?)
              if (n1=*(si+1))
-                  if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+                  if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n0+n1+n2+n3)>>2;
                        else *di=(n0+n1+n2)/3;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=(n0+n1+n3)/3;
                        else *di=(n0+n1)>>1;
-             else if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+             else if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n0+n2+n3)/3;
                        else *di=(n0+n2)>>1;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=(n0+n3)>>1;
                        else *di=n0;
         else if (n1=*(si+1))
-                  if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+                  if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n1+n2+n3)/3;
                        else *di=(n1+n2)>>1;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=(n1+n3)>>1;
                        else *di=n1;
-             else if (n2=*(si+an))
-                       if (n3=*(si+an+1))
+             else if (n2=*(si+w))
+                       if (n3=*(si+w+1))
                             *di=(n2+n3)>>1;
                        else *di=n2;
-                  else if (n3=*(si+an+1))
+                  else if (n3=*(si+w+1))
                             *di=n3;
                        else *di=0;
 
@@ -552,24 +552,24 @@ void fill_inter(int an,int al) { // Rellena con medias una zona
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Selecciona un bloque por un relleno (x,y,fill_dac)
+//      Select a block via a fill (x,y,fill_dac)
 //═════════════════════════════════════════════════════════════════════════════
 
 void fill_select(word x,word y) {
 
-  int _modo_fill;
+  int _fill_mode;
 
-  _modo_fill=modo_fill; modo_fill=1;
+  _fill_mode=fill_mode; fill_mode=1;
   if ((fss=(word*)malloc(60000))!=NULL) {
     fsp=fss; fsp_max=fss+30000; fill_scan(x,y); free(fss);
   } else {
-    v_texto=(char *)texto[45]; dialogo(err0);
+    v_text=(char *)texts[45]; dialog(err0);
   }
-  modo_fill=_modo_fill;
+  fill_mode=_fill_mode;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Relleno de una zona (que contiene colores fill_dac) con un color
+//      Fill an area (containing fill_dac colors) with a color
 //═════════════════════════════════════════════════════════════════════════════
 
 void fill(word x,word y) {
@@ -580,30 +580,30 @@ void fill(word x,word y) {
 
     fsp=fss; fsp_max=fss+30000;
 
-    memset(mab,0,((map_an*map_al+31)/32)*4);
+    memset(mab,0,((map_width*map_height+31)/32)*4);
 
-    if (modo_fill==2) {
-      memset(fill_dac,1,256); // Rellena hasta el color seleccionado
+    if (fill_mode==2) {
+      memset(fill_dac,1,256); // Fill up to the selected color
       fill_dac[color]=0;
     } else {
-      memset(fill_dac,0,256); // Rellena el color de map(x,y)
-      fill_dac[*(map+y*map_an+x)]=1;
+      memset(fill_dac,0,256); // Fill the color at map(x,y)
+      fill_dac[*(map+y*map_width+x)]=1;
     }
 
-    mab_x0=map_an; mab_y0=map_al; mab_x1=0; mab_y1=0;
+    mab_x0=map_width; mab_y0=map_height; mab_x1=0; mab_y1=0;
 
     fill_scan(x,y);
 
-    if (modo_fill==3) {
+    if (fill_mode==3) {
       if (mab_x0) a=mab_x0-1; else a=mab_x0;
       if (mab_y0) b=mab_y0-1; else b=mab_y0;
-      if (mab_x1<map_an-1) c=mab_x1+1; else c=mab_x1;
-      if (mab_y1<map_al-1) d=mab_y1+1; else d=mab_y1;
-      c=c-a+1; d=d-b+1; an_original=c;
+      if (mab_x1<map_width-1) c=mab_x1+1; else c=mab_x1;
+      if (mab_y1<map_height-1) d=mab_y1+1; else d=mab_y1;
+      c=c-a+1; d=d-b+1; original_width=c;
       if ((original=(byte*)save_undo(a,b,c,d))!=NULL) {
         if (!mab_x0) original--;
-        if (!mab_y0) original-=an_original;
-        modo_inter();
+        if (!mab_y0) original-=original_width;
+        inter_mode();
       }
     } else {
       if (save_undo(mab_x0,mab_y0,mab_x1-mab_x0+1,mab_y1-mab_y0+1))
@@ -612,108 +612,108 @@ void fill(word x,word y) {
 
     free(fss);
   } else {
-    v_texto=(char *)texto[45]; dialogo(err0);
+    v_text=(char *)texts[45]; dialog(err0);
   }
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Algoritmo de fill (por scanes)
+//      Fill algorithm (by scans)
 //═════════════════════════════════════════════════════════════════════════════
 
 void fill_scan(word x,word y) {
   int x0,x1;
 
-  nuevo_scan:
+  new_scan:
 
-  x0=x; do x0--; while (x0>=0 && fill_dac[*(map+y*map_an+x0)]); x0++;
-  x1=x; do x1++; while (x1<map_an && fill_dac[*(map+y*map_an+x1)]); x1--;
+  x0=x; do x0--; while (x0>=0 && fill_dac[*(map+y*map_width+x0)]); x0++;
+  x1=x; do x1++; while (x1<map_width && fill_dac[*(map+y*map_width+x1)]); x1--;
 
   if (x0<mab_x0) mab_x0=x0; if (x1>mab_x1) mab_x1=x1;
   if (y<mab_y0) mab_y0=y; if (y>mab_y1) mab_y1=y;
 
   for (x=x0;x<=x1;x++) set_mab(x,y);
 
-  if (modo_fill==1) { if (x0>0) x0--; if (x1<map_an-1) x1++; }
+  if (fill_mode==1) { if (x0>0) x0--; if (x1<map_width-1) x1++; }
 
-  x=x0; sigue_scan_0:
+  x=x0; continue_scan_0:
 
   if (y>0) while (x<=x1) {
-    if (!is_mab(x,y-1)) // Si no está pintado
-      if (fill_dac[*(map+(y-1)*map_an+x)]) // Si se tiene que pintar
-        if (fsp<fsp_max) { // Si se puede pintar
+    if (!is_mab(x,y-1)) // If it is not painted
+      if (fill_dac[*(map+(y-1)*map_width+x)]) // If it has to be painted
+        if (fsp<fsp_max) { // If it can be painted
           *fsp=x0; fsp++; *fsp=x1; fsp++;
           *fsp=x+2; fsp++; *fsp=y; fsp++;
           *fsp=0; fsp++; y--;
-          goto nuevo_scan;
+          goto new_scan;
         }
     x++;
   }
 
-  x=x0; sigue_scan_1:
+  x=x0; continue_scan_1:
 
-  if (y<map_al-1) while (x<=x1) {
-    if (!is_mab(x,y+1)) // Si no está pintado
-      if (fill_dac[*(map+(y+1)*map_an+x)]) // Si se tiene que pintar
-        if (fsp<fsp_max) { // Si se puede pintar
+  if (y<map_height-1) while (x<=x1) {
+    if (!is_mab(x,y+1)) // If it is not painted
+      if (fill_dac[*(map+(y+1)*map_width+x)]) // If it has to be painted
+        if (fsp<fsp_max) { // If it can be painted
           *fsp=x0; fsp++; *fsp=x1; fsp++;
           *fsp=x+2; fsp++; *fsp=y; fsp++;
           *fsp=1; fsp++; y++;
-          goto nuevo_scan;
+          goto new_scan;
         }
     x++;
   }
 
-  if (fsp>fss) { // Mientras queden scanes sin terminar
+  if (fsp>fss) { // While there are unfinished scans
     fsp-=2; y=*fsp; fsp--; x=*fsp;
     fsp--; x1=*fsp; fsp--; x0=*fsp;
-    if (*(fsp+4)) goto sigue_scan_1; else goto sigue_scan_0;
+    if (*(fsp+4)) goto continue_scan_1; else goto continue_scan_0;
   }
 
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Relleno del fill
+//      Fill of the fill
 //═════════════════════════════════════════════════════════════════════════════
 
-extern byte * textura_color;
+extern byte * texture_color;
 byte get_color(int x,int y);
 
 void fill_draw(void) {
   int x,y;
 
-  if (textura_color) {
+  if (texture_color) {
     for (y=mab_y0;y<=mab_y1;y++)
       for (x=mab_x0;x<=mab_x1;x++)
-        if (is_mab(x,y)) *(map+y*map_an+x)=get_color(x,y);
+        if (is_mab(x,y)) *(map+y*map_width+x)=get_color(x,y);
   } else {
     for (y=mab_y0;y<=mab_y1;y++)
       for (x=mab_x0;x<=mab_x1;x++)
-        if (is_mab(x,y)) *(map+y*map_an+x)=color;
+        if (is_mab(x,y)) *(map+y*map_width+x)=color;
   }
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Volcado de la zona interpolada
+//      Dump of the interpolated area
 //═════════════════════════════════════════════════════════════════════════════
 
-void volcado_inter(int an) { // Vuelca a pantalla la zona interpolada
+void blit_inter(int w) { // Dump the interpolated area to the screen
 
   int x,y,n;
 
       for (y=mab_y0;y<=mab_y1;y++)
       for (x=mab_x0;x<=mab_x1;x++)
         if (is_mab(x,y)) {
-          n=*(m0+(y-mab_y0+1)*an+(x-mab_x0+1)); if (n>256) n-=256; else n=0;
-          *(map+y*map_an+x)=near_regla[n/256]; }
+          n=*(m0+(y-mab_y0+1)*w+(x-mab_x0+1)); if (n>256) n-=256; else n=0;
+          *(map+y*map_width+x)=near_rule[n/256]; }
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una selección de mapa de bits (según zoom,zoom_x/y,mab_*)
+//      Draw a bitmap selection (according to zoom,zoom_x/y,mab_*)
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_selection_mab(void) {
 
-  int x0,y0,x1,y1; // Intersección de la zona seleccionada y lo visto en zoom
+  int x0,y0,x1,y1; // Intersection of the selected area and what is seen in zoom
   int x,y,c;
   byte *p,g0=c0,g4=c4;
   word g04,g40;
@@ -721,20 +721,20 @@ void draw_selection_mab(void) {
 
   x0=zoom_x; if (mab_x0>x0) x0=mab_x0;
   y0=zoom_y; if (mab_y0>y0) y0=mab_y0;
-  x1=zoom_x+(zan>>zoom)-1; if (mab_x1<x1) x1=mab_x1;
-  y1=zoom_y+(zal>>zoom)-1; if (mab_y1<y1) y1=mab_y1;
+  x1=zoom_x+(zwidth>>zoom)-1; if (mab_x1<x1) x1=mab_x1;
+  y1=zoom_y+(zheight>>zoom)-1; if (mab_y1<y1) y1=mab_y1;
 
-  // OJO !!!
-  // p=copia+(zy+((y0-zoom_y)<<zoom))*vga_an+zx+((x0-zoom_x)<<zoom);
+  // NOTE !!!
+  // p=copy_buffer+(zy+((y0-zoom_y)<<zoom))*vga_width+zx+((x0-zoom_x)<<zoom);
 
   if (x1>=x0 && y1>=y0) switch(zoom) {
 
     case 0: for (y=y0;y<=y1;y++) {
-      inc32=y*map_an+x0; _mab=mab+(inc32>>5); inc32&=31;
-      p=copia+(zy+y-zoom_y)*vga_an+(zx+x0-zoom_x); c=(cclock^y^x0)&1;
+      inc32=y*map_width+x0; _mab=mab+(inc32>>5); inc32&=31;
+      p=copy_buffer+(zy+y-zoom_y)*vga_width+(zx+x0-zoom_x); c=(cclock^y^x0)&1;
       for (x=x0;x<=x1;x++,p++,c^=1) {
         if (*_mab) if ((*_mab)&(1<<inc32))
-            if (y==0 || x==0 || y==map_al-1 || x==map_an-1)  {
+            if (y==0 || x==0 || y==map_height-1 || x==map_width-1)  {
               if (c) *p=g0; else *p=g4;
             } else if (!is_mab(x,y-1) || !is_mab(x-1,y) || !is_mab(x,y+1) || !is_mab(x+1,y)) {
               if (c) *p=g0; else *p=g4;
@@ -746,39 +746,39 @@ void draw_selection_mab(void) {
     case 1: if (cclock&1) { g0=c4; g4=c0; }
     g04=g0+g4*256; g40=g4+g0*256;
     for (y=y0;y<=y1;y++) {
-      inc32=y*map_an+x0; _mab=mab+(inc32>>5); inc32&=31;
-      p=copia+(zy+(y-zoom_y)*2)*vga_an+zx+(x0-zoom_x)*2;
+      inc32=y*map_width+x0; _mab=mab+(inc32>>5); inc32&=31;
+      p=copy_buffer+(zy+(y-zoom_y)*2)*vga_width+zx+(x0-zoom_x)*2;
       for (x=x0;x<=x1;x++,p+=2) {
         if (*_mab) if ((*_mab)&(1<<inc32)) {
           if (y==0 || (y!=0 && !is_mab(x,y-1))) {
             *(word*)p=g04;
-            if (y==map_al-1 || (y<map_al-1 && !is_mab(x,y+1))) {
-              *(word*)(p+vga_an)=g40;
+            if (y==map_height-1 || (y<map_height-1 && !is_mab(x,y+1))) {
+              *(word*)(p+vga_width)=g40;
             } else {
               if (x==0 || (x!=0 && !is_mab(x-1,y))) {
-                *(p+vga_an)=g4;
+                *(p+vga_width)=g4;
               }
-              if (x==map_an-1 || (x<map_an-1 && !is_mab(x+1,y))) {
-                *(p+vga_an+1)=g0;
+              if (x==map_width-1 || (x<map_width-1 && !is_mab(x+1,y))) {
+                *(p+vga_width+1)=g0;
               }
             }
           } else if (x==0 || (x!=0 && !is_mab(x-1,y))) {
             *p=g0;
-            *(p+vga_an)=g4;
-            if (x==map_an-1 || (x<map_an-1 && !is_mab(x+1,y))) {
+            *(p+vga_width)=g4;
+            if (x==map_width-1 || (x<map_width-1 && !is_mab(x+1,y))) {
               *(p+1)=g4;
-              *(p+vga_an+1)=g0;
-            } else if (y==map_al-1 || (y<map_al-1 && !is_mab(x,y+1))) {
-              *(p+vga_an+1)=g0;
+              *(p+vga_width+1)=g0;
+            } else if (y==map_height-1 || (y<map_height-1 && !is_mab(x,y+1))) {
+              *(p+vga_width+1)=g0;
             }
-          } else if (y==map_al-1 || (y<map_al-1 && !is_mab(x,y+1))) {
-            *(word*)(p+vga_an)=g40;
-            if (x==map_an-1 || (x<map_an-1 && !is_mab(x+1,y))) {
+          } else if (y==map_height-1 || (y<map_height-1 && !is_mab(x,y+1))) {
+            *(word*)(p+vga_width)=g40;
+            if (x==map_width-1 || (x<map_width-1 && !is_mab(x+1,y))) {
               *(p+1)=g4;
             }
-          } else if (x==map_an-1 || (x<map_an-1 && !is_mab(x+1,y))) {
+          } else if (x==map_width-1 || (x<map_width-1 && !is_mab(x+1,y))) {
              *(p+1)=g4;
-             *(p+vga_an+1)=g0;
+             *(p+vga_width+1)=g0;
           }
         }
         if (!(inc32=(inc32+1)&31)) _mab++;
@@ -787,34 +787,34 @@ void draw_selection_mab(void) {
 
     case 2: if (cclock&1) { g0=c4; g4=c0; }
     for (y=y0;y<=y1;y++) {
-      p=copia+(zy+(y-zoom_y)*4)*vga_an+zx+(x0-zoom_x)*4;
+      p=copy_buffer+(zy+(y-zoom_y)*4)*vga_width+zx+(x0-zoom_x)*4;
       for (x=x0;x<=x1;x++,p+=4) if (is_mab(x,y)) {
         if (y==0 || (y!=0 && !is_mab(x,y-1))) {
           *p=g0; *(p+1)=g4;
           *(p+2)=g0; *(p+3)=g4; }
         if (x==0 || (x!=0 && !is_mab(x-1,y))) {
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p-=vga_an*3; }
-        if (y==map_al-1 || (y<map_al-1 && !is_mab(x,y+1))) {
-          p+=vga_an*3;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p-=vga_width*3; }
+        if (y==map_height-1 || (y<map_height-1 && !is_mab(x,y+1))) {
+          p+=vga_width*3;
           *p=g4; p++;
           *p=g0; p++;
           *p=g4; p++;
-          *p=g0; p-=vga_an*3+3; }
-        if (x==map_an-1 || (x<map_an-1 && !is_mab(x+1,y))) {
+          *p=g0; p-=vga_width*3+3; }
+        if (x==map_width-1 || (x<map_width-1 && !is_mab(x+1,y))) {
           p+=3;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p-=vga_an*3+3; }
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p-=vga_width*3+3; }
       }
     } break;
 
     case 3: if (cclock&1) { g0=c4; g4=c0; }
     for (y=y0;y<=y1;y++) {
-      p=copia+(zy+(y-zoom_y)*8)*vga_an+zx+(x0-zoom_x)*8;
+      p=copy_buffer+(zy+(y-zoom_y)*8)*vga_width+zx+(x0-zoom_x)*8;
       for (x=x0;x<=x1;x++,p+=8) if (is_mab(x,y)) {
         if (y==0 || (y!=0 && !is_mab(x,y-1))) {
           *p=g0; *(p+1)=g4;
@@ -822,16 +822,16 @@ void draw_selection_mab(void) {
           *(p+4)=g0; *(p+5)=g4;
           *(p+6)=g0; *(p+7)=g4; }
         if (x==0 || (x!=0 && !is_mab(x-1,y))) {
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p-=vga_an*7; }
-        if (y==map_al-1 || (y<map_al-1 && !is_mab(x,y+1))) {
-          p+=vga_an*7;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p-=vga_width*7; }
+        if (y==map_height-1 || (y<map_height-1 && !is_mab(x,y+1))) {
+          p+=vga_width*7;
           *p=g4; p++;
           *p=g0; p++;
           *p=g4; p++;
@@ -839,17 +839,17 @@ void draw_selection_mab(void) {
           *p=g4; p++;
           *p=g0; p++;
           *p=g4; p++;
-          *p=g0; p-=vga_an*7+7; }
-        if (x==map_an-1 || (x<map_an-1 && !is_mab(x+1,y))) {
+          *p=g0; p-=vga_width*7+7; }
+        if (x==map_width-1 || (x<map_width-1 && !is_mab(x+1,y))) {
           p+=7;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p+=vga_an;
-          *p=g4; p+=vga_an;
-          *p=g0; p-=vga_an*7+7; }
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p+=vga_width;
+          *p=g4; p+=vga_width;
+          *p=g0; p-=vga_width*7+7; }
       }
     } break;
   }
@@ -857,7 +857,7 @@ void draw_selection_mab(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Dibuja una caja de selección (según zoom,zoom_x/y)
+//      Draw a selection box (according to zoom,zoom_x/y)
 //═════════════════════════════════════════════════════════════════════════════
 
 void draw_selection_box(int _x0,int _y0,int _x1,int _y1) {
@@ -872,12 +872,12 @@ void draw_selection_box(int _x0,int _y0,int _x1,int _y1) {
   x1=zx+(_x1<<zoom)-(zoom_x<<zoom)+(1<<zoom)-1;
   y1=zy+(_y1<<zoom)-(zoom_y<<zoom)+(1<<zoom)-1;
 
-  if (x1>=zx && x0<zx+zan && y1>=zy && y0<zy+zal) {
+  if (x1>=zx && x0<zx+zwidth && y1>=zy && y0<zy+zheight) {
 
     if (y0>=zy) {
-      if (x0<zx) x0=zx; if (x1>=zx+zan) x1=zx+zan-1;
+      if (x0<zx) x0=zx; if (x1>=zx+zwidth) x1=zx+zwidth-1;
       n=x1-x0+1;
-      p=copia+vga_an*y0+x0;
+      p=copy_buffer+vga_width*y0+x0;
       if ((y0^cclock)&1) do {
         if ((memptrsize)p&1) *p=c0; else *p=c4; p++;
       } while (--n);
@@ -886,10 +886,10 @@ void draw_selection_box(int _x0,int _y0,int _x1,int _y1) {
       } while (--n);
     }
 
-    if (y1<zy+zal) {
-      if (x0<zx) x0=zx; if (x1>=zx+zan) x1=zx+zan-1;
+    if (y1<zy+zheight) {
+      if (x0<zx) x0=zx; if (x1>=zx+zwidth) x1=zx+zwidth-1;
       n=x1-x0+1;
-      p=copia+vga_an*y1+x0;
+      p=copy_buffer+vga_width*y1+x0;
       if ((y1^cclock)&1) do {
         if ((memptrsize)p&1) *p=c0; else *p=c4; p++;
       } while (--n);
@@ -902,53 +902,53 @@ void draw_selection_box(int _x0,int _y0,int _x1,int _y1) {
     x1=zx+(_x1<<zoom)-(zoom_x<<zoom)+(1<<zoom)-1;
 
     if (x0>=zx) {
-      if (y0<zy) y0=zy; if (y1>=zy+zal) y1=zy+zal-1;
+      if (y0<zy) y0=zy; if (y1>=zy+zheight) y1=zy+zheight-1;
       n=y1-y0+1;
-      p=copia+vga_an*y0+x0;
+      p=copy_buffer+vga_width*y0+x0;
       if ((x0^cclock)&1) do {
-        if (y0&1) *p=c0; else *p=c4; p+=vga_an; y0++;
+        if (y0&1) *p=c0; else *p=c4; p+=vga_width; y0++;
       } while (--n);
       else do {
-        if (y0&1) *p=c4; else *p=c0; p+=vga_an; y0++;
+        if (y0&1) *p=c4; else *p=c0; p+=vga_width; y0++;
       } while (--n);
       y0=zy+(_y0<<zoom)-(zoom_y<<zoom);
     }
 
-    if (x1<zx+zan) {
-      if (y0<zy) y0=zy; if (y1>=zy+zal) y1=zy+zal-1;
+    if (x1<zx+zwidth) {
+      if (y0<zy) y0=zy; if (y1>=zy+zheight) y1=zy+zheight-1;
       n=y1-y0+1;
-      p=copia+vga_an*y0+x1;
+      p=copy_buffer+vga_width*y0+x1;
       if ((x1^cclock)&1) do {
-        if (y0&1) *p=c0; else *p=c4; p+=vga_an; y0++;
+        if (y0&1) *p=c0; else *p=c4; p+=vga_width; y0++;
       } while (--n);
       else do {
-        if (y0&1) *p=c4; else *p=c0; p+=vga_an; y0++;
+        if (y0&1) *p=c4; else *p=c0; p+=vga_width; y0++;
       } while (--n);
     }
   }
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones del mapa de bits, poner un pixel
+//      Bitmap functions, set a pixel
 //═════════════════════════════════════════════════════════════════════════════
 
-void set_mab(int x,int y) { // Pone un pixel en el mapa de bits
+void set_mab(int x,int y) { // Set a pixel in the bitmap
 
-  x+=y*map_an; // Nº de bit en el buffer
-  y=x>>5; // Nº de int en el buffer
-  x&=31; // Nº de bit en el int
+  x+=y*map_width; // Bit number in the buffer
+  y=x>>5; // Int number in the buffer
+  x&=31; // Bit number in the int
   *(mab+y)|=1<<x;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Funciones del mapa de bits, consultar un pixel
+//      Bitmap functions, query a pixel
 //═════════════════════════════════════════════════════════════════════════════
 
-int is_mab(int x,int y) { // Consulta un pixel en el mapa de bits
+int is_mab(int x,int y) { // Query a pixel in the bitmap
 
-  x+=y*map_an; // Nº de bit en el buffer
-  y=x>>5; // Nº de int en el buffer
-  x&=31; // Nº de bit en el int
+  x+=y*map_width; // Bit number in the buffer
+  y=x>>5; // Int number in the buffer
+  x&=31; // Bit number in the int
   return(*(mab+y)&(1<<x));
 }
 
@@ -957,162 +957,162 @@ int is_near_mab(int x,int y) {
   int c;
 
   if (x) c=is_mab(x-1,y); else c=0;
-  if (x<map_an-1) c|=is_mab(x+1,y);
+  if (x<map_width-1) c|=is_mab(x+1,y);
   if (y) c|=is_mab(x,y-1);
-  if (y<map_al-1) c|=is_mab(x,y+1);
+  if (y<map_height-1) c|=is_mab(x,y+1);
 
   return(c&& !is_mab(x,y));
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      UNDO - Guarda la zona ocupada por una acción, antes de realizarla claro
+//      UNDO - Save the area occupied by an action, before performing it of course
 //═════════════════════════════════════════════════════════════════════════════
 
-byte * save_undo(int x, int y, int an, int al) {
+byte * save_undo(int x, int y, int w, int h) {
 
-  int a,start,end; // Inicio y fin del bloque guardado (en undo[])
+  int a,start,end; // Start and end of the saved block (in undo[])
   byte *ret=0;
 
-  if (x<0) {an+=x; x=0; } if (y<0) {al+=y; y=0; }
-  if (x+an>map_an) an=map_an-x; if (y+al>map_al) al=map_al-y;
-  if (an<=0 || al<=0) return((byte *)-1);
+  if (x<0) {w+=x; x=0; } if (y<0) {h+=y; y=0; }
+  if (x+w>map_width) w=map_width-x; if (y+h>map_height) h=map_height-y;
+  if (w<=0 || h<=0) return((byte *)-1);
 
-  // Determina la zona de zoom a refrescar
+  // Determine the zoom area to refresh
 
-  if (x<zoom_x) hacer_zoom_x=zx-((zoom_x-x)<<zoom);
-  else hacer_zoom_x=zx+((x-zoom_x)<<zoom);
-  if (y<zoom_y) hacer_zoom_y=zy+((y-zoom_y)<<zoom);
-  else hacer_zoom_y=zy+((y-zoom_y)<<zoom);
-  hacer_zoom_an=an<<zoom; hacer_zoom_al=al<<zoom;
+  if (x<zoom_x) do_zoom_x=zx-((zoom_x-x)<<zoom);
+  else do_zoom_x=zx+((x-zoom_x)<<zoom);
+  if (y<zoom_y) do_zoom_y=zy+((y-zoom_y)<<zoom);
+  else do_zoom_y=zy+((y-zoom_y)<<zoom);
+  do_zoom_width=w<<zoom; do_zoom_height=h<<zoom;
 
-  if (hacer_zoom_x+hacer_zoom_an<=zx || hacer_zoom_y+hacer_zoom_al<=zy ||
-      hacer_zoom_x>=zx+zan || hacer_zoom_y>=zy+zal) {
-    hacer_zoom_an=0; hacer_zoom_al=0;
+  if (do_zoom_x+do_zoom_width<=zx || do_zoom_y+do_zoom_height<=zy ||
+      do_zoom_x>=zx+zwidth || do_zoom_y>=zy+zheight) {
+    do_zoom_width=0; do_zoom_height=0;
   } else {
-    if (hacer_zoom_x<zx) { hacer_zoom_an-=zx-hacer_zoom_x; hacer_zoom_x=zx; }
-    if (hacer_zoom_y<zy) { hacer_zoom_al-=zy-hacer_zoom_y; hacer_zoom_y=zy; }
-    if (hacer_zoom_x+hacer_zoom_an>zx+zan) hacer_zoom_an=zx+zan-hacer_zoom_x;
-    if (hacer_zoom_y+hacer_zoom_al>zy+zal) hacer_zoom_al=zy+zal-hacer_zoom_y;
-    if (!hacer_zoom) hacer_zoom=-1;
+    if (do_zoom_x<zx) { do_zoom_width-=zx-do_zoom_x; do_zoom_x=zx; }
+    if (do_zoom_y<zy) { do_zoom_height-=zy-do_zoom_y; do_zoom_y=zy; }
+    if (do_zoom_x+do_zoom_width>zx+zwidth) do_zoom_width=zx+zwidth-do_zoom_x;
+    if (do_zoom_y+do_zoom_height>zy+zheight) do_zoom_height=zy+zheight-do_zoom_y;
+    if (!do_zoom) do_zoom=-1;
   }
 
   if (iundo) a=iundo-1; else a=max_undos-1;
 
-  start=0; if (tundo[a].modo!=-1) start=tundo[a].end;
+  start=0; if (tundo[a].mode!=-1) start=tundo[a].end;
 
-  if (start+an*al>undo_memory) start=0;
+  if (start+w*h>undo_memory) start=0;
 
-  // Si una acción ocupa más de undo_memory, entonces no la guardamos.
+  // If an action takes more than undo_memory, then we do not save it.
 
-  if ((end=start+an*al)<=undo_memory) {
+  if ((end=start+w*h)<=undo_memory) {
 
     tundo[iundo].start=start; tundo[iundo].end=end;
 
     tundo[iundo].x=x; tundo[iundo].y=y;
-    tundo[iundo].an=an; tundo[iundo].al=al;
+    tundo[iundo].w=w; tundo[iundo].h=h;
 
-    tundo[iundo].modo=modo;
+    tundo[iundo].mode=mode;
 
-    // Nos cargamos los bloques machacados
+    // We discard the overwritten blocks
 
     for (a=0;a<max_undos;a++)
-      if (a!=iundo && tundo[a].modo!=-1)
+      if (a!=iundo && tundo[a].mode!=-1)
         if ((tundo[a].start<start && tundo[a].end>start)||
            (tundo[a].start>=start && tundo[a].start<end))
-           tundo[a].modo=-1;
+           tundo[a].mode=-1;
 
-    // Guardamos la zona que ocupará la acción realizada.
+    // We save the area that the performed action will occupy.
 
-    copy_block(undo+start,map+x+y*map_an,an,al);
+    copy_block(undo+start,map+x+y*map_width,w,h);
 
-    tundo[iundo].codigo=codigo_mapa;
+    tundo[iundo].code=map_code;
 
-    iundo=(iundo+1)%max_undos; tundo[iundo].modo=-1; // Se prohibe undo_next()
+    iundo=(iundo+1)%max_undos; tundo[iundo].mode=-1; // undo_next() is forbidden
 
     ret=(byte *)(undo+start);
 
   } else {
-    fondo_edicion(0,0,vga_an,vga_al);
-    volcar_barras(1);
-    volcado_completo=1; volcado(copia);
-    v_texto=(char *)texto[320]; dialogo(err0); undo_error=1;
+    edit_background(0,0,vga_width,vga_height);
+    blit_bars(1);
+    blit_full=1; blit_screen(copy_buffer);
+    v_text=(char *)texts[320]; dialog(err0); undo_error=1;
   }
 
   return(ret);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      UNDO - Restaura la zona ocupada por la última acción.
+//      UNDO - Restore the area occupied by the last action.
 //═════════════════════════════════════════════════════════════════════════════
 
 int undo_back(void) {
-  int x,y,an,al;
+  int x,y,w,h;
 
   if (iundo) a=iundo-1; else a=max_undos-1;
 
-  if (tundo[a].modo!=-1 && tundo[a].codigo==codigo_mapa) {
+  if (tundo[a].mode!=-1 && tundo[a].code==map_code) {
 
-    iundo=a; retrazo();
+    iundo=a; retrace();
 
     x=tundo[a].x; y=tundo[a].y;
-    an=tundo[a].an; al=tundo[a].al;
+    w=tundo[a].w; h=tundo[a].h;
 
-    xchg_block(undo+tundo[a].start,map+x+y*map_an,an,al);
+    xchg_block(undo+tundo[a].start,map+x+y*map_width,w,h);
 
-    // Determina la zona de zoom a refrescar
+    // Determine the zoom area to refresh
 
-    if (x<zoom_x) hacer_zoom_x=zx-((zoom_x-x)<<zoom);
-    else hacer_zoom_x=zx+((x-zoom_x)<<zoom);
-    if (y<zoom_y) hacer_zoom_y=zy+((y-zoom_y)<<zoom);
-    else hacer_zoom_y=zy+((y-zoom_y)<<zoom);
-    hacer_zoom_an=an<<zoom; hacer_zoom_al=al<<zoom;
+    if (x<zoom_x) do_zoom_x=zx-((zoom_x-x)<<zoom);
+    else do_zoom_x=zx+((x-zoom_x)<<zoom);
+    if (y<zoom_y) do_zoom_y=zy+((y-zoom_y)<<zoom);
+    else do_zoom_y=zy+((y-zoom_y)<<zoom);
+    do_zoom_width=w<<zoom; do_zoom_height=h<<zoom;
 
-    if (hacer_zoom_x+hacer_zoom_an<=zx || hacer_zoom_y+hacer_zoom_al<=zy ||
-        hacer_zoom_x>=zx+zan || hacer_zoom_y>=zy+zal) {
-      hacer_zoom_an=0; hacer_zoom_al=0;
+    if (do_zoom_x+do_zoom_width<=zx || do_zoom_y+do_zoom_height<=zy ||
+        do_zoom_x>=zx+zwidth || do_zoom_y>=zy+zheight) {
+      do_zoom_width=0; do_zoom_height=0;
     } else {
-      if (hacer_zoom_x<zx) { hacer_zoom_an-=zx-hacer_zoom_x; hacer_zoom_x=zx; }
-      if (hacer_zoom_y<zy) { hacer_zoom_al-=zy-hacer_zoom_y; hacer_zoom_y=zy; }
-      if (hacer_zoom_x+hacer_zoom_an>zx+zan) hacer_zoom_an=zx+zan-hacer_zoom_x;
-      if (hacer_zoom_y+hacer_zoom_al>zy+zal) hacer_zoom_al=zy+zal-hacer_zoom_y;
-      if (!hacer_zoom) hacer_zoom=-1;
+      if (do_zoom_x<zx) { do_zoom_width-=zx-do_zoom_x; do_zoom_x=zx; }
+      if (do_zoom_y<zy) { do_zoom_height-=zy-do_zoom_y; do_zoom_y=zy; }
+      if (do_zoom_x+do_zoom_width>zx+zwidth) do_zoom_width=zx+zwidth-do_zoom_x;
+      if (do_zoom_y+do_zoom_height>zy+zheight) do_zoom_height=zy+zheight-do_zoom_y;
+      if (!do_zoom) do_zoom=-1;
     } return(1);
   } else return(0);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      UNDO - Rehace la untima acción desecha con undo_back()
+//      UNDO - Redo the last action undone with undo_back()
 //═════════════════════════════════════════════════════════════════════════════
 
 void undo_next(void) {
-  int x,y,an,al;
+  int x,y,w,h;
 
-  if (tundo[iundo].modo!=-1 && tundo[iundo].codigo==codigo_mapa) {
+  if (tundo[iundo].mode!=-1 && tundo[iundo].code==map_code) {
 
-    retrazo();
+    retrace();
 
     x=tundo[iundo].x; y=tundo[iundo].y;
-    an=tundo[iundo].an; al=tundo[iundo].al;
+    w=tundo[iundo].w; h=tundo[iundo].h;
 
-    xchg_block(undo+tundo[iundo].start,map+x+y*map_an,an,al);
+    xchg_block(undo+tundo[iundo].start,map+x+y*map_width,w,h);
 
-    // Determina la zona de zoom a refrescar
+    // Determine the zoom area to refresh
 
-    if (x<zoom_x) hacer_zoom_x=zx-((zoom_x-x)<<zoom);
-    else hacer_zoom_x=zx+((x-zoom_x)<<zoom);
-    if (y<zoom_y) hacer_zoom_y=zy+((y-zoom_y)<<zoom);
-    else hacer_zoom_y=zy+((y-zoom_y)<<zoom);
-    hacer_zoom_an=an<<zoom; hacer_zoom_al=al<<zoom;
+    if (x<zoom_x) do_zoom_x=zx-((zoom_x-x)<<zoom);
+    else do_zoom_x=zx+((x-zoom_x)<<zoom);
+    if (y<zoom_y) do_zoom_y=zy+((y-zoom_y)<<zoom);
+    else do_zoom_y=zy+((y-zoom_y)<<zoom);
+    do_zoom_width=w<<zoom; do_zoom_height=h<<zoom;
 
-    if (hacer_zoom_x+hacer_zoom_an<=zx || hacer_zoom_y+hacer_zoom_al<=zy ||
-        hacer_zoom_x>=zx+zan || hacer_zoom_y>=zy+zal) {
-      hacer_zoom_an=0; hacer_zoom_al=0;
+    if (do_zoom_x+do_zoom_width<=zx || do_zoom_y+do_zoom_height<=zy ||
+        do_zoom_x>=zx+zwidth || do_zoom_y>=zy+zheight) {
+      do_zoom_width=0; do_zoom_height=0;
     } else {
-      if (hacer_zoom_x<zx) { hacer_zoom_an-=zx-hacer_zoom_x; hacer_zoom_x=zx; }
-      if (hacer_zoom_y<zy) { hacer_zoom_al-=zy-hacer_zoom_y; hacer_zoom_y=zy; }
-      if (hacer_zoom_x+hacer_zoom_an>zx+zan) hacer_zoom_an=zx+zan-hacer_zoom_x;
-      if (hacer_zoom_y+hacer_zoom_al>zy+zal) hacer_zoom_al=zy+zal-hacer_zoom_y;
-      if (!hacer_zoom) hacer_zoom=-1;
+      if (do_zoom_x<zx) { do_zoom_width-=zx-do_zoom_x; do_zoom_x=zx; }
+      if (do_zoom_y<zy) { do_zoom_height-=zy-do_zoom_y; do_zoom_y=zy; }
+      if (do_zoom_x+do_zoom_width>zx+zwidth) do_zoom_width=zx+zwidth-do_zoom_x;
+      if (do_zoom_y+do_zoom_height>zy+zheight) do_zoom_height=zy+zheight-do_zoom_y;
+      if (!do_zoom) do_zoom=-1;
     }
 
     iundo=(iundo+1)%max_undos;
@@ -1120,26 +1120,26 @@ void undo_next(void) {
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Copia un bloque del mapa a memoria
+//      Copy a block of the map to memory
 //═════════════════════════════════════════════════════════════════════════════
 
-void copy_block(byte *d,byte *s,int an,int al) {
+void copy_block(byte *d,byte *s,int w,int h) {
 
   do {
-    memcpy(d,s,an);
-    d+=an; s+=map_an;
-  } while (--al);
+    memcpy(d,s,w);
+    d+=w; s+=map_width;
+  } while (--h);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Intercambia un bloque entre el mapa y memoria
+//      Swap a block between the map and memory
 //═════════════════════════════════════════════════════════════════════════════
 
-void xchg_block(byte *d,byte *s,int an,int al) {
+void xchg_block(byte *d,byte *s,int w,int h) {
 
   do {
-    memxchg(d,s,an);
-    d+=an; s+=map_an;
-  } while (--al);
+    memxchg(d,s,w);
+    d+=w; s+=map_width;
+  } while (--h);
 }
 

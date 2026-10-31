@@ -7,27 +7,27 @@
 typedef struct {
     int     dist_max;
     int     mmdist[2];
-    int     ancho_pantalla;
-    int     alto_pantalla;
-    float   fancho_pantalla;
-    float   falto_pantalla;
-    int     vancho;
-    char    *copia;
-    char    *fin_copia;
+    int     screen_width;
+    int     screen_height;
+    float   screen_fwidth;
+    float   screen_fheight;
+    int     vwidth;
+    char    *copy_buffer;
+    char    *end_copy;
 
-    float   proyeccion_x;     // Tipo de lente.
-    float   proyeccion_y;     // Tipo de lente.
+    float   projection_x;     // Lens type.
+    float   projection_y;     // Lens type.
 
 } llrender;
 
-void llrender_Pinta_Triangulo(llrender *llrender_struct,lptface face, int mmlevel, int tipo);
-int  llrender_Cara_Oculta(llrender *llrender_struct,lptface face);
+void llrender_Draw_Triangle(llrender *llrender_struct,lptface face, int mmlevel, int type);
+int  llrender_Hidden_Face(llrender *llrender_struct,lptface face);
 void llrender_clipping_3d_near(llrender *llrender_struct,lptface face);
 void llrender_clipping_3d_left(llrender *llrender_struct,lptface face);
 void llrender_clipping_3d_right(llrender *llrender_struct,lptface face);
 void llrender_clipping_3d_up(llrender *llrender_struct,lptface face);
 void llrender_clipping_3d_down(llrender *llrender_struct,lptface face);
-void llrender_pintar_triangulo(llrender *llrender_struct,lptface face);
+void llrender_draw_triangle(llrender *llrender_struct,lptface face);
 
 void llrender_create(llrender *llrender_struct,sprite3d *newcamera); //Video *vid);
 void llrender_destroy(llrender *llrender_struct);

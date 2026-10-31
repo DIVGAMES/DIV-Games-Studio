@@ -18,7 +18,7 @@ SoundInfo *judas_loadrawsample(char *name, int repeat, int end, unsigned char vo
         unsigned char *SI_aux, *temp;
         short *short_ptr;
         SoundInfo *SI=NULL;
-        int con;
+        int ctr;
 
         if((SI_aux=(char *)malloc(sizeof(SoundInfo)))==NULL) return(SI);
         SI=(SoundInfo *)SI_aux;
@@ -86,7 +86,7 @@ SoundInfo *judas_loadrawsample(char *name, int repeat, int end, unsigned char vo
         }
         judas_close(handle);
         short_ptr = (short *)smp->start;
-        for(con=0; con<length; con++) short_ptr[con]=(short)(((*(temp+con))+0x80)*0x100);
+        for(ctr=0; ctr<length; ctr++) short_ptr[ctr]=(short)(((*(temp+ctr))+0x80)*0x100);
         free(temp);
         smp->repeat = smp->start + repeat;
         smp->end = smp->start + end;
@@ -109,7 +109,7 @@ SoundInfo *judas_loadrawsample_mem(char *FileBuffer, int length, int repeat, int
         unsigned char *SI_aux, *temp;
         short         *short_ptr;
         SoundInfo     *SI=NULL;
-        int           con;
+        int           ctr;
 
         if((SI_aux=(char *)malloc(sizeof(SoundInfo)))==NULL) return(SI);
         SI=(SoundInfo *)SI_aux;
@@ -145,7 +145,7 @@ SoundInfo *judas_loadrawsample_mem(char *FileBuffer, int length, int repeat, int
         judas_error = JUDAS_READ_ERROR;
         memcpy(temp, FileBuffer, length);
         short_ptr = (short *)smp->start;
-        for(con=0; con<length; con++) short_ptr[con]=(short)(((*(temp+con))+0x80)*0x100);
+        for(ctr=0; ctr<length; ctr++) short_ptr[ctr]=(short)(((*(temp+ctr))+0x80)*0x100);
         free(temp);
         smp->repeat = smp->start + repeat;
         smp->end = smp->start + end;

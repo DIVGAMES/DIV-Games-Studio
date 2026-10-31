@@ -1,5 +1,5 @@
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-# Online Help file for DIV Games Studio 3.0 (Castellano)
+# Online Help file for DIV Games Studio 3.0 (English)
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 # Empty lines are meant to be end of paragraphs.
@@ -5076,7 +5076,7 @@ BEGIN
     LOOP
         IF (scan_code==_space)
 
-            stop_cd(); // Para el CD
+            stop_cd(); // Stop the CD
 
         END
         IF (scan_code==_enter)
@@ -9236,18 +9236,18 @@ PROGRAM example_ftell;
 
 GLOBAL
     mytable[3]=11,22,33,44;
-    midata1;
-    midata2;
+    mydata1;
+    mydata2;
     myhandle;
 
 BEGIN
     myhandle=fopen("help/help.dat","w");
 
-    midata1=ftell(myhandle); // Position of the cursor before writing
+    mydata1=ftell(myhandle); // Position of the cursor before writing
 
     fwrite(OFFSET mytable,4,myhandle);
 
-    midata2=ftell(myhandle); // Position of the cursor after being written the data
+    mydata2=ftell(myhandle); // Position of the cursor after being written the data
 
     fclose(myhandle);
 END
@@ -9257,10 +9257,10 @@ This example writes the four data items contained in {mytable} (11,22,33 & 44)
 into the file {help.dat}.
 
 After opening the file with {#223,fopen()} the position of the cursor is obtained
-and saved in the variable {midata1} (this will be 0, the beginning of the file).
+and saved in the variable {mydata1} (this will be 0, the beginning of the file).
 
 Then, the four values contained in the table are written in the file and the
-position of the cursor is obtained again, which now is saved in {midata2} (will be
+position of the cursor is obtained again, which now is saved in {mydata2} (will be
 4, at the end of the file, after the four written values).
 
 Finally, the file is closed with {#224.fclose()} before ends.
@@ -9276,7 +9276,7 @@ which by default is set at {4} for every program.
 
 {/}
 
-{Nota:} The function {#229,filelength()} allows you to find the length of an
+{Note:} The function {#229,filelength()} allows you to find the length of an
 file, but to do this the file must already be open.
 
 {/}See: {#227,fseek()} - {#225,fread()} - {#226,fwrite()} - {#1420,drive_size}
@@ -9377,18 +9377,18 @@ This last function allows you to close just one file, or everyone which is open.
 PROGRAM example_flush;
 
 GLOBAL
-    midata1;
-    midata2;
+    mydata1;
+    mydata2;
     myhandle;
 
 BEGIN
     myhandle=fopen("help/help.dat","w");
 
-    midata1=flush(); // Obtains the number of opened files (1)
+    mydata1=flush(); // Obtains the number of opened files (1)
 
     fclose(myhandle);
 
-    midata2=flush(); // Obtains the number of opened files (0)
+    mydata2=flush(); // Obtains the number of opened files (0)
 
 END
 {-}
@@ -9548,7 +9548,7 @@ the value {1} and will save all information about the file in the global structu
 
 The path to the file can be completely specified (from the
 main directory of the drive, as "C:\WINDOWS\...") or relative to the current 
-directory (from which the game is executed, like "MAP\MIOS\...").
+directory (from which the game is executed, like "MAP\MINE\...").
 Anyhow, the complete path from the main directory will always be stored in 
 {fileinfo.fullpath}, including the drive letter of the disk.
 
@@ -10858,16 +10858,16 @@ of the first {file FPG} which is loaded in the program).
 PROGRAM example_write_in_map;
 
 GLOBAL
-    mi_font;
+    my_font;
 
 BEGIN
-    mi_font=load_fnt("help/help.fnt");
+    my_font=load_fnt("help/help.fnt");
 
     // A new map is created with the text "MOUSE"
     // with the checkpoint in the centre, and is
     // assigned as the graphic of the mouse cursor.
 
-    mouse.graph = write_in_map(mi_font,"MOUSE",4);
+    mouse.graph = write_in_map(my_font,"MOUSE",4);
 
     REPEAT
         FRAME;
@@ -14368,7 +14368,7 @@ type of data can only contain values inside the rank {0} ... {255}.
 {#9999,Example:}
 PROGRAM my_game;
 GLOBAL
-    BYTE mi_value=300; // Error: Value of byte out of rank (0...255).
+    BYTE my_value=300; // Error: Value of byte out of rank (0...255).
 BEGIN
     //...
 END
@@ -17207,8 +17207,8 @@ It is possible to define the literals over several lines, to do this you just ne
 text into several lines, and put them successively (do not separate them with any symbol). 
 For example, you could define a constant as:
 
-{salute="­Ho"}ú
-{       "la!";}
+{salute="Hel"}ú
+{       "lo!";}
 
 This also can be used to initiate the data of type {#1406,STRING}.
 There is no limit in the number of lines. Only {#1002,Comments}
@@ -20595,7 +20595,7 @@ The values defined for these constants are the following ones.
 
 {Note:} Besides these standard video modes, the global structure
 {#1415,video_modes} contains a list of all modes compatible with the VESA standard
-situated in the system's video adaptador.
+situated in the system's video adapter.
 
 
 {/}See: {#1202,Constants} - {#157,set_mode()} - {#1415,video_modes}
@@ -22504,7 +22504,7 @@ directly to its 33 (from 0 to 32) firsts characters. If it is intended
 to access out of these limits, the program will advert it indicating an access
 out of the rank.
 
-{/}See: {#1401,types de data} - {#1009,Declaration of a data} - {#1085,OFFSET}
+{/}See: {#1401,types of data} - {#1009,Declaration of a data} - {#1085,OFFSET}
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -22703,7 +22703,7 @@ program to close after this code has finished, you can use, for example, the
 function {#129,let_me_alone()} just before the {#1091,END} of the {#1015,main code}, or also the function
 {#109,exit()} (in any point of the program).
 
-{/}See: {#1016,Los blocks PROCESS} - {#1000,syntax}
+{/}See: {#1016,PROCESS blocks} - {#1000,syntax}
 
 # ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -23024,7 +23024,7 @@ type {#1406,STRING}) and numeric variables (data of type {#1402,INT}).
 
 {fullpath} - Full name (including the path). The file path can be specified completely (beginning with
 the root directory of the drive, such as "C:\WINDOWS\...") or relative to the current directory
-(starting from where the game executes, such as "MAP\MIOS\...").
+(starting from where the game executes, such as "MAP\MINE\...").
 In all cases, {fileinfo.fullpath} always returns the full path
 from the root directory, including the drive letter.
 

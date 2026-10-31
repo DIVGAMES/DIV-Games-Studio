@@ -29,7 +29,7 @@ typedef unsigned short  UWORD;
 #define GUSMASTERR      (5<<3) | 3
 
 ////////////////////
-// Mixer de la SB //
+// SB mixer       //
 
 #define MIX_ADR_OFF         4
 #define MIX_DATA_OFF        5
@@ -51,12 +51,12 @@ typedef unsigned short  UWORD;
 #define MIX_HIGH_FILT       8
 #define MIX_NO_FILT        20
 
-// Mixer de la SB //
+// SB mixer       //
 ////////////////////
 
-void SetMasterVolume  (UWORD volumen); // de 0 a 15
-void SetVocVolume     (UWORD volumen); // de 0 a 15
-void SetCDVolume      (UWORD volumen); // de 0 a 15
+void SetMasterVolume  (UWORD volume); // from 0 to 15
+void SetVocVolume     (UWORD volume); // from 0 to 15
+void SetCDVolume      (UWORD volume); // from 0 to 15
 void InitMixer        (UWORD card, UWORD address, UWORD master, UWORD voc, UWORD cd);
 void MIX_Reset        (void);
 void MIX_SetInput     (byte opt);

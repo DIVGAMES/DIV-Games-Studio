@@ -254,7 +254,7 @@ strcpy(_FullPath, _Path);
 
 int nummatch=0;
 int np=0;
-int type=0;
+int find_type=0;
 
 char findmask[255];
 char findname[2048];
@@ -268,7 +268,7 @@ int ret=0;
 
 strcpy(findname,name);
 //printf("FIND FIRST %s %d\n",findname,attr );
-type = attr;
+find_type = attr;
 
 strcpy(findmask,name);
 strlwr(findmask);
@@ -317,7 +317,7 @@ if(namelist!=NULL) {
 
    nummatch = 0;//scandir(".", &namelist, 0, alphasort); 
 np=-1;
-type = attr;
+find_type = attr;
 
 //n--;
 ret =_dos_findnext(result);
@@ -361,12 +361,12 @@ strcpy(result->name,result2.name);
 	result->attrib=result2.attrib;
 	result->size = result2.size;
 
-//	printf("findnext found: %s %s %d %d\n",result->name, result2.name,result2.attrib,type);
+//	printf("findnext found: %s %s %d %d\n",result->name, result2.name,result2.attrib,find_type);
 
-if((type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
-	type == _A_SUBDIR && result2.attrib&_A_SUBDIR) {
+if((find_type == _A_NORMAL && result2.attrib!=_A_SUBDIR) ||
+	find_type == _A_SUBDIR && result2.attrib&_A_SUBDIR) {
 		
-		if(type == _A_SUBDIR) {
+		if(find_type == _A_SUBDIR) {
 			if ( !strcmp(findmask,"*.*") ) // match everything
 				return 0;
 				
@@ -455,7 +455,7 @@ return 1;
 	strcpy(result->name,namelist[np]->d_name);
 	result->attrib=0;
 	if(result->name[0]!='.' || ( result->name[0]=='.' &&  result->name[1]=='.')) {
-		if(namelist[np]->d_type == DT_DIR && type == _A_SUBDIR) {
+		if(namelist[np]->d_type == DT_DIR && find_type == _A_SUBDIR) {
 			//printf("free'ing np [%d] (DIR) [%s]\n",np,result->name);
 			free(namelist[np]);
 			result->attrib=16;
@@ -465,7 +465,7 @@ return 1;
 
 	if (fnmatch(findmask, strlwr(findname), FNM_PATHNAME)==0){
 		
-		if(namelist[np]->d_type != DT_DIR && type == _A_NORMAL) {
+		if(namelist[np]->d_type != DT_DIR && find_type == _A_NORMAL) {
 			//printf("free'ing np [%d] [FILE]\n",np,result->name);
 			free(namelist[np]);
 			result->attrib=0;

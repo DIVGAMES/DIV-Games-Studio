@@ -4,120 +4,120 @@
 UWORD SoundCard;
 UWORD BaseAddress;
 
-void SetMasterVolume (UWORD volumen)
+void SetMasterVolume (UWORD volume)
 {
 #ifdef DOS
     if (SoundCard==DEV_NOSOUND) return;
 
-    volumen &= 15;
+    volume &= 15;
     switch (SoundCard)
     {
         case DEV_SB:
-                    volumen &= ~1;
+                    volume &= ~1;
                     outp (BaseAddress+SBMIXADDRESS, SBMASTER);
-                    outp (BaseAddress+SBMIXDATA, volumen);
+                    outp (BaseAddress+SBMIXDATA, volume);
                     break;
         case DEV_SBPRO:
         case DEV_SB16 :
-                    volumen += volumen << 4;
+                    volume += volume << 4;
                     outp (BaseAddress+SBMIXADDRESS, SBPMASTER);
-                    outp (BaseAddress+SBMIXDATA, volumen);
+                    outp (BaseAddress+SBMIXDATA, volume);
                     break;
         case DEV_GUS:
-                    volumen <<=3;
+                    volume <<=3;
                     outp(BaseAddress+GUSMIXADDRESS,GUSMASTERL);
-                    outp(BaseAddress+GUSMIXDATA,volumen);
+                    outp(BaseAddress+GUSMIXDATA,volume);
                     outp(BaseAddress+GUSMIXADDRESS,GUSMASTERR);
-                    outp(BaseAddress+GUSMIXDATA,volumen);
-/* OJO !!!
+                    outp(BaseAddress+GUSMIXDATA,volume);
+/* NOTE !!!
         case GUSMAX:
-                    volumen = 15-volumen;
-                    volumen <<= 2;
+                    volume = 15-volume;
+                    volume <<= 2;
                     outp(BaseAddress+MAXMIXADDRESS,GUSMAXMASTERL);
-                    outp(BaseAddress+MAXMIXDATA,volumen);
+                    outp(BaseAddress+MAXMIXDATA,volume);
                     outp(BaseAddress+MAXMIXADDRESS,GUSMAXMASTERR);
-                    outp(BaseAddress+MAXMIXDATA,volumen);
+                    outp(BaseAddress+MAXMIXDATA,volume);
                     break;
 */
     }
 #endif
 }
 
-void SetVocVolume (UWORD volumen)
+void SetVocVolume (UWORD volume)
 {
 #ifdef DOS
     if (SoundCard==DEV_NOSOUND) return;
 
-    volumen &= 15;
+    volume &= 15;
     switch (SoundCard)
     {
         case DEV_SB:
-                    volumen >>= 1;
-                    volumen &= ~1;
+                    volume >>= 1;
+                    volume &= ~1;
                     outp (BaseAddress+SBMIXADDRESS, SBVOC);
-                    outp (BaseAddress+SBMIXDATA, volumen);
+                    outp (BaseAddress+SBMIXDATA, volume);
                     break;
         case DEV_SBPRO:
         case DEV_SB16:
-                    volumen += volumen << 4;
+                    volume += volume << 4;
                     outp (BaseAddress+SBMIXADDRESS, SBPVOC);
-                    outp (BaseAddress+SBMIXDATA, volumen);
+                    outp (BaseAddress+SBMIXDATA, volume);
                     break;
         case DEV_GUS:
-                    volumen <<=3;
+                    volume <<=3;
                     outp(BaseAddress+GUSMIXADDRESS,GUSVOCL);
-                    outp(BaseAddress+GUSMIXDATA,volumen);
+                    outp(BaseAddress+GUSMIXDATA,volume);
                     outp(BaseAddress+GUSMIXADDRESS,GUSVOCR);
-                    outp(BaseAddress+GUSMIXDATA,volumen);
-/* OJO !!!
+                    outp(BaseAddress+GUSMIXDATA,volume);
+/* NOTE !!!
         case GUSMAX:
-                    volumen=15-volumen;
-                    volumen <<= 1;
-                    volumen++;
+                    volume=15-volume;
+                    volume <<= 1;
+                    volume++;
                     outp(BaseAddress+MAXMIXADDRESS,GUSMAXVOCL);
-                    outp(BaseAddress+MAXMIXDATA,volumen);
+                    outp(BaseAddress+MAXMIXDATA,volume);
                     outp(BaseAddress+MAXMIXADDRESS,GUSMAXVOCR);
-                    outp(BaseAddress+MAXMIXDATA,volumen);
+                    outp(BaseAddress+MAXMIXDATA,volume);
                     break;
 */
     }
 #endif
 }
 
-void SetCDVolume (UWORD volumen)
+void SetCDVolume (UWORD volume)
 {
 #ifdef DOS
     if (SoundCard==DEV_NOSOUND) return;
 
-    volumen &= 15;
+    volume &= 15;
     switch (SoundCard)
     {
         case DEV_SB:
-                    volumen &= ~1;
+                    volume &= ~1;
                     outp (BaseAddress+SBMIXADDRESS, SBCD);
-                    outp (BaseAddress+SBMIXDATA, volumen);
+                    outp (BaseAddress+SBMIXDATA, volume);
                     break;
         case DEV_SBPRO:
         case DEV_SB16:
-                    volumen += volumen << 4;
+                    volume += volume << 4;
                     outp (BaseAddress+SBMIXADDRESS, SBPCD);
-                    outp (BaseAddress+SBMIXDATA, volumen);
+                    outp (BaseAddress+SBMIXDATA, volume);
                     break;
         case DEV_GUS:
-                    volumen <<=3;
+                    volume <<=3;
                     outp(BaseAddress+GUSMIXADDRESS,GUSCDL);
-                    outp(BaseAddress+GUSMIXDATA,volumen);
+                    outp(BaseAddress+GUSMIXDATA,volume);
                     outp(BaseAddress+GUSMIXADDRESS,GUSCDR);
-                    outp(BaseAddress+GUSMIXDATA,volumen);
-/* OJO !!!
+                    outp(BaseAddress+GUSMIXDATA,volume);
+/* NOTE !!!
         case GUSMAX:
-                    volumen=15-volumen;
-                    volumen <<= 1;
-                    volumen++;
+                    volume=15-volume;
+                    volume <<= 1;
+                    volume++;
                     outp(BaseAddress+MAXMIXADDRESS,GUSMAXCDL);
-                    outp(BaseAddress+MAXMIXDATA,volumen);
+                    outp(BaseAddress+MAXMIXDATA,volume);
                     outp(BaseAddress+MAXMIXADDRESS,GUSMAXCDR);
-                    outp(BaseAddress+MAXMIXDATA,volumen);
+                    outp(BaseAddress+MAXMIXDATA,volume);
                     break;
 */
     }

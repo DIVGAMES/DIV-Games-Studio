@@ -408,7 +408,7 @@ char *vga=(char*)0xA0000;
 char xlat[256];
 
 void put_hboy() {
-  unsigned int con,X=0;
+  unsigned int ctr,X=0;
   unsigned int fExit=0;
   unsigned int pixel=0;
   char ch,rep;
@@ -418,7 +418,7 @@ void put_hboy() {
     rep=1;
     if((ch&192)==192) { rep=(ch&63); ch=*hboy++;}
     pixel+=rep;
-	for(con=0;con<rep;con++) { vga[X++]=ch; if(X>=64000) fExit=1; }
+	for(ctr=0;ctr<rep;ctr++) { vga[X++]=ch; if(X>=64000) fExit=1; }
   }
 }
 
@@ -438,58 +438,58 @@ void set_video_mode(){
 
 void buffer_to_video1() {
   char *di,*si;
-  int yr,xr,iyr,ixr,an,al;
+  int yr,xr,iyr,ixr,w,h;
 
   ixr=(wide<<8)/160; iyr=(height<<8)/100; yr=0;
-  di=(char*)0xA0000+320*50+80; al=100;
+  di=(char*)0xA0000+320*50+80; h=100;
 
   do {
-    si=buffer+(yr>>8)*wide; an=160; xr=0;
+    si=buffer+(yr>>8)*wide; w=160; xr=0;
     do {
       *di=xlat[*(si+(xr>>8))];
       di++; xr+=ixr;
-    } while (--an);
+    } while (--w);
     yr+=iyr; di+=160;
-  } while (--al);
+  } while (--h);
 }
 
 void buffer_to_video2() {
   char *di,*si,*si2;
-  int yr,xr,xr2,iyr,ixr,an,al,c;
+  int yr,xr,xr2,iyr,ixr,w,h,c;
 
   ixr=(wide<<8)/160; iyr=(height<<8)/100; yr=0;
-  di=(char*)0xA0000+320*50+80; al=100;
+  di=(char*)0xA0000+320*50+80; h=100;
 
   do {
     si=buffer+(yr>>8)*wide;
     si2=buffer+((yr+iyr/2)>>8)*wide;
-    an=160; xr=0; xr2=ixr/2;
+    w=160; xr=0; xr2=ixr/2;
     do {
       *di=ghost[xlat[*(si+(xr>>8))]*256+xlat[*(si2+(xr2>>8))]];
       di++; xr+=ixr; xr2+=ixr;
-    } while (--an);
+    } while (--w);
     yr+=iyr; di+=160;
-  } while (--al);
+  } while (--h);
 }
 
 void buffer_to_video3() {
   char *di,*si,*si2;
-  int yr,xr,xr2,iyr,ixr,an,al,c;
+  int yr,xr,xr2,iyr,ixr,w,h,c;
 
   ixr=(wide<<8)/160; iyr=(height<<8)/100; yr=0;
-  di=(char*)0xA0000+320*50+80; al=100;
+  di=(char*)0xA0000+320*50+80; h=100;
 
   do {
     si=buffer+(yr>>8)*wide;
     si2=buffer+((yr+iyr/2)>>8)*wide;
-    an=160; xr=0; xr2=ixr/2;
+    w=160; xr=0; xr2=ixr/2;
     do {
       c=ghost[xlat[*(si+(xr>>8))]*256+xlat[*(si+(xr2>>8))]]*256;
       *di=ghost[c+ghost[xlat[*(si2+(xr>>8))]*256+xlat[*(si2+(xr2>>8))]]];
       di++; xr+=ixr; xr2+=ixr;
-    } while (--an);
+    } while (--w);
     yr+=iyr; di+=160;
-  } while (--al);
+  } while (--h);
 }
 
 void buffer_to_video() {

@@ -1,8 +1,8 @@
 
-// Versión de las Judas para DIV 2 (para el entorno, que no el intérprete).
+// Version of the Judas for DIV 2 (for the environment, not the interpreter).
 
-// Estan tocados JUDAS/RAW/WAV para que carguen los sonidos incluso si
-// judas_device es DEV_SOUND (ya que se tienen que seguir pudiendo editar).
+// JUDAS/RAW/WAV have been modified so that they load sounds even if
+// judas_device is DEV_SOUND (since they still need to be editable).
 
 /*
  * JUDAS Apocalyptic Softwaremixing Sound System V2.06y by Faust & Yehar

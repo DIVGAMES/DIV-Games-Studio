@@ -1,4 +1,4 @@
-// *** OJO con los OJO
+// *** CAREFUL with the NOTEs
 
 #include <math.h>
 #include <stdio.h>
@@ -6,7 +6,7 @@
 #include "internal.h"
 
 #define GLOBALS
-#define FIN_GRID (32768-2560)
+#define END_GRID (32768-2560)
 
 FILE * div_open_file(char * file);
 #include "inter.h"
@@ -23,58 +23,58 @@ extern int error_vpe;
 
 #define text_offset mem[7] // Start of text segment (mem[] index)
 
-void set_fog_table(int intensidad,int r,int g, int b);
-void elimina_proceso(int);
+void set_fog_table(int intensity,int r,int g, int b);
+void delete_process(int);
 
-typedef struct { int z;         // Profundidad
+typedef struct { int z;         // Depth
                } mode8_struct;
 
-int vpe_inicializada=0;
+int vpe_initialized=0;
 int mode8_list[10];
 int **fpg_grf;
 int num_fpg_aux;
 int fr=-1,fg=0,fb=0;
 extern int num_blocks;
 
-// Importante: Para cada función se debe indicar el retval(int), y hacer
-// siempre un getparm() por cada parámetro de llamada (el retval() es
-// imprescindible incluso si la función no necesita devolver un valor).
+// Important: For each function you must specify the retval(int), and
+// always do a getparm() for each call parameter (the retval() is
+// mandatory even if the function does not need to return a value).
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve la longitud de un fichero
+//  Return the length of a file
 //═════════════════════════════════════════════════════════════════════════════
 
-int file_size(FILE *fichero)
+int file_size(FILE *file)
 {
   int save_pos, size_of_file;
 
-  save_pos=ftell(fichero);
-  fseek(fichero,0L,SEEK_END);
-  size_of_file=ftell(fichero);
-  fseek(fichero,save_pos,SEEK_SET);
+  save_pos=ftell(file);
+  fseek(file,0L,SEEK_END);
+  size_of_file=ftell(file);
+  fseek(file,save_pos,SEEK_SET);
   return(size_of_file);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Carga un mundo de modo 8 (VPE)
+//  Load a mode 8 world (VPE)
 //═════════════════════════════════════════════════════════════════════════════
 
 void load_wld(void)
 {
-  int num_fpg=pila[sp--];
-  int nombre=pila[sp];
+  int num_fpg=opstack[sp--];
+  int name=opstack[sp];
   int i,m;
-  FILE *fichero;
+  FILE *file;
   char *buffer;
   int size;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (vpe_inicializada) {
+  if (vpe_initialized) {
     while (Objects.Number) {
       _object_destroy(0);
     }
-    _vpe_fin();
+    _vpe_end();
   }
 
   num_blocks=0;
@@ -82,49 +82,49 @@ void load_wld(void)
   num_fpg_aux=num_fpg;
 
   if (npackfiles) {
-    m=read_packfile((byte*)&mem[text_offset+nombre]);
-    if (m==-1) goto wldfuera;
-    if (m==-2) { pila[sp]=0; e(100); return; }
-    if (m<=0) { pila[sp]=0; e(200); return; }
+    m=read_packfile((byte*)&mem[text_offset+name]);
+    if (m==-1) goto wldout;
+    if (m==-2) { opstack[sp]=0; e(100); return; }
+    if (m<=0) { opstack[sp]=0; e(200); return; }
     buffer=packptr; size=m;
   } else {
-    wldfuera:
-    if ((fichero=div_open_file((char*)&mem[text_offset+nombre]))==NULL) {
-      e(159); vpe_inicializada=0; return;
+    wldout:
+    if ((file=div_open_file((char*)&mem[text_offset+name]))==NULL) {
+      e(159); vpe_initialized=0; return;
     } else {
-      fseek(fichero,0,SEEK_END); size=ftell(fichero);
+      fseek(file,0,SEEK_END); size=ftell(file);
       if ((buffer=(byte *)malloc(size))!=NULL) {
-        fseek(fichero,0,SEEK_SET);
-        fread(buffer,1,size,fichero);
-        fclose(fichero);
-      } else { fclose(fichero); e(100); vpe_inicializada=0; return; }
+        fseek(file,0,SEEK_SET);
+        fread(buffer,1,size,file);
+        fclose(file);
+      } else { fclose(file); e(100); vpe_initialized=0; return; }
     }
   }
 
-  _vpe_inicio(buffer,(char *)copia,vga_an,vga_al);
+  _vpe_start(buffer,(char *)copy_buffer,vga_width,vga_height);
 
   for (i=0;i<10;i++) {
     mode8_list[i]=-1;
   }
 
-  vpe_inicializada=1;
+  vpe_initialized=1;
   free(buffer);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Inicializa una sesion de modo 8 (VPE)
+//  Initialize a mode 8 session (VPE)
 //═════════════════════════════════════════════════════════════════════════════
 
 void start_mode8(void)
 {
-  int num_region=pila[sp--];
-  int num_mode8=pila[sp--];
-  int ide_camera=pila[sp];
-  int ancho,alto;
+  int num_region=opstack[sp--];
+  int num_mode8=opstack[sp--];
+  int ide_camera=opstack[sp];
+  int width,height;
   t_region *my_region;
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   if (num_region<0 || num_region>31) {
@@ -137,10 +137,10 @@ void start_mode8(void)
 
   my_region=(t_region *)((memptrsize)region+sizeof(t_region)*num_region);
 
-  ancho=my_region->x1-my_region->x0;
-  alto=my_region->y1-my_region->y0;
+  width=my_region->x1-my_region->x0;
+  height=my_region->y1-my_region->y0;
 
-  vpe_inicializada=1;
+  vpe_initialized=1;
   mode8_list[num_mode8]=num_region;
   m8[num_mode8].camera=ide_camera;
 
@@ -152,15 +152,15 @@ void start_mode8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Finaliza una sesion de modo 8 (VPE)
+//  End a mode 8 session (VPE)
 //═════════════════════════════════════════════════════════════════════════════
 
 void stop_mode8(void)
 {
-  int num_mode8=pila[sp];
-  pila[sp]=0;
+  int num_mode8=opstack[sp];
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   if (num_mode8<0 || num_mode8>9) {
@@ -170,39 +170,39 @@ void stop_mode8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica la altura del suelo de una region
+//  Modify the floor height of a region
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_sector_height(void)
 {
-  int techo=pila[sp--];
-  int suelo=pila[sp--];
-  int num_region=pila[sp];
+  int ceiling=opstack[sp--];
+  int floor_h=opstack[sp--];
+  int num_region=opstack[sp];
   struct Region *new_region;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada) return;
+  if (!vpe_initialized) return;
 
   new_region=(struct Region *)Regions.ptr[num_region];
-  if(suelo!=-1) new_region->FloorH=INT_FIX(suelo);
-  if(techo!=-1) new_region->CeilH =INT_FIX(techo);
+  if(floor_h!=-1) new_region->FloorH=INT_FIX(floor_h);
+  if(ceiling!=-1) new_region->CeilH =INT_FIX(ceiling);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica la altura del techo de una region
+//  Modify the ceiling height of a region
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_sector_height(void)
 {
-  int techo=pila[sp--];
-  int suelo=pila[sp--];
-  int num_region=pila[sp];
+  int ceiling=opstack[sp--];
+  int floor_h=opstack[sp--];
+  int num_region=opstack[sp];
   struct Region *new_region;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
   
   if(num_region<0)
@@ -212,34 +212,34 @@ void get_sector_height(void)
  // fprintf(stdout,"region: %d NEW REGION: %x\n",num_region,new_region);
 
 //return;
-  mem[suelo]=FIX_INT(new_region->FloorH);
-  mem[techo]=FIX_INT(new_region->CeilH);
+  mem[floor_h]=FIX_INT(new_region->FloorH);
+  mem[ceiling]=FIX_INT(new_region->CeilH);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Finaliza las VPE
+//  End the VPE
 //═════════════════════════════════════════════════════════════════════════════
 
-void vpe_fin()
+void vpe_end()
 {
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
-  _vpe_fin();
+  _vpe_end();
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Bucle central del modo 8
+//  Main loop of mode 8
 //═════════════════════════════════════════════════════════════════════════════
 
 void loop_mode8(void)
 {
   int i,j;
-  int ancho,alto;
+  int width,height;
   t_region *my_region;
 	struct Object *po;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   VPE_Update();   // Update zone info
@@ -255,10 +255,10 @@ void loop_mode8(void)
         m8[i].height=mem[m8[i].camera+_Height]-8;
 
       my_region=(t_region *)((memptrsize)region+sizeof(t_region)*mode8_list[i]);
-      ancho=my_region->x1-my_region->x0;
-      alto=my_region->y1-my_region->y0;
-      InitGraph((char *)(copia+my_region->y0*vga_an+my_region->x0),ancho,alto);    // Init gfx system
-      SetActiveView(m8[i].height,mem[m8[i].camera+_M8_Object],ancho,alto,(char *)(copia+my_region->y0*vga_an+my_region->x0),vga_an);
+      width=my_region->x1-my_region->x0;
+      height=my_region->y1-my_region->y0;
+      InitGraph((char *)(copy_buffer+my_region->y0*vga_width+my_region->x0),width,height);    // Init gfx system
+      SetActiveView(m8[i].height,mem[m8[i].camera+_M8_Object],width,height,(char *)(copy_buffer+my_region->y0*vga_width+my_region->x0),vga_width);
       if (m8[i].angle>128)
         m8[i].angle=128;
       if (m8[i].angle<-128)
@@ -275,7 +275,7 @@ void loop_mode8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Crea un objeto
+//  Create an object
 //═════════════════════════════════════════════════════════════════════════════
 
 int create_object(int ide)
@@ -283,13 +283,13 @@ int create_object(int ide)
   struct Object *object;
   struct Region *new_region;
   int num_object;
-  int angulo;
+  int ang;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return(-1);
 
-  angulo=((DEG360*mem[ide+_Angle])/360000)&(DEG360-1);
-  if (angulo==0 || angulo==512 || angulo==1024 || angulo==1024+512) angulo++;
+  ang=((DEG360*mem[ide+_Angle])/360000)&(DEG360-1);
+  if (ang==0 || ang==512 || ang==1024 || ang==1024+512) ang++;
 
   // Read OBJECT
   object=(struct Object *)AddEntry(&Objects);
@@ -308,17 +308,17 @@ int create_object(int ide)
   object->pp->link=0;
   object->pp->Stamp=-1;
 
-  object->Angle=angulo;
+  object->Angle=ang;
 
   if (mem[ide+_Resolution]<2) {
     object->H=object->RH=INT_FIX(mem[ide+_Z]);
     object->pp->x=INT_FIX(mem[ide+_X]);
-    object->pp->y=INT_FIX(FIN_GRID-mem[ide+_Y]);
+    object->pp->y=INT_FIX(END_GRID-mem[ide+_Y]);
   }
   else {
     object->H=object->RH=INT_FIX(mem[ide+_Z])/mem[ide+_Resolution];
     object->pp->x=((mem[ide+_X]*256)/mem[ide+_Resolution])*256;
-    object->pp->y=(((FIN_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256;
+    object->pp->y=(((END_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256;
   }
 
   object->Height=INT_FIX(mem[ide+_Height]);
@@ -365,11 +365,11 @@ void _object_data_input(int ide)
 {
 	struct Object *po;
   struct Region *new_region;
-  int angulo,angle;
+  int ang,angle;
   int m,p,i;
   int x0,y0,x1,y1;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   if (mem[ide+_M8_Object]==-1)
@@ -378,8 +378,8 @@ void _object_data_input(int ide)
   while (mem[ide+_Angle]<0) mem[ide+_Angle]+=360000;
   while (mem[ide+_Angle]>=360000) mem[ide+_Angle]-=360000;
 
-  angulo=((DEG360*mem[ide+_Angle])/360000)&(DEG360-1);
-  if (angulo==0 || angulo==512 || angulo==1024 || angulo==1024+512) angulo++;
+  ang=((DEG360*mem[ide+_Angle])/360000)&(DEG360-1);
+  if (ang==0 || ang==512 || ang==1024 || ang==1024+512) ang++;
 
   po=(struct Object *)Objects.ptr[mem[ide+_M8_Object]];
 
@@ -389,9 +389,9 @@ void _object_data_input(int ide)
   if (mem[ide+_Resolution]<2) {
     po->H=INT_FIX(mem[ide+_Z]+Z_OFFSET);
     if (FIX_INT(po->pp->x)!=mem[ide+_X] ||
-        FIX_INT(po->pp->y)!=FIN_GRID-mem[ide+_Y]) {
+        FIX_INT(po->pp->y)!=END_GRID-mem[ide+_Y]) {
       po->pp->x=INT_FIX(mem[ide+_X]);
-      po->pp->y=INT_FIX(FIN_GRID-mem[ide+_Y]);
+      po->pp->y=INT_FIX(END_GRID-mem[ide+_Y]);
       new_region=FindRegion(po->pp->x,po->pp->y,po->H,po->Type&O_STRUCT);
       if (new_region!=NULL) {
         ClearObjRegion(po);
@@ -400,7 +400,7 @@ void _object_data_input(int ide)
       else {
         _object_destroy(mem[ide+_M8_Object]);
         mem[ide+_M8_Object]=-1;
-        elimina_proceso(ide);
+        delete_process(ide);
         error_vpe=156;
         return;
       }
@@ -409,9 +409,9 @@ void _object_data_input(int ide)
   else {
     po->H=INT_FIX(mem[ide+_Z])/mem[ide+_Resolution];
     if ((int)po->pp->x != ((mem[ide+_X]*256)/mem[ide+_Resolution])*256 ||
-        (int)po->pp->y != (((FIN_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256 ) {
+        (int)po->pp->y != (((END_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256 ) {
       po->pp->x=((mem[ide+_X]*256)/mem[ide+_Resolution])*256;
-      po->pp->y=(((FIN_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256;
+      po->pp->y=(((END_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256;
       new_region=FindRegion(po->pp->x,po->pp->y,po->H,po->Type&O_STRUCT);
       if (new_region!=NULL) {
         ClearObjRegion(po);
@@ -420,14 +420,14 @@ void _object_data_input(int ide)
       else {
         _object_destroy(mem[ide+_M8_Object]);
         mem[ide+_M8_Object]=-1;
-        elimina_proceso(ide);
+        delete_process(ide);
         error_vpe=156;
         return;
       }
     }
   }
 
-  po->Angle=angulo;
+  po->Angle=ang;
   po->Height=INT_FIX(mem[ide+_Height]);
   po->Radius=INT_FIX(mem[ide+_Radius]);
 
@@ -467,7 +467,7 @@ void _object_data_input(int ide)
             while (angle<0) angle+=360000;
             while (angle>=360000) angle-=360000;
 
-            angle=angulo+(DEG360*angle)/360000;
+            angle=ang+(DEG360*angle)/360000;
 
             while (angle<0) angle+=DEG360;
             while (angle>=DEG360) angle-=DEG360;
@@ -475,7 +475,7 @@ void _object_data_input(int ide)
             m=mem[p];
             if (m>0 && m<=256) {
 
-              // angle es el ángulo de visión del gráfico (0..2048), m el número de particiones
+              // angle is the viewing angle of the graphic (0..2048), m the number of partitions
 
               mem[ide+_Flags]&=254;
               mem[ide+_Graph]=((angle+DEG360/(m*2))*m)/DEG360;
@@ -530,7 +530,7 @@ void _object_data_output(int ide)
 {
 	struct Object *po;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   if (mem[ide+_M8_Object]==-1)
@@ -541,16 +541,16 @@ void _object_data_output(int ide)
   if (mem[ide+_Resolution]<2) {
     mem[ide+_Z]=FIX_INT(po->H)-Z_OFFSET;
     mem[ide+_X]=FIX_INT(po->pp->x);
-    mem[ide+_Y]=FIN_GRID-FIX_INT(po->pp->y);
+    mem[ide+_Y]=END_GRID-FIX_INT(po->pp->y);
   }
   else {
     if (po->H != INT_FIX(mem[ide+_Z])/mem[ide+_Resolution]) {
       mem[ide+_Z]=((int)po->H*(int)mem[ide+_Resolution])/65536;
     }
     if ((int)po->pp->x != ((mem[ide+_X]*256)/mem[ide+_Resolution])*256 ||
-        (int)po->pp->y != (((FIN_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256 ) {
+        (int)po->pp->y != (((END_GRID*mem[ide+_Resolution]-mem[ide+_Y])*256)/mem[ide+_Resolution])*256 ) {
       mem[ide+_X]=(((int)po->pp->x/256)*mem[ide+_Resolution])/256;
-      mem[ide+_Y]=((FIN_GRID*256-(int)po->pp->y/256)*mem[ide+_Resolution])/256;
+      mem[ide+_Y]=((END_GRID*256-(int)po->pp->y/256)*mem[ide+_Resolution])/256;
     }
   }
   mem[ide+_M8_Wall]=po->wall_number;
@@ -563,14 +563,14 @@ void _object_data_output(int ide)
 
 void go_to_flag(void)
 {
-  int flag=pila[sp];
+  int flag=opstack[sp];
   int i,aux;
 	struct Object *po;
   struct Region *new_region;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   if (id<id_start || id>id_end)
@@ -607,7 +607,7 @@ void go_to_flag(void)
   po=(struct Object *)Objects.ptr[mem[id+_M8_Object]];
 
   po->pp->x=flags[aux]->x;
-  po->pp->y=INT_FIX(FIN_GRID)-flags[aux]->y;
+  po->pp->y=INT_FIX(END_GRID)-flags[aux]->y;
 
   if (po!=NULL) {
     new_region=FindRegion(po->pp->x,po->pp->y,po->H,po->Type&O_STRUCT);
@@ -618,7 +618,7 @@ void go_to_flag(void)
     else {
       _object_destroy(mem[id+_M8_Object]);
       mem[id+_M8_Object]=-1;
-      elimina_proceso(id);
+      delete_process(id);
       e(156);
       return;
     }
@@ -626,19 +626,19 @@ void go_to_flag(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica las coordenadas de un punto del mapa
+//  Modify the coordinates of a map point
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_point_m8(void)
 {
 	struct Point *point;
 
-  int y=FIN_GRID-pila[sp--];
-  int x=pila[sp--];
-  int num_point=pila[sp];
-  pila[sp]=0;
+  int y=END_GRID-opstack[sp--];
+  int x=opstack[sp--];
+  int num_point=opstack[sp];
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   point=(struct Point *)Points.ptr[num_point];
@@ -650,154 +650,154 @@ void set_point_m8(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve las coordenadas de un punto del mapa
+//  Return the coordinates of a map point
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_point_m8(void)
 {
 	struct Point *point;
 
-  int y=pila[sp--];
-  int x=pila[sp--];
-  int num_point=pila[sp];
-  pila[sp]=0;
+  int y=opstack[sp--];
+  int x=opstack[sp--];
+  int num_point=opstack[sp];
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   point=(struct Point *)Points.ptr[num_point];
 
   if (point!=NULL) {
     mem[x]=FIX_INT(point->x);
-    mem[y]=FIN_GRID-FIX_INT(point->y);
+    mem[y]=END_GRID-FIX_INT(point->y);
   }
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica las texturas de una region del mapa
+//  Modify the textures of a map region
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_sector_texture(void)
 {
-  int fade=pila[sp--];
-  int techo=pila[sp--];
-  int suelo=pila[sp--];
-  int num_region=pila[sp];
+  int fade=opstack[sp--];
+  int ceiling=opstack[sp--];
+  int floor_h=opstack[sp--];
+  int num_region=opstack[sp];
   struct Region *new_region;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada) return;
+  if (!vpe_initialized) return;
 
   if (fade < -1 || fade > 15) return;
 
   new_region=(struct Region *)Regions.ptr[num_region];
 
   if( fade !=-1 ) new_region->Fade= 15 - fade;
-  if( suelo!=-1 ) TexAlloc(&new_region->FloorTC,suelo,num_fpg_aux);
-  if( techo!=-1 ) TexAlloc(&new_region->CeilTC,techo,num_fpg_aux);
+  if( floor_h!=-1 ) TexAlloc(&new_region->FloorTC,floor_h,num_fpg_aux);
+  if( ceiling!=-1 ) TexAlloc(&new_region->CeilTC,ceiling,num_fpg_aux);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve las texturas de una region del mapa
+//  Return the textures of a map region
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_sector_texture(void)
 {
-  int fade =pila[sp--];
-  int techo=pila[sp--];
-  int suelo=pila[sp--];
-  int num_region=pila[sp];
+  int fade =opstack[sp--];
+  int ceiling=opstack[sp--];
+  int floor_h=opstack[sp--];
+  int num_region=opstack[sp];
   struct Region *new_region;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   new_region=(struct Region *)Regions.ptr[num_region];
   mem[fade ]=new_region->Fade;
   if(new_region->FloorTC.pPic!=0)
-    mem[suelo]=new_region->FloorTC.pPic->code;
+    mem[floor_h]=new_region->FloorTC.pPic->code;
   
   if(new_region->CeilTC.pPic!=0)  
-    mem[techo]=new_region->CeilTC.pPic->code;
+    mem[ceiling]=new_region->CeilTC.pPic->code;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica las texturas de una pared del mapa
+//  Modify the textures of a map wall
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_wall_texture(void)
 {
-  int fade    =( 15-pila[sp--] )%16;
-  int textura =pila[sp--];
-  int num_wall=pila[sp];
+  int fade    =( 15-opstack[sp--] )%16;
+  int texture =opstack[sp--];
+  int num_wall=opstack[sp];
   struct Wall *new_wall;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   new_wall=(struct Wall *)Walls.ptr[num_wall];
   if(fade!=-1)
     new_wall->Fade=fade;
 
-  if(textura!=-1)
+  if(texture!=-1)
   {
     if (new_wall->Type&1)
     {
-      TexAlloc(&new_wall->TopTC,textura,num_fpg_aux);
-      TexAlloc(&new_wall->BotTC,textura,num_fpg_aux);
+      TexAlloc(&new_wall->TopTC,texture,num_fpg_aux);
+      TexAlloc(&new_wall->BotTC,texture,num_fpg_aux);
     }
     else
-      TexAlloc(&new_wall->MidTC,textura,num_fpg_aux);
+      TexAlloc(&new_wall->MidTC,texture,num_fpg_aux);
   }
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Devuelve las texturas de una pared del mapa
+//  Return the textures of a map wall
 //═════════════════════════════════════════════════════════════════════════════
 
 void get_wall_texture(void)
 {
-  int fade    =pila[sp--];
-  int textura =pila[sp--];
-  int num_wall=pila[sp];
+  int fade    =opstack[sp--];
+  int texture =opstack[sp--];
+  int num_wall=opstack[sp];
   struct Wall *new_wall;
 
-  pila[sp]=0;
+  opstack[sp]=0;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   new_wall=(struct Wall *)Walls.ptr[num_wall];
   mem[fade   ]=new_wall->Fade;
   if (new_wall->Type&1)
-    mem[textura]=new_wall->TopTC.pPic->code;
+    mem[texture]=new_wall->TopTC.pPic->code;
   else
-    mem[textura]=new_wall->MidTC.pPic->code;
+    mem[texture]=new_wall->MidTC.pPic->code;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Avanza un objeto
+//  Advance an object
 //═════════════════════════════════════════════════════════════════════════════
 
-void _object_avance(int ide,int angulo,int velocidad)
+void _object_advance(int ide,int ang,int speed)
 {
 	struct Object *po;
   int old_angle;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
 
   _object_data_input(ide);
 
-  while (angulo<0) angulo+=360000;
-  while (angulo>=360000) angulo-=360000;
+  while (ang<0) ang+=360000;
+  while (ang>=360000) ang-=360000;
 
-  angulo=((DEG360*angulo)/360000)&(DEG360-1);
+  ang=((DEG360*ang)/360000)&(DEG360-1);
 
   if (mem[ide+_M8_Object]==-1)
     return;
@@ -808,11 +808,11 @@ void _object_avance(int ide,int angulo,int velocidad)
     return;
 
   if (mem[ide+_Resolution]>1)
-    po->Speed.X=(velocidad*65536)/mem[ide+_Resolution];
+    po->Speed.X=(speed*65536)/mem[ide+_Resolution];
   else
-    po->Speed.X=velocidad*65536;
+    po->Speed.X=speed*65536;
   old_angle=po->Angle;
-  po->Angle=angulo;
+  po->Angle=ang;
   po->wall_number=-1;
   po->nextregion_number=-1;
 
@@ -822,7 +822,7 @@ void _object_avance(int ide,int angulo,int velocidad)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Destruye un objeto
+//  Destroy an object
 //═════════════════════════════════════════════════════════════════════════════
 
 void _object_destroy(int num_object)
@@ -830,7 +830,7 @@ void _object_destroy(int num_object)
 	struct Object *po;
   int i;
 
-  if (!vpe_inicializada)
+  if (!vpe_initialized)
     return;
   if(num_object<0)
     return;
@@ -852,34 +852,34 @@ void _object_destroy(int num_object)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Modifica el valor de niebla
+//  Modify the fog value
 //═════════════════════════════════════════════════════════════════════════════
 
 void set_fog(void)
 {
-int fin=pila[sp--];
-int ini=pila[sp  ];
-  pila[sp]=0;
-  if (!vpe_inicializada) return;
-  if(ini >= fin)
+int end=opstack[sp--];
+int begin=opstack[sp  ];
+  opstack[sp]=0;
+  if (!vpe_initialized) return;
+  if(begin >= end)
   {
     VPE_fog=0;
     return;
   }
   VPE_fog=1;
-  ActView->FIni= (ini)<<16 ;
-  ActView->FLen= (fin-ini)<<16 ;
+  ActView->FIni= (begin)<<16 ;
+  ActView->FLen= (end-begin)<<16 ;
   if(ActView->FLen<ActView->FIni*2)
     ActView->FLen=ActView->FIni*2;
 }
 
 void set_env_color(void)
 {
-int b=pila[sp--];
-int g=pila[sp--];
-int r=pila[sp  ];
+int b=opstack[sp--];
+int g=opstack[sp--];
+int r=opstack[sp  ];
 int wfr,wfg,wfb;
-  pila[sp]=0;
+  opstack[sp]=0;
 
   if (r<0)   r=0;
   if (r>100) r=100;
@@ -893,6 +893,6 @@ int wfr,wfg,wfb;
   wfb = (b*63)/100;
   if( fr==wfr && fg==wfg && fb==wfb ) return;
   fr=wfr; fg=wfg; fb=wfb;
-  if ( !vpe_inicializada )  return;
+  if ( !vpe_initialized )  return;
   set_fog_table( 1, fr, fg, fb );
 }

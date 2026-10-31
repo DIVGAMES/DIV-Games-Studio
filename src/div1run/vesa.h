@@ -1,11 +1,11 @@
 //═════════════════════════════════════════════════════════════════════════════
-//      Subrutinas de VESA
+//      VESA subroutines
 //═════════════════════════════════════════════════════════════════════════════
 
 #define		TRUE				1
 #define		FALSE				0
 
-// Estructuras usadas por el driver VESA
+// Structures used by the VESA driver
 
 typedef struct RealPointer
 {

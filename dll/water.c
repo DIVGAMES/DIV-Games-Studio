@@ -11,14 +11,14 @@
 char    *water=NULL;
 
 void post_process_buffer(void) {
-  static int desp=3000;
+  static int disp=3000;
   static int dec=-1;
-  static int valor=0;
+  static int value=0;
   int    x,inc;
   FILE   *f;
 
-  if(valor==0) {
-    valor=1;
+  if(value==0) {
+    value=1;
     water=(char *)div_malloc(HEIGHT*wide);
   }
 
@@ -28,10 +28,10 @@ void post_process_buffer(void) {
 
   for(x=0;x<HEIGHT;x++) {
     memcpy(water+x*wide,buffer+(inc/100)*wide,wide);
-    inc-=desp/10;
-    desp+=dec;
-    if(desp<2500) dec=1;
-    if(desp>3500) dec=-1;
+    inc-=disp/10;
+    disp+=dec;
+    if(disp<2500) dec=1;
+    if(disp>3500) dec=-1;
   }
 
   memset(water,0,wide);

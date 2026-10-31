@@ -136,7 +136,7 @@ void dump(int size) {
 	int args=0;
 	int ifloop=0;
 	char condstack[255][100];
-	int con=0;
+	int ctr=0;
 	int f=0;
 	//					0    1     2    3    4    5    6    7    8    9  
 	char keys[128][15]={"","_esc","_1","_2","_3","_4","_5","_6","_7","_8",
@@ -388,42 +388,42 @@ i=mem[1]-1;
 //		}
 /*		
 local struct reserved[0]
-        process_id     // Identificador del proceso
-        id_scan        // Para scanear procesos (colisiones)
-        process_type   // Tipo de proceso
-        type_scan      // Para scanear procesos por tipo
-        status         // Estado actual de este proceso
-        param_offset   // Puntero a los par┬ámetros pasados
-        program_index  // Contador de programa para este proceso
-        is_executed    // Indica si el proceso ya ha sido ejecutado
-        is_painted     // Indica si el proceso ya ha sido pintado
-        distance_1     // Distancia 1 del proceso (reservado modo 7)
-        distance_2     // Distancia 2 del proceso (idem)
-        frame_percent  // Porcentaje de frame recorrido
-        box_x0         // Caja ocupada por el sprite cada
-        box_y0         // vez que se pinta para realizar
-        box_x1         // volcado y restauraci┬ón de fondo
-        box_y1         // parcial (dump_type==partial_dump)
+        process_id     // Process identifier
+        id_scan        // To scan processes (collisions)
+        process_type   // Process type
+        type_scan      // To scan processes by type
+        status         // Current state of this process
+        param_offset   // Pointer to the passed parameters
+        program_index  // Program counter for this process
+        is_executed    // Tells whether the process has already been executed
+        is_painted     // Tells whether the process has already been drawn
+        distance_1     // Distance 1 of the process (reserved for mode 7)
+        distance_2     // Distance 2 of the process (ditto)
+        frame_percent  // Percentage of frame elapsed
+        box_x0         // Box occupied by the sprite each
+        box_y0         // time it is drawn, to perform
+        box_x1         // partial dump and background restore
+        box_y1         // partial (dump_type==partial_dump)
 end
 
-local father=0          // Identificador del padre
-local son=0             // Identificador del ┬último hijo
-local smallbro=0        // Identificador del hermano menor
-local bigbro=0          // Identificador del hermano mayor
-local priority=0        // Prioridad de proceso (a mayor se procesa antes)
-local ctype=0           // Tipo de coordenada
-local x=0               // Coordenada X
-local y=0               // Coordenada Y
-local z=0               // Prioridad de impresi┬ón del gr┬áfico
-local graph=0           // C┬ódigo del gr┬áfico para este proceso
-local flags=0           // +1 iversi┬ón horiz., +2 inversion vert., +4 Ghost
-local size=100          // Tama┬ño del proceso (en tanto por ciento)
-local angle=0           // Angulo del proceso
-local region=0          // Regi┬ón de clipping para este proceso
-local file=0            // Fichero del que tomar los gr┬áficos
-local xgraph=0          // Puntero a tabla: n┬ºgraficos, graf_angulo_0, ...
-local height=1          // Altura de los procesos en el modo-7 (pix/4)
-local cnumber=0         // N┬º de scroll o m7 en el que est┬á (0 en todos, o bien: +1 en el 0, +2 en el 1, +4 en el 2, ...)
+local father=0          // Father identifier
+local son=0             // Identifier of the last son
+local smallbro=0        // Identifier of the younger brother
+local bigbro=0          // Identifier of the older brother
+local priority=0        // Process priority (higher is processed first)
+local ctype=0           // Coordinate type
+local x=0               // X coordinate
+local y=0               // Y coordinate
+local z=0               // Graphic print priority
+local graph=0           // Graphic code for this process
+local flags=0           // +1 horiz. flip, +2 vert. flip, +4 Ghost
+local size=100          // Size of the process (as a percentage)
+local angle=0           // Angle of the process
+local region=0          // Clipping region for this process
+local file=0            // File to take the graphics from
+local xgraph=0          // Pointer to table: num_graphics, graph_angle_0, ...
+local height=1          // Height of the processes in mode-7 (pix/4)
+local cnumber=0         // Number of the scroll or m7 it is in (0 in all, or else: +1 in 0, +2 in 1, +4 in 2, ...)
 local resolution=0 
 
 */
@@ -440,21 +440,21 @@ local resolution=0
 			fprintf(prg,"%s=%s",cstack[sp-2],cmd);
 		}
 		memset(cmd,0,255);
-		con=1;
+		ctr=1;
 		sp--;
 		break;
     case lori: 
 		fprintf(sta,"%5u\tori",i);
 //		fprintf(prg,"// UNIMP! || (ORI)\n");
 		fprintf(prg,"// stack: || %d %d\n",sp,i);
-		sprintf(condstack[con],"%s OR %s",condstack[con-2],condstack[con-1]);
-		strcpy(condstack[con-2],condstack[con]);
-		strcpy(cstack[sp-2],condstack[con]);
+		sprintf(condstack[ctr],"%s OR %s",condstack[ctr-2],condstack[ctr-1]);
+		strcpy(condstack[ctr-2],condstack[ctr]);
+		strcpy(cstack[sp-2],condstack[ctr]);
 //		sp--;
-//		fprintf(prg,"// cmd: %s\n",condstack[con]);
+//		fprintf(prg,"// cmd: %s\n",condstack[ctr]);
 
-		con--;
-		strcpy(cmd,condstack[con-1]);
+		ctr--;
+		strcpy(cmd,condstack[ctr-1]);
 
 		break;
     case lxor: 
@@ -466,62 +466,62 @@ local resolution=0
 		fprintf(sta,"%5u\tand",i); 
 //		fprintf(prg,"// UNIMP! && (AND)\n");
 		fprintf(prg,"// stack: && %d\n",sp);
-		sprintf(condstack[con],"(%s && %s)",condstack[con-2],condstack[con-1]);
-		strcpy(condstack[con-2],condstack[con]);
-		con--;
-//		fprintf(prg,"// condstack %s\n",condstack[con]);
-		strcpy(cmd,condstack[con-1]);
+		sprintf(condstack[ctr],"(%s && %s)",condstack[ctr-2],condstack[ctr-1]);
+		strcpy(condstack[ctr-2],condstack[ctr]);
+		ctr--;
+//		fprintf(prg,"// condstack %s\n",condstack[ctr]);
+		strcpy(cmd,condstack[ctr-1]);
 		break;
     case ligu: 
 		fprintf(sta,"%5u\tigu",i); 
 //		fprintf(prg,"// %s UNIMP! == (IGU)\n",cmd);		
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"%s == %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s == %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 		break;
     case ldis: 
 		fprintf(sta,"%5u\tdis",i); 
 //		fprintf(prg,"// UNIMP! != (DIS)\n");		
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"%s != %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s != %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 
 		break;
     case lmay: 
 		fprintf(sta,"%5u\tmay",i); 
 //		fprintf(prg,"// UNIMP! > (MAY)\n");		
-		sprintf(condstack[con],"%s > %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s > %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 //		fprintf(prg,"// stack: %d %s\n",sp,cmd);
 		break;
     case lmen: 
 		fprintf(sta,"%5u\tmen",i); 
 //		fprintf(prg,"// UNIMP! < (MEN)\n");				
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"%s < %s",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"%s < %s",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 
 		break;
     case lmei: 
 		fprintf(sta,"%5u\tmei",i); 
 //		fprintf(prg,"// UNIMP! <= (MEI)\n");	
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"(%s <= %s)",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"(%s <= %s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 
 		break;
     case lmai: 
 		fprintf(sta,"%5u\tmai",i); 
 //		fprintf(prg,"// UNIMP! >= (MAI)\n");			
 //		fprintf(prg,"// stack: %d\n",sp);
-		sprintf(condstack[con],"(%s >= %s)",cstack[sp-2],cstack[sp-1]);
-		strcpy(cmd,condstack[con]);
-		con++;
+		sprintf(condstack[ctr],"(%s >= %s)",cstack[sp-2],cstack[sp-1]);
+		strcpy(cmd,condstack[ctr]);
+		ctr++;
 		break;
     case ladd: 
 		fprintf(sta,"%5u\tadd",i);
@@ -674,12 +674,12 @@ local resolution=0
 
 		memset(cmd,0,255);
 		i++;
-		con=0;
+		ctr=0;
 		sp=0;
 		break;
     case lfun: 
 		fprintf(sta,"%5u\tfun %u",i,mem[i+1]); 
-//		fprintf(prg,"// LFUN stack: %d i: %u con: %u\n",sp,i,con);
+//		fprintf(prg,"// LFUN stack: %d i: %u ctr: %u\n",sp,i,ctr);
 		// calling function
 
 //		fprintf(prg,"// fun stack %d %d\n",sp,i);
@@ -776,15 +776,15 @@ local resolution=0
 				fprintf(prg,"// GET_ID\n");
 				sprintf(cmd,"get_id(type proc%s)",cstack[sp-1]);
 				strcpy(cstack[sp-1],cmd);
-//				con++;
+//				ctr++;
 				break;
 //				sp=1;
 			
 			case 12:
 				sprintf(cmd,"get_angle(%s)",cstack[sp-1]);
-//				strcpy(condstack[con],cmd);
+//				strcpy(condstack[ctr],cmd);
 				strcpy(cstack[sp-1],cmd);
-//				con++;
+//				ctr++;
 //				sp=1;
 				break;
 
@@ -944,8 +944,8 @@ local resolution=0
 //				sp=0;
 				break;
 		}
-		strcpy(condstack[con],cmd);
-		con++;
+		strcpy(condstack[ctr],cmd);
+		ctr++;
 		i++; break;
     case lcal: 
 		fprintf(sta,"%5u\tcal %u",i,mem[i+1]); 
@@ -979,7 +979,7 @@ local resolution=0
 		fprintf(prg,"%s;\n",cmd);
 //		fprintf(prg,"// discard stack %d\n",sp);
 		memset(cmd,0,255);
-		con=0;
+		ctr=0;
 		sp--;
 
 		break;
@@ -1094,7 +1094,7 @@ local resolution=0
     case lext: fprintf(sta,"%5u\text %u",i,mem[i+1]); i++; break;
     case lchk: 
 		fprintf(sta,"%5u\tchk",i); 
-		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
+		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[ctr-1],cmd);
 		getvarname(mem[i+2],name);
 		strcat(cstack[sp-1],".");
 		strcat(cstack[sp-1],name);
@@ -1109,7 +1109,7 @@ local resolution=0
 		}
 */
 //		i++;
-//		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[con-1],cmd);
+//		fprintf(prg,"// offset %d %s %d %s %s\n",mem[i+2],cstack[sp-1],stack[sp-1],condstack[ctr-1],cmd);
 		i+=2;
 		fprintf(prg,"// lchk next %d %d\n",i,mem[i+1]);
 		if(mem[i+1]==lptr || mem[i+1]==lchk)

@@ -4,10 +4,10 @@
 #include "resource.hpp"
 
 /********************************************************/
-/* Estructuras basicas para la engine 3D                */
+/* Basic structures for the 3D engine                */
 /********************************************************/
 
-/* MATRIZ ***********************************************/
+/* MATRIX ***********************************************/
 
 typedef struct _matrix{
     float   _00,_01,_02,_03;
@@ -16,108 +16,108 @@ typedef struct _matrix{
     float   _30,_31,_32,_33;
 }tmatrix,*lptmatrix;
 
-/* TEXTURA **********************************************/
+/* TEXTURE **********************************************/
 
-typedef struct _textura{
-  int           ancho,alto; // Tama¤o de la textura.
-  char          *buffer;    // Buffer de texturas.
+typedef struct _texture{
+  int           width,height; // Texture size.
+  char          *buffer;    // Texture buffer.
 // MipMapping
-  char          *Levels[4]; // Puntero a los niveles.
-  int           Ancho[4];   // Puntero a los niveles.
-  int           Alto[4];    // Puntero a los niveles.
-}ttextura,*lpttextura;
+  char          *Levels[4]; // Pointer to the levels.
+  int           Width[4];   // Pointer to the levels.
+  int           Height[4];    // Pointer to the levels.
+}ttexture,*lpttexture;
 
 /* MATERIAL *********************************************/
 
 #define T_FLAT        0
-#define T_TEXTURA     1
+#define T_TEXTURE     1
 #define T_GOURAUD     2
-#define T_PERSPECTIVA 4
-#define T_TRANSLUCIDO 8
-#define T_MASCARA     16
-#define T_SOMBRA      32
+#define T_PERSPECTIVE 4
+#define T_TRANSLUCENT 8
+#define T_MASK     16
+#define T_SHADOW      32
 #define T_ANTIALIAS   64
 
-// Tipos de mapeado
+// Mapping types
 #define FLAT          0
 #define GOURAUD       1
-#define TRANSLUCIDO   2
-#define TEXTURA       3
+#define TRANSLUCENT   2
+#define TEXTURE       3
 #define GOURAUD_TEXT  4
-#define TRANSPARENTE  5
+#define TRANSPARENT  5
 #define GHOST         6
 
-#define TEXTURA_Z_CONST 7
+#define TEXTURE_Z_CONST 7
 
 #define FLAT_TRANS    8
 #define TEXT_TRANS    9
 #define TEXT_PER_TRANS 10
 #define GOURAUD_PER   11
-#define TRANSPARENTE_MASCARA 12
+#define TRANSPARENT_MASK 12
 #define TEXT_PER      13
 #define GOUR_TEXT_PER 14
 #define TRANS_PER     15
 #define TEXT_BILINEAR 16
 #define TEXT_GOUR     17
-#define TEXT_ILUM     18
-#define SOMBRA        19
+#define TEXT_ILLUM     18
+#define SHADOW        19
 #define GOUR_MASK     20
 #define WIRE          21
 #define ANTIALIAS     22
 
 typedef struct _material{
-  float       dr,dg,db;     // Color de la luz difusa que afecta al objeto.
-  char        dac_difusa;   // Indice sobre el dac del color difuso
-  float       ar,ag,ab;     // Color de la luz ambiente que afecta al objeto.
-  char        dac_ambient;  // Indice sobre el dac del color ambiente
-  float       sr,sg,sb;     // Color de la luz especular que afecta al objeto.
-  char        dac_especular;// Indice sobre el dac del color especular
-  lpttextura  textura;      // Puntero al buffer de textura.
-  int         tipo_map;     // Tipo de mapeado
+  float       dr,dg,db;     // Color of the diffuse light affecting the object.
+  char        dac_diffuse;   // Index into the dac of the diffuse color
+  float       ar,ag,ab;     // Color of the ambient light affecting the object.
+  char        dac_ambient;  // Index into the dac of the ambient color
+  float       sr,sg,sb;     // Color of the specular light affecting the object.
+  char        dac_specular;// Index into the dac of the specular color
+  lpttexture  texture;      // Pointer to the texture buffer.
+  int         map_type;     // Mapping type
 }tmaterial,*lptmaterial;
 
-/* VERTICE **********************************************/
+/* VERTEX ***********************************************/
 
 typedef struct _vertex{
-  float       rx,ry,rz;     // Coordenadas reales.
-  float       sx,sy,sz;     // Coordenadas espaciales.
-  float       fpx,fpy,fpz;  // Coordenadas de pantalla en float.
-  int         px,py,pz;     // Coordenadas de pantalla.
+  float       rx,ry,rz;     // Real coordinates.
+  float       sx,sy,sz;     // Spatial coordinates.
+  float       fpx,fpy,fpz;  // Screen coordinates in float.
+  int         px,py,pz;     // Screen coordinates.
 
-  float       rnx,rny,rnz;  // Normales del vertice reales.
-  float       snx,sny,snz;  // Normales del vertice espaciales.
-  float       r,g,b;        // Valores rgb del vertice.
-  float       intensidad;   // Valores de intensidad.
+  float       rnx,rny,rnz;  // Real vertex normals.
+  float       snx,sny,snz;  // Spatial vertex normals.
+  float       r,g,b;        // Rgb values of the vertex.
+  float       intensity;   // Intensity values.
 
-  float       u,v;          // Coordenadas de textura.
-  float       ru,rv;        // Coordenadas de textura.
-  int         estado;       // Para evitar tratarlo varias veces
-  int         sutherland_cohen; // Para el clipping 3D
-  int         basura[4];
+  float       u,v;          // Texture coordinates.
+  float       ru,rv;        // Texture coordinates.
+  int         state;       // To avoid processing it several times
+  int         sutherland_cohen; // For 3D clipping
+  int         garbage[4];
 }tvertex,*lptvertex;
 
-/* CARA *************************************************/
+/* FACE *************************************************/
 
 typedef struct _face{
-  lptvertex   v1;           // Puntero al vertice 1.
-  lptvertex   v2;           // Puntero al vertice 2.
-  lptvertex   v3;           // Puntero al vertice 3.
-  float       rnx,rny,rnz;  // Normal de la cara reales.
-  float       snx,sny,snz;  // Normal de la cara espaciales.
+  lptvertex   v1;           // Pointer to vertex 1.
+  lptvertex   v2;           // Pointer to vertex 2.
+  lptvertex   v3;           // Pointer to vertex 3.
+  float       rnx,rny,rnz;  // Real face normal.
+  float       snx,sny,snz;  // Spatial face normal.
   float       co;
-  lptmaterial material;     // Puntero al material de esta cara.
-  int         tipo_map;
+  lptmaterial material;     // Pointer to the material of this face.
+  int         map_type;
 //  int         bas[4];
 }tface,*lptface;
 
 /* BOUNDING BOX *****************************************/
 
 typedef struct _bbox{
-  float       x1,y1,z1;     // Esquina superior izquierda.
-  float       x2,y2,z2;     // Esquina inferior derecha.
+  float       x1,y1,z1;     // Top left corner.
+  float       x2,y2,z2;     // Bottom right corner.
 }tbbox,*lptbbox;
 
-/* CINTA AISLANTE *****************************************/
+/* DUCT TAPE *****************************************/
 
 typedef struct _tape{
   int         Obj1,Vert1;
@@ -125,22 +125,22 @@ typedef struct _tape{
   int         LinkMode;
 }ttape,*lpttape;
 
-/* OBJETO ***********************************************/
+/* OBJECT ***********************************************/
 
 typedef struct _object{
-  short       nVertex;      // Numero de vertices del objeto.
-  short       nFaces;       // Numero de caras del objeto.
-  lptmaterial Material;     // Puntero al material que afecta al objeto.
-  tbbox       Bbox;         // Bounding Box del objeto.
-  tvertex     Centro;       // Buffer de vertices.
-  unsigned int z;           // z para ordenar.
-  lptvertex   Vertices;     // Buffer de vertices.
-  lptface     Faces;        // Buffer de caras.
-  lptmatrix   matrix;       // Matriz de transformaci¢n.
-  char        name[20];     // Nombre del objeto
-  int         Shadow;       // Indica si se trata como sombra
-  float       lambiente;    // Luz ambiente del objeto
-  int         activo;
+  short       nVertex;      // Number of vertices of the object.
+  short       nFaces;       // Number of faces of the object.
+  lptmaterial Material;     // Pointer to the material affecting the object.
+  tbbox       Bbox;         // Bounding Box of the object.
+  tvertex     Center;       // Vertex buffer.
+  unsigned int z;           // z for sorting.
+  lptvertex   Vertices;     // Vertex buffer.
+  lptface     Faces;        // Face buffer.
+  lptmatrix   matrix;       // Transformation matrix.
+  char        name[20];     // Object name
+  int         Shadow;       // Tells whether it is treated as a shadow
+  float       lambient;    // Ambient light of the object
+  int         active;
 }tobject,*lptobject;
 
 typedef struct _vector{
@@ -151,7 +151,7 @@ typedef struct _texturebuffer{
     int         users;
     char        name[13];
     Resource    *res;
-    lpttextura  pointer;
+    lpttexture  pointer;
 }texturebuffer,*lptexturebuffer;
 
 #endif

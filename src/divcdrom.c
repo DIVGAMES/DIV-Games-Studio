@@ -43,17 +43,17 @@ static int CDOpendoor=0;
                 CDPlaying=0;
                 cd_stop_audio ();
         }
-        if(get_cd_status()&1)//Puerta abierta
+        if(get_cd_status()&1)//Door open
         {
                 CDPlaying=0;
                 CDOpendoor=1;
         }
-        if(CDOpendoor&&!(get_cd_status()&1) )//CD Puerta cerrada
+        if(CDOpendoor&&!(get_cd_status()&1) )//CD Door closed
         {
                 CDOpendoor=0;
                 CDChange=1;
         }
-        if(!CDPlaying &&CDChange && !(get_cd_status()&(1<<11)))//CD DENTRO
+        if(!CDPlaying &&CDChange && !(get_cd_status()&(1<<11)))//CD INSIDE
         {
                 if(CDinit())
                         CDChange=0;
@@ -90,7 +90,7 @@ int x;
         if( !CDInUse || cdrom_installed () )
         {
                 CDInUse=1;
-                if(get_cd_status()&(1<<11)) //No hay CD dentro
+                if(get_cd_status()&(1<<11)) //No CD inside
                 {
                         tracks=0;
                         return 0;
@@ -229,10 +229,10 @@ int ODig1=-1,ODig2=-1,ODig3=-1,ODig4=-1,ODig5=-1,ODig6=-1,OCDPlaying=-1;
 void ShowTrack_Time()
 {
 byte * ptr=v.ptr;
-int an=v.an,al=v.al;
+int w=v.w,h=v.h;
 char cBuff[3];
 int Dig1,Dig2,Dig3,Dig4,Dig5,Dig6;
-        if (big) {an/=2; al/=2; }
+        if (big) {w/=2; h/=2; }
         CDgetInfo();
         if(tracks)
         {        
@@ -260,53 +260,53 @@ int Dig1,Dig2,Dig3,Dig4,Dig5,Dig6;
 
         if(ODig1!=Dig1)
         {
-                wput(ptr,an,al,68,14,Dig1);
-                v.volcar=1;
+                wput(ptr,w,h,68,14,Dig1);
+                v.blit=1;
                 ODig1=Dig1;
         }
         if(ODig2!=Dig2)
         {
-                wput(ptr,an,al,75,14,Dig2);
-                v.volcar=1;
+                wput(ptr,w,h,75,14,Dig2);
+                v.blit=1;
                 ODig2=Dig2;
         }
         if(ODig3!=Dig3)
         {
-                wput(ptr,an,al,108,14,Dig3);
-                v.volcar=1;
+                wput(ptr,w,h,108,14,Dig3);
+                v.blit=1;
                 ODig3=Dig3;
         }
         if(ODig4!=Dig4)
         {
-                wput(ptr,an,al,115,14,Dig4);
-                v.volcar=1;
+                wput(ptr,w,h,115,14,Dig4);
+                v.blit=1;
                 ODig4=Dig4;
         }        
         if(ODig5!=Dig5)
         {
-                wput(ptr,an,al,126,14,Dig5);
-                v.volcar=1;
+                wput(ptr,w,h,126,14,Dig5);
+                v.blit=1;
                 ODig5=Dig5;
         }
         if(ODig6!=Dig6)
         {
-                wput(ptr,an,al,133,14,Dig6);
-                v.volcar=1;
+                wput(ptr,w,h,133,14,Dig6);
+                v.blit=1;
                 ODig6=Dig6;
         }
         if(OCDPlaying!=CDPlaying)
         {
                 if(CDPlaying)
                 {
-                        wput(ptr,an,al,36,13,197);
-                        wput(ptr,an,al,41,13,198);
+                        wput(ptr,w,h,36,13,197);
+                        wput(ptr,w,h,41,13,198);
                 }
                 else
                 {
-                        wput(ptr,an,al,36,13,199);
-                        wput(ptr,an,al,41,13,196);
+                        wput(ptr,w,h,36,13,199);
+                        wput(ptr,w,h,41,13,196);
                 }
-                v.volcar=1;
+                v.blit=1;
                 OCDPlaying=CDPlaying;
         }
 }
@@ -315,10 +315,10 @@ int Dig1,Dig2,Dig3,Dig4,Dig5,Dig6;
 
 void CDiv1(void) {
   byte * ptr=v.ptr;
-  int an=v.an,al=v.al;
+  int w=v.w,h=v.h;
 
-  if (big) {an/=2; al/=2; }
-  wput(ptr,an,al,2,10,195);
+  if (big) {w/=2; h/=2; }
+  wput(ptr,w,h,2,10,195);
   ODig1=-1; ODig2=-1; ODig3=-1;
   ODig4=-1; ODig5=-1; ODig6=-1;
   OCDPlaying=-1;
@@ -327,27 +327,27 @@ void CDiv1(void) {
 
 void CDiv2(void) {
   byte * ptr=v.ptr;
-  int an=v.an/big2,al=v.al/big2,x;
+  int w=v.w/big2,h=v.h/big2,x;
   static int LastPress=-1;
   int lp=-1,in=-1;
 
   for(x=0;x<6;x++) {
     if((wmouse_y>31)&&(wmouse_y<42)&&(wmouse_x>x*24+4)&&(wmouse_x<x*24+23)) {
       in=x;
-      if(mouse_b&1) { lp=in; wput(ptr,an,al,x*24+4,32,(212+x)*-1); }
+      if(mouse_b&1) { lp=in; wput(ptr,w,h,x*24+4,32,(212+x)*-1); }
     }
   }
 
   if(wmouse_in(22,12,13,14)) {
     in=6;
-    if(mouse_b&1) { lp=in; wput(ptr,an,al,23,13,-232); }
+    if(mouse_b&1) { lp=in; wput(ptr,w,h,23,13,-232); }
   }
 
   if (lp!=LastPress) {
-    v.volcar=1;
+    v.blit=1;
     if (LastPress!=-1) {
-      wput(ptr,an,al,4,32,211);
-      wput(ptr,an,al,23,13,-231);
+      wput(ptr,w,h,4,32,211);
+      wput(ptr,w,h,23,13,-231);
       if (LastPress==in) switch(in) {
         case 0: CDbtrack(); break;
         case 1: CDbsec(); break;
@@ -355,7 +355,7 @@ void CDiv2(void) {
         case 3: CDplay_track(1); break;
         case 4: CDfsec(); break;
         case 5: CDftrack(); break;
-        case 6: nueva_ventana(mixer0); return;
+        case 6: new_window(mixer0); return;
       }
     }
   }
@@ -365,11 +365,11 @@ void CDiv2(void) {
 }
 
 void CDiv0(void) {
-  v.tipo=4; // Diálogo
-  v.an=147;
-  v.al=45;
-  v.titulo=texto[150];
-  v.nombre=texto[150];
+  v.type=4; // Dialog
+  v.w=147;
+  v.h=45;
+  v.title=texts[150];
+  v.name=texts[150];
   v.paint_handler=CDiv1;
   v.click_handler=CDiv2;
   ODig1=-1; ODig2=-1; ODig3=-1;
@@ -379,10 +379,10 @@ void CDiv0(void) {
 
 int get_cd_error(void);
 
-void muestra_cd_player() {
+void show_cd_player() {
   if (!CDinit()) if (!CDinit()) CDinit();
   if (get_cd_error()&0x200) CDPlaying=1; else CDPlaying=0;
-  nueva_ventana(CDiv0);
+  new_window(CDiv0);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
@@ -399,19 +399,19 @@ void Show_Time()
 //	return;
 	
 byte * ptr=v.ptr;
-int an,al;
+int w,h;
 char cBuff[3];
 int Dig1,Dig2,Dig3,Dig4;
 //struct dostime_t time;
-        if (v.primer_plano!=2 || v.al>v._al) {
-          an=v.an; al=v.al;
+        if (v.foreground!=2 || v.h>v._h) {
+          w=v.w; h=v.h;
         } else {
-          an=v._an; al=v._al;
+          w=v._w; h=v._h;
         }
-        if (big) {an/=2; al/=2; }
+        if (big) {w/=2; h/=2; }
          time(&dtime);
          timeinfo = localtime ( &dtime );
-        sprintf(cTimeForIcon,"%s [%02d%c%02d]",texto[151],timeinfo->tm_hour,timeinfo->tm_sec%2?':':'.',timeinfo->tm_min);
+        sprintf(cTimeForIcon,"%s [%02d%c%02d]",texts[151],timeinfo->tm_hour,timeinfo->tm_sec%2?':':'.',timeinfo->tm_min);
 
         sprintf(cBuff,"%02d",timeinfo->tm_hour);
         if(cBuff[0]=='0')
@@ -426,40 +426,40 @@ int Dig1,Dig2,Dig3,Dig4;
 
         if(ORDig1!=Dig1)
         {
-                wput(ptr,an,al,8,14,Dig1);
-                v.volcar=1;
+                wput(ptr,w,h,8,14,Dig1);
+                v.blit=1;
                 ORDig1=Dig1;
         }
         if(ORDig2!=Dig2)
         {
-                wput(ptr,an,al,15,14,Dig2);
-                v.volcar=1;
+                wput(ptr,w,h,15,14,Dig2);
+                v.blit=1;
                 ORDig2=Dig2;
         }
         if(ORDig3!=Dig3)
         {
-                wput(ptr,an,al,26,14,Dig3);
-                v.volcar=1;
+                wput(ptr,w,h,26,14,Dig3);
+                v.blit=1;
                 ORDig3=Dig3;
         }
         if(ORDig4!=Dig4)
         {
-                wput(ptr,an,al,33,14,Dig4);
-                v.volcar=1;
+                wput(ptr,w,h,33,14,Dig4);
+                v.blit=1;
                 ORDig4=Dig4;
         }
 
         if(timeinfo->tm_sec%2)
         {
-                wbox(ptr,an,al,c4,23,17,1,1);
-                wbox(ptr,an,al,c4,23,19,1,1);
-                v.volcar=1;
+                wbox(ptr,w,h,c4,23,17,1,1);
+                wbox(ptr,w,h,c4,23,19,1,1);
+                v.blit=1;
         }
         else
         {
-                wbox(ptr,an,al,c2,23,17,1,1);
-                wbox(ptr,an,al,c2,23,19,1,1);
-                v.volcar=1;
+                wbox(ptr,w,h,c2,23,17,1,1);
+                wbox(ptr,w,h,c2,23,19,1,1);
+                v.blit=1;
         }
         
 }
@@ -467,9 +467,9 @@ int Dig1,Dig2,Dig3,Dig4;
 void Clock1(void)
 {
 byte * ptr=v.ptr;
-int an=v.an,al=v.al;
-        if (big) {an/=2; al/=2; }
-        wput(ptr,an,al,2,10,218);
+int w=v.w,h=v.h;
+        if (big) {w/=2; h/=2; }
+        wput(ptr,w,h,2,10,218);
         ORDig1=-1; ORDig2=-1; ORDig3=-1; ORDig4=-1;
         Show_Time();
 }
@@ -485,14 +485,14 @@ void Clock3(void)
 
 void Clock0(void)
 {	
-        v.tipo=4; // Timer
-        v.an=47;
-        v.al=30;
-        v.titulo=texto[151];
+        v.type=4; // Timer
+        v.w=47;
+        v.h=30;
+        v.title=texts[151];
         time(&dtime);
         timeinfo = localtime ( &dtime );
-        sprintf(cTimeForIcon,"%s [%02d%c%02d]",texto[151],timeinfo->tm_hour,timeinfo->tm_sec%2?';':' ',timeinfo->tm_min);
-        v.nombre=(byte *)cTimeForIcon;
+        sprintf(cTimeForIcon,"%s [%02d%c%02d]",texts[151],timeinfo->tm_hour,timeinfo->tm_sec%2?';':' ',timeinfo->tm_min);
+        v.name=(byte *)cTimeForIcon;
         v.paint_handler=Clock1;
         v.click_handler=Clock2;
         v.close_handler=Clock3;
@@ -502,7 +502,7 @@ void Clock0(void)
         ORDig4=-1;
 }
 
-void muestra_reloj()
+void show_clock()
 {
-        nueva_ventana(Clock0);
+        new_window(Clock0);
 }

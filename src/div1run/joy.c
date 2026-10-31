@@ -31,9 +31,9 @@ int _get_joy_button(int button)
 #ifdef DOS
    /* get button status */
    if( inp(GAME_PORT) & (1 << (4 + button)) )
-      return(0); //no pulsado
+      return(0); //not pressed
    else
-      return(1); //pulsado
+      return(1); //pressed
 #endif
 }
 

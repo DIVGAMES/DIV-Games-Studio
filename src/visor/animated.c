@@ -12,7 +12,7 @@ void animated_create(animated *animated_struct,fileanim *f_anm,hlrender *hlrnd,c
   {
     lf_free(animated_struct->complex_struct.Anims);
   }
-  animated_struct->complex_struct.AIncrustada=0;
+  animated_struct->complex_struct.AEmbedded=0;
   animated_setanim(animated_struct,0);
 }
 

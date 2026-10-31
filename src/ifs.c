@@ -6,7 +6,7 @@
 #include "ifs.h"
 
 //─────────────────────────────────────────────────────────────────────────────
-//  Tabla de conversión de chars Windows a chars MSDOS
+//  Conversion table from Windows chars to MSDOS chars
 //─────────────────────────────────────────────────────────────────────────────
 
 char OEM2ANSI[256]={
@@ -20,13 +20,13 @@ char OEM2ANSI[256]={
   211,223,212,210,245,213,181,254,222,218,219,217,253,221,175,180,173,177,95,190,182,167,247,184,176,168,183,185,179,178,95,32};
 
 /*
-char OEM2ANSI[256]={     // Tabla antigua
-//Diferencias
+char OEM2ANSI[256]={     // Old table
+//Differences
                  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
                  0,  0,  0,  0,  0,164,  0,  0,  0,  0,
                182,167,  0,  0,  0,  0,  0,  0,  0,  0,
                  0,  0,
-//Diferencias
+//Differences
                 32, 33, 34, 35, 36, 37, 38, 39,
                 40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
                 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
@@ -37,7 +37,7 @@ char OEM2ANSI[256]={     // Tabla antigua
                100,101,102,103,104,105,106,107,108,109,
                110,111,112,113,114,115,116,117,118,119,
                120,121,122,123,124,125,126,127,
-//Diferencias
+//Differences
                199,252,
                233,226,228,224,229,231,234,235,232,239,
                238,236,196,197,201,230,198,244,246,242,
@@ -52,30 +52,30 @@ char OEM2ANSI[256]={     // Tabla antigua
                181,  0,  0,  0,  0,167,  0,248,  0,  0,
                  0,177,  0,  0,  0,  0,247,  0,176,149,
                  0,  0,  0,178,  0,  0};
-//Diferencias
+//Differences
 */
 
 FNTHEADER FNTheader = { "DIVFNT", 0x1A };
 IFSHEADER IFSheader;
-TABLAFNT tablaFNT[256];
-TABLAIFS tablaIFS[256];
+FNTTABLE tableFNT[256];
+IFSTABLE tableIFS[256];
 IFS ifs;
 
 char *bodyTexBuffer, *outTexBuffer, *shadowTexBuffer;
 
-char *ptrLetra, *ptrBody, *ptrOutline, *ptrShadow;
+char *ptrLetter, *ptrBody, *ptrOutline, *ptrShadow;
 char *Buffer=NULL, *Buffer2=NULL, *Buffer3=NULL;
 char *outBuffer=NULL, *shadowBuffer=NULL;
-FILE *fichIFS=NULL, *fichFNT=NULL;
-short despY,Alto,Ancho, sizeIFS, incY;
-unsigned short anchoreal,altoreal, anchoBody, altoBody, anchoOutline, altoOutline;
+FILE *fileIFS=NULL, *fileFNT=NULL;
+short dispY,Height,Width, sizeIFS, incY;
+unsigned short realwidth,realheight, bodyWidth, bodyHeight, outlineWidth, outlineHeight;
 
 
 void CloseAndFreeAll()
 {
 //    fcloseall();
-    if (fichIFS!=NULL) { fclose(fichIFS); fichIFS=NULL; }
-    if (fichFNT!=NULL) { fclose(fichFNT); fichFNT=NULL; }
+    if (fileIFS!=NULL) { fclose(fileIFS); fileIFS=NULL; }
+    if (fileFNT!=NULL) { fclose(fileFNT); fileFNT=NULL; }
     if (Buffer) free(Buffer);
     if (Buffer2) free(Buffer2);
     if (Buffer3) free(Buffer3);
@@ -87,96 +87,96 @@ void CloseAndFreeAll()
 short initStruct()
 {
 
-  long  posicion;
-    if ((fichIFS=fopen(ifs.ifsName,"rb"))==NULL)
+  long  position;
+    if ((fileIFS=fopen(ifs.ifsName,"rb"))==NULL)
         return(IFS_OPEN_ERROR);
-    if (fread(&IFSheader,sizeof(IFSheader),1,fichIFS)<1)
+    if (fread(&IFSheader,sizeof(IFSheader),1,fileIFS)<1)
         return(IFS_FORMAT_ERROR);
     if (strcmp((char *)IFSheader.id,"IFS"))
         return(IFS_FORMAT_ERROR);
-    if (ifs.tamX<8 || ifs.tamX>128 || ifs.tamY<8 || ifs.tamY>128)
+    if (ifs.sizeX<8 || ifs.sizeX>128 || ifs.sizeY<8 || ifs.sizeY>128)
         return(IFS_PARAM_ERROR);
 
-    if (ifs.tamX==8 && ifs.tamY==8) { posicion=IFSheader.offset8; sizeIFS=8; }
-    else if (ifs.tamX<=10 && ifs.tamY<=10) { posicion=IFSheader.offset10; sizeIFS=10; }
-    else if (ifs.tamX<=12 && ifs.tamY<=12) { posicion=IFSheader.offset12; sizeIFS=12; }
-    else if (ifs.tamX<=14 && ifs.tamY<=14) { posicion=IFSheader.offset14; sizeIFS=14; }
-    else { posicion=IFSheader.offset128; sizeIFS=128; }
+    if (ifs.sizeX==8 && ifs.sizeY==8) { position=IFSheader.offset8; sizeIFS=8; }
+    else if (ifs.sizeX<=10 && ifs.sizeY<=10) { position=IFSheader.offset10; sizeIFS=10; }
+    else if (ifs.sizeX<=12 && ifs.sizeY<=12) { position=IFSheader.offset12; sizeIFS=12; }
+    else if (ifs.sizeX<=14 && ifs.sizeY<=14) { position=IFSheader.offset14; sizeIFS=14; }
+    else { position=IFSheader.offset128; sizeIFS=128; }
 
-    if (fseek(fichIFS,posicion,SEEK_SET))
+    if (fseek(fileIFS,position,SEEK_SET))
         return (IFS_FORMAT_ERROR);
-    if (fread(&tablaIFS,sizeof(tablaIFS),1,fichIFS)<1)
+    if (fread(&tableIFS,sizeof(tableIFS),1,fileIFS)<1)
         return(IFS_FORMAT_ERROR);
 
-    if (ifs.brillo>4) ifs.brillo=0;
+    if (ifs.brightness>4) ifs.brightness=0;
 
     return (0);
 }
 
 
-short CargaLetra(short letra)
+short LoadLetter(short letter)
 {
     long offset;
     short x,y,j,t;
     char rtbyte, error=0;
     short pixels;
 
-    offset=tablaIFS[letra].desp;
-    if (fseek(fichIFS,offset,SEEK_SET)) error=1;
-    if (fread(&Alto,2,1,fichIFS)<1) error=1;
-    if (fread(&despY,2,1,fichIFS)<1) error=1;
-    if (fread(&Ancho,2,1,fichIFS)<1) error=1;
-    if (fread(&pixels,2,1,fichIFS)<1) error=1;
+    offset=tableIFS[letter].disp;
+    if (fseek(fileIFS,offset,SEEK_SET)) error=1;
+    if (fread(&Height,2,1,fileIFS)<1) error=1;
+    if (fread(&dispY,2,1,fileIFS)<1) error=1;
+    if (fread(&Width,2,1,fileIFS)<1) error=1;
+    if (fread(&pixels,2,1,fileIFS)<1) error=1;
     if (error) return (IFS_READ_ERROR);
-    t=Ancho*8-pixels;
-    Alto+=despY;
+    t=Width*8-pixels;
+    Height+=dispY;
 
-    if (!Ancho || !Alto) return 0;
+    if (!Width || !Height) return 0;
 
-    Buffer=(char *) realloc (Buffer, Alto*Ancho*8+10);
+    Buffer=(char *) realloc (Buffer, Height*Width*8+10);
     if (Buffer==NULL) return (IFS_MEM_ERROR);
-    memset(Buffer, 0, Alto*Ancho*8+10);
+    memset(Buffer, 0, Height*Width*8+10);
 
-    for (y=0; y<Alto-despY; y++)
-        for (x=0; x<Ancho; x++)
+    for (y=0; y<Height-dispY; y++)
+        for (x=0; x<Width; x++)
         {
-            if (fread(&rtbyte,1,1,fichIFS)<1) return (IFS_READ_ERROR);
+            if (fread(&rtbyte,1,1,fileIFS)<1) return (IFS_READ_ERROR);
             for (j=0; j<8; j++)
                 if (rtbyte & (1<<j))
-                    Buffer[((y+despY)*pixels + x*8+j)-t]=255;
+                    Buffer[((y+dispY)*pixels + x*8+j)-t]=255;
         }
 
-    anchoreal=Ancho=pixels;
-    altoreal=Alto;
+    realwidth=Width=pixels;
+    realheight=Height;
     return (0);
 }
 
 
-short escalar()
+short scalar()
 {
-    float ancho=Ancho, alto=Alto, ancho2, alto2;
+    float width=Width, height=Height, width2, height2;
     float factX,factY,x,y, f;
     float x1,x2,y1,y2;
-    float porcien,acum;
+    float percent,accum;
     long pixel;
     int ix,iy,ixx,iyy;
     short cx=0,cy=0,flag=0;
     char *ptr=Buffer, *p;
 
-    ancho2= (float) ancho * ifs.tamX / sizeIFS;    // ancho real en relación
-                                                     // al tamaño original
-    alto2= (float) alto * ifs.tamY / sizeIFS;
+    width2= (float) width * ifs.sizeX / sizeIFS;    // actual width relative
+                                                     // to the original size
+    height2= (float) height * ifs.sizeY / sizeIFS;
 
-    if (ifs.tamX==sizeIFS && ifs.tamY==sizeIFS)         // no hace falta escalar
+    if (ifs.sizeX==sizeIFS && ifs.sizeY==sizeIFS)         // no need to scale
     {
-        ptrLetra=Buffer;
+        ptrLetter=Buffer;
         return (0);
     }
 
-    factX=ancho/ancho2;
-    factY=alto/alto2;
+    factX=width/width2;
+    factY=height/height2;
 
-    if (factX>=2.0 || factY>=2.0)           // escalar por medias
+    if (factX>=2.0 || factY>=2.0)           // scale by averages
     {
         if (factX-(int)factX==0.0 && factY-(int)factY==0.0) flag=1;
 
@@ -198,57 +198,57 @@ short escalar()
              else if (factY<16.0)
                 factY=8;
 
-        f=anchoreal=Ancho/factX;
-        if (f-(int)f > 0.0) anchoreal++;
-        f=altoreal=Alto/factY;
-        if (f-(int)f > 0.0) altoreal++;
+        f=realwidth=Width/factX;
+        if (f-(int)f > 0.0) realwidth++;
+        f=realheight=Height/factY;
+        if (f-(int)f > 0.0) realheight++;
 
-        Buffer2=(char *) realloc (Buffer2, (altoreal+3) * (anchoreal+3));
+        Buffer2=(char *) realloc (Buffer2, (realheight+3) * (realwidth+3));
         if (Buffer2==NULL)
             return (IFS_MEM_ERROR);
-        memset(Buffer2, 0, (altoreal+3) * (anchoreal+3));
+        memset(Buffer2, 0, (realheight+3) * (realwidth+3));
         ptr=Buffer2;
 
-        for (iy=0; iy<alto; iy+=factY)
+        for (iy=0; iy<height; iy+=factY)
         {
-            for (ix=0; ix<ancho; ix+=factX)
+            for (ix=0; ix<width; ix+=factX)
             {
                 pixel=0;
                 for (iyy=iy; iyy<iy+(int)factY; iyy++)
                     for (ixx=ix; ixx<ix+(int)factX; ixx++)
-                    pixel+=Buffer[iyy*Ancho + ixx];
+                    pixel+=Buffer[iyy*Width + ixx];
                 pixel/=(factX*factY);
-                if (flag)   // filtrar anti-alias
-                    ptr[cy*anchoreal+cx++]= pixel > 128 ? 255 : 0;
+                if (flag)   // anti-alias filter
+                    ptr[cy*realwidth+cx++]= pixel > 128 ? 255 : 0;
                 else
-                    ptr[cy*anchoreal+cx++]=pixel;
+                    ptr[cy*realwidth+cx++]=pixel;
             }
             cx=0; cy++;
         }
         if (flag)
         {
-            ptrLetra=Buffer2;
+            ptrLetter=Buffer2;
             return (0);
         }
-        ancho=anchoreal;
-        alto=altoreal;
-        factX=(float) ancho/ancho2;
-        factY=(float) alto/alto2;
+        width=realwidth;
+        height=realheight;
+        factX=(float) width/width2;
+        factY=(float) height/height2;
 
     }
 
-    anchoreal=(int)ancho2;
-    if (ancho2-(int)ancho2 > 0.5) anchoreal++;
-    altoreal=(int)alto2;
+    realwidth=(int)width2;
+    if (width2-(int)width2 > 0.5) realwidth++;
+    realheight=(int)height2;
 
-    Buffer3=(char *) realloc(Buffer3,(anchoreal+3) * (altoreal+3));
+    Buffer3=(char *) realloc(Buffer3,(realwidth+3) * (realheight+3));
     if (Buffer3==NULL)
         return (IFS_MEM_ERROR);
-    memset(Buffer3,0,(anchoreal+3)*(altoreal+3));
+    memset(Buffer3,0,(realwidth+3)*(realheight+3));
     cx=0;cy=0;
-    for (y=0.5; y<=alto+0.9; y+=factY)
+    for (y=0.5; y<=height+0.9; y+=factY)
     {
-        for (x=0.5; x<=ancho+0.9; x+=factX)
+        for (x=0.5; x<=width+0.9; x+=factX)
         {
             ix=x; x1=ix+0.5;
             if (x-ix>=0.5) {
@@ -267,171 +267,171 @@ short escalar()
                 y1=iy-0.5;
                 y2=iy+0.5;
             }
-            p=ptr+(int)y1*(int)ancho+(int)x1;
+            p=ptr+(int)y1*(int)width+(int)x1;
 
-            porcien=2-((x-x1)*(x-x1)+(y-y1)*(y-y1));
-            acum=porcien;
-            pixel=*p*porcien; p+=(int)ancho;
+            percent=2-((x-x1)*(x-x1)+(y-y1)*(y-y1));
+            accum=percent;
+            pixel=*p*percent; p+=(int)width;
 
-            porcien=2-((x-x1)*(x-x1)+(y-y2)*(y-y2));
-            acum+=porcien;
-            pixel+=*p*porcien; p-=(int)ancho-1;
+            percent=2-((x-x1)*(x-x1)+(y-y2)*(y-y2));
+            accum+=percent;
+            pixel+=*p*percent; p-=(int)width-1;
 
-            porcien=2-((x-x2)*(x-x2)+(y-y1)*(y-y1));
-            acum+=porcien;
-            pixel+=*p*porcien; p+=(int)ancho;
+            percent=2-((x-x2)*(x-x2)+(y-y1)*(y-y1));
+            accum+=percent;
+            pixel+=*p*percent; p+=(int)width;
 
-            porcien=2-((x-x2)*(x-x2)+(y-y2)*(y-y2));
-            acum+=porcien;
-            pixel+=*p*porcien;
+            percent=2-((x-x2)*(x-x2)+(y-y2)*(y-y2));
+            accum+=percent;
+            pixel+=*p*percent;
 
-            pixel=(float)pixel/acum;
-            Buffer3[cy*anchoreal+cx++]= pixel > 128 ? 255 : 0;
+            pixel=(float)pixel/accum;
+            Buffer3[cy*realwidth+cx++]= pixel > 128 ? 255 : 0;
         }
         cx=0;cy++;
     }
-    ptrLetra=Buffer3;
+    ptrLetter=Buffer3;
     return (0);
 }
 
 
-short PintaOutline()
+short DrawOutline()
 {
   short x,y,i,cont, cont2;
-  short anchoTotal=anchoBody+4+ifs.outline*2;
-  short altoTotal=altoBody+4+ifs.outline*2;
-  short anchoOut=anchoBody+ifs.outline*2;
-  short altoOut=altoBody+1+ifs.outline*2;
-  char *tmpBuffer, *ptr, *ptr2, *pun, blanco, negro, gris;
+  short totalWidth=bodyWidth+4+ifs.outline*2;
+  short totalHeight=bodyHeight+4+ifs.outline*2;
+  short outWidth=bodyWidth+ifs.outline*2;
+  short outHeight=bodyHeight+1+ifs.outline*2;
+  char *tmpBuffer, *ptr, *ptr2, *pun, white, black, grey;
 
-    tmpBuffer=(char *)malloc (anchoTotal*(altoTotal+1));
-    outBuffer=(char *)realloc (outBuffer, anchoOut*altoOut);
+    tmpBuffer=(char *)malloc (totalWidth*(totalHeight+1));
+    outBuffer=(char *)realloc (outBuffer, outWidth*outHeight);
     if (tmpBuffer==NULL || outBuffer==NULL)
         return (IFS_MEM_ERROR);
-    memset(tmpBuffer, 0, anchoTotal*(altoTotal+1));
-    memset(outBuffer, 0, anchoOut*altoOut);
+    memset(tmpBuffer, 0, totalWidth*(totalHeight+1));
+    memset(outBuffer, 0, outWidth*outHeight);
     ptr=ptrBody;
-    ptrOutline=ptr2=tmpBuffer+ifs.outline+2+(ifs.outline+2)*anchoTotal;
-    for (y=0; y<altoBody; y++)
+    ptrOutline=ptr2=tmpBuffer+ifs.outline+2+(ifs.outline+2)*totalWidth;
+    for (y=0; y<bodyHeight; y++)
     {
-        memcpy(ptr2, ptr, anchoBody);
-        ptr2+=anchoTotal;
-        ptr+=anchoBody;
+        memcpy(ptr2, ptr, bodyWidth);
+        ptr2+=totalWidth;
+        ptr+=bodyWidth;
     }
 
-    switch (ifs.brillo)
+    switch (ifs.brightness)
     {
         case 1:
-        case 3: blanco=192; negro=64; gris=128; break;
+        case 3: white=192; black=64; grey=128; break;
         case 2:
-        case 4: blanco=64; negro=192; gris=128; break;
+        case 4: white=64; black=192; grey=128; break;
     }
 
-    pun=outBuffer+ifs.outline+ifs.outline*anchoOut;
+    pun=outBuffer+ifs.outline+ifs.outline*outWidth;
 
     for (i=1; i<=ifs.outline; i++)
     {
-        for (y=0; y<altoreal+i*2; y++)
+        for (y=0; y<realheight+i*2; y++)
         {
-            ptr=ptrOutline-i+(y-i)*anchoTotal;
-            ptr2=pun-i+(y-i)*anchoOut;
-            for (x=0; x<anchoreal+i*2; x++, ptr++, ptr2++)
+            ptr=ptrOutline-i+(y-i)*totalWidth;
+            ptr2=pun-i+(y-i)*outWidth;
+            for (x=0; x<realwidth+i*2; x++, ptr++, ptr2++)
             if (!*ptr)
             {
               cont=0;
               if (*(ptr+1)>=255-i) cont+=1;
-              if (*(ptr+anchoTotal)>=255-i) cont+=2;
+              if (*(ptr+totalWidth)>=255-i) cont+=2;
               if (*(ptr-1)>=255-i) cont+=4;
-              if (*(ptr-anchoTotal)>=255-i) cont+=8;
+              if (*(ptr-totalWidth)>=255-i) cont+=8;
               if (cont)
               {
                 *ptr=254-i;
-                if (!ifs.brillo) *ptr2=128;
-                else if (ifs.brillo==1 || ifs.brillo==2)
+                if (!ifs.brightness) *ptr2=128;
+                else if (ifs.brightness==1 || ifs.brightness==2)
                 switch(cont)
                 {
-                  case 2:       if (*(ptr-1-anchoTotal)>=255-i)
-                            *ptr2=negro;
-                        else *ptr2=blanco; break;
+                  case 2:       if (*(ptr-1-totalWidth)>=255-i)
+                            *ptr2=black;
+                        else *ptr2=white; break;
                   case 1:
                   case 2+1:
                   case 4+2+1:
-                  case 8+2+1:   *ptr2=blanco; break;
+                  case 8+2+1:   *ptr2=white; break;
 
                   case 4:
                   case 8:
                   case 8+4:
                   case 8+4+1:
-                  case 8+4+2:   *ptr2=negro; break;
+                  case 8+4+2:   *ptr2=black; break;
 
                   case 4+1:
                   case 8+2:
-                  case 8+4+2+1: *ptr2=gris; break;
+                  case 8+4+2+1: *ptr2=grey; break;
 
                   case 4+2:
                   case 8+1: cont2=0;
-                        if (*(ptr-1-anchoTotal)>=255-i) cont2+=1;
-                        if (*(ptr+1+anchoTotal)>=255-i) cont2+=2;
+                        if (*(ptr-1-totalWidth)>=255-i) cont2+=1;
+                        if (*(ptr+1+totalWidth)>=255-i) cont2+=2;
                         switch(cont2) {
                         case 0: if (cont==4+2) {
-                              if (*(ptr-2-2*anchoTotal)>=255-i || *(ptr-3-3*anchoTotal)>=255-i)
-                                *ptr2=negro;
+                              if (*(ptr-2-2*totalWidth)>=255-i || *(ptr-3-3*totalWidth)>=255-i)
+                                *ptr2=black;
                               else
-                                *ptr2=gris;
+                                *ptr2=grey;
                             } else
-                            if (*(ptr-1-2*anchoTotal)<255-i)
-                                *ptr2=blanco;
+                            if (*(ptr-1-2*totalWidth)<255-i)
+                                *ptr2=white;
                             else if (*(ptr+2)<255-i)
-                                *ptr2=negro;
+                                *ptr2=black;
                             else
-                                *ptr2=gris;
+                                *ptr2=grey;
                             break;
-                        case 1: *ptr2=negro; break;
-                        case 2: *ptr2=blanco; break;
-                        case 2+1: *ptr2=gris; break;
+                        case 1: *ptr2=black; break;
+                        case 2: *ptr2=white; break;
+                        case 2+1: *ptr2=grey; break;
                         }
                         break;
                 }
-                else if (ifs.brillo==3 || ifs.brillo==4)
+                else if (ifs.brightness==3 || ifs.brightness==4)
                 switch(cont)
                 {
                   case 1:
                   case 8:
                   case 8+1:
                   case 4+8+1:
-                  case 8+2+1:   *ptr2=negro; break;
+                  case 8+2+1:   *ptr2=black; break;
 
                   case 4:
                   case 2:
                   case 2+4:
                   case 2+4+1:
-                  case 8+4+2:   *ptr2=blanco; break;
+                  case 8+4+2:   *ptr2=white; break;
 
                   case 4+1:
                   case 8+2:
-                  case 8+4+2+1: *ptr2=gris; break;
+                  case 8+4+2+1: *ptr2=grey; break;
 
                   case 1+2:
                   case 8+4: cont2=0;
-                        if (*(ptr-1+anchoTotal)>=255-i) cont2+=1;
-                        if (*(ptr+1-anchoTotal)>=255-i) cont2+=2;
+                        if (*(ptr-1+totalWidth)>=255-i) cont2+=1;
+                        if (*(ptr+1-totalWidth)>=255-i) cont2+=2;
                         switch(cont2) {
                         case 0: if (cont==1+2) {
-                              if (*(ptr+2-2*anchoTotal)>=255-i)
-                                *ptr2=negro;
+                              if (*(ptr+2-2*totalWidth)>=255-i)
+                                *ptr2=black;
                               else
-                                *ptr2=gris;
+                                *ptr2=grey;
                             } else
-                            if (*(ptr+1-2*anchoTotal)<255-i)
-                                *ptr2=blanco;
+                            if (*(ptr+1-2*totalWidth)<255-i)
+                                *ptr2=white;
                             else if (*(ptr-2)<255-i)
-                                *ptr2=negro;
+                                *ptr2=black;
                             else
-                                *ptr2=gris;
+                                *ptr2=grey;
                             break;
-                        case 1: *ptr2=blanco; break;
-                        case 2: *ptr2=negro; break;
-                        case 2+1: *ptr2=gris; break;
+                        case 1: *ptr2=white; break;
+                        case 2: *ptr2=black; break;
+                        case 2+1: *ptr2=grey; break;
                         }
                         break;
                 }
@@ -440,200 +440,200 @@ short PintaOutline()
         }
     }
 
-    ptrLetra=outBuffer;
-    anchoreal+=(ifs.outline*2);
-    altoreal+=(ifs.outline*2);
+    ptrLetter=outBuffer;
+    realwidth+=(ifs.outline*2);
+    realheight+=(ifs.outline*2);
     free (tmpBuffer);
     return (0);
 }
 
 
-short PintaSombra()
+short DrawShadow()
 {
   char *ptr, *ptr2;
   short x, y;
-  short absSombraX=abs(ifs.sombraX), absSombraY=abs(ifs.sombraY);
+  short absShadowX=abs(ifs.shadowX), absShadowY=abs(ifs.shadowY);
 
-    shadowBuffer=(char *)realloc (shadowBuffer, (anchoreal+absSombraX+1) * (altoreal+absSombraY+1));
+    shadowBuffer=(char *)realloc (shadowBuffer, (realwidth+absShadowX+1) * (realheight+absShadowY+1));
     if (shadowBuffer==NULL) return (IFS_MEM_ERROR);
-    memset (shadowBuffer, 0, (anchoreal+absSombraX+1)*(altoreal+absSombraY+1));
+    memset (shadowBuffer, 0, (realwidth+absShadowX+1)*(realheight+absShadowY+1));
 
-    if (ifs.sombraY>0) {
-      ptr2=shadowBuffer + absSombraY * (anchoreal+absSombraX);
+    if (ifs.shadowY>0) {
+      ptr2=shadowBuffer + absShadowY * (realwidth+absShadowX);
     } else ptr2=shadowBuffer;
-    if (ifs.sombraX>0) ptr2+=absSombraX;
+    if (ifs.shadowX>0) ptr2+=absShadowX;
 
 /*
-    if (ifs.sombraX < 0 && ifs.sombraY < 0)
+    if (ifs.shadowX < 0 && ifs.shadowY < 0)
         ptr2=shadowBuffer;
-    else if (ifs.sombraX > 0 && ifs.sombraY > 0)
-            ptr2=shadowBuffer + absSombraX + absSombraY * (anchoreal+absSombraX);
-    else if (ifs.sombraX > 0)
-            ptr2=shadowBuffer + absSombraX;
+    else if (ifs.shadowX > 0 && ifs.shadowY > 0)
+            ptr2=shadowBuffer + absShadowX + absShadowY * (realwidth+absShadowX);
+    else if (ifs.shadowX > 0)
+            ptr2=shadowBuffer + absShadowX;
     else
-        ptr2=shadowBuffer + absSombraY*(anchoreal+absSombraX);
+        ptr2=shadowBuffer + absShadowY*(realwidth+absShadowX);
 */
 
     ptrShadow=ptr2;
 
     ptr=ptrOutline;
-    for (y=0; y<altoOutline; y++)
+    for (y=0; y<outlineHeight; y++)
     {
-        for (x=0; x<anchoOutline; x++, ptr++, ptr2++)
+        for (x=0; x<outlineWidth; x++, ptr++, ptr2++)
             if (*ptr) *ptr2=ifs.shadowTexColor;
-        ptr2+=absSombraX;
+        ptr2+=absShadowX;
     }
 
-    ptrLetra=shadowBuffer;
-    anchoreal+=absSombraX;
-    altoreal+=absSombraY;
+    ptrLetter=shadowBuffer;
+    realwidth+=absShadowX;
+    realheight+=absShadowY;
     return (0);
 }
 
 
-void texturarBody()
+void textureBody()
 {
     char *ptr;
     short ix,iy,xx,yy;
     float factX, factY, x, y;
 
-    if (!ifs.bodyTexAncho || !ifs.bodyTexAlto) return;
+    if (!ifs.bodyTexWidth || !ifs.bodyTexHeight) return;
 
-    ptr=ptrBody+incY*anchoBody;
+    ptr=ptrBody+incY*bodyWidth;
 
-    if (ifs.bodyTexAncho==1 && ifs.bodyTexAlto==1)    // textura=1 color
+    if (ifs.bodyTexWidth==1 && ifs.bodyTexHeight==1)    // texture=1 color
     {
-        for (iy=0; iy<altoBody-incY; iy++)
-            for (ix=0; ix<anchoBody; ix++, ptr++)
+        for (iy=0; iy<bodyHeight-incY; iy++)
+            for (ix=0; ix<bodyWidth; ix++, ptr++)
                 if (*ptr) *ptr=ifs.bodyTexColor;
         return;
     }
 
-    if (ifs.bodyTexModo==1)                           // escalar textura
+    if (ifs.bodyTexMode==1)                           // scale texture
     {
-        factX=(float) ifs.bodyTexAncho/anchoBody;
-        factY=(float) ifs.bodyTexAlto/(altoBody-incY);
+        factX=(float) ifs.bodyTexWidth/bodyWidth;
+        factY=(float) ifs.bodyTexHeight/(bodyHeight-incY);
 
-        for (y=0, yy=0; yy<altoBody-incY; y+=factY, yy++)
-            for (x=0, xx=0; xx<anchoBody; x+=factX, xx++, ptr++)
-            if (*ptr) *ptr=bodyTexBuffer[(int)y*ifs.bodyTexAncho+(int)x];
+        for (y=0, yy=0; yy<bodyHeight-incY; y+=factY, yy++)
+            for (x=0, xx=0; xx<bodyWidth; x+=factX, xx++, ptr++)
+            if (*ptr) *ptr=bodyTexBuffer[(int)y*ifs.bodyTexWidth+(int)x];
     }
-    else                                                // textura en tile
-        for (yy=0, iy=0; yy<altoBody-incY; yy++)
+    else                                                // tiled texture
+        for (yy=0, iy=0; yy<bodyHeight-incY; yy++)
         {
-            for (xx=0, ix=0; xx<anchoBody; xx++, ptr++)
+            for (xx=0, ix=0; xx<bodyWidth; xx++, ptr++)
             {
-                if (*ptr) *ptr=bodyTexBuffer[iy*ifs.bodyTexAncho+ix];
-                if (++ix>=ifs.bodyTexAncho) ix=0;
+                if (*ptr) *ptr=bodyTexBuffer[iy*ifs.bodyTexWidth+ix];
+                if (++ix>=ifs.bodyTexWidth) ix=0;
             }
-            if (++iy>=ifs.bodyTexAlto) iy=0;
+            if (++iy>=ifs.bodyTexHeight) iy=0;
         }
 }
 
 
-void texturarOutline()
+void textureOutline()
 {
   char *ptr, color;
   short x, y , ix, iy;
   float factX, factY, fx, fy;
 
-    ptr=ptrOutline+incY*anchoOutline;
+    ptr=ptrOutline+incY*outlineWidth;
 
-    if (ifs.outTexAncho<2 && ifs.outTexAlto<2)
+    if (ifs.outTexWidth<2 && ifs.outTexHeight<2)
     {
-        for (y=0; y<altoOutline-incY; y++)
-            for (x=0; x<anchoOutline; x++, ptr++)
+        for (y=0; y<outlineHeight-incY; y++)
+            for (x=0; x<outlineWidth; x++, ptr++)
                 if (*ptr)
                 {
-                    if (*ptr<128) *ptr=ifs.oscuros[ifs.outTexColor];
-                    else if (*ptr>128) *ptr=ifs.claros[ifs.outTexColor];
+                    if (*ptr<128) *ptr=ifs.dark[ifs.outTexColor];
+                    else if (*ptr>128) *ptr=ifs.light[ifs.outTexColor];
                     else *ptr=ifs.outTexColor;
                 }
         return;
     }
 
-    if (ifs.outTexModo==1)                     // escalar textura
+    if (ifs.outTexMode==1)                     // scale texture
     {
-        factX=(float) ifs.outTexAncho/anchoOutline;
-        factY=(float) ifs.outTexAlto/(altoOutline-incY);
+        factX=(float) ifs.outTexWidth/outlineWidth;
+        factY=(float) ifs.outTexHeight/(outlineHeight-incY);
 
-        for (y=0, fy=0; y<altoOutline-incY; y++, fy+=factY)
-            for (x=0, fx=0; x<anchoOutline; x++, fx+=factX, ptr++)
+        for (y=0, fy=0; y<outlineHeight-incY; y++, fy+=factY)
+            for (x=0, fx=0; x<outlineWidth; x++, fx+=factX, ptr++)
                 if (*ptr)
                 {
-                    color=outTexBuffer[(int)fy*ifs.outTexAncho+(int)fx];
-                    if (*ptr<128) *ptr=ifs.oscuros[color];
-                    else if (*ptr>128) *ptr=ifs.claros[color];
+                    color=outTexBuffer[(int)fy*ifs.outTexWidth+(int)fx];
+                    if (*ptr<128) *ptr=ifs.dark[color];
+                    else if (*ptr>128) *ptr=ifs.light[color];
                     else *ptr=color;
                 }
 
     }
     else
-        for (y=0, iy=0; y<altoOutline-incY; y++)        // textura en tile
+        for (y=0, iy=0; y<outlineHeight-incY; y++)        // tiled texture
         {
-            for (x=0, ix=0; x<anchoOutline; x++, ptr++)
+            for (x=0, ix=0; x<outlineWidth; x++, ptr++)
             {
                 if (*ptr)
                 {
-                    color=outTexBuffer[iy*ifs.outTexAncho+ix];
-                    if (*ptr<128) *ptr=ifs.oscuros[color];
-                    else if (*ptr>128) *ptr=ifs.claros[color];
+                    color=outTexBuffer[iy*ifs.outTexWidth+ix];
+                    if (*ptr<128) *ptr=ifs.dark[color];
+                    else if (*ptr>128) *ptr=ifs.light[color];
                     else *ptr=color;
                 }
-                if (++ix>=ifs.outTexAncho) ix=0;
+                if (++ix>=ifs.outTexWidth) ix=0;
             }
-            if (++iy>=ifs.outTexAlto) iy=0;
+            if (++iy>=ifs.outTexHeight) iy=0;
         }
 }
 
 
-void texturarSombra()
+void textureShadow()
 {
   char *ptr;
   short x,y,ix,iy;
   float factX, factY, fx, fy;
-  short absSombraX=abs(ifs.sombraX);
+  short absShadowX=abs(ifs.shadowX);
 
-    if (ifs.shadowTexAncho<2 && ifs.shadowTexAlto<2) return;
+    if (ifs.shadowTexWidth<2 && ifs.shadowTexHeight<2) return;
 
-    ptr=ptrShadow+incY*(anchoOutline+absSombraX);
+    ptr=ptrShadow+incY*(outlineWidth+absShadowX);
 
-    if (ifs.shadowTexModo==1)                     // escalar textura
+    if (ifs.shadowTexMode==1)                     // scale texture
     {
-        factX=(float) ifs.shadowTexAncho/anchoOutline;
-        factY=(float) ifs.shadowTexAlto/(altoOutline-incY);
+        factX=(float) ifs.shadowTexWidth/outlineWidth;
+        factY=(float) ifs.shadowTexHeight/(outlineHeight-incY);
 
-        for (y=0, fy=0; y<altoOutline-incY; y++, fy+=factY)
+        for (y=0, fy=0; y<outlineHeight-incY; y++, fy+=factY)
         {
-            for (x=0, fx=0; x<anchoOutline; x++, fx+=factX, ptr++)
-            if (*ptr) *ptr=shadowTexBuffer[(int)fy*ifs.shadowTexAncho+(int)fx];
-            ptr+=absSombraX;
+            for (x=0, fx=0; x<outlineWidth; x++, fx+=factX, ptr++)
+            if (*ptr) *ptr=shadowTexBuffer[(int)fy*ifs.shadowTexWidth+(int)fx];
+            ptr+=absShadowX;
         }
     }
     else
-    for (y=0, iy=0; y<altoOutline-incY; y++)            // textura en tile
+    for (y=0, iy=0; y<outlineHeight-incY; y++)            // tiled texture
     {
-        for (x=0, ix=0; x<anchoOutline; x++, ptr++)
+        for (x=0, ix=0; x<outlineWidth; x++, ptr++)
         {
-            if (*ptr) *ptr=shadowTexBuffer[iy*ifs.shadowTexAncho+ix];
-            if (++ix>=ifs.shadowTexAncho) ix=0;
+            if (*ptr) *ptr=shadowTexBuffer[iy*ifs.shadowTexWidth+ix];
+            if (++ix>=ifs.shadowTexWidth) ix=0;
         }
-        if (++iy>=ifs.shadowTexAlto) iy=0;
-        ptr+=absSombraX;
+        if (++iy>=ifs.shadowTexHeight) iy=0;
+        ptr+=absShadowX;
     }
 }
 
 
-void unirOutlineConBody(void) { // Le añade el body al outline
+void joinOutlineWithBody(void) { // Add the body to the outline
   char *ptr, *ptr2, c, color, realcolor;
   short x,y,n;
 
-  ptr=ptrBody-anchoBody-1;
-  ptr2=ptrOutline+ifs.outline-1+(ifs.outline-1)*anchoOutline;
-  for (y=-1; y<=altoBody; y++) {
-    for (x=-1; x<=anchoBody; x++, ptr++, ptr2++) {
+  ptr=ptrBody-bodyWidth-1;
+  ptr2=ptrOutline+ifs.outline-1+(ifs.outline-1)*outlineWidth;
+  for (y=-1; y<=bodyHeight; y++) {
+    for (x=-1; x<=bodyWidth; x++, ptr++, ptr2++) {
 
-      if (x>=0 && y>=0 && x<anchoBody && y<altoBody) {
+      if (x>=0 && y>=0 && x<bodyWidth && y<bodyHeight) {
         if (*ptr) {
           *ptr2=*ptr;
           continue;
@@ -641,19 +641,19 @@ void unirOutlineConBody(void) { // Le añade el body al outline
       }
       if ((realcolor=*ptr2)) {
         color=0; n=0;
-        if (y<altoBody && y>=0) {
+        if (y<bodyHeight && y>=0) {
           if (x>0) if ((c=*(ptr-1))) {
             color=c; n++;
           }
-          if (x<anchoBody-1) if ((c=*(ptr+1))) {
+          if (x<bodyWidth-1) if ((c=*(ptr+1))) {
           if (color) color=*(ghost+color*256+c); else color=c; n++;
           }
         }
-        if (x<anchoBody && x>=0) {
-          if (y<altoBody-1) if ((c=*(ptr+anchoBody))) {
+        if (x<bodyWidth && x>=0) {
+          if (y<bodyHeight-1) if ((c=*(ptr+bodyWidth))) {
             if (color) color=*(ghost+color*256+c); else color=c; n++;
           }
-          if (y>0) if ((c=*(ptr-anchoBody))) {
+          if (y>0) if ((c=*(ptr-bodyWidth))) {
             if (color) color=*(ghost+color*256+c); else color=c; n++;
           }
         }
@@ -683,39 +683,39 @@ void unirOutlineConBody(void) { // Le añade el body al outline
 }
 
 
-void unirSombraConResto()
+void joinShadowWithRest()
 {
   char *ptr, *ptr2;
   short x,y;
-  short absSombraX=abs(ifs.sombraX), absSombraY=abs(ifs.sombraY);
+  short absShadowX=abs(ifs.shadowX), absShadowY=abs(ifs.shadowY);
 
     ptr=ptrOutline;
 
-    if (ifs.sombraY<0) {
-      ptr2=shadowBuffer + absSombraY*anchoreal;
+    if (ifs.shadowY<0) {
+      ptr2=shadowBuffer + absShadowY*realwidth;
     } else ptr2=shadowBuffer;
-    if (ifs.sombraX<0) ptr2+=absSombraX;
+    if (ifs.shadowX<0) ptr2+=absShadowX;
 
 /*
-    if (ifs.sombraX < 0 && ifs.sombraY < 0)
-        ptr2=shadowBuffer + absSombraX + absSombraY*anchoreal;
-    else if (ifs.sombraX > 0 && ifs.sombraY > 0)
+    if (ifs.shadowX < 0 && ifs.shadowY < 0)
+        ptr2=shadowBuffer + absShadowX + absShadowY*realwidth;
+    else if (ifs.shadowX > 0 && ifs.shadowY > 0)
         ptr2=shadowBuffer;
-    else if (ifs.sombraX > 0)
-        ptr2=shadowBuffer + absSombraY*anchoreal;
+    else if (ifs.shadowX > 0)
+        ptr2=shadowBuffer + absShadowY*realwidth;
     else
-        ptr2=shadowBuffer + absSombraX;
+        ptr2=shadowBuffer + absShadowX;
 */
 
-    for (y=0; y<altoOutline; y++)
+    for (y=0; y<outlineHeight; y++)
     {
-        for (x=0; x<anchoOutline; x++, ptr++, ptr2++)
+        for (x=0; x<outlineWidth; x++, ptr++, ptr2++)
             if (*ptr) *ptr2=*ptr;
-        ptr2+=absSombraX;
+        ptr2+=absShadowX;
     }
 }
 
-int Jorge_Crea_el_font(int GenCode)
+int Jorge_Creates_the_font(int GenCode)
 {
   char error=0, stop;
   short x, ret;
@@ -730,102 +730,102 @@ int Jorge_Crea_el_font(int GenCode)
     }
 
 
-    if ((fichFNT=fopen(ifs.fntName,"wb"))==NULL)
+    if ((fileFNT=fopen(ifs.fntName,"wb"))==NULL)
     {
         CloseAndFreeAll();
         return (IFS_OPEN_ERROR);
     }
-    fwrite("fnt\x1a\x0d\x0a\x00\x00",8,1,fichFNT);
-    fwrite(dac,768,1,fichFNT);
-    fwrite(reglas,sizeof(reglas),1,fichFNT);
-    fwrite(&GenCode,1,4,fichFNT);
+    fwrite("fnt\x1a\x0d\x0a\x00\x00",8,1,fileFNT);
+    fwrite(dac,768,1,fileFNT);
+    fwrite(rules,sizeof(rules),1,fileFNT);
+    fwrite(&GenCode,1,4,fileFNT);
 
-    if (fwrite(tablaFNT,sizeof(tablaFNT),1,fichFNT)<1) {
+    if (fwrite(tableFNT,sizeof(tableFNT),1,fileFNT)<1) {
         error=1;
 	}
 
     for (x=0, error=0; x<256 && !error; x++)
     {
 
-        Progress((char *)texto[217],x,256);
+        Progress((char *)texts[217],x,256);
 
-        tablaFNT[x].ancho=tablaFNT[x].alto=0;
-        tablaFNT[x].offset=0;
-        if (ifs.tabla[x])
+        tableFNT[x].width=tableFNT[x].height=0;
+        tableFNT[x].offset=0;
+        if (ifs.table[x])
         {
-            anchoreal=0;
-            altoreal=0;
+            realwidth=0;
+            realheight=0;
             incY=0;
 //            if (OEM2ANSI[x]!=0)
             if (x!=0)
             {
-//             if ((ret=CargaLetra(OEM2ANSI[x])))
-             if ((ret=CargaLetra(x)))
+//             if ((ret=LoadLetter(OEM2ANSI[x])))
+             if ((ret=LoadLetter(x)))
              {
                 CloseAndFreeAll();
                 return (ret);
              }
-             if (Alto && Ancho)
+             if (Height && Width)
              {
-                if ((ret=escalar()))
+                if ((ret=scalar()))
                 {
-                    Progress((char *)texto[217],256,256);
+                    Progress((char *)texts[217],256,256);
                     CloseAndFreeAll();
                     return (ret);
                 }
-                ptrOutline=ptrBody=ptrLetra;
-                anchoOutline=anchoBody=anchoreal;
-                altoOutline=altoBody=altoreal;
+                ptrOutline=ptrBody=ptrLetter;
+                outlineWidth=bodyWidth=realwidth;
+                outlineHeight=bodyHeight=realheight;
 
                 stop=0;
-                for (incY=0; !stop && incY<altoreal; incY++)
-                    for (j=0; !stop && j<anchoreal; j++)
-                        if (ptrLetra[incY*anchoreal+j]) stop=1;
+                for (incY=0; !stop && incY<realheight; incY++)
+                    for (j=0; !stop && j<realwidth; j++)
+                        if (ptrLetter[incY*realwidth+j]) stop=1;
                 incY--;
-//                incY=altoBody*despY/Alto;
+//                incY=bodyHeight*dispY/Height;
 
                 if (ifs.outline)
                 {
-                    if ((ret=PintaOutline()))
+                    if ((ret=DrawOutline()))
                     {
-                        Progress((char *)texto[217],256,256);
+                        Progress((char *)texts[217],256,256);
                         CloseAndFreeAll();
                         return (ret);
                     }
-                    ptrOutline=ptrLetra;
-                    anchoOutline=anchoreal;
-                    altoOutline=altoreal;
-                    texturarBody();
-                    texturarOutline();
-                    unirOutlineConBody();
+                    ptrOutline=ptrLetter;
+                    outlineWidth=realwidth;
+                    outlineHeight=realheight;
+                    textureBody();
+                    textureOutline();
+                    joinOutlineWithBody();
                 }
                else
-                texturarBody();
+                textureBody();
 
-                if (ifs.sombraX || ifs.sombraY)
+                if (ifs.shadowX || ifs.shadowY)
                 {
-                    if ((ret=PintaSombra()))
+                    if ((ret=DrawShadow()))
                     {
-                        Progress((char *)texto[217],256,256);
+                        Progress((char *)texts[217],256,256);
                         CloseAndFreeAll();
                         return (ret);
                     }
-                    texturarSombra();
-                    unirSombraConResto();
+                    textureShadow();
+                    joinShadowWithRest();
                 }
             }
 
-            if (anchoreal<=0 || incY>=altoreal) {
-              tablaFNT[x].ancho=0;
-              tablaFNT[x].alto=0;
-              tablaFNT[x].incY=0;
-              tablaFNT[x].offset=0;
+            if (realwidth<=0 || incY>=realheight) {
+              tableFNT[x].width=0;
+              tableFNT[x].height=0;
+              tableFNT[x].incY=0;
+              tableFNT[x].offset=0;
             } else {
-              tablaFNT[x].ancho=anchoreal;
-              tablaFNT[x].alto=altoreal-incY;
-              tablaFNT[x].incY=incY;
-              tablaFNT[x].offset=ftell(fichFNT);
-              if (fwrite(ptrLetra+incY*anchoreal,tablaFNT[x].ancho * tablaFNT[x].alto,1,fichFNT)<1) error=1;
+              tableFNT[x].width=realwidth;
+              tableFNT[x].height=realheight-incY;
+              tableFNT[x].incY=incY;
+              tableFNT[x].offset=ftell(fileFNT);
+              if (fwrite(ptrLetter+incY*realwidth,tableFNT[x].width * tableFNT[x].height,1,fileFNT)<1) error=1;
             }
 
            }
@@ -834,157 +834,157 @@ int Jorge_Crea_el_font(int GenCode)
 
     if (error)
     {
-        Progress((char *)texto[217],256,256);
+        Progress((char *)texts[217],256,256);
         CloseAndFreeAll();
         return (IFS_WRITE_ERROR);
     }
 
-//    tablaFNT[' '].ancho=ifs.tamX;
+//    tableFNT[' '].width=ifs.sizeX;
 
-    fseek(fichFNT,8+768+sizeof(reglas)+4,SEEK_SET);
-    fwrite(&tablaFNT,sizeof(tablaFNT),1,fichFNT);
+    fseek(fileFNT,8+768+sizeof(rules)+4,SEEK_SET);
+    fwrite(&tableFNT,sizeof(tableFNT),1,fileFNT);
 
-    Progress((char *)texto[217],256,256);
+    Progress((char *)texts[217],256,256);
     CloseAndFreeAll();
     return(0);
 }
 
-void GetCharSize(int WhatChar,int *ancho,int *alto)
+void GetCharSize(int WhatChar,int *width,int *height)
 {
-FILE *fichFnt;
-        *ancho=4;
-        *alto=1;
+FILE *fileFnt;
+        *width=4;
+        *height=1;
 
-        if ((fichFnt=fopen("PREVIEW.FNT","rb"))==NULL)
+        if ((fileFnt=fopen("PREVIEW.FNT","rb"))==NULL)
                 return;
-        fseek(fichFnt,8+768+sizeof(reglas)+4,SEEK_SET);
-        if (fread(tablaFNT,sizeof(tablaFNT),1,fichFnt)<1)
+        fseek(fileFnt,8+768+sizeof(rules)+4,SEEK_SET);
+        if (fread(tableFNT,sizeof(tableFNT),1,fileFnt)<1)
         {
-                fclose(fichFnt);
+                fclose(fileFnt);
                 return;
         }
-        *alto=tablaFNT[WhatChar].incY+tablaFNT[WhatChar].alto;
+        *height=tableFNT[WhatChar].incY+tableFNT[WhatChar].height;
         if(WhatChar==32)
-                *ancho=tablaFNT[WhatChar].ancho/2;
+                *width=tableFNT[WhatChar].width/2;
         else
-                *ancho=tablaFNT[WhatChar].ancho+1;
-        fclose(fichFnt);
+                *width=tableFNT[WhatChar].width+1;
+        fclose(fileFnt);
 return;
 }
-void GetCharSizeBuffer(int WhatChar,int *ancho,int *alto,char *buffer)
+void GetCharSizeBuffer(int WhatChar,int *width,int *height,char *buffer)
 {
-        *ancho=4;
-        *alto=1;
+        *width=4;
+        *height=1;
 
-        memcpy(tablaFNT,buffer+8+768+sizeof(reglas)+4,sizeof(tablaFNT));
-        *alto=tablaFNT[WhatChar].incY+tablaFNT[WhatChar].alto;
-        *ancho=tablaFNT[WhatChar].ancho+1;
+        memcpy(tableFNT,buffer+8+768+sizeof(rules)+4,sizeof(tableFNT));
+        *height=tableFNT[WhatChar].incY+tableFNT[WhatChar].height;
+        *width=tableFNT[WhatChar].width+1;
 return;
 }
-int ShowChar(int WhatChar,int cx,int cy,char *ptr,int an)
+int ShowChar(int WhatChar,int cx,int cy,char *ptr,int w)
 {
 int y,iy;
-FILE *fichFnt;
+FILE *fileFnt;
 char *rawBuffer;
-        if ((fichFnt=fopen("PREVIEW.FNT","rb"))==NULL)
+        if ((fileFnt=fopen("PREVIEW.FNT","rb"))==NULL)
                 return 4;
-        fseek(fichFnt,8+768+sizeof(reglas)+4,SEEK_SET);
-        if (fread(tablaFNT,sizeof(tablaFNT),1,fichFnt)<1)
+        fseek(fileFnt,8+768+sizeof(rules)+4,SEEK_SET);
+        if (fread(tableFNT,sizeof(tableFNT),1,fileFnt)<1)
         {
-                fclose(fichFnt);
+                fclose(fileFnt);
                 return 4;
         }
-        if (tablaFNT[WhatChar].ancho*tablaFNT[WhatChar].alto)
+        if (tableFNT[WhatChar].width*tableFNT[WhatChar].height)
         {
-            rawBuffer=(char *) malloc(tablaFNT[WhatChar].ancho*tablaFNT[WhatChar].alto);
+            rawBuffer=(char *) malloc(tableFNT[WhatChar].width*tableFNT[WhatChar].height);
             if (rawBuffer==NULL)
             {
-                fclose(fichFnt);
+                fclose(fileFnt);
                 if(WhatChar==32)
-                        return (tablaFNT[WhatChar].ancho/2);
+                        return (tableFNT[WhatChar].width/2);
                 else
-                        return (tablaFNT[WhatChar].ancho+1);
+                        return (tableFNT[WhatChar].width+1);
             }
-            if (fseek(fichFnt,tablaFNT[WhatChar].offset,SEEK_SET))
+            if (fseek(fileFnt,tableFNT[WhatChar].offset,SEEK_SET))
             {
                 free(rawBuffer);
-                fclose(fichFnt);
+                fclose(fileFnt);
                 if(WhatChar==32)
-                        return (tablaFNT[WhatChar].ancho/2);
+                        return (tableFNT[WhatChar].width/2);
                 else
-                        return (tablaFNT[WhatChar].ancho+1);
+                        return (tableFNT[WhatChar].width+1);
             }
-            if (fread(rawBuffer,tablaFNT[WhatChar].ancho*tablaFNT[WhatChar].alto,1,fichFnt)<1)
+            if (fread(rawBuffer,tableFNT[WhatChar].width*tableFNT[WhatChar].height,1,fileFnt)<1)
             {
                 free(rawBuffer);
-                fclose(fichFnt);
+                fclose(fileFnt);
                 if(WhatChar==32)
-                        return (tablaFNT[WhatChar].ancho/2);
+                        return (tableFNT[WhatChar].width/2);
                 else
-                        return (tablaFNT[WhatChar].ancho+1);
+                        return (tableFNT[WhatChar].width+1);
 
             }
-            iy=tablaFNT[WhatChar].incY;
-            for (y=0; y<tablaFNT[WhatChar].alto; y++)
-                memcpy(ptr+((cy+iy)*an+cx)+y*an,rawBuffer+y*tablaFNT[WhatChar].ancho,tablaFNT[WhatChar].ancho);
+            iy=tableFNT[WhatChar].incY;
+            for (y=0; y<tableFNT[WhatChar].height; y++)
+                memcpy(ptr+((cy+iy)*w+cx)+y*w,rawBuffer+y*tableFNT[WhatChar].width,tableFNT[WhatChar].width);
 
-            fclose(fichFnt);
+            fclose(fileFnt);
             free(rawBuffer);
             if(WhatChar==32)
-                return (tablaFNT[WhatChar].ancho/2);
+                return (tableFNT[WhatChar].width/2);
             else
-                return (tablaFNT[WhatChar].ancho+1);
-        } else fclose(fichFnt);
+                return (tableFNT[WhatChar].width+1);
+        } else fclose(fileFnt);
 if(WhatChar==32)
-        return (tablaFNT[WhatChar].ancho/2);
+        return (tableFNT[WhatChar].width/2);
 else
-        return (tablaFNT[WhatChar].ancho+1);
+        return (tableFNT[WhatChar].width+1);
 
 }
 
-int ShowCharBuffer(int WhatChar,int cx,int cy,char *ptr,int an,char *buffer)
+int ShowCharBuffer(int WhatChar,int cx,int cy,char *ptr,int w,char *buffer)
 {
 int y,iy,x,c;
 char *rawBuffer;
-        memcpy(tablaFNT,buffer+8+768+sizeof(reglas)+4,sizeof(tablaFNT));
-        if (tablaFNT[WhatChar].ancho*tablaFNT[WhatChar].alto)
+        memcpy(tableFNT,buffer+8+768+sizeof(rules)+4,sizeof(tableFNT));
+        if (tableFNT[WhatChar].width*tableFNT[WhatChar].height)
         {
-            rawBuffer=(char *) malloc(tablaFNT[WhatChar].ancho*tablaFNT[WhatChar].alto);
+            rawBuffer=(char *) malloc(tableFNT[WhatChar].width*tableFNT[WhatChar].height);
             if (rawBuffer==NULL)
             {
                 if(WhatChar==32)
-                        return (tablaFNT[WhatChar].ancho/2);
+                        return (tableFNT[WhatChar].width/2);
                 else
-                        return (tablaFNT[WhatChar].ancho+1);
+                        return (tableFNT[WhatChar].width+1);
             }
-            memcpy(rawBuffer,buffer+tablaFNT[WhatChar].offset,tablaFNT[WhatChar].ancho*tablaFNT[WhatChar].alto);
-            iy=tablaFNT[WhatChar].incY;
-            for (y=0; y<tablaFNT[WhatChar].alto; y++) {
-                for (x=0; x<tablaFNT[WhatChar].ancho; x++) {
-                  if ((c=rawBuffer[y*tablaFNT[WhatChar].ancho+x])) {
-                    ptr[(cy+iy)*an+cx+x+y*an]=c;
+            memcpy(rawBuffer,buffer+tableFNT[WhatChar].offset,tableFNT[WhatChar].width*tableFNT[WhatChar].height);
+            iy=tableFNT[WhatChar].incY;
+            for (y=0; y<tableFNT[WhatChar].height; y++) {
+                for (x=0; x<tableFNT[WhatChar].width; x++) {
+                  if ((c=rawBuffer[y*tableFNT[WhatChar].width+x])) {
+                    ptr[(cy+iy)*w+cx+x+y*w]=c;
                   }
                 }
-//                memcpy(ptr+((cy+iy)*an+cx)+y*an,rawBuffer+y*tablaFNT[WhatChar].ancho,tablaFNT[WhatChar].ancho);
+//                memcpy(ptr+((cy+iy)*w+cx)+y*w,rawBuffer+y*tableFNT[WhatChar].width,tableFNT[WhatChar].width);
             }
             free(rawBuffer);
             if(WhatChar==32)
-                return (tablaFNT[WhatChar].ancho/2);
+                return (tableFNT[WhatChar].width/2);
             else
-                return (tablaFNT[WhatChar].ancho+1);
+                return (tableFNT[WhatChar].width+1);
         }
-return (tablaFNT[WhatChar].ancho+1);
+return (tableFNT[WhatChar].width+1);
 }
 
 void ConvertFntToPal(char *buffer)
 {
 char DacFnt[768];
-int acum=0,x,a,b;
+int accum=0,x,a,b;
 byte xlat[256];
         memcpy(DacFnt,buffer+8,768);
 
-        for(x=0;x<768;x++) if(dac[x]!=DacFnt[x]) acum=1;
-        if(!acum)
+        for(x=0;x<768;x++) if(dac[x]!=DacFnt[x]) accum=1;
+        if(!accum)
                 return;
 
         create_dac4();
@@ -992,16 +992,16 @@ byte xlat[256];
         for (x=1;x<256;x++)
                 xlat[x]=find_color_not0(DacFnt[x*3],DacFnt[x*3+1],DacFnt[x*3+2]);
 
-        memcpy(tablaFNT,buffer+8+768+sizeof(reglas)+4,sizeof(tablaFNT));
+        memcpy(tableFNT,buffer+8+768+sizeof(rules)+4,sizeof(tableFNT));
 
         for(x=0;x<256;x++)
         {
-                if (tablaFNT[x].ancho*tablaFNT[x].alto)
-                        for(a=0;a<tablaFNT[x].alto;a++)
-                                for(b=0;b<tablaFNT[x].ancho;b++)
+                if (tableFNT[x].width*tableFNT[x].height)
+                        for(a=0;a<tableFNT[x].height;a++)
+                                for(b=0;b<tableFNT[x].width;b++)
                                 {
-                                        acum=*(buffer+tablaFNT[x].offset+a*tablaFNT[x].ancho+b);
-                                        *(buffer+tablaFNT[x].offset+a*tablaFNT[x].ancho+b)=xlat[acum];
+                                        accum=*(buffer+tableFNT[x].offset+a*tableFNT[x].width+b);
+                                        *(buffer+tableFNT[x].offset+a*tableFNT[x].width+b)=xlat[accum];
                                 }
         }
         memcpy(buffer+8,dac,768);

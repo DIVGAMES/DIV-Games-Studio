@@ -7,6 +7,6 @@
 #define MOUSE_KEY   5
 
 void RegScreen(unsigned char *NewScreen);
-void EndGrabador();
+void EndRecorder();
 void WriteDac(unsigned char *dac);
 void WriteMouseKey(char bMouseKey);

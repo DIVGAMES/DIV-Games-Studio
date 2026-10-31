@@ -224,7 +224,7 @@
 163 "Complete word"
 164 "Capital/small letters"
 165 "Substitute text..."
-# Mas textos
+# More texts
 166 "Num "
 167 "Cap "
 168 "Small "
@@ -395,7 +395,7 @@
 348 "The palette has changed"
 349 "Edit sound"
 
-# Miscelanea (ultimos textos metidos en lenguaje.div)
+# Miscellaneous (latest texts added to lenguaje.div)
 
 350 "Trash-can"
 
@@ -405,7 +405,7 @@
 353 "GAMES/"
 354 "Installation is complete, press any key to finish."
 
-# 355 Este texto esta definido tras el numero 351
+# 355 This text is defined after number 351
 
 356 "hard drive destination is invalid."
 357 "Error creating the installation. Insufficient memory."
@@ -695,7 +695,7 @@
 
 # The menus can have up to 25 options, the first start in the text
 # 750 and the others consecutively every 25 s, the texts that are defined for
-# Each menu are: nombre_icono.mnu, title bar, option 1, option 2, ...
+# Each menu are: icon_name.mnu, title bar, option 1, option 2, ...
 
 750     # Main MENU
 
@@ -824,7 +824,7 @@
         "Repeat [CTRL+G]"
         "Replace... [CTRL+R]"
 
-1000    # Menu de mapas 3D
+1000    # 3D maps menu
 
         "maps 3D"
         "3D MAP Menu"

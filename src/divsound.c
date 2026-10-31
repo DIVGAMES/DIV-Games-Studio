@@ -4,7 +4,7 @@
 #include "divsb.h"
 #include "divmixer.hpp"
 
-int reloj=0;
+int clock_ticks=0;
 extern int safe;
 
 int SoundActive=0;
@@ -35,7 +35,7 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
   FILE *File_Cfg;
   int master=7,sound_fx=7,cd_audio=7;
   char Device[8]={DEV_NOSOUND,DEV_SB,DEV_SB,DEV_SBPRO,DEV_SB16,DEV_SB16,DEV_GUS,DEV_GUS};
-  unsigned short Puertos[6]={0x210,0x220,0x230,0x240,0x250,0x260};
+  unsigned short Ports[6]={0x210,0x220,0x230,0x240,0x250,0x260};
   unsigned short IRQS[10]  ={2,3,5,7,10,11,12,13,14,15};
   unsigned short DMAS[10]  ={0,1,2,3,4,5,6,7,8,9};
   unsigned short DMAS2[10] ={0,1,2,3,4,5,6,7,8,9};
@@ -67,7 +67,7 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
       fread(&sound_fx, 1, 4, File_Cfg);
       fread(&cd_audio, 1, 4, File_Cfg);
 
-      // Nuevos valores del sound.cfg
+      // New values of sound.cfg
 
       if (fread(&mixer, 1, 4, File_Cfg)==4) {
         fread(&mixrate, 1, 4, File_Cfg);
@@ -88,7 +88,7 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
     if(File_Cfg!=NULL) {
       fclose(File_Cfg);
       judascfg_device = Device[cfg_dev];
-      judascfg_port   = Puertos[cfg_port];
+      judascfg_port   = Ports[cfg_port];
       judascfg_irq    = IRQS[cfg_irq];
       judascfg_dma1   = DMAS[cfg_dma1];
       judascfg_dma2   = DMAS2[cfg_dma2];
@@ -99,7 +99,7 @@ if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) 
 
 //  timer_init(1193180 / 100, judas_update);
 
-  if (safe==33) { // Modo a prueba de fallos
+  if (safe==33) { // Safe mode
 
     judascfg_device = DEV_NOSOUND;
     judas_init(mixrate, mixer, mixmode, interpolation);

@@ -1,6 +1,6 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Pruebas con la interrupción de teclado
+//      Tests with the keyboard interrupt
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "global.h"
@@ -19,8 +19,8 @@ TIRQHandler OldIrq1b;
 byte * shift = (byte *) 0x417; // Shift status
 
 byte buf[64*3]; // {ascii,scan_code,shift_status}
-int ibuf=0; // Puntero al buffer, inicio de la cola
-int fbuf=0; // Puntero al buffer, fin de la cola
+int ibuf=0; // Pointer to the buffer, start of the queue
+int fbuf=0; // Pointer to the buffer, end of the queue
 
 //═════════════════════════════════════════════════════════════════════════════
 // Interrupt handler related functions.
@@ -119,21 +119,21 @@ void kbdReset(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Espera una tecla, actualiza variables (ascii,scan_code y shift_status)
+//      Wait for a key, update variables (ascii,scan_code and shift_status)
 //═════════════════════════════════════════════════════════════════════════════
 
-void tecla_bios(void) {
+void bios_key(void) {
 	// nothing to do
 }
 
-extern int reloj;
+extern int clock_ticks;
 
 //extern float m_x=0.0,m_y;
-void tecla(void) {
+void read_key(void) {
 mclock = SDL_GetTicks()/100;//(int)clock()/20000;
-reloj = SDL_GetTicks()/100;//(int)clock();
+clock_ticks = SDL_GetTicks()/100;//(int)clock();
 
-//printf("%d %d\n",mclock,reloj);
+//printf("%d %d\n",mclock,clock_ticks);
 
 //mclock++;
 #ifdef NOTYET
@@ -153,7 +153,7 @@ while(SDL_PollEvent(&event))
             if (event.type == SDL_QUIT)
             {
                 /* Quit the application */
-                salir_del_entorno=1;
+                exit_environment=1;
             }
             
             if (event.type == SDL_KEYDOWN)
@@ -194,7 +194,7 @@ while(SDL_PollEvent(&event))
   union REGS r;
   struct SREGS s;
 
-  tecla_bios();
+  bios_key();
 
   if (ibuf!=fbuf) {
     ascii=buf[ibuf]; scan_code=buf[ibuf+1]; shift_status=buf[ibuf+2];
@@ -213,8 +213,8 @@ while(SDL_PollEvent(&event))
 //     Empty the keyboard buffer (real and internal)
 //═════════════════════════════════════════════════════════════════════════════
 
-void vacia_buffer(void) {
-//printf("vacia_buffer\n");
+void empty_buffer(void) {
+//printf("empty_buffer\n");
 #ifdef NOTYET
   union REGS r;
   struct SREGS s;

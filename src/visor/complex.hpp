@@ -9,10 +9,10 @@
 
 typedef struct {
         float x,y,z;
-        int32_t             activo;
+        int32_t             active;
         int32_t             Clon;
         int32_t             Shadow;
-        int32_t             AIncrustada;
+        int32_t             AEmbedded;
         float           angx,angy,angz;
         hlrender        *hl_render;
         short           nObjects;
@@ -28,10 +28,10 @@ typedef struct {
         lptmatrix       Anims;
         tmatrix         CompMat;
         int32_t            curframe;
-        int32_t            bbox_x_ini; //Coordenadas de pantalla de la bounding box
-        int32_t            bbox_x_fin;
-        int32_t            bbox_y_ini;
-        int32_t            bbox_y_fin;
+        int32_t            bbox_x_start; //Screen coordinates of the bounding box
+        int32_t            bbox_x_end;
+        int32_t            bbox_y_start;
+        int32_t            bbox_y_end;
 } complex;
 
 void complex_create(complex *complex_struct,hlrender *hlrnd,char *name,Resource *res);
@@ -46,17 +46,17 @@ void complex_draw(complex *complex_struct);
 void complex_sortdraw(complex *complex_struct);
 void complex_drawshadow(complex *complex_struct);
 void complex_setmaptype(complex *complex_struct,int type);
-void complex_setambientlight(complex *complex_struct,float intensidad); //Valores entre -1.0 y 1.0
+void complex_setambientlight(complex *complex_struct,float intensity); //Values between -1.0 and 1.0
 void complex_setcolor(complex *complex_struct,float r, float g, float b);
 void complex_makefacenormals(complex *complex_struct);
 void complex_look(complex *complex_struct,float nx,float ny,float nz);
 void complex_active_object(complex *complex_struct,int act);
 
-typedef struct _wvertice{
+typedef struct _wvertex{
   float x,y,z;
   float nx,ny,nz;
   float u,v;
-}wvertice;
+}wvertex;
 
 typedef struct _wface{
   short a,b,c;
@@ -68,12 +68,12 @@ typedef struct _wmaterial{
   float ar,ag,ab;
   float sr,sg,sb;
   int   transp;
-  char  textura[16];
+  char  texture[16];
   int   map_type;
 }wmaterial;
 
 typedef struct { float x, y, z;
-               } punto_3d;
+               } point_3d;
 
 #define TWIRE      0
 #define TFLAT      1

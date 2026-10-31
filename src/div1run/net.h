@@ -10,20 +10,20 @@ extern "C" {
 #endif
 
 //-----------------------------------------------------------------------------
-// Definicion de tipos
+// Type definitions
 //-----------------------------------------------------------------------------
 typedef unsigned short WORD;
 typedef unsigned char  BYTE;
 
 //-----------------------------------------------------------------------------
-// Definicion de Dispositivos
+// Device definitions
 //-----------------------------------------------------------------------------
 #define IPX     1
 #define SERIAL  2
 #define MODEM   3
 
 //-----------------------------------------------------------------------------
-// Definicion de errores
+// Error definitions
 //-----------------------------------------------------------------------------
 #define NET_ABORTED -1 // esc
 #define NET_BADINIT -2
@@ -31,46 +31,46 @@ typedef unsigned char  BYTE;
 #define NET_BADSYNC -4
 
 //-----------------------------------------------------------------------------
-// Definicion de variables exportadas
+// Definition of exported variables
 //-----------------------------------------------------------------------------
-extern int inicializacion_red; // Hay que inicializarla a cero
-
-//-----------------------------------------------------------------------------
-// Definicion de procedimientos externos
-//-----------------------------------------------------------------------------
-
-// Rutina para la recepcion de paquetes como servidor
-extern void (*SRV_Packet)(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
-
-// Rutina para la recepcion de paquetes como Nodo
-extern void (*NOD_Packet)(WORD Usuario,WORD Comando,BYTE *Buffer,WORD Len);
+extern int network_initialization; // It must be initialized to zero
 
 //-----------------------------------------------------------------------------
-// Definicion de procedimientos propios
+// Definition of external procedures
 //-----------------------------------------------------------------------------
 
-// Inicializa el protocolo ipx (devuelve error o número de nodo)
-int net_init_ipx(int socket,int num_jugadores, int timeout);
-// socket=identificador de partida(int), 2..8, segundos (1..60)
+// Routine for receiving packets as server
+extern void (*SRV_Packet)(WORD User,WORD Command,BYTE *Buffer,WORD Len);
 
-// ojo con el key(esc) de aborción
+// Routine for receiving packets as Node
+extern void (*NOD_Packet)(WORD User,WORD Command,BYTE *Buffer,WORD Len);
 
-// Inicializa el modem (devuelve error o número de nodo)
-int net_init_modem(int puerto, int velocidad, int dial, char *cadena_inicio,
-                   char *cadena_llamada, char *telefono, int timeout);
+//-----------------------------------------------------------------------------
+// Definition of own procedures
+//-----------------------------------------------------------------------------
 
-// Inicializa el cable serie (devuelve error o número de nodo)
-int net_init_serial(int puerto, int velocidad, int timeout);
+// Initialize the ipx protocol (returns error or node number)
+int net_init_ipx(int socket,int num_players, int timeout);
+// socket=game identifier(int), 2..8, seconds (1..60)
 
-// Manda un paquete
-void net_send(int direccion, char *offset, int size);
+// careful with the abort key(esc)
 
-// direccion (de mem), offset (puntero), size en bytes
+// Initialize the modem (returns error or node number)
+int net_init_modem(int port, int speed, int dial, char *string_start,
+                   char *string_call, char *phone, int timeout);
 
-// Recibe un paquete
+// Initialize the serial cable (returns error or node number)
+int net_init_serial(int port, int speed, int timeout);
+
+// Send a packet
+void net_send(int direction, char *offset, int size);
+
+// address (in mem), offset (pointer), size in bytes
+
+// Receive a packet
 void net_receive();
 
-// Finaliza la comunicacion
+// End the communication
 void net_end();
 
 #ifdef __cplusplus

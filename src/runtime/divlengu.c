@@ -1,138 +1,138 @@
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Módulo para la gestión de textos (lenguaje.div) y de encriptación
+//      Module for managing texts (lenguaje.div) and encryption
 //═════════════════════════════════════════════════════════════════════════════
 
 #include "inter.h"
 
-byte * textos;
-byte * fin_textos;
+byte * text_data;
+byte * end_texts;
 
-int numero=0; // Número de texto
-byte *p_lengu,*q_lengu; // Punteros de lectura y escritura respectivamente.
+int number=0; // Text number
+byte *p_lang,*q_lang; // Read and write pointers respectively.
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //   Prototypes for this file
 ///////////////////////////////////////////////////////////////////////////////
-void analiza_textos(void);
-void coder(byte * ptr, int len, char * clave);
-void an_numero(void);
-void an_texto(void);
-void an_comentario(void);
+void analyze_texts(void);
+void coder(byte * ptr, int len, char * cipher_key);
+void number_width(void);
+void text_width(void);
+void comment_width(void);
 
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Inicializa el sistema de textos
+//      Initialize the text system
 //═════════════════════════════════════════════════════════════════════════════
 
-void inicializa_textos(byte * fichero) {
+void initialize_texts(byte * file) {
 
 //#ifdef DEBUG
   FILE * f;
   int n;
 //#endif
 
-  memset(text,0,max_textos_sistema*4);
+  memset(text,0,max_system_texts*4);
 
 #ifdef DEBUG
 
-  if ((f=fopen((char *)fichero,"rb"))!=NULL) {
+  if ((f=fopen((char *)file,"rb"))!=NULL) {
     fseek(f,0,SEEK_END); n=ftell(f);
-    if ((textos=(byte *)malloc(n))!=NULL) {
+    if ((text_data=(byte *)malloc(n))!=NULL) {
       fseek(f,0,SEEK_SET);
-      n=fread(textos,1,n,f);
+      n=fread(text_data,1,n,f);
       fclose(f);
-      fin_textos=textos+n;
-      analiza_textos();
+      end_texts=text_data+n;
+      analyze_texts();
     } else fclose(f);
   }
 
 #else
 
-  if ((f=fopen((char *)fichero,"rb"))!=NULL) {
+  if ((f=fopen((char *)file,"rb"))!=NULL) {
     fseek(f,-4,SEEK_END);
     fread(&n,4,1,f);
     //DebugData(n);
     fseek(f,-4-n,SEEK_END);
-    if ((textos=(byte *)malloc(n+1))!=NULL) {
-      n=fread(textos,1,n,f);
+    if ((text_data=(byte *)malloc(n+1))!=NULL) {
+      n=fread(text_data,1,n,f);
       fclose(f);
-      fin_textos=textos+n;
-      analiza_textos();
+      end_texts=text_data+n;
+      analyze_texts();
     } else fclose(f);
   } 
 
 /*
-  textos=textosing;
-  fin_textos=textos+sizeof(textosing);
-  analiza_textos();
+  text_data=english_texts;
+  end_texts=text_data+sizeof(english_texts);
+  analyze_texts();
 */
 #endif
 
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Función de análisis de los textos
+//      Text parsing function
 //═════════════════════════════════════════════════════════════════════════════
 
-void analiza_textos(void) {
+void analyze_texts(void) {
 
-  q_lengu=p_lengu=textos;
+  q_lang=p_lang=text_data;
 
-  if (!strcmp((char *)p_lengu,"Zk!")) {
-    p_lengu+=4;
-    coder(p_lengu,fin_textos-textos-4,"lave");
+  if (!strcmp((char *)p_lang,"Zk!")) {
+    p_lang+=4;
+    coder(p_lang,end_texts-text_data-4,"lave");
   }
 
-  while(p_lengu<fin_textos)
-    if (*p_lengu>='0' && *p_lengu<='9') an_numero();
-    else if (*p_lengu=='"') an_texto();
-    else if (*p_lengu=='#') an_comentario();
-    else p_lengu++;
+  while(p_lang<end_texts)
+    if (*p_lang>='0' && *p_lang<='9') number_width();
+    else if (*p_lang=='"') text_width();
+    else if (*p_lang=='#') comment_width();
+    else p_lang++;
 }
 
-void an_numero(void) {
+void number_width(void) {
 
-  numero=0; do {
-    numero=numero*10+*p_lengu-'0'; p_lengu++;
-  } while (*p_lengu>='0' && *p_lengu<='9' && p_lengu<fin_textos);
-  if (numero>=max_textos_sistema) numero=0;
+  number=0; do {
+    number=number*10+*p_lang-'0'; p_lang++;
+  } while (*p_lang>='0' && *p_lang<='9' && p_lang<end_texts);
+  if (number>=max_system_texts) number=0;
 }
 
-void an_comentario(void) {
+void comment_width(void) {
 
-  while (*p_lengu!=13 && p_lengu<fin_textos) p_lengu++;
+  while (*p_lang!=13 && p_lang<end_texts) p_lang++;
 }
 
-void an_texto(void) {
+void text_width(void) {
 
-  text[numero]=q_lengu; p_lengu++; numero++;
-  while (*p_lengu!='"' && p_lengu<fin_textos && *p_lengu!=13) {
-    if (*p_lengu=='\\') { p_lengu++;
-      if (*p_lengu=='n') {
-        *q_lengu++=13; *q_lengu++=10; p_lengu++;
-      } else if (*p_lengu=='#') {
-        *q_lengu++=13; p_lengu++;
-      } else *q_lengu++=*p_lengu++;
-    } else *q_lengu++=*p_lengu++;
-  } p_lengu++; *q_lengu++=0;
+  text[number]=q_lang; p_lang++; number++;
+  while (*p_lang!='"' && p_lang<end_texts && *p_lang!=13) {
+    if (*p_lang=='\\') { p_lang++;
+      if (*p_lang=='n') {
+        *q_lang++=13; *q_lang++=10; p_lang++;
+      } else if (*p_lang=='#') {
+        *q_lang++=13; p_lang++;
+      } else *q_lang++=*p_lang++;
+    } else *q_lang++=*p_lang++;
+  } p_lang++; *q_lang++=0;
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//      Finaliza el sistema de textos
+//      End the text system
 //═════════════════════════════════════════════════════════════════════════════
 
-void finaliza_textos(void) {
+void finalize_texts(void) {
 
-  free(textos);
+  free(text_data);
 }
 
 //════════════════════════════════════════════════════════════════════════════
-//      Generador de números aleatorios
+//      Random number generator
 //════════════════════════════════════════════════════════════════════════════
 
-union {byte b[128]; int d[32];} seed_coder; // Seed aleatorio (127 bytes + PTR)
+union {byte b[128]; int d[32];} seed_coder; // Random seed (127 bytes + PTR)
 
 byte rndb(void) {
 byte ptr;
@@ -150,13 +150,13 @@ int rnd2(int min,int max) {
   return((rnd_coder()%(max-min+1))+min);
 }
 
-void init_rnd_coder(int n, char * clave){
+void init_rnd_coder(int n, char * cipher_key){
   volatile int a;
   for (a=0;a<32;a++) seed_coder.d[a]=n;
-  if (clave!=NULL) {
+  if (cipher_key!=NULL) {
     for (a=0;a<127;a++) {
-      if (!clave[a]) break;
-      seed_coder.b[a]^=clave[a];
+      if (!cipher_key[a]) break;
+      seed_coder.b[a]^=cipher_key[a];
     }
   }
   seed_coder.b[127]&=127;
@@ -164,13 +164,13 @@ void init_rnd_coder(int n, char * clave){
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Función de encriptación/desencriptación
+//  Encryption/decryption function
 //═════════════════════════════════════════════════════════════════════════════
 
-void coder(byte * ptr, int len, char * clave) {
+void coder(byte * ptr, int len, char * cipher_key) {
   int n;
 
-  init_rnd_coder(len,clave);
+  init_rnd_coder(len,cipher_key);
   for (n=0;n<len;n++) {
     ptr[n]^=rndb();
   }

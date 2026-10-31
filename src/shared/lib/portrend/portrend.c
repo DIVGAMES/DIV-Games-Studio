@@ -8,7 +8,7 @@
 #include "portrend.h"
 #include "internal.h"
 
-int ancho,alto;
+int width,height;
 
 
 static SDL_Surface* surface = NULL;
@@ -275,9 +275,9 @@ static void vline(int x, int y1,int y2, int top,int middle,int bottom)
 {
 	int y=0;
 		
-    byte *pix = (byte *)copia;//int *pix = (int*) surface->pixels;
-    y1 = clamp(y1, 0, alto-1);
-    y2 = clamp(y2, 0, alto-1);
+    byte *pix = (byte *)copy_buffer;//int *pix = (int*) surface->pixels;
+    y1 = clamp(y1, 0, height-1);
+    y2 = clamp(y2, 0, height-1);
 //    printf("vline: %d %d\n",x,y1);
     
     if(y2 == y1)
@@ -286,7 +286,7 @@ static void vline(int x, int y1,int y2, int top,int middle,int bottom)
     {
         pix[y1*W+x] = top;
         for(y=y1+1; y<y2; ++y) pix[y*W+x] = middle;
-     //   for(int y=y1; y<=y2; ++y) pix[y*ancho+x] = middle;
+     //   for(int y=y1; y<=y2; ++y) pix[y*width+x] = middle;
         pix[y2*W+x] = bottom;
     }
 }
@@ -329,8 +329,8 @@ void PortRender(int i) {
 	player.where.y=mem[m8[i].camera+_Y];
 	player.where.z=1024;//mem[m8[i].camera+_Z];
 	player.angle=mem[m8[i].camera+_Angle]/200.0f;
-ancho = 640;
-alto = 480;
+width = 640;
+height = 480;
 
 //printf
 //	printf("Player: %f %f %f %d\n",player.where.x,player.where.y,player.where.z,player.angle);
@@ -355,7 +355,7 @@ void DrawScreen(void)
     for(n=0; n<NumSectors; ++n) 
 		renderedsectors[n] = 0;
 
-//printf("screen width: %d height: %d\n",ancho, alto);
+//printf("screen width: %d height: %d\n",width, height);
 
 //printf("NumSectors: %d player sector: %d\n ",NumSectors,player.sector);
 

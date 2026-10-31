@@ -2,17 +2,17 @@
 #include "grabador.h"
 #include "global.h"
 
-byte *MiCopia;
-byte DacCopia[768];
+byte *MyCopy;
+byte DacCopy[768];
 FILE *FileGrb;
 char CHUNK;
-int InitGrabador=0;
+int InitRecorder=0;
 
-int MiraDiferencias(byte *NewScreen)
+int LookForDifferences(byte *NewScreen)
 {
 int x,Dif=0;
         for(x=0;x<64000;x++)
-                if((MiCopia[x]^=NewScreen[x]))         
+                if((MyCopy[x]^=NewScreen[x]))         
                         Dif=1;
 return(Dif);
 }
@@ -79,14 +79,14 @@ byte *cbuffer=(byte *)malloc(*LengtOff*2);
 return((char *)cbuffer);
 }
 
-void ComprimeFrameySalva()
+void CompressFrameAndSave()
 {
 byte *BuffOff;
 byte *BuffRLE;
 int LengtOff=64000,LengtRLE=64000;
 
-        BuffOff=(byte *)CmpOFF((char *)MiCopia,&LengtOff);
-        BuffRLE=(byte *)CmpRLE((char *)MiCopia,&LengtRLE);
+        BuffOff=(byte *)CmpOFF((char *)MyCopy,&LengtOff);
+        BuffRLE=(byte *)CmpRLE((char *)MyCopy,&LengtRLE);
         
         if(LengtOff<LengtRLE)
         {
@@ -112,50 +112,50 @@ int LengtOff=64000,LengtRLE=64000;
 
 void RegScreen(unsigned char *NewScreen)
 {
-        if(!InitGrabador)
+        if(!InitRecorder)
         {
-                InitGrabador=1;
-                MiCopia=(byte *)malloc(64004);
-                memset(MiCopia,0,64004);
+                InitRecorder=1;
+                MyCopy=(byte *)malloc(64004);
+                memset(MyCopy,0,64004);
                 FileGrb=fopen("GRABADOR.SSN","wb");
                 WriteDac(dac);
-                memcpy(MiCopia,NewScreen,64000);
-                ComprimeFrameySalva();
+                memcpy(MyCopy,NewScreen,64000);
+                CompressFrameAndSave();
         }
         else
         {
-                if(MiraDiferencias(NewScreen))
-                        ComprimeFrameySalva();                
-                memcpy(MiCopia,NewScreen,64000);
+                if(LookForDifferences(NewScreen))
+                        CompressFrameAndSave();                
+                memcpy(MyCopy,NewScreen,64000);
         }
 }
 
-void EndGrabador()
+void EndRecorder()
 {
         CHUNK=END_ANIM;
         fwrite(&CHUNK,1,1,FileGrb);
         fclose(FileGrb);
-        free(MiCopia);
+        free(MyCopy);
 }
 
 void WriteDac(byte *dac)
 {
 int x;
-       if(InitGrabador)
+       if(InitRecorder)
         for(x=0;x<768;x++)
-                if(DacCopia[x]!=dac[x])
+                if(DacCopy[x]!=dac[x])
                 {
                         CHUNK=SET_PALET;
                         fwrite(&CHUNK,1,1,FileGrb);
                         fwrite(dac,768,1,FileGrb);
-                        memcpy(DacCopia,dac,768);
+                        memcpy(DacCopy,dac,768);
                         return;
                 }
 }
 
 void WriteMouseKey(char bMouseKey)
 {
-        if(InitGrabador)
+        if(InitRecorder)
         {
                 CHUNK=MOUSE_KEY;
                 fwrite(&CHUNK,1,1,FileGrb);

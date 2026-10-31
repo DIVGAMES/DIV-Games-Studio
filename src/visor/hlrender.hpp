@@ -12,17 +12,17 @@
 
 typedef struct {
   sprite3d    *ccamera;
-  lptobject   objects[N_OBJECTS]; // Array de 128 objetos.
-  lptobject   wobjects[N_OBJECTS];// Array de 128 objetos.
-  int         nobjects;           // Numero de objetos.
+  lptobject   objects[N_OBJECTS]; // Array of 128 objects.
+  lptobject   wobjects[N_OBJECTS];// Array of 128 objects.
+  int         nobjects;           // Number of objects.
   int         ppf,oldppf;
 
-  // Variables para luces
+  // Variables for lights
   float       lgtx,lgty,lgtz;
   float       mlgtx,mlgty,mlgtz;
-  // Variables para luces
-  float       centro_pantalla_x;
-  float       centro_pantalla_y;
+  // Variables for lights
+  float       center_screen_x;
+  float       center_screen_y;
 
   llrender    llrender_struct;
 
@@ -31,12 +31,12 @@ typedef struct {
 void hlrender_create(hlrender *hlrender_struct,sprite3d *newcamera);
 void hlrender_destroy(hlrender *hlrender_struct);
 
-void hlrender_rotar(hlrender *hlrender_struct,lptvertex v,lptmatrix matriz);
-void hlrender_rotar_normales(lptvertex v,lptmatrix matriz);
-void hlrender_transformar(hlrender *hlrender_struct,lptobject obj);
-void hlrender_transformar_sombra(hlrender *hlrender_struct,lptobject obj);
+void hlrender_rotate(hlrender *hlrender_struct,lptvertex v,lptmatrix matrix);
+void hlrender_rotate_normals(lptvertex v,lptmatrix matrix);
+void hlrender_transform(hlrender *hlrender_struct,lptobject obj);
+void hlrender_transform_shadow(hlrender *hlrender_struct,lptobject obj);
 
-void hlrender_transformar_centro(hlrender *hlrender_struct,lptobject obj);
+void hlrender_transform_center(hlrender *hlrender_struct,lptobject obj);
 int  hlrender_addobject(hlrender *hlrender_struct,lptobject object);
 void hlrender_deleteobject(hlrender *hlrender_struct,lptobject object);
 void hlrender_modifyobject(hlrender *hlrender_struct,int,lptmatrix matrix);

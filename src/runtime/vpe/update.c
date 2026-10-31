@@ -3,21 +3,21 @@
 void DoObjectUpdate(struct Object *); // In OBJECT.C
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Actualiza una zona
+//  Update a zone
 //═════════════════════════════════════════════════════════════════════════════
 
 void UpdateZone(void)
 {
   int i;
   //---------------------------------------------------------------------------
-  // Actualiza los objetos
+  // Update the objects
   //---------------------------------------------------------------------------
   for (i=0;i<Objects.Number;i++)
     DoObjectUpdate(Objects.ptr[i]);
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Actualiza las zonas de las vistas
+//  Update the zones of the views
 //═════════════════════════════════════════════════════════════════════════════
 
 void UpdateZoneViews(void)

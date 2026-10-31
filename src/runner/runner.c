@@ -71,7 +71,7 @@ void main(int argc,char *argv[]) {
 
   putenv("DOS4G=QUIET");
 
-  // La siguiente línea daba problemas de arranque en algunos equipos ...
+  // The following line caused startup problems on some machines ...
   // putenv("DOS4GVM=VIRTUALSIZE#65536 MINMEM#2048 MAXMEM#65536");
 
   while(retval>0 && retval<128) {

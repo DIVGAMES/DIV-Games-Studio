@@ -4,8 +4,8 @@
 /* Define window size */
 #include "internal.h"
 
-#define W ancho
-#define H alto
+#define W width
+#define H height
 
 
 #define FALSE           0
@@ -105,7 +105,7 @@ typedef struct _m8camera
 
 #define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
 #define max(a,b)             (((a) > (b)) ? (a) : (b)) // max: Choose greater of two scalars.
-#define clamp(a, mi,ma)      min(max(a,mi),ma)         // clamp: Clamp value into set range.
+#define clamp(a, my,ma)      min(max(a,my),ma)         // clamp: Clamp value into set range.
 #define vxs(x0,y0, x1,y1)    ((x0)*(y1) - (x1)*(y0))   // vxs: Vector cross product
 // Overlap:  Determine whether the two number ranges overlap.
 #define Overlap(a0,a1,b0,b1) (min(a0,a1) <= max(b0,b1) && min(b0,b1) <= max(a0,a1))
@@ -121,7 +121,7 @@ typedef struct _m8camera
 
 
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-//  Definicion de tipos
+//  Type definitions
 //ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 typedef struct type_flag {
@@ -144,7 +144,7 @@ typedef struct type_wall {
   int32_t texture;
   int32_t texture_top;
   int32_t texture_bot;
-  int32_t fade;       // Valor de la luz de 0 a 16
+  int32_t fade;       // Light value from 0 to 16
 } twall, *lptwall;
 
 typedef struct type_region {
@@ -153,7 +153,7 @@ typedef struct type_region {
   int32_t floor_height,ceil_height;
   int32_t floor_tex;
   int32_t ceil_tex;
-  int32_t fade;       // Valor de la luz de 0 a 16  
+  int32_t fade;       // Light value from 0 to 16  
 } tregion, *lptregion;
 
 typedef struct type_map {
@@ -165,16 +165,16 @@ typedef struct type_map {
   tregion *regions[MAX_REGIONS];
   int32_t num_flags;
   tflag *flags[MAX_FLAGS];
-  int32_t bbox_x_ini,bbox_y_ini;
-  int32_t bbox_x_fin,bbox_y_fin;
-  int32_t fondo;
+  int32_t bbox_x_start,bbox_y_start;
+  int32_t bbox_x_end,bbox_y_end;
+  int32_t background;
 } tmap, *lptmap;
 
 
 typedef struct {
   byte  m3d_path[256];
   byte  m3d_name[16];
-  int32_t   numero;
+  int32_t   number;
   byte  fpg_path[256];
   byte  fpg_name[16];
   tmap  map;

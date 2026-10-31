@@ -3,7 +3,7 @@
 *****************************************************************************/
 
 // These functions can be altered, renamed or whatever
-void InitGraph(char *buffer,int ancho,int alto); // Init gfx output device
+void InitGraph(char *buffer,int width,int height); // Init gfx output device
 void ShutGraph(void);		// Shut down gfx
 int  GetGraphWidth(void);	// Returns width of output device
 int  GetGraphHeight(void);	// Returns height of output device

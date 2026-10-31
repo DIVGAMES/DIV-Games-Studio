@@ -89,7 +89,7 @@ void read_packfile(char * filepath) {
 	fclose(f);
 }
 
-void busca_packfile(char *path) {
+void find_packfile(char *path) {
 	int prg_id=0;
 	char head[8];
 	int id[3];
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
   chdir("/working");
 #endif
 
-	busca_packfile(argv[1]);
+	find_packfile(argv[1]);
 	
 //	printf("%x\n",packdir);
 

@@ -7,7 +7,7 @@ static int   NumBlocks;
 static VPEByte  CacheEmpty;
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Inicializa el gestor de memoria
+//  Initialize the memory manager
 //═════════════════════════════════════════════════════════════════════════════
 
 void InitMemory(void)
@@ -55,7 +55,7 @@ void InitMemory(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Finaliza el gestor de memoria
+//  End the memory manager
 //═════════════════════════════════════════════════════════════════════════════
 
 void ShutMemory(void)
@@ -65,7 +65,7 @@ void ShutMemory(void)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Reserva memoria interna
+//  Allocate internal memory
 //═════════════════════════════════════════════════════════════════════════════
 
 void *CacheAlloc(VPELong size)
@@ -82,7 +82,7 @@ void *CacheAlloc(VPELong size)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Añade una entrada al gestor de memoria
+//  Add an entry to the memory manager
 //═════════════════════════════════════════════════════════════════════════════
 
 void *AddEntry(struct Table *t)
@@ -105,7 +105,7 @@ void *AddEntry(struct Table *t)
 }
 
 //═════════════════════════════════════════════════════════════════════════════
-//  Borra una entrada del gestor de memoria
+//  Delete an entry from the memory manager
 //═════════════════════════════════════════════════════════════════════════════
 
 void *DelEntry(struct Table *t, int index)
